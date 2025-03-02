@@ -1,18 +1,27 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
 import './index.css'
-import ErrorBoundary from './ErrorBoundary'
 
-const domNode = document.getElementById('root')
-if (!domNode) {
-  throw new Error('Failed to find root element')
+function App() {
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold">
+        Career Development Platform
+      </h1>
+    </div>
+  )
 }
 
-ReactDOM.createRoot(domNode).render(
+// Ensure root element exists
+const rootElement = document.getElementById('root')
+if (!rootElement) {
+  throw new Error('Root element not found')
+}
+
+// Create root and render app
+const root = ReactDOM.createRoot(rootElement)
+root.render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
+    <App />
   </React.StrictMode>
 )
