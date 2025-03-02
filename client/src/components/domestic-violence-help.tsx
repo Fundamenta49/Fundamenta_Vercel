@@ -29,6 +29,7 @@ import {
 
 interface SafetyStep {
   title: string;
+  description: string;
   content: string;
   items: string[];
 }
@@ -42,6 +43,7 @@ const handleQuickExit = () => {
 const defaultSafetyPlanSteps: SafetyStep[] = [
   {
     title: "Important Documents",
+    description: "Essential documents to keep safe",
     content: "Keep copies of important documents in a safe place or with a trusted person",
     items: [
       "Driver's license and ID cards",
@@ -54,6 +56,7 @@ const defaultSafetyPlanSteps: SafetyStep[] = [
   },
   {
     title: "Emergency Bag",
+    description: "Pack essentials for quick departure",
     content: "Pack an emergency bag with essentials",
     items: [
       "Clothes for a few days",
@@ -66,6 +69,7 @@ const defaultSafetyPlanSteps: SafetyStep[] = [
   },
   {
     title: "Safe Contacts",
+    description: "Important contacts for emergencies",
     content: "Keep important contact information readily available",
     items: [
       "Trusted friends and family",
@@ -78,6 +82,7 @@ const defaultSafetyPlanSteps: SafetyStep[] = [
   },
   {
     title: "Plan Escape Routes",
+    description: "Know your exit strategies",
     content: "Know the safest ways to leave",
     items: [
       "Identify all possible exits from your home",
@@ -93,7 +98,6 @@ const defaultSafetyPlanSteps: SafetyStep[] = [
 const STORAGE_KEY = 'user_safety_plan';
 
 export default function DomesticViolenceHelp() {
-  const [showContent, setShowContent] = useState(true);
   const [safetyPlanSteps, setSafetyPlanSteps] = useState<SafetyStep[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -101,7 +105,14 @@ export default function DomesticViolenceHelp() {
     }
     return defaultSafetyPlanSteps;
   });
-  const [newStep, setNewStep] = useState<SafetyStep>({ title: '', content: '', items: [] });
+
+  const [newStep, setNewStep] = useState<SafetyStep>({
+    title: '',
+    description: '',
+    content: '',
+    items: []
+  });
+
   const [isAddingStep, setIsAddingStep] = useState(false);
   const [editingItemIndex, setEditingItemIndex] = useState<{ stepIndex: number, itemIndex: number | null }>({ stepIndex: -1, itemIndex: null });
   const [newItem, setNewItem] = useState("");
@@ -130,7 +141,7 @@ export default function DomesticViolenceHelp() {
   const handleAddStep = () => {
     if (newStep.title && newStep.content) {
       setSafetyPlanSteps([...safetyPlanSteps, { ...newStep, items: [] }]);
-      setNewStep({ title: '', content: '', items: [] });
+      setNewStep({ title: '', description: '', content: '', items: [] });
       setIsAddingStep(false);
     }
   };
@@ -157,8 +168,6 @@ export default function DomesticViolenceHelp() {
     setSafetyPlanSteps(updatedSteps);
     setEditingItemIndex({ stepIndex: -1, itemIndex: null });
   };
-
-  if (!showContent) return null;
 
   return (
     <div className="space-y-6 relative">
@@ -321,6 +330,11 @@ export default function DomesticViolenceHelp() {
                 />
                 <Input
                   placeholder="Step Description"
+                  value={newStep.description}
+                  onChange={(e) => setNewStep({ ...newStep, description: e.target.value })}
+                />
+                <Input
+                  placeholder="Step Content"
                   value={newStep.content}
                   onChange={(e) => setNewStep({ ...newStep, content: e.target.value })}
                 />
@@ -330,7 +344,7 @@ export default function DomesticViolenceHelp() {
                   </Button>
                   <Button variant="outline" onClick={() => {
                     setIsAddingStep(false);
-                    setNewStep({ title: '', content: '', items: [] });
+                    setNewStep({ title: '', description: '', content: '', items: [] });
                   }}>
                     Cancel
                   </Button>
