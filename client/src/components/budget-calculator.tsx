@@ -12,6 +12,13 @@ export interface BudgetItem {
   amount: number;
 }
 
+export interface SavingsGoal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+}
+
 export interface BudgetData {
   income: number;
   expenses: BudgetItem[];
@@ -20,6 +27,7 @@ export interface BudgetData {
   expensePercentage: number;
   retirementSavings: number;
   otherSavings: number;
+  savingsGoals: SavingsGoal[];
 }
 
 interface BudgetCalculatorProps {
@@ -79,6 +87,18 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
     return 0;
   });
 
+  const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return data.savingsGoals || [];
+    }
+    return [];
+  });
+
+  const [newGoalName, setNewGoalName] = useState("");
+  const [newGoalAmount, setNewGoalAmount] = useState<number>(0);
+
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
   const remaining = income - totalExpenses - retirementSavings - otherSavings;
   const expensePercentage = income > 0 ? (totalExpenses / income) * 100 : 0;
@@ -93,6 +113,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
       expensePercentage,
       retirementSavings,
       otherSavings,
+      savingsGoals,
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(budgetData));
@@ -100,7 +121,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
     if (onBudgetUpdate) {
       onBudgetUpdate(budgetData);
     }
-  }, [income, expenses, totalExpenses, remaining, expensePercentage, retirementSavings, otherSavings, onBudgetUpdate]);
+  }, [income, expenses, totalExpenses, remaining, expensePercentage, retirementSavings, otherSavings, savingsGoals, onBudgetUpdate]);
 
   const handleExpenseChange = (id: string, value: string) => {
     setExpenses(expenses.map(expense =>
@@ -123,6 +144,33 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
 
   const removeCategory = (id: string) => {
     setExpenses(expenses.filter(expense => expense.id !== id));
+  };
+
+  const addSavingsGoal = () => {
+    if (!newGoalName.trim() || newGoalAmount <= 0) return;
+
+    const newGoal: SavingsGoal = {
+      id: String(Date.now()),
+      name: newGoalName,
+      targetAmount: newGoalAmount,
+      currentAmount: 0,
+    };
+
+    setSavingsGoals([...savingsGoals, newGoal]);
+    setNewGoalName("");
+    setNewGoalAmount(0);
+  };
+
+  const updateSavingsGoal = (id: string, field: "currentAmount" | "targetAmount", value: number) => {
+    setSavingsGoals(savingsGoals.map(goal =>
+      goal.id === id
+        ? { ...goal, [field]: value }
+        : goal
+    ));
+  };
+
+  const removeSavingsGoal = (id: string) => {
+    setSavingsGoals(savingsGoals.filter(goal => goal.id !== id));
   };
 
   return (
@@ -181,6 +229,75 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Savings Goals</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              value={newGoalName}
+              onChange={(e) => setNewGoalName(e.target.value)}
+              placeholder="Goal name (e.g., Car, House)"
+            />
+            <Input
+              type="number"
+              value={newGoalAmount || ""}
+              onChange={(e) => setNewGoalAmount(parseFloat(e.target.value) || 0)}
+              placeholder="Target amount"
+            />
+          </div>
+          <Button
+            onClick={addSavingsGoal}
+            disabled={!newGoalName.trim() || newGoalAmount <= 0}
+            className="w-full"
+          >
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add Savings Goal
+          </Button>
+
+          {savingsGoals.map((goal) => (
+            <div key={goal.id} className="space-y-2 p-4 border rounded-lg">
+              <div className="flex items-center justify-between">
+                <h3 className="font-medium">{goal.name}</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeSavingsGoal(goal.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Label>Current Amount:</Label>
+                  <Input
+                    type="number"
+                    value={goal.currentAmount || ""}
+                    onChange={(e) => updateSavingsGoal(goal.id, "currentAmount", parseFloat(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Label>Target Amount:</Label>
+                  <Input
+                    type="number"
+                    value={goal.targetAmount || ""}
+                    onChange={(e) => updateSavingsGoal(goal.id, "targetAmount", parseFloat(e.target.value) || 0)}
+                  />
+                </div>
+                <Progress 
+                  value={(goal.currentAmount / goal.targetAmount) * 100} 
+                  className="h-2" 
+                />
+                <p className="text-sm text-right text-muted-foreground">
+                  {((goal.currentAmount / goal.targetAmount) * 100).toFixed(1)}% Complete
+                </p>
+              </div>
             </div>
           ))}
         </CardContent>

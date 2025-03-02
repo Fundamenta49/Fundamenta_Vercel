@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { BudgetData, BudgetItem } from "./budget-calculator";
+import type { BudgetData, BudgetItem, SavingsGoal } from "./budget-calculator";
 import {
   Card,
   CardContent,
@@ -52,20 +52,10 @@ const monthlyData = [
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"];
 
-const STORAGE_KEY = 'financial_dashboard_data';
-
 export default function FinancialDashboard({ budgetData }: FinancialDashboardProps) {
   const [progress, setProgress] = useState(0);
-  const [savingsGoal] = useState(10000);
   const [retirementProgress, setRetirementProgress] = useState(0);
-  const [retirementGoal, setRetirementGoal] = useState<number>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const data = JSON.parse(stored);
-      return data.retirementGoal || 1000000;
-    }
-    return 1000000;
-  });
+  const [retirementGoal, setRetirementGoal] = useState<number>(1000000);
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [tempGoal, setTempGoal] = useState(retirementGoal);
 
@@ -78,12 +68,11 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
   const otherSavings = budgetData?.otherSavings || 0;
   const totalSavings = retirementSavings + otherSavings;
 
+  // Get savings goals from budgetData
+  const savingsGoals = budgetData?.savingsGoals || [];
+
   // Update retirement progress calculation
   const monthlyRetirementProgress = (retirementSavings * 12 / retirementGoal) * 100;
-
-  // Calculate savings progress
-  const savingsProgress = (totalSavings / savingsGoal) * 100;
-
 
   // Update expense categories
   const expenseCategories = budgetData?.expenses.map(item => ({
@@ -100,17 +89,11 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setProgress(savingsProgress);
+      setProgress(monthlyRetirementProgress);
       setRetirementProgress(monthlyRetirementProgress);
     }, 500);
     return () => clearTimeout(timer);
-  }, [savingsProgress, monthlyRetirementProgress, retirementGoal]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      retirementGoal
-    }));
-  }, [retirementGoal]);
+  }, [monthlyRetirementProgress]);
 
   const handleGoalUpdate = () => {
     if (tempGoal > 0) {
@@ -168,7 +151,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             <div className="text-2xl font-bold text-blue-700">
               ${totalSavings.toLocaleString()}
             </div>
-            <p className="text-sm text-blue-600">Towards ${savingsGoal.toLocaleString()} goal</p>
+            <p className="text-sm text-blue-600">Total monthly savings</p>
           </CardContent>
         </Card>
 
@@ -189,32 +172,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
       </div>
 
       {/* Savings Goals Progress */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Monthly Savings Progress */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
-              Savings Goal Progress
-            </CardTitle>
-            <CardDescription>
-              Track your progress towards your savings goal
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Current: ${totalSavings.toLocaleString()}</span>
-                <span>Goal: ${savingsGoal.toLocaleString()}</span>
-              </div>
-              <Progress value={progress} className="h-2" />
-              <p className="text-sm text-muted-foreground text-right">
-                {progress.toFixed(1)}% Complete
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
+      <div className="grid gap-4">
         {/* Retirement Progress */}
         <Card>
           <CardHeader>
@@ -279,6 +237,38 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </div>
           </CardContent>
         </Card>
+
+        {/* Other Savings Goals */}
+        {savingsGoals.map((goal) => (
+          <Card key={goal.id}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                {goal.name}
+              </CardTitle>
+              <CardDescription>
+                Progress towards your {goal.name.toLowerCase()} savings goal
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span>Current: ${goal.currentAmount.toLocaleString()}</span>
+                    <span>Goal: ${goal.targetAmount.toLocaleString()}</span>
+                  </div>
+                  <Progress 
+                    value={(goal.currentAmount / goal.targetAmount) * 100}
+                    className="h-2"
+                  />
+                  <p className="text-sm text-muted-foreground text-right">
+                    {((goal.currentAmount / goal.targetAmount) * 100).toFixed(1)}% Complete
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Expense Distribution */}
