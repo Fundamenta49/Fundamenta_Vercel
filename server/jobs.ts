@@ -1,5 +1,5 @@
 import axios from "axios";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 
 interface JobSearchParams {
   query: string;
@@ -20,54 +20,131 @@ interface JobListing {
 }
 
 async function searchIndeed(query: string, location: string): Promise<JobListing[]> {
-  // Note: This would require Indeed API access
-  // For now, we'll return a placeholder implementation
-  return [
-    {
-      id: "indeed-1",
-      title: "Sample Indeed Job",
-      company: "Indeed Company",
-      location: location,
-      description: "This is a sample job listing from Indeed.",
-      url: "https://indeed.com",
-      source: "Indeed",
-      postedDate: new Date().toLocaleDateString(),
-    }
-  ];
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    const encodedLocation = encodeURIComponent(location);
+    const url = `https://www.indeed.com/jobs?q=${encodedQuery}&l=${encodedLocation}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+
+    const $ = cheerio.load(response.data);
+    const jobs: JobListing[] = [];
+
+    $('.job_seen_beacon').each((i: number, element: cheerio.Element) => {
+      const title = $(element).find('.jobTitle').text().trim();
+      const company = $(element).find('.companyName').text().trim();
+      const location = $(element).find('.companyLocation').text().trim();
+      const description = $(element).find('.job-snippet').text().trim();
+      const salary = $(element).find('.salary-snippet').text().trim();
+      const url = 'https://www.indeed.com' + $(element).find('a').attr('href');
+      const postedDate = $(element).find('.date').text().trim();
+
+      jobs.push({
+        id: `indeed-${i}`,
+        title,
+        company,
+        location,
+        description,
+        salary: salary || undefined,
+        url,
+        source: 'Indeed',
+        postedDate: postedDate || new Date().toLocaleDateString()
+      });
+    });
+
+    return jobs;
+  } catch (error) {
+    console.error("Error searching Indeed:", error);
+    return [];
+  }
 }
 
 async function searchLinkedIn(query: string, location: string): Promise<JobListing[]> {
-  // Note: This would require LinkedIn API access
-  // For now, we'll return a placeholder implementation
-  return [
-    {
-      id: "linkedin-1",
-      title: "Sample LinkedIn Job",
-      company: "LinkedIn Company",
-      location: location,
-      description: "This is a sample job listing from LinkedIn.",
-      url: "https://linkedin.com",
-      source: "LinkedIn",
-      postedDate: new Date().toLocaleDateString(),
-    }
-  ];
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    const encodedLocation = encodeURIComponent(location);
+    const url = `https://www.linkedin.com/jobs/search?keywords=${encodedQuery}&location=${encodedLocation}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+
+    const $ = cheerio.load(response.data);
+    const jobs: JobListing[] = [];
+
+    $('.jobs-search__results-list li').each((i: number, element: cheerio.Element) => {
+      const title = $(element).find('.base-search-card__title').text().trim();
+      const company = $(element).find('.base-search-card__subtitle').text().trim();
+      const location = $(element).find('.job-search-card__location').text().trim();
+      const description = $(element).find('.base-search-card__metadata').text().trim();
+      const url = $(element).find('a').attr('href') || '';
+      const postedDate = $(element).find('time').text().trim();
+
+      jobs.push({
+        id: `linkedin-${i}`,
+        title,
+        company,
+        location,
+        description,
+        url,
+        source: 'LinkedIn',
+        postedDate: postedDate || new Date().toLocaleDateString()
+      });
+    });
+
+    return jobs;
+  } catch (error) {
+    console.error("Error searching LinkedIn:", error);
+    return [];
+  }
 }
 
 async function searchZipRecruiter(query: string, location: string): Promise<JobListing[]> {
-  // Note: This would require ZipRecruiter API access
-  // For now, we'll return a placeholder implementation
-  return [
-    {
-      id: "ziprecruiter-1",
-      title: "Sample ZipRecruiter Job",
-      company: "ZipRecruiter Company",
-      location: location,
-      description: "This is a sample job listing from ZipRecruiter.",
-      url: "https://ziprecruiter.com",
-      source: "ZipRecruiter",
-      postedDate: new Date().toLocaleDateString(),
-    }
-  ];
+  try {
+    const encodedQuery = encodeURIComponent(query);
+    const encodedLocation = encodeURIComponent(location);
+    const url = `https://www.ziprecruiter.com/jobs-search?q=${encodedQuery}&l=${encodedLocation}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+
+    const $ = cheerio.load(response.data);
+    const jobs: JobListing[] = [];
+
+    $('.job_content').each((i: number, element: cheerio.Element) => {
+      const title = $(element).find('.job_title').text().trim();
+      const company = $(element).find('.hiring_company').text().trim();
+      const location = $(element).find('.location').text().trim();
+      const description = $(element).find('.job_description').text().trim();
+      const url = $(element).find('a.job_link').attr('href') || '';
+      const postedDate = $(element).find('.posted_date').text().trim();
+
+      jobs.push({
+        id: `ziprecruiter-${i}`,
+        title,
+        company,
+        location,
+        description,
+        url,
+        source: 'ZipRecruiter',
+        postedDate: postedDate || new Date().toLocaleDateString()
+      });
+    });
+
+    return jobs;
+  } catch (error) {
+    console.error("Error searching ZipRecruiter:", error);
+    return [];
+  }
 }
 
 export async function searchJobs(params: JobSearchParams): Promise<JobListing[]> {
@@ -84,6 +161,11 @@ export async function searchJobs(params: JobSearchParams): Promise<JobListing[]>
     searchPromises.push(searchZipRecruiter(query, location));
   }
 
-  const results = await Promise.all(searchPromises);
-  return results.flat();
+  const results = await Promise.allSettled(searchPromises);
+  const jobs = results
+    .filter((result): result is PromiseFulfilledResult<JobListing[]> => result.status === 'fulfilled')
+    .map(result => result.value)
+    .flat();
+
+  return jobs;
 }
