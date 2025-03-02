@@ -39,7 +39,7 @@ const STORAGE_KEY = 'emergency_location_data';
 
 // Mock data for different cities
 const cityEmergencyData: Record<string, { shelters: Shelter[], alerts: WeatherAlert[] }> = {
-  "Cincinnati": {
+  "cincinnati": {
     shelters: [
       {
         name: "Duke Energy Convention Center",
@@ -78,7 +78,57 @@ const cityEmergencyData: Record<string, { shelters: Shelter[], alerts: WeatherAl
       }
     ]
   },
-  // Add more cities as needed
+  "miami": {
+    shelters: [
+      {
+        name: "Miami-Dade County Fair & Exposition",
+        address: "10901 SW 24th St, Miami, FL 33165",
+        type: "Hurricane Shelter",
+        capacity: 800,
+        currentStatus: "open"
+      },
+      {
+        name: "Florida International University Arena",
+        address: "11200 SW 8th St, Miami, FL 33199",
+        type: "Emergency Shelter",
+        capacity: 600,
+        currentStatus: "open"
+      }
+    ],
+    alerts: [
+      {
+        type: "Hurricane Watch",
+        severity: "high",
+        description: "Tropical storm system approaching Southeast Florida",
+        instructions: "Review evacuation plans and prepare emergency supplies. Monitor local news for updates."
+      }
+    ]
+  },
+  "los angeles": {
+    shelters: [
+      {
+        name: "LA Convention Center",
+        address: "1201 S Figueroa St, Los Angeles, CA 90015",
+        type: "Emergency Shelter",
+        capacity: 1000,
+        currentStatus: "open"
+      }
+    ],
+    alerts: [
+      {
+        type: "Heat Advisory",
+        severity: "medium",
+        description: "Excessive heat warning for LA County",
+        instructions: "Stay hydrated and avoid outdoor activities during peak hours."
+      },
+      {
+        type: "Air Quality Alert",
+        severity: "medium",
+        description: "Unhealthy air quality levels in parts of Los Angeles",
+        instructions: "Sensitive groups should limit outdoor exposure."
+      }
+    ]
+  }
 };
 
 // State emergency management links
@@ -357,8 +407,8 @@ export default function EmergencyGuide() {
                     <h3 className="font-medium">{shelter.name}</h3>
                     <Badge
                       variant={
-                        shelter.currentStatus === 'open' ? 'success' :
-                          shelter.currentStatus === 'full' ? 'warning' : 'destructive'
+                        shelter.currentStatus === 'open' ? 'default' :
+                          shelter.currentStatus === 'full' ? 'secondary' : 'destructive'
                       }
                     >
                       {shelter.currentStatus}
