@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Phone, 
@@ -15,7 +16,9 @@ import {
   AlertTriangle,
   Heart,
   LogOut,
-  Check
+  Check,
+  Plus,
+  X
 } from "lucide-react";
 import { 
   Accordion,
@@ -30,12 +33,8 @@ const handleQuickExit = () => {
   window.location.href = "https://weather.com";
 };
 
-// Safety planning information
-const safetyPlanSteps = [
-  {
-    title: "Create a Safety Word",
-    content: "Choose a code word to alert friends/family when you need help"
-  },
+// Default safety planning information
+const defaultSafetyPlanSteps = [
   {
     title: "Important Documents",
     content: "Keep copies of important documents (ID, birth certificates, financial records) in a safe place or with a trusted person"
@@ -54,9 +53,17 @@ const safetyPlanSteps = [
   }
 ];
 
+const STORAGE_KEY = 'user_safety_plan';
+
 export default function DomesticViolenceHelp() {
   const [showContent, setShowContent] = useState(true);
-  
+  const [safetyPlanSteps, setSafetyPlanSteps] = useState(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : defaultSafetyPlanSteps;
+  });
+  const [newStep, setNewStep] = useState({ title: '', content: '' });
+  const [isAddingStep, setIsAddingStep] = useState(false);
+
   // Listen for Escape key
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -68,6 +75,27 @@ export default function DomesticViolenceHelp() {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
+
+  // Save safety plan to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(safetyPlanSteps));
+    } catch (error) {
+      console.error('Error saving safety plan:', error);
+    }
+  }, [safetyPlanSteps]);
+
+  const handleAddStep = () => {
+    if (newStep.title && newStep.content) {
+      setSafetyPlanSteps([...safetyPlanSteps, newStep]);
+      setNewStep({ title: '', content: '' });
+      setIsAddingStep(false);
+    }
+  };
+
+  const handleRemoveStep = (index: number) => {
+    setSafetyPlanSteps(safetyPlanSteps.filter((_, i) => i !== index));
+  };
 
   if (!showContent) return null;
 
@@ -131,20 +159,70 @@ export default function DomesticViolenceHelp() {
             Safety Planning
           </CardTitle>
           <CardDescription>
-            Steps to help protect yourself and plan for your safety
+            Customize your safety plan - add or remove steps that work for your situation
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Accordion type="single" collapsible className="w-full">
-            {safetyPlanSteps.map((step, index) => (
-              <AccordionItem key={index} value={`step-${index}`}>
-                <AccordionTrigger>{step.title}</AccordionTrigger>
-                <AccordionContent>
-                  <p className="text-muted-foreground">{step.content}</p>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <div className="space-y-4">
+            <Accordion type="single" collapsible className="w-full">
+              {safetyPlanSteps.map((step, index) => (
+                <AccordionItem key={index} value={`step-${index}`}>
+                  <AccordionTrigger className="flex justify-between">
+                    <span>{step.title}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveStep(index);
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <p className="text-muted-foreground">{step.content}</p>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+
+            {isAddingStep ? (
+              <div className="space-y-4 pt-4">
+                <Input
+                  placeholder="Step Title"
+                  value={newStep.title}
+                  onChange={(e) => setNewStep({ ...newStep, title: e.target.value })}
+                />
+                <Input
+                  placeholder="Step Description"
+                  value={newStep.content}
+                  onChange={(e) => setNewStep({ ...newStep, content: e.target.value })}
+                />
+                <div className="flex gap-2">
+                  <Button onClick={handleAddStep} disabled={!newStep.title || !newStep.content}>
+                    Save Step
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    setIsAddingStep(false);
+                    setNewStep({ title: '', content: '' });
+                  }}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                onClick={() => setIsAddingStep(true)}
+                className="w-full mt-4"
+                variant="outline"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Custom Safety Step
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 
