@@ -18,75 +18,21 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Calculator, Percent, LineChart, DollarSign } from "lucide-react";
 
-// Risk tolerance quiz questions
-const riskQuestions = [
-  {
-    id: 1,
-    question: "How would you react if your investment lost 20% in a month?",
-    options: [
-      { value: 1, text: "Sell everything immediately" },
-      { value: 2, text: "Sell some investments" },
-      { value: 3, text: "Do nothing and wait" },
-      { value: 4, text: "Buy more while prices are low" }
-    ]
-  },
-  {
-    id: 2,
-    question: "When do you plan to start withdrawing from your investments?",
-    options: [
-      { value: 1, text: "Within 3 years" },
-      { value: 2, text: "3-5 years" },
-      { value: 3, text: "5-10 years" },
-      { value: 4, text: "More than 10 years" }
-    ]
-  },
-  {
-    id: 3,
-    question: "What's your primary investment goal?",
-    options: [
-      { value: 1, text: "Preserve my wealth" },
-      { value: 2, text: "Grow wealth slowly with minimal risk" },
-      { value: 3, text: "Balance growth with security" },
-      { value: 4, text: "Maximize long-term growth" }
-    ]
-  }
-];
-
 export default function InvestmentEducation() {
-  // Compound Interest Calculator State
   const [principal, setPrincipal] = useState<number>(1000);
   const [monthlyContribution, setMonthlyContribution] = useState<number>(100);
   const [years, setYears] = useState<number>(10);
   const [rate, setRate] = useState<number>(7);
   const [futureValue, setFutureValue] = useState<number | null>(null);
 
-  // Risk Quiz State
-  const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [riskProfile, setRiskProfile] = useState<string>("");
-
   const calculateCompoundInterest = () => {
     const monthlyRate = rate / 12 / 100;
     const months = years * 12;
-    
+
     const futureVal = principal * Math.pow(1 + monthlyRate, months) +
       monthlyContribution * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
-    
-    setFutureValue(Math.round(futureVal));
-  };
 
-  const handleQuizAnswer = (questionId: number, value: number) => {
-    setAnswers({ ...answers, [questionId]: value });
-    
-    // Calculate risk profile if all questions are answered
-    if (Object.keys(answers).length === riskQuestions.length - 1) {
-      const total = Object.values({ ...answers, [questionId]: value }).reduce((a, b) => a + b, 0);
-      const average = total / riskQuestions.length;
-      
-      if (average <= 1.5) setRiskProfile("Conservative");
-      else if (average <= 2.5) setRiskProfile("Moderate-Conservative");
-      else if (average <= 3.5) setRiskProfile("Moderate-Aggressive");
-      else setRiskProfile("Aggressive");
-    }
+    setFutureValue(Math.round(futureVal));
   };
 
   return (
@@ -149,47 +95,6 @@ export default function InvestmentEducation() {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-        </CardContent>
-      </Card>
-
-      {/* Risk Tolerance Quiz */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Percent className="h-5 w-5 text-primary" />
-            Investment Risk Quiz
-          </CardTitle>
-          <CardDescription>
-            Discover your investment risk tolerance
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {riskQuestions.map((q) => (
-            <div key={q.id} className="space-y-2">
-              <p className="font-medium">{q.question}</p>
-              <div className="grid grid-cols-2 gap-2">
-                {q.options.map((option) => (
-                  <Button
-                    key={option.value}
-                    variant={answers[q.id] === option.value ? "default" : "outline"}
-                    onClick={() => handleQuizAnswer(q.id, option.value)}
-                    className="justify-start"
-                  >
-                    {option.text}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {riskProfile && (
-            <Alert className="mt-4 border-blue-500 bg-blue-50">
-              <AlertCircle className="h-4 w-4 text-blue-500" />
-              <AlertDescription className="text-blue-800">
-                Your risk profile: <strong>{riskProfile}</strong>
-              </AlertDescription>
-            </Alert>
-          )}
         </CardContent>
       </Card>
 
@@ -307,7 +212,7 @@ export default function InvestmentEducation() {
               </p>
             </div>
 
-            <Alert className="mt-4">
+            <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 Remember: Start small, stay consistent, and increase your investments as your income grows.
