@@ -10,7 +10,8 @@ import ChatInterface from "@/components/chat-interface";
 import BudgetCalculator from "@/components/budget-calculator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import BankLink from "@/components/bank-link"; // Added import
+import BankLink from "@/components/bank-link";
+import RetirementPlanning from "@/components/retirement-planning"; // Added import
 
 export default function Finance() {
   return (
@@ -30,8 +31,9 @@ export default function Finance() {
       <Tabs defaultValue="budget">
         <TabsList className="mb-4">
           <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
+          <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
           <TabsTrigger value="chat">Financial Advisor</TabsTrigger>
-          <TabsTrigger value="bank">Bank Accounts</TabsTrigger> {/* Added Tab */}
+          <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
         </TabsList>
 
         <TabsContent value="budget">
@@ -46,6 +48,10 @@ export default function Finance() {
               <BudgetCalculator />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="retirement">
+          <RetirementPlanning />
         </TabsContent>
 
         <TabsContent value="chat">
@@ -70,7 +76,7 @@ export default function Finance() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="bank"> {/* Added TabsContent */}
+        <TabsContent value="bank">
           <Card>
             <CardHeader>
               <CardTitle>Bank Accounts & Transactions</CardTitle>
@@ -83,7 +89,6 @@ export default function Finance() {
             </CardContent>
           </Card>
         </TabsContent>
-
       </Tabs>
     </div>
   );
