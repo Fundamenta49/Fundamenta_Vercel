@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { BudgetData, BudgetItem } from "./budget-calculator";
 import {
   Card,
   CardContent,
@@ -11,8 +12,6 @@ import {
   Line,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -33,7 +32,11 @@ import {
   PiggyBank,
 } from "lucide-react";
 
-// Sample data - In a real app, this would come from your backend
+interface FinancialDashboardProps {
+  budgetData?: BudgetData | null;
+}
+
+// Sample data for historical trends
 const monthlyData = [
   { month: "Jan", income: 5000, expenses: 4000, savings: 1000 },
   { month: "Feb", income: 5200, expenses: 3800, savings: 1400 },
@@ -43,22 +46,32 @@ const monthlyData = [
   { month: "Jun", income: 5400, expenses: 3800, savings: 1600 },
 ];
 
-const expenseCategories = [
-  { name: "Housing", value: 35 },
-  { name: "Transportation", value: 15 },
-  { name: "Food", value: 20 },
-  { name: "Utilities", value: 10 },
-  { name: "Entertainment", value: 10 },
-  { name: "Savings", value: 10 },
-];
-
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"];
 
-export default function FinancialDashboard() {
+export default function FinancialDashboard({ budgetData }: FinancialDashboardProps) {
   const [progress, setProgress] = useState(0);
   const [savingsGoal] = useState(10000);
-  const currentSavings = monthlyData.reduce((acc, month) => acc + month.savings, 0);
+
+  // Use real budget data or sample data
+  const currentIncome = budgetData?.income || monthlyData[monthlyData.length - 1].income;
+  const currentExpenses = budgetData?.totalExpenses || monthlyData[monthlyData.length - 1].expenses;
+  const currentSavings = budgetData ? (budgetData.income - budgetData.totalExpenses) : monthlyData.reduce((acc, month) => acc + month.savings, 0);
+
+  // Calculate savings progress
   const savingsProgress = (currentSavings / savingsGoal) * 100;
+
+  // Transform budget items for pie chart
+  const expenseCategories = budgetData?.expenses.map(item => ({
+    name: item.category,
+    value: (item.amount / budgetData.totalExpenses) * 100
+  })) || [
+    { name: "Housing", value: 35 },
+    { name: "Transportation", value: 15 },
+    { name: "Food", value: 20 },
+    { name: "Utilities", value: 10 },
+    { name: "Entertainment", value: 10 },
+    { name: "Savings", value: 10 },
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => setProgress(savingsProgress), 500);
@@ -78,9 +91,11 @@ export default function FinancialDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-700">
-              ${monthlyData[monthlyData.length - 1].income.toLocaleString()}
+              ${currentIncome.toLocaleString()}
             </div>
-            <p className="text-sm text-green-600">+5% from last month</p>
+            <p className="text-sm text-green-600">
+              {budgetData ? 'Current month' : '+5% from last month'}
+            </p>
           </CardContent>
         </Card>
 
@@ -93,9 +108,11 @@ export default function FinancialDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-700">
-              ${monthlyData[monthlyData.length - 1].expenses.toLocaleString()}
+              ${currentExpenses.toLocaleString()}
             </div>
-            <p className="text-sm text-red-600">-3% from last month</p>
+            <p className="text-sm text-red-600">
+              {budgetData ? 'Current month' : '-3% from last month'}
+            </p>
           </CardContent>
         </Card>
 
@@ -103,7 +120,7 @@ export default function FinancialDashboard() {
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-blue-700">
               <PiggyBank className="h-4 w-4" />
-              Total Savings
+              Current Savings
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -136,73 +153,6 @@ export default function FinancialDashboard() {
             <p className="text-sm text-muted-foreground text-right">
               {progress.toFixed(1)}% Complete
             </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Income vs Expenses Trend */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Wallet className="h-5 w-5" />
-            Income vs Expenses Trend
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="income"
-                  stroke="#22c55e"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  animationDuration={1500}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="expenses"
-                  stroke="#ef4444"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  animationDuration={1500}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Monthly Savings Trend */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
-            Monthly Savings
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Area
-                  type="monotone"
-                  dataKey="savings"
-                  stroke="#3b82f6"
-                  fill="#93c5fd"
-                  animationDuration={1500}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
@@ -250,9 +200,47 @@ export default function FinancialDashboard() {
                   color: COLORS[index % COLORS.length],
                 }}
               >
-                {category.name}: {category.value}%
+                {category.name}: {category.value.toFixed(1)}%
               </Badge>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Income vs Expenses Trend */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Wallet className="h-5 w-5" />
+            Income vs Expenses Trend
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={monthlyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  animationDuration={1500}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="expenses"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  animationDuration={1500}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>

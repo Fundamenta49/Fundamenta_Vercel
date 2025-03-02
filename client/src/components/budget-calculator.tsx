@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,13 +6,25 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Trash2 } from "lucide-react";
 
-interface BudgetItem {
+export interface BudgetItem {
   id: string;
   category: string;
   amount: number;
 }
 
-export default function BudgetCalculator() {
+export interface BudgetData {
+  income: number;
+  expenses: BudgetItem[];
+  totalExpenses: number;
+  remaining: number;
+  expensePercentage: number;
+}
+
+interface BudgetCalculatorProps {
+  onBudgetUpdate?: (data: BudgetData) => void;
+}
+
+export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorProps) {
   const [income, setIncome] = useState<number>(0);
   const [newCategory, setNewCategory] = useState<string>("");
   const [expenses, setExpenses] = useState<BudgetItem[]>([
@@ -27,6 +39,18 @@ export default function BudgetCalculator() {
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
   const remaining = income - totalExpenses;
   const expensePercentage = income > 0 ? (totalExpenses / income) * 100 : 0;
+
+  useEffect(() => {
+    if (onBudgetUpdate) {
+      onBudgetUpdate({
+        income,
+        expenses,
+        totalExpenses,
+        remaining,
+        expensePercentage,
+      });
+    }
+  }, [income, expenses, totalExpenses, remaining, expensePercentage, onBudgetUpdate]);
 
   const handleExpenseChange = (id: string, value: string) => {
     setExpenses(expenses.map(expense => 

@@ -7,19 +7,21 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
-import BudgetCalculator from "@/components/budget-calculator";
+import BudgetCalculator, { BudgetData } from "@/components/budget-calculator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import BankLink from "@/components/bank-link";
 import RetirementPlanning from "@/components/retirement-planning";
-import FinancialDashboard from "@/components/financial-dashboard"; // Added import
+import FinancialDashboard from "@/components/financial-dashboard";
+import { useState } from "react";
 
 export default function Finance() {
+  const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Financial Literacy</h1>
 
-      {/* Main Disclaimer */}
       <Alert variant="default" className="mb-6 border-amber-500 bg-amber-50">
         <AlertCircle className="h-5 w-5 text-amber-500" />
         <AlertDescription className="text-amber-800">
@@ -39,7 +41,7 @@ export default function Finance() {
         </TabsList>
 
         <TabsContent value="dashboard">
-          <FinancialDashboard />
+          <FinancialDashboard budgetData={budgetData} />
         </TabsContent>
 
         <TabsContent value="budget">
@@ -51,7 +53,7 @@ export default function Finance() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <BudgetCalculator />
+              <BudgetCalculator onBudgetUpdate={setBudgetData} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -67,7 +69,6 @@ export default function Finance() {
               <CardDescription>
                 Get personalized financial advice and guidance
               </CardDescription>
-              {/* Legal Information Disclaimer */}
               <Alert className="mt-4 border-blue-500 bg-blue-50">
                 <AlertCircle className="h-4 w-4 text-blue-500" />
                 <AlertDescription className="text-blue-800 text-sm">
