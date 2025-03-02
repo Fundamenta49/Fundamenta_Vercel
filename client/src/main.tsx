@@ -1,9 +1,9 @@
-import { createElement } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 
-const root = document.getElementById('root')
-if (!root) throw new Error('Root element not found')
+const root = document.getElementById('root');
+if (!root) throw new Error('Root element not found');
 
-const element = createElement('div', null, 'Hello')
+const App = () => React.createElement('div', null, 'Hello from React');
 
-createRoot(root).render(element)
+ReactDOM.createRoot(root).render(React.createElement(App));
