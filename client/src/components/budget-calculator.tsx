@@ -24,31 +24,61 @@ interface BudgetCalculatorProps {
   onBudgetUpdate?: (data: BudgetData) => void;
 }
 
+const STORAGE_KEY = 'budget_calculator_data';
+
 export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorProps) {
-  const [income, setIncome] = useState<number>(0);
+  // Initialize state from localStorage or default values
+  const [income, setIncome] = useState<number>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return data.income || 0;
+    }
+    return 0;
+  });
+
   const [newCategory, setNewCategory] = useState<string>("");
-  const [expenses, setExpenses] = useState<BudgetItem[]>([
-    { id: "1", category: "Housing", amount: 0 },
-    { id: "2", category: "Transportation", amount: 0 },
-    { id: "3", category: "Food", amount: 0 },
-    { id: "4", category: "Utilities", amount: 0 },
-    { id: "5", category: "Healthcare", amount: 0 },
-    { id: "6", category: "Savings", amount: 0 },
-  ]);
+  const [expenses, setExpenses] = useState<BudgetItem[]>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return data.expenses || [
+        { id: "1", category: "Housing", amount: 0 },
+        { id: "2", category: "Transportation", amount: 0 },
+        { id: "3", category: "Food", amount: 0 },
+        { id: "4", category: "Utilities", amount: 0 },
+        { id: "5", category: "Healthcare", amount: 0 },
+        { id: "6", category: "Savings", amount: 0 },
+      ];
+    }
+    return [
+      { id: "1", category: "Housing", amount: 0 },
+      { id: "2", category: "Transportation", amount: 0 },
+      { id: "3", category: "Food", amount: 0 },
+      { id: "4", category: "Utilities", amount: 0 },
+      { id: "5", category: "Healthcare", amount: 0 },
+      { id: "6", category: "Savings", amount: 0 },
+    ];
+  });
 
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
   const remaining = income - totalExpenses;
   const expensePercentage = income > 0 ? (totalExpenses / income) * 100 : 0;
 
+  // Save data to localStorage whenever it changes
   useEffect(() => {
+    const budgetData = {
+      income,
+      expenses,
+      totalExpenses,
+      remaining,
+      expensePercentage,
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(budgetData));
+
     if (onBudgetUpdate) {
-      onBudgetUpdate({
-        income,
-        expenses,
-        totalExpenses,
-        remaining,
-        expensePercentage,
-      });
+      onBudgetUpdate(budgetData);
     }
   }, [income, expenses, totalExpenses, remaining, expensePercentage, onBudgetUpdate]);
 
