@@ -287,18 +287,17 @@ export default function InterviewPractice() {
         <CardContent>
           <ul className="space-y-2">
             {interviewTips.map((tip, index) => (
-              <li key={index} className="flex items-center justify-between group">
-                <div className="flex items-start gap-2">
-                  <ThumbsUp className="h-4 w-4 mt-1 text-green-500" />
-                  <span>{tip.shortDesc}</span>
-                </div>
+              <li key={index}>
                 <Button
                   variant="ghost"
-                  size="icon"
+                  className="w-full text-left flex items-center justify-between p-3 hover:bg-accent rounded-lg group"
                   onClick={() => setSelectedTip(tip)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <Info className="h-4 w-4" />
+                  <div className="flex items-start gap-2">
+                    <ThumbsUp className="h-4 w-4 mt-1 text-green-500 flex-shrink-0" />
+                    <span>{tip.shortDesc}</span>
+                  </div>
+                  <Info className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Button>
               </li>
             ))}
