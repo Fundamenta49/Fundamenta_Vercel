@@ -26,23 +26,10 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2, MessageSquare, Video, ThumbsUp, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const industryQuestions = {
-  software: [
-    "Describe a challenging project you worked on and how you overcame obstacles.",
-    "How do you stay updated with the latest technologies?",
-    "Explain a complex technical concept in simple terms.",
-  ],
-  marketing: [
-    "Describe a successful marketing campaign you developed.",
-    "How do you measure the success of your marketing initiatives?",
-    "How do you adapt your strategy based on market trends?",
-  ],
-  finance: [
-    "How do you analyze financial risks in investments?",
-    "Describe a time you identified a financial opportunity.",
-    "How do you stay compliant with financial regulations?",
-  ],
   general: [
     "Tell me about yourself.",
     "Where do you see yourself in five years?",
@@ -205,12 +192,40 @@ Tips for this question:
 
 export default function InterviewPractice() {
   const [industry, setIndustry] = useState<keyof typeof industryQuestions>("general");
+  const [jobField, setJobField] = useState("");
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [selectedTip, setSelectedTip] = useState<any>(null);
   const [currentTips, setCurrentTips] = useState<any[]>([]);
+  const [customQuestions, setCustomQuestions] = useState<string[]>([]);
   const { toast } = useToast();
-  const [feedback, setFeedback] = useState<string>(""); // Added feedback state
+  const [feedback, setFeedback] = useState<string>("");
+
+  const generateQuestionsMutation = useMutation({
+    mutationFn: async (field: string) => {
+      const res = await apiRequest("POST", "/api/interview/questions", { jobField: field });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to generate questions");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setCustomQuestions(data.questions);
+      toast({
+        title: "Questions Generated",
+        description: `Interview questions generated for ${jobField} role.`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Generation Failed",
+        description: error.message || "Failed to generate questions. Please try again.",
+      });
+      console.error("Error generating questions:", error);
+    },
+  });
 
   const analyzeMutation = useMutation({
     mutationFn: async (answer: string) => {
@@ -226,7 +241,7 @@ export default function InterviewPractice() {
       return res.json();
     },
     onSuccess: (data) => {
-      setFeedback(data.feedback); // Update feedback state
+      setFeedback(data.feedback);
       toast({
         title: "Feedback Ready",
         description: "AI has analyzed your response.",
@@ -238,7 +253,7 @@ export default function InterviewPractice() {
         title: "Analysis Failed",
         description: error.message || "Unable to analyze response. Please try again later.",
       });
-      console.error("Error analyzing interview response:", error); //Added error logging
+      console.error("Error analyzing interview response:", error);
     },
   });
 
@@ -246,7 +261,19 @@ export default function InterviewPractice() {
     setCurrentQuestion(question);
     setAnswer("");
     setCurrentTips(getQuestionSpecificTips(question));
-    setFeedback(""); //Clear feedback when selecting a new question
+    setFeedback("");
+  };
+
+  const handleGenerateQuestions = () => {
+    if (!jobField.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please enter a job field to generate specific questions.",
+      });
+      return;
+    }
+    generateQuestionsMutation.mutate(jobField);
   };
 
   return (
@@ -265,21 +292,53 @@ export default function InterviewPractice() {
               onValueChange={(value) => setIndustry(value as keyof typeof industryQuestions)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select industry" />
+                <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="general">General Questions</SelectItem>
-                <SelectItem value="software">Software Development</SelectItem>
-                <SelectItem value="marketing">Marketing</SelectItem>
-                <SelectItem value="finance">Finance</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="jobField">Custom Job Field</Label>
+            <div className="flex gap-2">
+              <Input
+                id="jobField"
+                placeholder="e.g. Executive Chef, Software Engineer, etc."
+                value={jobField}
+                onChange={(e) => setJobField(e.target.value)}
+              />
+              <Button
+                onClick={handleGenerateQuestions}
+                disabled={generateQuestionsMutation.isPending || !jobField.trim()}
+              >
+                {generateQuestionsMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                )}
+                Generate Questions
+              </Button>
+            </div>
           </div>
 
           <div className="grid gap-4">
             {industryQuestions[industry].map((question, index) => (
               <Button
-                key={index}
+                key={`general-${index}`}
+                variant={currentQuestion === question ? "default" : "outline"}
+                className="justify-start"
+                onClick={() => handleSelectQuestion(question)}
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                {question}
+              </Button>
+            ))}
+
+            {customQuestions.map((question, index) => (
+              <Button
+                key={`custom-${index}`}
                 variant={currentQuestion === question ? "default" : "outline"}
                 className="justify-start"
                 onClick={() => handleSelectQuestion(question)}
@@ -326,7 +385,7 @@ export default function InterviewPractice() {
         </Card>
       )}
 
-      {currentQuestion && feedback && ( // Added feedback display section
+      {currentQuestion && feedback && (
         <Card>
           <CardHeader>
             <CardTitle>AI Feedback</CardTitle>

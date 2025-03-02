@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -84,8 +84,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { answer, question, industry } = interviewAnalysisSchema.parse(req.body);
 
       if (!answer.trim() || !question.trim() || !industry.trim()) {
-        return res.status(400).json({ 
-          error: "Missing required fields. Please provide answer, question, and industry." 
+        return res.status(400).json({
+          error: "Missing required fields. Please provide answer, question, and industry."
         });
       }
 
@@ -96,8 +96,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // More specific error messages based on error type
       if (error.name === "ZodError") {
-        return res.status(400).json({ 
-          error: "Invalid request format. Please check your input." 
+        return res.status(400).json({
+          error: "Invalid request format. Please check your input."
         });
       }
 
@@ -120,8 +120,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      res.status(500).json({ 
-        error: "Failed to analyze interview response. Please try again later." 
+      res.status(500).json({
+        error: "Failed to analyze interview response. Please try again later."
+      });
+    }
+  });
+
+  app.post("/api/interview/questions", async (req, res) => {
+    try {
+      const { jobField } = z.object({ jobField: z.string() }).parse(req.body);
+
+      if (!jobField.trim()) {
+        return res.status(400).json({
+          error: "Please provide a job field."
+        });
+      }
+
+      const questions = await generateJobQuestions(jobField);
+      res.json({ questions });
+    } catch (error: any) {
+      console.error("Question generation error:", error);
+
+      if (error.name === "ZodError") {
+        return res.status(400).json({
+          error: "Invalid request format. Please check your input."
+        });
+      }
+
+      if (error?.error?.type === "invalid_api_key") {
+        return res.status(503).json({
+          error: "Question generation service is currently unavailable. Please try again later."
+        });
+      }
+
+      if (error.message.includes('rate limit exceeded')) {
+        return res.status(429).json({
+          error: "Too many requests. Please wait a moment and try again."
+        });
+      }
+
+      res.status(500).json({
+        error: "Failed to generate questions. Please try again later."
       });
     }
   });
