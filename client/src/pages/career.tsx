@@ -11,6 +11,7 @@ import ResumeBuilder from "@/components/resume-builder";
 import InterviewPractice from "@/components/interview-practice";
 import CareerAssessment from "@/components/career-assessment";
 import JobSearch from "@/components/job-search";
+import SalaryInsights from "@/components/salary-insights";
 
 export default function Career() {
   return (
@@ -21,6 +22,7 @@ export default function Career() {
         <TabsList className="mb-4">
           <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
           <TabsTrigger value="search">Job Search</TabsTrigger>
+          <TabsTrigger value="salary">Salary Insights</TabsTrigger>
           <TabsTrigger value="chat">Career Coach</TabsTrigger>
           <TabsTrigger value="resume">Resume Builder</TabsTrigger>
           <TabsTrigger value="interview">Interview Practice</TabsTrigger>
@@ -32,6 +34,10 @@ export default function Career() {
 
         <TabsContent value="search">
           <JobSearch />
+        </TabsContent>
+
+        <TabsContent value="salary">
+          <SalaryInsights />
         </TabsContent>
 
         <TabsContent value="chat">

@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer, getSalaryInsights } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { searchJobs } from "./jobs";
@@ -278,6 +278,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(500).json({
         error: "Failed to search jobs. Please try again later."
+      });
+    }
+  });
+
+  app.post("/api/career/salary-insights", async (req, res) => {
+    try {
+      const { jobTitle, location } = z.object({
+        jobTitle: z.string(),
+        location: z.string(),
+      }).parse(req.body);
+
+      const insights = await getSalaryInsights(jobTitle, location);
+      res.json(insights);
+    } catch (error: any) {
+      console.error("Salary insights error:", error);
+
+      if (error.name === "ZodError") {
+        return res.status(400).json({
+          error: "Invalid request format. Please check your input."
+        });
+      }
+
+      if (error?.error?.type === "invalid_api_key") {
+        return res.status(503).json({
+          error: "Salary insights service is currently unavailable. Please try again later."
+        });
+      }
+
+      res.status(500).json({
+        error: "Failed to get salary insights. Please try again later."
       });
     }
   });

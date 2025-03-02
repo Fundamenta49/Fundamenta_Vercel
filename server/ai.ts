@@ -330,30 +330,30 @@ export async function generateCoverLetter(data: CoverLetterData): Promise<string
           role: "user",
           content: `Create a professional cover letter for a ${data.targetPosition} position${data.company ? ` at ${data.company}` : ''}.
           
-Candidate information:
-- Name: ${data.personalInfo.name}
-- Professional Summary: ${data.personalInfo.summary}
+          Candidate information:
+          - Name: ${data.personalInfo.name}
+          - Professional Summary: ${data.personalInfo.summary}
           
-Education:
-${data.education.map(edu => `- ${edu.degree} from ${edu.school} (${edu.year})`).join('\n')}
+          Education:
+          ${data.education.map(edu => `- ${edu.degree} from ${edu.school} (${edu.year})`).join('\n')}
           
-Experience:
-${data.experience.map(exp => `
-- ${exp.position} at ${exp.company} (${exp.duration})
-  ${exp.description}`).join('\n')}
+          Experience:
+          ${data.experience.map(exp => `
+          - ${exp.position} at ${exp.company} (${exp.duration})
+            ${exp.description}`).join('\n')}
           
-Additional Key Experience Points:
-${data.keyExperience.map(exp => `- ${exp}`).join('\n')}
-${data.additionalNotes ? `\nAdditional Notes:\n${data.additionalNotes}` : ''}
+          Additional Key Experience Points:
+          ${data.keyExperience.map(exp => `- ${exp}`).join('\n')}
+          ${data.additionalNotes ? `\nAdditional Notes:\n${data.additionalNotes}` : ''}
           
-The cover letter should:
-1. Be professionally formatted
-2. Highlight the most relevant experience and skills for the ${data.targetPosition} position
-3. Show enthusiasm for the role${data.company ? ' and the company' : ''}
-4. Include a strong opening and closing
-5. Be concise (around 300-400 words)
-6. Naturally incorporate educational background and work experience
-7. Demonstrate clear progression and growth in career journey`
+          The cover letter should:
+          1. Be professionally formatted
+          2. Highlight the most relevant experience and skills for the ${data.targetPosition} position
+          3. Show enthusiasm for the role${data.company ? ' and the company' : ''}
+          4. Include a strong opening and closing
+          5. Be concise (around 300-400 words)
+          6. Naturally incorporate educational background and work experience
+          7. Demonstrate clear progression and growth in career journey`
         }
       ],
       temperature: 0.7,
@@ -400,9 +400,9 @@ export async function assessCareer(answers: Record<number, string>): Promise<any
         {
           role: "user",
           content: `Based on these assessment answers, suggest 3 suitable careers with detailed information:
-
+          
           ${Object.entries(answers).map(([id, answer]) => `Question ${id}: ${answer}`).join('\n')}
-
+          
           Provide response in this JSON format:
           {
             "suggestions": [{
@@ -440,5 +440,65 @@ export async function assessCareer(answers: Record<number, string>): Promise<any
       throw new Error("OpenAI API rate limit exceeded. Please try again later.");
     }
     throw new Error("Failed to analyze career assessment: " + (error.message || 'Unknown error'));
+  }
+}
+
+// Add this function to the AI service
+export async function getSalaryInsights(jobTitle: string, location: string): Promise<any> {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
+
+    console.log("Getting salary insights with OpenAI...");
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a career and salary analysis expert. Provide detailed salary insights, growth trends, and market analysis for the specified job title and location. Return results in JSON format."
+        },
+        {
+          role: "user",
+          content: `Analyze the salary and career prospects for ${jobTitle} in ${location}. Include:
+          - Current average salary and range
+          - Growth rate and projections
+          - Market demand level
+          - Required skills
+          - Market outlook
+          - Industry trends
+
+          Return in this JSON format:
+          {
+            "title": "Job Title",
+            "averageSalary": "Average annual salary",
+            "salaryRange": {
+              "min": "Minimum typical salary",
+              "max": "Maximum typical salary"
+            },
+            "growthRate": "Percentage or description",
+            "demandLevel": "High/Medium/Low with context",
+            "requiredSkills": ["skill1", "skill2", ...],
+            "marketOutlook": "Detailed market outlook",
+            "industryTrends": ["trend1", "trend2", ...]
+          }`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    return JSON.parse(response.choices[0].message.content);
+  } catch (error: any) {
+    console.error("OpenAI API Error:", error);
+    if (error.response) {
+      console.error("OpenAI API Error Response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
+    }
+    throw new Error("Failed to get salary insights: " + (error.message || 'Unknown error'));
   }
 }
