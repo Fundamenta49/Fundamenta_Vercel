@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { href: "/emergency", label: "Emergency", icon: AlertCircle },
@@ -29,6 +29,13 @@ export default function Navigation() {
   const [location] = useLocation();
   const isMobile = useIsMobile();
   const [isMinimized, setIsMinimized] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--sidebar-width',
+      isMinimized ? '5rem' : '16rem'
+    );
+  }, [isMinimized]);
 
   const NavContent = () => (
     <nav className="flex flex-col gap-2">

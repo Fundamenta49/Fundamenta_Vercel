@@ -14,7 +14,7 @@ function Router() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="container mx-auto px-4 py-8 md:ml-20">
+      <main className="container mx-auto px-4 py-8 transition-all duration-300 md:ml-[var(--sidebar-width)]">
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/emergency" component={Emergency} />
