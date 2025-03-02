@@ -6,7 +6,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
@@ -136,27 +135,6 @@ const stateEmergencyLinks = {
   "Wyoming": "https://hls.wyo.gov/"
 };
 
-const updateEmergencyData = (city: string) => {
-    const normalizedCity = city.trim();
-    const cityData = cityEmergencyData[normalizedCity];
-    if (cityData) {
-      setWeatherAlerts(cityData.alerts);
-      setNearbyShelters(cityData.shelters);
-    } else {
-      // Only show alerts for cities we have data for
-      setWeatherAlerts([]);
-      setNearbyShelters([]);
-
-      // Show an alert that we don't have data for this city yet
-      setWeatherAlerts([{
-        type: "Location Notice",
-        severity: "low",
-        description: `We don't have specific emergency data for ${city} yet`,
-        instructions: "Please check your local emergency management website for the most up-to-date information."
-      }]);
-    }
-  };
-
 export default function EmergencyGuide() {
   const [location, setLocation] = useState<Location>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -174,10 +152,32 @@ export default function EmergencyGuide() {
   const [weatherAlerts, setWeatherAlerts] = useState<WeatherAlert[]>([]);
   const [nearbyShelters, setNearbyShelters] = useState<Shelter[]>([]);
 
+  const updateEmergencyData = (city: string) => {
+    const normalizedCity = city.trim().toLowerCase(); // Normalize to lowercase for case-insensitive matching
+    const cityData = cityEmergencyData[normalizedCity];
+    if (cityData) {
+      setWeatherAlerts(cityData.alerts);
+      setNearbyShelters(cityData.shelters);
+    } else {
+      setWeatherAlerts([{
+        type: "Location Notice",
+        severity: "low",
+        description: `We don't have specific emergency data for ${city} yet`,
+        instructions: "Please check your local emergency management website for the most up-to-date information."
+      }]);
+      setNearbyShelters([]);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
     if (location.city) {
-      updateEmergencyData(location.city);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
+        updateEmergencyData(location.city);
+      } catch (error) {
+        console.error("Error saving location to local storage:", error);
+        // Consider adding a user-friendly alert here to inform the user about the storage failure.
+      }
     }
   }, [location]);
 
@@ -245,7 +245,7 @@ export default function EmergencyGuide() {
                   Update Location
                 </Button>
               </div>
-              {(!cityEmergencyData[location.city]) && (
+              {(!cityEmergencyData[location.city.toLowerCase()]) && (
                 <Alert className="mt-4 bg-yellow-50 border-yellow-200">
                   <AlertTriangle className="h-4 w-4 text-yellow-600" />
                   <AlertDescription className="text-yellow-800">
