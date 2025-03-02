@@ -2,15 +2,15 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold">
         Career Development Platform
       </h1>
     </div>
-  )
-}
+  );
+};
 
 // Ensure root element exists
 const rootElement = document.getElementById('root')
