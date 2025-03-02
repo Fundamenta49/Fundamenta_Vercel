@@ -23,15 +23,18 @@ import {
 } from "recharts";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
   Target,
   Wallet,
   PiggyBank,
   Landmark,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 interface FinancialDashboardProps {
   budgetData?: BudgetData | null;
@@ -49,11 +52,22 @@ const monthlyData = [
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"];
 
+const STORAGE_KEY = 'financial_dashboard_data';
+
 export default function FinancialDashboard({ budgetData }: FinancialDashboardProps) {
   const [progress, setProgress] = useState(0);
   const [savingsGoal] = useState(10000);
   const [retirementProgress, setRetirementProgress] = useState(0);
-  const [retirementGoal] = useState(1000000); // Example retirement goal
+  const [retirementGoal, setRetirementGoal] = useState<number>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return data.retirementGoal || 1000000;
+    }
+    return 1000000;
+  });
+  const [isEditingGoal, setIsEditingGoal] = useState(false);
+  const [tempGoal, setTempGoal] = useState(retirementGoal);
 
   // Use real budget data or sample data
   const currentIncome = budgetData?.income || monthlyData[monthlyData.length - 1].income;
@@ -61,7 +75,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
   const currentSavings = budgetData ? (budgetData.income - budgetData.totalExpenses) : monthlyData.reduce((acc, month) => acc + month.savings, 0);
 
   // Get retirement savings from budget data if available
-  const retirementSavings = budgetData?.expenses.find(item => 
+  const retirementSavings = budgetData?.expenses.find(item =>
     item.category.toLowerCase().includes('retirement'))?.amount || 0;
   const monthlyRetirementProgress = (retirementSavings * 12 / retirementGoal) * 100;
 
@@ -87,7 +101,20 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
       setRetirementProgress(monthlyRetirementProgress);
     }, 500);
     return () => clearTimeout(timer);
-  }, [savingsProgress, monthlyRetirementProgress]);
+  }, [savingsProgress, monthlyRetirementProgress, retirementGoal]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      retirementGoal
+    }));
+  }, [retirementGoal]);
+
+  const handleGoalUpdate = () => {
+    if (tempGoal > 0) {
+      setRetirementGoal(tempGoal);
+      setIsEditingGoal(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -197,15 +224,55 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Annual: ${(retirementSavings * 12).toLocaleString()}</span>
-                <span>Goal: ${retirementGoal.toLocaleString()}</span>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span>Annual: ${(retirementSavings * 12).toLocaleString()}</span>
+                  {isEditingGoal ? (
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="retirementGoal">Goal: $</Label>
+                      <Input
+                        id="retirementGoal"
+                        type="number"
+                        value={tempGoal}
+                        onChange={(e) => setTempGoal(Number(e.target.value))}
+                        className="w-32"
+                      />
+                      <Button
+                        onClick={handleGoalUpdate}
+                        size="sm"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setTempGoal(retirementGoal);
+                          setIsEditingGoal(false);
+                        }}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span>Goal: ${retirementGoal.toLocaleString()}</span>
+                      <Button
+                        onClick={() => setIsEditingGoal(true)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Edit Goal
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <Progress value={retirementProgress} className="h-2" />
+                <p className="text-sm text-muted-foreground text-right">
+                  {retirementProgress.toFixed(1)}% of Goal
+                </p>
               </div>
-              <Progress value={retirementProgress} className="h-2" />
-              <p className="text-sm text-muted-foreground text-right">
-                {retirementProgress.toFixed(1)}% of Goal
-              </p>
             </div>
           </CardContent>
         </Card>
