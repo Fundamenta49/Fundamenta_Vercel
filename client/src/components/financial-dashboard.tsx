@@ -72,17 +72,20 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
   // Use real budget data or sample data
   const currentIncome = budgetData?.income || monthlyData[monthlyData.length - 1].income;
   const currentExpenses = budgetData?.totalExpenses || monthlyData[monthlyData.length - 1].expenses;
-  const currentSavings = budgetData ? (budgetData.income - budgetData.totalExpenses) : monthlyData.reduce((acc, month) => acc + month.savings, 0);
 
-  // Get retirement savings from budget data if available
-  const retirementSavings = budgetData?.expenses.find(item =>
-    item.category.toLowerCase().includes('retirement'))?.amount || 0;
+  // Get retirement savings directly from budgetData
+  const retirementSavings = budgetData?.retirementSavings || 0;
+  const otherSavings = budgetData?.otherSavings || 0;
+  const totalSavings = retirementSavings + otherSavings;
+
+  // Update retirement progress calculation
   const monthlyRetirementProgress = (retirementSavings * 12 / retirementGoal) * 100;
 
   // Calculate savings progress
-  const savingsProgress = (currentSavings / savingsGoal) * 100;
+  const savingsProgress = (totalSavings / savingsGoal) * 100;
 
-  // Transform budget items for pie chart
+
+  // Update expense categories
   const expenseCategories = budgetData?.expenses.map(item => ({
     name: item.category,
     value: (item.amount / budgetData.totalExpenses) * 100
@@ -91,8 +94,8 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
     { name: "Transportation", value: 15 },
     { name: "Food", value: 20 },
     { name: "Utilities", value: 10 },
+    { name: "Healthcare", value: 10 },
     { name: "Entertainment", value: 10 },
-    { name: "Retirement", value: 10 },
   ];
 
   useEffect(() => {
@@ -163,7 +166,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-700">
-              ${currentSavings.toLocaleString()}
+              ${totalSavings.toLocaleString()}
             </div>
             <p className="text-sm text-blue-600">Towards ${savingsGoal.toLocaleString()} goal</p>
           </CardContent>
@@ -201,7 +204,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Current: ${currentSavings.toLocaleString()}</span>
+                <span>Current: ${totalSavings.toLocaleString()}</span>
                 <span>Goal: ${savingsGoal.toLocaleString()}</span>
               </div>
               <Progress value={progress} className="h-2" />

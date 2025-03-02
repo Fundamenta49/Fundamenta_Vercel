@@ -18,6 +18,8 @@ export interface BudgetData {
   totalExpenses: number;
   remaining: number;
   expensePercentage: number;
+  retirementSavings: number;
+  otherSavings: number;
 }
 
 interface BudgetCalculatorProps {
@@ -48,8 +50,6 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
         { id: "3", category: "Food", amount: 0 },
         { id: "4", category: "Utilities", amount: 0 },
         { id: "5", category: "Healthcare", amount: 0 },
-        { id: "6", category: "Retirement", amount: 0 },
-        { id: "7", category: "Other Savings", amount: 0 },
       ];
     }
     return [
@@ -58,13 +58,29 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
       { id: "3", category: "Food", amount: 0 },
       { id: "4", category: "Utilities", amount: 0 },
       { id: "5", category: "Healthcare", amount: 0 },
-      { id: "6", category: "Retirement", amount: 0 },
-      { id: "7", category: "Other Savings", amount: 0 },
     ];
   });
 
+  const [retirementSavings, setRetirementSavings] = useState<number>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return data.retirementSavings || 0;
+    }
+    return 0;
+  });
+
+  const [otherSavings, setOtherSavings] = useState<number>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return data.otherSavings || 0;
+    }
+    return 0;
+  });
+
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
-  const remaining = income - totalExpenses;
+  const remaining = income - totalExpenses - retirementSavings - otherSavings;
   const expensePercentage = income > 0 ? (totalExpenses / income) * 100 : 0;
 
   // Save data to localStorage whenever it changes
@@ -75,6 +91,8 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
       totalExpenses,
       remaining,
       expensePercentage,
+      retirementSavings,
+      otherSavings,
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(budgetData));
@@ -82,7 +100,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
     if (onBudgetUpdate) {
       onBudgetUpdate(budgetData);
     }
-  }, [income, expenses, totalExpenses, remaining, expensePercentage, onBudgetUpdate]);
+  }, [income, expenses, totalExpenses, remaining, expensePercentage, retirementSavings, otherSavings, onBudgetUpdate]);
 
   const handleExpenseChange = (id: string, value: string) => {
     setExpenses(expenses.map(expense =>
@@ -170,6 +188,32 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
 
       <Card>
         <CardHeader>
+          <CardTitle>Monthly Savings Allocation</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Label className="min-w-[150px]">Retirement Savings</Label>
+            <Input
+              type="number"
+              value={retirementSavings || ""}
+              onChange={(e) => setRetirementSavings(parseFloat(e.target.value) || 0)}
+              placeholder="Enter monthly retirement savings"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Label className="min-w-[150px]">Other Savings</Label>
+            <Input
+              type="number"
+              value={otherSavings || ""}
+              onChange={(e) => setOtherSavings(parseFloat(e.target.value) || 0)}
+              placeholder="Enter other monthly savings"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Summary</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -198,6 +242,21 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
                 }`}
               >
                 ${remaining.toFixed(2)}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+            <div>
+              <p className="text-sm text-muted-foreground">Total Savings</p>
+              <p className="text-2xl font-bold text-blue-500">
+                ${(retirementSavings + otherSavings).toFixed(2)}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Retirement Savings</p>
+              <p className="text-2xl font-bold text-purple-500">
+                ${retirementSavings.toFixed(2)}
               </p>
             </div>
           </div>
