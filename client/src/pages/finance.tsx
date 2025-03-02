@@ -10,6 +10,7 @@ import ChatInterface from "@/components/chat-interface";
 import BudgetCalculator from "@/components/budget-calculator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import BankLink from "@/components/bank-link"; // Added import
 
 export default function Finance() {
   return (
@@ -20,8 +21,8 @@ export default function Finance() {
       <Alert variant="default" className="mb-6 border-amber-500 bg-amber-50">
         <AlertCircle className="h-5 w-5 text-amber-500" />
         <AlertDescription className="text-amber-800">
-          This app provides general financial information for educational purposes only. 
-          It is not intended to be financial advice. Please consult a qualified financial 
+          This app provides general financial information for educational purposes only.
+          It is not intended to be financial advice. Please consult a qualified financial
           advisor for guidance specific to your situation.
         </AlertDescription>
       </Alert>
@@ -30,6 +31,7 @@ export default function Finance() {
         <TabsList className="mb-4">
           <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
           <TabsTrigger value="chat">Financial Advisor</TabsTrigger>
+          <TabsTrigger value="bank">Bank Accounts</TabsTrigger> {/* Added Tab */}
         </TabsList>
 
         <TabsContent value="budget">
@@ -67,6 +69,21 @@ export default function Finance() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="bank"> {/* Added TabsContent */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Bank Accounts & Transactions</CardTitle>
+              <CardDescription>
+                Connect your bank accounts to track spending in real-time
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <BankLink />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
       </Tabs>
     </div>
   );

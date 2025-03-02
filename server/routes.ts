@@ -5,6 +5,7 @@ import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterview
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { searchJobs } from "./jobs";
+import { createLinkToken, exchangePublicToken, getTransactions } from "./plaid";
 
 const messageSchema = z.object({
   content: z.string(),
@@ -309,6 +310,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         error: "Failed to get salary insights. Please try again later."
       });
+    }
+  });
+
+  app.post("/api/plaid/create_link_token", async (req, res) => {
+    try {
+      const linkToken = await createLinkToken();
+      res.json({ link_token: linkToken });
+    } catch (error) {
+      console.error("Error creating link token:", error);
+      res.status(500).json({ error: "Failed to create link token" });
+    }
+  });
+
+  app.post("/api/plaid/exchange_token", async (req, res) => {
+    try {
+      const { public_token } = req.body;
+      const accessToken = await exchangePublicToken(public_token);
+      // In a real app, you would store this access_token securely
+      // and associate it with the user's account
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error exchanging token:", error);
+      res.status(500).json({ error: "Failed to exchange token" });
+    }
+  });
+
+  app.get("/api/plaid/transactions", async (req, res) => {
+    try {
+      // In a real app, you would retrieve the access_token from your database
+      // based on the authenticated user's session
+      const accessToken = "your_access_token";
+      const transactions = await getTransactions(accessToken);
+      res.json({ transactions });
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      res.status(500).json({ error: "Failed to fetch transactions" });
     }
   });
 
