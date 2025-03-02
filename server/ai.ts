@@ -139,3 +139,40 @@ export async function getEmergencyGuidance(situation: string): Promise<string> {
     return "Emergency services are currently unavailable. Please dial your local emergency number.";
   }
 }
+
+export async function analyzeInterviewAnswer(
+  answer: string,
+  question: string,
+  industry: string
+): Promise<string> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert interview coach providing constructive feedback on interview responses. 
+          Consider: clarity, relevance, professionalism, structure, and persuasiveness.
+          Focus on both strengths and areas for improvement.
+          For ${industry} industry context.`,
+        },
+        {
+          role: "user",
+          content: `Question: ${question}\n\nAnswer: ${answer}\n\nPlease provide detailed feedback on this interview response, including:
+          1. Overall impression
+          2. Specific strengths
+          3. Areas for improvement
+          4. Suggested enhancements
+          Format the response in a clear, encouraging manner.`,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+    });
+
+    return response.choices[0].message.content || "Unable to analyze response at this time.";
+  } catch (error) {
+    console.error("OpenAI API Error:", error);
+    throw new Error("Failed to analyze interview response");
+  }
+}

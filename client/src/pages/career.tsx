@@ -8,6 +8,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import ResumeBuilder from "@/components/resume-builder";
+import InterviewPractice from "@/components/interview-practice";
 
 export default function Career() {
   return (
@@ -18,6 +19,7 @@ export default function Career() {
         <TabsList className="mb-4">
           <TabsTrigger value="chat">Career Coach</TabsTrigger>
           <TabsTrigger value="resume">Resume Builder</TabsTrigger>
+          <TabsTrigger value="interview">Interview Practice</TabsTrigger>
         </TabsList>
 
         <TabsContent value="chat">
@@ -36,6 +38,10 @@ export default function Career() {
 
         <TabsContent value="resume">
           <ResumeBuilder />
+        </TabsContent>
+
+        <TabsContent value="interview">
+          <InterviewPractice />
         </TabsContent>
       </Tabs>
     </div>

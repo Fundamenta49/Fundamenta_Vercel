@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -29,6 +29,12 @@ const resumeSchema = z.object({
     description: z.string(),
   })),
   targetPosition: z.string(),
+});
+
+const interviewAnalysisSchema = z.object({
+  answer: z.string(),
+  question: z.string(),
+  industry: z.string(),
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -70,6 +76,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(user);
     } catch (error) {
       res.status(400).json({ error: "Invalid user data" });
+    }
+  });
+
+  app.post("/api/interview/analyze", async (req, res) => {
+    try {
+      const { answer, question, industry } = interviewAnalysisSchema.parse(req.body);
+      const feedback = await analyzeInterviewAnswer(answer, question, industry);
+      res.json({ feedback });
+    } catch (error) {
+      console.error("Interview analysis error:", error);
+      res.status(400).json({ error: "Failed to analyze interview response" });
     }
   });
 
