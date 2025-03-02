@@ -343,108 +343,106 @@ export default function ResumeBuilder() {
         </CardContent>
       </Card>
 
-      {personalInfo.name && targetPosition && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Cover Letter Generator</CardTitle>
-            <CardDescription>
-              Generate a customized cover letter based on your resume and additional details
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="company">Company Name (Optional)</Label>
-              <Input
-                id="company"
-                placeholder="Enter company name"
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
-              />
-            </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Cover Letter Generator</CardTitle>
+          <CardDescription>
+            Generate a customized cover letter based on your resume and additional details
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="company">Company Name (Optional)</Label>
+            <Input
+              id="company"
+              placeholder="Enter company name"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+            />
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="keyExperience">Key Experience Points</Label>
-              <p className="text-sm text-muted-foreground">
-                Add specific experiences or skills relevant to this position
-              </p>
-              {keyExperience.map((exp, index) => (
-                <div key={index} className="flex gap-2">
-                  <Input
-                    value={exp}
-                    onChange={(e) => {
-                      const newExp = [...keyExperience];
-                      newExp[index] = e.target.value;
-                      setKeyExperience(newExp);
-                    }}
-                    placeholder="E.g., Led a team of 5 developers..."
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setKeyExperience(keyExperience.filter((_, i) => i !== index));
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setKeyExperience([...keyExperience, ""])}
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Add Experience Point
-              </Button>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="additionalNotes">Additional Notes (Optional)</Label>
-              <Textarea
-                id="additionalNotes"
-                placeholder="Any specific points you'd like to emphasize..."
-                value={additionalNotes}
-                onChange={(e) => setAdditionalNotes(e.target.value)}
-              />
-            </div>
-
-            <Button
-              onClick={generateCoverLetter}
-              disabled={
-                coverLetterMutation.isPending ||
-                !personalInfo.name ||
-                !targetPosition ||
-                keyExperience.length === 0
-              }
-              className="w-full"
-            >
-              {coverLetterMutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Wand2 className="h-4 w-4 mr-2" />
-                  Generate Cover Letter
-                </>
-              )}
-            </Button>
-
-            {coverLetter && (
-              <div className="space-y-2">
-                <Label>Generated Cover Letter</Label>
-                <Textarea
-                  value={coverLetter}
-                  onChange={(e) => setCoverLetter(e.target.value)}
-                  className="min-h-[300px] font-mono"
+          <div className="space-y-2">
+            <Label htmlFor="keyExperience">Key Experience Points</Label>
+            <p className="text-sm text-muted-foreground">
+              Add specific experiences or skills relevant to this position
+            </p>
+            {keyExperience.map((exp, index) => (
+              <div key={index} className="flex gap-2">
+                <Input
+                  value={exp}
+                  onChange={(e) => {
+                    const newExp = [...keyExperience];
+                    newExp[index] = e.target.value;
+                    setKeyExperience(newExp);
+                  }}
+                  placeholder="E.g., Led a team of 5 developers..."
                 />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setKeyExperience(keyExperience.filter((_, i) => i !== index));
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
+            ))}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setKeyExperience([...keyExperience, ""])}
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Add Experience Point
+            </Button>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="additionalNotes">Additional Notes (Optional)</Label>
+            <Textarea
+              id="additionalNotes"
+              placeholder="Any specific points you'd like to emphasize..."
+              value={additionalNotes}
+              onChange={(e) => setAdditionalNotes(e.target.value)}
+            />
+          </div>
+
+          <Button
+            onClick={generateCoverLetter}
+            disabled={
+              coverLetterMutation.isPending ||
+              !personalInfo.name ||
+              !targetPosition ||
+              keyExperience.length === 0
+            }
+            className="w-full"
+          >
+            {coverLetterMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Wand2 className="h-4 w-4 mr-2" />
+                Generate Cover Letter
+              </>
             )}
-          </CardContent>
-        </Card>
-      )}
+          </Button>
+
+          {coverLetter && (
+            <div className="space-y-2">
+              <Label>Generated Cover Letter</Label>
+              <Textarea
+                value={coverLetter}
+                onChange={(e) => setCoverLetter(e.target.value)}
+                className="min-h-[300px] font-mono"
+              />
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
