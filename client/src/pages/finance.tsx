@@ -11,7 +11,8 @@ import BudgetCalculator from "@/components/budget-calculator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import BankLink from "@/components/bank-link";
-import RetirementPlanning from "@/components/retirement-planning"; // Added import
+import RetirementPlanning from "@/components/retirement-planning";
+import FinancialDashboard from "@/components/financial-dashboard"; // Added import
 
 export default function Finance() {
   return (
@@ -28,13 +29,18 @@ export default function Finance() {
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="budget">
+      <Tabs defaultValue="dashboard">
         <TabsList className="mb-4">
+          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
           <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
           <TabsTrigger value="chat">Financial Advisor</TabsTrigger>
           <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="dashboard">
+          <FinancialDashboard />
+        </TabsContent>
 
         <TabsContent value="budget">
           <Card>
