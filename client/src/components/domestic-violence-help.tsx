@@ -27,14 +27,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+interface SafetyStep {
+  title: string;
+  content: string;
+  items: string[];
+}
+
 // Quick exit functionality
 const handleQuickExit = () => {
-  // Redirect to a safe site (weather.com is commonly used as it's innocuous)
   window.location.href = "https://weather.com";
 };
 
 // Default safety planning information
-const defaultSafetyPlanSteps = [
+const defaultSafetyPlanSteps: SafetyStep[] = [
   {
     title: "Important Documents",
     content: "Keep copies of important documents in a safe place or with a trusted person",
@@ -89,11 +94,14 @@ const STORAGE_KEY = 'user_safety_plan';
 
 export default function DomesticViolenceHelp() {
   const [showContent, setShowContent] = useState(true);
-  const [safetyPlanSteps, setSafetyPlanSteps] = useState(() => {
+  const [safetyPlanSteps, setSafetyPlanSteps] = useState<SafetyStep[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : defaultSafetyPlanSteps;
+    if (stored) {
+      return JSON.parse(stored);
+    }
+    return defaultSafetyPlanSteps;
   });
-  const [newStep, setNewStep] = useState({ title: '', content: '', items: [] });
+  const [newStep, setNewStep] = useState<SafetyStep>({ title: '', content: '', items: [] });
   const [isAddingStep, setIsAddingStep] = useState(false);
   const [editingItemIndex, setEditingItemIndex] = useState<{ stepIndex: number, itemIndex: number | null }>({ stepIndex: -1, itemIndex: null });
   const [newItem, setNewItem] = useState("");
