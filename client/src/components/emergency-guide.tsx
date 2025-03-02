@@ -174,7 +174,6 @@ export default function EmergencyGuide() {
   const [weatherAlerts, setWeatherAlerts] = useState<WeatherAlert[]>([]);
   const [nearbyShelters, setNearbyShelters] = useState<Shelter[]>([]);
 
-
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
     if (location.city) {
@@ -246,6 +245,15 @@ export default function EmergencyGuide() {
                   Update Location
                 </Button>
               </div>
+              {(!cityEmergencyData[location.city]) && (
+                <Alert className="mt-4 bg-yellow-50 border-yellow-200">
+                  <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-800">
+                    We're currently expanding our emergency database for {location.city}. 
+                    Please refer to your state's emergency management website for the most up-to-date information.
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
           )}
         </CardContent>
