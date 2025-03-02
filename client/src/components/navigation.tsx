@@ -6,6 +6,8 @@ import {
   Briefcase,
   Heart,
   Menu,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   Sheet,
@@ -14,6 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 const navItems = [
   { href: "/emergency", label: "Emergency", icon: AlertCircle },
@@ -25,6 +28,7 @@ const navItems = [
 export default function Navigation() {
   const [location] = useLocation();
   const isMobile = useIsMobile();
+  const [isMinimized, setIsMinimized] = useState(false);
 
   const NavContent = () => (
     <nav className="flex flex-col gap-2">
@@ -39,7 +43,7 @@ export default function Navigation() {
             )}
           >
             <Icon className="h-5 w-5" />
-            <span>{label}</span>
+            {!isMinimized && <span>{label}</span>}
           </a>
         </Link>
       ))}
@@ -65,12 +69,29 @@ export default function Navigation() {
   }
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-64 border-r bg-background p-4">
-      <Link href="/">
-        <a className="flex items-center gap-2 px-4 py-2 mb-8">
-          <h1 className="text-2xl font-bold">Fundamenta</h1>
-        </a>
-      </Link>
+    <div className={cn(
+      "fixed left-0 top-0 h-screen border-r bg-background p-4 transition-all duration-300",
+      isMinimized ? "w-20" : "w-64"
+    )}>
+      <div className="flex items-center justify-between mb-8">
+        <Link href="/">
+          <a className="flex items-center gap-2 px-4 py-2">
+            {!isMinimized && <h1 className="text-2xl font-bold">Fundamenta</h1>}
+          </a>
+        </Link>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsMinimized(!isMinimized)}
+          className="ml-auto"
+        >
+          {isMinimized ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
+      </div>
       <NavContent />
     </div>
   );
