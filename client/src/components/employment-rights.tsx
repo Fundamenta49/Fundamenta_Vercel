@@ -15,6 +15,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Search, ExternalLink, Shield, Scale, DollarSign, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface RightsCategory {
   id: string;
@@ -158,6 +159,16 @@ export default function EmploymentRights() {
 
   return (
     <div className="space-y-6">
+      {/* Main Disclaimer */}
+      <Alert variant="warning" className="border-amber-500 bg-amber-50">
+        <AlertCircle className="h-5 w-5 text-amber-500" />
+        <AlertDescription className="text-amber-800">
+          This app provides general legal and tax information for educational purposes only. 
+          It is not intended to be legal or financial advice. Please consult a licensed attorney 
+          or tax professional for guidance specific to your situation.
+        </AlertDescription>
+      </Alert>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -167,6 +178,15 @@ export default function EmploymentRights() {
           <CardDescription>
             Learn about your workplace rights, laws, and how to report violations
           </CardDescription>
+          {/* Legal Information Disclaimer */}
+          <Alert className="mt-4 border-blue-500 bg-blue-50">
+            <AlertCircle className="h-4 w-4 text-blue-500" />
+            <AlertDescription className="text-blue-800 text-sm">
+              The information provided here is for general guidance only. Laws and tax regulations 
+              change frequently, and individual circumstances vary. Always check with a qualified 
+              professional before making legal or financial decisions.
+            </AlertDescription>
+          </Alert>
         </CardHeader>
         <CardContent>
           <div className="relative">
@@ -239,6 +259,16 @@ export default function EmploymentRights() {
             </CardContent>
           </Card>
         ))}
+
+        {/* Additional Legal Notice */}
+        <Alert className="border-gray-300 bg-gray-50">
+          <AlertCircle className="h-4 w-4 text-gray-500" />
+          <AlertDescription className="text-gray-700 text-sm">
+            For interactive features and AI-powered assistance, please note that responses are based on 
+            publicly available laws and regulations and should not be considered a substitute for 
+            professional legal advice.
+          </AlertDescription>
+        </Alert>
       </div>
     </div>
   );
