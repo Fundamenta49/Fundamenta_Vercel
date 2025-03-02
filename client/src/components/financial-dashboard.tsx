@@ -65,8 +65,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
 
   // Get retirement savings directly from budgetData
   const retirementSavings = budgetData?.retirementSavings || 0;
-  const otherSavings = budgetData?.otherSavings || 0;
-  const totalSavings = retirementSavings + otherSavings;
+  const totalSavings = retirementSavings;
 
   // Get savings goals from budgetData
   const savingsGoals = budgetData?.savingsGoals || [];

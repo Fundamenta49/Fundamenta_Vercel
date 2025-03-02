@@ -26,7 +26,6 @@ export interface BudgetData {
   remaining: number;
   expensePercentage: number;
   retirementSavings: number;
-  otherSavings: number;
   savingsGoals: SavingsGoal[];
 }
 
@@ -78,15 +77,6 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
     return 0;
   });
 
-  const [otherSavings, setOtherSavings] = useState<number>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const data = JSON.parse(stored);
-      return data.otherSavings || 0;
-    }
-    return 0;
-  });
-
   const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -100,7 +90,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
   const [newGoalAmount, setNewGoalAmount] = useState<number>(0);
 
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
-  const remaining = income - totalExpenses - retirementSavings - otherSavings;
+  const remaining = income - totalExpenses - retirementSavings;
   const expensePercentage = income > 0 ? (totalExpenses / income) * 100 : 0;
 
   // Save data to localStorage whenever it changes
@@ -112,7 +102,6 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
       remaining,
       expensePercentage,
       retirementSavings,
-      otherSavings,
       savingsGoals,
     };
 
@@ -121,7 +110,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
     if (onBudgetUpdate) {
       onBudgetUpdate(budgetData);
     }
-  }, [income, expenses, totalExpenses, remaining, expensePercentage, retirementSavings, otherSavings, savingsGoals, onBudgetUpdate]);
+  }, [income, expenses, totalExpenses, remaining, expensePercentage, retirementSavings, savingsGoals, onBudgetUpdate]);
 
   const handleExpenseChange = (id: string, value: string) => {
     setExpenses(expenses.map(expense =>
@@ -317,15 +306,6 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
               placeholder="Enter monthly retirement savings"
             />
           </div>
-          <div className="flex items-center gap-2">
-            <Label className="min-w-[150px]">Other Savings</Label>
-            <Input
-              type="number"
-              value={otherSavings || ""}
-              onChange={(e) => setOtherSavings(parseFloat(e.target.value) || 0)}
-              placeholder="Enter other monthly savings"
-            />
-          </div>
         </CardContent>
       </Card>
 
@@ -367,7 +347,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
             <div>
               <p className="text-sm text-muted-foreground">Total Savings</p>
               <p className="text-2xl font-bold text-blue-500">
-                ${(retirementSavings + otherSavings).toFixed(2)}
+                ${retirementSavings.toFixed(2)}
               </p>
             </div>
             <div>
