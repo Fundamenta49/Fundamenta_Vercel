@@ -1,9 +1,5 @@
-import React from 'react'
-
-export default function App() {
-  return (
-    <div>
-      <h1>Financial Planning</h1>
-    </div>
-  )
+const App = () => {
+  return <h1>App</h1>
 }
+
+export default App
