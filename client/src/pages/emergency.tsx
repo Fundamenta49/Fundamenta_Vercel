@@ -9,6 +9,7 @@ import {
 import ChatInterface from "@/components/chat-interface";
 import EmergencyGuide from "@/components/emergency-guide";
 import CPRGuide from "@/components/cpr-guide";
+import DomesticViolenceHelp from "@/components/domestic-violence-help";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Emergency() {
@@ -21,6 +22,7 @@ export default function Emergency() {
           <TabsTrigger value="chat">AI Assistant</TabsTrigger>
           <TabsTrigger value="guides">Emergency Guides</TabsTrigger>
           <TabsTrigger value="cpr">CPR Training</TabsTrigger>
+          <TabsTrigger value="safety">Safety Resources</TabsTrigger>
         </TabsList>
 
         <TabsContent value="chat">
@@ -43,6 +45,10 @@ export default function Emergency() {
 
         <TabsContent value="cpr">
           <CPRGuide />
+        </TabsContent>
+
+        <TabsContent value="safety">
+          <DomesticViolenceHelp />
         </TabsContent>
       </Tabs>
     </div>
