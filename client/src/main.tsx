@@ -1,7 +1,9 @@
+import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './App'
 
-const rootElement = document.getElementById('root')
-if (!rootElement) throw new Error('No root element')
+const root = document.getElementById('root')
+if (!root) throw new Error('Root element not found')
 
-createRoot(rootElement).render(<App />)
+const element = createElement('div', null, 'Hello')
+
+createRoot(root).render(element)
