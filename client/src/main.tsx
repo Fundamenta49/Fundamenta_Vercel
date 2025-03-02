@@ -1,28 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import App from './App'
+import './index.css'
+import ErrorBoundary from './ErrorBoundary'
 
-// Explicitly declare types for better error tracking
-declare global {
-  interface Window {
-    React: typeof React;
-  }
+const domNode = document.getElementById('root')
+if (!domNode) {
+  throw new Error('Failed to find root element')
 }
 
-window.React = React;
-
-const root = document.getElementById('root');
-if (!root) throw new Error('Root element not found');
-
-const App: React.FC = () => {
-  return (
-    <div>
-      <h1>Basic React App</h1>
-    </div>
-  );
-};
-
-ReactDOM.createRoot(root).render(
+ReactDOM.createRoot(domNode).render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>
-);
+)
