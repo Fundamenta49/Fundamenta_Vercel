@@ -48,7 +48,8 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
         { id: "3", category: "Food", amount: 0 },
         { id: "4", category: "Utilities", amount: 0 },
         { id: "5", category: "Healthcare", amount: 0 },
-        { id: "6", category: "Savings", amount: 0 },
+        { id: "6", category: "Retirement", amount: 0 },
+        { id: "7", category: "Other Savings", amount: 0 },
       ];
     }
     return [
@@ -57,7 +58,8 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
       { id: "3", category: "Food", amount: 0 },
       { id: "4", category: "Utilities", amount: 0 },
       { id: "5", category: "Healthcare", amount: 0 },
-      { id: "6", category: "Savings", amount: 0 },
+      { id: "6", category: "Retirement", amount: 0 },
+      { id: "7", category: "Other Savings", amount: 0 },
     ];
   });
 
@@ -83,8 +85,8 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
   }, [income, expenses, totalExpenses, remaining, expensePercentage, onBudgetUpdate]);
 
   const handleExpenseChange = (id: string, value: string) => {
-    setExpenses(expenses.map(expense => 
-      expense.id === id 
+    setExpenses(expenses.map(expense =>
+      expense.id === id
         ? { ...expense, amount: parseFloat(value) || 0 }
         : expense
     ));

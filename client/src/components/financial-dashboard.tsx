@@ -30,6 +30,7 @@ import {
   Target,
   Wallet,
   PiggyBank,
+  Landmark,
 } from "lucide-react";
 
 interface FinancialDashboardProps {
@@ -38,12 +39,12 @@ interface FinancialDashboardProps {
 
 // Sample data for historical trends
 const monthlyData = [
-  { month: "Jan", income: 5000, expenses: 4000, savings: 1000 },
-  { month: "Feb", income: 5200, expenses: 3800, savings: 1400 },
-  { month: "Mar", income: 4800, expenses: 3900, savings: 900 },
-  { month: "Apr", income: 5100, expenses: 3700, savings: 1400 },
-  { month: "May", income: 5300, expenses: 4100, savings: 1200 },
-  { month: "Jun", income: 5400, expenses: 3800, savings: 1600 },
+  { month: "Jan", income: 5000, expenses: 4000, savings: 1000, retirement: 500 },
+  { month: "Feb", income: 5200, expenses: 3800, savings: 1400, retirement: 600 },
+  { month: "Mar", income: 4800, expenses: 3900, savings: 900, retirement: 450 },
+  { month: "Apr", income: 5100, expenses: 3700, savings: 1400, retirement: 700 },
+  { month: "May", income: 5300, expenses: 4100, savings: 1200, retirement: 600 },
+  { month: "Jun", income: 5400, expenses: 3800, savings: 1600, retirement: 800 },
 ];
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"];
@@ -51,11 +52,18 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"
 export default function FinancialDashboard({ budgetData }: FinancialDashboardProps) {
   const [progress, setProgress] = useState(0);
   const [savingsGoal] = useState(10000);
+  const [retirementProgress, setRetirementProgress] = useState(0);
+  const [retirementGoal] = useState(1000000); // Example retirement goal
 
   // Use real budget data or sample data
   const currentIncome = budgetData?.income || monthlyData[monthlyData.length - 1].income;
   const currentExpenses = budgetData?.totalExpenses || monthlyData[monthlyData.length - 1].expenses;
   const currentSavings = budgetData ? (budgetData.income - budgetData.totalExpenses) : monthlyData.reduce((acc, month) => acc + month.savings, 0);
+
+  // Get retirement savings from budget data if available
+  const retirementSavings = budgetData?.expenses.find(item => 
+    item.category.toLowerCase().includes('retirement'))?.amount || 0;
+  const monthlyRetirementProgress = (retirementSavings * 12 / retirementGoal) * 100;
 
   // Calculate savings progress
   const savingsProgress = (currentSavings / savingsGoal) * 100;
@@ -70,18 +78,21 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
     { name: "Food", value: 20 },
     { name: "Utilities", value: 10 },
     { name: "Entertainment", value: 10 },
-    { name: "Savings", value: 10 },
+    { name: "Retirement", value: 10 },
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => setProgress(savingsProgress), 500);
+    const timer = setTimeout(() => {
+      setProgress(savingsProgress);
+      setRetirementProgress(monthlyRetirementProgress);
+    }, 500);
     return () => clearTimeout(timer);
-  }, [savingsProgress]);
+  }, [savingsProgress, monthlyRetirementProgress]);
 
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card className="bg-green-50">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-green-700">
@@ -130,32 +141,75 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             <p className="text-sm text-blue-600">Towards ${savingsGoal.toLocaleString()} goal</p>
           </CardContent>
         </Card>
+
+        <Card className="bg-purple-50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-purple-700">
+              <Landmark className="h-4 w-4" />
+              Retirement Savings
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-700">
+              ${retirementSavings.toLocaleString()}
+            </div>
+            <p className="text-sm text-purple-600">Monthly contribution</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Savings Progress */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5" />
-            Savings Goal Progress
-          </CardTitle>
-          <CardDescription>
-            Track your progress towards your savings goal
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Current: ${currentSavings.toLocaleString()}</span>
-              <span>Goal: ${savingsGoal.toLocaleString()}</span>
+      {/* Savings Goals Progress */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Monthly Savings Progress */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              Savings Goal Progress
+            </CardTitle>
+            <CardDescription>
+              Track your progress towards your savings goal
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Current: ${currentSavings.toLocaleString()}</span>
+                <span>Goal: ${savingsGoal.toLocaleString()}</span>
+              </div>
+              <Progress value={progress} className="h-2" />
+              <p className="text-sm text-muted-foreground text-right">
+                {progress.toFixed(1)}% Complete
+              </p>
             </div>
-            <Progress value={progress} className="h-2" />
-            <p className="text-sm text-muted-foreground text-right">
-              {progress.toFixed(1)}% Complete
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        {/* Retirement Progress */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Landmark className="h-5 w-5" />
+              Retirement Progress
+            </CardTitle>
+            <CardDescription>
+              Annual retirement savings projection
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Annual: ${(retirementSavings * 12).toLocaleString()}</span>
+                <span>Goal: ${retirementGoal.toLocaleString()}</span>
+              </div>
+              <Progress value={retirementProgress} className="h-2" />
+              <p className="text-sm text-muted-foreground text-right">
+                {retirementProgress.toFixed(1)}% of Goal
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Expense Distribution */}
       <Card>
