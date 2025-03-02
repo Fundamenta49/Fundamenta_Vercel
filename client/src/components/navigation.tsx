@@ -41,9 +41,9 @@ export default function Navigation() {
     <nav className="flex flex-col gap-2">
       {navItems.map(({ href, label, icon: Icon }) => (
         <Link key={href} href={href}>
-          <a
+          <button
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors",
+              "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left",
               location === href
                 ? "bg-primary text-primary-foreground"
                 : "hover:bg-accent"
@@ -51,7 +51,7 @@ export default function Navigation() {
           >
             <Icon className="h-5 w-5" />
             {!isMinimized && <span>{label}</span>}
-          </a>
+          </button>
         </Link>
       ))}
     </nav>
@@ -82,9 +82,9 @@ export default function Navigation() {
     )}>
       <div className="flex items-center justify-between mb-8">
         <Link href="/">
-          <a className="flex items-center gap-2 px-4 py-2">
+          <button className="flex items-center gap-2 px-4 py-2">
             {!isMinimized && <h1 className="text-2xl font-bold">Fundamenta</h1>}
-          </a>
+          </button>
         </Link>
         <Button
           variant="ghost"
