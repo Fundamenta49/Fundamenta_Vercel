@@ -51,8 +51,9 @@ const industryQuestions = {
   ],
 };
 
-const interviewTips = [
-  {
+// Base interview tips that can be customized
+const baseInterviewTips = {
+  star: {
     title: "STAR Method",
     shortDesc: "Use the STAR method for behavioral questions",
     fullDesc: `The STAR method is a structured approach to answering behavioral interview questions:
@@ -60,18 +61,9 @@ const interviewTips = [
 • Situation: Set the scene and context
 • Task: Describe what you were responsible for
 • Action: Explain exactly what you did
-• Result: Share the outcomes of your actions
-
-Example:
-Q: "Tell me about a time you handled a difficult project."
-
-STAR Response:
-✓ Situation: "At my previous company, we faced a critical client deadline for a complex software implementation."
-✓ Task: "I was responsible for coordinating between development and client teams."
-✓ Action: "I created a detailed project timeline, held daily stand-ups, and implemented a new communication protocol."
-✓ Result: "We delivered the project two days early and the client commended our excellent communication."`,
+• Result: Share the outcomes of your actions`,
   },
-  {
+  bodyLanguage: {
     title: "Body Language",
     shortDesc: "Maintain good posture and appropriate eye contact",
     fullDesc: `Key aspects of professional body language:
@@ -84,21 +76,9 @@ STAR Response:
 2. Eye Contact
 • Maintain natural eye contact 60-70% of the time
 • When speaking, look at different faces in the panel
-• When listening, focus on the speaker
-
-3. Hand Gestures
-• Use open, natural gestures
-• Keep hands visible but calm
-• Avoid fidgeting or touching face
-
-4. Facial Expressions
-• Maintain a pleasant, engaged expression
-• Smile naturally when appropriate
-• Show active listening through nodding
-
-Practice these in front of a mirror or record yourself to improve!`,
+• When listening, focus on the speaker`,
   },
-  {
+  experience: {
     title: "Experience Examples",
     shortDesc: "Prepare relevant examples from your experience",
     fullDesc: `How to prepare compelling experience examples:
@@ -106,31 +86,9 @@ Practice these in front of a mirror or record yourself to improve!`,
 1. Create an Experience Bank
 • List 5-7 significant projects/achievements
 • Include challenges overcome
-• Note measurable results
-
-2. Categories to Cover:
-• Leadership
-• Problem-solving
-• Teamwork
-• Conflict resolution
-• Technical skills
-
-3. Structure Each Example:
-• Context: Brief background
-• Challenge: What problem you faced
-• Action: Your specific role
-• Impact: Quantifiable results
-
-Example Template:
-"In my role at [Company], I [action] which resulted in [specific outcome]. This demonstrated my ability to [relevant skill]."
-
-Remember to:
-• Use specific numbers and metrics
-• Keep examples recent (last 2-3 years)
-• Adapt stories to different questions
-• Practice telling them concisely`,
+• Note measurable results`,
   },
-  {
+  listening: {
     title: "Active Listening",
     shortDesc: "Practice active listening and thoughtful responses",
     fullDesc: `Active Listening Techniques:
@@ -138,37 +96,119 @@ Remember to:
 1. During the Question
 • Listen completely without interrupting
 • Notice key words and themes
-• Pay attention to the specific type of example requested
-
-2. Before Responding
-• Take a brief pause (1-2 seconds)
-• If needed, clarify any unclear points
-• Structure your response mentally
-
-3. While Responding
-• Address all parts of the question
-• Use specific examples
-• Watch for interviewer cues
-• Keep responses focused (2-3 minutes max)
-
-Common Mistakes to Avoid:
-• Rushing to answer
-• Going off on tangents
-• Missing key parts of complex questions
-• Not providing specific examples
-
-Pro Tips:
-• It's okay to ask for clarification
-• Use phrases like "Let me think about that for a moment"
-• Confirm you've answered fully: "Does that address your question?"`,
+• Pay attention to the specific type of example requested`,
   },
-];
+};
+
+// Question-specific tips mapping
+const getQuestionSpecificTips = (question: string) => {
+  const tips = [];
+
+  // Personal introduction question
+  if (question.toLowerCase().includes("tell me about yourself")) {
+    tips.push({
+      ...baseInterviewTips.experience,
+      shortDesc: "Structure your personal introduction",
+      fullDesc: `How to introduce yourself effectively:
+
+1. Present Structure (60-90 seconds total)
+• Start with current role/status (15 seconds)
+• Highlight 2-3 key achievements (30 seconds)
+• Connect past experience to desired role (15 seconds)
+• End with enthusiasm for opportunity (15 seconds)
+
+2. Key Elements to Include
+• Relevant skills and experience
+• Unique value proposition
+• Professional passion/motivation
+• Clear connection to role
+
+Remember:
+• Stay professional but personable
+• Focus on relevant experiences
+• Show enthusiasm and confidence
+• Practice but don't sound rehearsed`
+    });
+  }
+
+  // Future goals question
+  else if (question.toLowerCase().includes("five years")) {
+    tips.push({
+      ...baseInterviewTips.experience,
+      shortDesc: "Frame your career aspirations",
+      fullDesc: `How to discuss your future goals:
+
+1. Structure Your Response
+• Start with immediate goals related to the role
+• Discuss medium-term development plans
+• Share long-term aspirations aligned with company growth
+
+2. Key Points to Cover
+• Professional development goals
+• Leadership aspirations
+• Industry knowledge growth
+• Company contribution vision
+
+Remember:
+• Show ambition but stay realistic
+• Align goals with company trajectory
+• Emphasize commitment to growth
+• Balance personal and professional goals`
+    });
+  }
+
+  // Behavioral/project questions
+  else if (question.toLowerCase().includes("describe") || question.toLowerCase().includes("how do you")) {
+    tips.push({
+      ...baseInterviewTips.star,
+      fullDesc: `${baseInterviewTips.star.fullDesc}
+
+Example for "${question}":
+✓ Situation: Describe the specific context
+✓ Task: Explain your responsibility
+✓ Action: Detail your specific actions
+✓ Result: Share quantifiable outcomes
+
+Tips for this question:
+• Choose a relevant, recent example
+• Focus on your direct contributions
+• Include specific metrics/results
+• Highlight key learnings`
+    });
+  }
+
+  // Add general tips that are always useful
+  tips.push({
+    ...baseInterviewTips.bodyLanguage,
+    fullDesc: `${baseInterviewTips.bodyLanguage.fullDesc}
+
+3. Specific to This Question:
+• Use confident, open posture
+• Maintain steady eye contact
+• Use natural hand gestures to emphasize points
+• Show engagement through active listening`
+  });
+
+  tips.push({
+    ...baseInterviewTips.listening,
+    fullDesc: `${baseInterviewTips.listening.fullDesc}
+
+2. For This Question Type:
+• Listen for specific requirements
+• Take a moment to organize thoughts
+• Structure response clearly
+• Check understanding if needed`
+  });
+
+  return tips;
+};
 
 export default function InterviewPractice() {
   const [industry, setIndustry] = useState<keyof typeof industryQuestions>("general");
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [selectedTip, setSelectedTip] = useState<typeof interviewTips[0] | null>(null);
+  const [selectedTip, setSelectedTip] = useState<any>(null);
+  const [currentTips, setCurrentTips] = useState<any[]>([]);
   const { toast } = useToast();
 
   const analyzeMutation = useMutation({
@@ -198,6 +238,7 @@ export default function InterviewPractice() {
   const handleSelectQuestion = (question: string) => {
     setCurrentQuestion(question);
     setAnswer("");
+    setCurrentTips(getQuestionSpecificTips(question));
   };
 
   return (
@@ -281,12 +322,14 @@ export default function InterviewPractice() {
         <CardHeader>
           <CardTitle>Interview Confidence Tips</CardTitle>
           <CardDescription>
-            Click on each tip to learn more about the technique
+            {currentQuestion 
+              ? "Specific tips for this question type"
+              : "Select a question to see tailored tips"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {interviewTips.map((tip, index) => (
+            {currentTips.map((tip, index) => (
               <li key={index}>
                 <Button
                   variant="ghost"
