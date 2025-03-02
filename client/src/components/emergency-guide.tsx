@@ -37,7 +37,7 @@ interface Shelter {
 
 const STORAGE_KEY = 'emergency_location_data';
 
-// Mock data for different cities
+// Adding more cities to our mock database
 const cityEmergencyData: Record<string, { shelters: Shelter[], alerts: WeatherAlert[] }> = {
   "cincinnati": {
     shelters: [
@@ -126,6 +126,75 @@ const cityEmergencyData: Record<string, { shelters: Shelter[], alerts: WeatherAl
         severity: "medium",
         description: "Unhealthy air quality levels in parts of Los Angeles",
         instructions: "Sensitive groups should limit outdoor exposure."
+      }
+    ]
+  },
+  "seattle": {
+    shelters: [
+      {
+        name: "Seattle Center Armory",
+        address: "305 Harrison St, Seattle, WA 98109",
+        type: "Emergency Shelter",
+        capacity: 400,
+        currentStatus: "open"
+      }
+    ],
+    alerts: [
+      {
+        type: "Winter Storm Warning",
+        severity: "high",
+        description: "Heavy snowfall expected in the Seattle metro area",
+        instructions: "Avoid unnecessary travel. Keep emergency supplies and warm clothing ready."
+      }
+    ]
+  },
+  "phoenix": {
+    shelters: [
+      {
+        name: "Phoenix Convention Center",
+        address: "100 N 3rd St, Phoenix, AZ 85004",
+        type: "Cooling Center",
+        capacity: 1000,
+        currentStatus: "open"
+      }
+    ],
+    alerts: [
+      {
+        type: "Excessive Heat Warning",
+        severity: "high",
+        description: "Dangerous heat conditions with temperatures exceeding 110°F",
+        instructions: "Stay indoors in air-conditioned spaces. Check on elderly neighbors and those without AC."
+      },
+      {
+        type: "Dust Storm Watch",
+        severity: "medium",
+        description: "Potential for dust storms in the greater Phoenix area",
+        instructions: "Be prepared to pull over if driving. Keep windows and doors closed."
+      }
+    ]
+  },
+  "new orleans": {
+    shelters: [
+      {
+        name: "Ernest N. Morial Convention Center",
+        address: "900 Convention Center Blvd, New Orleans, LA 70130",
+        type: "Hurricane Shelter",
+        capacity: 1200,
+        currentStatus: "open"
+      }
+    ],
+    alerts: [
+      {
+        type: "Flash Flood Warning",
+        severity: "high",
+        description: "Heavy rainfall causing street flooding in multiple areas",
+        instructions: "Avoid driving through flooded streets. Move to higher ground if necessary."
+      },
+      {
+        type: "Tornado Watch",
+        severity: "medium",
+        description: "Conditions favorable for tornado development",
+        instructions: "Monitor local weather updates. Be prepared to take shelter immediately."
       }
     ]
   }
