@@ -10,7 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
-import { AlertTriangle, MapPin, Navigation } from "lucide-react";
+import { AlertTriangle, MapPin, Navigation, Cloud, Shield, BriefcaseMedical, Home, DollarSign } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface Location {
@@ -19,42 +19,99 @@ interface Location {
   country: string;
 }
 
+interface WeatherAlert {
+  type: string;
+  severity: "low" | "medium" | "high";
+  description: string;
+  instructions: string;
+}
+
+interface Shelter {
+  name: string;
+  address: string;
+  type: string;
+  capacity: number;
+  currentStatus: "open" | "full" | "closed";
+}
+
 const STORAGE_KEY = 'emergency_location_data';
 
-const emergencyGuides = [
+const evacuationChecklist = [
   {
-    title: "CPR Guide",
-    description: "Step-by-step instructions for performing CPR",
-    steps: [
-      "Check the scene for safety",
-      "Check the person for responsiveness",
-      "Call 911 or ask someone else to",
-      "Check for breathing",
-      "Begin chest compressions",
-      "Give rescue breaths",
-      "Continue CPR until help arrives"
+    category: "Essential Documents",
+    items: [
+      "Driver's license and ID cards",
+      "Insurance policies",
+      "Birth certificates and passports",
+      "Social Security cards",
+      "Medical records and prescriptions",
+      "Bank account information",
     ]
   },
   {
-    title: "First Aid for Cuts and Burns",
-    description: "Basic first aid for common injuries",
-    steps: [
-      "Clean the wound with soap and water",
-      "Apply antibiotic ointment",
-      "Cover with sterile bandage",
-      "Change dressing daily",
-      "Watch for signs of infection"
+    category: "Emergency Supplies",
+    items: [
+      "3-day supply of non-perishable food",
+      "Water (1 gallon per person per day)",
+      "First aid kit",
+      "Flashlights and batteries",
+      "Battery-powered or hand-crank radio",
+      "Emergency blankets",
+      "Basic tools",
     ]
   },
   {
-    title: "Natural Disaster Preparedness",
-    description: "How to prepare for natural disasters",
+    category: "Personal Items",
+    items: [
+      "Change of clothes",
+      "Personal hygiene items",
+      "Prescription medications",
+      "Phone charger",
+      "Cash and change",
+      "Emergency contact list",
+    ]
+  }
+];
+
+const femaAssistance = [
+  {
+    title: "Individual Assistance",
+    description: "Financial help for individuals and households affected by disasters",
     steps: [
-      "Create an emergency kit",
-      "Develop an evacuation plan",
-      "Store important documents safely",
-      "Keep emergency contacts handy",
-      "Know your local emergency procedures"
+      "Visit DisasterAssistance.gov",
+      "Call 1-800-621-3362",
+      "Document all damage with photos",
+      "Keep receipts for disaster-related expenses",
+      "Register within 60 days of disaster declaration"
+    ],
+    links: [
+      { text: "FEMA Application", url: "https://www.disasterassistance.gov/" },
+      { text: "Recovery Resources", url: "https://www.fema.gov/assistance/individual/disaster-survivors" }
+    ]
+  },
+  {
+    title: "Housing Assistance",
+    description: "Temporary housing and home repair assistance",
+    steps: [
+      "Apply for FEMA assistance",
+      "Schedule home inspection",
+      "Provide proof of occupancy/ownership",
+      "Keep all documentation of damage",
+      "Follow up on application status"
+    ]
+  },
+  {
+    title: "Financial Resources",
+    description: "Grants and loans for disaster recovery",
+    steps: [
+      "Apply for Small Business Administration (SBA) disaster loans",
+      "Contact your insurance provider",
+      "Document all losses",
+      "Keep receipts for reimbursement",
+      "Consider tax deductions for losses"
+    ],
+    links: [
+      { text: "SBA Disaster Loans", url: "https://www.sba.gov/funding-programs/disaster-assistance" }
     ]
   }
 ];
@@ -73,9 +130,48 @@ export default function EmergencyGuide() {
   });
 
   const [isEditing, setIsEditing] = useState(!location.city);
+  const [weatherAlerts, setWeatherAlerts] = useState<WeatherAlert[]>([]);
+  const [nearbyShelters, setNearbyShelters] = useState<Shelter[]>([]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
+
+    // Mock weather alerts based on location
+    if (location.city) {
+      // In a real app, this would be an API call to a weather service
+      setWeatherAlerts([
+        {
+          type: "Severe Weather",
+          severity: "high",
+          description: "Potential severe thunderstorms in your area",
+          instructions: "Stay indoors and away from windows. Monitor local news for updates."
+        },
+        {
+          type: "Flash Flood Watch",
+          severity: "medium",
+          description: "Heavy rainfall may cause flash flooding",
+          instructions: "Avoid low-lying areas and be prepared to move to higher ground."
+        }
+      ]);
+
+      // Mock shelter data based on location
+      setNearbyShelters([
+        {
+          name: "Community Center Shelter",
+          address: "123 Main St",
+          type: "General",
+          capacity: 200,
+          currentStatus: "open"
+        },
+        {
+          name: "High School Gymnasium",
+          address: "456 School Ave",
+          type: "General",
+          capacity: 300,
+          currentStatus: "open"
+        }
+      ]);
+    }
   }, [location]);
 
   const handleLocationSubmit = () => {
@@ -176,10 +272,55 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
+      {/* Weather & Disaster Alerts */}
+      {location.city && (
+        <Card className="border-orange-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Cloud className="h-5 w-5 text-orange-600" />
+              Weather & Disaster Alerts
+            </CardTitle>
+            <CardDescription>
+              Current alerts for {location.city}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {weatherAlerts.map((alert, index) => (
+                <Alert
+                  key={index}
+                  className={`
+                    ${alert.severity === 'high' ? 'bg-red-50 border-red-200' :
+                      alert.severity === 'medium' ? 'bg-orange-50 border-orange-200' :
+                        'bg-yellow-50 border-yellow-200'}
+                  `}
+                >
+                  <AlertTriangle className={`
+                    h-4 w-4
+                    ${alert.severity === 'high' ? 'text-red-600' :
+                      alert.severity === 'medium' ? 'text-orange-600' :
+                        'text-yellow-600'}
+                  `} />
+                  <div className="ml-2">
+                    <h4 className="font-semibold">{alert.type}</h4>
+                    <p className="text-sm mt-1">{alert.description}</p>
+                    <p className="text-sm mt-2 font-medium">Instructions:</p>
+                    <p className="text-sm">{alert.instructions}</p>
+                  </div>
+                </Alert>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Emergency Numbers */}
       <Card className="border-red-200">
         <CardHeader>
-          <CardTitle className="text-red-600">Emergency Numbers</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <BriefcaseMedical className="h-5 w-5 text-red-600" />
+            Emergency Numbers
+          </CardTitle>
           <CardDescription>Keep these numbers handy</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -191,6 +332,130 @@ export default function EmergencyGuide() {
             <span>Poison Control</span>
             <Button variant="destructive">1-800-222-1222</Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Evacuation Checklist */}
+      <Card className="border-purple-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-purple-600" />
+            Evacuation Checklist
+          </CardTitle>
+          <CardDescription>
+            Essential items to prepare for evacuation
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="single" collapsible className="w-full">
+            {evacuationChecklist.map((category, index) => (
+              <AccordionItem key={index} value={`category-${index}`}>
+                <AccordionTrigger>{category.category}</AccordionTrigger>
+                <AccordionContent>
+                  <ul className="list-disc list-inside space-y-2">
+                    {category.items.map((item, itemIndex) => (
+                      <li key={itemIndex} className="text-sm">{item}</li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </CardContent>
+      </Card>
+
+      {/* Nearby Shelters */}
+      {location.city && (
+        <Card className="border-green-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Home className="h-5 w-5 text-green-600" />
+              Emergency Shelters Near {location.city}
+            </CardTitle>
+            <CardDescription>
+              Available emergency shelters in your area
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {nearbyShelters.map((shelter, index) => (
+                <div
+                  key={index}
+                  className="p-4 border rounded-lg space-y-2"
+                >
+                  <div className="flex justify-between items-start">
+                    <h3 className="font-medium">{shelter.name}</h3>
+                    <Badge
+                      variant={
+                        shelter.currentStatus === 'open' ? 'success' :
+                        shelter.currentStatus === 'full' ? 'warning' : 'destructive'
+                      }
+                    >
+                      {shelter.currentStatus}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{shelter.address}</p>
+                  <p className="text-sm">Type: {shelter.type}</p>
+                  <p className="text-sm">Capacity: {shelter.capacity} people</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* FEMA & Financial Assistance */}
+      <Card className="border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <DollarSign className="h-5 w-5 text-blue-600" />
+            Disaster Financial Assistance
+          </CardTitle>
+          <CardDescription>
+            FEMA and other financial resources for disaster recovery
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="single" collapsible className="w-full">
+            {femaAssistance.map((assistance, index) => (
+              <AccordionItem key={index} value={`assistance-${index}`}>
+                <AccordionTrigger>{assistance.title}</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      {assistance.description}
+                    </p>
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-sm">Steps:</h4>
+                      <ul className="list-disc list-inside space-y-1">
+                        {assistance.steps.map((step, stepIndex) => (
+                          <li key={stepIndex} className="text-sm">{step}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    {assistance.links && (
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-sm">Resources:</h4>
+                        <div className="space-y-2">
+                          {assistance.links.map((link, linkIndex) => (
+                            <Button
+                              key={linkIndex}
+                              variant="outline"
+                              className="w-full justify-between"
+                              onClick={() => window.open(link.url, "_blank")}
+                            >
+                              {link.text}
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </CardContent>
       </Card>
 
@@ -254,3 +519,47 @@ export default function EmergencyGuide() {
     </div>
   );
 }
+
+const emergencyGuides = [
+  {
+    title: "CPR Guide",
+    description: "Step-by-step instructions for performing CPR",
+    steps: [
+      "Check the scene for safety",
+      "Check the person for responsiveness",
+      "Call 911 or ask someone else to",
+      "Check for breathing",
+      "Begin chest compressions",
+      "Give rescue breaths",
+      "Continue CPR until help arrives"
+    ]
+  },
+  {
+    title: "First Aid for Cuts and Burns",
+    description: "Basic first aid for common injuries",
+    steps: [
+      "Clean the wound with soap and water",
+      "Apply antibiotic ointment",
+      "Cover with sterile bandage",
+      "Change dressing daily",
+      "Watch for signs of infection"
+    ]
+  },
+  {
+    title: "Natural Disaster Preparedness",
+    description: "How to prepare for natural disasters",
+    steps: [
+      "Create an emergency kit",
+      "Develop an evacuation plan",
+      "Store important documents safely",
+      "Keep emergency contacts handy",
+      "Know your local emergency procedures"
+    ]
+  }
+];
+
+//Missing Component - Placeholder
+const Badge = ({ variant, children }) => <span className={`border px-2 py-1 rounded text-sm ${variant === 'success' ? 'bg-green-100 text-green-800 border-green-300' : variant === 'warning' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' : 'bg-red-100 text-red-800 border-red-300'}`}>{children}</span>;
+const ExternalLink = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.44.99-.44 1.43 0l.001.001M2.25 12l8.954 8.955c.44.44.99.44 1.43 0l.001-.001M14.75 6.001a1.5 1.5 0 012.121 0l2.121 2.122a1.5 1.5 0 01-2.12 2.121L12 10.5l-2.62 2.621a1.5 1.5 0 01-2.121-2.12l2.121-2.121z" />
+</svg>
