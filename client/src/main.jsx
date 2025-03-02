@@ -1,17 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-const App = () => (
-  <div>
-    <h1>Career Development Platform</h1>
-  </div>
-)
+// Explicitly declare types for better error tracking
+window.React = React;
 
-const root = document.getElementById('root')
-if (!root) throw new Error('Root element not found')
+const App = () => {
+  return (
+    <div>
+      <h1>Career Development Platform</h1>
+    </div>
+  );
+};
 
-ReactDOM.createRoot(root).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-)
+);
