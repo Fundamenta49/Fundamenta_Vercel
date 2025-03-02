@@ -4,12 +4,16 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2, Wand2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 interface Education {
   school: string;
@@ -24,7 +28,18 @@ interface Experience {
   description: string;
 }
 
+interface OptimizationSuggestions {
+  enhancedSummary: string;
+  keywords: string[];
+  experienceSuggestions: Array<{
+    original: string;
+    improved: string;
+  }>;
+  structuralChanges: string[];
+}
+
 export default function ResumeBuilder() {
+  const { toast } = useToast();
   const [personalInfo, setPersonalInfo] = useState({
     name: "",
     email: "",
@@ -32,13 +47,40 @@ export default function ResumeBuilder() {
     summary: "",
   });
 
+  const [targetPosition, setTargetPosition] = useState("");
   const [education, setEducation] = useState<Education[]>([
     { school: "", degree: "", year: "" },
   ]);
-
   const [experience, setExperience] = useState<Experience[]>([
     { company: "", position: "", duration: "", description: "" },
   ]);
+  const [suggestions, setSuggestions] = useState<OptimizationSuggestions | null>(null);
+
+  const optimizeMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/resume/optimize", {
+        personalInfo,
+        education,
+        experience,
+        targetPosition,
+      });
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setSuggestions(data.suggestions);
+      toast({
+        title: "Resume Optimized",
+        description: "AI suggestions have been generated for your resume.",
+      });
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Optimization Failed",
+        description: "Failed to optimize resume. Please try again.",
+      });
+    },
+  });
 
   const addEducation = () => {
     setEducation([...education, { school: "", degree: "", year: "" }]);
@@ -59,8 +101,97 @@ export default function ResumeBuilder() {
     setExperience(experience.filter((_, i) => i !== index));
   };
 
+  const handleOptimize = () => {
+    if (!targetPosition) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please enter your target position to optimize the resume.",
+      });
+      return;
+    }
+    optimizeMutation.mutate();
+  };
+
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Target Position</CardTitle>
+          <CardDescription>Enter the position you're applying for to get AI-powered optimization</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="targetPosition">Target Position</Label>
+            <Input
+              id="targetPosition"
+              value={targetPosition}
+              onChange={(e) => setTargetPosition(e.target.value)}
+              placeholder="e.g. Senior Software Engineer"
+            />
+          </div>
+          <Button
+            onClick={handleOptimize}
+            disabled={optimizeMutation.isPending || !targetPosition}
+            className="w-full"
+          >
+            <Wand2 className="h-4 w-4 mr-2" />
+            {optimizeMutation.isPending ? "Optimizing..." : "Optimize Resume"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {suggestions && (
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Suggestions</CardTitle>
+            <CardDescription>Recommended improvements for your resume</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Enhanced Summary</Label>
+              <div className="p-4 bg-muted rounded-lg">
+                <p>{suggestions.enhancedSummary}</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Recommended Keywords</Label>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.keywords.map((keyword, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-primary/10 rounded-full text-sm"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Experience Improvements</Label>
+              <div className="space-y-4">
+                {suggestions.experienceSuggestions.map((suggestion, index) => (
+                  <div key={index} className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Original:</p>
+                    <p className="pl-4">{suggestion.original}</p>
+                    <p className="text-sm text-muted-foreground">Improved:</p>
+                    <p className="pl-4 text-primary">{suggestion.improved}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Structural Changes</Label>
+              <ul className="list-disc pl-4 space-y-1">
+                {suggestions.structuralChanges.map((change, index) => (
+                  <li key={index} className="text-sm">{change}</li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Personal Information</CardTitle>

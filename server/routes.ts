@@ -1,13 +1,34 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
 const messageSchema = z.object({
   content: z.string(),
   category: z.enum(["emergency", "finance", "career", "wellness"]),
+});
+
+const resumeSchema = z.object({
+  personalInfo: z.object({
+    name: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    summary: z.string(),
+  }),
+  education: z.array(z.object({
+    school: z.string(),
+    degree: z.string(),
+    year: z.string(),
+  })),
+  experience: z.array(z.object({
+    company: z.string(),
+    position: z.string(),
+    duration: z.string(),
+    description: z.string(),
+  })),
+  targetPosition: z.string(),
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -28,6 +49,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ guidance });
     } catch (error) {
       res.status(400).json({ error: "Invalid request" });
+    }
+  });
+
+  app.post("/api/resume/optimize", async (req, res) => {
+    try {
+      const resumeData = resumeSchema.parse(req.body);
+      const optimizedResume = await optimizeResume(resumeData);
+      res.json({ suggestions: JSON.parse(optimizedResume) });
+    } catch (error) {
+      console.error("Resume optimization error:", error);
+      res.status(400).json({ error: "Failed to optimize resume" });
     }
   });
 

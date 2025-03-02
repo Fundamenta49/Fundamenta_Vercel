@@ -35,6 +35,89 @@ export async function getChatResponse(
   }
 }
 
+interface ResumeData {
+  personalInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    summary: string;
+  };
+  education: Array<{
+    school: string;
+    degree: string;
+    year: string;
+  }>;
+  experience: Array<{
+    company: string;
+    position: string;
+    duration: string;
+    description: string;
+  }>;
+  targetPosition: string;
+}
+
+export async function optimizeResume(resumeData: ResumeData): Promise<string> {
+  try {
+    const prompt = `
+As an expert career coach and resume optimizer, please enhance this resume to target the position of ${resumeData.targetPosition}.
+
+Current Resume Information:
+Name: ${resumeData.personalInfo.name}
+Professional Summary: ${resumeData.personalInfo.summary}
+
+Experience:
+${resumeData.experience.map(exp => `
+- Position: ${exp.position}
+  Company: ${exp.company}
+  Duration: ${exp.duration}
+  Description: ${exp.description}
+`).join('\n')}
+
+Education:
+${resumeData.education.map(edu => `
+- ${edu.degree}
+  ${edu.school}
+  ${edu.year}
+`).join('\n')}
+
+Please provide specific suggestions to optimize this resume for the target position, including:
+1. Enhanced professional summary
+2. Recommended keywords and skills to highlight
+3. Suggested improvements to experience descriptions
+4. Overall structure recommendations
+
+Format the response as a JSON object with the following structure:
+{
+  "enhancedSummary": "string",
+  "keywords": ["string"],
+  "experienceSuggestions": [{
+    "original": "string",
+    "improved": "string"
+  }],
+  "structuralChanges": ["string"]
+}`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert resume optimizer focusing on creating targeted, ATS-friendly resumes. Provide specific, actionable suggestions in JSON format."
+        },
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    return response.choices[0].message.content || "Could not generate optimization suggestions.";
+  } catch (error) {
+    console.error("OpenAI API Error:", error);
+    throw new Error("Failed to optimize resume");
+  }
+}
+
 export async function getEmergencyGuidance(situation: string): Promise<string> {
   try {
     const response = await openai.chat.completions.create({
