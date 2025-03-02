@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -29,6 +29,19 @@ const resumeSchema = z.object({
     description: z.string(),
   })),
   targetPosition: z.string(),
+});
+
+const coverLetterSchema = z.object({
+  personalInfo: z.object({
+    name: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    summary: z.string(),
+  }),
+  targetPosition: z.string(),
+  company: z.string().optional(),
+  keyExperience: z.array(z.string()),
+  additionalNotes: z.string().optional(),
 });
 
 const interviewAnalysisSchema = z.object({
@@ -161,6 +174,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(500).json({
         error: "Failed to generate questions. Please try again later."
+      });
+    }
+  });
+
+  app.post("/api/resume/cover-letter", async (req, res) => {
+    try {
+      const data = coverLetterSchema.parse(req.body);
+      const coverLetter = await generateCoverLetter(data);
+      res.json({ coverLetter });
+    } catch (error: any) {
+      console.error("Cover letter generation error:", error);
+
+      if (error.name === "ZodError") {
+        return res.status(400).json({
+          error: "Invalid request format. Please check your input."
+        });
+      }
+
+      if (error?.error?.type === "invalid_api_key") {
+        return res.status(503).json({
+          error: "Cover letter generation service is currently unavailable. Please try again later."
+        });
+      }
+
+      if (error.message.includes('rate limit exceeded')) {
+        return res.status(429).json({
+          error: "Too many requests. Please wait a moment and try again."
+        });
+      }
+
+      res.status(500).json({
+        error: "Failed to generate cover letter. Please try again later."
       });
     }
   });

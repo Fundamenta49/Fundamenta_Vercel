@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Trash2, Wand2 } from "lucide-react";
+import { PlusCircle, Trash2, Wand2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -111,6 +111,54 @@ export default function ResumeBuilder() {
       return;
     }
     optimizeMutation.mutate();
+  };
+
+  const [company, setCompany] = useState("");
+  const [keyExperience, setKeyExperience] = useState<string[]>([]);
+  const [additionalNotes, setAdditionalNotes] = useState("");
+  const [coverLetter, setCoverLetter] = useState("");
+
+  const coverLetterMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/resume/cover-letter", {
+        personalInfo,
+        targetPosition,
+        company,
+        keyExperience: keyExperience.filter(exp => exp.trim()),
+        additionalNotes,
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to generate cover letter");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setCoverLetter(data.coverLetter);
+      toast({
+        title: "Cover Letter Generated",
+        description: "Your cover letter has been generated successfully.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Generation Failed",
+        description: error.message || "Failed to generate cover letter. Please try again.",
+      });
+    },
+  });
+
+  const generateCoverLetter = () => {
+    if (!personalInfo.name || !targetPosition || keyExperience.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please fill in your personal information, target position, and at least one key experience point.",
+      });
+      return;
+    }
+    coverLetterMutation.mutate();
   };
 
   return (
@@ -294,6 +342,109 @@ export default function ResumeBuilder() {
           ))}
         </CardContent>
       </Card>
+
+      {personalInfo.name && targetPosition && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Cover Letter Generator</CardTitle>
+            <CardDescription>
+              Generate a customized cover letter based on your resume and additional details
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="company">Company Name (Optional)</Label>
+              <Input
+                id="company"
+                placeholder="Enter company name"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="keyExperience">Key Experience Points</Label>
+              <p className="text-sm text-muted-foreground">
+                Add specific experiences or skills relevant to this position
+              </p>
+              {keyExperience.map((exp, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={exp}
+                    onChange={(e) => {
+                      const newExp = [...keyExperience];
+                      newExp[index] = e.target.value;
+                      setKeyExperience(newExp);
+                    }}
+                    placeholder="E.g., Led a team of 5 developers..."
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setKeyExperience(keyExperience.filter((_, i) => i !== index));
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setKeyExperience([...keyExperience, ""])}
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Add Experience Point
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="additionalNotes">Additional Notes (Optional)</Label>
+              <Textarea
+                id="additionalNotes"
+                placeholder="Any specific points you'd like to emphasize..."
+                value={additionalNotes}
+                onChange={(e) => setAdditionalNotes(e.target.value)}
+              />
+            </div>
+
+            <Button
+              onClick={generateCoverLetter}
+              disabled={
+                coverLetterMutation.isPending ||
+                !personalInfo.name ||
+                !targetPosition ||
+                keyExperience.length === 0
+              }
+              className="w-full"
+            >
+              {coverLetterMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-4 w-4 mr-2" />
+                  Generate Cover Letter
+                </>
+              )}
+            </Button>
+
+            {coverLetter && (
+              <div className="space-y-2">
+                <Label>Generated Cover Letter</Label>
+                <Textarea
+                  value={coverLetter}
+                  onChange={(e) => setCoverLetter(e.target.value)}
+                  className="min-h-[300px] font-mono"
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

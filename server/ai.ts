@@ -240,7 +240,6 @@ export async function analyzeInterviewAnswer(
   }
 }
 
-// Add new function after analyzeInterviewAnswer
 export async function generateJobQuestions(jobField: string): Promise<string[]> {
   try {
     if (!process.env.OPENAI_API_KEY) {
@@ -286,5 +285,78 @@ export async function generateJobQuestions(jobField: string): Promise<string[]> 
       throw new Error("OpenAI API rate limit exceeded. Please try again later.");
     }
     throw new Error("Failed to generate interview questions: " + (error.message || 'Unknown error'));
+  }
+}
+
+interface CoverLetterData {
+  personalInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    summary: string;
+  };
+  targetPosition: string;
+  company?: string;
+  keyExperience: string[];
+  additionalNotes?: string;
+}
+
+export async function generateCoverLetter(data: CoverLetterData): Promise<string> {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
+
+    console.log("Generating cover letter with OpenAI...");
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert in crafting compelling cover letters that highlight relevant experience and skills while maintaining a professional and engaging tone."
+        },
+        {
+          role: "user",
+          content: `Create a professional cover letter for a ${data.targetPosition} position${data.company ? ` at ${data.company}` : ''}.
+
+Candidate information:
+- Name: ${data.personalInfo.name}
+- Professional Summary: ${data.personalInfo.summary}
+- Key Experience:
+${data.keyExperience.map(exp => `  - ${exp}`).join('\n')}
+${data.additionalNotes ? `\nAdditional Notes:\n${data.additionalNotes}` : ''}
+
+The cover letter should:
+1. Be professionally formatted
+2. Highlight relevant experience and skills
+3. Show enthusiasm for the role
+4. Include a strong opening and closing
+5. Be concise (around 300-400 words)`
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 800,
+    });
+
+    return response.choices[0].message.content || "Unable to generate cover letter at this time.";
+  } catch (error: any) {
+    console.error("OpenAI API Error:", error);
+    if (error.response) {
+      console.error("OpenAI API Error Response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
+    }
+    if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    }
+    if (error?.error?.type === "invalid_request_error") {
+      throw new Error("Invalid API request. Please check your input.");
+    }
+    if (error.message.includes('rate limit exceeded')) {
+      throw new Error("OpenAI API rate limit exceeded. Please try again later.");
+    }
+    throw new Error("Failed to generate cover letter: " + (error.message || 'Unknown error'));
   }
 }
