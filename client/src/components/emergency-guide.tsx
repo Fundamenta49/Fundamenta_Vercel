@@ -38,6 +38,50 @@ interface Shelter {
 
 const STORAGE_KEY = 'emergency_location_data';
 
+// Mock data for different cities
+const cityEmergencyData: Record<string, { shelters: Shelter[], alerts: WeatherAlert[] }> = {
+  "Cincinnati": {
+    shelters: [
+      {
+        name: "Duke Energy Convention Center",
+        address: "525 Elm St, Cincinnati, OH 45202",
+        type: "Emergency Shelter",
+        capacity: 500,
+        currentStatus: "open"
+      },
+      {
+        name: "University of Cincinnati Fifth Third Arena",
+        address: "2700 O'Varsity Way, Cincinnati, OH 45221",
+        type: "Emergency Shelter",
+        capacity: 400,
+        currentStatus: "open"
+      },
+      {
+        name: "Hamilton County Emergency Operations Center",
+        address: "2000 Radcliff Dr, Cincinnati, OH 45204",
+        type: "Operations Center",
+        capacity: 200,
+        currentStatus: "open"
+      }
+    ],
+    alerts: [
+      {
+        type: "River Flood Watch",
+        severity: "medium",
+        description: "Ohio River water levels rising due to recent rainfall",
+        instructions: "Monitor local news and be prepared for possible evacuation in low-lying areas."
+      },
+      {
+        type: "Severe Weather Alert",
+        severity: "high",
+        description: "Potential for severe thunderstorms with high winds",
+        instructions: "Stay indoors and away from windows. Keep emergency supplies ready."
+      }
+    ]
+  },
+  // Add more cities as needed
+};
+
 // State emergency management links
 const stateEmergencyLinks = {
   "Alabama": "https://ema.alabama.gov/",
@@ -109,44 +153,44 @@ export default function EmergencyGuide() {
   const [weatherAlerts, setWeatherAlerts] = useState<WeatherAlert[]>([]);
   const [nearbyShelters, setNearbyShelters] = useState<Shelter[]>([]);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
-
-    // Mock weather alerts based on location
-    if (location.city) {
+  const updateEmergencyData = (city: string) => {
+    const cityData = cityEmergencyData[city];
+    if (cityData) {
+      setWeatherAlerts(cityData.alerts);
+      setNearbyShelters(cityData.shelters);
+    } else {
+      // Default data for cities not in our mock database
       setWeatherAlerts([
         {
-          type: "Severe Weather",
-          severity: "high",
-          description: "Potential severe thunderstorms in your area",
-          instructions: "Stay indoors and away from windows. Monitor local news for updates."
-        },
-        {
-          type: "Flash Flood Watch",
-          severity: "medium",
-          description: "Heavy rainfall may cause flash flooding",
-          instructions: "Avoid low-lying areas and be prepared to move to higher ground."
+          type: "General Weather Advisory",
+          severity: "low",
+          description: "Monitor local weather conditions",
+          instructions: "Stay tuned to local news and weather updates."
         }
       ]);
-
       setNearbyShelters([
         {
-          name: "Community Center Shelter",
-          address: "123 Main St",
+          name: "Local Community Center",
+          address: `123 Main St, ${city}`,
           type: "General",
           capacity: 200,
-          currentStatus: "open"
-        },
-        {
-          name: "High School Gymnasium",
-          address: "456 School Ave",
-          type: "General",
-          capacity: 300,
           currentStatus: "open"
         }
       ]);
     }
+  };
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
+    if (location.city) {
+      updateEmergencyData(location.city);
+    }
   }, [location]);
+
+  const handleLocationSubmit = () => {
+    setIsEditing(false);
+    updateEmergencyData(location.city);
+  };
 
   return (
     <div className="space-y-6">
@@ -193,7 +237,7 @@ export default function EmergencyGuide() {
                   placeholder="Enter your country"
                 />
               </div>
-              <Button onClick={() => setIsEditing(false)} className="w-full">
+              <Button onClick={handleLocationSubmit} className="w-full">
                 Save Location
               </Button>
             </div>
@@ -244,47 +288,6 @@ export default function EmergencyGuide() {
           </CardContent>
         </Card>
       )}
-
-      {/* National Emergency Resources */}
-      <Card className="border-green-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-green-600" />
-            National Emergency Resources
-          </CardTitle>
-          <CardDescription>
-            Federal emergency management resources and information
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.ready.gov/", "_blank")}
-            >
-              Ready.gov - National Preparedness
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.fema.gov/", "_blank")}
-            >
-              FEMA - Federal Emergency Management Agency
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.redcross.org/get-help/how-to-prepare-for-emergencies.html", "_blank")}
-            >
-              Red Cross Emergency Preparedness
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Weather & Disaster Alerts */}
       {location.city && weatherAlerts.length > 0 && (
@@ -367,6 +370,47 @@ export default function EmergencyGuide() {
           </CardContent>
         </Card>
       )}
+
+      {/* National Emergency Resources */}
+      <Card className="border-green-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Globe className="h-5 w-5 text-green-600" />
+            National Emergency Resources
+          </CardTitle>
+          <CardDescription>
+            Federal emergency management resources and information
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => window.open("https://www.ready.gov/", "_blank")}
+            >
+              Ready.gov - National Preparedness
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => window.open("https://www.fema.gov/", "_blank")}
+            >
+              FEMA - Federal Emergency Management Agency
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => window.open("https://www.redcross.org/get-help/how-to-prepare-for-emergencies.html", "_blank")}
+            >
+              Red Cross Emergency Preparedness
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
