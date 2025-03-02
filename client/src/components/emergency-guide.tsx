@@ -136,6 +136,27 @@ const stateEmergencyLinks = {
   "Wyoming": "https://hls.wyo.gov/"
 };
 
+const updateEmergencyData = (city: string) => {
+    const normalizedCity = city.trim();
+    const cityData = cityEmergencyData[normalizedCity];
+    if (cityData) {
+      setWeatherAlerts(cityData.alerts);
+      setNearbyShelters(cityData.shelters);
+    } else {
+      // Only show alerts for cities we have data for
+      setWeatherAlerts([]);
+      setNearbyShelters([]);
+
+      // Show an alert that we don't have data for this city yet
+      setWeatherAlerts([{
+        type: "Location Notice",
+        severity: "low",
+        description: `We don't have specific emergency data for ${city} yet`,
+        instructions: "Please check your local emergency management website for the most up-to-date information."
+      }]);
+    }
+  };
+
 export default function EmergencyGuide() {
   const [location, setLocation] = useState<Location>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -153,32 +174,6 @@ export default function EmergencyGuide() {
   const [weatherAlerts, setWeatherAlerts] = useState<WeatherAlert[]>([]);
   const [nearbyShelters, setNearbyShelters] = useState<Shelter[]>([]);
 
-  const updateEmergencyData = (city: string) => {
-    const cityData = cityEmergencyData[city];
-    if (cityData) {
-      setWeatherAlerts(cityData.alerts);
-      setNearbyShelters(cityData.shelters);
-    } else {
-      // Default data for cities not in our mock database
-      setWeatherAlerts([
-        {
-          type: "General Weather Advisory",
-          severity: "low",
-          description: "Monitor local weather conditions",
-          instructions: "Stay tuned to local news and weather updates."
-        }
-      ]);
-      setNearbyShelters([
-        {
-          name: "Local Community Center",
-          address: `123 Main St, ${city}`,
-          type: "General",
-          capacity: 200,
-          currentStatus: "open"
-        }
-      ]);
-    }
-  };
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
