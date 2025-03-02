@@ -1,7 +1,11 @@
 import OpenAI from "openai";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ 
+  apiKey: process.env.OPENAI_API_KEY,
+  maxRetries: 3, // Add retries for resilience
+  timeout: 30000, // 30 second timeout
+});
 
 export async function getChatResponse(
   prompt: string,
@@ -18,6 +22,7 @@ export async function getChatResponse(
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OpenAI API key not configured");
     }
+    console.log("Getting chat response with OpenAI...");
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -34,11 +39,20 @@ export async function getChatResponse(
     return response.choices[0].message.content || "I apologize, I couldn't process that request.";
   } catch (error: any) {
     console.error("OpenAI API Error:", error);
+    if (error.response) {
+      console.error("OpenAI API Error Response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
+    }
+    if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    }
     if (error?.error?.type === "invalid_request_error") {
       throw new Error("Invalid API request. Please check your input.");
-    } else if (error?.error?.type === "invalid_api_key") {
-      throw new Error("Invalid API key. Please check your API key configuration.");
-    } else if (error.status === 429) {
+    }
+    if (error.message.includes('rate limit exceeded')) {
       throw new Error("OpenAI API rate limit exceeded. Please try again later.");
     }
     return "I'm sorry, I'm having trouble processing your request right now.";
@@ -71,6 +85,7 @@ export async function optimizeResume(resumeData: ResumeData): Promise<string> {
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OpenAI API key not configured");
     }
+    console.log("Optimizing resume with OpenAI...");
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -100,11 +115,20 @@ export async function optimizeResume(resumeData: ResumeData): Promise<string> {
     return response.choices[0].message.content || "Could not generate optimization suggestions.";
   } catch (error: any) {
     console.error("OpenAI API Error:", error);
+    if (error.response) {
+      console.error("OpenAI API Error Response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
+    }
+    if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    }
     if (error?.error?.type === "invalid_request_error") {
       throw new Error("Invalid API request. Please check your input.");
-    } else if (error?.error?.type === "invalid_api_key") {
-      throw new Error("Invalid API key. Please check your API key configuration.");
-    } else if (error.status === 429) {
+    }
+    if (error.message.includes('rate limit exceeded')) {
       throw new Error("OpenAI API rate limit exceeded. Please try again later.");
     }
     throw new Error("Failed to optimize resume: " + (error.message || 'Unknown error'));
@@ -116,6 +140,7 @@ export async function getEmergencyGuidance(situation: string): Promise<string> {
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OpenAI API key not configured");
     }
+    console.log("Getting emergency guidance with OpenAI...");
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -132,11 +157,20 @@ export async function getEmergencyGuidance(situation: string): Promise<string> {
     return response.choices[0].message.content || "Unable to provide guidance at this time.";
   } catch (error: any) {
     console.error("OpenAI API Error:", error);
+    if (error.response) {
+      console.error("OpenAI API Error Response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
+    }
+    if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    }
     if (error?.error?.type === "invalid_request_error") {
       throw new Error("Invalid API request. Please check your input.");
-    } else if (error?.error?.type === "invalid_api_key") {
-      throw new Error("Invalid API key. Please check your API key configuration.");
-    } else if (error.status === 429) {
+    }
+    if (error.message.includes('rate limit exceeded')) {
       throw new Error("OpenAI API rate limit exceeded. Please try again later.");
     }
     return "Emergency services are currently unavailable. Please dial your local emergency number.";
@@ -153,6 +187,7 @@ export async function analyzeInterviewAnswer(
       throw new Error("OpenAI API key not configured");
     }
 
+    console.log("Analyzing interview answer with OpenAI...");
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -181,11 +216,23 @@ export async function analyzeInterviewAnswer(
   } catch (error: any) {
     console.error("OpenAI API Error:", error);
 
+    // Log the full error for debugging
+    if (error.response) {
+      console.error("OpenAI API Error Response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
+    }
+
+    // Handle specific error types
+    if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    }
     if (error?.error?.type === "invalid_request_error") {
       throw new Error("Invalid API request. Please check your input.");
-    } else if (error?.error?.type === "invalid_api_key") {
-      throw new Error("Invalid API key. Please check your API key configuration.");
-    } else if (error.status === 429) {
+    }
+    if (error.message.includes('rate limit exceeded')) {
       throw new Error("OpenAI API rate limit exceeded. Please try again later.");
     }
 
