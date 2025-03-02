@@ -210,6 +210,7 @@ export default function InterviewPractice() {
   const [selectedTip, setSelectedTip] = useState<any>(null);
   const [currentTips, setCurrentTips] = useState<any[]>([]);
   const { toast } = useToast();
+  const [feedback, setFeedback] = useState<string>(""); // Added feedback state
 
   const analyzeMutation = useMutation({
     mutationFn: async (answer: string) => {
@@ -218,20 +219,25 @@ export default function InterviewPractice() {
         question: currentQuestion,
         industry,
       });
+      if (!res.ok) {
+        throw new Error("Failed to analyze response");
+      }
       return res.json();
     },
     onSuccess: (data) => {
+      setFeedback(data.feedback); // Update feedback state
       toast({
         title: "Feedback Ready",
         description: "AI has analyzed your response.",
       });
     },
-    onError: () => {
+    onError: (err) => {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to analyze response. Please try again.",
+        title: "Analysis Failed",
+        description: "Unable to analyze response. Please try again later.",
       });
+      console.error("Error analyzing interview response:", err); //Added error logging
     },
   });
 
@@ -239,6 +245,7 @@ export default function InterviewPractice() {
     setCurrentQuestion(question);
     setAnswer("");
     setCurrentTips(getQuestionSpecificTips(question));
+    setFeedback(""); //Clear feedback when selecting a new question
   };
 
   return (
@@ -318,11 +325,23 @@ export default function InterviewPractice() {
         </Card>
       )}
 
+      {currentQuestion && feedback && ( // Added feedback display section
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Feedback</CardTitle>
+            <CardDescription>Analysis of your response</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="whitespace-pre-wrap">{feedback}</div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Interview Confidence Tips</CardTitle>
           <CardDescription>
-            {currentQuestion 
+            {currentQuestion
               ? "Specific tips for this question type"
               : "Select a question to see tailored tips"}
           </CardDescription>

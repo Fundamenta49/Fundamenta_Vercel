@@ -82,11 +82,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/interview/analyze", async (req, res) => {
     try {
       const { answer, question, industry } = interviewAnalysisSchema.parse(req.body);
+
+      if (!answer.trim() || !question.trim() || !industry.trim()) {
+        return res.status(400).json({ 
+          error: "Missing required fields. Please provide answer, question, and industry." 
+        });
+      }
+
       const feedback = await analyzeInterviewAnswer(answer, question, industry);
       res.json({ feedback });
     } catch (error) {
       console.error("Interview analysis error:", error);
-      res.status(400).json({ error: "Failed to analyze interview response" });
+
+      // More specific error messages based on error type
+      if (error.name === "ZodError") {
+        return res.status(400).json({ 
+          error: "Invalid request format. Please check your input." 
+        });
+      }
+
+      res.status(500).json({ 
+        error: "Failed to analyze interview response. Please try again later." 
+      });
     }
   });
 
