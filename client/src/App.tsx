@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch, Link } from 'wouter';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MeditationGuide from './components/meditation-guide';
 import InterviewPractice from './components/interview-practice';
 import Finance from './pages/finance';
@@ -33,7 +34,7 @@ const App: React.FC = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Switch>
-          <Route path="/" >
+          <Route path="/">
             <div className="grid gap-6">
               <section className="space-y-4">
                 <h2 className="text-3xl font-bold">Welcome to Your Career Journey</h2>
@@ -43,45 +44,54 @@ const App: React.FC = () => {
               </section>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Quick Access Cards */}
-                <div className="bg-card p-6 rounded-lg shadow-sm">
-                  <h3 className="text-xl font-semibold mb-2">Interview Practice</h3>
-                  <p className="text-muted-foreground mb-4">Prepare for your next interview with AI-powered practice sessions.</p>
-                  <Link href="/interview">
-                    <a className="text-primary hover:underline">Start Practice →</a>
-                  </Link>
-                </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Interview Practice</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      Prepare for your next interview with AI-powered practice sessions.
+                    </p>
+                    <Link href="/interview">
+                      <a className="text-primary hover:underline">Start Practice →</a>
+                    </Link>
+                  </CardContent>
+                </Card>
 
-                <div className="bg-card p-6 rounded-lg shadow-sm">
-                  <h3 className="text-xl font-semibold mb-2">Wellness Center</h3>
-                  <p className="text-muted-foreground mb-4">Take care of your mental health with guided meditation sessions.</p>
-                  <Link href="/wellness">
-                    <a className="text-primary hover:underline">Start Session →</a>
-                  </Link>
-                </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Wellness Center</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      Take care of your mental health with guided meditation sessions.
+                    </p>
+                    <Link href="/wellness">
+                      <a className="text-primary hover:underline">Start Session →</a>
+                    </Link>
+                  </CardContent>
+                </Card>
 
-                <div className="bg-card p-6 rounded-lg shadow-sm">
-                  <h3 className="text-xl font-semibold mb-2">Financial Planning</h3>
-                  <p className="text-muted-foreground mb-4">Plan your financial future with our comprehensive tools.</p>
-                  <Link href="/finance">
-                    <a className="text-primary hover:underline">View Tools →</a>
-                  </Link>
-                </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Financial Planning</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      Plan your financial future with our comprehensive tools.
+                    </p>
+                    <Link href="/finance">
+                      <a className="text-primary hover:underline">View Tools →</a>
+                    </Link>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </Route>
 
-          <Route path="/interview">
-            <InterviewPractice />
-          </Route>
-
-          <Route path="/wellness">
-            <MeditationGuide />
-          </Route>
-
-          <Route path="/finance">
-            <Finance />
-          </Route>
+          <Route path="/interview" component={InterviewPractice} />
+          <Route path="/wellness" component={MeditationGuide} />
+          <Route path="/finance" component={Finance} />
         </Switch>
       </main>
     </div>
