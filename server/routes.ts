@@ -91,13 +91,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const feedback = await analyzeInterviewAnswer(answer, question, industry);
       res.json({ feedback });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Interview analysis error:", error);
 
       // More specific error messages based on error type
       if (error.name === "ZodError") {
         return res.status(400).json({ 
           error: "Invalid request format. Please check your input." 
+        });
+      }
+
+      // Handle OpenAI specific errors
+      if (error.message.includes('Invalid API key')) {
+        return res.status(503).json({
+          error: "Interview analysis service is currently unavailable. Please try again later."
+        });
+      }
+
+      if (error.message.includes('rate limit exceeded')) {
+        return res.status(429).json({
+          error: "Too many requests. Please wait a moment and try again."
         });
       }
 

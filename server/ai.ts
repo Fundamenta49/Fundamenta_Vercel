@@ -15,6 +15,9 @@ export async function getChatResponse(
   };
 
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -29,8 +32,15 @@ export async function getChatResponse(
     });
 
     return response.choices[0].message.content || "I apologize, I couldn't process that request.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("OpenAI API Error:", error);
+    if (error?.error?.type === "invalid_request_error") {
+      throw new Error("Invalid API request. Please check your input.");
+    } else if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    } else if (error.status === 429) {
+      throw new Error("OpenAI API rate limit exceeded. Please try again later.");
+    }
     return "I'm sorry, I'm having trouble processing your request right now.";
   }
 }
@@ -58,45 +68,9 @@ interface ResumeData {
 
 export async function optimizeResume(resumeData: ResumeData): Promise<string> {
   try {
-    const prompt = `
-As an expert career coach and resume optimizer, please enhance this resume to target the position of ${resumeData.targetPosition}.
-
-Current Resume Information:
-Name: ${resumeData.personalInfo.name}
-Professional Summary: ${resumeData.personalInfo.summary}
-
-Experience:
-${resumeData.experience.map(exp => `
-- Position: ${exp.position}
-  Company: ${exp.company}
-  Duration: ${exp.duration}
-  Description: ${exp.description}
-`).join('\n')}
-
-Education:
-${resumeData.education.map(edu => `
-- ${edu.degree}
-  ${edu.school}
-  ${edu.year}
-`).join('\n')}
-
-Please provide specific suggestions to optimize this resume for the target position, including:
-1. Enhanced professional summary
-2. Recommended keywords and skills to highlight
-3. Suggested improvements to experience descriptions
-4. Overall structure recommendations
-
-Format the response as a JSON object with the following structure:
-{
-  "enhancedSummary": "string",
-  "keywords": ["string"],
-  "experienceSuggestions": [{
-    "original": "string",
-    "improved": "string"
-  }],
-  "structuralChanges": ["string"]
-}`;
-
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -104,7 +78,19 @@ Format the response as a JSON object with the following structure:
           role: "system",
           content: "You are an expert resume optimizer focusing on creating targeted, ATS-friendly resumes. Provide specific, actionable suggestions in JSON format."
         },
-        { role: "user", content: prompt }
+        { 
+          role: "user", 
+          content: `Please optimize this resume for ${resumeData.targetPosition} position and provide suggestions in JSON format with the following structure:
+          {
+            "enhancedSummary": "string",
+            "keywords": ["string"],
+            "experienceSuggestions": [{
+              "original": "string",
+              "improved": "string"
+            }],
+            "structuralChanges": ["string"]
+          }` 
+        }
       ],
       response_format: { type: "json_object" },
       temperature: 0.7,
@@ -112,14 +98,24 @@ Format the response as a JSON object with the following structure:
     });
 
     return response.choices[0].message.content || "Could not generate optimization suggestions.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("OpenAI API Error:", error);
-    throw new Error("Failed to optimize resume");
+    if (error?.error?.type === "invalid_request_error") {
+      throw new Error("Invalid API request. Please check your input.");
+    } else if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    } else if (error.status === 429) {
+      throw new Error("OpenAI API rate limit exceeded. Please try again later.");
+    }
+    throw new Error("Failed to optimize resume: " + (error.message || 'Unknown error'));
   }
 }
 
 export async function getEmergencyGuidance(situation: string): Promise<string> {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -134,8 +130,15 @@ export async function getEmergencyGuidance(situation: string): Promise<string> {
     });
 
     return response.choices[0].message.content || "Unable to provide guidance at this time.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("OpenAI API Error:", error);
+    if (error?.error?.type === "invalid_request_error") {
+      throw new Error("Invalid API request. Please check your input.");
+    } else if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    } else if (error.status === 429) {
+      throw new Error("OpenAI API rate limit exceeded. Please try again later.");
+    }
     return "Emergency services are currently unavailable. Please dial your local emergency number.";
   }
 }
@@ -146,6 +149,10 @@ export async function analyzeInterviewAnswer(
   industry: string
 ): Promise<string> {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -171,8 +178,17 @@ export async function analyzeInterviewAnswer(
     });
 
     return response.choices[0].message.content || "Unable to analyze response at this time.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("OpenAI API Error:", error);
-    throw new Error("Failed to analyze interview response");
+
+    if (error?.error?.type === "invalid_request_error") {
+      throw new Error("Invalid API request. Please check your input.");
+    } else if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    } else if (error.status === 429) {
+      throw new Error("OpenAI API rate limit exceeded. Please try again later.");
+    }
+
+    throw new Error("Failed to analyze interview response: " + (error.message || 'Unknown error'));
   }
 }
