@@ -388,7 +388,7 @@ export default function EmergencyGuide() {
                     <Badge
                       variant={
                         shelter.currentStatus === 'open' ? 'success' :
-                        shelter.currentStatus === 'full' ? 'warning' : 'destructive'
+                          shelter.currentStatus === 'full' ? 'warning' : 'destructive'
                       }
                     >
                       {shelter.currentStatus}
@@ -522,16 +522,14 @@ export default function EmergencyGuide() {
 
 const emergencyGuides = [
   {
-    title: "CPR Guide",
-    description: "Step-by-step instructions for performing CPR",
+    title: "Interactive CPR Training",
+    description: "Learn life-saving CPR skills with our interactive guide",
     steps: [
-      "Check the scene for safety",
-      "Check the person for responsiveness",
-      "Call 911 or ask someone else to",
-      "Check for breathing",
-      "Begin chest compressions",
-      "Give rescue breaths",
-      "Continue CPR until help arrives"
+      "Follow the step-by-step instructions",
+      "Complete knowledge checks",
+      "Track your progress",
+      "Earn achievements",
+      "Remember: This is for learning only - call 911 in real emergencies"
     ]
   },
   {

@@ -8,19 +8,21 @@ import {
 } from "@/components/ui/card";
 import ChatInterface from "@/components/chat-interface";
 import EmergencyGuide from "@/components/emergency-guide";
+import CPRGuide from "@/components/cpr-guide";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Emergency() {
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Emergency Assistance</h1>
-      
+
       <Tabs defaultValue="chat">
         <TabsList className="mb-4">
           <TabsTrigger value="chat">AI Assistant</TabsTrigger>
           <TabsTrigger value="guides">Emergency Guides</TabsTrigger>
+          <TabsTrigger value="cpr">CPR Training</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="chat">
           <Card>
             <CardHeader>
@@ -34,9 +36,13 @@ export default function Emergency() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="guides">
           <EmergencyGuide />
+        </TabsContent>
+
+        <TabsContent value="cpr">
+          <CPRGuide />
         </TabsContent>
       </Tabs>
     </div>
