@@ -122,9 +122,13 @@ export default function ResumeBuilder() {
     mutationFn: async () => {
       const res = await apiRequest("POST", "/api/resume/cover-letter", {
         personalInfo,
+        education,
+        experience,
         targetPosition,
         company,
-        keyExperience: keyExperience.filter(exp => exp.trim()),
+        keyExperience: experience.map(exp => 
+          `${exp.position} at ${exp.company}: ${exp.description}`
+        ),
         additionalNotes,
       });
       if (!res.ok) {
@@ -150,14 +154,28 @@ export default function ResumeBuilder() {
   });
 
   const generateCoverLetter = () => {
-    if (!personalInfo.name || !targetPosition || keyExperience.length === 0) {
+    if (!personalInfo.name || !targetPosition) {
       toast({
         variant: "destructive",
         title: "Missing Information",
-        description: "Please fill in your personal information, target position, and at least one key experience point.",
+        description: "Please fill in your personal information and target position first.",
       });
       return;
     }
+
+    const formattedExperience = experience.map(exp => 
+      `${exp.position} at ${exp.company}: ${exp.description}`
+    );
+
+    const formattedEducation = education.map(edu =>
+      `${edu.degree} from ${edu.school} (${edu.year})`
+    );
+
+    const allExperience = [
+      ...formattedExperience,
+      ...keyExperience
+    ].filter(exp => exp.trim());
+
     coverLetterMutation.mutate();
   };
 
@@ -413,8 +431,7 @@ export default function ResumeBuilder() {
             disabled={
               coverLetterMutation.isPending ||
               !personalInfo.name ||
-              !targetPosition ||
-              keyExperience.length === 0
+              !targetPosition
             }
             className="w-full"
           >

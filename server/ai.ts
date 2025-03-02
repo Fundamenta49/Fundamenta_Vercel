@@ -295,6 +295,17 @@ interface CoverLetterData {
     phone: string;
     summary: string;
   };
+  education: Array<{
+    school: string;
+    degree: string;
+    year: string;
+  }>;
+  experience: Array<{
+    company: string;
+    position: string;
+    duration: string;
+    description: string;
+  }>;
   targetPosition: string;
   company?: string;
   keyExperience: string[];
@@ -322,16 +333,27 @@ export async function generateCoverLetter(data: CoverLetterData): Promise<string
 Candidate information:
 - Name: ${data.personalInfo.name}
 - Professional Summary: ${data.personalInfo.summary}
-- Key Experience:
-${data.keyExperience.map(exp => `  - ${exp}`).join('\n')}
+
+Education:
+${data.education.map(edu => `- ${edu.degree} from ${edu.school} (${edu.year})`).join('\n')}
+
+Experience:
+${data.experience.map(exp => `
+- ${exp.position} at ${exp.company} (${exp.duration})
+  ${exp.description}`).join('\n')}
+
+Additional Key Experience Points:
+${data.keyExperience.map(exp => `- ${exp}`).join('\n')}
 ${data.additionalNotes ? `\nAdditional Notes:\n${data.additionalNotes}` : ''}
 
 The cover letter should:
 1. Be professionally formatted
-2. Highlight relevant experience and skills
-3. Show enthusiasm for the role
+2. Highlight the most relevant experience and skills for the ${data.targetPosition} position
+3. Show enthusiasm for the role${data.company ? ' and the company' : ''}
 4. Include a strong opening and closing
-5. Be concise (around 300-400 words)`
+5. Be concise (around 300-400 words)
+6. Naturally incorporate educational background and work experience
+7. Demonstrate clear progression and growth in career journey`
         }
       ],
       temperature: 0.7,

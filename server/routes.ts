@@ -38,6 +38,17 @@ const coverLetterSchema = z.object({
     phone: z.string(),
     summary: z.string(),
   }),
+  education: z.array(z.object({
+    school: z.string(),
+    degree: z.string(),
+    year: z.string(),
+  })),
+  experience: z.array(z.object({
+    company: z.string(),
+    position: z.string(),
+    duration: z.string(),
+    description: z.string(),
+  })),
   targetPosition: z.string(),
   company: z.string().optional(),
   keyExperience: z.array(z.string()),
