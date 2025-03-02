@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -217,6 +217,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(500).json({
         error: "Failed to generate cover letter. Please try again later."
+      });
+    }
+  });
+
+  app.post("/api/career/assess", async (req, res) => {
+    try {
+      const { answers } = z.object({
+        answers: z.record(z.string(), z.string())
+      }).parse(req.body);
+
+      const results = await assessCareer(answers);
+      res.json(results);
+    } catch (error: any) {
+      console.error("Career assessment error:", error);
+
+      if (error.name === "ZodError") {
+        return res.status(400).json({
+          error: "Invalid request format. Please check your input."
+        });
+      }
+
+      if (error?.error?.type === "invalid_api_key") {
+        return res.status(503).json({
+          error: "Career assessment service is currently unavailable. Please try again later."
+        });
+      }
+
+      if (error.message.includes('rate limit exceeded')) {
+        return res.status(429).json({
+          error: "Too many requests. Please wait a moment and try again."
+        });
+      }
+
+      res.status(500).json({
+        error: "Failed to analyze career assessment. Please try again later."
       });
     }
   });

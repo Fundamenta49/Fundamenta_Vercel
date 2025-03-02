@@ -329,23 +329,23 @@ export async function generateCoverLetter(data: CoverLetterData): Promise<string
         {
           role: "user",
           content: `Create a professional cover letter for a ${data.targetPosition} position${data.company ? ` at ${data.company}` : ''}.
-
+          
 Candidate information:
 - Name: ${data.personalInfo.name}
 - Professional Summary: ${data.personalInfo.summary}
-
+          
 Education:
 ${data.education.map(edu => `- ${edu.degree} from ${edu.school} (${edu.year})`).join('\n')}
-
+          
 Experience:
 ${data.experience.map(exp => `
 - ${exp.position} at ${exp.company} (${exp.duration})
   ${exp.description}`).join('\n')}
-
+          
 Additional Key Experience Points:
 ${data.keyExperience.map(exp => `- ${exp}`).join('\n')}
 ${data.additionalNotes ? `\nAdditional Notes:\n${data.additionalNotes}` : ''}
-
+          
 The cover letter should:
 1. Be professionally formatted
 2. Highlight the most relevant experience and skills for the ${data.targetPosition} position
@@ -380,5 +380,65 @@ The cover letter should:
       throw new Error("OpenAI API rate limit exceeded. Please try again later.");
     }
     throw new Error("Failed to generate cover letter: " + (error.message || 'Unknown error'));
+  }
+}
+
+export async function assessCareer(answers: Record<number, string>): Promise<any> {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
+
+    console.log("Analyzing career assessment with OpenAI...");
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a career counselor expert providing detailed career suggestions based on assessment answers. Return results in JSON format with career suggestions including title, description, required skills, growth potential, and education path."
+        },
+        {
+          role: "user",
+          content: `Based on these assessment answers, suggest 3 suitable careers with detailed information:
+
+          ${Object.entries(answers).map(([id, answer]) => `Question ${id}: ${answer}`).join('\n')}
+
+          Provide response in this JSON format:
+          {
+            "suggestions": [{
+              "title": "Career Title",
+              "description": "Detailed description of the career and why it matches",
+              "skills": ["Required Skill 1", "Required Skill 2", ...],
+              "growth": "Information about career growth and market demand",
+              "education": "Required education and certification path"
+            }]
+          }`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    return JSON.parse(response.choices[0].message.content);
+  } catch (error: any) {
+    console.error("OpenAI API Error:", error);
+    if (error.response) {
+      console.error("OpenAI API Error Response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
+    }
+    if (error?.error?.type === "invalid_api_key") {
+      throw new Error("Invalid API key. Please check your API key configuration.");
+    }
+    if (error?.error?.type === "invalid_request_error") {
+      throw new Error("Invalid API request. Please check your input.");
+    }
+    if (error.message.includes('rate limit exceeded')) {
+      throw new Error("OpenAI API rate limit exceeded. Please try again later.");
+    }
+    throw new Error("Failed to analyze career assessment: " + (error.message || 'Unknown error'));
   }
 }

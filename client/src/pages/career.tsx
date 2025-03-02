@@ -9,18 +9,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import ResumeBuilder from "@/components/resume-builder";
 import InterviewPractice from "@/components/interview-practice";
+import CareerAssessment from "@/components/career-assessment";
 
 export default function Career() {
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Career Development</h1>
 
-      <Tabs defaultValue="chat">
+      <Tabs defaultValue="assessment">
         <TabsList className="mb-4">
+          <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
           <TabsTrigger value="chat">Career Coach</TabsTrigger>
           <TabsTrigger value="resume">Resume Builder</TabsTrigger>
           <TabsTrigger value="interview">Interview Practice</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="assessment">
+          <CareerAssessment />
+        </TabsContent>
 
         <TabsContent value="chat">
           <Card>
