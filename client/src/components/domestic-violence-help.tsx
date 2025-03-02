@@ -37,19 +37,51 @@ const handleQuickExit = () => {
 const defaultSafetyPlanSteps = [
   {
     title: "Important Documents",
-    content: "Keep copies of important documents (ID, birth certificates, financial records) in a safe place or with a trusted person"
+    content: "Keep copies of important documents in a safe place or with a trusted person",
+    items: [
+      "Driver's license and ID cards",
+      "Birth certificates and passports",
+      "Social Security cards",
+      "Insurance policies",
+      "Bank account information",
+      "Medical records and prescriptions"
+    ]
   },
   {
     title: "Emergency Bag",
-    content: "Pack an emergency bag with essentials (clothes, medications, money, copies of keys) and keep it somewhere safe"
+    content: "Pack an emergency bag with essentials",
+    items: [
+      "Clothes for a few days",
+      "Medications",
+      "Cash and change",
+      "Copies of keys",
+      "Phone charger",
+      "Basic toiletries"
+    ]
   },
   {
     title: "Safe Contacts",
-    content: "Memorize or safely store important phone numbers of trusted friends, family, or shelters"
+    content: "Keep important contact information readily available",
+    items: [
+      "Trusted friends and family",
+      "Local domestic violence shelter",
+      "Your doctor's office",
+      "Your children's school",
+      "Local police non-emergency number",
+      "Your lawyer or legal aid"
+    ]
   },
   {
     title: "Plan Escape Routes",
-    content: "Know the quickest and safest ways to leave your home and workplace"
+    content: "Know the safest ways to leave",
+    items: [
+      "Identify all possible exits from your home",
+      "Practice getting out quickly",
+      "Know which doors/windows can be used as exits",
+      "Keep car keys accessible",
+      "Plan where you will go",
+      "Have backup transportation options"
+    ]
   }
 ];
 
@@ -61,8 +93,10 @@ export default function DomesticViolenceHelp() {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : defaultSafetyPlanSteps;
   });
-  const [newStep, setNewStep] = useState({ title: '', content: '' });
+  const [newStep, setNewStep] = useState({ title: '', content: '', items: [] });
   const [isAddingStep, setIsAddingStep] = useState(false);
+  const [editingItemIndex, setEditingItemIndex] = useState<{ stepIndex: number, itemIndex: number | null }>({ stepIndex: -1, itemIndex: null });
+  const [newItem, setNewItem] = useState("");
 
   // Listen for Escape key
   useEffect(() => {
@@ -87,14 +121,33 @@ export default function DomesticViolenceHelp() {
 
   const handleAddStep = () => {
     if (newStep.title && newStep.content) {
-      setSafetyPlanSteps([...safetyPlanSteps, newStep]);
-      setNewStep({ title: '', content: '' });
+      setSafetyPlanSteps([...safetyPlanSteps, { ...newStep, items: [] }]);
+      setNewStep({ title: '', content: '', items: [] });
       setIsAddingStep(false);
     }
   };
 
-  const handleRemoveStep = (index: number) => {
-    setSafetyPlanSteps(safetyPlanSteps.filter((_, i) => i !== index));
+  const handleAddItem = (stepIndex: number) => {
+    if (newItem.trim()) {
+      const updatedSteps = [...safetyPlanSteps];
+      updatedSteps[stepIndex].items.push(newItem.trim());
+      setSafetyPlanSteps(updatedSteps);
+      setNewItem("");
+      setEditingItemIndex({ stepIndex: -1, itemIndex: null });
+    }
+  };
+
+  const handleRemoveItem = (stepIndex: number, itemIndex: number) => {
+    const updatedSteps = [...safetyPlanSteps];
+    updatedSteps[stepIndex].items.splice(itemIndex, 1);
+    setSafetyPlanSteps(updatedSteps);
+  };
+
+  const handleUpdateItem = (stepIndex: number, itemIndex: number, newValue: string) => {
+    const updatedSteps = [...safetyPlanSteps];
+    updatedSteps[stepIndex].items[itemIndex] = newValue;
+    setSafetyPlanSteps(updatedSteps);
+    setEditingItemIndex({ stepIndex: -1, itemIndex: null });
   };
 
   if (!showContent) return null;
@@ -159,30 +212,93 @@ export default function DomesticViolenceHelp() {
             Safety Planning
           </CardTitle>
           <CardDescription>
-            Customize your safety plan - add or remove steps that work for your situation
+            Customize your safety plan - add or modify steps and items that work for your situation
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <Accordion type="single" collapsible className="w-full">
-              {safetyPlanSteps.map((step, index) => (
-                <AccordionItem key={index} value={`step-${index}`}>
-                  <AccordionTrigger className="flex justify-between">
-                    <span>{step.title}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveStep(index);
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </AccordionTrigger>
+              {safetyPlanSteps.map((step, stepIndex) => (
+                <AccordionItem key={stepIndex} value={`step-${stepIndex}`}>
+                  <AccordionTrigger>{step.title}</AccordionTrigger>
                   <AccordionContent>
-                    <p className="text-muted-foreground">{step.content}</p>
+                    <div className="space-y-4">
+                      <p className="text-muted-foreground">{step.content}</p>
+                      <div className="space-y-2">
+                        {step.items.map((item, itemIndex) => (
+                          <div key={itemIndex} className="flex items-center gap-2">
+                            {editingItemIndex.stepIndex === stepIndex && editingItemIndex.itemIndex === itemIndex ? (
+                              <div className="flex-1 flex gap-2">
+                                <Input
+                                  value={newItem || item}
+                                  onChange={(e) => setNewItem(e.target.value)}
+                                  onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleUpdateItem(stepIndex, itemIndex, newItem || item);
+                                    }
+                                  }}
+                                />
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleUpdateItem(stepIndex, itemIndex, newItem || item)}
+                                >
+                                  Save
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setEditingItemIndex({ stepIndex: -1, itemIndex: null });
+                                    setNewItem("");
+                                  }}
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            ) : (
+                              <>
+                                <span className="flex-1">{item}</span>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setEditingItemIndex({ stepIndex, itemIndex });
+                                    setNewItem(item);
+                                  }}
+                                >
+                                  Edit
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleRemoveItem(stepIndex, itemIndex)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                        <div className="flex gap-2 mt-4">
+                          <Input
+                            placeholder="Add new item"
+                            value={editingItemIndex.stepIndex === stepIndex ? newItem : ""}
+                            onChange={(e) => setNewItem(e.target.value)}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter' && editingItemIndex.stepIndex === -1) {
+                                handleAddItem(stepIndex);
+                              }
+                            }}
+                          />
+                          <Button
+                            onClick={() => handleAddItem(stepIndex)}
+                            disabled={!newItem.trim() || editingItemIndex.stepIndex !== -1}
+                          >
+                            Add Item
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -206,7 +322,7 @@ export default function DomesticViolenceHelp() {
                   </Button>
                   <Button variant="outline" onClick={() => {
                     setIsAddingStep(false);
-                    setNewStep({ title: '', content: '' });
+                    setNewStep({ title: '', content: '', items: [] });
                   }}>
                     Cancel
                   </Button>
