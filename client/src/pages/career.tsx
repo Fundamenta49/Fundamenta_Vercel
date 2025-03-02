@@ -10,6 +10,7 @@ import ChatInterface from "@/components/chat-interface";
 import ResumeBuilder from "@/components/resume-builder";
 import InterviewPractice from "@/components/interview-practice";
 import CareerAssessment from "@/components/career-assessment";
+import JobSearch from "@/components/job-search";
 
 export default function Career() {
   return (
@@ -19,6 +20,7 @@ export default function Career() {
       <Tabs defaultValue="assessment">
         <TabsList className="mb-4">
           <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
+          <TabsTrigger value="search">Job Search</TabsTrigger>
           <TabsTrigger value="chat">Career Coach</TabsTrigger>
           <TabsTrigger value="resume">Resume Builder</TabsTrigger>
           <TabsTrigger value="interview">Interview Practice</TabsTrigger>
@@ -26,6 +28,10 @@ export default function Career() {
 
         <TabsContent value="assessment">
           <CareerAssessment />
+        </TabsContent>
+
+        <TabsContent value="search">
+          <JobSearch />
         </TabsContent>
 
         <TabsContent value="chat">

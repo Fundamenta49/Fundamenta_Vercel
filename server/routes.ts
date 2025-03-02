@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
+import { searchJobs } from "./jobs";
 
 const messageSchema = z.object({
   content: z.string(),
@@ -252,6 +253,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(500).json({
         error: "Failed to analyze career assessment. Please try again later."
+      });
+    }
+  });
+
+  app.post("/api/jobs/search", async (req, res) => {
+    try {
+      const { query, location, sources } = z.object({
+        query: z.string(),
+        location: z.string(),
+        sources: z.array(z.string()),
+      }).parse(req.body);
+
+      const jobs = await searchJobs({ query, location, sources });
+      res.json({ jobs });
+    } catch (error: any) {
+      console.error("Job search error:", error);
+
+      if (error.name === "ZodError") {
+        return res.status(400).json({
+          error: "Invalid request format. Please check your input."
+        });
+      }
+
+      res.status(500).json({
+        error: "Failed to search jobs. Please try again later."
       });
     }
   });
