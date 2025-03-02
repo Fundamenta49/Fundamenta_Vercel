@@ -3,31 +3,52 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, Trash2 } from "lucide-react";
 
 interface BudgetItem {
+  id: string;
   category: string;
   amount: number;
 }
 
 export default function BudgetCalculator() {
   const [income, setIncome] = useState<number>(0);
+  const [newCategory, setNewCategory] = useState<string>("");
   const [expenses, setExpenses] = useState<BudgetItem[]>([
-    { category: "Housing", amount: 0 },
-    { category: "Transportation", amount: 0 },
-    { category: "Food", amount: 0 },
-    { category: "Utilities", amount: 0 },
-    { category: "Healthcare", amount: 0 },
-    { category: "Savings", amount: 0 },
+    { id: "1", category: "Housing", amount: 0 },
+    { id: "2", category: "Transportation", amount: 0 },
+    { id: "3", category: "Food", amount: 0 },
+    { id: "4", category: "Utilities", amount: 0 },
+    { id: "5", category: "Healthcare", amount: 0 },
+    { id: "6", category: "Savings", amount: 0 },
   ]);
 
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
   const remaining = income - totalExpenses;
   const expensePercentage = income > 0 ? (totalExpenses / income) * 100 : 0;
 
-  const handleExpenseChange = (index: number, value: string) => {
-    const newExpenses = [...expenses];
-    newExpenses[index].amount = parseFloat(value) || 0;
-    setExpenses(newExpenses);
+  const handleExpenseChange = (id: string, value: string) => {
+    setExpenses(expenses.map(expense => 
+      expense.id === id 
+        ? { ...expense, amount: parseFloat(value) || 0 }
+        : expense
+    ));
+  };
+
+  const addCategory = () => {
+    if (!newCategory.trim()) return;
+
+    const newId = String(Date.now());
+    setExpenses([
+      ...expenses,
+      { id: newId, category: newCategory, amount: 0 }
+    ]);
+    setNewCategory("");
+  };
+
+  const removeCategory = (id: string) => {
+    setExpenses(expenses.filter(expense => expense.id !== id));
   };
 
   return (
@@ -55,16 +76,37 @@ export default function BudgetCalculator() {
           <CardTitle>Monthly Expenses</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {expenses.map((expense, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <Label htmlFor={`expense-${index}`}>{expense.category}</Label>
+          <div className="flex gap-2">
+            <Input
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="New expense category"
+            />
+            <Button
+              onClick={addCategory}
+              disabled={!newCategory.trim()}
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Add
+            </Button>
+          </div>
+
+          {expenses.map((expense) => (
+            <div key={expense.id} className="flex items-center gap-2">
+              <Label className="min-w-[150px]">{expense.category}</Label>
               <Input
-                id={`expense-${index}`}
                 type="number"
                 value={expense.amount || ""}
-                onChange={(e) => handleExpenseChange(index, e.target.value)}
+                onChange={(e) => handleExpenseChange(expense.id, e.target.value)}
                 placeholder={`Enter ${expense.category.toLowerCase()} expenses`}
               />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeCategory(expense.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
           ))}
         </CardContent>
