@@ -117,83 +117,6 @@ export default function ResumeBuilder() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Target Position</CardTitle>
-          <CardDescription>Enter the position you're applying for to get AI-powered optimization</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="targetPosition">Target Position</Label>
-            <Input
-              id="targetPosition"
-              value={targetPosition}
-              onChange={(e) => setTargetPosition(e.target.value)}
-              placeholder="e.g. Senior Software Engineer"
-            />
-          </div>
-          <Button
-            onClick={handleOptimize}
-            disabled={optimizeMutation.isPending || !targetPosition}
-            className="w-full"
-          >
-            <Wand2 className="h-4 w-4 mr-2" />
-            {optimizeMutation.isPending ? "Optimizing..." : "Optimize Resume"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {suggestions && (
-        <Card>
-          <CardHeader>
-            <CardTitle>AI Suggestions</CardTitle>
-            <CardDescription>Recommended improvements for your resume</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Enhanced Summary</Label>
-              <div className="p-4 bg-muted rounded-lg">
-                <p>{suggestions.enhancedSummary}</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Recommended Keywords</Label>
-              <div className="flex flex-wrap gap-2">
-                {suggestions.keywords.map((keyword, index) => (
-                  <span
-                    key={index}
-                    className="px-2 py-1 bg-primary/10 rounded-full text-sm"
-                  >
-                    {keyword}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Experience Improvements</Label>
-              <div className="space-y-4">
-                {suggestions.experienceSuggestions.map((suggestion, index) => (
-                  <div key={index} className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Original:</p>
-                    <p className="pl-4">{suggestion.original}</p>
-                    <p className="text-sm text-muted-foreground">Improved:</p>
-                    <p className="pl-4 text-primary">{suggestion.improved}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Structural Changes</Label>
-              <ul className="list-disc pl-4 space-y-1">
-                {suggestions.structuralChanges.map((change, index) => (
-                  <li key={index} className="text-sm">{change}</li>
-                ))}
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader>
           <CardTitle>Personal Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -245,11 +168,7 @@ export default function ResumeBuilder() {
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
             Education
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={addEducation}
-            >
+            <Button variant="outline" size="sm" onClick={addEducation}>
               <PlusCircle className="h-4 w-4 mr-2" />
               Add Education
             </Button>
@@ -309,11 +228,7 @@ export default function ResumeBuilder() {
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
             Experience
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={addExperience}
-            >
+            <Button variant="outline" size="sm" onClick={addExperience}>
               <PlusCircle className="h-4 w-4 mr-2" />
               Add Experience
             </Button>
@@ -379,6 +294,88 @@ export default function ResumeBuilder() {
           ))}
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Optimize for Target Position</CardTitle>
+          <CardDescription>
+            After filling in your information above, enter your target position to get AI-powered optimization suggestions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="targetPosition">Target Position</Label>
+            <Input
+              id="targetPosition"
+              value={targetPosition}
+              onChange={(e) => setTargetPosition(e.target.value)}
+              placeholder="e.g. Senior Software Engineer"
+            />
+          </div>
+          <Button
+            onClick={handleOptimize}
+            disabled={optimizeMutation.isPending || !targetPosition}
+            className="w-full"
+          >
+            <Wand2 className="h-4 w-4 mr-2" />
+            {optimizeMutation.isPending ? "Optimizing..." : "Optimize Resume"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {suggestions && (
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Suggestions</CardTitle>
+            <CardDescription>Recommended improvements for your resume</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Enhanced Summary</Label>
+              <div className="p-4 bg-muted rounded-lg">
+                <p>{suggestions.enhancedSummary}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Recommended Keywords</Label>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.keywords.map((keyword, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-primary/10 rounded-full text-sm"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Experience Improvements</Label>
+              <div className="space-y-4">
+                {suggestions.experienceSuggestions.map((suggestion, index) => (
+                  <div key={index} className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Original:</p>
+                    <p className="pl-4">{suggestion.original}</p>
+                    <p className="text-sm text-muted-foreground">Improved:</p>
+                    <p className="pl-4 text-primary">{suggestion.improved}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Structural Changes</Label>
+              <ul className="list-disc pl-4 space-y-1">
+                {suggestions.structuralChanges.map((change, index) => (
+                  <li key={index} className="text-sm">{change}</li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
