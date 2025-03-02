@@ -220,7 +220,8 @@ export default function InterviewPractice() {
         industry,
       });
       if (!res.ok) {
-        throw new Error("Failed to analyze response");
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to analyze response");
       }
       return res.json();
     },
@@ -231,13 +232,13 @@ export default function InterviewPractice() {
         description: "AI has analyzed your response.",
       });
     },
-    onError: (err) => {
+    onError: (error: Error) => {
       toast({
         variant: "destructive",
         title: "Analysis Failed",
-        description: "Unable to analyze response. Please try again later.",
+        description: error.message || "Unable to analyze response. Please try again later.",
       });
-      console.error("Error analyzing interview response:", err); //Added error logging
+      console.error("Error analyzing interview response:", error); //Added error logging
     },
   });
 

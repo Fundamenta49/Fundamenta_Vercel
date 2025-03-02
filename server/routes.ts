@@ -102,9 +102,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Handle OpenAI specific errors
-      if (error.message.includes('Invalid API key')) {
+      if (error?.error?.type === "invalid_api_key") {
         return res.status(503).json({
           error: "Interview analysis service is currently unavailable. Please try again later."
+        });
+      }
+
+      if (error?.error?.type === "invalid_request_error") {
+        return res.status(400).json({
+          error: "Invalid API request. Please check your input."
         });
       }
 
