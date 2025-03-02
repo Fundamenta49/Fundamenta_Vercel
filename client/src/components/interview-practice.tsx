@@ -15,9 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, MessageSquare, Video, ThumbsUp } from "lucide-react";
+import { Loader2, MessageSquare, Video, ThumbsUp, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const industryQuestions = {
@@ -44,18 +51,124 @@ const industryQuestions = {
   ],
 };
 
-const confidenceTips = [
-  "Maintain good posture - sit up straight and keep shoulders back",
-  "Practice active listening and maintain appropriate eye contact",
-  "Take deep breaths to stay calm and composed",
-  "Use the STAR method for behavioral questions",
-  "Prepare relevant examples from your experience",
+const interviewTips = [
+  {
+    title: "STAR Method",
+    shortDesc: "Use the STAR method for behavioral questions",
+    fullDesc: `The STAR method is a structured approach to answering behavioral interview questions:
+
+• Situation: Set the scene and context
+• Task: Describe what you were responsible for
+• Action: Explain exactly what you did
+• Result: Share the outcomes of your actions
+
+Example:
+Q: "Tell me about a time you handled a difficult project."
+
+STAR Response:
+✓ Situation: "At my previous company, we faced a critical client deadline for a complex software implementation."
+✓ Task: "I was responsible for coordinating between development and client teams."
+✓ Action: "I created a detailed project timeline, held daily stand-ups, and implemented a new communication protocol."
+✓ Result: "We delivered the project two days early and the client commended our excellent communication."`,
+  },
+  {
+    title: "Body Language",
+    shortDesc: "Maintain good posture and appropriate eye contact",
+    fullDesc: `Key aspects of professional body language:
+
+1. Posture
+• Sit straight but relaxed
+• Keep shoulders back and chin up
+• Avoid crossing arms (appears defensive)
+
+2. Eye Contact
+• Maintain natural eye contact 60-70% of the time
+• When speaking, look at different faces in the panel
+• When listening, focus on the speaker
+
+3. Hand Gestures
+• Use open, natural gestures
+• Keep hands visible but calm
+• Avoid fidgeting or touching face
+
+4. Facial Expressions
+• Maintain a pleasant, engaged expression
+• Smile naturally when appropriate
+• Show active listening through nodding
+
+Practice these in front of a mirror or record yourself to improve!`,
+  },
+  {
+    title: "Experience Examples",
+    shortDesc: "Prepare relevant examples from your experience",
+    fullDesc: `How to prepare compelling experience examples:
+
+1. Create an Experience Bank
+• List 5-7 significant projects/achievements
+• Include challenges overcome
+• Note measurable results
+
+2. Categories to Cover:
+• Leadership
+• Problem-solving
+• Teamwork
+• Conflict resolution
+• Technical skills
+
+3. Structure Each Example:
+• Context: Brief background
+• Challenge: What problem you faced
+• Action: Your specific role
+• Impact: Quantifiable results
+
+Example Template:
+"In my role at [Company], I [action] which resulted in [specific outcome]. This demonstrated my ability to [relevant skill]."
+
+Remember to:
+• Use specific numbers and metrics
+• Keep examples recent (last 2-3 years)
+• Adapt stories to different questions
+• Practice telling them concisely`,
+  },
+  {
+    title: "Active Listening",
+    shortDesc: "Practice active listening and thoughtful responses",
+    fullDesc: `Active Listening Techniques:
+
+1. During the Question
+• Listen completely without interrupting
+• Notice key words and themes
+• Pay attention to the specific type of example requested
+
+2. Before Responding
+• Take a brief pause (1-2 seconds)
+• If needed, clarify any unclear points
+• Structure your response mentally
+
+3. While Responding
+• Address all parts of the question
+• Use specific examples
+• Watch for interviewer cues
+• Keep responses focused (2-3 minutes max)
+
+Common Mistakes to Avoid:
+• Rushing to answer
+• Going off on tangents
+• Missing key parts of complex questions
+• Not providing specific examples
+
+Pro Tips:
+• It's okay to ask for clarification
+• Use phrases like "Let me think about that for a moment"
+• Confirm you've answered fully: "Does that address your question?"`,
+  },
 ];
 
 export default function InterviewPractice() {
   const [industry, setIndustry] = useState<keyof typeof industryQuestions>("general");
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [selectedTip, setSelectedTip] = useState<typeof interviewTips[0] | null>(null);
   const { toast } = useToast();
 
   const analyzeMutation = useMutation({
@@ -168,20 +281,41 @@ export default function InterviewPractice() {
         <CardHeader>
           <CardTitle>Interview Confidence Tips</CardTitle>
           <CardDescription>
-            Follow these tips to improve your interview performance
+            Click on each tip to learn more about the technique
           </CardDescription>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {confidenceTips.map((tip, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <ThumbsUp className="h-4 w-4 mt-1 text-green-500" />
-                <span>{tip}</span>
+            {interviewTips.map((tip, index) => (
+              <li key={index} className="flex items-center justify-between group">
+                <div className="flex items-start gap-2">
+                  <ThumbsUp className="h-4 w-4 mt-1 text-green-500" />
+                  <span>{tip.shortDesc}</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSelectedTip(tip)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Info className="h-4 w-4" />
+                </Button>
               </li>
             ))}
           </ul>
         </CardContent>
       </Card>
+
+      <Dialog open={!!selectedTip} onOpenChange={() => setSelectedTip(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{selectedTip?.title}</DialogTitle>
+            <DialogDescription>
+              <div className="mt-4 whitespace-pre-wrap">{selectedTip?.fullDesc}</div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
