@@ -1,19 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-// Explicitly declare types for better error tracking
-window.React = React;
-
-const App = () => {
+function App() {
   return (
     <div>
-      <h1>Career Development Platform</h1>
+      <h1>Hello World</h1>
     </div>
-  );
-};
+  )
+}
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const domNode = document.getElementById('root')
+const root = ReactDOM.createRoot(domNode)
+root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-);
+)
