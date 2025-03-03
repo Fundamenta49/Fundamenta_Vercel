@@ -13,7 +13,6 @@ import {
   Home,
   MessageSquare,
   Shield,
-  Tool,
   Users,
 } from "lucide-react";
 
