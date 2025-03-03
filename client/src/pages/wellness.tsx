@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import MeditationGuide from "@/components/meditation-guide";
 import NutritionGuide from "@/components/nutrition-guide";
+import ShoppingBuddy from "@/components/shopping-buddy";
 
 export default function Wellness() {
   return (
@@ -19,6 +20,7 @@ export default function Wellness() {
         <TabsList className="mb-4">
           <TabsTrigger value="chat">Wellness Coach</TabsTrigger>
           <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
+          <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
           <TabsTrigger value="meditation">Meditation</TabsTrigger>
         </TabsList>
 
@@ -38,6 +40,10 @@ export default function Wellness() {
 
         <TabsContent value="nutrition">
           <NutritionGuide />
+        </TabsContent>
+
+        <TabsContent value="shopping">
+          <ShoppingBuddy />
         </TabsContent>
 
         <TabsContent value="meditation">
