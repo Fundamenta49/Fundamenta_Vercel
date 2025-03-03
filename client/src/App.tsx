@@ -10,6 +10,7 @@ import Emergency from "@/pages/emergency";
 import Finance from "@/pages/finance";
 import Career from "@/pages/career";
 import Wellness from "@/pages/wellness";
+import LifeSkills from "@/pages/life-skills";
 
 function Router() {
   const { primary, secondary } = useTimeGradient();
@@ -30,6 +31,7 @@ function Router() {
           <Route path="/finance" component={Finance} />
           <Route path="/career" component={Career} />
           <Route path="/wellness" component={Wellness} />
+          <Route path="/life-skills" component={LifeSkills} />
           <Route component={NotFound} />
         </Switch>
       </main>
