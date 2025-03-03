@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, DollarSign, Briefcase, Heart } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap } from "lucide-react";
 import { Link } from "wouter";
 
 const features = [
@@ -30,6 +30,13 @@ const features = [
     icon: Heart,
     href: "/wellness",
     color: "text-purple-500",
+  },
+  {
+    title: "Life Skills",
+    description: "Learn essential skills, personal development, and continuous learning",
+    icon: GraduationCap,
+    href: "/learning",
+    color: "text-orange-500",
   },
 ];
 
