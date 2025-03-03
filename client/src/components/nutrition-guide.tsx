@@ -19,6 +19,9 @@ import {
   Heart,
   Droplets,
   AlertCircle,
+  ShoppingBag,
+  UtensilsCrossed,
+  DollarSign,
 } from "lucide-react";
 import {
   Select,
@@ -58,6 +61,56 @@ const healthTips = [
   },
 ];
 
+const budgetMeals = [
+  {
+    title: "Chickpea Curry Bowl",
+    cost: "$3.50",
+    ingredients: ["Chickpeas", "Rice", "Onion", "Tomatoes", "Curry Spices"],
+    tips: "Buy spices in bulk and rice in large bags for best value"
+  },
+  {
+    title: "Mediterranean Pasta",
+    cost: "$4.20",
+    ingredients: ["Whole Grain Pasta", "Tomatoes", "Spinach", "Olive Oil", "Garlic"],
+    tips: "Use frozen spinach to save money"
+  },
+  {
+    title: "Bean & Rice Burrito Bowl",
+    cost: "$3.80",
+    ingredients: ["Black Beans", "Rice", "Corn", "Peppers", "Seasonings"],
+    tips: "Use dried beans instead of canned for extra savings"
+  },
+  {
+    title: "Lentil Soup",
+    cost: "$2.90",
+    ingredients: ["Lentils", "Carrots", "Onion", "Celery", "Broth"],
+    tips: "Make a large batch and freeze portions"
+  }
+];
+
+const mealPrepTips = [
+  {
+    title: "Prep Basics",
+    tips: [
+      "Choose 2-3 proteins to cook",
+      "Roast multiple vegetables at once",
+      "Cook grains in bulk",
+      "Use similar ingredients across meals",
+      "Store properly in airtight containers"
+    ]
+  },
+  {
+    title: "Time-Saving Tricks",
+    tips: [
+      "Chop vegetables in advance",
+      "Use sheet pan meals",
+      "Cook proteins in slow cooker",
+      "Prepare overnight oats",
+      "Use mason jar salads"
+    ]
+  }
+];
+
 export default function NutritionGuide() {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [habits, setHabits] = useState<HabitTracker>({
@@ -70,6 +123,12 @@ export default function NutritionGuide() {
     goal: "",
     dietaryPreference: "",
     restrictions: "",
+  });
+  const [groceryPreferences, setGroceryPreferences] = useState({
+    diet: "",
+    budget: "",
+    meals: 0,
+    restrictions: ""
   });
 
   const handleQuizSubmit = () => {
@@ -262,6 +321,128 @@ export default function NutritionGuide() {
           </CardContent>
         </Card>
       )}
+
+      {/* Budget Meals Section */}
+      <Card className="border-green-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <DollarSign className="h-5 w-5 text-green-500" />
+            $5 Healthy Meals on a Budget
+          </CardTitle>
+          <CardDescription>
+            Nutritious and affordable meal ideas that won't break the bank
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {budgetMeals.map((meal, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    <span>{meal.title}</span>
+                    <span className="text-green-600">{meal.cost}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p className="font-medium">Ingredients:</p>
+                    <ul className="list-disc list-inside text-sm text-muted-foreground">
+                      {meal.ingredients.map((ingredient, i) => (
+                        <li key={i}>{ingredient}</li>
+                      ))}
+                    </ul>
+                    <p className="text-sm text-muted-foreground italic">
+                      Tip: {meal.tips}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Smart Grocery List Generator */}
+      <Card className="border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShoppingBag className="h-5 w-5 text-blue-500" />
+            Smart Grocery List Generator
+          </CardTitle>
+          <CardDescription>
+            Get a personalized shopping list based on your preferences
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Select
+            value={groceryPreferences.diet}
+            onValueChange={(value) => setGroceryPreferences(prev => ({ ...prev, diet: value }))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select your diet type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="omnivore">Omnivore</SelectItem>
+              <SelectItem value="vegetarian">Vegetarian</SelectItem>
+              <SelectItem value="vegan">Vegan</SelectItem>
+              <SelectItem value="paleo">Paleo</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={groceryPreferences.budget}
+            onValueChange={(value) => setGroceryPreferences(prev => ({ ...prev, budget: value }))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Weekly budget" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="low">$30-50</SelectItem>
+              <SelectItem value="medium">$50-100</SelectItem>
+              <SelectItem value="high">$100+</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Input
+            placeholder="Any dietary restrictions or allergies?"
+            value={groceryPreferences.restrictions}
+            onChange={(e) => setGroceryPreferences(prev => ({ ...prev, restrictions: e.target.value }))}
+          />
+
+          <Button className="w-full">
+            Generate Shopping List
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Meal Prep Guide */}
+      <Card className="border-purple-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <UtensilsCrossed className="h-5 w-5 text-purple-500" />
+            Meal Prep Guide for Beginners
+          </CardTitle>
+          <CardDescription>
+            Quick and easy batch cooking tips for healthy eating
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {mealPrepTips.map((section, index) => (
+              <div key={index} className="space-y-2">
+                <h3 className="font-medium text-lg">{section.title}</h3>
+                <ul className="list-disc list-inside space-y-1">
+                  {section.tips.map((tip, tipIndex) => (
+                    <li key={tipIndex} className="text-sm text-muted-foreground">
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
