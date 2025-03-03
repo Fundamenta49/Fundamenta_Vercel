@@ -22,6 +22,7 @@ import {
   ShoppingBag,
   UtensilsCrossed,
   DollarSign,
+  X,
 } from "lucide-react";
 import {
   Select,
@@ -30,12 +31,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Refrigerator } from "lucide-react";
 
 interface HabitTracker {
   water: number;
   sleep: number;
   exercise: number;
   meditation: number;
+}
+
+interface IngredientList {
+  items: string[];
 }
 
 const healthTips = [
@@ -130,6 +138,9 @@ export default function NutritionGuide() {
     meals: 0,
     restrictions: ""
   });
+  const [ingredients, setIngredients] = useState<string>("");
+  const [ingredientList, setIngredientList] = useState<IngredientList>({ items: [] });
+  const [suggestedMeals, setSuggestedMeals] = useState<string[]>([]);
 
   const handleQuizSubmit = () => {
     setQuizCompleted(true);
@@ -141,6 +152,32 @@ export default function NutritionGuide() {
       ...prev,
       [habit]: value,
     }));
+  };
+
+  const handleAddIngredient = () => {
+    if (ingredients.trim()) {
+      setIngredientList(prev => ({
+        items: [...prev.items, ingredients.trim()]
+      }));
+      setIngredients("");
+    }
+  };
+
+  const handleRemoveIngredient = (index: number) => {
+    setIngredientList(prev => ({
+      items: prev.items.filter((_, i) => i !== index)
+    }));
+  };
+
+  const generateMealSuggestions = () => {
+    // This would integrate with an AI service to get meal suggestions
+    // For now, we'll provide example suggestions
+    setSuggestedMeals([
+      "Quick stir-fry with available vegetables",
+      "One-pot pasta with pantry ingredients",
+      "Custom rice bowl with protein and veggies",
+      "Healthy sandwich combinations"
+    ]);
   };
 
   return (
@@ -321,6 +358,72 @@ export default function NutritionGuide() {
           </CardContent>
         </Card>
       )}
+
+
+      {/* Kitchen Ingredients Meal Suggestions */}
+      <Card className="border-orange-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Refrigerator className="h-5 w-5 text-orange-500" />
+            What's in Your Kitchen?
+          </CardTitle>
+          <CardDescription>
+            Enter ingredients you have available and get AI-powered meal suggestions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Enter ingredients (e.g., rice, chicken, tomatoes)"
+              value={ingredients}
+              onChange={(e) => setIngredients(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleAddIngredient();
+                }
+              }}
+            />
+            <Button onClick={handleAddIngredient}>Add</Button>
+          </div>
+
+          <ScrollArea className="h-24 w-full rounded-md border p-4">
+            <div className="flex flex-wrap gap-2">
+              {ingredientList.items.map((item, index) => (
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="cursor-pointer"
+                  onClick={() => handleRemoveIngredient(index)}
+                >
+                  {item} <X className="h-3 w-3 ml-1" />
+                </Badge>
+              ))}
+            </div>
+          </ScrollArea>
+
+          <Button
+            className="w-full"
+            onClick={generateMealSuggestions}
+            disabled={ingredientList.items.length === 0}
+          >
+            Get Meal Suggestions
+          </Button>
+
+          {suggestedMeals.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="font-medium">Suggested Meals:</h3>
+              <ul className="space-y-2">
+                {suggestedMeals.map((meal, index) => (
+                  <li key={index} className="flex items-center gap-2">
+                    <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{meal}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Budget Meals Section */}
       <Card className="border-green-200">
