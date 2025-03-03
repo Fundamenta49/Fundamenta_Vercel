@@ -157,27 +157,16 @@ export default function NutritionGuide() {
   const [locationError, setLocationError] = useState<string>("");
   const [essentialItems, setEssentialItems] = useState<string[]>([]);
   const [storeComparisons, setStoreComparisons] = useState<StoreComparison[]>([
-    {
-      storeName: "SuperMart",
-      distance: "0.8 miles",
-      prices: [
-        { item: "Milk", price: 3.99, deal: "Buy 2 get 1 free" },
-        { item: "Bread", price: 2.49 },
-        { item: "Eggs", price: 3.29, deal: "20% off this week" },
-      ]
-    },
-    {
-      storeName: "FreshValue",
-      distance: "1.2 miles",
-      prices: [
-        { item: "Milk", price: 4.29 },
-        { item: "Bread", price: 2.29, deal: "BOGO" },
-        { item: "Eggs", price: 2.99 },
-      ]
-    },
+
   ]);
   const [isLoadingStores, setIsLoadingStores] = useState(false);
   const [storeError, setStoreError] = useState<string>("");
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const commonProducts = [
+    "Milk", "Bread", "Eggs", "Chicken", "Rice",
+    "Pasta", "Apples", "Bananas", "Tomatoes", "Potatoes",
+    "Onions", "Cheese", "Yogurt", "Coffee", "Cereal"
+  ];
 
   const handleQuizSubmit = () => {
     setQuizCompleted(true);
@@ -226,35 +215,96 @@ export default function NutritionGuide() {
       // For now, we'll simulate an API delay and update mock data
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      setStoreComparisons([
+      // Simulate different stores based on location
+      const stores = [
         {
-          storeName: "SuperMart",
-          distance: "0.3 miles",
+          storeName: "Kroger",
+          distance: "0.5 miles",
           prices: [
             { item: "Milk", price: 3.99, deal: "Buy 2 get 1 free" },
             { item: "Bread", price: 2.49 },
             { item: "Eggs", price: 3.29, deal: "20% off this week" },
+            {item: "Chicken", price: 6.99},
+            {item: "Rice", price: 4.99},
+            {item: "Pasta", price: 2.99},
+            {item: "Apples", price: 2.49},
+            {item: "Bananas", price: 0.79},
+            {item: "Tomatoes", price: 1.99},
+            {item: "Potatoes", price: 3.49},
+            {item: "Onions", price: 1.29},
+            {item: "Cheese", price: 4.99},
+            {item: "Yogurt", price: 1.99},
+            {item: "Coffee", price: 8.99},
+            {item: "Cereal", price: 4.29}
+
           ]
         },
         {
-          storeName: "FreshValue",
+          storeName: "Whole Foods Market",
           distance: "0.8 miles",
           prices: [
-            { item: "Milk", price: 4.29 },
-            { item: "Bread", price: 2.29, deal: "BOGO" },
-            { item: "Eggs", price: 2.99 },
+            { item: "Milk", price: 4.49 },
+            { item: "Bread", price: 3.99, deal: "Organic" },
+            { item: "Eggs", price: 4.99, deal: "Cage-free" },
+            {item: "Chicken", price: 8.99},
+            {item: "Rice", price: 6.49},
+            {item: "Pasta", price: 3.99},
+            {item: "Apples", price: 3.49},
+            {item: "Bananas", price: 0.99},
+            {item: "Tomatoes", price: 2.49},
+            {item: "Potatoes", price: 4.49},
+            {item: "Onions", price: 1.49},
+            {item: "Cheese", price: 6.49},
+            {item: "Yogurt", price: 2.49},
+            {item: "Coffee", price: 10.99},
+            {item: "Cereal", price: 5.29}
           ]
         },
         {
-          storeName: "ValueMart",
+          storeName: "Trader Joe's",
           distance: "1.2 miles",
           prices: [
+            { item: "Milk", price: 3.79 },
+            { item: "Bread", price: 2.99 },
+            { item: "Eggs", price: 3.49, deal: "Free-range" },
+            {item: "Chicken", price: 7.49},
+            {item: "Rice", price: 5.49},
+            {item: "Pasta", price: 3.49},
+            {item: "Apples", price: 2.99},
+            {item: "Bananas", price: 0.89},
+            {item: "Tomatoes", price: 2.29},
+            {item: "Potatoes", price: 3.99},
+            {item: "Onions", price: 1.39},
+            {item: "Cheese", price: 5.49},
+            {item: "Yogurt", price: 2.29},
+            {item: "Coffee", price: 9.49},
+            {item: "Cereal", price: 4.79}
+          ]
+        },
+        {
+          storeName: "Safeway",
+          distance: "1.5 miles",
+          prices: [
             { item: "Milk", price: 3.89 },
-            { item: "Bread", price: 2.99, deal: "Fresh baked daily" },
-            { item: "Eggs", price: 3.49 },
+            { item: "Bread", price: 2.79, deal: "Fresh baked" },
+            { item: "Eggs", price: 3.19, deal: "Member price" },
+            {item: "Chicken", price: 7.99},
+            {item: "Rice", price: 5.99},
+            {item: "Pasta", price: 2.49},
+            {item: "Apples", price: 2.79},
+            {item: "Bananas", price: 0.84},
+            {item: "Tomatoes", price: 2.19},
+            {item: "Potatoes", price: 3.79},
+            {item: "Onions", price: 1.19},
+            {item: "Cheese", price: 5.99},
+            {item: "Yogurt", price: 1.79},
+            {item: "Coffee", price: 9.99},
+            {item: "Cereal", price: 4.49}
           ]
         }
-      ]);
+      ];
+
+      setStoreComparisons(stores);
     } catch (error) {
       setStoreError("Failed to fetch nearby stores. Please try again.");
     } finally {
@@ -666,6 +716,43 @@ export default function NutritionGuide() {
       </Card>
 
       {/* Store Price Comparison */}
+      <Card className="border-teal-200 mb-4">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShoppingBag className="h-5 w-5 text-teal-500" />
+            Select Products to Compare
+          </CardTitle>
+          <CardDescription>
+            Choose items you want to compare prices for across stores
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            {commonProducts.map((product) => (
+              <Badge
+                key={product}
+                variant={selectedProducts.includes(product) ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedProducts(prev =>
+                    prev.includes(product)
+                      ? prev.filter(p => p !== product)
+                      : [...prev, product]
+                  );
+                }}
+              >
+                {product}
+              </Badge>
+            ))}
+          </div>
+          {selectedProducts.length > 0 && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              Selected {selectedProducts.length} items to compare
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="border-teal-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -743,19 +830,21 @@ export default function NutritionGuide() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      {store.prices.map((item, itemIndex) => (
-                        <div key={itemIndex} className="flex items-center justify-between">
-                          <span>{item.item}</span>
-                          <div className="text-right">
-                            <span className="font-medium">${item.price.toFixed(2)}</span>
-                            {item.deal && (
-                              <Badge variant="secondary" className="ml-2">
-                                {item.deal}
-                              </Badge>
-                            )}
+                      {store.prices
+                        .filter(item => selectedProducts.length === 0 || selectedProducts.includes(item.item))
+                        .map((item, itemIndex) => (
+                          <div key={itemIndex} className="flex items-center justify-between">
+                            <span>{item.item}</span>
+                            <div className="text-right">
+                              <span className="font-medium">${item.price.toFixed(2)}</span>
+                              {item.deal && (
+                                <Badge variant="secondary" className="ml-2">
+                                  {item.deal}
+                                </Badge>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   </CardContent>
                 </Card>
