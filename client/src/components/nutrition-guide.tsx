@@ -34,6 +34,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Refrigerator } from "lucide-react";
+import { MapPin, TrendingDown } from "lucide-react";
 
 interface HabitTracker {
   water: number;
@@ -44,6 +45,16 @@ interface HabitTracker {
 
 interface IngredientList {
   items: string[];
+}
+
+interface StoreComparison {
+  storeName: string;
+  distance: string;
+  prices: {
+    item: string;
+    price: number;
+    deal?: string;
+  }[];
 }
 
 const healthTips = [
@@ -141,6 +152,28 @@ export default function NutritionGuide() {
   const [ingredients, setIngredients] = useState<string>("");
   const [ingredientList, setIngredientList] = useState<IngredientList>({ items: [] });
   const [suggestedMeals, setSuggestedMeals] = useState<string[]>([]);
+  const [location, setLocation] = useState<string>("");
+  const [essentialItems, setEssentialItems] = useState<string[]>([]);
+  const [storeComparisons, setStoreComparisons] = useState<StoreComparison[]>([
+    {
+      storeName: "SuperMart",
+      distance: "0.8 miles",
+      prices: [
+        { item: "Milk", price: 3.99, deal: "Buy 2 get 1 free" },
+        { item: "Bread", price: 2.49 },
+        { item: "Eggs", price: 3.29, deal: "20% off this week" },
+      ]
+    },
+    {
+      storeName: "FreshValue",
+      distance: "1.2 miles",
+      prices: [
+        { item: "Milk", price: 4.29 },
+        { item: "Bread", price: 2.29, deal: "BOGO" },
+        { item: "Eggs", price: 2.99 },
+      ]
+    },
+  ]);
 
   const handleQuizSubmit = () => {
     setQuizCompleted(true);
@@ -543,6 +576,88 @@ export default function NutritionGuide() {
                 </ul>
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Store Price Comparison */}
+      <Card className="border-teal-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingDown className="h-5 w-5 text-teal-500" />
+            Smart Price Comparison
+          </CardTitle>
+          <CardDescription>
+            Find the best deals on groceries at stores near you
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Enter your location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="flex-1"
+            />
+            <Button variant="outline" className="shrink-0">
+              <MapPin className="h-4 w-4 mr-2" />
+              Use Current Location
+            </Button>
+          </div>
+
+          <Alert className="bg-teal-50 border-teal-200">
+            <AlertCircle className="h-4 w-4 text-teal-600" />
+            <AlertDescription className="text-teal-800">
+              AI-powered price tracking helps you save money by comparing prices and finding the best deals.
+            </AlertDescription>
+          </Alert>
+
+          <div className="space-y-4">
+            {storeComparisons.map((store, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    <span>{store.storeName}</span>
+                    <span className="text-sm text-muted-foreground">{store.distance}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {store.prices.map((item, itemIndex) => (
+                      <div key={itemIndex} className="flex items-center justify-between">
+                        <span>{item.item}</span>
+                        <div className="text-right">
+                          <span className="font-medium">${item.price.toFixed(2)}</span>
+                          {item.deal && (
+                            <Badge variant="secondary" className="ml-2">
+                              {item.deal}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="font-medium">Money-Saving Tips:</h3>
+            <ul className="space-y-1">
+              <li className="text-sm text-muted-foreground flex items-center gap-2">
+                <TrendingDown className="h-4 w-4" />
+                Best time to shop: Early mornings for fresh markdowns
+              </li>
+              <li className="text-sm text-muted-foreground flex items-center gap-2">
+                <TrendingDown className="h-4 w-4" />
+                Compare unit prices instead of package prices
+              </li>
+              <li className="text-sm text-muted-foreground flex items-center gap-2">
+                <TrendingDown className="h-4 w-4" />
+                Check store flyers for weekly specials
+              </li>
+            </ul>
           </div>
         </CardContent>
       </Card>
