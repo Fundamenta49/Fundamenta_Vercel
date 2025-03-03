@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { Car, Wrench, Oil, Droplets, AlertCircle } from "lucide-react";
+import { Car, Wrench, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MaintenanceGuide {
