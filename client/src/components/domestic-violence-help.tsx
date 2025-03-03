@@ -9,10 +9,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Phone, 
-  MessageSquare, 
-  Shield, 
+import {
+  Phone,
+  MessageSquare,
+  Shield,
   AlertTriangle,
   Heart,
   LogOut,
@@ -20,7 +20,7 @@ import {
   Plus,
   X
 } from "lucide-react";
-import { 
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -98,8 +98,11 @@ const defaultSafetyPlanSteps: SafetyStep[] = [
 const STORAGE_KEY = 'user_safety_plan';
 
 export default function DomesticViolenceHelp() {
+  console.log("DomesticViolenceHelp component mounting");
+
   const [safetyPlanSteps, setSafetyPlanSteps] = useState<SafetyStep[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
+    console.log("Initial safety plan steps:", stored);
     if (stored) {
       return JSON.parse(stored);
     }
