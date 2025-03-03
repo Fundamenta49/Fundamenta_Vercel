@@ -153,6 +153,8 @@ export default function NutritionGuide() {
   const [ingredientList, setIngredientList] = useState<IngredientList>({ items: [] });
   const [suggestedMeals, setSuggestedMeals] = useState<string[]>([]);
   const [location, setLocation] = useState<string>("");
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string>("");
   const [essentialItems, setEssentialItems] = useState<string[]>([]);
   const [storeComparisons, setStoreComparisons] = useState<StoreComparison[]>([
     {
@@ -210,6 +212,57 @@ export default function NutritionGuide() {
       "One-pot pasta with pantry ingredients",
       "Custom rice bowl with protein and veggies",
       "Healthy sandwich combinations"
+    ]);
+  };
+
+  const getCurrentLocation = () => {
+    setIsLocating(true);
+    setLocationError("");
+
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      setIsLocating(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Here we would normally use a geocoding service to get the address
+        // For now, we'll just show the coordinates
+        setLocation(`${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`);
+        setIsLocating(false);
+        // This would trigger store search in a real implementation
+        searchNearbyStores(position.coords.latitude, position.coords.longitude);
+      },
+      (error) => {
+        setLocationError("Unable to retrieve your location");
+        setIsLocating(false);
+      }
+    );
+  };
+
+  const searchNearbyStores = async (latitude: number, longitude: number) => {
+    // This would normally make an API call to get nearby stores
+    // For now, we'll just update the mock data with different distances
+    setStoreComparisons([
+      {
+        storeName: "SuperMart",
+        distance: "0.3 miles",
+        prices: [
+          { item: "Milk", price: 3.99, deal: "Buy 2 get 1 free" },
+          { item: "Bread", price: 2.49 },
+          { item: "Eggs", price: 3.29, deal: "20% off this week" },
+        ]
+      },
+      {
+        storeName: "FreshValue",
+        distance: "0.8 miles",
+        prices: [
+          { item: "Milk", price: 4.29 },
+          { item: "Bread", price: 2.29, deal: "BOGO" },
+          { item: "Eggs", price: 2.99 },
+        ]
+      },
     ]);
   };
 
@@ -599,18 +652,32 @@ export default function NutritionGuide() {
               onChange={(e) => setLocation(e.target.value)}
               className="flex-1"
             />
-            <Button variant="outline" className="shrink-0">
+            <Button
+              variant="outline"
+              className="shrink-0"
+              onClick={getCurrentLocation}
+              disabled={isLocating}
+            >
               <MapPin className="h-4 w-4 mr-2" />
-              Use Current Location
+              {isLocating ? "Locating..." : "Use Current Location"}
             </Button>
           </div>
 
-          <Alert className="bg-teal-50 border-teal-200">
-            <AlertCircle className="h-4 w-4 text-teal-600" />
-            <AlertDescription className="text-teal-800">
-              AI-powered price tracking helps you save money by comparing prices and finding the best deals.
-            </AlertDescription>
-          </Alert>
+          {locationError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{locationError}</AlertDescription>
+            </Alert>
+          )}
+
+          {location && (
+            <Alert className="bg-teal-50 border-teal-200">
+              <MapPin className="h-4 w-4 text-teal-600" />
+              <AlertDescription className="text-teal-800">
+                Showing stores near: {location}
+              </AlertDescription>
+            </Alert>
+          )}
 
           <div className="space-y-4">
             {storeComparisons.map((store, index) => (
