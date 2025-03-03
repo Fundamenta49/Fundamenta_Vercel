@@ -22,17 +22,44 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { 
-  Scale, 
-  FileText, 
-  AlertTriangle, 
+import {
+  Scale,
+  FileText,
+  AlertTriangle,
   ExternalLink,
   Shield,
   BookOpen
 } from "lucide-react";
 
-// Protective Order Steps
+// Add state-specific form links at the top
+const stateCourtForms = {
+  "California": "https://www.courts.ca.gov/forms.htm?filter=DV",
+  "New York": "https://www.nycourts.gov/forms/familycourt/domesticviolence.shtml",
+  "Texas": "https://www.txcourts.gov/programs-services/protective-order-registry/protective-order-forms/",
+  "Florida": "https://www.flcourts.org/Resources-Services/Court-Improvement/Family-Courts/Family-Law-Self-Help-Information/Family-Law-Forms",
+  "Illinois": "https://www.illinoiscourts.gov/forms/approved-forms/forms-approved-forms-circuit-court/domestic-violence",
+  "Pennsylvania": "https://www.pacourts.us/forms/dependency-forms",
+  "Ohio": "https://www.supremecourt.ohio.gov/JCS/domesticViolence/protection_forms/DVForms/default.asp",
+  "Michigan": "https://courts.michigan.gov/Administration/SCAO/Forms/Pages/Personal-Protection.aspx",
+  "Georgia": "https://georgiacourts.gov/domestic-violence-forms/",
+  "North Carolina": "https://www.nccourts.gov/documents/forms/complaint-and-motion-for-domestic-violence-protective-order",
+  // Add more states
+};
+
+// Update the protectiveOrderSteps to include form information
 const protectiveOrderSteps = [
+  {
+    title: "Find Your State's Forms",
+    content: "Locate and download the correct protective order forms for your state",
+    items: [
+      "Visit your state court's website",
+      "Look for 'Protection Order' or 'Restraining Order' forms",
+      "Download or request the forms",
+      "Check if your court offers online filing",
+      "Consider contacting your local court clerk for guidance",
+      "Some courts offer form-filling assistance"
+    ]
+  },
   {
     title: "Gather Documentation",
     content: "Collect evidence of abuse and important documents",
@@ -80,7 +107,7 @@ const protectiveOrderSteps = [
   }
 ];
 
-// Legal Resources by State
+// Legal Resources by State (remains unchanged)
 const legalResources = {
   general: [
     {
@@ -144,18 +171,19 @@ const violationSteps = [
 
 export default function LegalRightsGuide() {
   const [selectedState, setSelectedState] = useState("");
+  const [showStateForm, setShowStateForm] = useState(false);
   const [legalQuestion, setLegalQuestion] = useState("");
   const [legalResponse, setLegalResponse] = useState("");
 
   const handleLegalQuestion = async () => {
     if (!legalQuestion.trim()) return;
-    
+
     setLegalResponse("Loading response...");
     // Here we would integrate with an AI service to get state-specific legal information
     // For now, we'll provide a placeholder response
     setLegalResponse(
       "This is a preliminary response. Please consult with a legal professional for accurate advice specific to your situation. " +
-      "Your state's domestic violence coalition can provide free legal consultation and resources."
+        "Your state's domestic violence coalition can provide free legal consultation and resources."
     );
   };
 
@@ -169,7 +197,7 @@ export default function LegalRightsGuide() {
         </AlertDescription>
       </Alert>
 
-      {/* Protective Order Guide */}
+      {/* Protective Order Guide with State Selection */}
       <Card className="border-blue-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -177,27 +205,67 @@ export default function LegalRightsGuide() {
             How to File a Protective Order
           </CardTitle>
           <CardDescription>
-            Step-by-step guide to obtaining a protective order
+            Select your state to get specific filing information and forms
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Accordion type="single" collapsible className="w-full">
-            {protectiveOrderSteps.map((step, index) => (
-              <AccordionItem key={index} value={`step-${index}`}>
-                <AccordionTrigger>{step.title}</AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4">
-                    <p className="text-muted-foreground">{step.content}</p>
-                    <ul className="list-disc list-inside space-y-2">
-                      {step.items.map((item, itemIndex) => (
-                        <li key={itemIndex} className="text-sm">{item}</li>
-                      ))}
-                    </ul>
+          <div className="space-y-4">
+            <Select
+              value={selectedState}
+              onValueChange={(value) => {
+                setSelectedState(value);
+                setShowStateForm(true);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select your state" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(stateCourtForms).map((state) => (
+                  <SelectItem key={state} value={state}>
+                    {state}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {showStateForm && selectedState && (
+              <Alert className="bg-blue-50 border-blue-200">
+                <FileText className="h-4 w-4 text-blue-600" />
+                <AlertDescription>
+                  <div className="space-y-2">
+                    <p>Forms for {selectedState} are available online.</p>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between"
+                      onClick={() => window.open(stateCourtForms[selectedState], "_blank")}
+                    >
+                      Access {selectedState} Court Forms
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <Accordion type="single" collapsible className="w-full">
+              {protectiveOrderSteps.map((step, index) => (
+                <AccordionItem key={index} value={`step-${index}`}>
+                  <AccordionTrigger>{step.title}</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-4">
+                      <p className="text-muted-foreground">{step.content}</p>
+                      <ul className="list-disc list-inside space-y-2">
+                        {step.items.map((item, itemIndex) => (
+                          <li key={itemIndex} className="text-sm">{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         </CardContent>
       </Card>
 
@@ -299,7 +367,7 @@ export default function LegalRightsGuide() {
                 value={legalQuestion}
                 onChange={(e) => setLegalQuestion(e.target.value)}
               />
-              <Button 
+              <Button
                 className="w-full"
                 onClick={handleLegalQuestion}
                 disabled={!selectedState || !legalQuestion.trim()}
