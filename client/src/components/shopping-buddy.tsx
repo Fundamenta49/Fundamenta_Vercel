@@ -75,6 +75,16 @@ export default function ShoppingBuddy() {
     restrictions: ""
   });
 
+  const [generatedList, setGeneratedList] = useState<{
+    items: Array<{ name: string; estimatedCost: number }>;
+    totalCost: number;
+    suggestions: string[];
+  }>({
+    items: [],
+    totalCost: 0,
+    suggestions: []
+  });
+
   const commonProducts = [
     "Milk", "Bread", "Eggs", "Chicken", "Rice",
     "Pasta", "Apples", "Bananas", "Tomatoes", "Potatoes",
@@ -99,18 +109,18 @@ export default function ShoppingBuddy() {
             { item: "Milk", price: 3.99, deal: "Buy 2 get 1 free" },
             { item: "Bread", price: 2.49 },
             { item: "Eggs", price: 3.29, deal: "20% off this week" },
-            {item: "Chicken", price: 6.99},
-            {item: "Rice", price: 4.99},
-            {item: "Pasta", price: 2.99},
-            {item: "Apples", price: 2.49},
-            {item: "Bananas", price: 0.79},
-            {item: "Tomatoes", price: 1.99},
-            {item: "Potatoes", price: 3.49},
-            {item: "Onions", price: 1.29},
-            {item: "Cheese", price: 4.99},
-            {item: "Yogurt", price: 1.99},
-            {item: "Coffee", price: 8.99},
-            {item: "Cereal", price: 4.29}
+            { item: "Chicken", price: 6.99 },
+            { item: "Rice", price: 4.99 },
+            { item: "Pasta", price: 2.99 },
+            { item: "Apples", price: 2.49 },
+            { item: "Bananas", price: 0.79 },
+            { item: "Tomatoes", price: 1.99 },
+            { item: "Potatoes", price: 3.49 },
+            { item: "Onions", price: 1.29 },
+            { item: "Cheese", price: 4.99 },
+            { item: "Yogurt", price: 1.99 },
+            { item: "Coffee", price: 8.99 },
+            { item: "Cereal", price: 4.29 }
           ]
         },
         {
@@ -120,18 +130,18 @@ export default function ShoppingBuddy() {
             { item: "Milk", price: 4.49 },
             { item: "Bread", price: 3.99, deal: "Organic" },
             { item: "Eggs", price: 4.99, deal: "Cage-free" },
-            {item: "Chicken", price: 8.99},
-            {item: "Rice", price: 6.49},
-            {item: "Pasta", price: 3.99},
-            {item: "Apples", price: 3.49},
-            {item: "Bananas", price: 0.99},
-            {item: "Tomatoes", price: 2.49},
-            {item: "Potatoes", price: 4.49},
-            {item: "Onions", price: 1.49},
-            {item: "Cheese", price: 6.49},
-            {item: "Yogurt", price: 2.49},
-            {item: "Coffee", price: 10.99},
-            {item: "Cereal", price: 5.29}
+            { item: "Chicken", price: 8.99 },
+            { item: "Rice", price: 6.49 },
+            { item: "Pasta", price: 3.99 },
+            { item: "Apples", price: 3.49 },
+            { item: "Bananas", price: 0.99 },
+            { item: "Tomatoes", price: 2.49 },
+            { item: "Potatoes", price: 4.49 },
+            { item: "Onions", price: 1.49 },
+            { item: "Cheese", price: 6.49 },
+            { item: "Yogurt", price: 2.49 },
+            { item: "Coffee", price: 10.99 },
+            { item: "Cereal", price: 5.29 }
           ]
         },
         {
@@ -141,18 +151,18 @@ export default function ShoppingBuddy() {
             { item: "Milk", price: 3.79 },
             { item: "Bread", price: 2.99 },
             { item: "Eggs", price: 3.49, deal: "Free-range" },
-            {item: "Chicken", price: 7.49},
-            {item: "Rice", price: 5.49},
-            {item: "Pasta", price: 3.49},
-            {item: "Apples", price: 2.99},
-            {item: "Bananas", price: 0.89},
-            {item: "Tomatoes", price: 2.29},
-            {item: "Potatoes", price: 3.99},
-            {item: "Onions", price: 1.39},
-            {item: "Cheese", price: 5.49},
-            {item: "Yogurt", price: 2.29},
-            {item: "Coffee", price: 9.49},
-            {item: "Cereal", price: 4.79}
+            { item: "Chicken", price: 7.49 },
+            { item: "Rice", price: 5.49 },
+            { item: "Pasta", price: 3.49 },
+            { item: "Apples", price: 2.99 },
+            { item: "Bananas", price: 0.89 },
+            { item: "Tomatoes", price: 2.29 },
+            { item: "Potatoes", price: 3.99 },
+            { item: "Onions", price: 1.39 },
+            { item: "Cheese", price: 5.49 },
+            { item: "Yogurt", price: 2.29 },
+            { item: "Coffee", price: 9.49 },
+            { item: "Cereal", price: 4.79 }
           ]
         },
         {
@@ -162,18 +172,18 @@ export default function ShoppingBuddy() {
             { item: "Milk", price: 3.89 },
             { item: "Bread", price: 2.79, deal: "Fresh baked" },
             { item: "Eggs", price: 3.19, deal: "Member price" },
-            {item: "Chicken", price: 7.99},
-            {item: "Rice", price: 5.99},
-            {item: "Pasta", price: 2.49},
-            {item: "Apples", price: 2.79},
-            {item: "Bananas", price: 0.84},
-            {item: "Tomatoes", price: 2.19},
-            {item: "Potatoes", price: 3.79},
-            {item: "Onions", price: 1.19},
-            {item: "Cheese", price: 5.99},
-            {item: "Yogurt", price: 1.79},
-            {item: "Coffee", price: 9.99},
-            {item: "Cereal", price: 4.49}
+            { item: "Chicken", price: 7.99 },
+            { item: "Rice", price: 5.99 },
+            { item: "Pasta", price: 2.49 },
+            { item: "Apples", price: 2.79 },
+            { item: "Bananas", price: 0.84 },
+            { item: "Tomatoes", price: 2.19 },
+            { item: "Potatoes", price: 3.79 },
+            { item: "Onions", price: 1.19 },
+            { item: "Cheese", price: 5.99 },
+            { item: "Yogurt", price: 1.79 },
+            { item: "Coffee", price: 9.99 },
+            { item: "Cereal", price: 4.49 }
           ]
         }
       ];
@@ -220,6 +230,64 @@ export default function ShoppingBuddy() {
         maximumAge: 0
       }
     );
+  };
+
+  const generateGroceryList = () => {
+    // This would normally call an AI service
+    // For now, we'll simulate budget-based suggestions
+    const budgetRanges = {
+      'very-low': { min: 0, max: 30 },
+      'low': { min: 30, max: 50 },
+      'medium': { min: 50, max: 100 },
+      'high': { min: 100, max: 150 },
+      'very-high': { min: 150, max: 300 }
+    };
+
+    const budget = budgetRanges[groceryPreferences.budget];
+
+    // Example generated list based on budget
+    const generateSampleList = () => {
+      if (groceryPreferences.diet === 'vegan') {
+        return {
+          items: [
+            { name: "Tofu (2 blocks)", estimatedCost: 5.98 },
+            { name: "Quinoa (1 lb)", estimatedCost: 4.99 },
+            { name: "Mixed Vegetables", estimatedCost: 6.99 },
+            { name: "Plant-based Milk", estimatedCost: 3.99 },
+            { name: "Legumes (2 cans)", estimatedCost: 3.98 }
+          ],
+          suggestions: [
+            "Buy in bulk to save on staples",
+            "Check frozen vegetables for better value",
+            "Visit local farmers markets for fresh produce deals"
+          ]
+        };
+      } else {
+        return {
+          items: [
+            { name: "Chicken Breast (2 lbs)", estimatedCost: 9.98 },
+            { name: "Brown Rice (2 lbs)", estimatedCost: 3.99 },
+            { name: "Mixed Vegetables", estimatedCost: 6.99 },
+            { name: "Eggs (dozen)", estimatedCost: 3.99 },
+            { name: "Milk (1 gallon)", estimatedCost: 3.89 }
+          ],
+          suggestions: [
+            "Look for family packs of protein for better value",
+            "Compare unit prices between brands",
+            "Check weekly specials for staples"
+          ]
+        };
+      }
+    };
+
+    const list = generateSampleList();
+    const totalCost = list.items.reduce((sum, item) => sum + item.estimatedCost, 0);
+
+    setGeneratedList({
+      items: list.items,
+      totalCost,
+      suggestions: list.suggestions
+    });
   };
 
   return (
@@ -288,9 +356,11 @@ export default function ShoppingBuddy() {
               <SelectValue placeholder="Weekly budget" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="very-low">Under $30</SelectItem>
               <SelectItem value="low">$30-50</SelectItem>
               <SelectItem value="medium">$50-100</SelectItem>
-              <SelectItem value="high">$100+</SelectItem>
+              <SelectItem value="high">$100-150</SelectItem>
+              <SelectItem value="very-high">$150+</SelectItem>
             </SelectContent>
           </Select>
 
@@ -300,9 +370,43 @@ export default function ShoppingBuddy() {
             onChange={(e) => setGroceryPreferences(prev => ({ ...prev, restrictions: e.target.value }))}
           />
 
-          <Button className="w-full">
+          <Button
+            className="w-full"
+            onClick={generateGroceryList}
+            disabled={!groceryPreferences.diet || !groceryPreferences.budget}
+          >
             Generate Shopping List
           </Button>
+
+          {generatedList.items.length > 0 && (
+            <div className="space-y-4 mt-4 p-4 border rounded-md">
+              <h3 className="font-medium">Your Personalized Shopping List:</h3>
+              <div className="space-y-2">
+                {generatedList.items.map((item, index) => (
+                  <div key={index} className="flex justify-between">
+                    <span>{item.name}</span>
+                    <span className="font-medium">${item.estimatedCost.toFixed(2)}</span>
+                  </div>
+                ))}
+                <div className="border-t pt-2 mt-2">
+                  <div className="flex justify-between font-bold">
+                    <span>Estimated Total:</span>
+                    <span>${generatedList.totalCost.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4">
+                <h4 className="font-medium">Shopping Tips:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {generatedList.suggestions.map((tip, index) => (
+                    <li key={index} className="text-sm text-muted-foreground">
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
