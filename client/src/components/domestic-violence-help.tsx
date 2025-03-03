@@ -245,7 +245,7 @@ export default function DomesticViolenceHelp() {
                     <div className="space-y-4">
                       <p className="text-muted-foreground">{step.content}</p>
                       <div className="space-y-2">
-                        {step.items.map((item, itemIndex) => (
+                        {step.items?.map((item, itemIndex) => (
                           <div key={itemIndex} className="flex items-center gap-2">
                             {editingItemIndex.stepIndex === stepIndex && editingItemIndex.itemIndex === itemIndex ? (
                               <div className="flex-1 flex gap-2">
