@@ -1,10 +1,9 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { Heart, GraduationCap } from "lucide-react";
+import { Heart } from "lucide-react";
 
 const toolbarItems = [
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
-  { href: "/life-skills", label: "Life Skills", icon: GraduationCap },
 ];
 
 export default function Toolbar() {
