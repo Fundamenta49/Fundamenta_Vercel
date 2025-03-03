@@ -7,7 +7,8 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
-import { GraduationCap, Book, Target, Brain, Lightbulb } from "lucide-react";
+import VehicleGuide from "@/components/vehicle-guide";
+import { GraduationCap, Book, Target, Brain, Lightbulb, Car } from "lucide-react";
 
 export default function Learning() {
   return (
@@ -18,6 +19,7 @@ export default function Learning() {
         <TabsList className="mb-4">
           <TabsTrigger value="chat">Learning Coach</TabsTrigger>
           <TabsTrigger value="skills">Skill Building</TabsTrigger>
+          <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
           <TabsTrigger value="courses">Learning Paths</TabsTrigger>
           <TabsTrigger value="goals">Goal Setting</TabsTrigger>
         </TabsList>
@@ -78,6 +80,10 @@ export default function Learning() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="vehicle">
+          <VehicleGuide />
         </TabsContent>
 
         <TabsContent value="courses">
