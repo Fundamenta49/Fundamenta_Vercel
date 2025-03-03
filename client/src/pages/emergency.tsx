@@ -11,6 +11,7 @@ import EmergencyGuide from "@/components/emergency-guide";
 import CPRGuide from "@/components/cpr-guide";
 import DomesticViolenceHelp from "@/components/domestic-violence-help";
 import LegalRightsGuide from "@/components/legal-rights-guide";
+import SurvivorStories from "@/components/survivor-stories";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Emergency() {
@@ -25,6 +26,7 @@ export default function Emergency() {
           <TabsTrigger value="cpr">CPR Training</TabsTrigger>
           <TabsTrigger value="safety">Safety Resources</TabsTrigger>
           <TabsTrigger value="legal">Legal Rights</TabsTrigger>
+          <TabsTrigger value="stories">Survivor Stories</TabsTrigger>
         </TabsList>
 
         <TabsContent value="chat">
@@ -55,6 +57,10 @@ export default function Emergency() {
 
         <TabsContent value="legal">
           <LegalRightsGuide />
+        </TabsContent>
+
+        <TabsContent value="stories">
+          <SurvivorStories />
         </TabsContent>
       </Tabs>
     </div>
