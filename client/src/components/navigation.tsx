@@ -22,7 +22,7 @@ const navItems = [
   { href: "/emergency", label: "Emergency", icon: AlertCircle },
   { href: "/finance", label: "Finance", icon: DollarSign },
   { href: "/career", label: "Career", icon: Briefcase },
-  { href: "/wellness", label: "Wellness", icon: Heart },
+  { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
 ];
 
 export default function Navigation() {

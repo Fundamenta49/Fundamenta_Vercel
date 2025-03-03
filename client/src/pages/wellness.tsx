@@ -12,7 +12,7 @@ import MeditationGuide from "@/components/meditation-guide";
 export default function Wellness() {
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Wellness Support</h1>
+      <h1 className="text-3xl font-bold mb-6">Wellness & Nutrition</h1>
 
       <Tabs defaultValue="chat">
         <TabsList className="mb-4">
@@ -25,7 +25,7 @@ export default function Wellness() {
             <CardHeader>
               <CardTitle>Wellness AI Coach</CardTitle>
               <CardDescription>
-                Get guidance for mental health and well-being
+                Get guidance for mental health, well-being, and nutrition
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -25,8 +25,8 @@ const features = [
     color: "text-blue-500",
   },
   {
-    title: "Wellness Support",
-    description: "Access mental health resources and meditation guides",
+    title: "Wellness & Nutrition",
+    description: "Access mental health resources, meditation guides, and nutrition advice",
     icon: Heart,
     href: "/wellness",
     color: "text-purple-500",
