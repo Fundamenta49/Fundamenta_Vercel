@@ -8,7 +8,6 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
-  GraduationCap,
 } from "lucide-react";
 import {
   Sheet,
@@ -24,7 +23,6 @@ const navItems = [
   { href: "/finance", label: "Finance", icon: DollarSign },
   { href: "/career", label: "Career", icon: Briefcase },
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
-  { href: "/life-skills", label: "Life Skills", icon: GraduationCap },
 ];
 
 export default function Navigation() {
