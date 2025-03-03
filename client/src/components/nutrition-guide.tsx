@@ -176,6 +176,8 @@ export default function NutritionGuide() {
       ]
     },
   ]);
+  const [isLoadingStores, setIsLoadingStores] = useState(false);
+  const [storeError, setStoreError] = useState<string>("");
 
   const handleQuizSubmit = () => {
     setQuizCompleted(true);
@@ -215,6 +217,58 @@ export default function NutritionGuide() {
     ]);
   };
 
+  const searchNearbyStores = async (latitude: number, longitude: number) => {
+    setIsLoadingStores(true);
+    setStoreError("");
+
+    try {
+      // This would normally make an API call to get nearby stores
+      // For now, we'll simulate an API delay and update mock data
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      setStoreComparisons([
+        {
+          storeName: "SuperMart",
+          distance: "0.3 miles",
+          prices: [
+            { item: "Milk", price: 3.99, deal: "Buy 2 get 1 free" },
+            { item: "Bread", price: 2.49 },
+            { item: "Eggs", price: 3.29, deal: "20% off this week" },
+          ]
+        },
+        {
+          storeName: "FreshValue",
+          distance: "0.8 miles",
+          prices: [
+            { item: "Milk", price: 4.29 },
+            { item: "Bread", price: 2.29, deal: "BOGO" },
+            { item: "Eggs", price: 2.99 },
+          ]
+        },
+        {
+          storeName: "ValueMart",
+          distance: "1.2 miles",
+          prices: [
+            { item: "Milk", price: 3.89 },
+            { item: "Bread", price: 2.99, deal: "Fresh baked daily" },
+            { item: "Eggs", price: 3.49 },
+          ]
+        }
+      ]);
+    } catch (error) {
+      setStoreError("Failed to fetch nearby stores. Please try again.");
+    } finally {
+      setIsLoadingStores(false);
+    }
+  };
+
+  const handleLocationSearch = (manualLocation: string) => {
+    setLocation(manualLocation);
+    // In a real app, we would geocode the address here
+    // For now, just simulate some coordinates
+    searchNearbyStores(37.7749, -122.4194);
+  };
+
   const getCurrentLocation = () => {
     setIsLocating(true);
     setLocationError("");
@@ -227,43 +281,21 @@ export default function NutritionGuide() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        // Here we would normally use a geocoding service to get the address
-        // For now, we'll just show the coordinates
-        setLocation(`${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`);
+        const { latitude, longitude } = position.coords;
+        setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        searchNearbyStores(latitude, longitude);
         setIsLocating(false);
-        // This would trigger store search in a real implementation
-        searchNearbyStores(position.coords.latitude, position.coords.longitude);
       },
       (error) => {
-        setLocationError("Unable to retrieve your location");
+        setLocationError("Unable to retrieve your location. Please enter it manually.");
         setIsLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
       }
     );
-  };
-
-  const searchNearbyStores = async (latitude: number, longitude: number) => {
-    // This would normally make an API call to get nearby stores
-    // For now, we'll just update the mock data with different distances
-    setStoreComparisons([
-      {
-        storeName: "SuperMart",
-        distance: "0.3 miles",
-        prices: [
-          { item: "Milk", price: 3.99, deal: "Buy 2 get 1 free" },
-          { item: "Bread", price: 2.49 },
-          { item: "Eggs", price: 3.29, deal: "20% off this week" },
-        ]
-      },
-      {
-        storeName: "FreshValue",
-        distance: "0.8 miles",
-        prices: [
-          { item: "Milk", price: 4.29 },
-          { item: "Bread", price: 2.29, deal: "BOGO" },
-          { item: "Eggs", price: 2.99 },
-        ]
-      },
-    ]);
   };
 
   return (
@@ -650,6 +682,11 @@ export default function NutritionGuide() {
               placeholder="Enter your location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleLocationSearch(e.target.value);
+                }
+              }}
               className="flex-1"
             />
             <Button
@@ -670,43 +707,60 @@ export default function NutritionGuide() {
             </Alert>
           )}
 
+          {storeError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{storeError}</AlertDescription>
+            </Alert>
+          )}
+
           {location && (
             <Alert className="bg-teal-50 border-teal-200">
               <MapPin className="h-4 w-4 text-teal-600" />
               <AlertDescription className="text-teal-800">
-                Showing stores near: {location}
+                {isLoadingStores ? (
+                  "Finding stores near your location..."
+                ) : (
+                  `Showing stores near: ${location}`
+                )}
               </AlertDescription>
             </Alert>
           )}
 
           <div className="space-y-4">
-            {storeComparisons.map((store, index) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center justify-between">
-                    <span>{store.storeName}</span>
-                    <span className="text-sm text-muted-foreground">{store.distance}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {store.prices.map((item, itemIndex) => (
-                      <div key={itemIndex} className="flex items-center justify-between">
-                        <span>{item.item}</span>
-                        <div className="text-right">
-                          <span className="font-medium">${item.price.toFixed(2)}</span>
-                          {item.deal && (
-                            <Badge variant="secondary" className="ml-2">
-                              {item.deal}
-                            </Badge>
-                          )}
+            {isLoadingStores ? (
+              <div className="text-center py-4">
+                <p className="text-muted-foreground">Loading nearby stores...</p>
+              </div>
+            ) : (
+              storeComparisons.map((store, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center justify-between">
+                      <span>{store.storeName}</span>
+                      <span className="text-sm text-muted-foreground">{store.distance}</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {store.prices.map((item, itemIndex) => (
+                        <div key={itemIndex} className="flex items-center justify-between">
+                          <span>{item.item}</span>
+                          <div className="text-right">
+                            <span className="font-medium">${item.price.toFixed(2)}</span>
+                            {item.deal && (
+                              <Badge variant="secondary" className="ml-2">
+                                {item.deal}
+                              </Badge>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
 
           <div className="space-y-2">
