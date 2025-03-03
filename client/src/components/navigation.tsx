@@ -5,6 +5,7 @@ import {
   DollarSign,
   Briefcase,
   Heart,
+  GraduationCap,
   Menu,
   ChevronLeft,
   ChevronRight,
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/finance", label: "Finance", icon: DollarSign },
   { href: "/career", label: "Career", icon: Briefcase },
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
+  { href: "/learning", label: "Learning & Development", icon: GraduationCap },
 ];
 
 export default function Navigation() {
