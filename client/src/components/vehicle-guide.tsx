@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Car, Wrench, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -27,6 +27,12 @@ interface MaintenanceGuide {
   notes: string;
 }
 
+interface YouTubeVideo {
+  id: string;
+  title: string;
+  thumbnail: string;
+}
+
 export default function VehicleGuide() {
   const [vehicleInfo, setVehicleInfo] = useState({
     year: "",
@@ -35,6 +41,8 @@ export default function VehicleGuide() {
   });
   const [showGuide, setShowGuide] = useState(false);
   const [selectedTask, setSelectedTask] = useState<string>("");
+  const [videos, setVideos] = useState<YouTubeVideo[]>([]);
+  const [isLoadingVideos, setIsLoadingVideos] = useState(false);
 
   const maintenanceTasks: Record<string, MaintenanceGuide> = {
     "tire-change": {
@@ -99,8 +107,31 @@ export default function VehicleGuide() {
     }
   };
 
+  const fetchYouTubeVideos = async (task: string) => {
+    setIsLoadingVideos(true);
+    try {
+      const query = `${vehicleInfo.year} ${vehicleInfo.make} ${vehicleInfo.model} ${maintenanceTasks[task].title}`;
+      const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      setVideos(data.items.map((item: any) => ({
+        id: item.id.videoId,
+        title: item.snippet.title,
+        thumbnail: item.snippet.thumbnails.medium.url
+      })));
+    } catch (error) {
+      console.error('Error fetching videos:', error);
+    } finally {
+      setIsLoadingVideos(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedTask && showGuide) {
+      fetchYouTubeVideos(selectedTask);
+    }
+  }, [selectedTask]);
+
   const handleSearch = () => {
-    // In a real app, this would fetch vehicle-specific data
     setShowGuide(true);
   };
 
@@ -196,6 +227,34 @@ export default function VehicleGuide() {
                         ))}
                       </ol>
                     </div>
+
+                    {videos.length > 0 && (
+                      <div>
+                        <h3 className="font-medium mb-2">Video Guides:</h3>
+                        <div className="grid gap-4 md:grid-cols-2">
+                          {videos.slice(0, 2).map((video) => (
+                            <a
+                              key={video.id}
+                              href={`https://www.youtube.com/watch?v=${video.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block hover:opacity-90 transition-opacity"
+                            >
+                              <Card>
+                                <img
+                                  src={video.thumbnail}
+                                  alt={video.title}
+                                  className="w-full rounded-t-lg"
+                                />
+                                <CardContent className="p-2">
+                                  <p className="text-sm line-clamp-2">{video.title}</p>
+                                </CardContent>
+                              </Card>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <Alert className="mt-4 bg-orange-50 border-orange-200">
                       <AlertCircle className="h-4 w-4 text-orange-500" />

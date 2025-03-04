@@ -6,6 +6,7 @@ import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { searchJobs } from "./jobs";
 import { createLinkToken, exchangePublicToken, getTransactions } from "./plaid";
+import axios from 'axios';
 
 const messageSchema = z.object({
   content: z.string(),
@@ -346,6 +347,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching transactions:", error);
       res.status(500).json({ error: "Failed to fetch transactions" });
+    }
+  });
+
+  app.get("/api/youtube-search", async (req, res) => {
+    try {
+      const query = req.query.q as string;
+      if (!query) {
+        return res.status(400).json({ error: "Search query is required" });
+      }
+
+      const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+        params: {
+          part: 'snippet',
+          q: query,
+          type: 'video',
+          maxResults: 3,
+          key: process.env.YOUTUBE_API_KEY,
+        }
+      });
+
+      res.json(response.data);
+    } catch (error) {
+      console.error("YouTube API error:", error);
+      res.status(500).json({ error: "Failed to fetch videos" });
     }
   });
 
