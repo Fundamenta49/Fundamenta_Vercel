@@ -54,6 +54,7 @@ export default function VehicleGuide() {
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [customMaintenanceQuery, setCustomMaintenanceQuery] = useState("");
 
   const maintenanceTasks: Record<string, MaintenanceGuide> = {
     "tire-change": {
@@ -165,10 +166,10 @@ export default function VehicleGuide() {
     );
   });
 
-  const fetchYouTubeVideos = async (task: string) => {
+  const fetchYouTubeVideos = async (searchTerm: string) => {
     setIsLoadingVideos(true);
     try {
-      const query = `${vehicleInfo.year} ${vehicleInfo.make} ${vehicleInfo.model} ${maintenanceTasks[task].title}`;
+      const query = `${vehicleInfo.year} ${vehicleInfo.make} ${vehicleInfo.model} ${searchTerm}`;
       const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       setVideos(data.items.map((item: any) => ({
@@ -185,12 +186,18 @@ export default function VehicleGuide() {
 
   useEffect(() => {
     if (selectedTask && showGuide) {
-      fetchYouTubeVideos(selectedTask);
+      fetchYouTubeVideos(maintenanceTasks[selectedTask].title);
     }
   }, [selectedTask]);
 
   const handleSearch = () => {
     setShowGuide(true);
+  };
+
+  const handleCustomSearch = () => {
+    if (customMaintenanceQuery.trim()) {
+      fetchYouTubeVideos(customMaintenanceQuery);
+    }
   };
 
   return (
@@ -241,9 +248,29 @@ export default function VehicleGuide() {
                 </AlertDescription>
               </Alert>
 
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Search for any maintenance task..."
+                  value={customMaintenanceQuery}
+                  onChange={(e) => setCustomMaintenanceQuery(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleCustomSearch();
+                    }
+                  }}
+                />
+                <Button onClick={handleCustomSearch}>
+                  Search
+                </Button>
+              </div>
+
+              <div className="text-sm text-muted-foreground mb-4">
+                Or choose from common maintenance tasks:
+              </div>
+
               <Command className="rounded-lg border shadow-md">
                 <CommandInput 
-                  placeholder="Search maintenance tasks..." 
+                  placeholder="Search common maintenance tasks..." 
                   value={searchQuery}
                   onValueChange={setSearchQuery}
                 />
