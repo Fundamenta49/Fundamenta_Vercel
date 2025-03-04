@@ -16,16 +16,12 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useState, useEffect } from "react";
 import { Car, Wrench, AlertCircle, Check, ChevronsUpDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Refrigerator } from "lucide-react";
 
 interface MaintenanceGuide {
   title: string;
@@ -329,34 +325,6 @@ export default function VehicleGuide() {
                       </ol>
                     </div>
 
-                    {videos.length > 0 && (
-                      <div>
-                        <h3 className="font-medium mb-2">Video Guides:</h3>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          {videos.slice(0, 2).map((video) => (
-                            <a
-                              key={video.id}
-                              href={`https://www.youtube.com/watch?v=${video.id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block hover:opacity-90 transition-opacity"
-                            >
-                              <Card>
-                                <img
-                                  src={video.thumbnail}
-                                  alt={video.title}
-                                  className="w-full rounded-t-lg"
-                                />
-                                <CardContent className="p-2">
-                                  <p className="text-sm line-clamp-2">{video.title}</p>
-                                </CardContent>
-                              </Card>
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
                     <Alert className="mt-4 bg-orange-50 border-orange-200">
                       <AlertCircle className="h-4 w-4 text-orange-500" />
                       <AlertDescription className="text-orange-800">
@@ -365,6 +333,47 @@ export default function VehicleGuide() {
                     </Alert>
                   </CardContent>
                 </Card>
+              )}
+
+              {videos.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Video Guides</CardTitle>
+                    <CardDescription>
+                      Relevant maintenance videos for your vehicle
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {videos.map((video) => (
+                        <a
+                          key={video.id}
+                          href={`https://www.youtube.com/watch?v=${video.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block hover:opacity-90 transition-opacity"
+                        >
+                          <Card>
+                            <img
+                              src={video.thumbnail}
+                              alt={video.title}
+                              className="w-full rounded-t-lg"
+                            />
+                            <CardContent className="p-2">
+                              <p className="text-sm line-clamp-2">{video.title}</p>
+                            </CardContent>
+                          </Card>
+                        </a>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {isLoadingVideos && (
+                <div className="text-center py-4">
+                  <p>Loading relevant videos...</p>
+                </div>
               )}
             </div>
           )}
