@@ -8,15 +8,23 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useState, useEffect } from "react";
-import { Car, Wrench, AlertCircle } from "lucide-react";
+import { Car, Wrench, AlertCircle, Check, ChevronsUpDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
 
 interface MaintenanceGuide {
   title: string;
@@ -43,6 +51,7 @@ export default function VehicleGuide() {
   const [selectedTask, setSelectedTask] = useState<string>("");
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const maintenanceTasks: Record<string, MaintenanceGuide> = {
     "tire-change": {
@@ -104,6 +113,44 @@ export default function VehicleGuide() {
       difficulty: "Easy",
       time: "15-20 minutes",
       notes: "Replace wipers every 6-12 months or when streaking occurs",
+    },
+    "air-filter": {
+      title: "How to Check/Replace Air Filter",
+      steps: [
+        "Locate the air filter housing",
+        "Open the housing carefully",
+        "Remove the old filter",
+        "Inspect filter condition",
+        "Insert new filter if needed",
+        "Close and secure housing",
+      ],
+      tools: [
+        "New air filter (if replacing)",
+        "Screwdriver (if needed)",
+      ],
+      difficulty: "Easy",
+      time: "10-15 minutes",
+      notes: "Replace air filter every 15,000-30,000 miles or when visibly dirty",
+    },
+    "battery-check": {
+      title: "How to Check Battery Health",
+      steps: [
+        "Locate the battery",
+        "Check for corrosion on terminals",
+        "Clean terminals if needed",
+        "Check battery age",
+        "Test battery voltage",
+        "Inspect cables and connections",
+      ],
+      tools: [
+        "Voltmeter",
+        "Battery cleaning solution",
+        "Wire brush",
+        "Safety gloves",
+      ],
+      difficulty: "Easy",
+      time: "15-20 minutes",
+      notes: "Most batteries last 3-5 years. Wear protective gear when handling battery",
     }
   };
 
@@ -183,19 +230,47 @@ export default function VehicleGuide() {
                 </AlertDescription>
               </Alert>
 
-              <Select
-                value={selectedTask}
-                onValueChange={setSelectedTask}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select maintenance task" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="tire-change">Change a Tire</SelectItem>
-                  <SelectItem value="oil-check">Check Oil Level</SelectItem>
-                  <SelectItem value="wipers">Replace Windshield Wipers</SelectItem>
-                </SelectContent>
-              </Select>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between"
+                  >
+                    {selectedTask
+                      ? maintenanceTasks[selectedTask].title
+                      : "Select maintenance task..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="Search maintenance tasks..." />
+                    <CommandEmpty>No task found.</CommandEmpty>
+                    <CommandGroup>
+                      {Object.entries(maintenanceTasks).map(([id, task]) => (
+                        <CommandItem
+                          key={id}
+                          value={id}
+                          onSelect={(currentValue) => {
+                            setSelectedTask(currentValue === selectedTask ? "" : currentValue);
+                            setOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedTask === id ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {task.title}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
 
               {selectedTask && maintenanceTasks[selectedTask] && (
                 <Card>
