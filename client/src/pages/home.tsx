@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">
+        <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
           Welcome to Fundamenta
         </h1>
         <p className="text-lg text-muted-foreground">
@@ -55,13 +55,13 @@ export default function Home() {
       <div className="grid md:grid-cols-2 gap-6">
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href}>
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200">
               <CardHeader>
                 <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
-                <CardTitle>{feature.title}</CardTitle>
+                <CardTitle className="text-[#1C3D5A]">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">{feature.description}</p>
+                <p className="text-gray-600">{feature.description}</p>
               </CardContent>
             </Card>
           </Link>
