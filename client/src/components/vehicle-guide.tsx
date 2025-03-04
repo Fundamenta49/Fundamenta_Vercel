@@ -25,6 +25,7 @@ import { useState, useEffect } from "react";
 import { Car, Wrench, AlertCircle, Check, ChevronsUpDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface MaintenanceGuide {
   title: string;
@@ -52,6 +53,7 @@ export default function VehicleGuide() {
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const maintenanceTasks: Record<string, MaintenanceGuide> = {
     "tire-change": {
@@ -154,6 +156,15 @@ export default function VehicleGuide() {
     }
   };
 
+  const filteredTasks = Object.entries(maintenanceTasks).filter(([id, task]) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      task.title.toLowerCase().includes(searchLower) ||
+      task.steps.some(step => step.toLowerCase().includes(searchLower)) ||
+      task.tools.some(tool => tool.toLowerCase().includes(searchLower))
+    );
+  });
+
   const fetchYouTubeVideos = async (task: string) => {
     setIsLoadingVideos(true);
     try {
@@ -230,47 +241,35 @@ export default function VehicleGuide() {
                 </AlertDescription>
               </Alert>
 
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-full justify-between"
-                  >
-                    {selectedTask
-                      ? maintenanceTasks[selectedTask].title
-                      : "Select maintenance task..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
-                  <Command>
-                    <CommandInput placeholder="Search maintenance tasks..." />
-                    <CommandEmpty>No task found.</CommandEmpty>
-                    <CommandGroup>
-                      {Object.entries(maintenanceTasks).map(([id, task]) => (
-                        <CommandItem
-                          key={id}
-                          value={id}
-                          onSelect={(currentValue) => {
-                            setSelectedTask(currentValue === selectedTask ? "" : currentValue);
-                            setOpen(false);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              selectedTask === id ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          {task.title}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              <Command className="rounded-lg border shadow-md">
+                <CommandInput 
+                  placeholder="Search maintenance tasks..." 
+                  value={searchQuery}
+                  onValueChange={setSearchQuery}
+                />
+                <CommandList>
+                  <CommandEmpty>No maintenance tasks found.</CommandEmpty>
+                  <CommandGroup heading="Available Tasks">
+                    {filteredTasks.map(([id, task]) => (
+                      <CommandItem
+                        key={id}
+                        value={id}
+                        onSelect={() => {
+                          setSelectedTask(id);
+                          setOpen(false);
+                        }}
+                        className="flex items-center justify-between py-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Wrench className="h-4 w-4" />
+                          <span>{task.title}</span>
+                        </div>
+                        <Badge variant="outline">{task.difficulty}</Badge>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
 
               {selectedTask && maintenanceTasks[selectedTask] && (
                 <Card>
