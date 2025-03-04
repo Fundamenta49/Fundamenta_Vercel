@@ -2,7 +2,6 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { useTimeGradient } from "@/hooks/use-time-gradient";
 import Navigation from "@/components/navigation";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
@@ -13,16 +12,8 @@ import Wellness from "@/pages/wellness";
 import Learning from "@/pages/learning";
 
 function Router() {
-  const { primary, secondary } = useTimeGradient();
-
   return (
-    <div 
-      className="min-h-screen bg-background"
-      style={{
-        background: `linear-gradient(135deg, ${primary}, ${secondary})`,
-        transition: 'background 3s ease',
-      }}
-    >
+    <div className="min-h-screen bg-gray-100">
       <Navigation />
       <main className="container mx-auto px-4 py-8 transition-all duration-300 md:ml-[var(--sidebar-width)]">
         <Switch>

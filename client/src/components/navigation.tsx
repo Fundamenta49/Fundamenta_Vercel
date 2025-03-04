@@ -47,8 +47,8 @@ export default function Navigation() {
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left",
               location === href
-                ? "bg-primary text-primary-foreground"
-                : "hover:bg-accent"
+                ? "bg-[#1C3D5A] text-[#D8BFAA]"
+                : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
             )}
           >
             <Icon className="h-5 w-5" />
@@ -79,7 +79,7 @@ export default function Navigation() {
 
   return (
     <div className={cn(
-      "fixed left-0 top-0 h-screen border-r bg-background p-4 transition-all duration-300",
+      "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300",
       isMinimized ? "w-20" : "w-64"
     )}>
       <div className="flex items-center justify-between mb-8">
@@ -92,7 +92,7 @@ export default function Navigation() {
           variant="ghost"
           size="icon"
           onClick={() => setIsMinimized(!isMinimized)}
-          className="ml-auto"
+          className="ml-auto text-[#D8BFAA] hover:text-[#A3C6C4]"
         >
           {isMinimized ? (
             <ChevronRight className="h-4 w-4" />

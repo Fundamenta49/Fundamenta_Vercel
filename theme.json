@@ -1,6 +1,13 @@
 {
   "variant": "professional",
-  "primary": "hsl(222.2 47.4% 11.2%)",
+  "primary": "hsl(209, 53%, 23%)",
   "appearance": "light",
-  "radius": 0.5
+  "radius": 0.5,
+  "colors": {
+    "background": "hsl(0, 0%, 98%)",
+    "foreground": "hsl(209, 53%, 23%)",
+    "muted": "hsl(210, 40%, 96%)",
+    "accent": "hsl(25, 33%, 76%)",
+    "hover": "hsl(177, 23%, 71%)"
+  }
 }
