@@ -17,11 +17,10 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useState, useEffect } from "react";
-import { Car, Wrench, AlertCircle, Check, ChevronsUpDown } from "lucide-react";
+import { Car, Wrench, AlertCircle, Check, ChevronsUpDown, Star } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Refrigerator } from "lucide-react";
 
 interface MaintenanceGuide {
   title: string;
@@ -30,6 +29,7 @@ interface MaintenanceGuide {
   difficulty: string;
   time: string;
   notes: string;
+  isCustom?: boolean;
 }
 
 interface YouTubeVideo {
@@ -51,8 +51,7 @@ export default function VehicleGuide() {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [customMaintenanceQuery, setCustomMaintenanceQuery] = useState("");
-
-  const maintenanceTasks: Record<string, MaintenanceGuide> = {
+  const [maintenanceTasks, setMaintenanceTasks] = useState<Record<string, MaintenanceGuide>>({
     "tire-change": {
       title: "How to Change a Tire",
       steps: [
@@ -151,7 +150,7 @@ export default function VehicleGuide() {
       time: "15-20 minutes",
       notes: "Most batteries last 3-5 years. Wear protective gear when handling battery",
     }
-  };
+  });
 
   const filteredTasks = Object.entries(maintenanceTasks).filter(([id, task]) => {
     const searchLower = searchQuery.toLowerCase();
@@ -161,6 +160,29 @@ export default function VehicleGuide() {
       task.tools.some(tool => tool.toLowerCase().includes(searchLower))
     );
   });
+
+  const addCustomTask = () => {
+    if (customMaintenanceQuery.trim()) {
+      const taskId = `custom-${Date.now()}`;
+      const newTask: MaintenanceGuide = {
+        title: customMaintenanceQuery,
+        steps: ["Search YouTube for detailed instructions"],
+        tools: ["As shown in video guides"],
+        difficulty: "Variable",
+        time: "Variable",
+        notes: "Custom saved task from search",
+        isCustom: true
+      };
+
+      setMaintenanceTasks(prev => ({
+        ...prev,
+        [taskId]: newTask
+      }));
+
+      // Clear the input after saving
+      setCustomMaintenanceQuery("");
+    }
+  };
 
   const fetchYouTubeVideos = async (searchTerm: string) => {
     setIsLoadingVideos(true);
@@ -258,21 +280,29 @@ export default function VehicleGuide() {
                 <Button onClick={handleCustomSearch}>
                   Search
                 </Button>
+                <Button 
+                  variant="outline"
+                  onClick={addCustomTask}
+                  disabled={!customMaintenanceQuery.trim()}
+                >
+                  <Star className="h-4 w-4 mr-2" />
+                  Save
+                </Button>
               </div>
 
               <div className="text-sm text-muted-foreground mb-4">
-                Or choose from common maintenance tasks:
+                Or choose from available tasks:
               </div>
 
               <Command className="rounded-lg border shadow-md">
                 <CommandInput 
-                  placeholder="Search common maintenance tasks..." 
+                  placeholder="Search available tasks..." 
                   value={searchQuery}
                   onValueChange={setSearchQuery}
                 />
                 <CommandList>
                   <CommandEmpty>No maintenance tasks found.</CommandEmpty>
-                  <CommandGroup heading="Available Tasks">
+                  <CommandGroup heading="Common Tasks">
                     {filteredTasks.map(([id, task]) => (
                       <CommandItem
                         key={id}
@@ -284,7 +314,11 @@ export default function VehicleGuide() {
                         className="flex items-center justify-between py-2"
                       >
                         <div className="flex items-center gap-2">
-                          <Wrench className="h-4 w-4" />
+                          {task.isCustom ? (
+                            <Star className="h-4 w-4 text-yellow-500" />
+                          ) : (
+                            <Wrench className="h-4 w-4" />
+                          )}
                           <span>{task.title}</span>
                         </div>
                         <Badge variant="outline">{task.difficulty}</Badge>
