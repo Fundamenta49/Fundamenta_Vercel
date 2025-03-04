@@ -55,3 +55,20 @@
   background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
   background-repeat: repeat;
 }
+
+/* Button styles with wood texture */
+.btn-wood {
+  @apply bg-gradient-to-r from-wood-dark to-wood transition-all duration-300 text-[#f4f1de];
+  box-shadow: 2px 2px 5px rgba(92, 64, 51, 0.2);
+}
+
+.btn-wood:hover {
+  @apply bg-gradient-to-r from-wood to-wood-light;
+  box-shadow: 2px 2px 8px rgba(92, 64, 51, 0.3);
+}
+
+/* Card with sandstone texture */
+.card-sandstone {
+  @apply bg-background bg-texture shadow-custom-md;
+  border: 1px solid rgba(92, 64, 51, 0.1);
+}

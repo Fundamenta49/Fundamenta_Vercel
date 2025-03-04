@@ -254,6 +254,7 @@ export default function VehicleGuide() {
 
           <Button
             className="w-full"
+            variant="wood"
             onClick={handleSearch}
             disabled={!vehicleInfo.year || !vehicleInfo.make || !vehicleInfo.model}
           >
@@ -262,7 +263,7 @@ export default function VehicleGuide() {
 
           {showGuide && (
             <div className="space-y-4">
-              <Alert>
+              <Alert className="card-sandstone">
                 <Car className="h-4 w-4" />
                 <AlertDescription>
                   Showing maintenance guides for: {vehicleInfo.year} {vehicleInfo.make} {vehicleInfo.model}
@@ -279,14 +280,16 @@ export default function VehicleGuide() {
                       handleCustomSearch();
                     }
                   }}
+                  className="bg-texture"
                 />
-                <Button onClick={handleCustomSearch}>
+                <Button variant="wood" onClick={handleCustomSearch}>
                   Search
                 </Button>
                 <Button
                   variant="outline"
                   onClick={addCustomTask}
                   disabled={!customMaintenanceQuery.trim()}
+                  className="hover:bg-wood hover:text-[#f4f1de]"
                 >
                   <Star className="h-4 w-4 mr-2" />
                   Save
