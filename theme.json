@@ -8,6 +8,32 @@
     "foreground": "hsl(209, 53%, 23%)",
     "muted": "hsl(210, 40%, 96%)",
     "accent": "hsl(25, 33%, 76%)",
-    "hover": "hsl(177, 23%, 71%)"
+    "hover": "hsl(177, 23%, 71%)",
+    "primary": {
+      "default": "hsl(209, 53%, 23%)",
+      "light": "hsl(209, 53%, 33%)",
+      "dark": "hsl(209, 53%, 13%)"
+    },
+    "secondary": {
+      "default": "hsl(25, 33%, 76%)",
+      "light": "hsl(25, 33%, 86%)",
+      "dark": "hsl(25, 33%, 66%)"
+    },
+    "accent": {
+      "default": "hsl(177, 23%, 71%)",
+      "light": "hsl(177, 23%, 81%)",
+      "dark": "hsl(177, 23%, 61%)"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "md": "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1)"
+    },
+    "gradients": {
+      "subtle": "linear-gradient(to right, var(--primary-light), var(--primary-dark))",
+      "accent": "linear-gradient(to right, var(--accent-light), var(--accent-dark))"
+    }
   }
 }
