@@ -179,6 +179,8 @@ export default function VehicleGuide() {
         [taskId]: newTask
       }));
 
+      // Fetch videos for the new custom task
+      fetchYouTubeVideos(customMaintenanceQuery);
       // Clear the input after saving
       setCustomMaintenanceQuery("");
     }
@@ -187,7 +189,7 @@ export default function VehicleGuide() {
   const fetchYouTubeVideos = async (searchTerm: string) => {
     setIsLoadingVideos(true);
     try {
-      const query = `${vehicleInfo.year} ${vehicleInfo.make} ${vehicleInfo.model} ${searchTerm}`;
+      const query = `${vehicleInfo.year} ${vehicleInfo.make} ${vehicleInfo.model} ${searchTerm} how to maintenance guide`;
       const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       setVideos(data.items.map((item: any) => ({
@@ -204,9 +206,10 @@ export default function VehicleGuide() {
 
   useEffect(() => {
     if (selectedTask && showGuide) {
-      fetchYouTubeVideos(maintenanceTasks[selectedTask].title);
+      const taskTitle = maintenanceTasks[selectedTask]?.title || "";
+      fetchYouTubeVideos(taskTitle);
     }
-  }, [selectedTask]);
+  }, [selectedTask, vehicleInfo]);
 
   const handleSearch = () => {
     setShowGuide(true);
@@ -249,7 +252,7 @@ export default function VehicleGuide() {
             />
           </div>
 
-          <Button 
+          <Button
             className="w-full"
             onClick={handleSearch}
             disabled={!vehicleInfo.year || !vehicleInfo.make || !vehicleInfo.model}
@@ -280,7 +283,7 @@ export default function VehicleGuide() {
                 <Button onClick={handleCustomSearch}>
                   Search
                 </Button>
-                <Button 
+                <Button
                   variant="outline"
                   onClick={addCustomTask}
                   disabled={!customMaintenanceQuery.trim()}
@@ -295,8 +298,8 @@ export default function VehicleGuide() {
               </div>
 
               <Command className="rounded-lg border shadow-md">
-                <CommandInput 
-                  placeholder="Search available tasks..." 
+                <CommandInput
+                  placeholder="Search available tasks..."
                   value={searchQuery}
                   onValueChange={setSearchQuery}
                 />
@@ -370,34 +373,28 @@ export default function VehicleGuide() {
               )}
 
               {videos.length > 0 && (
-                <Card>
+                <Card className="mt-6">
                   <CardHeader>
                     <CardTitle>Video Guides</CardTitle>
                     <CardDescription>
-                      Relevant maintenance videos for your vehicle
+                      Watch step-by-step maintenance guides for your {vehicleInfo.year} {vehicleInfo.make} {vehicleInfo.model}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-6">
                       {videos.map((video) => (
-                        <a
-                          key={video.id}
-                          href={`https://www.youtube.com/watch?v=${video.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block hover:opacity-90 transition-opacity"
-                        >
-                          <Card>
-                            <img
-                              src={video.thumbnail}
-                              alt={video.title}
-                              className="w-full rounded-t-lg"
+                        <div key={video.id} className="space-y-4">
+                          <div className="aspect-video w-full">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${video.id}`}
+                              title={video.title}
+                              className="w-full h-full rounded-lg"
+                              allowFullScreen
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             />
-                            <CardContent className="p-2">
-                              <p className="text-sm line-clamp-2">{video.title}</p>
-                            </CardContent>
-                          </Card>
-                        </a>
+                          </div>
+                          <h3 className="font-medium text-lg">{video.title}</h3>
+                        </div>
                       ))}
                     </div>
                   </CardContent>
@@ -405,8 +402,9 @@ export default function VehicleGuide() {
               )}
 
               {isLoadingVideos && (
-                <div className="text-center py-4">
-                  <p>Loading relevant videos...</p>
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p>Loading video guides...</p>
                 </div>
               )}
             </div>
