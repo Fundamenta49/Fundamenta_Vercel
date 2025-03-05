@@ -155,11 +155,11 @@ const CarouselContent = React.forwardRef<
   const { carouselRef, orientation } = useCarousel()
 
   return (
-    <div ref={carouselRef} className="overflow-hidden">
+    <div ref={carouselRef} className="w-full overflow-hidden">
       <div
         ref={ref}
         className={cn(
-          "flex",
+          "flex w-full transition-transform duration-300 ease-in-out",
           orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
           className
         )}
@@ -182,7 +182,7 @@ const CarouselItem = React.forwardRef<
       role="group"
       aria-roledescription="slide"
       className={cn(
-        "min-w-0 shrink-0 grow-0 basis-full",
+        "min-w-0 shrink-0 grow-0 basis-full px-4",
         orientation === "horizontal" ? "pl-4" : "pt-4",
         className
       )}
