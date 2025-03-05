@@ -41,53 +41,25 @@
     --input: 0 0% 96%; /* Soft off-white for readability */
     --ring: 208 26% 48%; /* Muted steel blue */
 
-    --radius: 0.5rem;
+    --radius: 0.25rem; /* Sharper corners for refined edges */
   }
 
-  /* Card styles with lighter background */
-  .card {
-    background-color: #F5F5F5 !important;
-    color: #2E2E2E !important;
+  /* Label styling - Sharp and minimalistic */
+  label,
+  .label {
+    @apply text-sm font-medium leading-none;
+    color: #2E2E2E;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
   }
 
-  /* Content areas with lighter background */
-  .category-content {
-    background-color: #F5F5F5;
-    height: calc(100vh - 2rem);
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 1rem;
-    margin: -1rem;
+  /* Form field groups - Structured grid */
+  .form-group {
+    @apply grid gap-2;
+    margin-bottom: 1.5rem;
   }
 
-  /* Keep horizontal scrollbar styling */
-  .category-content::-webkit-scrollbar,
-  .card-container::-webkit-scrollbar,
-  .tabs-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .category-content::-webkit-scrollbar-track,
-  .card-container::-webkit-scrollbar-track,
-  .tabs-container::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .category-content::-webkit-scrollbar-thumb,
-  .card-container::-webkit-scrollbar-thumb,
-  .tabs-container::-webkit-scrollbar-thumb {
-    background: var(--wood);
-    border-radius: 4px;
-  }
-
-  .category-content::-webkit-scrollbar-thumb:hover,
-  .card-container::-webkit-scrollbar-thumb:hover,
-  .tabs-container::-webkit-scrollbar-thumb:hover {
-    background: var(--wood-light);
-  }
-
-  /* Text input styling */
+  /* Input fields - Clean, sharp edges */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -100,11 +72,52 @@
   .text-box {
     background-color: #F5F5F5 !important;
     color: #2E2E2E !important;
-    border: 1px solid var(--wood);
-    @apply rounded-md focus:border-wood/40 focus:ring-wood/30;
+    border: 1px solid rgba(92, 64, 51, 0.2);
+    @apply rounded-sm focus:border-wood/40 focus:ring-wood/30;
+    padding: 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: border-color 0.15s ease;
   }
 
-  /* Rest of the existing styles remain unchanged */
+  /* Glassmorphism for overlays */
+  .glass-overlay {
+    background: rgba(245, 245, 245, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Material texture backgrounds */
+  .bg-brushed {
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(255, 255, 255, 0.1) 75%,
+      rgba(255, 255, 255, 0.1)
+    );
+    background-size: 64px 64px;
+  }
+
+  /* Keep existing component styles but update borders to be sharper */
+  .card {
+    @apply rounded-sm;
+    border: 1px solid rgba(92, 64, 51, 0.1);
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
+  }
+
+  /* Subtle gradients for depth */
+  .gradient-bg {
+    background: linear-gradient(
+      180deg,
+      rgba(245, 245, 245, 1) 0%,
+      rgba(240, 240, 240, 1) 100%
+    );
+  }
+
+  /* Rest of existing styles remain unchanged */
   * {
     @apply border-border;
   }
