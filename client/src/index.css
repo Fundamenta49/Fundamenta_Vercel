@@ -57,51 +57,55 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
     box-shadow: 
-      0 2px 4px rgba(92, 64, 51, 0.05),    /* Subtle outer shadow */
-      0 4px 8px rgba(92, 64, 51, 0.05),    /* Medium outer shadow */
-      inset 0 -2px 4px rgba(255, 255, 255, 0.7),  /* Bottom inner highlight */
-      inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Top inner shadow */
+      0 4px 6px rgba(92, 64, 51, 0.08),    /* Enhanced outer shadow */
+      0 8px 12px rgba(92, 64, 51, 0.06),   /* Medium depth shadow */
+      0 12px 24px rgba(92, 64, 51, 0.04),  /* Far depth shadow */
+      inset 0 -4px 8px rgba(255, 255, 255, 0.9),  /* Stronger bottom highlight */
+      inset 0 2px 6px rgba(0, 0, 0, 0.08); /* Enhanced top shadow */
   }
 
   .card:hover {
-    transform: translateY(-4px) scale(1.01);
+    transform: translateY(-8px) scale(1.02);
     box-shadow: 
-      0 8px 16px rgba(92, 64, 51, 0.08),    /* Larger outer shadow */
-      0 12px 24px rgba(92, 64, 51, 0.08),   /* Spread outer shadow */
-      inset 0 -2px 4px rgba(255, 255, 255, 0.9),  /* Enhanced bottom highlight */
-      inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Consistent top shadow */
+      0 12px 24px rgba(92, 64, 51, 0.12),   /* Larger outer shadow */
+      0 16px 32px rgba(92, 64, 51, 0.1),    /* Enhanced spread shadow */
+      0 24px 48px rgba(92, 64, 51, 0.08),   /* Far depth shadow */
+      inset 0 -4px 8px rgba(255, 255, 255, 1),  /* Maximum bottom highlight */
+      inset 0 2px 6px rgba(0, 0, 0, 0.06);  /* Subtle top shadow */
   }
 
   .card:active {
-    transform: translateY(-2px) scale(0.99);
+    transform: translateY(-4px) scale(0.98);
     box-shadow: 
-      0 4px 8px rgba(92, 64, 51, 0.06),
-      0 6px 12px rgba(92, 64, 51, 0.06),
-      inset 0 -2px 4px rgba(255, 255, 255, 0.8),
-      inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      0 8px 16px rgba(92, 64, 51, 0.1),
+      0 12px 24px rgba(92, 64, 51, 0.08),
+      inset 0 -4px 8px rgba(255, 255, 255, 0.9),
+      inset 0 2px 6px rgba(0, 0, 0, 0.08);
   }
 
-  /* Card header enhancement */
+  /* Enhanced card header */
   .card-header {
     position: relative;
     z-index: 1;
     background: linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0.5)
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0.8)
     );
-    border-bottom: 1px solid rgba(92, 64, 51, 0.1);
+    border-bottom: 2px solid rgba(92, 64, 51, 0.1);
+    padding: 1.5rem;
   }
 
-  /* Card content enhancement */
+  /* Enhanced card content */
   .card-content {
     position: relative;
     z-index: 0;
     background: linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.8)
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0.95)
     );
+    padding: 1.5rem;
   }
 
 
