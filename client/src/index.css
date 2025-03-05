@@ -44,7 +44,7 @@
 
 /* Base component styles */
 .base-component {
-  @apply bg-[#F3F4F6] border-wood/20 rounded-lg shadow-sm;
+  @apply rounded-lg shadow-sm border-wood/20;
 }
 
 /* Command menu styles */
@@ -55,7 +55,7 @@
 [role="listbox"],
 [role="menu"],
 [data-radix-popper-content-wrapper] {
-  @apply bg-[#F3F4F6] border-wood/20;
+  @apply border-wood/20;
 }
 
 [cmdk-input],
@@ -73,7 +73,7 @@
 
 /* Card styles */
 .card-sandstone {
-  @apply bg-[#F3F4F6] shadow-sm border-wood/20;
+  @apply shadow-sm border-wood/20;
   border: 1px solid rgba(92, 64, 51, 0.2);
 }
 
@@ -100,12 +100,12 @@ select,
 .select-content,
 .dropdown-content,
 .popover-content {
-  @apply bg-[#F3F4F6] border-wood/20 shadow-sm rounded-md;
+  @apply border-wood/20 shadow-sm rounded-md;
 }
 
 /* Dialog and modal styles */
 .dialog-content {
-  @apply bg-[#F3F4F6] border-wood/20 shadow-md rounded-lg;
+  @apply border-wood/20 shadow-md rounded-lg;
 }
 
 .bg-wood {
