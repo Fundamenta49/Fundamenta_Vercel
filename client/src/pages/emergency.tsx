@@ -20,14 +20,16 @@ export default function Emergency() {
       <h1 className="text-3xl font-bold mb-6">Emergency Assistance</h1>
 
       <Tabs defaultValue="chat">
-        <TabsList className="mb-4">
-          <TabsTrigger value="chat">AI Assistant</TabsTrigger>
-          <TabsTrigger value="guides">Emergency Guides</TabsTrigger>
-          <TabsTrigger value="cpr">CPR Training</TabsTrigger>
-          <TabsTrigger value="safety">Safety Resources</TabsTrigger>
-          <TabsTrigger value="legal">Legal Rights</TabsTrigger>
-          <TabsTrigger value="stories">Survivor Stories</TabsTrigger>
-        </TabsList>
+        <div className="tabs-container">
+          <TabsList className="mb-4">
+            <TabsTrigger value="chat">AI Assistant</TabsTrigger>
+            <TabsTrigger value="guides">Emergency Guides</TabsTrigger>
+            <TabsTrigger value="cpr">CPR Training</TabsTrigger>
+            <TabsTrigger value="safety">Safety Resources</TabsTrigger>
+            <TabsTrigger value="legal">Legal Rights</TabsTrigger>
+            <TabsTrigger value="stories">Survivor Stories</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="chat">
           <Card>

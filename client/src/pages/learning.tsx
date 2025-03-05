@@ -16,13 +16,15 @@ export default function Learning() {
       <h1 className="text-3xl font-bold mb-6">Learning & Development</h1>
 
       <Tabs defaultValue="chat">
-        <TabsList className="mb-4">
-          <TabsTrigger value="chat">Learning Coach</TabsTrigger>
-          <TabsTrigger value="skills">Skill Building</TabsTrigger>
-          <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
-          <TabsTrigger value="courses">Learning Paths</TabsTrigger>
-          <TabsTrigger value="goals">Goal Setting</TabsTrigger>
-        </TabsList>
+        <div className="tabs-container">
+          <TabsList className="mb-4">
+            <TabsTrigger value="chat">Learning Coach</TabsTrigger>
+            <TabsTrigger value="skills">Skill Building</TabsTrigger>
+            <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
+            <TabsTrigger value="courses">Learning Paths</TabsTrigger>
+            <TabsTrigger value="goals">Goal Setting</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="chat">
           <Card>
