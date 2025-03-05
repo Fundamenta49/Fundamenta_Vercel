@@ -56,22 +56,25 @@
     color: #2E2E2E !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
+    position: relative;
+    z-index: 1;
     box-shadow: 
-      0 4px 6px rgba(92, 64, 51, 0.08),    /* Enhanced outer shadow */
-      0 8px 12px rgba(92, 64, 51, 0.06),   /* Medium depth shadow */
-      0 12px 24px rgba(92, 64, 51, 0.04),  /* Far depth shadow */
-      inset 0 -4px 8px rgba(255, 255, 255, 0.9),  /* Stronger bottom highlight */
-      inset 0 2px 6px rgba(0, 0, 0, 0.08); /* Enhanced top shadow */
+      0 4px 6px rgba(92, 64, 51, 0.08),
+      0 8px 12px rgba(92, 64, 51, 0.06),
+      0 12px 24px rgba(92, 64, 51, 0.04),
+      inset 0 -4px 8px rgba(255, 255, 255, 0.9),
+      inset 0 2px 6px rgba(0, 0, 0, 0.08);
   }
 
   .card:hover {
     transform: translateY(-8px) scale(1.02);
+    z-index: 2; /* Slightly higher when hovered */
     box-shadow: 
-      0 12px 24px rgba(92, 64, 51, 0.12),   /* Larger outer shadow */
-      0 16px 32px rgba(92, 64, 51, 0.1),    /* Enhanced spread shadow */
-      0 24px 48px rgba(92, 64, 51, 0.08),   /* Far depth shadow */
-      inset 0 -4px 8px rgba(255, 255, 255, 1),  /* Maximum bottom highlight */
-      inset 0 2px 6px rgba(0, 0, 0, 0.06);  /* Subtle top shadow */
+      0 12px 24px rgba(92, 64, 51, 0.12),
+      0 16px 32px rgba(92, 64, 51, 0.1),
+      0 24px 48px rgba(92, 64, 51, 0.08),
+      inset 0 -4px 8px rgba(255, 255, 255, 1),
+      inset 0 2px 6px rgba(0, 0, 0, 0.06);
   }
 
   .card:active {
@@ -129,10 +132,10 @@
     line-height: 1.4;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 
-      0 2px 4px rgba(92, 64, 51, 0.05),    /* Subtle outer shadow */
-      0 4px 8px rgba(92, 64, 51, 0.05),    /* Medium outer shadow */
-      inset 0 -2px 4px rgba(255, 255, 255, 0.7),  /* Bottom inner highlight */
-      inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Top inner shadow */
+      0 2px 4px rgba(92, 64, 51, 0.05),
+      0 4px 8px rgba(92, 64, 51, 0.05),
+      inset 0 -2px 4px rgba(255, 255, 255, 0.7),
+      inset 0 2px 4px rgba(0, 0, 0, 0.05);
     transform: translateY(0);
   }
 
@@ -143,10 +146,10 @@
     transform: translateY(-2px);
     border-color: var(--wood);
     box-shadow: 
-      0 4px 8px rgba(92, 64, 51, 0.08),    /* Larger outer shadow */
-      0 8px 16px rgba(92, 64, 51, 0.08),   /* Spread outer shadow */
-      inset 0 -2px 4px rgba(255, 255, 255, 0.9),  /* Enhanced bottom highlight */
-      inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Consistent top shadow */
+      0 4px 8px rgba(92, 64, 51, 0.08),
+      0 8px 16px rgba(92, 64, 51, 0.08),
+      inset 0 -2px 4px rgba(255, 255, 255, 0.9),
+      inset 0 2px 4px rgba(0, 0, 0, 0.05);
     outline: none;
   }
 
@@ -239,7 +242,6 @@
     margin-bottom: 1.5rem;
   }
 
-
   /* Tabs animation */
   .tabs-container [role="tab"] {
     transition: all 0.2s ease;
@@ -327,9 +329,12 @@
   main {
     flex: 1;
     width: 100%;
-    max-width: 100vw;
+    max-width: calc(100vw - 256px); /* Adjust for toolbar width */
+    margin-left: 256px; /* Match toolbar width */
     overflow-x: hidden;
     padding: 1rem;
+    position: relative;
+    z-index: 1; /* Lower than toolbar */
   }
 
   /* Category content container */
@@ -373,7 +378,6 @@
     }
   }
 
-
   /* Horizontal scrolling containers */
   .scroll-container-x {
     width: 100%;
@@ -401,7 +405,6 @@
   .scroll-container-x::-webkit-scrollbar-thumb:hover {
     background: var(--wood-light);
   }
-
 
   /* Add styles for tab container scrolling */
   .tabs-container {
@@ -439,7 +442,6 @@
     gap: 1rem;
     padding: 0 0.5rem;
   }
-
 
   /* Command menu styles - keeping light backgrounds */
   .cm-base,
@@ -519,5 +521,14 @@
     min-height: 100vh;
     margin: 0;
     padding: 0;
+  }
+
+  nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 256px;
+    z-index: 50; /* Ensure toolbar stays above content */
   }
 }
