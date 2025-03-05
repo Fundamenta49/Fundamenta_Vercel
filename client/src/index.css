@@ -60,7 +60,7 @@
 
 [cmdk-input],
 .input-base {
-  @apply bg-[#F3F4F6] border-wood/20 focus:border-wood/40 focus:ring-wood/30;
+  @apply border-wood/20 focus:border-wood/40 focus:ring-wood/30;
 }
 
 [cmdk-list] {
@@ -93,7 +93,7 @@ input,
 textarea,
 select,
 .input-control {
-  @apply bg-[#F3F4F6] border-wood/20 focus:border-wood/40 focus:ring-wood/30 rounded-md;
+  @apply border-wood/20 focus:border-wood/40 focus:ring-wood/30 rounded-md;
 }
 
 /* Dropdown and select styles */

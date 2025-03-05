@@ -354,10 +354,11 @@ export default function LegalRightsGuide() {
                   <SelectValue placeholder="Select your state" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="CA">California</SelectItem>
-                  <SelectItem value="NY">New York</SelectItem>
-                  <SelectItem value="TX">Texas</SelectItem>
-                  {/* Add more states */}
+                  {Object.keys(stateCourtForms).map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -366,6 +367,7 @@ export default function LegalRightsGuide() {
                 placeholder="Ask about domestic violence laws in your state..."
                 value={legalQuestion}
                 onChange={(e) => setLegalQuestion(e.target.value)}
+                className="border-wood/20"
               />
               <Button
                 className="w-full"
