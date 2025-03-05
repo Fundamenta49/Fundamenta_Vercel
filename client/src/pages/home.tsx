@@ -4,13 +4,6 @@ import { Link } from "wouter";
 
 const features = [
   {
-    title: "Emergency Guidance",
-    description: "Get instant step-by-step guidance for emergency situations",
-    icon: AlertCircle,
-    href: "/emergency",
-    color: "text-red-500",
-  },
-  {
     title: "Financial Literacy",
     description: "Learn budgeting, savings, and financial planning",
     icon: DollarSign,
@@ -37,6 +30,13 @@ const features = [
     icon: GraduationCap,
     href: "/learning",
     color: "text-orange-500",
+  },
+  {
+    title: "Emergency Guidance",
+    description: "Get instant step-by-step guidance for emergency situations",
+    icon: AlertCircle,
+    href: "/emergency",
+    color: "text-red-500",
   },
 ];
 
