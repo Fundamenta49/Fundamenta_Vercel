@@ -32,13 +32,15 @@ export default function Finance() {
       </Alert>
 
       <Tabs defaultValue="dashboard">
-        <TabsList className="mb-4">
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
-          <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
-          <TabsTrigger value="chat">Financial Advisor</TabsTrigger>
-          <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
-        </TabsList>
+        <div className="tabs-container">
+          <TabsList className="mb-4">
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
+            <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
+            <TabsTrigger value="chat">Financial Advisor</TabsTrigger>
+            <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="dashboard">
           <FinancialDashboard budgetData={budgetData} />

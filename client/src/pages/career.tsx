@@ -20,15 +20,17 @@ export default function Career() {
       <h1 className="text-3xl font-bold mb-6">Career Development</h1>
 
       <Tabs defaultValue="assessment">
-        <TabsList className="mb-4">
-          <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
-          <TabsTrigger value="search">Job Search</TabsTrigger>
-          <TabsTrigger value="salary">Salary Insights</TabsTrigger>
-          <TabsTrigger value="rights">Employment Rights</TabsTrigger>
-          <TabsTrigger value="chat">Career Coach</TabsTrigger>
-          <TabsTrigger value="resume">Resume Builder</TabsTrigger>
-          <TabsTrigger value="interview">Interview Practice</TabsTrigger>
-        </TabsList>
+        <div className="tabs-container">
+          <TabsList className="mb-4">
+            <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
+            <TabsTrigger value="search">Job Search</TabsTrigger>
+            <TabsTrigger value="salary">Salary Insights</TabsTrigger>
+            <TabsTrigger value="rights">Employment Rights</TabsTrigger>
+            <TabsTrigger value="chat">Career Coach</TabsTrigger>
+            <TabsTrigger value="resume">Resume Builder</TabsTrigger>
+            <TabsTrigger value="interview">Interview Practice</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="assessment">
           <CareerAssessment />
