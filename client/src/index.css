@@ -19,6 +19,10 @@
     --muted: 208 26% 48%; /* Muted steel blue #5A789A */
     --muted-foreground: 0 0% 18%; /* Dark metal for contrast */
 
+    /* Card and content backgrounds */
+    --card: 0 0% 96%; /* Soft off-white #F5F5F5 */
+    --card-foreground: 0 0% 18%; /* Dark metal for text */
+
     /* Accent colors */
     --accent: 177 23% 71%; /* Seafoam green #A3C6C4 */
     --accent-foreground: 200 27% 23%; /* Deep navy */
@@ -40,7 +44,67 @@
     --radius: 0.5rem;
   }
 
-  /* Keep existing component styles and structure */
+  /* Card styles with lighter background */
+  .card {
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
+  }
+
+  /* Content areas with lighter background */
+  .category-content {
+    background-color: #F5F5F5;
+    height: calc(100vh - 2rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem;
+    margin: -1rem;
+  }
+
+  /* Keep horizontal scrollbar styling */
+  .category-content::-webkit-scrollbar,
+  .card-container::-webkit-scrollbar,
+  .tabs-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .category-content::-webkit-scrollbar-track,
+  .card-container::-webkit-scrollbar-track,
+  .tabs-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .category-content::-webkit-scrollbar-thumb,
+  .card-container::-webkit-scrollbar-thumb,
+  .tabs-container::-webkit-scrollbar-thumb {
+    background: var(--wood);
+    border-radius: 4px;
+  }
+
+  .category-content::-webkit-scrollbar-thumb:hover,
+  .card-container::-webkit-scrollbar-thumb:hover,
+  .tabs-container::-webkit-scrollbar-thumb:hover {
+    background: var(--wood-light);
+  }
+
+  /* Text input styling */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  textarea,
+  select,
+  .text-box {
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
+    border: 1px solid var(--wood);
+    @apply rounded-md focus:border-wood/40 focus:ring-wood/30;
+  }
+
+  /* Rest of the existing styles remain unchanged */
   * {
     @apply border-border;
   }
@@ -117,28 +181,6 @@
     }
   }
 
-  /* Scrollbar styling */
-  .category-content::-webkit-scrollbar,
-  .card-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .category-content::-webkit-scrollbar-track,
-  .card-container::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .category-content::-webkit-scrollbar-thumb,
-  .card-container::-webkit-scrollbar-thumb {
-    background: var(--wood);
-    border-radius: 4px;
-  }
-
-  .category-content::-webkit-scrollbar-thumb:hover,
-  .card-container::-webkit-scrollbar-thumb:hover {
-    background: var(--wood-light);
-  }
 
   /* Horizontal scrolling containers */
   .scroll-container-x {
@@ -206,22 +248,6 @@
     padding: 0 0.5rem;
   }
 
-  /* Remove background color from text boxes */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="search"],
-  input[type="number"],
-  input[type="tel"],
-  input[type="url"],
-  textarea,
-  select,
-  .text-box {
-    background-color: #F5F5F5 !important;
-    color: #2E2E2E !important; /* Dark metal color for better readability */
-    border: 1px solid var(--wood);
-    @apply rounded-md focus:border-wood/40 focus:ring-wood/30;
-  }
 
   /* Command menu styles - keeping light backgrounds */
   .cm-base,
