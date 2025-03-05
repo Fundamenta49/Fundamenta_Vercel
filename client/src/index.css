@@ -454,6 +454,8 @@
     background-color: #F5F5F5;
     color: #2E2E2E;
     @apply border-wood/20;
+    margin-top: 8px; /* Add space between trigger and dropdown */
+    z-index: 40; /* Below toolbar but above content */
   }
 
   [cmdk-input],
@@ -466,6 +468,8 @@
   [cmdk-list] {
     background-color: #F5F5F5;
     @apply border-t border-wood/20;
+    margin-top: 8px;
+    z-index: 40;
   }
 
   [cmdk-item] {
