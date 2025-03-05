@@ -28,26 +28,59 @@
     --radius: 0.75rem;
   }
 
-  /* Enhanced button interactions */
-  .btn-wood {
-    @apply bg-gradient-to-r from-wood-dark to-wood transition-all duration-300 text-[#F3F4F6];
-    box-shadow: 0 2px 8px rgba(92, 64, 51, 0.2);
-    transform: translateY(0);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Navigation styles */
+  nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 256px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary);
   }
 
-  .btn-wood:hover {
-    @apply bg-gradient-to-r from-wood to-wood-light;
-    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.3);
-    transform: translateY(-2px) scale(1.02);
+  .nav-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--primary);
+    z-index: 51;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
   }
 
-  .btn-wood:active {
-    transform: translateY(1px) scale(0.98);
-    box-shadow: 0 1px 4px rgba(92, 64, 51, 0.2);
+  .nav-menu {
+    padding-top: calc(80px + 5rem); /* Logo height + extra padding */
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 2rem;
   }
 
-  /* Playful card interactions */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 2rem;
+    color: #F3F4F6;
+    transition: all 0.2s ease;
+    margin: 0.25rem 0;
+  }
+
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
+  }
+
+  /* Enhanced card styles */
   .card {
     @apply rounded-lg;
     border: 2px solid rgba(92, 64, 51, 0.1);
@@ -85,7 +118,7 @@
       inset 0 2px 6px rgba(0, 0, 0, 0.08);
   }
 
-  /* Enhanced card header */
+  /* Card header enhancement */
   .card-header {
     position: relative;
     z-index: 1;
@@ -98,7 +131,7 @@
     padding: 1.5rem;
   }
 
-  /* Enhanced card content */
+  /* Card content enhancement */
   .card-content {
     position: relative;
     z-index: 0;
@@ -109,6 +142,26 @@
     );
     padding: 1.5rem;
   }
+
+  /* Enhanced button interactions */
+  .btn-wood {
+    @apply bg-gradient-to-r from-wood-dark to-wood transition-all duration-300 text-[#F3F4F6];
+    box-shadow: 0 2px 8px rgba(92, 64, 51, 0.2);
+    transform: translateY(0);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-wood:hover {
+    @apply bg-gradient-to-r from-wood to-wood-light;
+    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.3);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .btn-wood:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 0 1px 4px rgba(92, 64, 51, 0.2);
+  }
+
 
   /* Enhanced input interactions with 3D effect */
   input[type="text"],
@@ -297,59 +350,6 @@
     margin: 0;
     padding: 0;
   }
-  /* Navigation styles */
-  nav {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 256px;
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--primary);
-  }
-
-  .nav-logo {
-    padding: 2rem;
-    padding-bottom: 3rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    margin-bottom: 2rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 256px;
-    background-color: var(--primary);
-    z-index: 51;
-  }
-
-  .nav-menu {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 180px; /* Space for fixed logo */
-    padding: 0.5rem 0;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 2rem;
-    color: #F3F4F6;
-    transition: all 0.2s ease;
-    margin: 0.25rem 0;
-  }
-
-  .nav-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateX(4px);
-  }
-
   /* Main layout */
   body {
     @apply bg-texture font-serif text-wood;
