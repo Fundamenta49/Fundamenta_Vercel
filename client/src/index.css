@@ -14,6 +14,10 @@
     @apply font-serif antialiased bg-background text-foreground;
   }
 
+  input {
+    @apply bg-[#F4F1DE] border-wood/20;
+  }
+
   :root {
     --primary: 34 33% 75%;
     --primary-foreground: 20 29% 28%;
@@ -74,4 +78,9 @@
 .card-sandstone {
   @apply bg-background bg-texture shadow-custom-md;
   border: 1px solid rgba(92, 64, 51, 0.1);
+}
+
+/* Input styles */
+.input-base {
+  @apply bg-[#F4F1DE] border-wood/20 focus:border-wood/40 focus:ring-wood/30;
 }
