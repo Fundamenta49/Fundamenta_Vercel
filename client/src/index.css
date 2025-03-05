@@ -58,7 +58,7 @@
     transform-origin: center;
     position: relative;
     z-index: 1;
-    box-shadow: 
+    box-shadow:
       0 4px 6px rgba(92, 64, 51, 0.08),
       0 8px 12px rgba(92, 64, 51, 0.06),
       0 12px 24px rgba(92, 64, 51, 0.04),
@@ -68,8 +68,8 @@
 
   .card:hover {
     transform: translateY(-8px) scale(1.02);
-    z-index: 2; /* Slightly higher when hovered */
-    box-shadow: 
+    z-index: 2;
+    box-shadow:
       0 12px 24px rgba(92, 64, 51, 0.12),
       0 16px 32px rgba(92, 64, 51, 0.1),
       0 24px 48px rgba(92, 64, 51, 0.08),
@@ -79,7 +79,7 @@
 
   .card:active {
     transform: translateY(-4px) scale(0.98);
-    box-shadow: 
+    box-shadow:
       0 8px 16px rgba(92, 64, 51, 0.1),
       0 12px 24px rgba(92, 64, 51, 0.08),
       inset 0 -4px 8px rgba(255, 255, 255, 0.9),
@@ -131,7 +131,7 @@
     font-size: 0.95rem;
     line-height: 1.4;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
+    box-shadow:
       0 2px 4px rgba(92, 64, 51, 0.05),
       0 4px 8px rgba(92, 64, 51, 0.05),
       inset 0 -2px 4px rgba(255, 255, 255, 0.7),
@@ -145,7 +145,7 @@
   .text-box:focus {
     transform: translateY(-2px);
     border-color: var(--wood);
-    box-shadow: 
+    box-shadow:
       0 4px 8px rgba(92, 64, 51, 0.08),
       0 8px 16px rgba(92, 64, 51, 0.08),
       inset 0 -2px 4px rgba(255, 255, 255, 0.9),
@@ -158,7 +158,7 @@
   select:hover,
   .text-box:hover {
     transform: translateY(-1px);
-    box-shadow: 
+    box-shadow:
       0 3px 6px rgba(92, 64, 51, 0.07),
       0 6px 12px rgba(92, 64, 51, 0.07),
       inset 0 -2px 4px rgba(255, 255, 255, 0.8),
@@ -329,21 +329,22 @@
   main {
     flex: 1;
     width: 100%;
-    max-width: calc(100vw - 256px); /* Adjust for toolbar width */
-    margin-left: 256px; /* Match toolbar width */
+    max-width: calc(100vw - 256px);
+    margin-left: 256px;
     overflow-x: hidden;
     padding: 1rem;
     position: relative;
-    z-index: 1; /* Lower than toolbar */
+    z-index: 1;
   }
 
   /* Category content container */
   .category-content {
-    height: calc(100vh - 2rem); /* Account for padding */
+    height: calc(100vh - 2rem);
     overflow-y: auto;
     overflow-x: hidden;
     padding: 1rem;
     margin: -1rem;
+    padding-top: 4rem; /* Increased padding to account for logo */
   }
 
   /* Card containers within categories */
@@ -362,19 +363,19 @@
   /* Ensure cards within container maintain proper sizing */
   .card-container > * {
     flex: 0 0 auto;
-    max-width: calc(33.333% - 1rem); /* 3 cards per row with gap */
-    min-width: 280px; /* Minimum card width */
+    max-width: calc(33.333% - 1rem);
+    min-width: 280px;
   }
 
   @media (max-width: 1024px) {
     .card-container > * {
-      max-width: calc(50% - 1rem); /* 2 cards per row on medium screens */
+      max-width: calc(50% - 1rem);
     }
   }
 
   @media (max-width: 640px) {
     .card-container > * {
-      max-width: calc(100% - 1rem); /* 1 card per row on small screens */
+      max-width: calc(100% - 1rem);
     }
   }
 
@@ -386,7 +387,7 @@
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    padding-bottom: 1rem; /* Space for scrollbar */
+    padding-bottom: 1rem;
   }
 
   .scroll-container-x::-webkit-scrollbar {
@@ -454,8 +455,8 @@
     background-color: #F5F5F5;
     color: #2E2E2E;
     @apply border-wood/20;
-    margin-top: 8px; /* Add space between trigger and dropdown */
-    z-index: 40; /* Below toolbar but above content */
+    margin-top: 8px;
+    z-index: 40;
   }
 
   [cmdk-input],
@@ -526,13 +527,34 @@
     margin: 0;
     padding: 0;
   }
-
   nav {
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
     width: 256px;
-    z-index: 50; /* Ensure toolbar stays above content */
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+  }
+  .nav-logo {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .nav-menu {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 1rem;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: #F3F4F6;
+    transition: all 0.2s ease;
+  }
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
   }
 }
