@@ -172,18 +172,19 @@ main {
 }
 
 :root {
-  --primary: 34 33% 75%;
-  --primary-foreground: 20 29% 28%;
+  --primary: 210 40% 98%; /* Light blue-gray */
+  --primary-foreground: 222.2 47.4% 11.2%;
 
-  --background: 34 33% 75%;
-  --foreground: 20 29% 28%;
+  --background: 0 0% 100%;
+  --foreground: 222.2 47.4% 11.2%;
 
-  --muted: 46 33% 91%;
+  --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
 
-  --accent: 177 48% 46%;
-  --accent-foreground: 20 29% 28%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
 
+  /* Preserve wood theme variables */
   --wood: 20 29% 28%;
   --wood-light: 20 29% 38%;
   --wood-dark: 20 29% 18%;
@@ -196,25 +197,6 @@ main {
   --ring: 20 29% 28%;
 
   --radius: 0.5rem;
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--wood);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--wood-light);
 }
 
 /* Remove background color from text boxes */
