@@ -541,18 +541,21 @@
 
   .nav-logo {
     padding: 2rem;
-    padding-bottom: 3rem; /* Increased bottom padding */
+    padding-bottom: 3rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    min-height: 80px; /* Ensure minimum height for logo area */
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
   }
 
   .nav-menu {
     flex: 1;
     overflow-y: auto;
-    padding-top: 2rem; /* Increased top padding */
+    padding-top: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem; /* Add gap between nav items */
+    gap: 0.75rem;
   }
 
   .nav-item {
@@ -561,7 +564,7 @@
     padding: 0.75rem 2rem;
     color: #F3F4F6;
     transition: all 0.2s ease;
-    margin: 0.25rem 0; /* Add vertical margin between items */
+    margin: 0.25rem 0;
   }
 
   .nav-item:hover {
