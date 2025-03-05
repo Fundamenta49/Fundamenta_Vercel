@@ -195,7 +195,7 @@ export default function EmploymentRights() {
               placeholder="Search rights, laws, or reporting procedures..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 bg-[#F4F1DE] border-wood/20"
             />
           </div>
         </CardContent>

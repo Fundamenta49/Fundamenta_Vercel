@@ -105,6 +105,7 @@ export default function JobSearch() {
               placeholder="e.g. Software Engineer, Marketing Manager"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-[#F4F1DE] border-wood/20"
             />
           </div>
 
@@ -115,6 +116,7 @@ export default function JobSearch() {
               placeholder="e.g. New York, Remote"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
+              className="bg-[#F4F1DE] border-wood/20"
             />
           </div>
 

@@ -6,17 +6,18 @@
 @tailwind utilities;
 
 @layer base {
- * {
-    @apply border-border;
+  * {
+     @apply border-border;
   }
 
   body {
     @apply font-serif antialiased bg-background text-foreground;
   }
 
-  input {
+  /* Input styles are updated below, removing redundancy */
+  /*input {
     @apply bg-[#F4F1DE] border-wood/20;
-  }
+  }*/
 
   :root {
     --primary: 34 33% 75%;
@@ -61,6 +62,21 @@
 
 [cmdk-item] {
   @apply hover:bg-wood/5;
+}
+
+/* Dropdown menu styles */
+[data-radix-popper-content-wrapper] {
+  @apply bg-[#F4F1DE] border-wood/20;
+}
+
+.dropdown-content {
+  @apply bg-[#F4F1DE] border-wood/20;
+}
+
+/* Select and menubar styles */
+[role="listbox"],
+[role="menu"] {
+  @apply bg-[#F4F1DE] border-wood/20;
 }
 
 /* Input styles */
