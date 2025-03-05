@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 @layer base {
-  * {
+ * {
     @apply border-border;
   }
 
@@ -46,6 +46,28 @@
   }
 }
 
+/* Command menu styles */
+.cm-base {
+  @apply bg-[#F4F1DE] border-wood/20;
+}
+
+[cmdk-input] {
+  @apply bg-[#F4F1DE] border-wood/20 focus:border-wood/40 focus:ring-wood/30;
+}
+
+[cmdk-list] {
+  @apply bg-[#F4F1DE] border-t border-wood/20;
+}
+
+[cmdk-item] {
+  @apply hover:bg-wood/5;
+}
+
+/* Input styles */
+.input-base {
+  @apply bg-[#F4F1DE] border-wood/20 focus:border-wood/40 focus:ring-wood/30;
+}
+
 .bg-wood {
   @apply bg-gradient-to-r from-wood-dark to-wood-light;
 }
@@ -78,9 +100,4 @@
 .card-sandstone {
   @apply bg-background bg-texture shadow-custom-md;
   border: 1px solid rgba(92, 64, 51, 0.1);
-}
-
-/* Input styles */
-.input-base {
-  @apply bg-[#F4F1DE] border-wood/20 focus:border-wood/40 focus:ring-wood/30;
 }

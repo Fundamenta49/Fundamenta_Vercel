@@ -303,13 +303,14 @@ export default function VehicleGuide() {
                 Or choose from available tasks:
               </div>
 
-              <Command className="rounded-lg border shadow-md">
+              <Command className="rounded-lg border shadow-md bg-[#F4F1DE]">
                 <CommandInput
                   placeholder="Search available tasks..."
                   value={searchQuery}
                   onValueChange={setSearchQuery}
+                  className="bg-[#F4F1DE] border-wood/20"
                 />
-                <CommandList>
+                <CommandList className="bg-[#F4F1DE] border-t border-wood/20">
                   <CommandEmpty>No maintenance tasks found.</CommandEmpty>
                   <CommandGroup heading="Common Tasks">
                     {filteredTasks.map(([id, task]) => (
@@ -320,7 +321,7 @@ export default function VehicleGuide() {
                           setSelectedTask(id);
                           setOpen(false);
                         }}
-                        className="flex items-center justify-between py-2"
+                        className="flex items-center justify-between py-2 hover:bg-wood/5"
                       >
                         <div className="flex items-center gap-2">
                           {task.isCustom ? (
