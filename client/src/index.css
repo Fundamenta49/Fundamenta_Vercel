@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+ :root {
     /* Primary colors */
     --primary: 200 27% 23%; /* Deep navy #1C3D5A */
     --primary-foreground: 0 0% 96%; /* Off-white */
@@ -217,12 +217,13 @@
   textarea,
   select,
   .text-box {
-    background-color: transparent !important;
-    border: 1px solid rgba(92, 64, 51, 0.2);
+    background-color: #F5F5F5 !important;
+    color: var(--foreground);
+    border: 1px solid var(--wood);
     @apply rounded-md focus:border-wood/40 focus:ring-wood/30;
   }
 
-  /* Command menu styles */
+  /* Command menu styles - keeping light backgrounds */
   .cm-base,
   [cmdk-input],
   [cmdk-list],
@@ -230,15 +231,18 @@
   [role="listbox"],
   [role="menu"],
   [data-radix-popper-content-wrapper] {
+    background-color: #F5F5F5;
     @apply border-wood/20;
   }
 
   [cmdk-input],
   .input-base {
+    background-color: #F5F5F5;
     @apply border-wood/20 focus:border-wood/40 focus:ring-wood/30;
   }
 
   [cmdk-list] {
+    background-color: #F5F5F5;
     @apply border-t border-wood/20;
   }
 
