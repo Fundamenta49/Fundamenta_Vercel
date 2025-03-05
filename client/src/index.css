@@ -6,65 +6,64 @@
 @tailwind utilities;
 
 @layer base {
+  /* Existing root variables remain unchanged */
   :root {
-    /* Primary colors */
-    --primary: 200 27% 23%; /* Deep navy #1C3D5A */
-    --primary-foreground: 0 0% 96%; /* Off-white */
-
-    /* Background colors */
-    --background: 0 0% 96%; /* Soft off-white #F5F5F5 */
-    --foreground: 0 0% 18%; /* Dark metal #2E2E2E for text */
-
-    /* Muted/subtle elements */
-    --muted: 208 26% 48%; /* Muted steel blue #5A789A */
-    --muted-foreground: 0 0% 18%; /* Dark metal for contrast */
-
-    /* Card and content backgrounds */
-    --card: 0 0% 96%; /* Soft off-white #F5F5F5 */
-    --card-foreground: 0 0% 18%; /* Dark metal for text */
-
-    /* Accent colors */
-    --accent: 177 23% 71%; /* Seafoam green #A3C6C4 */
-    --accent-foreground: 200 27% 23%; /* Deep navy */
-
-    /* Wood theme preserved but updated */
-    --wood: 26 19% 69%; /* Natural driftwood #B89F89 */
-    --wood-light: 25 31% 75%; /* Warm sand #D8BFAA */
-    --wood-dark: 26 19% 59%; /* Darker driftwood */
-
-    /* System colors */
+    --primary: 200 27% 23%;
+    --primary-foreground: 0 0% 96%;
+    --background: 0 0% 96%;
+    --foreground: 0 0% 18%;
+    --muted: 208 26% 48%;
+    --muted-foreground: 0 0% 18%;
+    --card: 0 0% 96%;
+    --card-foreground: 0 0% 18%;
+    --accent: 177 23% 71%;
+    --accent-foreground: 200 27% 23%;
+    --wood: 26 19% 69%;
+    --wood-light: 25 31% 75%;
+    --wood-dark: 26 19% 59%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 96%; /* Off-white */
-
-    /* Border and input colors */
-    --border: 26 19% 69%; /* Natural driftwood */
-    --input: 0 0% 96%; /* Soft off-white for readability */
-    --ring: 208 26% 48%; /* Muted steel blue */
-
-    --radius: 0.75rem; /* Softer corners for a friendlier feel */
+    --destructive-foreground: 0 0% 96%;
+    --border: 26 19% 69%;
+    --input: 0 0% 96%;
+    --ring: 208 26% 48%;
+    --radius: 0.75rem;
   }
 
-  /* Label styling - Friendly and clear */
-  label,
-  .label {
-    @apply text-sm font-medium leading-none;
-    color: #2E2E2E;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0;
-    transition: transform 0.2s ease;
+  /* Enhanced button interactions */
+  .btn-wood {
+    @apply bg-gradient-to-r from-wood-dark to-wood transition-all duration-300 text-[#F3F4F6];
+    box-shadow: 0 2px 8px rgba(92, 64, 51, 0.2);
+    transform: translateY(0);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  label:hover {
-    transform: translateX(2px);
+  .btn-wood:hover {
+    @apply bg-gradient-to-r from-wood to-wood-light;
+    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.3);
+    transform: translateY(-2px) scale(1.02);
   }
 
-  /* Form field groups - Clean layout */
-  .form-group {
-    @apply grid gap-3;
-    margin-bottom: 1.5rem;
+  .btn-wood:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 0 1px 4px rgba(92, 64, 51, 0.2);
   }
 
-  /* Input fields - Smooth interactions */
+  /* Playful card interactions */
+  .card {
+    @apply rounded-lg;
+    border: 2px solid rgba(92, 64, 51, 0.1);
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+
+  .card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 8px 20px rgba(92, 64, 51, 0.12);
+  }
+
+  /* Enhanced input interactions */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -82,16 +81,94 @@
     padding: 0.75rem;
     font-size: 0.95rem;
     line-height: 1.4;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   input:focus,
   textarea:focus,
   select:focus,
   .text-box:focus {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(92, 64, 51, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.1);
+    border-color: var(--wood);
   }
+
+  /* Playful tab interactions */
+  .tabs-container [role="tab"] {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .tabs-container [role="tab"]:hover {
+    transform: translateY(-2px);
+  }
+
+  .tabs-container [role="tab"][data-state="active"] {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(92, 64, 51, 0.15);
+  }
+
+  .tabs-container [role="tab"][data-state="active"]::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, var(--wood-dark), var(--wood-light));
+    transform: scaleX(0);
+    animation: tabActivate 0.3s forwards cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes tabActivate {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Loading animation */
+  .loading-spinner {
+    border: 3px solid rgba(92, 64, 51, 0.1);
+    border-top: 3px solid var(--wood);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Hover lift effect */
+  .hover-lift {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Keep existing styles */
+  label,
+  .label {
+    @apply text-sm font-medium leading-none;
+    color: #2E2E2E;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0;
+    transition: transform 0.2s ease;
+  }
+
+  label:hover {
+    transform: translateX(2px);
+  }
+
+  .form-group {
+    @apply grid gap-3;
+    margin-bottom: 1.5rem;
+  }
+
 
   /* Card styles - More playful */
   .card {
@@ -105,24 +182,6 @@
   .card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(92, 64, 51, 0.1);
-  }
-
-  /* Button styles - More engaging */
-  .btn-wood {
-    @apply bg-gradient-to-r from-wood-dark to-wood transition-all duration-300 text-[#F3F4F6];
-    box-shadow: 0 2px 8px rgba(92, 64, 51, 0.2);
-    transform: translateY(0);
-    transition: all 0.2s ease;
-  }
-
-  .btn-wood:hover {
-    @apply bg-gradient-to-r from-wood to-wood-light;
-    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.3);
-    transform: translateY(-1px);
-  }
-
-  .btn-wood:active {
-    transform: translateY(1px);
   }
 
   /* Tabs animation */
@@ -166,18 +225,10 @@
     background: var(--wood-light);
   }
 
-  /* Interactive elements */
-  .hover-lift {
-    transition: transform 0.2s ease;
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-2px);
-  }
 
   /* Background texture */
   .bg-texture {
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-attachment: fixed;
     background-size: auto;
