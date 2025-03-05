@@ -283,18 +283,19 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 1rem;
-    margin: -1rem;
+    margin: 0;
     position: relative;
+    box-sizing: border-box;
   }
 
   /* Card containers within categories */
   .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Reduced from 240px */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
-    padding: 1rem;
-    padding-right: 1.5rem; /* Reduced padding for scrollbar */
-    width: calc(100% - 8px); /* Account for scrollbar width */
+    padding: 0;
+    margin-right: 1rem; /* Space for scrollbar */
+    width: auto;
     box-sizing: border-box;
   }
 
@@ -308,14 +309,13 @@
   /* Responsive adjustments */
   @media (max-width: 1024px) {
     .card-container {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
   }
 
   @media (max-width: 640px) {
     .card-container {
-      grid-template-columns: 1fr;
-      padding-right: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     }
   }
 
