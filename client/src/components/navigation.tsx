@@ -20,11 +20,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 
 const navItems = [
-  { href: "/emergency", label: "Emergency", icon: AlertCircle },
   { href: "/finance", label: "Finance", icon: DollarSign },
   { href: "/career", label: "Career", icon: Briefcase },
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
   { href: "/learning", label: "Learning & Development", icon: GraduationCap },
+  { href: "/emergency", label: "Emergency Assistance", icon: AlertCircle }, // Moved to bottom
 ];
 
 export default function Navigation() {
