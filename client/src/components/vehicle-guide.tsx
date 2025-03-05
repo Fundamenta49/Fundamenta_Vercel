@@ -239,16 +239,19 @@ export default function VehicleGuide() {
               placeholder="Year (e.g., 2020)"
               value={vehicleInfo.year}
               onChange={(e) => setVehicleInfo(prev => ({ ...prev, year: e.target.value }))}
+              className="bg-background bg-texture border-wood/20"
             />
             <Input
               placeholder="Make (e.g., Toyota)"
               value={vehicleInfo.make}
               onChange={(e) => setVehicleInfo(prev => ({ ...prev, make: e.target.value }))}
+              className="bg-background bg-texture border-wood/20"
             />
             <Input
               placeholder="Model (e.g., Camry)"
               value={vehicleInfo.model}
               onChange={(e) => setVehicleInfo(prev => ({ ...prev, model: e.target.value }))}
+              className="bg-background bg-texture border-wood/20"
             />
           </div>
 
