@@ -17,12 +17,14 @@ export default function Wellness() {
       <h1 className="text-3xl font-bold mb-6">Wellness & Nutrition</h1>
 
       <Tabs defaultValue="chat">
-        <TabsList className="mb-4">
-          <TabsTrigger value="chat">Wellness Coach</TabsTrigger>
-          <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
-          <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
-          <TabsTrigger value="meditation">Meditation</TabsTrigger>
-        </TabsList>
+        <div className="tabs-container">
+          <TabsList className="mb-4">
+            <TabsTrigger value="chat">Wellness Coach</TabsTrigger>
+            <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
+            <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
+            <TabsTrigger value="meditation">Meditation</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="chat">
           <Card>
