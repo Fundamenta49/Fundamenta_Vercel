@@ -19,7 +19,7 @@ export default function Finance() {
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
 
   return (
-    <div className="max-w-screen-2xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Financial Literacy</h1>
 
       <Alert variant="default" className="mb-6 border-amber-500 bg-amber-50">
@@ -31,8 +31,8 @@ export default function Finance() {
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="dashboard" className="w-full">
-        <TabsList className="mb-4 w-full flex-wrap justify-start">
+      <Tabs defaultValue="dashboard">
+        <TabsList className="mb-4">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
           <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
@@ -40,64 +40,62 @@ export default function Finance() {
           <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
         </TabsList>
 
-        <div className="scroll-container-x">
-          <TabsContent value="dashboard" className="min-w-full">
-            <FinancialDashboard budgetData={budgetData} />
-          </TabsContent>
+        <TabsContent value="dashboard">
+          <FinancialDashboard budgetData={budgetData} />
+        </TabsContent>
 
-          <TabsContent value="budget" className="min-w-full">
-            <Card>
-              <CardHeader>
-                <CardTitle>Smart Budget Planner</CardTitle>
-                <CardDescription>
-                  Track your income, expenses, and set savings goals
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <BudgetCalculator onBudgetUpdate={setBudgetData} />
-              </CardContent>
-            </Card>
-          </TabsContent>
+        <TabsContent value="budget">
+          <Card>
+            <CardHeader>
+              <CardTitle>Smart Budget Planner</CardTitle>
+              <CardDescription>
+                Track your income, expenses, and set savings goals
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <BudgetCalculator onBudgetUpdate={setBudgetData} />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <TabsContent value="retirement" className="min-w-full">
-            <RetirementPlanning />
-          </TabsContent>
+        <TabsContent value="retirement">
+          <RetirementPlanning />
+        </TabsContent>
 
-          <TabsContent value="chat" className="min-w-full">
-            <Card>
-              <CardHeader>
-                <CardTitle>Financial AI Advisor</CardTitle>
-                <CardDescription>
-                  Get personalized financial advice and guidance
-                </CardDescription>
-                <Alert className="mt-4 border-blue-500 bg-blue-50">
-                  <AlertCircle className="h-4 w-4 text-blue-500" />
-                  <AlertDescription className="text-blue-800 text-sm">
-                    The AI advisor provides general guidance based on publicly available financial information.
-                    For specific advice, please consult with a qualified financial professional.
-                  </AlertDescription>
-                </Alert>
-              </CardHeader>
-              <CardContent>
-                <ChatInterface category="finance" />
-              </CardContent>
-            </Card>
-          </TabsContent>
+        <TabsContent value="chat">
+          <Card>
+            <CardHeader>
+              <CardTitle>Financial AI Advisor</CardTitle>
+              <CardDescription>
+                Get personalized financial advice and guidance
+              </CardDescription>
+              <Alert className="mt-4 border-blue-500 bg-blue-50">
+                <AlertCircle className="h-4 w-4 text-blue-500" />
+                <AlertDescription className="text-blue-800 text-sm">
+                  The AI advisor provides general guidance based on publicly available financial information.
+                  For specific advice, please consult with a qualified financial professional.
+                </AlertDescription>
+              </Alert>
+            </CardHeader>
+            <CardContent>
+              <ChatInterface category="finance" />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <TabsContent value="bank" className="min-w-full">
-            <Card>
-              <CardHeader>
-                <CardTitle>Bank Accounts & Transactions</CardTitle>
-                <CardDescription>
-                  Connect your bank accounts to track spending in real-time
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <BankLink />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </div>
+        <TabsContent value="bank">
+          <Card>
+            <CardHeader>
+              <CardTitle>Bank Accounts & Transactions</CardTitle>
+              <CardDescription>
+                Connect your bank accounts to track spending in real-time
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <BankLink />
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );

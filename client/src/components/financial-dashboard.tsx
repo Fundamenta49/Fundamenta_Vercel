@@ -102,173 +102,172 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
   };
 
   return (
-    <div className="space-y-6 overflow-x-hidden">
+    <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="scroll-container-x pb-4">
-        <div className="flex gap-4 min-w-max">
-          <Card className="bg-green-50 w-72">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-green-700">
-                <TrendingUp className="h-4 w-4" />
-                Monthly Income
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-700">
-                ${currentIncome.toLocaleString()}
-              </div>
-              <p className="text-sm text-green-600">
-                {budgetData ? 'Current month' : '+5% from last month'}
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="bg-red-50 w-72">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-red-700">
-                <TrendingDown className="h-4 w-4" />
-                Monthly Expenses
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-700">
-                ${currentExpenses.toLocaleString()}
-              </div>
-              <p className="text-sm text-red-600">
-                {budgetData ? 'Current month' : '-3% from last month'}
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="bg-blue-50 w-72">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-blue-700">
-                <PiggyBank className="h-4 w-4" />
-                Current Savings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-700">
-                ${totalSavings.toLocaleString()}
-              </div>
-              <p className="text-sm text-blue-600">Total monthly savings</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-purple-50 w-72">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-purple-700">
-                <Landmark className="h-4 w-4" />
-                Retirement Savings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-700">
-                ${retirementSavings.toLocaleString()}
-              </div>
-              <p className="text-sm text-purple-600">Monthly contribution</p>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="bg-green-50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-green-700">
+              <TrendingUp className="h-4 w-4" />
+              Monthly Income
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-700">
+              ${currentIncome.toLocaleString()}
+            </div>
+            <p className="text-sm text-green-600">
+              {budgetData ? 'Current month' : '+5% from last month'}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-red-50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-red-700">
+              <TrendingDown className="h-4 w-4" />
+              Monthly Expenses
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-700">
+              ${currentExpenses.toLocaleString()}
+            </div>
+            <p className="text-sm text-red-600">
+              {budgetData ? 'Current month' : '-3% from last month'}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-blue-50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-blue-700">
+              <PiggyBank className="h-4 w-4" />
+              Current Savings
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-700">
+              ${totalSavings.toLocaleString()}
+            </div>
+            <p className="text-sm text-blue-600">Total monthly savings</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-purple-50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-purple-700">
+              <Landmark className="h-4 w-4" />
+              Retirement Savings
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-700">
+              ${retirementSavings.toLocaleString()}
+            </div>
+            <p className="text-sm text-purple-600">Monthly contribution</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Savings Goals Progress */}
-      <div className="scroll-container-x pb-4">
-        <div className="flex gap-4 min-w-max">
-          {/* Retirement Progress Card */}
-          <Card className="w-96">
+      <div className="grid gap-4">
+        {/* Retirement Progress */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Landmark className="h-5 w-5" />
+              Retirement Progress
+            </CardTitle>
+            <CardDescription>
+              Annual retirement savings projection
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span>Annual: ${(retirementSavings * 12).toLocaleString()}</span>
+                  {isEditingGoal ? (
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="retirementGoal">Goal: $</Label>
+                      <Input
+                        id="retirementGoal"
+                        type="number"
+                        value={tempGoal}
+                        onChange={(e) => setTempGoal(Number(e.target.value))}
+                        className="w-32"
+                      />
+                      <Button
+                        onClick={handleGoalUpdate}
+                        size="sm"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setTempGoal(retirementGoal);
+                          setIsEditingGoal(false);
+                        }}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span>Goal: ${retirementGoal.toLocaleString()}</span>
+                      <Button
+                        onClick={() => setIsEditingGoal(true)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Edit Goal
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <Progress value={retirementProgress} className="h-2" />
+                <p className="text-sm text-muted-foreground text-right">
+                  {retirementProgress.toFixed(1)}% of Goal
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Other Savings Goals */}
+        {savingsGoals.map((goal) => (
+          <Card key={goal.id}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Landmark className="h-5 w-5" />
-                Retirement Progress
+                <Target className="h-5 w-5" />
+                {goal.name}
               </CardTitle>
               <CardDescription>
-                Annual retirement savings projection
+                Progress towards your {goal.name.toLowerCase()} savings goal
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span>Annual: ${(retirementSavings * 12).toLocaleString()}</span>
-                    {isEditingGoal ? (
-                      <div className="flex items-center gap-2">
-                        <Label htmlFor="retirementGoal">Goal: $</Label>
-                        <Input
-                          id="retirementGoal"
-                          type="number"
-                          value={tempGoal}
-                          onChange={(e) => setTempGoal(Number(e.target.value))}
-                          className="w-32"
-                        />
-                        <Button
-                          onClick={handleGoalUpdate}
-                          size="sm"
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setTempGoal(retirementGoal);
-                            setIsEditingGoal(false);
-                          }}
-                          variant="outline"
-                          size="sm"
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span>Goal: ${retirementGoal.toLocaleString()}</span>
-                        <Button
-                          onClick={() => setIsEditingGoal(true)}
-                          variant="outline"
-                          size="sm"
-                        >
-                          Edit Goal
-                        </Button>
-                      </div>
-                    )}
+                    <span>Current: ${goal.currentAmount.toLocaleString()}</span>
+                    <span>Goal: ${goal.targetAmount.toLocaleString()}</span>
                   </div>
-                  <Progress value={retirementProgress} className="h-2" />
+                  <Progress 
+                    value={(goal.currentAmount / goal.targetAmount) * 100}
+                    className="h-2"
+                  />
                   <p className="text-sm text-muted-foreground text-right">
-                    {retirementProgress.toFixed(1)}% of Goal
+                    {((goal.currentAmount / goal.targetAmount) * 100).toFixed(1)}% Complete
                   </p>
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          {/* Other savings goal cards */}
-          {savingsGoals.map((goal) => (
-            <Card key={goal.id} className="w-96">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  {goal.name}
-                </CardTitle>
-                <CardDescription>
-                  Progress towards your {goal.name.toLowerCase()} savings goal
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span>Current: ${goal.currentAmount.toLocaleString()}</span>
-                      <span>Goal: ${goal.targetAmount.toLocaleString()}</span>
-                    </div>
-                    <Progress
-                      value={(goal.currentAmount / goal.targetAmount) * 100}
-                      className="h-2"
-                    />
-                    <p className="text-sm text-muted-foreground text-right">
-                      {((goal.currentAmount / goal.targetAmount) * 100).toFixed(1)}% Complete
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        ))}
       </div>
 
       {/* Expense Distribution */}
