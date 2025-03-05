@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 @layer base {
- :root {
+  :root {
     /* Primary colors */
     --primary: 200 27% 23%; /* Deep navy #1C3D5A */
     --primary-foreground: 0 0% 96%; /* Off-white */
@@ -218,7 +218,7 @@
   select,
   .text-box {
     background-color: #F5F5F5 !important;
-    color: var(--foreground);
+    color: #2E2E2E !important; /* Dark metal color for better readability */
     border: 1px solid var(--wood);
     @apply rounded-md focus:border-wood/40 focus:ring-wood/30;
   }
@@ -232,12 +232,14 @@
   [role="menu"],
   [data-radix-popper-content-wrapper] {
     background-color: #F5F5F5;
+    color: #2E2E2E;
     @apply border-wood/20;
   }
 
   [cmdk-input],
   .input-base {
     background-color: #F5F5F5;
+    color: #2E2E2E;
     @apply border-wood/20 focus:border-wood/40 focus:ring-wood/30;
   }
 
@@ -247,6 +249,7 @@
   }
 
   [cmdk-item] {
+    color: #2E2E2E;
     @apply hover:bg-wood/5;
   }
 
