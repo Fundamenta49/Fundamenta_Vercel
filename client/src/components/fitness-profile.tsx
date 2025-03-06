@@ -43,10 +43,12 @@ const feetInchesToCm = (feet: number, inches: number) => (feet * 12 + inches) * 
 
 export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps) {
   const { toast } = useToast();
-  const [profile, setProfile] = useState<Partial<FitnessProfile>>({});
   const [heightFeet, setHeightFeet] = useState<string>("");
   const [heightInches, setHeightInches] = useState<string>("");
   const [weightLbs, setWeightLbs] = useState<string>("");
+  const [sex, setSex] = useState<"male" | "female" | undefined>(undefined);
+  const [fitnessLevel, setFitnessLevel] = useState<"beginner" | "intermediate" | "advanced" | undefined>(undefined);
+  const [goals, setGoals] = useState<string[]>([]);
 
   const fitnessGoals = [
     "Weight Loss",
@@ -60,7 +62,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!heightFeet || !heightInches || !weightLbs || !profile.sex || !profile.fitnessLevel) {
+    if (!heightFeet || !heightInches || !weightLbs || !sex || !fitnessLevel) {
       toast({
         variant: "destructive",
         title: "Missing Information",
@@ -73,11 +75,12 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     const weightKg = lbsToKg(Number(weightLbs));
 
     onComplete({
-      ...profile,
       height: heightCm,
       weight: weightKg,
-      goals: profile.goals || [],
-    } as FitnessProfile);
+      sex,
+      fitnessLevel,
+      goals,
+    });
   };
 
   return (
@@ -134,14 +137,9 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="sex">Sex</Label>
-            <Select
-              value={profile.sex}
-              onValueChange={(value: "male" | "female") =>
-                setProfile({ ...profile, sex: value })
-              }
-            >
-              <SelectTrigger>
+            <Label>Sex</Label>
+            <Select value={sex} onValueChange={(value: "male" | "female") => setSex(value)}>
+              <SelectTrigger id="sex">
                 <SelectValue placeholder="Select your sex" />
               </SelectTrigger>
               <SelectContent>
@@ -152,14 +150,12 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="fitnessLevel">Fitness Level</Label>
-            <Select
-              value={profile.fitnessLevel}
-              onValueChange={(value: "beginner" | "intermediate" | "advanced") =>
-                setProfile({ ...profile, fitnessLevel: value })
-              }
+            <Label>Fitness Level</Label>
+            <Select 
+              value={fitnessLevel} 
+              onValueChange={(value: "beginner" | "intermediate" | "advanced") => setFitnessLevel(value)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="fitnessLevel">
                 <SelectValue placeholder="Select your fitness level" />
               </SelectTrigger>
               <SelectContent>
@@ -177,14 +173,14 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                 <Button
                   key={goal}
                   type="button"
-                  variant={profile.goals?.includes(goal) ? "default" : "outline"}
+                  variant={goals.includes(goal) ? "default" : "outline"}
                   className="justify-start"
                   onClick={() => {
-                    const goals = profile.goals || [];
-                    const newGoals = goals.includes(goal)
-                      ? goals.filter((g) => g !== goal)
-                      : [...goals, goal];
-                    setProfile({ ...profile, goals: newGoals });
+                    setGoals(current => 
+                      current.includes(goal)
+                        ? current.filter(g => g !== goal)
+                        : [...current, goal]
+                    );
                   }}
                 >
                   {goal}
