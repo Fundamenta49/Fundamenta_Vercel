@@ -33,6 +33,15 @@ export default function InitialGreeting({ onComplete }: InitialGreetingProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="ghost"
+              onClick={onComplete}
+              className="text-muted-foreground"
+            >
+              Skip personalization →
+            </Button>
+          </div>
           <ChatInterface 
             category="welcome" 
             onConversationComplete={() => setHasCompletedChat(true)}
