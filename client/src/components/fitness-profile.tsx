@@ -9,13 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
 export interface FitnessProfile {
@@ -129,29 +122,29 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
           <div className="space-y-2">
             <Label>Sex</Label>
-            <Select onValueChange={setSelectedSex}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your sex" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              className="w-full h-10 px-3 py-2 text-sm border rounded-md"
+              value={selectedSex}
+              onChange={(e) => setSelectedSex(e.target.value)}
+            >
+              <option value="">Select your sex</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
           </div>
 
           <div className="space-y-2">
             <Label>Fitness Level</Label>
-            <Select onValueChange={setSelectedFitnessLevel}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your fitness level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="beginner">Beginner</SelectItem>
-                <SelectItem value="intermediate">Intermediate</SelectItem>
-                <SelectItem value="advanced">Advanced</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              className="w-full h-10 px-3 py-2 text-sm border rounded-md"
+              value={selectedFitnessLevel}
+              onChange={(e) => setSelectedFitnessLevel(e.target.value)}
+            >
+              <option value="">Select your fitness level</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
           </div>
 
           <div className="space-y-2">
