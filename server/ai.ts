@@ -384,7 +384,7 @@ export async function generateCoverLetter(data: CoverLetterData): Promise<string
 }
 
 interface EducationPathSuggestion {
-  pathType: 'university' | 'trade';
+  pathType: 'university' | 'trade' | 'specialized';
   title: string;
   description: string;
   skills: string[];
@@ -420,34 +420,50 @@ export async function assessCareer(answers: Record<number, string>): Promise<{
       messages: [
         {
           role: "system",
-          content: `You are a career and education counselor expert. Analyze the assessment answers to recommend whether a 4-year university degree or trade school would be more suitable. 
+          content: `You are a career and education counselor expert. Analyze the assessment answers to recommend suitable educational and career paths across a wide spectrum including:
+
+          Traditional Paths:
+          - University degrees
+          - Trade schools
+          - Technical certifications
+
+          Specialized Fields:
+          - Culinary arts and hospitality
+          - Aviation and transportation
+          - Healthcare and wellness
+          - Creative and performing arts
+          - Technology and digital media
+
           Consider:
-          - Learning style preferences
-          - Personality traits
-          - Career interests
-          - Desired timeline
-          - Financial considerations
+          - Personality traits and work style
+          - Specific interests and passions
+          - Preferred learning methods
+          - Desired work environment
+          - Physical vs. mental work preference
+          - Creative vs. technical orientation
+          - People vs. process orientation
 
-          For each path suggested, provide detailed information about:
-          - Specific programs or degrees
-          - Required skills
-          - Career outlook
-          - Education requirements
-          - Cost estimates
+          For each suggested path provide:
+          - Detailed program recommendations
+          - Required skills and aptitudes
+          - Career growth trajectory
+          - Education requirements and timeline
+          - Cost considerations
           - Salary potential
+          - Work-life balance implications
 
-          Return 2-3 suggestions in JSON format.`
+          Return 2-3 highly personalized suggestions in JSON format.`
         },
         {
           role: "user",
-          content: `Based on these assessment answers, suggest optimal educational paths (both university and trade options if appropriate):
+          content: `Based on these assessment answers, suggest optimal educational and career paths:
 
           ${Object.entries(answers).map(([id, answer]) => `Question ${id}: ${answer}`).join('\n')}
 
           Provide response in this JSON format:
           {
             "suggestions": [{
-              "pathType": "university" | "trade",
+              "pathType": "university" | "trade" | "specialized",
               "title": "Career/Program Title",
               "description": "Detailed description of the career path",
               "skills": ["Required Skill 1", "Required Skill 2", ...],
@@ -485,15 +501,6 @@ export async function assessCareer(answers: Record<number, string>): Promise<{
         statusText: error.response.statusText,
         data: error.response.data
       });
-    }
-    if (error?.error?.type === "invalid_api_key") {
-      throw new Error("Invalid API key. Please check your API key configuration.");
-    }
-    if (error?.error?.type === "invalid_request_error") {
-      throw new Error("Invalid API request. Please check your input.");
-    }
-    if (error.message.includes('rate limit exceeded')) {
-      throw new Error("OpenAI API rate limit exceeded. Please try again later.");
     }
     throw new Error("Failed to analyze career assessment: " + (error.message || 'Unknown error'));
   }

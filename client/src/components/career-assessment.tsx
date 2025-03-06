@@ -19,7 +19,7 @@ import { Separator } from "@/components/ui/separator";
 interface Question {
   id: number;
   text: string;
-  category: 'personality' | 'interests' | 'values' | 'skills';
+  category: 'personality' | 'interests' | 'values' | 'skills' | 'environment';
   options: string[];
 }
 
@@ -27,101 +27,126 @@ const questions: Question[] = [
   // Personality Questions
   {
     id: 1,
-    text: "How do you prefer to solve problems?",
+    text: "How do you prefer to express yourself best?",
     category: 'personality',
     options: [
-      "Through careful analysis and research",
-      "By getting hands-on and experimenting",
-      "Through creative thinking and innovation",
-      "By discussing with others and collaboration",
-      "Through step-by-step systematic approach"
+      "Through writing and analysis",
+      "Through physical or hands-on creation",
+      "Through artistic and visual means",
+      "Through verbal communication and teaching",
+      "Through problem-solving and innovation"
     ],
   },
   {
     id: 2,
-    text: "How do you prefer to learn new things?",
+    text: "What energizes you most during your day?",
     category: 'personality',
     options: [
-      "Through reading and theoretical study",
-      "Through practical, hands-on experience",
-      "Through visual demonstrations",
-      "Through group discussions and seminars",
-      "Through self-paced online courses"
+      "Solving complex mental challenges",
+      "Creating or preparing things for others",
+      "Moving around and staying physically active",
+      "Interacting with many different people",
+      "Working with machinery or technology"
     ],
   },
   // Interests Questions
   {
     id: 3,
-    text: "What type of work environment interests you most?",
+    text: "Which activities do you find yourself naturally drawn to?",
     category: 'interests',
     options: [
-      "Traditional office setting",
-      "Workshop or construction site",
-      "Laboratory or research facility",
-      "Outdoor and variable locations",
-      "Creative studio or design space"
+      "Cooking and experimenting with recipes",
+      "Fixing or building things",
+      "Helping and caring for others",
+      "Operating vehicles or machinery",
+      "Designing and decorating spaces"
     ],
   },
   {
     id: 4,
-    text: "Which activities do you find most engaging?",
+    text: "What type of shows or content do you enjoy most?",
     category: 'interests',
     options: [
-      "Writing and analyzing documents",
-      "Building or repairing things",
-      "Solving complex problems",
-      "Working with tools and machinery",
-      "Creating and designing"
+      "Cooking shows and food documentaries",
+      "DIY and home improvement shows",
+      "Travel and aviation programs",
+      "Medical and healthcare documentaries",
+      "Technology and innovation features"
     ],
   },
   // Values Questions
   {
     id: 5,
-    text: "What factors are most important in your career choice?",
+    text: "What aspect of work matters most to you?",
     category: 'values',
     options: [
-      "High earning potential and benefits",
-      "Work-life balance and stability",
-      "Opportunity for advancement",
-      "Independence and autonomy",
-      "Making a positive impact"
+      "Creating experiences for others",
+      "Building or fixing tangible things",
+      "Having variety in daily tasks",
+      "Making a direct impact on people",
+      "Achieving technical excellence"
     ],
   },
   {
     id: 6,
-    text: "What timeline for career preparation appeals to you?",
+    text: "How do you prefer to learn new skills?",
     category: 'values',
     options: [
-      "4+ years of academic study",
-      "1-2 years of focused training",
-      "2-3 years combining study and practice",
-      "Immediate hands-on training",
-      "Flexible, self-paced learning"
+      "Through apprenticeship and mentoring",
+      "Through hands-on practice and repetition",
+      "Through formal education and theory",
+      "Through creative experimentation",
+      "Through technical training and certification"
     ],
   },
-  // Skills Assessment
+  // Environment Questions
   {
     id: 7,
-    text: "What are your strongest current skills?",
-    category: 'skills',
+    text: "What kind of work environment appeals to you most?",
+    category: 'environment',
     options: [
-      "Academic and analytical thinking",
-      "Technical and mechanical abilities",
-      "Creative and artistic expression",
-      "Physical and hands-on work",
-      "Leadership and organization"
+      "Dynamic environment like a kitchen or restaurant",
+      "Workshop or construction setting",
+      "Travel-oriented or aviation environment",
+      "Healthcare or wellness facility",
+      "Traditional office or remote work"
     ],
   },
   {
     id: 8,
-    text: "How do you handle challenging tasks?",
+    text: "How do you prefer to structure your work day?",
+    category: 'environment',
+    options: [
+      "Variable shifts with high energy periods",
+      "Regular daytime hours with physical activity",
+      "Flexible schedule with travel opportunities",
+      "Structured shifts helping others",
+      "Project-based work with deadlines"
+    ],
+  },
+  // Skills Assessment
+  {
+    id: 9,
+    text: "What skills come most naturally to you?",
     category: 'skills',
     options: [
-      "Research thoroughly before starting",
-      "Jump in and learn by doing",
-      "Break down into smaller steps",
-      "Seek guidance from experts",
-      "Collaborate with others"
+      "Attention to detail and precision",
+      "Physical coordination and dexterity",
+      "Social awareness and communication",
+      "Spatial awareness and navigation",
+      "Analytical thinking and planning"
+    ],
+  },
+  {
+    id: 10,
+    text: "How do you handle pressure and deadlines?",
+    category: 'skills',
+    options: [
+      "Thrive in fast-paced, high-energy situations",
+      "Prefer methodical, steady progress",
+      "Enjoy dynamic, changing priorities",
+      "Work best with clear, structured deadlines",
+      "Adapt easily to unexpected changes"
     ],
   }
 ];
