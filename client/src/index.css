@@ -6,107 +6,60 @@
 @tailwind utilities;
 
 @layer base {
-  /* Existing root variables remain unchanged */
   :root {
-    --primary: 200 27% 23%;
-    --primary-foreground: 0 0% 96%;
-    --background: 0 0% 96%;
-    --foreground: 0 0% 18%;
-    --muted: 208 26% 48%;
-    --muted-foreground: 0 0% 18%;
-    --card: 0 0% 96%;
-    --card-foreground: 0 0% 18%;
-    --accent: 177 23% 71%;
-    --accent-foreground: 200 27% 23%;
-    --wood: 26 19% 69%;
-    --wood-light: 25 31% 75%;
-    --wood-dark: 26 19% 59%;
+    /* Primary colors */
+    --primary: 200 27% 23%; /* Deep navy #1C3D5A */
+    --primary-foreground: 0 0% 96%; /* Off-white */
+
+    /* Background colors */
+    --background: 0 0% 96%; /* Soft off-white #F5F5F5 */
+    --foreground: 0 0% 18%; /* Dark metal #2E2E2E for text */
+
+    /* Muted/subtle elements */
+    --muted: 208 26% 48%; /* Muted steel blue #5A789A */
+    --muted-foreground: 0 0% 18%; /* Dark metal for contrast */
+
+    /* Card and content backgrounds */
+    --card: 0 0% 96%; /* Soft off-white #F5F5F5 */
+    --card-foreground: 0 0% 18%; /* Dark metal for text */
+
+    /* Accent colors */
+    --accent: 177 23% 71%; /* Seafoam green #A3C6C4 */
+    --accent-foreground: 200 27% 23%; /* Deep navy */
+
+    /* Wood theme preserved but updated */
+    --wood: 26 19% 69%; /* Natural driftwood #B89F89 */
+    --wood-light: 25 31% 75%; /* Warm sand #D8BFAA */
+    --wood-dark: 26 19% 59%; /* Darker driftwood */
+
+    /* System colors */
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 96%;
-    --border: 26 19% 69%;
-    --input: 0 0% 96%;
-    --ring: 208 26% 48%;
-    --radius: 0.75rem;
+    --destructive-foreground: 0 0% 96%; /* Off-white */
+
+    /* Border and input colors */
+    --border: 26 19% 69%; /* Natural driftwood */
+    --input: 0 0% 96%; /* Soft off-white for readability */
+    --ring: 208 26% 48%; /* Muted steel blue */
+
+    --radius: 0.25rem; /* Sharper corners for refined edges */
   }
 
-  /* Enhanced button interactions */
-  .btn-wood {
-    @apply bg-gradient-to-r from-wood-dark to-wood transition-all duration-300 text-[#F3F4F6];
-    box-shadow: 0 2px 8px rgba(92, 64, 51, 0.2);
-    transform: translateY(0);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Label styling - Sharp and minimalistic */
+  label,
+  .label {
+    @apply text-sm font-medium leading-none;
+    color: #2E2E2E;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
   }
 
-  .btn-wood:hover {
-    @apply bg-gradient-to-r from-wood to-wood-light;
-    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.3);
-    transform: translateY(-2px) scale(1.02);
+  /* Form field groups - Structured grid */
+  .form-group {
+    @apply grid gap-2;
+    margin-bottom: 1.5rem;
   }
 
-  .btn-wood:active {
-    transform: translateY(1px) scale(0.98);
-    box-shadow: 0 1px 4px rgba(92, 64, 51, 0.2);
-  }
-
-  /* Playful card interactions */
-  .card {
-    @apply rounded-lg;
-    border: 2px solid rgba(92, 64, 51, 0.1);
-    background-color: #F5F5F5 !important;
-    color: #2E2E2E !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center;
-    box-shadow:
-      0 2px 4px rgba(92, 64, 51, 0.05),    /* Subtle outer shadow */
-      0 4px 8px rgba(92, 64, 51, 0.05),    /* Medium outer shadow */
-      inset 0 -2px 4px rgba(255, 255, 255, 0.7),  /* Bottom inner highlight */
-      inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Top inner shadow */
-    padding: 1rem; /* Added padding */
-  }
-
-  .card:hover {
-    transform: translateY(-4px) scale(1.01);
-    box-shadow:
-      0 8px 16px rgba(92, 64, 51, 0.08),    /* Larger outer shadow */
-      0 12px 24px rgba(92, 64, 51, 0.08),   /* Spread outer shadow */
-      inset 0 -2px 4px rgba(255, 255, 255, 0.9),  /* Enhanced bottom highlight */
-      inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Consistent top shadow */
-  }
-
-  .card:active {
-    transform: translateY(-2px) scale(0.99);
-    box-shadow:
-      0 4px 8px rgba(92, 64, 51, 0.06),
-      0 6px 12px rgba(92, 64, 51, 0.06),
-      inset 0 -2px 4px rgba(255, 255, 255, 0.8),
-      inset 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  /* Card header enhancement */
-  .card-header {
-    position: relative;
-    z-index: 1;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0.5)
-    );
-    border-bottom: 1px solid rgba(92, 64, 51, 0.1);
-  }
-
-  /* Card content enhancement */
-  .card-content {
-    position: relative;
-    z-index: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.8)
-    );
-  }
-
-
-  /* Enhanced input interactions with 3D effect */
+  /* Input fields - Clean, sharp edges */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -119,242 +72,52 @@
   .text-box {
     background-color: #F5F5F5 !important;
     color: #2E2E2E !important;
-    border: 2px solid rgba(92, 64, 51, 0.15);
-    @apply rounded-lg;
-    padding: 0.75rem;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:
-      0 2px 4px rgba(92, 64, 51, 0.05),    /* Subtle outer shadow */
-      0 4px 8px rgba(92, 64, 51, 0.05),    /* Medium outer shadow */
-      inset 0 -2px 4px rgba(255, 255, 255, 0.7),  /* Bottom inner highlight */
-      inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Top inner shadow */
-    transform: translateY(0);
+    border: 1px solid rgba(92, 64, 51, 0.2);
+    @apply rounded-sm focus:border-wood/40 focus:ring-wood/30;
+    padding: 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: border-color 0.15s ease;
   }
 
-  input:focus,
-  textarea:focus,
-  select:focus,
-  .text-box:focus {
-    transform: translateY(-2px);
-    border-color: var(--wood);
-    box-shadow:
-      0 4px 8px rgba(92, 64, 51, 0.08),    /* Larger outer shadow */
-      0 8px 16px rgba(92, 64, 51, 0.08),   /* Spread outer shadow */
-      inset 0 -2px 4px rgba(255, 255, 255, 0.9),  /* Enhanced bottom highlight */
-      inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Consistent top shadow */
-    outline: none;
+  /* Glassmorphism for overlays */
+  .glass-overlay {
+    background: rgba(245, 245, 245, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  input:hover,
-  textarea:hover,
-  select:hover,
-  .text-box:hover {
-    transform: translateY(-1px);
-    box-shadow:
-      0 3px 6px rgba(92, 64, 51, 0.07),
-      0 6px 12px rgba(92, 64, 51, 0.07),
-      inset 0 -2px 4px rgba(255, 255, 255, 0.8),
-      inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  /* Material texture backgrounds */
+  .bg-brushed {
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(255, 255, 255, 0.1) 75%,
+      rgba(255, 255, 255, 0.1)
+    );
+    background-size: 64px 64px;
   }
 
-  /* Playful tab interactions */
-  .tabs-container [role="tab"] {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+  /* Keep existing component styles but update borders to be sharper */
+  .card {
+    @apply rounded-sm;
+    border: 1px solid rgba(92, 64, 51, 0.1);
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
   }
 
-  .tabs-container [role="tab"]:hover {
-    transform: translateY(-2px);
+  /* Subtle gradients for depth */
+  .gradient-bg {
+    background: linear-gradient(
+      180deg,
+      rgba(245, 245, 245, 1) 0%,
+      rgba(240, 240, 240, 1) 100%
+    );
   }
 
-  .tabs-container [role="tab"][data-state="active"] {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(92, 64, 51, 0.15);
-  }
-
-  .tabs-container [role="tab"][data-state="active"]::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(to right, var(--wood-dark), var(--wood-light));
-    transform: scaleX(0);
-    animation: tabActivate 0.3s forwards cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  @keyframes tabActivate {
-    to {
-      transform: scaleX(1);
-    }
-  }
-
-  /* Loading animation */
-  .loading-spinner {
-    border: 3px solid rgba(92, 64, 51, 0.1);
-    border-top: 3px solid var(--wood);
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  /* Hover lift effect */
-  .hover-lift {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-2px);
-  }
-
-  /* Preserve existing styles but update for consistency */
-  label,
-  .label {
-    @apply text-sm font-medium leading-none;
-    color: #2E2E2E;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0;
-    transition: transform 0.2s ease;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
-  }
-
-  label:hover {
-    transform: translateX(2px);
-  }
-
-  .form-group {
-    @apply grid gap-3;
-    margin-bottom: 1.5rem;
-  }
-
-  /* Tabs animation */
-  .tabs-container [role="tab"] {
-    transition: all 0.2s ease;
-  }
-
-  .tabs-container [role="tab"]:hover {
-    transform: translateY(-1px);
-  }
-
-  .tabs-container [role="tab"][data-state="active"] {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(92, 64, 51, 0.1);
-  }
-
-  /* Keep existing scrollbar styling */
-  .category-content::-webkit-scrollbar,
-  .card-container::-webkit-scrollbar,
-  .tabs-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .category-content::-webkit-scrollbar-track,
-  .card-container::-webkit-scrollbar-track,
-  .tabs-container::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .category-content::-webkit-scrollbar-thumb,
-  .card-container::-webkit-scrollbar-thumb,
-  .tabs-container::-webkit-scrollbar-thumb {
-    background: var(--wood);
-    border-radius: 12px;
-  }
-
-  .category-content::-webkit-scrollbar-thumb:hover,
-  .card-container::-webkit-scrollbar-thumb:hover,
-  .tabs-container::-webkit-scrollbar-thumb:hover {
-    background: var(--wood-light);
-  }
-
-  /* Content areas with proper spacing */
-  .category-content {
-    height: calc(100vh - 2rem);
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 1rem;
-    margin: 0;
-    position: relative;
-    box-sizing: border-box;
-  }
-
-  /* Card containers within categories */
-  .card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    padding: 0;
-    margin-right: 1rem; /* Space for scrollbar */
-    width: auto;
-    box-sizing: border-box;
-  }
-
-  /* Ensure cards don't overflow */
-  .card-container > * {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 1024px) {
-    .card-container {
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    }
-  }
-
-  @media (max-width: 640px) {
-    .card-container {
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    }
-  }
-
-  /* Maintain existing scrollbar styling */
-  .category-content::-webkit-scrollbar {
-    width: 8px;
-    position: absolute;
-    right: 0;
-  }
-
-  .category-content::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .category-content::-webkit-scrollbar-thumb {
-    background: var(--wood);
-    border-radius: 12px;
-  }
-
-  .category-content::-webkit-scrollbar-thumb:hover {
-    background: var(--wood-light);
-  }
-
-
-  /* Background texture */
-  .bg-texture {
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-attachment: fixed;
-    background-size: auto;
-    background-position: center;
-  }
-
-  body {
-    @apply bg-texture font-serif text-wood;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-  }
+  /* Rest of existing styles remain unchanged */
   * {
     @apply border-border;
   }
@@ -388,6 +151,47 @@
     max-width: 100vw;
     overflow-x: hidden;
     padding: 1rem;
+  }
+
+  /* Category content container */
+  .category-content {
+    height: calc(100vh - 2rem); /* Account for padding */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem;
+    margin: -1rem;
+  }
+
+  /* Card containers within categories */
+  .card-container {
+    max-height: calc(100vh - 4rem);
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding-right: 0.5rem;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ensure cards within container maintain proper sizing */
+  .card-container > * {
+    flex: 0 0 auto;
+    max-width: calc(33.333% - 1rem); /* 3 cards per row with gap */
+    min-width: 280px; /* Minimum card width */
+  }
+
+  @media (max-width: 1024px) {
+    .card-container > * {
+      max-width: calc(50% - 1rem); /* 2 cards per row on medium screens */
+    }
+  }
+
+  @media (max-width: 640px) {
+    .card-container > * {
+      max-width: calc(100% - 1rem); /* 1 card per row on small screens */
+    }
   }
 
 
@@ -492,6 +296,17 @@
   .card-sandstone {
     @apply shadow-sm border-wood/20;
     border: 1px solid rgba(92, 64, 51, 0.2);
+  }
+
+  /* Button styles */
+  .btn-wood {
+    @apply bg-gradient-to-r from-wood-dark to-wood transition-all duration-300 text-[#F3F4F6];
+    box-shadow: 2px 2px 5px rgba(92, 64, 51, 0.2);
+  }
+
+  .btn-wood:hover {
+    @apply bg-gradient-to-r from-wood to-wood-light;
+    box-shadow: 2px 2px 8px rgba(92, 64, 51, 0.3);
   }
 
   /* Text input and form control styles */
