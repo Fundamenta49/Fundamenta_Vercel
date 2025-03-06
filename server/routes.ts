@@ -7,6 +7,9 @@ import { z } from "zod";
 import { searchJobs } from "./jobs";
 import { createLinkToken, exchangePublicToken, getTransactions } from "./plaid";
 import axios from 'axios';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const messageSchema = z.object({
   content: z.string(),
@@ -371,6 +374,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("YouTube API error:", error);
       res.status(500).json({ error: "Failed to fetch videos" });
+    }
+  });
+
+  app.post("/api/generate-workout", async (req, res) => {
+    try {
+      const { profile } = req.body;
+
+      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitness goals: ${profile.goals.join(', ')}. 
+      Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
+      Format the response as a JSON object with the following structure:
+      {
+        "exercises": [
+          {
+            "name": string,
+            "sets": number,
+            "reps": number,
+            "description": string,
+            "videoId": string (YouTube video ID)
+          }
+        ],
+        "schedule": string,
+        "tips": string[]
+      }`;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: "You are a professional fitness trainer experienced in creating personalized workout plans." },
+          { role: "user", content: prompt }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      const workoutPlan = JSON.parse(response.choices[0].message.content || "{}");
+      res.json(workoutPlan);
+
+    } catch (error) {
+      console.error('Error generating workout plan:', error);
+      res.status(500).json({ error: 'Failed to generate workout plan' });
     }
   });
 
