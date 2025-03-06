@@ -7,12 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 
 export default function Active() {
   const [hasProfile, setHasProfile] = useState<boolean>(false);
+  const [skipProfile, setSkipProfile] = useState<boolean>(false);
 
   const handleProfileComplete = (profile: ProfileType) => {
     // In a real app, we would save this to a database
@@ -28,8 +30,29 @@ export default function Active() {
     }
   }, []);
 
-  if (!hasProfile) {
-    return <FitnessProfile onComplete={handleProfileComplete} />;
+  if (!hasProfile && !skipProfile) {
+    return (
+      <div className="space-y-4">
+        <Card className="border-0 shadow-none">
+          <CardHeader>
+            <CardTitle>Welcome to Active You! 🎉</CardTitle>
+            <CardDescription>
+              Let's create your personalized fitness profile to help you achieve your goals.
+              This will help us provide customized recommendations across all features.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+        <FitnessProfile onComplete={handleProfileComplete} />
+        <div className="text-center mt-4">
+          <Button
+            variant="ghost"
+            onClick={() => setSkipProfile(true)}
+          >
+            Skip for now and explore
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
