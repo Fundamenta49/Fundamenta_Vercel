@@ -138,15 +138,13 @@
     background-color: #F5F5F5 !important;
     color: #2E2E2E !important;
     width: 100%; /* Full width on mobile */
-    max-width: 100%;
-    margin: 0 auto;
   }
   @media (min-width: 640px) {
     .card {
       @apply p-6; /* Larger padding on desktop */
-      max-width: 48rem; /* 768px - or adjust as needed */
     }
   }
+
 
   /* Grid Layout Helpers */
   .grid-cols-auto-fill {
@@ -171,13 +169,11 @@
     height: calc(100vh - 2rem);
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0.5rem;
-    margin: -0.5rem;
+    padding: 1rem;
+    margin: -1rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
   }
-
   @media (min-width: 640px) {
     .category-content {
       padding: 1rem;
@@ -206,43 +202,37 @@
   }
 
 
-  /* Card containers - mobile first */
+  /* Card containers - proper grid layout */
   .card-container {
-    max-height: calc(100vh - 4rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
     width: 100%;
-    overflow-y: auto;
-    overflow-x: auto;
-    padding-right: 0.25rem; /* Smaller padding on mobile */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem; /* Smaller gap on mobile */
-    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    padding: 1rem;
   }
 
-  @media (min-width: 640px) {
-    .card-container {
-      padding-right: 0.5rem;
-      gap: 1rem;
-    }
+  /* Individual card styles */
+  .card {
+    @apply rounded-sm p-4;
+    border: 1px solid rgba(92, 64, 51, 0.1);
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
+    width: 100%;
   }
 
-  /* Container sizing and centering */
+  /* Container for proper content width */
   .container {
     width: 100%;
-    max-width: 64rem; /* 1024px */
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
-
 
   /* Text scaling for better mobile readability */
   h1 {
     @apply text-2xl font-bold; /* Smaller on mobile */
   }
-
   @media (min-width: 640px) {
     h1 {
       @apply text-3xl;
@@ -263,7 +253,6 @@
     padding: 0.5rem; /* Smaller padding on mobile */
     font-size: 16px !important; /* Prevent zoom on iOS */
   }
-
   @media (min-width: 640px) {
     input[type="text"],
     input[type="email"],
@@ -291,7 +280,6 @@
     padding-bottom: 0.5rem; /* Smaller padding on mobile */
     margin-bottom: -0.5rem;
   }
-
   @media (min-width: 640px) {
     .tabs-container {
       padding-bottom: 1rem;
@@ -332,25 +320,6 @@
     max-width: 100vw;
     overflow-x: hidden;
     padding: 1rem;
-  }
-
-
-  .card-container > * {
-    flex: 0 0 auto;
-    max-width: calc(33.333% - 1rem); /* 3 cards per row with gap */
-    min-width: 280px; /* Minimum card width */
-  }
-
-  @media (max-width: 1024px) {
-    .card-container > * {
-      max-width: calc(50% - 1rem); /* 2 cards per row on medium screens */
-    }
-  }
-
-  @media (max-width: 640px) {
-    .card-container > * {
-      max-width: calc(100% - 1rem); /* 1 card per row on small screens */
-    }
   }
 
 
