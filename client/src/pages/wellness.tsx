@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import MeditationGuide from "@/components/meditation-guide";
 import NutritionGuide from "@/components/nutrition-guide";
+import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 
 export default function Wellness() {
@@ -20,7 +21,8 @@ export default function Wellness() {
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Wellness Coach</TabsTrigger>
-            <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
+            <TabsTrigger value="nutrition">Nutrition Guide</TabsTrigger>
+            <TabsTrigger value="tracker">Food Tracker</TabsTrigger>
             <TabsTrigger value="meditation">Meditation</TabsTrigger>
             <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
           </TabsList>
@@ -42,6 +44,10 @@ export default function Wellness() {
 
         <TabsContent value="nutrition">
           <NutritionGuide />
+        </TabsContent>
+
+        <TabsContent value="tracker">
+          <NutritionTracker />
         </TabsContent>
 
         <TabsContent value="meditation">
