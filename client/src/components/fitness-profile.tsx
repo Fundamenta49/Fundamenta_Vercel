@@ -44,7 +44,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  async function handleSubmit() {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault(); // Prevent default form submission
     try {
       // Validation
       const missingFields = [];
@@ -83,13 +84,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         goals: goals.length > 0 ? goals : ["General Fitness"],
       };
 
-      // Call the onComplete callback with the profile
-      await Promise.resolve(onComplete(profile));
+      onComplete(profile);
 
-      toast({
-        title: "Success!",
-        description: "Your fitness profile has been created.",
-      });
     } catch (error) {
       console.error("Profile creation error:", error);
       toast({
@@ -109,7 +105,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Height</Label>
@@ -205,12 +201,12 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           </div>
 
           <Button 
-            onClick={handleSubmit}
+            type="submit"
             className="w-full"
           >
             Create Profile
           </Button>
-        </div>
+        </form>
       </CardContent>
     </Card>
   );
