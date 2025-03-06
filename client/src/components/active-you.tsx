@@ -10,17 +10,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MeditationGuide from "./meditation-guide";
+import FitnessProgress from "./fitness-progress";
 import {
   Dumbbell,
   Bird as YogaIcon,
   Timer as RunningIcon,
   Brain,
+  Video,
+  Trophy,
   CalendarDays,
   Timer,
   TrendingUp,
 } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface Exercise {
   name: string;
@@ -29,6 +33,7 @@ interface Exercise {
   weight?: number;
   duration?: number;
   notes?: string;
+  videoUrl?: string;
 }
 
 interface WorkoutSession {
@@ -57,116 +62,140 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
 
   if (defaultTab === "weightlifting") {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Dumbbell className="h-5 w-5 text-primary" />
-            AI Weight Lifting Guide
-          </CardTitle>
-          <CardDescription>
-            Get personalized workout plans and form guidance
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Weight lifting guide content - to be implemented */}
-          <Alert>
-            <AlertDescription>
-              Coming soon: AI-powered workout planning and form analysis
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Dumbbell className="h-5 w-5 text-primary" />
+              AI Weight Lifting Guide
+            </CardTitle>
+            <CardDescription>
+              Get personalized workout plans and form guidance
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="relative aspect-video rounded-lg overflow-hidden">
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/videoseries?list=PLdemonic"
+                title="Interactive Workout Guide"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <Alert>
+              <AlertDescription>
+                AI form analysis and personalized recommendations coming soon!
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+        <FitnessProgress />
+      </div>
     );
   }
 
   if (defaultTab === "yoga") {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <YogaIcon className="h-5 w-5 text-primary" />
-            Yoga Buddy
-          </CardTitle>
-          <CardDescription>
-            Interactive yoga sessions with AI guidance
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Yoga guide content - to be implemented */}
-          <Alert>
-            <AlertDescription>
-              Coming soon: AI-guided yoga flows and pose corrections
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <YogaIcon className="h-5 w-5 text-primary" />
+              Yoga Buddy
+            </CardTitle>
+            <CardDescription>
+              Interactive yoga sessions with AI guidance
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="relative aspect-video rounded-lg overflow-hidden">
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/videoseries?list=PLyoga"
+                title="Interactive Yoga Session"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <Alert>
+              <AlertDescription>
+                AI pose correction and personalized flows coming soon!
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+        <FitnessProgress />
+      </div>
     );
   }
 
   if (defaultTab === "running") {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <RunningIcon className="h-5 w-5 text-primary" />
-            Running Tracker
-          </CardTitle>
-          <CardDescription>
-            Track your runs and get AI-powered insights
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card>
-              <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Timer className="h-4 w-4" />
-                  Duration
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {runningStats.duration} mins
-                </div>
-              </CardContent>
-            </Card>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <RunningIcon className="h-5 w-5 text-primary" />
+              Running Tracker
+            </CardTitle>
+            <CardDescription>
+              Track your runs and get AI-powered insights
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="py-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Timer className="h-4 w-4" />
+                    Duration
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {runningStats.duration} mins
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  Distance
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {runningStats.distance} km
-                </div>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader className="py-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Distance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {runningStats.distance} km
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardHeader className="py-3">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4" />
-                  Pace
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {runningStats.pace} min/km
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Alert>
-            <AlertDescription>
-              Coming soon: AI running coach and detailed analytics
-            </AlertDescription>
-          </Alert>
-        </CardContent>
-      </Card>
+              <Card>
+                <CardHeader className="py-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <CalendarDays className="h-4 w-4" />
+                    Pace
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {runningStats.pace} min/km
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            <Alert>
+              <AlertDescription>
+                GPS tracking and real-time coaching coming soon!
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+        <FitnessProgress />
+      </div>
     );
   }
 
