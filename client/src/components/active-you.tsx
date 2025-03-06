@@ -21,10 +21,6 @@ import {
   Timer as RunningIcon,
   Brain,
   Video,
-  Trophy,
-  CalendarDays,
-  Timer as TimerIcon,
-  TrendingUp,
 } from "lucide-react";
 
 interface ActiveYouProps {
@@ -32,101 +28,99 @@ interface ActiveYouProps {
 }
 
 export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouProps) {
-  if (defaultTab === "meditation") {
-    return <MeditationGuide />;
-  }
+  const [currentTab, setCurrentTab] = useState(defaultTab);
 
-  if (defaultTab === "weightlifting") {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Dumbbell className="h-5 w-5 text-primary" />
-              AI Weight Lifting Guide
-            </CardTitle>
-            <CardDescription>
-              Get personalized workout plans and form guidance
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="relative aspect-video rounded-lg overflow-hidden">
-              <iframe
-                className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/videoseries?list=PLdemonic"
-                title="Interactive Workout Guide"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-            <Alert>
-              <AlertDescription>
-                AI form analysis and personalized recommendations coming soon!
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-        <FitnessProgress />
-      </div>
-    );
-  }
+  return (
+    <div className="space-y-6">
+      {currentTab === "meditation" && (
+        <MeditationGuide />
+      )}
 
-  if (defaultTab === "yoga") {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <YogaIcon className="h-5 w-5 text-primary" />
-              Yoga Buddy
-            </CardTitle>
-            <CardDescription>
-              Interactive yoga sessions with AI guidance
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="relative aspect-video rounded-lg overflow-hidden">
-              <iframe
-                className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/videoseries?list=PLyoga"
-                title="Interactive Yoga Session"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-            <Alert>
-              <AlertDescription>
-                AI pose correction and personalized flows coming soon!
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-        <FitnessProgress />
-      </div>
-    );
-  }
+      {currentTab === "weightlifting" && (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Dumbbell className="h-5 w-5 text-primary" />
+                AI Weight Lifting Guide
+              </CardTitle>
+              <CardDescription>
+                Get personalized workout plans and form guidance
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="relative aspect-video rounded-lg overflow-hidden">
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/videoseries?list=PLdemonic"
+                  title="Interactive Workout Guide"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <Alert>
+                <AlertDescription>
+                  AI form analysis and personalized recommendations coming soon!
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+          <FitnessProgress />
+        </>
+      )}
 
-  if (defaultTab === "running") {
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <RunningIcon className="h-5 w-5 text-primary" />
-              Running Tracker
-            </CardTitle>
-            <CardDescription>
-              Track your runs and get AI-powered insights
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RunningTracker />
-          </CardContent>
-        </Card>
-        <FitnessProgress />
-      </div>
-    );
-  }
+      {currentTab === "yoga" && (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <YogaIcon className="h-5 w-5 text-primary" />
+                Yoga Buddy
+              </CardTitle>
+              <CardDescription>
+                Interactive yoga sessions with AI guidance
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="relative aspect-video rounded-lg overflow-hidden">
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/videoseries?list=PLyoga"
+                  title="Interactive Yoga Session"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <Alert>
+                <AlertDescription>
+                  AI pose correction and personalized flows coming soon!
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+          <FitnessProgress />
+        </>
+      )}
 
-  return null;
+      {currentTab === "running" && (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <RunningIcon className="h-5 w-5 text-primary" />
+                Running Tracker
+              </CardTitle>
+              <CardDescription>
+                Track your runs and get AI-powered insights
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RunningTracker />
+            </CardContent>
+          </Card>
+          <FitnessProgress />
+        </>
+      )}
+    </div>
+  );
 }
