@@ -28,11 +28,11 @@ const feetInchesToCm = (feet: number, inches: number) => (feet * 12 + inches) * 
 
 export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps) {
   const { toast } = useToast();
-  const [heightFeet, setHeightFeet] = useState("");
-  const [heightInches, setHeightInches] = useState("");
-  const [weightLbs, setWeightLbs] = useState("");
-  const [selectedSex, setSelectedSex] = useState("");
-  const [selectedFitnessLevel, setSelectedFitnessLevel] = useState("");
+  const [heightFeet, setHeightFeet] = useState<string>("");
+  const [heightInches, setHeightInches] = useState<string>("");
+  const [weightLbs, setWeightLbs] = useState<string>("");
+  const [selectedSex, setSelectedSex] = useState<string>("");
+  const [selectedFitnessLevel, setSelectedFitnessLevel] = useState<string>("");
   const [goals, setGoals] = useState<string[]>([]);
 
   const fitnessGoals = [
@@ -44,26 +44,44 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  const createProfile = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Create Profile clicked");
+    console.log("Form submission started", {
+      heightFeet,
+      heightInches,
+      weightLbs,
+      selectedSex,
+      selectedFitnessLevel,
+      goals
+    });
 
     // Validation
-    if (!heightFeet || !heightInches || !weightLbs || !selectedSex || !selectedFitnessLevel) {
-      console.log("Missing required fields");
+    const missingFields = [];
+    if (!heightFeet) missingFields.push("Height (feet)");
+    if (!heightInches) missingFields.push("Height (inches)");
+    if (!weightLbs) missingFields.push("Weight");
+    if (!selectedSex) missingFields.push("Sex");
+    if (!selectedFitnessLevel) missingFields.push("Fitness Level");
+
+    if (missingFields.length > 0) {
+      console.log("Validation failed - missing fields:", missingFields);
       toast({
         variant: "destructive",
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: `Please fill in: ${missingFields.join(", ")}`,
       });
       return;
     }
 
     try {
+      // Convert measurements
       const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
       const weightKg = lbsToKg(Number(weightLbs));
 
+      console.log("Measurements converted", { heightCm, weightKg });
+
       if (isNaN(heightCm) || isNaN(weightKg)) {
+        console.log("Invalid measurements", { heightCm, weightKg });
         toast({
           variant: "destructive",
           title: "Invalid Input",
@@ -72,6 +90,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         return;
       }
 
+      // Create profile object
       const profile: FitnessProfile = {
         height: heightCm,
         weight: weightKg,
@@ -80,8 +99,16 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         goals: goals.length > 0 ? goals : ["General Fitness"],
       };
 
-      console.log("Submitting profile:", profile);
+      console.log("Profile object created", profile);
+
+      // Call onComplete callback
       onComplete(profile);
+
+      // Show success message
+      toast({
+        title: "Success!",
+        description: "Your fitness profile has been created successfully!",
+      });
 
     } catch (error) {
       console.error("Profile creation error:", error);
@@ -102,7 +129,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Height</Label>
@@ -193,13 +220,10 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
             </div>
           </div>
 
-          <Button 
-            onClick={createProfile}
-            className="w-full"
-          >
+          <Button type="submit" className="w-full">
             Create Profile
           </Button>
-        </div>
+        </form>
       </CardContent>
     </Card>
   );
