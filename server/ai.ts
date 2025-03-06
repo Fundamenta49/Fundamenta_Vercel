@@ -383,7 +383,32 @@ export async function generateCoverLetter(data: CoverLetterData): Promise<string
   }
 }
 
-export async function assessCareer(answers: Record<number, string>): Promise<any> {
+interface EducationPathSuggestion {
+  pathType: 'university' | 'trade';
+  title: string;
+  description: string;
+  skills: string[];
+  growth: string;
+  education: {
+    type: string;
+    duration: string;
+    requirements: string[];
+    estimated_cost: string;
+  };
+  salary_range: {
+    entry: string;
+    experienced: string;
+  };
+  program_suggestions: {
+    name: string;
+    description: string;
+    link?: string;
+  }[];
+}
+
+export async function assessCareer(answers: Record<number, string>): Promise<{
+  suggestions: EducationPathSuggestion[];
+}> {
   try {
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OpenAI API key not configured");
@@ -395,29 +420,60 @@ export async function assessCareer(answers: Record<number, string>): Promise<any
       messages: [
         {
           role: "system",
-          content: "You are a career counselor expert providing detailed career suggestions based on assessment answers. Return results in JSON format with career suggestions including title, description, required skills, growth potential, and education path."
+          content: `You are a career and education counselor expert. Analyze the assessment answers to recommend whether a 4-year university degree or trade school would be more suitable. 
+          Consider:
+          - Learning style preferences
+          - Personality traits
+          - Career interests
+          - Desired timeline
+          - Financial considerations
+
+          For each path suggested, provide detailed information about:
+          - Specific programs or degrees
+          - Required skills
+          - Career outlook
+          - Education requirements
+          - Cost estimates
+          - Salary potential
+
+          Return 2-3 suggestions in JSON format.`
         },
         {
           role: "user",
-          content: `Based on these assessment answers, suggest 3 suitable careers with detailed information:
-          
+          content: `Based on these assessment answers, suggest optimal educational paths (both university and trade options if appropriate):
+
           ${Object.entries(answers).map(([id, answer]) => `Question ${id}: ${answer}`).join('\n')}
-          
+
           Provide response in this JSON format:
           {
             "suggestions": [{
-              "title": "Career Title",
-              "description": "Detailed description of the career and why it matches",
+              "pathType": "university" | "trade",
+              "title": "Career/Program Title",
+              "description": "Detailed description of the career path",
               "skills": ["Required Skill 1", "Required Skill 2", ...],
-              "growth": "Information about career growth and market demand",
-              "education": "Required education and certification path"
+              "growth": "Information about career growth potential",
+              "education": {
+                "type": "Type of education program",
+                "duration": "Expected duration",
+                "requirements": ["Requirement 1", "Requirement 2", ...],
+                "estimated_cost": "Cost range"
+              },
+              "salary_range": {
+                "entry": "Entry level salary range",
+                "experienced": "Experienced salary range"
+              },
+              "program_suggestions": [{
+                "name": "Program name",
+                "description": "Program description",
+                "link": "Optional link to program information"
+              }]
             }]
           }`
         }
       ],
       response_format: { type: "json_object" },
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 2000,
     });
 
     return JSON.parse(response.choices[0].message.content);
@@ -443,7 +499,6 @@ export async function assessCareer(answers: Record<number, string>): Promise<any
   }
 }
 
-// Add this function to the AI service
 export async function getSalaryInsights(jobTitle: string, location: string): Promise<any> {
   try {
     if (!process.env.OPENAI_API_KEY) {
@@ -467,7 +522,7 @@ export async function getSalaryInsights(jobTitle: string, location: string): Pro
           - Required skills
           - Market outlook
           - Industry trends
-
+          
           Return in this JSON format:
           {
             "title": "Job Title",

@@ -7,85 +7,146 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, GraduationCap, Wrench, Brain, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 interface Question {
   id: number;
   text: string;
+  category: 'personality' | 'interests' | 'values' | 'skills';
   options: string[];
 }
 
 const questions: Question[] = [
+  // Personality Questions
   {
     id: 1,
-    text: "What type of tasks do you enjoy most?",
+    text: "How do you prefer to solve problems?",
+    category: 'personality',
     options: [
-      "Analytical and problem-solving",
-      "Creative and artistic",
-      "Helping and teaching others",
-      "Leading and organizing teams",
-      "Working with technology",
+      "Through careful analysis and research",
+      "By getting hands-on and experimenting",
+      "Through creative thinking and innovation",
+      "By discussing with others and collaboration",
+      "Through step-by-step systematic approach"
     ],
   },
   {
     id: 2,
-    text: "What work environment do you prefer?",
+    text: "How do you prefer to learn new things?",
+    category: 'personality',
     options: [
-      "Fast-paced and dynamic",
-      "Structured and organized",
-      "Collaborative and team-oriented",
-      "Independent and autonomous",
-      "Mix of indoor and outdoor work",
+      "Through reading and theoretical study",
+      "Through practical, hands-on experience",
+      "Through visual demonstrations",
+      "Through group discussions and seminars",
+      "Through self-paced online courses"
     ],
   },
+  // Interests Questions
   {
     id: 3,
-    text: "What are your key strengths?",
+    text: "What type of work environment interests you most?",
+    category: 'interests',
     options: [
-      "Communication and interpersonal skills",
-      "Technical and analytical abilities",
-      "Creativity and innovation",
-      "Leadership and management",
-      "Detail-oriented and organized",
+      "Traditional office setting",
+      "Workshop or construction site",
+      "Laboratory or research facility",
+      "Outdoor and variable locations",
+      "Creative studio or design space"
     ],
   },
   {
     id: 4,
-    text: "What motivates you most in a career?",
+    text: "Which activities do you find most engaging?",
+    category: 'interests',
     options: [
-      "Financial success and stability",
-      "Making a positive impact",
-      "Learning and growth opportunities",
-      "Work-life balance",
-      "Recognition and advancement",
+      "Writing and analyzing documents",
+      "Building or repairing things",
+      "Solving complex problems",
+      "Working with tools and machinery",
+      "Creating and designing"
+    ],
+  },
+  // Values Questions
+  {
+    id: 5,
+    text: "What factors are most important in your career choice?",
+    category: 'values',
+    options: [
+      "High earning potential and benefits",
+      "Work-life balance and stability",
+      "Opportunity for advancement",
+      "Independence and autonomy",
+      "Making a positive impact"
     ],
   },
   {
-    id: 5,
-    text: "What industries interest you most?",
+    id: 6,
+    text: "What timeline for career preparation appeals to you?",
+    category: 'values',
     options: [
-      "Technology and innovation",
-      "Healthcare and wellness",
-      "Business and finance",
-      "Arts and entertainment",
-      "Education and training",
+      "4+ years of academic study",
+      "1-2 years of focused training",
+      "2-3 years combining study and practice",
+      "Immediate hands-on training",
+      "Flexible, self-paced learning"
     ],
   },
+  // Skills Assessment
+  {
+    id: 7,
+    text: "What are your strongest current skills?",
+    category: 'skills',
+    options: [
+      "Academic and analytical thinking",
+      "Technical and mechanical abilities",
+      "Creative and artistic expression",
+      "Physical and hands-on work",
+      "Leadership and organization"
+    ],
+  },
+  {
+    id: 8,
+    text: "How do you handle challenging tasks?",
+    category: 'skills',
+    options: [
+      "Research thoroughly before starting",
+      "Jump in and learn by doing",
+      "Break down into smaller steps",
+      "Seek guidance from experts",
+      "Collaborate with others"
+    ],
+  }
 ];
 
 interface CareerSuggestion {
+  pathType: 'university' | 'trade';
   title: string;
   description: string;
   skills: string[];
   growth: string;
-  education: string;
+  education: {
+    type: string;
+    duration: string;
+    requirements: string[];
+    estimated_cost: string;
+  };
+  salary_range: {
+    entry: string;
+    experienced: string;
+  };
+  program_suggestions: {
+    name: string;
+    description: string;
+    link?: string;
+  }[];
 }
 
 export default function CareerAssessment() {
@@ -109,7 +170,7 @@ export default function CareerAssessment() {
       setSuggestions(data.suggestions);
       toast({
         title: "Assessment Complete",
-        description: "Here are your personalized career suggestions!",
+        description: "Here are your personalized educational and career path suggestions!",
       });
     },
     onError: (error: Error) => {
@@ -141,21 +202,48 @@ export default function CareerAssessment() {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Your Career Suggestions</CardTitle>
+            <CardTitle>Your Educational Path Recommendations</CardTitle>
             <CardDescription>
-              Based on your answers, here are some career paths that might interest you
+              Based on your personality, interests, values, and skills, here are recommended educational and career paths
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {suggestions.map((suggestion, index) => (
-              <div key={index} className="space-y-4 p-4 border rounded-lg">
-                <h3 className="text-xl font-semibold flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  {suggestion.title}
-                </h3>
+              <div key={index} className="space-y-4 p-6 border rounded-lg bg-card">
+                <div className="flex items-center gap-2">
+                  {suggestion.pathType === 'university' ? (
+                    <GraduationCap className="h-6 w-6 text-primary" />
+                  ) : (
+                    <Wrench className="h-6 w-6 text-primary" />
+                  )}
+                  <h3 className="text-xl font-semibold">{suggestion.title}</h3>
+                </div>
+
                 <p className="text-muted-foreground">{suggestion.description}</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Education Path</h4>
+                    <div className="space-y-1 text-sm">
+                      <p><strong>Type:</strong> {suggestion.education.type}</p>
+                      <p><strong>Duration:</strong> {suggestion.education.duration}</p>
+                      <p><strong>Estimated Cost:</strong> {suggestion.education.estimated_cost}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Salary Potential</h4>
+                    <div className="space-y-1 text-sm">
+                      <p><strong>Entry Level:</strong> {suggestion.salary_range.entry}</p>
+                      <p><strong>Experienced:</strong> {suggestion.salary_range.experienced}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
                 <div>
-                  <h4 className="font-medium mb-2">Key Skills Needed:</h4>
+                  <h4 className="font-medium mb-2">Required Skills:</h4>
                   <div className="flex flex-wrap gap-2">
                     {suggestion.skills.map((skill, i) => (
                       <span
@@ -167,23 +255,34 @@ export default function CareerAssessment() {
                     ))}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-medium mb-1">Growth Potential</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {suggestion.growth}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-1">Education Path</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {suggestion.education}
-                    </p>
+
+                <div>
+                  <h4 className="font-medium mb-2">Recommended Programs:</h4>
+                  <div className="grid gap-2">
+                    {suggestion.program_suggestions.map((program, i) => (
+                      <div key={i} className="p-3 rounded-lg bg-muted">
+                        <h5 className="font-medium">{program.name}</h5>
+                        <p className="text-sm text-muted-foreground">
+                          {program.description}
+                        </p>
+                        {program.link && (
+                          <a
+                            href={program.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline mt-1 inline-block"
+                          >
+                            Learn more →
+                          </a>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             ))}
-            <Button onClick={handleRestart} className="w-full">
+
+            <Button onClick={handleRestart} className="w-full mt-4">
               Take Assessment Again
             </Button>
           </CardContent>
@@ -195,9 +294,12 @@ export default function CareerAssessment() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Career Assessment Quiz</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Brain className="h-6 w-6 text-primary" />
+          Educational Path Assessment
+        </CardTitle>
         <CardDescription>
-          Answer a few questions to get personalized career suggestions
+          Answer these questions to get personalized recommendations for university degrees or trade school programs
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
