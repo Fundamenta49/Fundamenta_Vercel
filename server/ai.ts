@@ -17,25 +17,164 @@ interface ConversationContext {
   }>;
 }
 
+interface CrossCategoryContext {
+  finance: {
+    budgetingStyle?: string;
+    financialGoals?: string[];
+    riskTolerance?: string;
+  };
+  career: {
+    educationPath?: string;
+    skillInterests?: string[];
+    workPreferences?: string[];
+  };
+  wellness: {
+    stressLevel?: string;
+    healthGoals?: string[];
+    lifestylePreferences?: string[];
+  };
+  learning: {
+    learningStyle?: string;
+    interests?: string[];
+    currentSkills?: string[];
+  };
+}
+
+interface UserContext {
+  personality: {
+    communicationStyle: string;
+    decisionMaking: string;
+    stressResponse: string;
+  };
+  preferences: {
+    detailLevel: string;
+    interactionStyle: string;
+    pacePreference: string;
+  };
+  crossCategoryInsights: CrossCategoryContext;
+}
+
+function analyzeCrossCategory(messages: { role: string; content: string; category?: string }[]): CrossCategoryContext {
+  const context: CrossCategoryContext = {
+    finance: {},
+    career: {},
+    wellness: {},
+    learning: {}
+  };
+
+  const content = messages.map(m => m.content.toLowerCase()).join(" ");
+
+  // Financial analysis
+  if (content.includes("budget") || content.includes("save") || content.includes("invest")) {
+    context.finance.budgetingStyle = content.includes("detailed") ? "detailed" : "simplified";
+    context.finance.financialGoals = extractFinancialGoals(content);
+  }
+
+  // Career analysis
+  if (content.includes("job") || content.includes("career") || content.includes("work")) {
+    context.career.workPreferences = extractWorkPreferences(content);
+    context.career.skillInterests = extractSkillInterests(content);
+  }
+
+  // Wellness analysis
+  if (content.includes("stress") || content.includes("health") || content.includes("exercise")) {
+    context.wellness.stressLevel = assessStressLevel(content);
+    context.wellness.healthGoals = extractHealthGoals(content);
+  }
+
+  // Learning analysis
+  if (content.includes("learn") || content.includes("study") || content.includes("skill")) {
+    context.learning.learningStyle = determineLearningStyle(content);
+    context.learning.interests = extractLearningInterests(content);
+  }
+
+  return context;
+}
+
+function extractFinancialGoals(content: string): string[] {
+  const goals = [];
+  if (content.includes("save")) goals.push("savings");
+  if (content.includes("invest")) goals.push("investment");
+  if (content.includes("debt")) goals.push("debt management");
+  if (content.includes("budget")) goals.push("budgeting");
+  return goals;
+}
+
+function extractWorkPreferences(content: string): string[] {
+  const preferences = [];
+  if (content.includes("remote")) preferences.push("remote work");
+  if (content.includes("flexible")) preferences.push("flexible schedule");
+  if (content.includes("team")) preferences.push("team-oriented");
+  if (content.includes("independent")) preferences.push("independent work");
+  return preferences;
+}
+
+function extractSkillInterests(content: string): string[] {
+  const skills = [];
+  if (content.includes("tech")) skills.push("technology");
+  if (content.includes("create")) skills.push("creative");
+  if (content.includes("manage")) skills.push("management");
+  if (content.includes("analyze")) skills.push("analytical");
+  return skills;
+}
+
+function assessStressLevel(content: string): string {
+  if (content.includes("overwhelm")) return "high";
+  if (content.includes("manag")) return "moderate";
+  if (content.includes("relax")) return "low";
+  return "moderate";
+}
+
+function extractHealthGoals(content: string): string[] {
+  const goals = [];
+  if (content.includes("weight")) goals.push("weight management");
+  if (content.includes("stress")) goals.push("stress reduction");
+  if (content.includes("sleep")) goals.push("better sleep");
+  if (content.includes("energy")) goals.push("energy improvement");
+  return goals;
+}
+
+function determineLearningStyle(content: string): string {
+  if (content.includes("visual")) return "visual";
+  if (content.includes("hands")) return "kinesthetic";
+  if (content.includes("listen")) return "auditory";
+  return "mixed";
+}
+
+function extractLearningInterests(content: string): string[] {
+  const interests = [];
+  if (content.includes("technical")) interests.push("technical skills");
+  if (content.includes("creative")) interests.push("creative arts");
+  if (content.includes("business")) interests.push("business");
+  if (content.includes("health")) interests.push("health sciences");
+  return interests;
+}
+
 export async function getChatResponse(
   prompt: string,
   category: string,
-  previousMessages: { role: string; content: string }[] = []
+  previousMessages: { role: string; content: string; category?: string }[] = []
 ): Promise<string> {
   const systemPrompts = {
     emergency: "You are an emergency response expert providing clear, step-by-step guidance for emergency situations. Maintain a calm, authoritative, and reassuring tone.",
     finance: "You are a financial advisor helping with budgeting, savings, and financial literacy. Adapt your advice to the user's financial knowledge level and goals.",
     career: "You are a career coach providing guidance on job searching, resume building, and interview preparation. Consider the user's experience level and career aspirations.",
     wellness: "You are a wellness coach providing guidance on mental health, meditation, and stress management. Be empathetic and adjust your tone based on the user's emotional state.",
+    learning: "You are a learning coach helping users develop new skills and knowledge. Adapt your guidance to their learning style and interests."
   };
 
-  // Add personality analysis to the system prompt
+  const crossCategoryContext = analyzeCrossCategory(previousMessages);
   const personalityAnalysis = previousMessages.length > 0 
-    ? `Based on our conversation, I understand that you:
-       - Prefer ${getPreferredStyle(previousMessages)} communication
-       - Show interest in ${getInterests(previousMessages)}
-       - Respond well to ${getLearningStyle(previousMessages)}
-       I'll adapt my responses accordingly.`
+    ? `Based on our conversation and cross-category analysis:
+       - Communication style: ${getPreferredStyle(previousMessages)}
+       - Interests: ${getInterests(previousMessages)}
+       - Learning approach: ${getLearningStyle(previousMessages)}
+       - Financial mindset: ${crossCategoryContext.finance.budgetingStyle || "unknown"}
+       - Career interests: ${crossCategoryContext.career.workPreferences?.join(", ") || "unknown"}
+       - Wellness priorities: ${crossCategoryContext.wellness.healthGoals?.join(", ") || "unknown"}
+       - Learning focus: ${crossCategoryContext.learning.interests?.join(", ") || "unknown"}
+
+       I'll adapt my responses to provide holistic guidance that considers all aspects of your development.`
     : "";
 
   try {
@@ -50,15 +189,15 @@ export async function getChatResponse(
           role: "system",
           content: `${systemPrompts[category as keyof typeof systemPrompts]}
                    ${personalityAnalysis}
-                   Adapt your communication style to match the user's preferences while maintaining professionalism.
-                   Pay attention to their vocabulary level, technical understanding, and emotional state.
-                   Maintain conversation history to provide consistent and personalized guidance.`,
+                   Consider the user's full context across all categories when providing advice.
+                   Integrate relevant insights from finance, career, wellness, and learning when appropriate.
+                   Maintain a consistent and personalized approach based on the user's communication preferences.`
         },
         ...previousMessages,
-        { role: "user", content: prompt },
+        { role: "user", content: prompt }
       ],
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 500
     });
 
     return response.choices[0].message.content || "I apologize, I couldn't process that request.";
