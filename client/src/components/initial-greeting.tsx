@@ -26,8 +26,10 @@ export default function InitialGreeting({ onComplete }: InitialGreetingProps) {
             Welcome to Fundamenta!
           </CardTitle>
           <CardDescription>
-            Before we begin, I'd love to get to know you a little better to create a more
-            personalized experience just for you. Let's have a quick chat!
+            I'd love to understand you better to create an experience that truly resonates 
+            with your personality and preferences. Let's have a brief conversation that will 
+            help me customize everything from the interface colors to how I communicate with you. 
+            Your responses will shape how the entire app adapts to your unique style!
           </CardDescription>
         </CardHeader>
         <CardContent>

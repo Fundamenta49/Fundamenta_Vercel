@@ -40,7 +40,28 @@ export default function ChatInterface({ category, onConversationComplete }: Chat
       wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
       learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
       fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. Whether you're into weightlifting, yoga, running, or meditation, I'll provide personalized guidance for your fitness journey. What would you like to work on today?",
-      welcome: "Hi! 👋 I'm excited to create a personalized experience just for you. Let's start with something fun - what's your favorite color? And do you prefer energetic or calming music while working out? This will help me customize your experience!"
+      welcome: `Hi! 👋 I'm excited to create a unique experience tailored just for you. Let's get to know each other a bit:
+
+1. What colors naturally draw your attention and make you feel energized? 🎨
+
+2. When it comes to music while exercising, do you prefer:
+   A) High-energy, motivating beats
+   B) Calming, focused rhythms
+   C) No music, just natural sounds
+
+3. When do you feel most productive and energetic during the day? 🌅
+
+4. When facing a challenge, do you prefer to:
+   A) Break it down into small steps
+   B) Visualize the end goal
+   C) Get guidance and support
+
+5. How do you typically handle stress?
+   A) Physical activity
+   B) Quiet reflection
+   C) Talking it through
+
+Your answers will help me personalize everything from workout recommendations to interface style!`
     };
 
     setMessages([{ role: "assistant", content: greetings[category], category }]);
@@ -67,8 +88,14 @@ export default function ChatInterface({ category, onConversationComplete }: Chat
       setInput("");
 
       // If this is the welcome conversation and we've gathered enough information,
-      // call the completion callback
-      if (category === "welcome" && messages.length >= 4 && onConversationComplete) {
+      // call the completion callback after collecting all psychological insights
+      if (category === "welcome" && messages.length >= 10 && onConversationComplete) {
+        // Store the user's preferences in localStorage for app-wide customization
+        const userPreferences = {
+          lastMessage: Date.now(),
+          responses: messages.filter(m => m.role === "user").map(m => m.content)
+        };
+        localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
         onConversationComplete();
       }
     },
