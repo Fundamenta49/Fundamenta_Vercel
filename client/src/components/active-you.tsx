@@ -103,23 +103,7 @@ export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouPro
       )}
 
       {currentTab === "running" && (
-        <>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <RunningIcon className="h-5 w-5 text-primary" />
-                Running Tracker
-              </CardTitle>
-              <CardDescription>
-                Track your runs and get AI-powered insights
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RunningTracker />
-            </CardContent>
-          </Card>
-          <FitnessProgress />
-        </>
+        <RunningTracker />
       )}
     </div>
   );
