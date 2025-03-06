@@ -69,6 +69,12 @@ export default function Navigation() {
           </Button>
         </SheetTrigger>
         <SheetContent>
+          <Link href="/">
+            <button className="flex items-center gap-2 px-4 py-2 mb-4 w-full text-left">
+              <HeartHandshake className="h-6 w-6" />
+              <span className="text-2xl font-bold">Fundamenta</span>
+            </button>
+          </Link>
           <NavContent />
         </SheetContent>
       </Sheet>
@@ -82,7 +88,11 @@ export default function Navigation() {
     )}>
       <div className="flex items-center justify-between mb-8">
         <Link href="/">
-          <button className="flex items-center gap-2 px-4 py-2">
+          <button className={cn(
+            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left hover:bg-[#A3C6C4] hover:text-[#1C3D5A]",
+            location === "/" && "bg-[#1C3D5A] text-[#D8BFAA]"
+          )}>
+            <HeartHandshake className="h-6 w-6" />
             {!isMinimized && <h1 className="text-2xl font-bold">Fundamenta</h1>}
           </button>
         </Link>
