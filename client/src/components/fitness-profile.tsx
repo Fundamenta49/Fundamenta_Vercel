@@ -19,8 +19,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 export interface FitnessProfile {
-  height: number;
-  weight: number;
+  height: number; // in centimeters
+  weight: number; // in kilograms
   sex: "male" | "female" | "other";
   goals: string[];
   fitnessLevel: "beginner" | "intermediate" | "advanced";
@@ -45,7 +45,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!profile.height || !profile.weight || !profile.sex || !profile.fitnessLevel) {
       toast({
         variant: "destructive",
@@ -81,7 +81,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                 placeholder="175"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="weight">Weight (kg)</Label>
               <Input

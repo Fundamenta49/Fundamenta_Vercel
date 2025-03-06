@@ -16,9 +16,9 @@ import "leaflet/dist/leaflet.css";
 interface RunningSession {
   startTime: number;
   endTime?: number;
-  distance: number;
-  duration: number;
-  pace: number;
+  distance: number; // in kilometers
+  duration: number; // in minutes
+  pace: number; // in minutes per kilometer
   route: Array<{
     latitude: number;
     longitude: number;
@@ -28,10 +28,10 @@ interface RunningSession {
 
 function RouteMap({ route }: { route: RunningSession["route"] }) {
   const mapCenter = route.length > 0 
-    ? [route[0].latitude, route[0].longitude] 
-    : [51.505, -0.09]; // Default center
+    ? [route[0].latitude, route[0].longitude] as [number, number]
+    : [51.505, -0.09] as [number, number]; // Default center
 
-  const positions = route.map(point => [point.latitude, point.longitude]);
+  const positions = route.map(point => [point.latitude, point.longitude] as [number, number]);
 
   return (
     <MapContainer 
@@ -119,7 +119,7 @@ export default function RunningTracker() {
             },
           ];
 
-          // Calculate new distance
+          // Calculate new distance in kilometers
           let distance = prev.distance;
           if (newRoute.length > 1) {
             const lastPoint = newRoute[newRoute.length - 2];
@@ -133,7 +133,7 @@ export default function RunningTracker() {
           }
 
           const duration = (Date.now() - prev.startTime) / 1000 / 60; // in minutes
-          const pace = duration > 0 ? distance > 0 ? duration / distance : 0 : 0;
+          const pace = duration > 0 ? distance > 0 ? duration / distance : 0 : 0; // min/km
 
           return {
             ...prev,
