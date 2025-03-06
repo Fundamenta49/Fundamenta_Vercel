@@ -46,8 +46,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
   const [heightFeet, setHeightFeet] = useState<string>("");
   const [heightInches, setHeightInches] = useState<string>("");
   const [weightLbs, setWeightLbs] = useState<string>("");
-  const [sex, setSex] = useState<"male" | "female" | undefined>(undefined);
-  const [fitnessLevel, setFitnessLevel] = useState<"beginner" | "intermediate" | "advanced" | undefined>(undefined);
+  const [sex, setSex] = useState<string>("");
+  const [fitnessLevel, setFitnessLevel] = useState<string>("");
   const [goals, setGoals] = useState<string[]>([]);
 
   const fitnessGoals = [
@@ -74,13 +74,15 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
     const weightKg = lbsToKg(Number(weightLbs));
 
-    onComplete({
+    const profile: FitnessProfile = {
       height: heightCm,
       weight: weightKg,
-      sex,
-      fitnessLevel,
+      sex: sex as "male" | "female",
+      fitnessLevel: fitnessLevel as "beginner" | "intermediate" | "advanced",
       goals: goals,
-    } as FitnessProfile);
+    };
+
+    onComplete(profile);
   };
 
   return (
@@ -138,7 +140,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
           <div className="space-y-2">
             <Label>Sex</Label>
-            <Select value={sex || ""} onValueChange={(value) => setSex(value as "male" | "female")}>
+            <Select value={sex} onValueChange={setSex}>
               <SelectTrigger>
                 <SelectValue placeholder="Select your sex" />
               </SelectTrigger>
@@ -151,7 +153,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
           <div className="space-y-2">
             <Label>Fitness Level</Label>
-            <Select value={fitnessLevel || ""} onValueChange={(value) => setFitnessLevel(value as "beginner" | "intermediate" | "advanced")}>
+            <Select value={fitnessLevel} onValueChange={setFitnessLevel}>
               <SelectTrigger>
                 <SelectValue placeholder="Select your fitness level" />
               </SelectTrigger>
@@ -173,9 +175,9 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                   variant={goals.includes(goal) ? "default" : "outline"}
                   className="justify-start"
                   onClick={() => {
-                    setGoals(current => 
+                    setGoals((current) =>
                       current.includes(goal)
-                        ? current.filter(g => g !== goal)
+                        ? current.filter((g) => g !== goal)
                         : [...current, goal]
                     );
                   }}
