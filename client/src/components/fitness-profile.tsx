@@ -49,25 +49,22 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submission started with data:", formData);
+    setIsSubmitting(true);
 
     try {
-      setIsSubmitting(true);
-
-      // Validation
+      // Validation with more specific messages
       const missingFields = [];
-      if (!formData.heightFeet) missingFields.push("Height (feet)");
-      if (!formData.heightInches) missingFields.push("Height (inches)");
-      if (!formData.weightLbs) missingFields.push("Weight");
+      if (!formData.heightFeet.trim()) missingFields.push("Height (feet)");
+      if (!formData.heightInches.trim()) missingFields.push("Height (inches)");
+      if (!formData.weightLbs.trim()) missingFields.push("Weight");
       if (!formData.sex) missingFields.push("Sex");
       if (!formData.fitnessLevel) missingFields.push("Fitness Level");
 
       if (missingFields.length > 0) {
-        console.log("Validation failed - missing fields:", missingFields);
         toast({
           variant: "destructive",
-          title: "Missing Information",
-          description: `Please fill in: ${missingFields.join(", ")}`,
+          title: "Please Fill All Fields",
+          description: `Missing required information: ${missingFields.join(", ")}`,
         });
         return;
       }
@@ -80,10 +77,9 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       const weightKg = lbsToKg(Number(formData.weightLbs));
 
       if (isNaN(heightCm) || isNaN(weightKg)) {
-        console.log("Invalid measurements", { heightCm, weightKg });
         toast({
           variant: "destructive",
-          title: "Invalid Input",
+          title: "Invalid Numbers",
           description: "Please enter valid numbers for height and weight.",
         });
         return;
@@ -97,9 +93,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         goals: formData.goals.length > 0 ? formData.goals : ["General Fitness"],
       };
 
-      console.log("Calling onComplete with profile:", profile);
       await Promise.resolve(onComplete(profile));
-      console.log("Profile submission completed");
 
     } catch (error) {
       console.error("Profile creation error:", error);
@@ -138,7 +132,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Height</Label>
+              <Label>Height (required)</Label>
               <div className="flex gap-2">
                 <div className="flex-1">
                   <Label>Feet</Label>
@@ -148,7 +142,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                     max="8"
                     value={formData.heightFeet}
                     onChange={(e) => handleInputChange("heightFeet", e.target.value)}
-                    placeholder="5"
+                    className="text-lg"
+                    required
                   />
                 </div>
                 <div className="flex-1">
@@ -159,29 +154,32 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                     max="11"
                     value={formData.heightInches}
                     onChange={(e) => handleInputChange("heightInches", e.target.value)}
-                    placeholder="10"
+                    className="text-lg"
+                    required
                   />
                 </div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Weight (lbs)</Label>
+              <Label>Weight (lbs) (required)</Label>
               <Input
                 type="number"
                 value={formData.weightLbs}
                 onChange={(e) => handleInputChange("weightLbs", e.target.value)}
-                placeholder="150"
+                className="text-lg"
+                required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Sex</Label>
+            <Label>Sex (required)</Label>
             <select
-              className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
+              className="w-full h-10 px-3 py-2 text-lg border rounded-md bg-background"
               value={formData.sex}
               onChange={(e) => handleInputChange("sex", e.target.value)}
+              required
             >
               <option value="">Select your sex</option>
               <option value="male">Male</option>
@@ -190,11 +188,12 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           </div>
 
           <div className="space-y-2">
-            <Label>Fitness Level</Label>
+            <Label>Fitness Level (required)</Label>
             <select
-              className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
+              className="w-full h-10 px-3 py-2 text-lg border rounded-md bg-background"
               value={formData.fitnessLevel}
               onChange={(e) => handleInputChange("fitnessLevel", e.target.value)}
+              required
             >
               <option value="">Select your fitness level</option>
               <option value="beginner">Beginner</option>
