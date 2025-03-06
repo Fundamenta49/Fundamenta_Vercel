@@ -9,13 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
 export interface FitnessProfile {
@@ -63,18 +56,41 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       return;
     }
 
-    const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
-    const weightKg = lbsToKg(Number(weightLbs));
+    try {
+      const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
+      const weightKg = lbsToKg(Number(weightLbs));
 
-    const profile: FitnessProfile = {
-      height: heightCm,
-      weight: weightKg,
-      sex: selectedSex as "male" | "female",
-      fitnessLevel: selectedFitnessLevel as "beginner" | "intermediate" | "advanced",
-      goals,
-    };
+      if (isNaN(heightCm) || isNaN(weightKg)) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Input",
+          description: "Please enter valid numbers for height and weight.",
+        });
+        return;
+      }
 
-    onComplete(profile);
+      const profile: FitnessProfile = {
+        height: heightCm,
+        weight: weightKg,
+        sex: selectedSex as "male" | "female",
+        fitnessLevel: selectedFitnessLevel as "beginner" | "intermediate" | "advanced",
+        goals: goals.length > 0 ? goals : ["General Fitness"], // Default goal if none selected
+      };
+
+      onComplete(profile);
+
+      toast({
+        title: "Profile Created",
+        description: "Your fitness profile has been created successfully!",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "There was an error creating your profile. Please try again.",
+      });
+      console.error("Profile creation error:", error);
+    }
   };
 
   return (
