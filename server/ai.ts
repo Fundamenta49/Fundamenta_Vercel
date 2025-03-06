@@ -3,33 +3,58 @@ import OpenAI from "openai";
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY,
-  maxRetries: 3, // Add retries for resilience
-  timeout: 30000, // 30 second timeout
+  maxRetries: 3,
+  timeout: 30000,
 });
+
+interface ConversationContext {
+  personalityTraits: string[];
+  interests: string[];
+  communicationStyle: string;
+  lastInteractions: Array<{
+    topic: string;
+    sentiment: string;
+  }>;
+}
 
 export async function getChatResponse(
   prompt: string,
-  category: string
+  category: string,
+  previousMessages: { role: string; content: string }[] = []
 ): Promise<string> {
   const systemPrompts = {
-    emergency: "You are an emergency response expert providing clear, step-by-step guidance for emergency situations.",
-    finance: "You are a financial advisor helping with budgeting, savings, and financial literacy.",
-    career: "You are a career coach providing guidance on job searching, resume building, and interview preparation.",
-    wellness: "You are a wellness coach providing guidance on mental health, meditation, and stress management.",
+    emergency: "You are an emergency response expert providing clear, step-by-step guidance for emergency situations. Maintain a calm, authoritative, and reassuring tone.",
+    finance: "You are a financial advisor helping with budgeting, savings, and financial literacy. Adapt your advice to the user's financial knowledge level and goals.",
+    career: "You are a career coach providing guidance on job searching, resume building, and interview preparation. Consider the user's experience level and career aspirations.",
+    wellness: "You are a wellness coach providing guidance on mental health, meditation, and stress management. Be empathetic and adjust your tone based on the user's emotional state.",
   };
+
+  // Add personality analysis to the system prompt
+  const personalityAnalysis = previousMessages.length > 0 
+    ? `Based on our conversation, I understand that you:
+       - Prefer ${getPreferredStyle(previousMessages)} communication
+       - Show interest in ${getInterests(previousMessages)}
+       - Respond well to ${getLearningStyle(previousMessages)}
+       I'll adapt my responses accordingly.`
+    : "";
 
   try {
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OpenAI API key not configured");
     }
-    console.log("Getting chat response with OpenAI...");
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: systemPrompts[category as keyof typeof systemPrompts],
+          content: `${systemPrompts[category as keyof typeof systemPrompts]}
+                   ${personalityAnalysis}
+                   Adapt your communication style to match the user's preferences while maintaining professionalism.
+                   Pay attention to their vocabulary level, technical understanding, and emotional state.
+                   Maintain conversation history to provide consistent and personalized guidance.`,
         },
+        ...previousMessages,
         { role: "user", content: prompt },
       ],
       temperature: 0.7,
@@ -46,17 +71,42 @@ export async function getChatResponse(
         data: error.response.data
       });
     }
-    if (error?.error?.type === "invalid_api_key") {
-      throw new Error("Invalid API key. Please check your API key configuration.");
-    }
-    if (error?.error?.type === "invalid_request_error") {
-      throw new Error("Invalid API request. Please check your input.");
-    }
-    if (error.message.includes('rate limit exceeded')) {
-      throw new Error("OpenAI API rate limit exceeded. Please try again later.");
-    }
     return "I'm sorry, I'm having trouble processing your request right now.";
   }
+}
+
+// Helper functions to analyze user communication patterns
+function getPreferredStyle(messages: { role: string; content: string }[]): string {
+  const userMessages = messages.filter(m => m.role === "user");
+  const avgLength = userMessages.reduce((acc, m) => acc + m.content.length, 0) / userMessages.length;
+  const hasQuestions = userMessages.some(m => m.content.includes("?"));
+  const hasTechnicalTerms = userMessages.some(m => /\b(api|code|framework|function|database)\b/i.test(m.content));
+
+  if (avgLength > 100) return "detailed and thorough";
+  if (hasQuestions) return "inquiry-based";
+  if (hasTechnicalTerms) return "technical";
+  return "concise and direct";
+}
+
+function getInterests(messages: { role: string; content: string }[]): string {
+  const content = messages.map(m => m.content.toLowerCase()).join(" ");
+  const interests = [];
+
+  if (content.includes("learn") || content.includes("study")) interests.push("learning");
+  if (content.includes("career") || content.includes("job")) interests.push("career development");
+  if (content.includes("health") || content.includes("wellness")) interests.push("well-being");
+  if (content.includes("money") || content.includes("finance")) interests.push("financial planning");
+
+  return interests.join(", ") || "various topics";
+}
+
+function getLearningStyle(messages: { role: string; content: string }[]): string {
+  const content = messages.map(m => m.content.toLowerCase()).join(" ");
+
+  if (content.includes("example") || content.includes("show")) return "practical examples";
+  if (content.includes("why") || content.includes("how")) return "detailed explanations";
+  if (content.includes("quick") || content.includes("brief")) return "concise information";
+  return "balanced guidance";
 }
 
 interface ResumeData {

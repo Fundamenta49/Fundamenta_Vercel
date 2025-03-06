@@ -29,9 +29,25 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     }
   }, [messages]);
 
+  // Set initial greeting based on category
+  useEffect(() => {
+    const greetings = {
+      emergency: "Hello, I'm here to help you with any emergency situation. What's happening?",
+      finance: "Hi! I'm your financial advisor. I'll adapt my guidance to your financial goals and knowledge level. What would you like to discuss?",
+      career: "Welcome! I'm your career development coach. I'll help guide you based on your experience and aspirations. What brings you here today?",
+      wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
+    };
+
+    setMessages([{ role: "assistant", content: greetings[category] }]);
+  }, [category]);
+
   const chatMutation = useMutation({
     mutationFn: async (content: string) => {
-      const res = await apiRequest("POST", "/api/chat", { content, category });
+      const res = await apiRequest("POST", "/api/chat", { 
+        content, 
+        category,
+        previousMessages: messages // Send conversation history for context
+      });
       return res.json();
     },
     onSuccess: (data) => {
