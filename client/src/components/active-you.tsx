@@ -26,12 +26,14 @@ import {
   User,
 } from "lucide-react";
 
+type TabType = "meditation" | "weightlifting" | "yoga" | "running" | "profile";
+
 interface ActiveYouProps {
-  defaultTab?: "meditation" | "weightlifting" | "yoga" | "running" | "profile";
+  defaultTab?: TabType;
 }
 
 export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouProps) {
-  const [currentTab, setCurrentTab] = useState(defaultTab);
+  const [currentTab, setCurrentTab] = useState<TabType>(defaultTab);
   const { toast } = useToast();
 
   const handleProfileUpdate = (profile: any) => {
@@ -59,7 +61,7 @@ export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouPro
           <CardDescription>Track and manage your fitness journey</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={currentTab} onValueChange={setCurrentTab}>
+          <Tabs value={currentTab} onValueChange={(value: TabType) => setCurrentTab(value)}>
             <TabsList className="mb-4">
               <TabsTrigger value="weightlifting">
                 <Dumbbell className="h-4 w-4 mr-2" />
