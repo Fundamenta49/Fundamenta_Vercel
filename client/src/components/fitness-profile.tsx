@@ -44,29 +44,22 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault(); // Prevent default form submission
+  const createProfile = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("Create Profile clicked");
+
+    // Validation
+    if (!heightFeet || !heightInches || !weightLbs || !selectedSex || !selectedFitnessLevel) {
+      console.log("Missing required fields");
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+      });
+      return;
+    }
+
     try {
-      // Validation
-      const missingFields = [];
-      if (!heightFeet) missingFields.push("Height (feet)");
-      if (!heightInches) missingFields.push("Height (inches)");
-      if (!weightLbs) missingFields.push("Weight");
-      if (!selectedSex) missingFields.push("Sex");
-      if (!selectedFitnessLevel) missingFields.push("Fitness Level");
-
-      if (missingFields.length > 0) {
-        toast({
-          variant: "destructive",
-          title: "Missing Information",
-          description: `Please fill in: ${missingFields.join(", ")}`,
-        });
-        return;
-      }
-
-      // Function to convert pounds to kg
-      const lbsToKg = (lbs: number) => lbs * 0.453592;
-      
       const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
       const weightKg = lbsToKg(Number(weightLbs));
 
@@ -88,31 +81,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       };
 
       console.log("Submitting profile:", profile);
-      
-      try {
-        // Make sure the onComplete function exists before calling it
-        if (typeof onComplete === 'function') {
-          onComplete(profile);
-          toast({
-            title: "Profile Created",
-            description: "Your fitness profile has been successfully created!",
-          });
-        } else {
-          console.error("onComplete is not a function:", onComplete);
-          toast({
-            variant: "destructive",
-            title: "Form Error",
-            description: "Could not process your submission. Please try again.",
-          });
-        }
-      } catch (error) {
-        console.error("Error calling onComplete:", error);
-        toast({
-          variant: "destructive",
-          title: "Form Error",
-          description: "Could not process your submission. Please try again.",
-        });
-      }
+      onComplete(profile);
 
     } catch (error) {
       console.error("Profile creation error:", error);
@@ -122,7 +91,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         description: "Failed to create profile. Please try again.",
       });
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -133,7 +102,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Height</Label>
@@ -224,10 +193,13 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
             </div>
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button 
+            onClick={createProfile}
+            className="w-full"
+          >
             Create Profile
           </Button>
-        </form>
+        </div>
       </CardContent>
     </Card>
   );
