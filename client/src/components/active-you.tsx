@@ -6,117 +6,67 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MeditationGuide from "./meditation-guide";
 import FitnessProgress from "./fitness-progress";
 import RunningTracker from "./running-tracker";
-import ProfileManager from "./profile-manager";
-import { useToast } from "@/hooks/use-toast";
 import {
   Dumbbell,
   Bird as YogaIcon,
-  Timer as RunningIcon,
-  Brain,
-  User,
 } from "lucide-react";
 
-type TabType = "active-you" | "meditation" | "weightlifting" | "yoga" | "running";
+type TabType = "meditation" | "weightlifting" | "yoga" | "running";
 
 interface ActiveYouProps {
-  defaultTab?: TabType;
+  defaultTab: TabType;
 }
 
-export default function ActiveYou({ defaultTab = "active-you" }: ActiveYouProps) {
-  const [currentTab, setCurrentTab] = useState<TabType>(defaultTab);
-  const { toast } = useToast();
+export default function ActiveYou({ defaultTab }: ActiveYouProps) {
+  if (defaultTab === "meditation") {
+    return <MeditationGuide />;
+  }
 
-  const handleProfileUpdate = (profile: any) => {
-    try {
-      localStorage.setItem('fitnessProfile', JSON.stringify(profile));
-      toast({
-        title: "Success!",
-        description: "Your fitness profile has been updated successfully!",
-      });
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-      });
-    }
-  };
-
-  return (
-    <div className="space-y-6">
+  if (defaultTab === "weightlifting") {
+    return (
       <Card>
         <CardHeader>
-          <CardTitle>Active You Dashboard</CardTitle>
-          <CardDescription>Track and manage your fitness journey</CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <Dumbbell className="h-5 w-5 text-primary" />
+            AI Weight Lifting Guide
+          </CardTitle>
+          <CardDescription>
+            Get personalized workout plans and form guidance
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={currentTab} onValueChange={(value: TabType) => setCurrentTab(value)}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="active-you">ActiveYou</TabsTrigger>
-              <TabsTrigger value="meditation">Meditation</TabsTrigger>
-              <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
-              <TabsTrigger value="yoga">Yoga</TabsTrigger>
-              <TabsTrigger value="running">Running</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="active-you">
-              <ProfileManager onUpdate={handleProfileUpdate} />
-            </TabsContent>
-
-            <TabsContent value="meditation">
-              <MeditationGuide />
-            </TabsContent>
-
-            <TabsContent value="weightlifting">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Dumbbell className="h-5 w-5 text-primary" />
-                    AI Weight Lifting Guide
-                  </CardTitle>
-                  <CardDescription>
-                    Get personalized workout plans and form guidance
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <FitnessProgress />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="yoga">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <YogaIcon className="h-5 w-5 text-primary" />
-                    Yoga Sessions
-                  </CardTitle>
-                  <CardDescription>
-                    Follow guided yoga sessions with AI assistance
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <FitnessProgress />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="running">
-              <RunningTracker />
-            </TabsContent>
-          </Tabs>
+          <FitnessProgress />
         </CardContent>
       </Card>
-    </div>
-  );
+    );
+  }
+
+  if (defaultTab === "yoga") {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <YogaIcon className="h-5 w-5 text-primary" />
+            Yoga Sessions
+          </CardTitle>
+          <CardDescription>
+            Follow guided yoga sessions with AI assistance
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FitnessProgress />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (defaultTab === "running") {
+    return <RunningTracker />;
+  }
+
+  return null;
 }

@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
+import ProfileManager from "@/components/profile-manager"; // Assuming this component exists
+
 
 export default function Active() {
   const { toast } = useToast();
@@ -22,14 +24,10 @@ export default function Active() {
   const handleProfileComplete = (profile: ProfileType) => {
     console.log("Profile completion handler called with:", profile);
     try {
-      // Save to localStorage
       localStorage.setItem('fitnessProfile', JSON.stringify(profile));
-
-      // Update state
       setHasProfile(true);
       setActiveTab("chat");
 
-      // Show success message
       toast({
         title: "Success!",
         description: "Your fitness profile has been created successfully!",
@@ -41,14 +39,12 @@ export default function Active() {
         title: "Error",
         description: "Failed to save profile. Please try again.",
       });
-      // Reset state on error
       setHasProfile(false);
       localStorage.removeItem('fitnessProfile');
     }
   };
 
   useEffect(() => {
-    // Check for existing profile on mount
     const savedProfile = localStorage.getItem('fitnessProfile');
     if (savedProfile) {
       try {
@@ -64,7 +60,6 @@ export default function Active() {
     }
   }, []);
 
-  // Show profile creation if no profile exists and user hasn't skipped
   if (!hasProfile && !skipProfile) {
     return (
       <div className="space-y-4">
@@ -90,7 +85,6 @@ export default function Active() {
     );
   }
 
-  // Main content after profile is created or skipped
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Active You</h1>
@@ -98,6 +92,7 @@ export default function Active() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4">
           <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
+          <TabsTrigger value="activeyou">ActiveYou</TabsTrigger>
           <TabsTrigger value="meditation">Meditation</TabsTrigger>
           <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
           <TabsTrigger value="yoga">Yoga</TabsTrigger>
@@ -116,6 +111,10 @@ export default function Active() {
               <ChatInterface category="fitness" />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="activeyou">
+          <ProfileManager onUpdate={handleProfileComplete} />
         </TabsContent>
 
         <TabsContent value="meditation">
