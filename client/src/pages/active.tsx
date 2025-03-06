@@ -8,11 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 
 export default function Active() {
+  const { toast } = useToast();
   const [hasProfile, setHasProfile] = useState<boolean>(false);
   const [skipProfile, setSkipProfile] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("chat");
@@ -23,9 +25,18 @@ export default function Active() {
       localStorage.setItem('fitnessProfile', JSON.stringify(profile));
       setHasProfile(true);
       console.log("Profile saved successfully");
+
+      toast({
+        title: "Profile Saved",
+        description: "Your fitness profile has been saved successfully.",
+      });
     } catch (error) {
       console.error("Error saving profile:", error);
-      // Reset state if saving fails
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save profile. Please try again.",
+      });
       setHasProfile(false);
       localStorage.removeItem('fitnessProfile');
     }

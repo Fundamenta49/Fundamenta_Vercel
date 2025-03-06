@@ -44,11 +44,9 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  const handleCreateProfile = () => {
+  function createProfile() {
     try {
-      console.log("Create Profile button clicked");
-
-      // Validation checks
+      // Validation
       const missingFields = [];
       if (!heightFeet) missingFields.push("Height (feet)");
       if (!heightInches) missingFields.push("Height (inches)");
@@ -57,7 +55,6 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       if (!selectedFitnessLevel) missingFields.push("Fitness Level");
 
       if (missingFields.length > 0) {
-        console.log("Missing fields:", missingFields);
         toast({
           variant: "destructive",
           title: "Missing Information",
@@ -71,7 +68,6 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       const weightKg = lbsToKg(Number(weightLbs));
 
       if (isNaN(heightCm) || isNaN(weightKg)) {
-        console.log("Invalid measurements:", { heightCm, weightKg });
         toast({
           variant: "destructive",
           title: "Invalid Input",
@@ -80,14 +76,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         return;
       }
 
-      console.log("Creating profile with:", {
-        heightCm,
-        weightKg,
-        selectedSex,
-        selectedFitnessLevel,
-        goals
-      });
-
+      // Create profile object
       const profile: FitnessProfile = {
         height: heightCm,
         weight: weightKg,
@@ -96,6 +85,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         goals: goals.length > 0 ? goals : ["General Fitness"],
       };
 
+      // Call the onComplete callback
       onComplete(profile);
 
       toast({
@@ -110,7 +100,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         description: "Failed to create profile. Please try again.",
       });
     }
-  };
+  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -168,10 +158,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               <select
                 className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
                 value={selectedSex}
-                onChange={(e) => {
-                  console.log("Sex selected:", e.target.value);
-                  setSelectedSex(e.target.value);
-                }}
+                onChange={(e) => setSelectedSex(e.target.value)}
               >
                 <option value="">Select your sex</option>
                 <option value="male">Male</option>
@@ -186,10 +173,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               <select
                 className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
                 value={selectedFitnessLevel}
-                onChange={(e) => {
-                  console.log("Fitness level selected:", e.target.value);
-                  setSelectedFitnessLevel(e.target.value);
-                }}
+                onChange={(e) => setSelectedFitnessLevel(e.target.value)}
               >
                 <option value="">Select your fitness level</option>
                 <option value="beginner">Beginner</option>
@@ -223,10 +207,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           </div>
 
           <Button 
-            onClick={() => {
-              console.log("Button clicked - calling handleCreateProfile");
-              handleCreateProfile();
-            }}
+            type="button"
+            onClick={createProfile}
             className="w-full"
           >
             Create Profile
