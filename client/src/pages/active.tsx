@@ -11,8 +11,7 @@ import { Button } from "@/components/ui/button";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
-import InitialGreeting from "@/components/initial-greeting"; // Assumed component
-
+import InitialGreeting from "@/components/initial-greeting";
 
 export default function Active() {
   const [hasProfile, setHasProfile] = useState<boolean>(false);
@@ -43,9 +42,21 @@ export default function Active() {
     localStorage.setItem('completedInitialGreeting', 'true');
   };
 
+  // For development/testing - clear localStorage
+  useEffect(() => {
+    // Comment out these lines in production
+    localStorage.removeItem('completedInitialGreeting');
+    localStorage.removeItem('fitnessProfile');
+    localStorage.removeItem('userPreferences');
+  }, []);
+
   // Show initial greeting if not completed
   if (!hasCompletedGreeting) {
-    return <InitialGreeting onComplete={handleGreetingComplete} />;
+    return (
+      <div className="max-w-4xl mx-auto space-y-6">
+        <InitialGreeting onComplete={handleGreetingComplete} />
+      </div>
+    );
   }
 
   // Show profile creation if not skipped
