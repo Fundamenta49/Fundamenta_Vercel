@@ -45,7 +45,7 @@ export default function Navigation() {
         <Link key={href} href={href}>
           <button
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left",
+              "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left nav-link",
               location === href
                 ? "bg-[#1C3D5A] text-[#D8BFAA]"
                 : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
@@ -70,7 +70,7 @@ export default function Navigation() {
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent>
+        <SheetContent className="nav-background">
           <NavContent />
         </SheetContent>
       </Sheet>
@@ -79,7 +79,7 @@ export default function Navigation() {
 
   return (
     <div className={cn(
-      "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300",
+      "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300 nav-background",
       isMinimized ? "w-20" : "w-64"
     )}>
       <div className="flex items-center justify-between mb-8">
