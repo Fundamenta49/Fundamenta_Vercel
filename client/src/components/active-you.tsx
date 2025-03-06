@@ -22,17 +22,16 @@ import {
   Bird as YogaIcon,
   Timer as RunningIcon,
   Brain,
-  Video,
   User,
 } from "lucide-react";
 
-type TabType = "meditation" | "weightlifting" | "yoga" | "running" | "profile";
+type TabType = "active-you" | "meditation" | "weightlifting" | "yoga" | "running";
 
 interface ActiveYouProps {
   defaultTab?: TabType;
 }
 
-export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouProps) {
+export default function ActiveYou({ defaultTab = "active-you" }: ActiveYouProps) {
   const [currentTab, setCurrentTab] = useState<TabType>(defaultTab);
   const { toast } = useToast();
 
@@ -63,27 +62,16 @@ export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouPro
         <CardContent>
           <Tabs value={currentTab} onValueChange={(value: TabType) => setCurrentTab(value)}>
             <TabsList className="mb-4">
-              <TabsTrigger value="weightlifting">
-                <Dumbbell className="h-4 w-4 mr-2" />
-                Weight Lifting
-              </TabsTrigger>
-              <TabsTrigger value="yoga">
-                <YogaIcon className="h-4 w-4 mr-2" />
-                Yoga
-              </TabsTrigger>
-              <TabsTrigger value="running">
-                <RunningIcon className="h-4 w-4 mr-2" />
-                Running
-              </TabsTrigger>
-              <TabsTrigger value="meditation">
-                <Brain className="h-4 w-4 mr-2" />
-                Meditation
-              </TabsTrigger>
-              <TabsTrigger value="profile">
-                <User className="h-4 w-4 mr-2" />
-                My Profile
-              </TabsTrigger>
+              <TabsTrigger value="active-you">ActiveYou</TabsTrigger>
+              <TabsTrigger value="meditation">Meditation</TabsTrigger>
+              <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
+              <TabsTrigger value="yoga">Yoga</TabsTrigger>
+              <TabsTrigger value="running">Running</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="active-you">
+              <ProfileManager onUpdate={handleProfileUpdate} />
+            </TabsContent>
 
             <TabsContent value="meditation">
               <MeditationGuide />
@@ -125,10 +113,6 @@ export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouPro
 
             <TabsContent value="running">
               <RunningTracker />
-            </TabsContent>
-
-            <TabsContent value="profile">
-              <ProfileManager onUpdate={handleProfileUpdate} />
             </TabsContent>
           </Tabs>
         </CardContent>
