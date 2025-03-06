@@ -136,8 +136,9 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           <div className="space-y-2">
             <Label htmlFor="sex">Sex</Label>
             <Select
-              onValueChange={(value) =>
-                setProfile({ ...profile, sex: value as "male" | "female" })
+              value={profile.sex}
+              onValueChange={(value: "male" | "female") =>
+                setProfile({ ...profile, sex: value })
               }
             >
               <SelectTrigger>
@@ -153,11 +154,9 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           <div className="space-y-2">
             <Label htmlFor="fitnessLevel">Fitness Level</Label>
             <Select
-              onValueChange={(value) =>
-                setProfile({
-                  ...profile,
-                  fitnessLevel: value as "beginner" | "intermediate" | "advanced",
-                })
+              value={profile.fitnessLevel}
+              onValueChange={(value: "beginner" | "intermediate" | "advanced") =>
+                setProfile({ ...profile, fitnessLevel: value })
               }
             >
               <SelectTrigger>
