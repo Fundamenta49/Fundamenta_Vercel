@@ -18,23 +18,12 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
-type Sex = "male" | "female";
-type FitnessLevel = "beginner" | "intermediate" | "advanced";
-
-interface FormState {
-  heightFeet: string;
-  heightInches: string;
-  weightLbs: string;
-  sex: Sex | null;
-  fitnessLevel: FitnessLevel | null;
-}
-
 export interface FitnessProfile {
   height: number;
   weight: number;
-  sex: Sex;
+  sex: "male" | "female";
   goals: string[];
-  fitnessLevel: FitnessLevel;
+  fitnessLevel: "beginner" | "intermediate" | "advanced";
 }
 
 interface FitnessProfileProps {
@@ -46,13 +35,11 @@ const feetInchesToCm = (feet: number, inches: number) => (feet * 12 + inches) * 
 
 export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps) {
   const { toast } = useToast();
-  const [formState, setFormState] = useState<FormState>({
-    heightFeet: "",
-    heightInches: "",
-    weightLbs: "",
-    sex: null,
-    fitnessLevel: null,
-  });
+  const [heightFeet, setHeightFeet] = useState("");
+  const [heightInches, setHeightInches] = useState("");
+  const [weightLbs, setWeightLbs] = useState("");
+  const [selectedSex, setSelectedSex] = useState("");
+  const [selectedFitnessLevel, setSelectedFitnessLevel] = useState("");
   const [goals, setGoals] = useState<string[]>([]);
 
   const fitnessGoals = [
@@ -64,14 +51,10 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  const handleInputChange = (field: keyof FormState, value: string) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formState.heightFeet || !formState.heightInches || !formState.weightLbs || !formState.sex || !formState.fitnessLevel) {
+    if (!heightFeet || !heightInches || !weightLbs || !selectedSex || !selectedFitnessLevel) {
       toast({
         variant: "destructive",
         title: "Missing Information",
@@ -80,14 +63,14 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       return;
     }
 
-    const heightCm = feetInchesToCm(Number(formState.heightFeet), Number(formState.heightInches));
-    const weightKg = lbsToKg(Number(formState.weightLbs));
+    const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
+    const weightKg = lbsToKg(Number(weightLbs));
 
     const profile: FitnessProfile = {
       height: heightCm,
       weight: weightKg,
-      sex: formState.sex!,
-      fitnessLevel: formState.fitnessLevel!,
+      sex: selectedSex as "male" | "female",
+      fitnessLevel: selectedFitnessLevel as "beginner" | "intermediate" | "advanced",
       goals,
     };
 
@@ -114,8 +97,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                     type="number"
                     min="1"
                     max="8"
-                    value={formState.heightFeet}
-                    onChange={(e) => handleInputChange("heightFeet", e.target.value)}
+                    value={heightFeet}
+                    onChange={(e) => setHeightFeet(e.target.value)}
                     placeholder="5"
                   />
                 </div>
@@ -125,8 +108,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                     type="number"
                     min="0"
                     max="11"
-                    value={formState.heightInches}
-                    onChange={(e) => handleInputChange("heightInches", e.target.value)}
+                    value={heightInches}
+                    onChange={(e) => setHeightInches(e.target.value)}
                     placeholder="10"
                   />
                 </div>
@@ -137,8 +120,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               <Label>Weight (lbs)</Label>
               <Input
                 type="number"
-                value={formState.weightLbs}
-                onChange={(e) => handleInputChange("weightLbs", e.target.value)}
+                value={weightLbs}
+                onChange={(e) => setWeightLbs(e.target.value)}
                 placeholder="150"
               />
             </div>
@@ -146,10 +129,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
           <div className="space-y-2">
             <Label>Sex</Label>
-            <Select 
-              defaultValue={formState.sex || undefined}
-              onValueChange={(value: Sex) => setFormState(prev => ({ ...prev, sex: value }))}
-            >
+            <Select onValueChange={setSelectedSex}>
               <SelectTrigger>
                 <SelectValue placeholder="Select your sex" />
               </SelectTrigger>
@@ -162,10 +142,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
           <div className="space-y-2">
             <Label>Fitness Level</Label>
-            <Select
-              defaultValue={formState.fitnessLevel || undefined}
-              onValueChange={(value: FitnessLevel) => setFormState(prev => ({ ...prev, fitnessLevel: value }))}
-            >
+            <Select onValueChange={setSelectedFitnessLevel}>
               <SelectTrigger>
                 <SelectValue placeholder="Select your fitness level" />
               </SelectTrigger>
