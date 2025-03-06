@@ -21,7 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 export interface FitnessProfile {
   height: number; // stored in centimeters
   weight: number; // stored in kilograms
-  sex: "male" | "female" | "other";
+  sex: "male" | "female";
   goals: string[];
   fitnessLevel: "beginner" | "intermediate" | "advanced";
 }
@@ -137,7 +137,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
             <Label htmlFor="sex">Sex</Label>
             <Select
               onValueChange={(value) =>
-                setProfile({ ...profile, sex: value as "male" | "female" | "other" })
+                setProfile({ ...profile, sex: value as "male" | "female" })
               }
             >
               <SelectTrigger>
@@ -146,7 +146,6 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               <SelectContent>
                 <SelectItem value="male">Male</SelectItem>
                 <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
