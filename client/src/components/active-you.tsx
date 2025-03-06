@@ -23,40 +23,15 @@ import {
   Video,
   Trophy,
   CalendarDays,
-  Timer,
+  Timer as TimerIcon,
   TrendingUp,
 } from "lucide-react";
 
-interface Exercise {
-  name: string;
-  sets: number;
-  reps: number;
-  weight?: number;
-  duration?: number;
-  notes?: string;
-  videoUrl?: string;
-}
-
-interface WorkoutSession {
-  date: string;
-  type: "weightlifting" | "yoga" | "running";
-  exercises: Exercise[];
-  duration: number;
-}
-
 interface ActiveYouProps {
-  defaultTab: "meditation" | "weightlifting" | "yoga" | "running";
+  defaultTab?: "meditation" | "weightlifting" | "yoga" | "running";
 }
 
-export default function ActiveYou({ defaultTab }: ActiveYouProps) {
-  const [workoutHistory, setWorkoutHistory] = useState<WorkoutSession[]>([]);
-  const [currentWorkout, setCurrentWorkout] = useState<Exercise[]>([]);
-  const [runningStats, setRunningStats] = useState({
-    distance: 0,
-    duration: 0,
-    pace: 0,
-  });
-
+export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouProps) {
   if (defaultTab === "meditation") {
     return <MeditationGuide />;
   }

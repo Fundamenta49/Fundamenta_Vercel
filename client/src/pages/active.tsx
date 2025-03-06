@@ -15,6 +15,7 @@ import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitn
 export default function Active() {
   const [hasProfile, setHasProfile] = useState<boolean>(false);
   const [skipProfile, setSkipProfile] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<"chat" | "meditation" | "weightlifting" | "yoga" | "running">("chat");
 
   const handleProfileComplete = (profile: ProfileType) => {
     // In a real app, we would save this to a database
@@ -59,7 +60,7 @@ export default function Active() {
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Active You</h1>
 
-      <Tabs defaultValue="chat">
+      <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)}>
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
