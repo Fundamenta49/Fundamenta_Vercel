@@ -44,16 +44,23 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted", { heightFeet, heightInches, weightLbs, selectedSex, selectedFitnessLevel, goals });
-
+  const validateForm = () => {
     if (!heightFeet || !heightInches || !weightLbs || !selectedSex || !selectedFitnessLevel) {
       toast({
         variant: "destructive",
         title: "Missing Information",
         description: "Please fill in all required fields.",
       });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Form submission started", { heightFeet, heightInches, weightLbs, selectedSex, selectedFitnessLevel, goals });
+
+    if (!validateForm()) {
       return;
     }
 
@@ -82,15 +89,15 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       onComplete(profile);
 
       toast({
-        title: "Profile Created",
-        description: "Your fitness profile has been created successfully!",
+        title: "Success!",
+        description: "Your fitness profile has been created.",
       });
     } catch (error) {
       console.error("Profile creation error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "There was an error creating your profile. Please try again.",
+        description: "Failed to create profile. Please try again.",
       });
     }
   };

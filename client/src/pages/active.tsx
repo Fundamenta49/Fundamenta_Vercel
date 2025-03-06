@@ -18,9 +18,14 @@ export default function Active() {
   const [activeTab, setActiveTab] = useState<string>("chat");
 
   const handleProfileComplete = (profile: ProfileType) => {
-    console.log("Profile completed:", profile);
-    localStorage.setItem('fitnessProfile', JSON.stringify(profile));
-    setHasProfile(true);
+    try {
+      console.log("Handling profile completion:", profile);
+      localStorage.setItem('fitnessProfile', JSON.stringify(profile));
+      setHasProfile(true);
+      console.log("Profile saved successfully");
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    }
   };
 
   useEffect(() => {
