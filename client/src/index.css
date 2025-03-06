@@ -6,6 +6,23 @@
 @tailwind utilities;
 
 @layer base {
+  /* Custom cursor styles */
+  :root {
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMxQzNENUEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1oZWFydC1oYW5kc2hha2UiPjxwYXRoIGQ9Ik0xOSAxNHYzYTQgNCAwIDAgMS00IDRINGEyIDIgMCAwIDEtMi0yVjVhMiAyIDAgMCAxIDItMmgxIi8+PHBhdGggZD0iTTEzLjUgM2ExLjUgMS41IDAgMCAxIDEuNSAxLjV2M2ExLjUgMS41IDAgMCAxLTMgMHYtM0ExLjUgMS41IDAgMCAxIDEzLjUgM3oiLz48cGF0aCBkPSJNMTcgM2ExLjUgMS41IDAgMCAxIDEuNSAxLjV2M2ExLjUgMS41IDAgMCAxLTMgMHYtM0ExLjUgMS41IDAgMCAxIDE3IDN6Ii8+PHBhdGggZD0iTTIwLjUgM0ExLjUgMS41IDAgMCAxIDIyIDQuNXYzYTEuNSAxLjUgMCAwIDEtMyAwdi0zQTEuNSAxLjUgMCAwIDEgMjAuNSAzeiIvPjxwYXRoIGQ9Ik0yMiAxMnYyIi8+PC9zdmc+") 12 12, auto;
+  }
+
+  /* Interactive elements cursor */
+  button,
+  a,
+  .interactive,
+  [role="button"],
+  select,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"] {
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNEOEJGQUEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1oZWFydC1oYW5kc2hha2UiPjxwYXRoIGQ9Ik0xOSAxNHYzYTQgNCAwIDAgMS00IDRINGEyIDIgMCAwIDEtMi0yVjVhMiAyIDAgMCAxIDItMmgxIi8+PHBhdGggZD0iTTEzLjUgM2ExLjUgMS41IDAgMCAxIDEuNSAxLjV2M2ExLjUgMS41IDAgMCAxLTMgMHYtM0ExLjUgMS41IDAgMCAxIDEzLjUgM3oiLz48cGF0aCBkPSJNMTcgM2ExLjUgMS41IDAgMCAxIDEuNSAxLjV2M2ExLjUgMS41IDAgMCAxLTMgMHYtM0ExLjUgMS41IDAgMCAxIDE3IDN6Ii8+PHBhdGggZD0iTTIwLjUgM0ExLjUgMS41IDAgMCAxIDIyIDQuNXYzYTEuNSAxLjUgMCAwIDEtMyAwdi0zQTEuNSAxLjUgMCAwIDEgMjAuNSAzeiIvPjxwYXRoIGQ9Ik0yMiAxMnYyIi8+PC9zdmc+") 12 12, pointer;
+  }
+
   /* Responsive text containers */
   .content-container {
     @apply px-4 py-6 sm:px-6 md:px-8;
