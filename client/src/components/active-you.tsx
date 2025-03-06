@@ -14,6 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MeditationGuide from "./meditation-guide";
 import FitnessProgress from "./fitness-progress";
+import RunningTracker from "./running-tracker";
 import {
   Dumbbell,
   Bird as YogaIcon,
