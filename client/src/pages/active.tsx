@@ -11,10 +11,13 @@ import { Button } from "@/components/ui/button";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
+import InitialGreeting from "@/components/initial-greeting"; // Assumed component
+
 
 export default function Active() {
   const [hasProfile, setHasProfile] = useState<boolean>(false);
   const [skipProfile, setSkipProfile] = useState<boolean>(false);
+  const [hasCompletedGreeting, setHasCompletedGreeting] = useState<boolean>(false);
 
   const handleProfileComplete = (profile: ProfileType) => {
     // In a real app, we would save this to a database
@@ -22,14 +25,30 @@ export default function Active() {
     setHasProfile(true);
   };
 
-  // Check for existing profile
+  // Check for existing profile and greeting completion
   useEffect(() => {
     const savedProfile = localStorage.getItem('fitnessProfile');
+    const completedGreeting = localStorage.getItem('completedInitialGreeting');
+
     if (savedProfile) {
       setHasProfile(true);
     }
+    if (completedGreeting) {
+      setHasCompletedGreeting(true);
+    }
   }, []);
 
+  const handleGreetingComplete = () => {
+    setHasCompletedGreeting(true);
+    localStorage.setItem('completedInitialGreeting', 'true');
+  };
+
+  // Show initial greeting if not completed
+  if (!hasCompletedGreeting) {
+    return <InitialGreeting onComplete={handleGreetingComplete} />;
+  }
+
+  // Show profile creation if not skipped
   if (!hasProfile && !skipProfile) {
     return (
       <div className="space-y-4">
@@ -55,6 +74,7 @@ export default function Active() {
     );
   }
 
+  // Main interface
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Active You</h1>

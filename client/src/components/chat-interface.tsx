@@ -14,10 +14,11 @@ interface ChatMessage {
 }
 
 interface ChatInterfaceProps {
-  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness";
+  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "welcome";
+  onConversationComplete?: () => void;
 }
 
-export default function ChatInterface({ category }: ChatInterfaceProps) {
+export default function ChatInterface({ category, onConversationComplete }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const { toast } = useToast();
@@ -38,7 +39,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       career: "Welcome! I'm your career development coach. I'll help guide you based on your experience and aspirations. What brings you here today?",
       wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
       learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
-      fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. Whether you're into weightlifting, yoga, running, or meditation, I'll provide personalized guidance for your fitness journey. What would you like to work on today?"
+      fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. Whether you're into weightlifting, yoga, running, or meditation, I'll provide personalized guidance for your fitness journey. What would you like to work on today?",
+      welcome: "Hi! 👋 I'm excited to create a personalized experience just for you. Let's start with something fun - what's your favorite color? And do you prefer energetic or calming music while working out? This will help me customize your experience!"
     };
 
     setMessages([{ role: "assistant", content: greetings[category], category }]);
@@ -63,6 +65,12 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         { role: "assistant", content: data.response, category }
       ]);
       setInput("");
+
+      // If this is the welcome conversation and we've gathered enough information,
+      // call the completion callback
+      if (category === "welcome" && messages.length >= 4 && onConversationComplete) {
+        onConversationComplete();
+      }
     },
     onError: () => {
       toast({
