@@ -79,8 +79,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       weight: weightKg,
       sex,
       fitnessLevel,
-      goals,
-    });
+      goals: goals,
+    } as FitnessProfile);
   };
 
   return (
@@ -138,8 +138,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
           <div className="space-y-2">
             <Label>Sex</Label>
-            <Select value={sex} onValueChange={(value: "male" | "female") => setSex(value)}>
-              <SelectTrigger id="sex">
+            <Select value={sex || ""} onValueChange={(value) => setSex(value as "male" | "female")}>
+              <SelectTrigger>
                 <SelectValue placeholder="Select your sex" />
               </SelectTrigger>
               <SelectContent>
@@ -151,11 +151,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
           <div className="space-y-2">
             <Label>Fitness Level</Label>
-            <Select 
-              value={fitnessLevel} 
-              onValueChange={(value: "beginner" | "intermediate" | "advanced") => setFitnessLevel(value)}
-            >
-              <SelectTrigger id="fitnessLevel">
+            <Select value={fitnessLevel || ""} onValueChange={(value) => setFitnessLevel(value as "beginner" | "intermediate" | "advanced")}>
+              <SelectTrigger>
                 <SelectValue placeholder="Select your fitness level" />
               </SelectTrigger>
               <SelectContent>
