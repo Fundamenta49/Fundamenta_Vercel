@@ -5,6 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import Navigation from "@/components/navigation";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
+import WhyFundamenta from "@/pages/why-fundamenta";
+import Partner from "@/pages/partner";
+import Privacy from "@/pages/privacy";
+import Invite from "@/pages/invite";
 import Emergency from "@/pages/emergency";
 import Finance from "@/pages/finance";
 import Career from "@/pages/career";
@@ -20,6 +24,10 @@ function Router() {
           <div className="max-w-7xl mx-auto space-y-6">
             <Switch>
               <Route path="/" component={Home} />
+              <Route path="/why-fundamenta" component={WhyFundamenta} />
+              <Route path="/partner" component={Partner} />
+              <Route path="/privacy" component={Privacy} />
+              <Route path="/invite" component={Invite} />
               <Route path="/emergency" component={Emergency} />
               <Route path="/finance" component={Finance} />
               <Route path="/career" component={Career} />
