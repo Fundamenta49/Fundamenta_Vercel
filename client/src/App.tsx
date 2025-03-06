@@ -15,9 +15,9 @@ function Router() {
   return (
     <div className="min-h-screen flex overflow-hidden bg-texture">
       <Navigation />
-      <main className="flex-1 relative z-0 h-screen overflow-y-auto ml-[240px]">
-        <div className="category-content">
-          <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <main className="flex-1 relative z-0 overflow-y-auto md:ml-[240px]">
+        <div className="p-4 sm:p-6 md:p-8">
+          <div className="max-w-7xl mx-auto space-y-6">
             <Switch>
               <Route path="/" component={Home} />
               <Route path="/emergency" component={Emergency} />

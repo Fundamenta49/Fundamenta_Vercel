@@ -6,6 +6,46 @@
 @tailwind utilities;
 
 @layer base {
+  /* Responsive text containers */
+  .content-container {
+    @apply px-4 py-6 sm:px-6 md:px-8;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* Text container spacing */
+  .text-content {
+    @apply space-y-4;
+  }
+
+  /* Adjust main content area */
+  main {
+    @apply flex-1 relative z-0 overflow-y-auto;
+    height: 100dvh;
+  }
+
+  /* Mobile-first padding adjustments */
+  .p-responsive {
+    @apply p-4 sm:p-6 md:p-8;
+  }
+
+  /* Card adjustments */
+  .card {
+    @apply rounded-sm p-4 sm:p-6;
+    border: 1px solid rgba(92, 64, 51, 0.1);
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
+    width: 100%;
+    height: fit-content;
+  }
+
+  /* Ensure text wrapping */
+  h1, h2, h3, p {
+    @apply break-words;
+    max-width: 100%;
+  }
+
   :root {
     /* Primary colors */
     --primary: 200 27% 23%; /* Deep navy #1C3D5A */
