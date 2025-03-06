@@ -28,12 +28,14 @@ const feetInchesToCm = (feet: number, inches: number) => (feet * 12 + inches) * 
 
 export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps) {
   const { toast } = useToast();
-  const [heightFeet, setHeightFeet] = useState<string>("");
-  const [heightInches, setHeightInches] = useState<string>("");
-  const [weightLbs, setWeightLbs] = useState<string>("");
-  const [selectedSex, setSelectedSex] = useState<string>("");
-  const [selectedFitnessLevel, setSelectedFitnessLevel] = useState<string>("");
-  const [goals, setGoals] = useState<string[]>([]);
+  const [formData, setFormData] = useState({
+    heightFeet: "",
+    heightInches: "",
+    weightLbs: "",
+    sex: "",
+    fitnessLevel: "",
+    goals: [] as string[]
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fitnessGoals = [
@@ -45,23 +47,23 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  const handleCreateProfile = () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Form submission started with data:", formData);
+
     try {
       setIsSubmitting(true);
-      toast({
-        title: "Processing",
-        description: "Creating your profile...",
-      });
 
       // Validation
       const missingFields = [];
-      if (!heightFeet) missingFields.push("Height (feet)");
-      if (!heightInches) missingFields.push("Height (inches)");
-      if (!weightLbs) missingFields.push("Weight");
-      if (!selectedSex) missingFields.push("Sex");
-      if (!selectedFitnessLevel) missingFields.push("Fitness Level");
+      if (!formData.heightFeet) missingFields.push("Height (feet)");
+      if (!formData.heightInches) missingFields.push("Height (inches)");
+      if (!formData.weightLbs) missingFields.push("Weight");
+      if (!formData.sex) missingFields.push("Sex");
+      if (!formData.fitnessLevel) missingFields.push("Fitness Level");
 
       if (missingFields.length > 0) {
+        console.log("Validation failed - missing fields:", missingFields);
         toast({
           variant: "destructive",
           title: "Missing Information",
@@ -70,10 +72,15 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         return;
       }
 
-      const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
-      const weightKg = lbsToKg(Number(weightLbs));
+      // Convert measurements
+      const heightCm = feetInchesToCm(
+        Number(formData.heightFeet),
+        Number(formData.heightInches)
+      );
+      const weightKg = lbsToKg(Number(formData.weightLbs));
 
       if (isNaN(heightCm) || isNaN(weightKg)) {
+        console.log("Invalid measurements", { heightCm, weightKg });
         toast({
           variant: "destructive",
           title: "Invalid Input",
@@ -82,17 +89,17 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         return;
       }
 
-      // Create profile object
       const profile: FitnessProfile = {
         height: heightCm,
         weight: weightKg,
-        sex: selectedSex as "male" | "female",
-        fitnessLevel: selectedFitnessLevel as "beginner" | "intermediate" | "advanced",
-        goals: goals.length > 0 ? goals : ["General Fitness"],
+        sex: formData.sex as "male" | "female",
+        fitnessLevel: formData.fitnessLevel as "beginner" | "intermediate" | "advanced",
+        goals: formData.goals.length > 0 ? formData.goals : ["General Fitness"],
       };
 
-      // Call the callback
-      onComplete(profile);
+      console.log("Calling onComplete with profile:", profile);
+      await Promise.resolve(onComplete(profile));
+      console.log("Profile submission completed");
 
     } catch (error) {
       console.error("Profile creation error:", error);
@@ -106,6 +113,19 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     }
   };
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const toggleGoal = (goal: string) => {
+    setFormData(prev => ({
+      ...prev,
+      goals: prev.goals.includes(goal)
+        ? prev.goals.filter(g => g !== goal)
+        : [...prev.goals, goal]
+    }));
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -115,7 +135,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Height</Label>
@@ -126,8 +146,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                     type="number"
                     min="1"
                     max="8"
-                    value={heightFeet}
-                    onChange={(e) => setHeightFeet(e.target.value)}
+                    value={formData.heightFeet}
+                    onChange={(e) => handleInputChange("heightFeet", e.target.value)}
                     placeholder="5"
                   />
                 </div>
@@ -137,8 +157,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                     type="number"
                     min="0"
                     max="11"
-                    value={heightInches}
-                    onChange={(e) => setHeightInches(e.target.value)}
+                    value={formData.heightInches}
+                    onChange={(e) => handleInputChange("heightInches", e.target.value)}
                     placeholder="10"
                   />
                 </div>
@@ -149,8 +169,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               <Label>Weight (lbs)</Label>
               <Input
                 type="number"
-                value={weightLbs}
-                onChange={(e) => setWeightLbs(e.target.value)}
+                value={formData.weightLbs}
+                onChange={(e) => handleInputChange("weightLbs", e.target.value)}
                 placeholder="150"
               />
             </div>
@@ -160,8 +180,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
             <Label>Sex</Label>
             <select
               className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
-              value={selectedSex}
-              onChange={(e) => setSelectedSex(e.target.value)}
+              value={formData.sex}
+              onChange={(e) => handleInputChange("sex", e.target.value)}
             >
               <option value="">Select your sex</option>
               <option value="male">Male</option>
@@ -173,8 +193,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
             <Label>Fitness Level</Label>
             <select
               className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
-              value={selectedFitnessLevel}
-              onChange={(e) => setSelectedFitnessLevel(e.target.value)}
+              value={formData.fitnessLevel}
+              onChange={(e) => handleInputChange("fitnessLevel", e.target.value)}
             >
               <option value="">Select your fitness level</option>
               <option value="beginner">Beginner</option>
@@ -190,15 +210,9 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
                 <Button
                   key={goal}
                   type="button"
-                  variant={goals.includes(goal) ? "default" : "outline"}
+                  variant={formData.goals.includes(goal) ? "default" : "outline"}
                   className="justify-start"
-                  onClick={() => {
-                    setGoals((current) =>
-                      current.includes(goal)
-                        ? current.filter((g) => g !== goal)
-                        : [...current, goal]
-                    );
-                  }}
+                  onClick={() => toggleGoal(goal)}
                 >
                   {goal}
                 </Button>
@@ -207,13 +221,13 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           </div>
 
           <Button 
-            onClick={handleCreateProfile}
+            type="submit"
             disabled={isSubmitting}
             className="w-full"
           >
             {isSubmitting ? "Creating Profile..." : "Create Profile"}
           </Button>
-        </div>
+        </form>
       </CardContent>
     </Card>
   );

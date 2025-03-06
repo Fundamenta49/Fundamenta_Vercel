@@ -22,10 +22,14 @@ export default function Active() {
   const handleProfileComplete = (profile: ProfileType) => {
     console.log("Profile completion handler called with:", profile);
     try {
+      // Save to localStorage
       localStorage.setItem('fitnessProfile', JSON.stringify(profile));
+
+      // Update state
       setHasProfile(true);
       setActiveTab("chat");
 
+      // Show success message
       toast({
         title: "Success!",
         description: "Your fitness profile has been created successfully!",
@@ -37,17 +41,20 @@ export default function Active() {
         title: "Error",
         description: "Failed to save profile. Please try again.",
       });
+      // Reset state on error
       setHasProfile(false);
       localStorage.removeItem('fitnessProfile');
     }
   };
 
   useEffect(() => {
+    // Check for existing profile on mount
     const savedProfile = localStorage.getItem('fitnessProfile');
     if (savedProfile) {
       try {
         const parsedProfile = JSON.parse(savedProfile);
         if (parsedProfile) {
+          console.log("Found existing profile:", parsedProfile);
           setHasProfile(true);
         }
       } catch (error) {
