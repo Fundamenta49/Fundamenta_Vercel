@@ -15,7 +15,7 @@ function Router() {
   return (
     <div className="min-h-screen flex overflow-hidden bg-texture">
       <Navigation />
-      <main className="flex-1 relative h-screen overflow-y-auto">
+      <main className="flex-1 relative z-0 h-screen overflow-y-auto ml-[240px]">
         <div className="category-content">
           <div className="container mx-auto px-4 py-8 max-w-7xl">
             <Switch>
