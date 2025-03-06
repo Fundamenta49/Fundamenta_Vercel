@@ -18,7 +18,10 @@ export default function Active() {
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
-            <TabsTrigger value="workout">Workouts</TabsTrigger>
+            <TabsTrigger value="meditation">Meditation</TabsTrigger>
+            <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
+            <TabsTrigger value="yoga">Yoga</TabsTrigger>
+            <TabsTrigger value="running">Running</TabsTrigger>
           </TabsList>
         </div>
 
@@ -36,8 +39,20 @@ export default function Active() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="workout">
-          <ActiveYou />
+        <TabsContent value="meditation">
+          <ActiveYou defaultTab="meditation" />
+        </TabsContent>
+
+        <TabsContent value="weightlifting">
+          <ActiveYou defaultTab="weightlifting" />
+        </TabsContent>
+
+        <TabsContent value="yoga">
+          <ActiveYou defaultTab="yoga" />
+        </TabsContent>
+
+        <TabsContent value="running">
+          <ActiveYou defaultTab="running" />
         </TabsContent>
       </Tabs>
     </div>
