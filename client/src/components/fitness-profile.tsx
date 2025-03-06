@@ -44,7 +44,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  function createProfile() {
+  async function handleSubmit() {
     try {
       // Validation
       const missingFields = [];
@@ -63,7 +63,6 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         return;
       }
 
-      // Convert measurements
       const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
       const weightKg = lbsToKg(Number(weightLbs));
 
@@ -76,7 +75,6 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         return;
       }
 
-      // Create profile object
       const profile: FitnessProfile = {
         height: heightCm,
         weight: weightKg,
@@ -85,8 +83,8 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         goals: goals.length > 0 ? goals : ["General Fitness"],
       };
 
-      // Call the onComplete callback
-      onComplete(profile);
+      // Call the onComplete callback with the profile
+      await Promise.resolve(onComplete(profile));
 
       toast({
         title: "Success!",
@@ -207,8 +205,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           </div>
 
           <Button 
-            type="button"
-            onClick={createProfile}
+            onClick={handleSubmit}
             className="w-full"
           >
             Create Profile

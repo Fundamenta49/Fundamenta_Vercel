@@ -21,15 +21,16 @@ export default function Active() {
 
   const handleProfileComplete = (profile: ProfileType) => {
     try {
-      console.log("Handling profile completion:", profile);
-      localStorage.setItem('fitnessProfile', JSON.stringify(profile));
       setHasProfile(true);
-      console.log("Profile saved successfully");
+      localStorage.setItem('fitnessProfile', JSON.stringify(profile));
 
       toast({
-        title: "Profile Saved",
-        description: "Your fitness profile has been saved successfully.",
+        title: "Success!",
+        description: "Your fitness profile has been saved.",
       });
+
+      // Force a re-render of the main content
+      setActiveTab("chat");
     } catch (error) {
       console.error("Error saving profile:", error);
       toast({
@@ -49,7 +50,6 @@ export default function Active() {
         const parsedProfile = JSON.parse(savedProfile);
         if (parsedProfile) {
           setHasProfile(true);
-          console.log("Loaded existing profile");
         }
       } catch (error) {
         console.error("Error loading saved profile:", error);
