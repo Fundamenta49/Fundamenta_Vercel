@@ -143,55 +143,8 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
               Track your runs and get AI-powered insights
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="py-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Timer className="h-4 w-4" />
-                    Duration
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {runningStats.duration} mins
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="py-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    Distance
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {runningStats.distance} km
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="py-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <CalendarDays className="h-4 w-4" />
-                    Pace
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {runningStats.pace} min/km
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            <Alert>
-              <AlertDescription>
-                GPS tracking and real-time coaching coming soon!
-              </AlertDescription>
-            </Alert>
+          <CardContent>
+            <RunningTracker />
           </CardContent>
         </Card>
         <FitnessProgress />
