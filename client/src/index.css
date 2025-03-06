@@ -57,7 +57,7 @@
   }
 
   .bg-woven {
-    background-image: 
+    background-image:
       linear-gradient(45deg, transparent 65%, rgba(184, 159, 137, 0.1) 65.5%, transparent 66%),
       linear-gradient(-45deg, transparent 65%, rgba(184, 159, 137, 0.1) 65.5%, transparent 66%);
     background-size: 20px 20px;
@@ -133,10 +133,16 @@
 
   /* Sharp Card Styles */
   .card {
-    @apply rounded-sm;
+    @apply rounded-sm p-4; /* Base padding */
     border: 1px solid rgba(92, 64, 51, 0.1);
     background-color: #F5F5F5 !important;
     color: #2E2E2E !important;
+    width: 100%; /* Full width on mobile */
+  }
+  @media (min-width: 640px) {
+    .card {
+      @apply p-6; /* Larger padding on desktop */
+    }
   }
 
   /* Grid Layout Helpers */
@@ -148,14 +154,6 @@
     gap: 1rem;
   }
 
-  /* Keep existing component styles but update borders to be sharper */
-  .card {
-    @apply rounded-sm;
-    border: 1px solid rgba(92, 64, 51, 0.1);
-    background-color: #F5F5F5 !important;
-    color: #2E2E2E !important;
-  }
-
   /* Subtle gradients for depth */
   .gradient-bg {
     background: linear-gradient(
@@ -165,7 +163,104 @@
     );
   }
 
-  /* Rest of existing styles remain unchanged */
+  /* Mobile-first responsive design */
+  .category-content {
+    height: calc(100vh - 2rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.5rem; /* Smaller padding on mobile */
+    margin: -0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .category-content {
+      padding: 1rem;
+      margin: -1rem;
+    }
+  }
+
+  /* Card containers - mobile first */
+  .card-container {
+    max-height: calc(100vh - 4rem);
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding-right: 0.25rem; /* Smaller padding on mobile */
+    display: flex;
+    flex-wrap: wrap; /* Wrap on mobile */
+    gap: 0.5rem; /* Smaller gap on mobile */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (min-width: 640px) {
+    .card-container {
+      padding-right: 0.5rem;
+      flex-wrap: nowrap;
+      gap: 1rem;
+    }
+  }
+
+  /* Text scaling for better mobile readability */
+  h1 {
+    @apply text-2xl font-bold; /* Smaller on mobile */
+  }
+
+  @media (min-width: 640px) {
+    h1 {
+      @apply text-3xl;
+    }
+  }
+
+  /* Input field adjustments for mobile */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  textarea,
+  select,
+  .text-box {
+    padding: 0.5rem; /* Smaller padding on mobile */
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+
+  @media (min-width: 640px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    textarea,
+    select,
+    .text-box {
+      padding: 0.625rem;
+      font-size: 0.875rem !important;
+    }
+  }
+
+  /* Keep tabs scrollable on mobile */
+  .tabs-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 0.5rem; /* Smaller padding on mobile */
+    margin-bottom: -0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .tabs-container {
+      padding-bottom: 1rem;
+      margin-bottom: -1rem;
+    }
+  }
+
   * {
     @apply border-border;
   }
@@ -201,29 +296,7 @@
     padding: 1rem;
   }
 
-  /* Category content container */
-  .category-content {
-    height: calc(100vh - 2rem); /* Account for padding */
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 1rem;
-    margin: -1rem;
-  }
 
-  /* Card containers within categories */
-  .card-container {
-    max-height: calc(100vh - 4rem);
-    width: 100%;
-    overflow-y: auto;
-    overflow-x: auto;
-    padding-right: 0.5rem;
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 1rem;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Ensure cards within container maintain proper sizing */
   .card-container > * {
     flex: 0 0 auto;
     max-width: calc(33.333% - 1rem); /* 3 cards per row with gap */
@@ -243,7 +316,6 @@
   }
 
 
-  /* Horizontal scrolling containers */
   .scroll-container-x {
     width: 100%;
     overflow-x: auto;
@@ -272,18 +344,6 @@
   }
 
 
-  /* Add styles for tab container scrolling */
-  .tabs-container {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    padding-bottom: 1rem;
-    margin-bottom: -1rem;
-  }
-
   .tabs-container::-webkit-scrollbar {
     height: 8px;
   }
@@ -301,7 +361,6 @@
     background: var(--wood-light);
   }
 
-  /* Ensure tab items stay inline */
   .tabs-container [role="tablist"] {
     display: inline-flex;
     min-width: min-content;
@@ -310,7 +369,6 @@
   }
 
 
-  /* Command menu styles - keeping light backgrounds */
   .cm-base,
   [cmdk-input],
   [cmdk-list],
@@ -340,13 +398,11 @@
     @apply hover:bg-wood/5;
   }
 
-  /* Card styles */
   .card-sandstone {
     @apply shadow-sm border-wood/20;
     border: 1px solid rgba(92, 64, 51, 0.2);
   }
 
-  /* Button styles */
   .btn-wood {
     @apply bg-gradient-to-r from-wood-dark to-wood transition-all duration-300 text-[#F3F4F6];
     box-shadow: 2px 2px 5px rgba(92, 64, 51, 0.2);
@@ -357,19 +413,16 @@
     box-shadow: 2px 2px 8px rgba(92, 64, 51, 0.3);
   }
 
-  /* Text input and form control styles */
   .input-control {
     @apply border-wood/20 focus:border-wood/40 focus:ring-wood/30 rounded-md;
   }
 
-  /* Dropdown and select styles */
   .select-content,
   .dropdown-content,
   .popover-content {
     @apply border-wood/20 shadow-sm rounded-md;
   }
 
-  /* Dialog and modal styles */
   .dialog-content {
     @apply border-wood/20 shadow-md rounded-lg;
   }
