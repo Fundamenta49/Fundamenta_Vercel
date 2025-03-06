@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Timer, MapPin, Play, Pause, Square } from "lucide-react";
+import { MapPin, Play, Square } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { MapContainer, TileLayer, Polyline, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 interface RunningSession {
   startTime: number;
@@ -22,6 +24,35 @@ interface RunningSession {
     longitude: number;
     timestamp: number;
   }>;
+}
+
+function RouteMap({ route }: { route: RunningSession["route"] }) {
+  const mapCenter = route.length > 0 
+    ? [route[0].latitude, route[0].longitude] 
+    : [51.505, -0.09]; // Default center
+
+  const positions = route.map(point => [point.latitude, point.longitude]);
+
+  return (
+    <MapContainer 
+      center={mapCenter} 
+      zoom={13} 
+      style={{ height: "400px", width: "100%" }}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      {positions.length > 1 && (
+        <Polyline 
+          positions={positions} 
+          color="blue" 
+          weight={3} 
+          opacity={0.7} 
+        />
+      )}
+    </MapContainer>
+  );
 }
 
 export default function RunningTracker() {
@@ -39,7 +70,7 @@ export default function RunningTracker() {
     try {
       const permission = await navigator.permissions.query({ name: 'geolocation' });
       setHasLocationPermission(permission.state === 'granted');
-      
+
       if (permission.state === 'prompt') {
         toast({
           title: "Location Permission Required",
@@ -194,10 +225,7 @@ export default function RunningTracker() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                   <CardHeader className="py-3">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <Timer className="h-4 w-4" />
-                      Duration
-                    </CardTitle>
+                    <CardTitle className="text-sm">Duration</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
@@ -229,6 +257,12 @@ export default function RunningTracker() {
                 </Card>
               </div>
 
+              {currentSession && currentSession.route.length > 0 && (
+                <div className="h-[400px] rounded-lg overflow-hidden border">
+                  <RouteMap route={currentSession.route} />
+                </div>
+              )}
+
               <div className="flex justify-center gap-4">
                 {!isTracking ? (
                   <Button
@@ -251,13 +285,6 @@ export default function RunningTracker() {
                   </Button>
                 )}
               </div>
-
-              {/* TODO: Add map visualization of the route */}
-              <Alert>
-                <AlertDescription>
-                  Route visualization and detailed analytics coming in the next update!
-                </AlertDescription>
-              </Alert>
             </>
           )}
         </CardContent>

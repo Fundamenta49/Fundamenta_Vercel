@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,8 +9,29 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
+import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 
 export default function Active() {
+  const [hasProfile, setHasProfile] = useState<boolean>(false);
+
+  const handleProfileComplete = (profile: ProfileType) => {
+    // In a real app, we would save this to a database
+    localStorage.setItem('fitnessProfile', JSON.stringify(profile));
+    setHasProfile(true);
+  };
+
+  // Check for existing profile
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('fitnessProfile');
+    if (savedProfile) {
+      setHasProfile(true);
+    }
+  }, []);
+
+  if (!hasProfile) {
+    return <FitnessProfile onComplete={handleProfileComplete} />;
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Active You</h1>
