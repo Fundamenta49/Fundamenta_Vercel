@@ -1,11 +1,10 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import {
-  AlertCircle,
-  DollarSign,
-  Briefcase,
-  Heart,
-  GraduationCap,
+  HeartHandshake,
+  HandshakeIcon,
+  Shield,
+  Users,
   Menu,
   ChevronLeft,
   ChevronRight,
@@ -20,11 +19,10 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 
 const navItems = [
-  { href: "/finance", label: "Finance", icon: DollarSign },
-  { href: "/career", label: "Career", icon: Briefcase },
-  { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
-  { href: "/learning", label: "Learning & Development", icon: GraduationCap },
-  { href: "/emergency", label: "Emergency Assistance", icon: AlertCircle }, // Moved to bottom
+  { href: "/why-fundamenta", label: "Why Fundamenta", icon: HeartHandshake },
+  { href: "/partner", label: "Partner With Us", icon: HandshakeIcon },
+  { href: "/privacy", label: "Privacy Hub", icon: Shield },
+  { href: "/invite", label: "Invite Friends", icon: Users },
 ];
 
 export default function Navigation() {
