@@ -70,7 +70,6 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         return;
       }
 
-      // Convert measurements
       const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
       const weightKg = lbsToKg(Number(weightLbs));
 

@@ -37,6 +37,8 @@ export default function Active() {
         title: "Error",
         description: "Failed to save profile. Please try again.",
       });
+      setHasProfile(false);
+      localStorage.removeItem('fitnessProfile');
     }
   };
 
@@ -55,6 +57,7 @@ export default function Active() {
     }
   }, []);
 
+  // Show profile creation if no profile exists and user hasn't skipped
   if (!hasProfile && !skipProfile) {
     return (
       <div className="space-y-4">
@@ -80,22 +83,21 @@ export default function Active() {
     );
   }
 
+  // Main content after profile is created or skipped
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Active You</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="tabs-container">
-          <TabsList className="mb-4">
-            <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
-            <TabsTrigger value="meditation">Meditation</TabsTrigger>
-            <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
-            <TabsTrigger value="yoga">Yoga</TabsTrigger>
-            <TabsTrigger value="running">Running</TabsTrigger>
-          </TabsList>
-        </div>
+        <TabsList className="mb-4">
+          <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
+          <TabsTrigger value="meditation">Meditation</TabsTrigger>
+          <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
+          <TabsTrigger value="yoga">Yoga</TabsTrigger>
+          <TabsTrigger value="running">Running</TabsTrigger>
+        </TabsList>
 
-        <TabsContent value="chat" className="mt-6">
+        <TabsContent value="chat">
           <Card className="border-0 shadow-none">
             <CardHeader>
               <CardTitle>Fitness AI Coach</CardTitle>
