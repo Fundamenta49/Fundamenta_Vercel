@@ -7,10 +7,10 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
-import MeditationGuide from "@/components/meditation-guide";
 import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
+import ActiveYou from "@/components/active-you";
 
 export default function Wellness() {
   return (
@@ -23,7 +23,7 @@ export default function Wellness() {
             <TabsTrigger value="chat">AI Wellness Coach</TabsTrigger>
             <TabsTrigger value="nutrition">Nutrition Guide</TabsTrigger>
             <TabsTrigger value="tracker">Food Tracker</TabsTrigger>
-            <TabsTrigger value="meditation">Meditation</TabsTrigger>
+            <TabsTrigger value="active">Active You</TabsTrigger>
             <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
           </TabsList>
         </div>
@@ -50,8 +50,8 @@ export default function Wellness() {
           <NutritionTracker />
         </TabsContent>
 
-        <TabsContent value="meditation">
-          <MeditationGuide />
+        <TabsContent value="active">
+          <ActiveYou />
         </TabsContent>
 
         <TabsContent value="shopping">
