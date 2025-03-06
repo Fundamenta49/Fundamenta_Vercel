@@ -20,21 +20,16 @@ export default function Active() {
   const [activeTab, setActiveTab] = useState<string>("chat");
 
   const handleProfileComplete = (profile: ProfileType) => {
+    console.log("Profile completion handler called with:", profile);
     try {
-      // Save profile to localStorage
       localStorage.setItem('fitnessProfile', JSON.stringify(profile));
-
-      // Update state
       setHasProfile(true);
+      setActiveTab("chat");
 
-      // Show success message
       toast({
         title: "Success!",
-        description: "Your fitness profile has been created.",
+        description: "Your fitness profile has been created successfully!",
       });
-
-      // Switch to chat tab
-      setActiveTab("chat");
     } catch (error) {
       console.error("Error saving profile:", error);
       toast({
@@ -46,7 +41,6 @@ export default function Active() {
   };
 
   useEffect(() => {
-    // Check for existing profile
     const savedProfile = localStorage.getItem('fitnessProfile');
     if (savedProfile) {
       try {

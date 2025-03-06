@@ -84,6 +84,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         goals: goals.length > 0 ? goals : ["General Fitness"],
       };
 
+      console.log("Submitting profile:", profile);
       onComplete(profile);
 
     } catch (error) {
@@ -148,33 +149,29 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
           <div className="space-y-2">
             <Label>Sex</Label>
-            <div className="relative">
-              <select
-                className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
-                value={selectedSex}
-                onChange={(e) => setSelectedSex(e.target.value)}
-              >
-                <option value="">Select your sex</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-            </div>
+            <select
+              className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
+              value={selectedSex}
+              onChange={(e) => setSelectedSex(e.target.value)}
+            >
+              <option value="">Select your sex</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
           </div>
 
           <div className="space-y-2">
             <Label>Fitness Level</Label>
-            <div className="relative">
-              <select
-                className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
-                value={selectedFitnessLevel}
-                onChange={(e) => setSelectedFitnessLevel(e.target.value)}
-              >
-                <option value="">Select your fitness level</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-            </div>
+            <select
+              className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
+              value={selectedFitnessLevel}
+              onChange={(e) => setSelectedFitnessLevel(e.target.value)}
+            >
+              <option value="">Select your fitness level</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
           </div>
 
           <div className="space-y-2">
@@ -200,10 +197,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
             </div>
           </div>
 
-          <Button 
-            type="submit"
-            className="w-full"
-          >
+          <Button type="submit" className="w-full">
             Create Profile
           </Button>
         </form>
