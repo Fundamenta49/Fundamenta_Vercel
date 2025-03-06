@@ -15,96 +15,122 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MeditationGuide from "./meditation-guide";
 import FitnessProgress from "./fitness-progress";
 import RunningTracker from "./running-tracker";
+import ProfileManager from "./profile-manager";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dumbbell,
   Bird as YogaIcon,
   Timer as RunningIcon,
   Brain,
   Video,
+  User,
 } from "lucide-react";
 
 interface ActiveYouProps {
-  defaultTab?: "meditation" | "weightlifting" | "yoga" | "running";
+  defaultTab?: "meditation" | "weightlifting" | "yoga" | "running" | "profile";
 }
 
 export default function ActiveYou({ defaultTab = "weightlifting" }: ActiveYouProps) {
   const [currentTab, setCurrentTab] = useState(defaultTab);
+  const { toast } = useToast();
+
+  const handleProfileUpdate = (profile: any) => {
+    try {
+      localStorage.setItem('fitnessProfile', JSON.stringify(profile));
+      toast({
+        title: "Success!",
+        description: "Your fitness profile has been updated successfully!",
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
-      {currentTab === "meditation" && (
-        <MeditationGuide />
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle>Active You Dashboard</CardTitle>
+          <CardDescription>Track and manage your fitness journey</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={currentTab} onValueChange={setCurrentTab}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="weightlifting">
+                <Dumbbell className="h-4 w-4 mr-2" />
+                Weight Lifting
+              </TabsTrigger>
+              <TabsTrigger value="yoga">
+                <YogaIcon className="h-4 w-4 mr-2" />
+                Yoga
+              </TabsTrigger>
+              <TabsTrigger value="running">
+                <RunningIcon className="h-4 w-4 mr-2" />
+                Running
+              </TabsTrigger>
+              <TabsTrigger value="meditation">
+                <Brain className="h-4 w-4 mr-2" />
+                Meditation
+              </TabsTrigger>
+              <TabsTrigger value="profile">
+                <User className="h-4 w-4 mr-2" />
+                My Profile
+              </TabsTrigger>
+            </TabsList>
 
-      {currentTab === "weightlifting" && (
-        <>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Dumbbell className="h-5 w-5 text-primary" />
-                AI Weight Lifting Guide
-              </CardTitle>
-              <CardDescription>
-                Get personalized workout plans and form guidance
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="relative aspect-video rounded-lg overflow-hidden">
-                <iframe
-                  className="absolute inset-0 w-full h-full"
-                  src="https://www.youtube.com/embed/videoseries?list=PLdemonic"
-                  title="Interactive Workout Guide"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-              <Alert>
-                <AlertDescription>
-                  AI form analysis and personalized recommendations coming soon!
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-          <FitnessProgress />
-        </>
-      )}
+            <TabsContent value="meditation">
+              <MeditationGuide />
+            </TabsContent>
 
-      {currentTab === "yoga" && (
-        <>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <YogaIcon className="h-5 w-5 text-primary" />
-                Yoga Buddy
-              </CardTitle>
-              <CardDescription>
-                Interactive yoga sessions with AI guidance
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="relative aspect-video rounded-lg overflow-hidden">
-                <iframe
-                  className="absolute inset-0 w-full h-full"
-                  src="https://www.youtube.com/embed/videoseries?list=PLyoga"
-                  title="Interactive Yoga Session"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-              <Alert>
-                <AlertDescription>
-                  AI pose correction and personalized flows coming soon!
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-          <FitnessProgress />
-        </>
-      )}
+            <TabsContent value="weightlifting">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Dumbbell className="h-5 w-5 text-primary" />
+                    AI Weight Lifting Guide
+                  </CardTitle>
+                  <CardDescription>
+                    Get personalized workout plans and form guidance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FitnessProgress />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-      {currentTab === "running" && (
-        <RunningTracker />
-      )}
+            <TabsContent value="yoga">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <YogaIcon className="h-5 w-5 text-primary" />
+                    Yoga Sessions
+                  </CardTitle>
+                  <CardDescription>
+                    Follow guided yoga sessions with AI assistance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FitnessProgress />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="running">
+              <RunningTracker />
+            </TabsContent>
+
+            <TabsContent value="profile">
+              <ProfileManager onUpdate={handleProfileUpdate} />
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 }
