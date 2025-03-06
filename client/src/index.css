@@ -81,7 +81,8 @@
     --input: 0 0% 96%; /* Soft off-white for readability */
     --ring: 208 26% 48%; /* Muted steel blue */
 
-    --radius: 0.25rem; /* Sharper corners for refined edges */
+    /* Update radius for more rounded edges */
+    --radius: 0.75rem;
   }
 
   /* Material Textures */
@@ -134,12 +135,21 @@
     background-color: #F5F5F5 !important;
     color: #2E2E2E !important;
     border: 1px solid rgba(92, 64, 51, 0.2);
-    @apply rounded-sm focus:border-wood/40 focus:ring-wood/30;
+    @apply rounded-sm focus:border-wood/40 focus:ring-wood/30 transition-all duration-200;
     padding: 0.625rem;
     font-size: 0.875rem;
     line-height: 1.25rem;
-    transition: border-color 0.15s ease;
+    border-radius: var(--radius);
   }
+
+  input:focus,
+  textarea:focus,
+  select:focus,
+  .text-box:focus {
+    @apply ring-2 ring-wood/30 transform scale-[1.02];
+    outline: none;
+  }
+
 
   /* Glassmorphism */
   .glass {
@@ -173,11 +183,15 @@
 
   /* Sharp Card Styles */
   .card {
-    @apply rounded-sm p-4; /* Base padding */
+    @apply rounded-lg transition-all duration-300 p-4; /* Base padding */
     border: 1px solid rgba(92, 64, 51, 0.1);
     background-color: #F5F5F5 !important;
     color: #2E2E2E !important;
     width: 100%; /* Full width on mobile */
+  }
+  .card:hover {
+    @apply shadow-md;
+    border-color: rgba(92, 64, 51, 0.2);
   }
   @media (min-width: 640px) {
     .card {
@@ -232,6 +246,7 @@
   main {
     position: relative;
     z-index: 0;
+    @apply transition-all duration-300;
   }
 
   /* Navigation positioning */
@@ -253,12 +268,8 @@
   }
 
   /* Individual card styles */
-  .card {
-    @apply rounded-sm p-4;
-    border: 1px solid rgba(92, 64, 51, 0.1);
-    background-color: #F5F5F5 !important;
-    color: #2E2E2E !important;
-    width: 100%;
+  .card-interactive {
+    @apply transform transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1;
   }
 
   /* Container for proper content width */
@@ -498,5 +509,41 @@
     min-height: 100vh;
     margin: 0;
     padding: 0;
+  }
+
+  /* Interactive button animations */
+  .btn-interactive {
+    @apply transform transition-all duration-200 ease-in-out;
+  }
+
+  .btn-interactive:hover {
+    @apply scale-105;
+  }
+
+  .btn-interactive:active {
+    @apply scale-95;
+  }
+
+  /* Button press effect */
+  button {
+    @apply transition-all duration-150;
+  }
+
+  button:active {
+    @apply transform scale-95;
+  }
+
+  /* Navigation hover effects */
+  .nav-link {
+    @apply transition-all duration-200;
+  }
+
+  .nav-link:hover {
+    @apply translate-x-1;
+  }
+
+  /* Tab transitions */
+  .tabs-trigger {
+    @apply transition-colors duration-200;
   }
 }
