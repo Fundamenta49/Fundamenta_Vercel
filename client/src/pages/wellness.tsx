@@ -26,15 +26,15 @@ export default function Wellness() {
           </TabsList>
         </div>
 
-        <TabsContent value="chat">
-          <Card>
+        <TabsContent value="chat" className="mt-6">
+          <Card className="border-0 shadow-none">
             <CardHeader>
               <CardTitle>Wellness AI Coach</CardTitle>
               <CardDescription>
                 Get guidance for mental health, well-being, and nutrition
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <ChatInterface category="wellness" />
             </CardContent>
           </Card>
