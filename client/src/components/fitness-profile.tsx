@@ -46,6 +46,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted", { heightFeet, heightInches, weightLbs, selectedSex, selectedFitnessLevel, goals });
 
     if (!heightFeet || !heightInches || !weightLbs || !selectedSex || !selectedFitnessLevel) {
       toast({
@@ -74,9 +75,10 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         weight: weightKg,
         sex: selectedSex as "male" | "female",
         fitnessLevel: selectedFitnessLevel as "beginner" | "intermediate" | "advanced",
-        goals: goals.length > 0 ? goals : ["General Fitness"], // Default goal if none selected
+        goals: goals.length > 0 ? goals : ["General Fitness"],
       };
 
+      console.log("Submitting profile:", profile);
       onComplete(profile);
 
       toast({
@@ -84,12 +86,12 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         description: "Your fitness profile has been created successfully!",
       });
     } catch (error) {
+      console.error("Profile creation error:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "There was an error creating your profile. Please try again.",
       });
-      console.error("Profile creation error:", error);
     }
   };
 

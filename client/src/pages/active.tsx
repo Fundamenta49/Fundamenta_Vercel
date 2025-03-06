@@ -18,6 +18,7 @@ export default function Active() {
   const [activeTab, setActiveTab] = useState<string>("chat");
 
   const handleProfileComplete = (profile: ProfileType) => {
+    console.log("Profile completed:", profile);
     localStorage.setItem('fitnessProfile', JSON.stringify(profile));
     setHasProfile(true);
   };
