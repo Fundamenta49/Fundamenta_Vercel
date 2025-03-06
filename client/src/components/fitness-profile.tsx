@@ -44,27 +44,20 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  const validateForm = () => {
-    if (!heightFeet || !heightInches || !weightLbs || !selectedSex || !selectedFitnessLevel) {
-      toast({
-        variant: "destructive",
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submission started", { heightFeet, heightInches, weightLbs, selectedSex, selectedFitnessLevel, goals });
-
-    if (!validateForm()) {
-      return;
-    }
-
+  const handleButtonClick = () => {
     try {
+      console.log("Create Profile button clicked");
+
+      // Validation
+      if (!heightFeet || !heightInches || !weightLbs || !selectedSex || !selectedFitnessLevel) {
+        toast({
+          variant: "destructive",
+          title: "Missing Information",
+          description: "Please fill in all required fields.",
+        });
+        return;
+      }
+
       const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
       const weightKg = lbsToKg(Number(weightLbs));
 
@@ -111,7 +104,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Height</Label>
@@ -206,10 +199,13 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
             </div>
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button 
+            onClick={handleButtonClick}
+            className="w-full"
+          >
             Create Profile
           </Button>
-        </form>
+        </div>
       </CardContent>
     </Card>
   );
