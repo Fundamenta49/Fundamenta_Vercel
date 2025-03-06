@@ -13,6 +13,7 @@ import Emergency from "@/pages/emergency";
 import Finance from "@/pages/finance";
 import Career from "@/pages/career";
 import Wellness from "@/pages/wellness";
+import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 
 function Router() {
@@ -32,6 +33,7 @@ function Router() {
               <Route path="/finance" component={Finance} />
               <Route path="/career" component={Career} />
               <Route path="/wellness" component={Wellness} />
+              <Route path="/active" component={Active} />
               <Route path="/learning" component={Learning} />
               <Route component={NotFound} />
             </Switch>

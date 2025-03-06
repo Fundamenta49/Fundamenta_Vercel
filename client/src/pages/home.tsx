@@ -28,7 +28,7 @@ const features = [
     title: "Active You",
     description: "Get personalized fitness guidance with AI-powered workout plans",
     icon: Activity,
-    href: "/wellness?tab=active",
+    href: "/active",
     color: "text-pink-500",
   },
   {
