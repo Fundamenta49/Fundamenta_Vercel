@@ -18,8 +18,14 @@ export default function Active() {
   const [skipProfile, setSkipProfile] = useState<boolean>(false);
   const [hasCompletedGreeting, setHasCompletedGreeting] = useState<boolean>(false);
 
+  // Clear storage on first load - Remove this in production
+  useEffect(() => {
+    localStorage.removeItem('completedInitialGreeting');
+    localStorage.removeItem('fitnessProfile');
+    localStorage.removeItem('userPreferences');
+  }, []);
+
   const handleProfileComplete = (profile: ProfileType) => {
-    // In a real app, we would save this to a database
     localStorage.setItem('fitnessProfile', JSON.stringify(profile));
     setHasProfile(true);
   };
@@ -41,14 +47,6 @@ export default function Active() {
     setHasCompletedGreeting(true);
     localStorage.setItem('completedInitialGreeting', 'true');
   };
-
-  // For development/testing - clear localStorage
-  useEffect(() => {
-    // Comment out these lines in production
-    localStorage.removeItem('completedInitialGreeting');
-    localStorage.removeItem('fitnessProfile');
-    localStorage.removeItem('userPreferences');
-  }, []);
 
   // Show initial greeting if not completed
   if (!hasCompletedGreeting) {
