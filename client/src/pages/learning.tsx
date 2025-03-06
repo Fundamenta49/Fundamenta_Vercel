@@ -8,7 +8,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
-import { GraduationCap, Book, Target, Brain, Lightbulb, Car } from "lucide-react";
+import HandymanGuide from "@/components/handyman-guide";
+import { GraduationCap, Book, Target, Brain, Lightbulb, Car, Wrench } from "lucide-react";
 
 export default function Learning() {
   return (
@@ -21,6 +22,7 @@ export default function Learning() {
             <TabsTrigger value="chat">Learning Coach</TabsTrigger>
             <TabsTrigger value="skills">Skill Building</TabsTrigger>
             <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
+            <TabsTrigger value="handyman">Home Repairs</TabsTrigger>
             <TabsTrigger value="courses">Learning Paths</TabsTrigger>
             <TabsTrigger value="goals">Goal Setting</TabsTrigger>
           </TabsList>
@@ -86,6 +88,10 @@ export default function Learning() {
 
         <TabsContent value="vehicle">
           <VehicleGuide />
+        </TabsContent>
+
+        <TabsContent value="handyman">
+          <HandymanGuide />
         </TabsContent>
 
         <TabsContent value="courses">
