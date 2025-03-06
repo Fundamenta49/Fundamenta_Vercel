@@ -16,9 +16,9 @@ import "leaflet/dist/leaflet.css";
 interface RunningSession {
   startTime: number;
   endTime?: number;
-  distance: number; // in kilometers
+  distance: number; // in miles
   duration: number; // in minutes
-  pace: number; // in minutes per kilometer
+  pace: number; // in minutes per mile
   route: Array<{
     latitude: number;
     longitude: number;
@@ -119,21 +119,22 @@ export default function RunningTracker() {
             },
           ];
 
-          // Calculate new distance in kilometers
+          // Calculate new distance in miles
           let distance = prev.distance;
           if (newRoute.length > 1) {
             const lastPoint = newRoute[newRoute.length - 2];
             const newPoint = newRoute[newRoute.length - 1];
-            distance += calculateDistance(
+            const kmDistance = calculateDistance(
               lastPoint.latitude,
               lastPoint.longitude,
               newPoint.latitude,
               newPoint.longitude
             );
+            distance += kmDistance * 0.621371; // Convert km to miles
           }
 
           const duration = (Date.now() - prev.startTime) / 1000 / 60; // in minutes
-          const pace = duration > 0 ? distance > 0 ? duration / distance : 0 : 0; // min/km
+          const pace = duration > 0 ? distance > 0 ? duration / distance : 0 : 0; // min/mile
 
           return {
             ...prev,
@@ -240,7 +241,7 @@ export default function RunningTracker() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      {currentSession ? currentSession.distance.toFixed(2) : "0.00"} km
+                      {currentSession ? currentSession.distance.toFixed(2) : "0.00"} mi
                     </div>
                   </CardContent>
                 </Card>
@@ -251,7 +252,7 @@ export default function RunningTracker() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      {currentSession ? currentSession.pace.toFixed(2) : "0.00"} min/km
+                      {currentSession ? currentSession.pace.toFixed(2) : "0.00"} min/mi
                     </div>
                   </CardContent>
                 </Card>

@@ -19,8 +19,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 export interface FitnessProfile {
-  height: number; // in centimeters
-  weight: number; // in kilograms
+  height: number; // stored in centimeters
+  weight: number; // stored in kilograms
   sex: "male" | "female" | "other";
   goals: string[];
   fitnessLevel: "beginner" | "intermediate" | "advanced";
@@ -30,9 +30,23 @@ interface FitnessProfileProps {
   onComplete: (profile: FitnessProfile) => void;
 }
 
+// Conversion helpers
+const lbsToKg = (lbs: number) => lbs * 0.453592;
+const kgToLbs = (kg: number) => kg * 2.20462;
+const cmToFeetInches = (cm: number) => {
+  const inches = cm / 2.54;
+  const feet = Math.floor(inches / 12);
+  const remainingInches = Math.round(inches % 12);
+  return { feet, inches: remainingInches };
+};
+const feetInchesToCm = (feet: number, inches: number) => (feet * 12 + inches) * 2.54;
+
 export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps) {
   const { toast } = useToast();
   const [profile, setProfile] = useState<Partial<FitnessProfile>>({});
+  const [heightFeet, setHeightFeet] = useState<string>("");
+  const [heightInches, setHeightInches] = useState<string>("");
+  const [weightLbs, setWeightLbs] = useState<string>("");
 
   const fitnessGoals = [
     "Weight Loss",
@@ -46,7 +60,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!profile.height || !profile.weight || !profile.sex || !profile.fitnessLevel) {
+    if (!heightFeet || !heightInches || !weightLbs || !profile.sex || !profile.fitnessLevel) {
       toast({
         variant: "destructive",
         title: "Missing Information",
@@ -55,7 +69,15 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       return;
     }
 
-    onComplete(profile as FitnessProfile);
+    const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
+    const weightKg = lbsToKg(Number(weightLbs));
+
+    onComplete({
+      ...profile,
+      height: heightCm,
+      weight: weightKg,
+      goals: profile.goals || [],
+    } as FitnessProfile);
   };
 
   return (
@@ -70,28 +92,43 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="height">Height (cm)</Label>
-              <Input
-                id="height"
-                type="number"
-                value={profile.height || ""}
-                onChange={(e) =>
-                  setProfile({ ...profile, height: Number(e.target.value) })
-                }
-                placeholder="175"
-              />
+              <Label>Height</Label>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Label htmlFor="feet">Feet</Label>
+                  <Input
+                    id="feet"
+                    type="number"
+                    min="1"
+                    max="8"
+                    value={heightFeet}
+                    onChange={(e) => setHeightFeet(e.target.value)}
+                    placeholder="5"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="inches">Inches</Label>
+                  <Input
+                    id="inches"
+                    type="number"
+                    min="0"
+                    max="11"
+                    value={heightInches}
+                    onChange={(e) => setHeightInches(e.target.value)}
+                    placeholder="10"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="weight">Weight (kg)</Label>
+              <Label htmlFor="weight">Weight (lbs)</Label>
               <Input
                 id="weight"
                 type="number"
-                value={profile.weight || ""}
-                onChange={(e) =>
-                  setProfile({ ...profile, weight: Number(e.target.value) })
-                }
-                placeholder="70"
+                value={weightLbs}
+                onChange={(e) => setWeightLbs(e.target.value)}
+                placeholder="150"
               />
             </div>
           </div>
