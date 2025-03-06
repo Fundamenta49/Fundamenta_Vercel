@@ -14,7 +14,7 @@ interface ChatMessage {
 }
 
 interface ChatInterfaceProps {
-  category: "emergency" | "finance" | "career" | "wellness" | "learning";
+  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness";
 }
 
 export default function ChatInterface({ category }: ChatInterfaceProps) {
@@ -37,7 +37,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       finance: "Hi! I'm your financial advisor. I'll adapt my guidance to your financial goals and knowledge level. What would you like to discuss?",
       career: "Welcome! I'm your career development coach. I'll help guide you based on your experience and aspirations. What brings you here today?",
       wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
-      learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?"
+      learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
+      fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. Whether you're into weightlifting, yoga, running, or meditation, I'll provide personalized guidance for your fitness journey. What would you like to work on today?"
     };
 
     setMessages([{ role: "assistant", content: greetings[category], category }]);
