@@ -31,16 +31,37 @@ export default function Finance() {
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="dashboard">
+      <Tabs defaultValue="chat">
         <div className="tabs-container">
           <TabsList className="mb-4">
+            <TabsTrigger value="chat">AI Financial Advisor</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
             <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
-            <TabsTrigger value="chat">Financial Advisor</TabsTrigger>
             <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
           </TabsList>
         </div>
+
+        <TabsContent value="chat" className="mt-6">
+          <Card className="border-0 shadow-none">
+            <CardHeader>
+              <CardTitle>Financial AI Advisor</CardTitle>
+              <CardDescription>
+                Get personalized financial advice and guidance
+              </CardDescription>
+              <Alert className="mt-4 border-blue-500 bg-blue-50">
+                <AlertCircle className="h-4 w-4 text-blue-500" />
+                <AlertDescription className="text-blue-800 text-sm">
+                  The AI advisor provides general guidance based on publicly available financial information.
+                  For specific advice, please consult with a qualified financial professional.
+                </AlertDescription>
+              </Alert>
+            </CardHeader>
+            <CardContent className="p-0">
+              <ChatInterface category="finance" />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="dashboard">
           <FinancialDashboard budgetData={budgetData} />
@@ -62,27 +83,6 @@ export default function Finance() {
 
         <TabsContent value="retirement">
           <RetirementPlanning />
-        </TabsContent>
-
-        <TabsContent value="chat">
-          <Card>
-            <CardHeader>
-              <CardTitle>Financial AI Advisor</CardTitle>
-              <CardDescription>
-                Get personalized financial advice and guidance
-              </CardDescription>
-              <Alert className="mt-4 border-blue-500 bg-blue-50">
-                <AlertCircle className="h-4 w-4 text-blue-500" />
-                <AlertDescription className="text-blue-800 text-sm">
-                  The AI advisor provides general guidance based on publicly available financial information.
-                  For specific advice, please consult with a qualified financial professional.
-                </AlertDescription>
-              </Alert>
-            </CardHeader>
-            <CardContent>
-              <ChatInterface category="finance" />
-            </CardContent>
-          </Card>
         </TabsContent>
 
         <TabsContent value="bank">

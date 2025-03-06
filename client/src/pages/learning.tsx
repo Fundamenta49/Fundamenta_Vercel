@@ -19,24 +19,24 @@ export default function Learning() {
       <Tabs defaultValue="chat">
         <div className="tabs-container">
           <TabsList className="mb-4">
-            <TabsTrigger value="chat">Learning Coach</TabsTrigger>
+            <TabsTrigger value="chat">AI Learning Coach</TabsTrigger>
             <TabsTrigger value="skills">Skill Building</TabsTrigger>
+            <TabsTrigger value="courses">Learning Paths</TabsTrigger>
             <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
             <TabsTrigger value="handyman">Home Repairs</TabsTrigger>
-            <TabsTrigger value="courses">Learning Paths</TabsTrigger>
             <TabsTrigger value="goals">Goal Setting</TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="chat">
-          <Card>
+        <TabsContent value="chat" className="mt-6">
+          <Card className="border-0 shadow-none">
             <CardHeader>
               <CardTitle>Learning AI Coach</CardTitle>
               <CardDescription>
                 Get personalized guidance for your learning journey
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <ChatInterface category="learning" />
             </CardContent>
           </Card>

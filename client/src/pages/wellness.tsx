@@ -19,10 +19,10 @@ export default function Wellness() {
       <Tabs defaultValue="chat">
         <div className="tabs-container">
           <TabsList className="mb-4">
-            <TabsTrigger value="chat">Wellness Coach</TabsTrigger>
+            <TabsTrigger value="chat">AI Wellness Coach</TabsTrigger>
             <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
-            <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
             <TabsTrigger value="meditation">Meditation</TabsTrigger>
+            <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
           </TabsList>
         </div>
 
@@ -44,12 +44,12 @@ export default function Wellness() {
           <NutritionGuide />
         </TabsContent>
 
-        <TabsContent value="shopping">
-          <ShoppingBuddy />
-        </TabsContent>
-
         <TabsContent value="meditation">
           <MeditationGuide />
+        </TabsContent>
+
+        <TabsContent value="shopping">
+          <ShoppingBuddy />
         </TabsContent>
       </Tabs>
     </div>
