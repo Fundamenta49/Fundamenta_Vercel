@@ -33,8 +33,10 @@ const formSchema = z.object({
   heightFeet: z.string().min(1, "Required"),
   heightInches: z.string().min(1, "Required"),
   weightLbs: z.string().min(1, "Required"),
-  sex: z.enum(["male", "female"]),
-  fitnessLevel: z.enum(["beginner", "intermediate", "advanced"]),
+  sex: z.string().min(1, "Please select your sex"),
+  fitnessLevel: z.enum(["beginner", "intermediate", "advanced"], {
+    required_error: "Please select your fitness level",
+  }),
 });
 
 export interface FitnessProfile {
@@ -63,7 +65,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       heightFeet: "",
       heightInches: "",
       weightLbs: "",
-      sex: undefined,
+      sex: "",
       fitnessLevel: undefined,
     },
   });
@@ -84,7 +86,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     const profile: FitnessProfile = {
       height: heightCm,
       weight: weightKg,
-      sex: values.sex,
+      sex: values.sex as "male" | "female",
       fitnessLevel: values.fitnessLevel,
       goals,
     };
@@ -95,7 +97,7 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Welcome to Active You! 💪</CardTitle>
+        <CardTitle>Create Your Fitness Profile 💪</CardTitle>
         <CardDescription>
           Let's create your personalized fitness profile to help you achieve your goals
         </CardDescription>
@@ -179,7 +181,10 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Sex</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select your sex" />
@@ -201,7 +206,10 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Fitness Level</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select your fitness level" />
