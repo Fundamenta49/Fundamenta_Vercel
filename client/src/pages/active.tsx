@@ -11,53 +11,25 @@ import { Button } from "@/components/ui/button";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
-import InitialGreeting from "@/components/initial-greeting";
 
 export default function Active() {
   const [hasProfile, setHasProfile] = useState<boolean>(false);
   const [skipProfile, setSkipProfile] = useState<boolean>(false);
-  const [hasCompletedGreeting, setHasCompletedGreeting] = useState<boolean>(false);
-
-  // Clear storage on first load - Remove this in production
-  useEffect(() => {
-    localStorage.removeItem('completedInitialGreeting');
-    localStorage.removeItem('fitnessProfile');
-    localStorage.removeItem('userPreferences');
-  }, []);
 
   const handleProfileComplete = (profile: ProfileType) => {
+    // In a real app, we would save this to a database
     localStorage.setItem('fitnessProfile', JSON.stringify(profile));
     setHasProfile(true);
   };
 
-  // Check for existing profile and greeting completion
+  // Check for existing profile
   useEffect(() => {
     const savedProfile = localStorage.getItem('fitnessProfile');
-    const completedGreeting = localStorage.getItem('completedInitialGreeting');
-
     if (savedProfile) {
       setHasProfile(true);
     }
-    if (completedGreeting) {
-      setHasCompletedGreeting(true);
-    }
   }, []);
 
-  const handleGreetingComplete = () => {
-    setHasCompletedGreeting(true);
-    localStorage.setItem('completedInitialGreeting', 'true');
-  };
-
-  // Show initial greeting if not completed
-  if (!hasCompletedGreeting) {
-    return (
-      <div className="max-w-4xl mx-auto space-y-6">
-        <InitialGreeting onComplete={handleGreetingComplete} />
-      </div>
-    );
-  }
-
-  // Show profile creation if not skipped
   if (!hasProfile && !skipProfile) {
     return (
       <div className="space-y-4">
@@ -83,7 +55,6 @@ export default function Active() {
     );
   }
 
-  // Main interface
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Active You</h1>

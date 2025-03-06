@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
 import { Link } from "wouter";
-import ChatInterface from "@/components/chat-interface";
 
 const features = [
   {
@@ -50,38 +48,8 @@ const features = [
 ];
 
 export default function Home() {
-  const [showWelcome, setShowWelcome] = useState(true);
-
-  useEffect(() => {
-    const hasCompletedGreeting = localStorage.getItem('completedInitialGreeting');
-    if (hasCompletedGreeting) {
-      setShowWelcome(false);
-    }
-  }, []);
-
-  const handleGreetingComplete = () => {
-    setShowWelcome(false);
-    localStorage.setItem('completedInitialGreeting', 'true');
-  };
-
   return (
     <div className="max-w-5xl mx-auto">
-      {showWelcome && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold tracking-tight text-[#1C3D5A]">
-              Welcome to Fundamenta! 👋
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChatInterface 
-              category="welcome" 
-              onConversationComplete={handleGreetingComplete} 
-            />
-          </CardContent>
-        </Card>
-      )}
-
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
           Welcome to Fundamenta
