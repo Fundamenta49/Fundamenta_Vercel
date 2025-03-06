@@ -44,24 +44,34 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
     "Stress Reduction"
   ];
 
-  const handleButtonClick = () => {
+  const handleCreateProfile = () => {
     try {
       console.log("Create Profile button clicked");
 
-      // Validation
-      if (!heightFeet || !heightInches || !weightLbs || !selectedSex || !selectedFitnessLevel) {
+      // Validation checks
+      const missingFields = [];
+      if (!heightFeet) missingFields.push("Height (feet)");
+      if (!heightInches) missingFields.push("Height (inches)");
+      if (!weightLbs) missingFields.push("Weight");
+      if (!selectedSex) missingFields.push("Sex");
+      if (!selectedFitnessLevel) missingFields.push("Fitness Level");
+
+      if (missingFields.length > 0) {
+        console.log("Missing fields:", missingFields);
         toast({
           variant: "destructive",
           title: "Missing Information",
-          description: "Please fill in all required fields.",
+          description: `Please fill in: ${missingFields.join(", ")}`,
         });
         return;
       }
 
+      // Convert measurements
       const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
       const weightKg = lbsToKg(Number(weightLbs));
 
       if (isNaN(heightCm) || isNaN(weightKg)) {
+        console.log("Invalid measurements:", { heightCm, weightKg });
         toast({
           variant: "destructive",
           title: "Invalid Input",
@@ -69,6 +79,14 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         });
         return;
       }
+
+      console.log("Creating profile with:", {
+        heightCm,
+        weightKg,
+        selectedSex,
+        selectedFitnessLevel,
+        goals
+      });
 
       const profile: FitnessProfile = {
         height: heightCm,
@@ -78,7 +96,6 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         goals: goals.length > 0 ? goals : ["General Fitness"],
       };
 
-      console.log("Submitting profile:", profile);
       onComplete(profile);
 
       toast({
@@ -151,7 +168,10 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               <select
                 className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
                 value={selectedSex}
-                onChange={(e) => setSelectedSex(e.target.value)}
+                onChange={(e) => {
+                  console.log("Sex selected:", e.target.value);
+                  setSelectedSex(e.target.value);
+                }}
               >
                 <option value="">Select your sex</option>
                 <option value="male">Male</option>
@@ -166,7 +186,10 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
               <select
                 className="w-full h-10 px-3 py-2 text-sm border rounded-md bg-background"
                 value={selectedFitnessLevel}
-                onChange={(e) => setSelectedFitnessLevel(e.target.value)}
+                onChange={(e) => {
+                  console.log("Fitness level selected:", e.target.value);
+                  setSelectedFitnessLevel(e.target.value);
+                }}
               >
                 <option value="">Select your fitness level</option>
                 <option value="beginner">Beginner</option>
@@ -200,7 +223,10 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
           </div>
 
           <Button 
-            onClick={handleButtonClick}
+            onClick={() => {
+              console.log("Button clicked - calling handleCreateProfile");
+              handleCreateProfile();
+            }}
             className="w-full"
           >
             Create Profile

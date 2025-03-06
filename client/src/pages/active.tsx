@@ -25,13 +25,25 @@ export default function Active() {
       console.log("Profile saved successfully");
     } catch (error) {
       console.error("Error saving profile:", error);
+      // Reset state if saving fails
+      setHasProfile(false);
+      localStorage.removeItem('fitnessProfile');
     }
   };
 
   useEffect(() => {
     const savedProfile = localStorage.getItem('fitnessProfile');
     if (savedProfile) {
-      setHasProfile(true);
+      try {
+        const parsedProfile = JSON.parse(savedProfile);
+        if (parsedProfile) {
+          setHasProfile(true);
+          console.log("Loaded existing profile");
+        }
+      } catch (error) {
+        console.error("Error loading saved profile:", error);
+        localStorage.removeItem('fitnessProfile');
+      }
     }
   }, []);
 
