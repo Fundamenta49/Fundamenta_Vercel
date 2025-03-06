@@ -64,6 +64,9 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
         return;
       }
 
+      // Function to convert pounds to kg
+      const lbsToKg = (lbs: number) => lbs * 0.453592;
+      
       const heightCm = feetInchesToCm(Number(heightFeet), Number(heightInches));
       const weightKg = lbsToKg(Number(weightLbs));
 
@@ -85,7 +88,31 @@ export default function FitnessProfileSetup({ onComplete }: FitnessProfileProps)
       };
 
       console.log("Submitting profile:", profile);
-      onComplete(profile);
+      
+      try {
+        // Make sure the onComplete function exists before calling it
+        if (typeof onComplete === 'function') {
+          onComplete(profile);
+          toast({
+            title: "Profile Created",
+            description: "Your fitness profile has been successfully created!",
+          });
+        } else {
+          console.error("onComplete is not a function:", onComplete);
+          toast({
+            variant: "destructive",
+            title: "Form Error",
+            description: "Could not process your submission. Please try again.",
+          });
+        }
+      } catch (error) {
+        console.error("Error calling onComplete:", error);
+        toast({
+          variant: "destructive",
+          title: "Form Error",
+          description: "Could not process your submission. Please try again.",
+        });
+      }
 
     } catch (error) {
       console.error("Profile creation error:", error);
