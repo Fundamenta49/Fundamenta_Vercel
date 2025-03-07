@@ -302,6 +302,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add this after the career-guidance endpoint
+  app.post("/api/skill-guidance", async (req, res) => {
+    try {
+      const { skillArea, userQuery } = z.object({
+        skillArea: z.enum(["technical", "soft"]),
+        userQuery: z.string()
+      }).parse(req.body);
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert learning advisor specializing in ${skillArea === "technical" ? "technical skills like programming, data analysis, and digital tools" : "soft skills like communication, leadership, and problem-solving"}. 
+
+            Provide detailed, actionable guidance that includes:
+            1. Specific learning resources (courses, platforms, books)
+            2. Step-by-step learning path
+            3. Practice exercises or projects
+            4. Estimated time investment
+            5. Ways to measure progress
+
+            Keep responses practical and focused on actionable steps.`
+          },
+          {
+            role: "user",
+            content: userQuery
+          }
+        ]
+      });
+
+      res.json({
+        guidance: response.choices[0].message.content || "I apologize, but I'm having trouble providing guidance right now. Please try again."
+      });
+    } catch (error) {
+      console.error("Skill guidance error:", error);
+      res.status(500).json({
+        error: "Failed to get skill guidance. Please try again later."
+      });
+    }
+  });
+
   app.post("/api/jobs/search", async (req, res) => {
     try {
       const { query, location, sources } = z.object({
