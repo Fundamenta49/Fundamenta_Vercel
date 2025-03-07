@@ -7,8 +7,14 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
@@ -88,9 +94,11 @@ export default function Learning() {
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const getSkillGuidance = async (skillType: "technical" | "soft", area: string) => {
     setIsLoading(true);
+    setDialogOpen(true);
     try {
       const response = await fetch("/api/skill-guidance", {
         method: "POST",
@@ -115,7 +123,28 @@ export default function Learning() {
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Learning & Development</h1>
 
-      <Tabs defaultValue="chat">
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedArea ? `${selectedArea} - Learning Path` : 'Learning Guidance'}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            {isLoading ? (
+              <div className="text-center text-muted-foreground">
+                Loading personalized guidance...
+              </div>
+            ) : guidance ? (
+              <div className="prose max-w-none">
+                {convertLinksToHtml(guidance)}
+              </div>
+            ) : null}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      <Tabs defaultValue="skills">
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Learning Coach</TabsTrigger>
@@ -154,126 +183,95 @@ export default function Learning() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
-                {/* Skills Selection */}
-                <div className="space-y-6">
-                  {/* Technical Skills */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Technical Skills</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {TECHNICAL_SKILLS.map((skill) => (
-                          <div key={skill.name} className="space-y-2">
-                            <Button
-                              variant={selectedSkill === skill.name ? "default" : "outline"}
-                              className="w-full justify-start"
-                              onClick={() => {
-                                setSelectedSkill(skill.name);
-                                setSelectedArea(null);
-                                setGuidance(null);
-                              }}
-                            >
-                              {skill.name}
-                            </Button>
+                {/* Technical Skills */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Technical Skills</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {TECHNICAL_SKILLS.map((skill) => (
+                        <div key={skill.name} className="space-y-2">
+                          <Button
+                            variant={selectedSkill === skill.name ? "default" : "outline"}
+                            className="w-full justify-start"
+                            onClick={() => {
+                              setSelectedSkill(skill.name);
+                              setSelectedArea(null);
+                              setGuidance(null);
+                            }}
+                          >
+                            {skill.name}
+                          </Button>
 
-                            {selectedSkill === skill.name && (
-                              <div className="pl-4 space-y-2">
-                                {skill.areas.map((area) => (
-                                  <Button
-                                    key={area}
-                                    variant={selectedArea === area ? "default" : "outline"}
-                                    size="sm"
-                                    className="w-full justify-start"
-                                    onClick={() => {
-                                      setSelectedArea(area);
-                                      getSkillGuidance("technical", area);
-                                    }}
-                                  >
-                                    {area}
-                                  </Button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                          {selectedSkill === skill.name && (
+                            <div className="pl-4 space-y-2">
+                              {skill.areas.map((area) => (
+                                <Button
+                                  key={area}
+                                  variant={selectedArea === area ? "default" : "outline"}
+                                  size="sm"
+                                  className="w-full justify-start"
+                                  onClick={() => {
+                                    setSelectedArea(area);
+                                    getSkillGuidance("technical", area);
+                                  }}
+                                >
+                                  {area}
+                                </Button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
 
-                  {/* Soft Skills */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Soft Skills</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {SOFT_SKILLS.map((skill) => (
-                          <div key={skill.name} className="space-y-2">
-                            <Button
-                              variant={selectedSkill === skill.name ? "default" : "outline"}
-                              className="w-full justify-start"
-                              onClick={() => {
-                                setSelectedSkill(skill.name);
-                                setSelectedArea(null);
-                                setGuidance(null);
-                              }}
-                            >
-                              {skill.name}
-                            </Button>
+                {/* Soft Skills */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Soft Skills</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {SOFT_SKILLS.map((skill) => (
+                        <div key={skill.name} className="space-y-2">
+                          <Button
+                            variant={selectedSkill === skill.name ? "default" : "outline"}
+                            className="w-full justify-start"
+                            onClick={() => {
+                              setSelectedSkill(skill.name);
+                              setSelectedArea(null);
+                              setGuidance(null);
+                            }}
+                          >
+                            {skill.name}
+                          </Button>
 
-                            {selectedSkill === skill.name && (
-                              <div className="pl-4 space-y-2">
-                                {skill.areas.map((area) => (
-                                  <Button
-                                    key={area}
-                                    variant={selectedArea === area ? "default" : "outline"}
-                                    size="sm"
-                                    className="w-full justify-start"
-                                    onClick={() => {
-                                      setSelectedArea(area);
-                                      getSkillGuidance("soft", area);
-                                    }}
-                                  >
-                                    {area}
-                                  </Button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Guidance Display */}
-                <div className="h-full">
-                  <Card className="h-full">
-                    <CardHeader>
-                      <CardTitle className="text-lg">
-                        {selectedArea ? `${selectedArea} - Learning Path` : 'Select a Skill'}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ScrollArea className="h-[600px] pr-4">
-                        {isLoading ? (
-                          <div className="text-center text-muted-foreground">
-                            Loading personalized guidance...
-                          </div>
-                        ) : guidance ? (
-                          <div className="prose max-w-none">
-                            {convertLinksToHtml(guidance)}
-                          </div>
-                        ) : (
-                          <div className="text-center text-muted-foreground">
-                            Select a skill area to get personalized guidance
-                          </div>
-                        )}
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
-                </div>
+                          {selectedSkill === skill.name && (
+                            <div className="pl-4 space-y-2">
+                              {skill.areas.map((area) => (
+                                <Button
+                                  key={area}
+                                  variant={selectedArea === area ? "default" : "outline"}
+                                  size="sm"
+                                  className="w-full justify-start"
+                                  onClick={() => {
+                                    setSelectedArea(area);
+                                    getSkillGuidance("soft", area);
+                                  }}
+                                >
+                                  {area}
+                                </Button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </CardContent>
           </Card>
