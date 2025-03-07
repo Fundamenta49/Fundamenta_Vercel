@@ -130,37 +130,33 @@ export default function CareerAssessment() {
 
   const progress = (currentQuestionIndex / questions.length) * 100;
 
+  const handleSelectAnswer = (value: string) => {
+    setAnswers(prev => ({
+      ...prev,
+      [questions[currentQuestionIndex].id]: value
+    }));
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Educational Path Assessment</CardTitle>
+        <CardTitle>Question {currentQuestionIndex + 1} of {questions.length}</CardTitle>
         <CardDescription>
-          Answer these questions to get personalized recommendations for university degrees or trade school programs
+          {Math.round(progress)}% Complete
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Question {currentQuestionIndex + 1} of {questions.length}</span>
-              <span>{Math.round(progress)}% Complete</span>
-            </div>
-            <Progress value={progress} />
-          </div>
+          <Progress value={progress} />
 
           <div className="space-y-4">
-            <Label className="text-lg font-medium">
+            <Label className="text-lg">
               {questions[currentQuestionIndex].text}
             </Label>
 
             <RadioGroup
               value={answers[questions[currentQuestionIndex].id]}
-              onValueChange={(value) => {
-                setAnswers(prev => ({
-                  ...prev,
-                  [questions[currentQuestionIndex].id]: value
-                }));
-              }}
+              onValueChange={handleSelectAnswer}
               className="space-y-3"
             >
               {questions[currentQuestionIndex].options.map((option, idx) => (
@@ -177,7 +173,7 @@ export default function CareerAssessment() {
             </RadioGroup>
           </div>
 
-          <div className="flex justify-between pt-6 border-t">
+          <div className="flex justify-between pt-6">
             <Button
               variant="outline"
               onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
@@ -186,7 +182,7 @@ export default function CareerAssessment() {
               Previous
             </Button>
             <Button
-              onClick={() => setCurrentQuestionIndex(prev => Math.min(questions.length -1, prev + 1))}
+              onClick={() => setCurrentQuestionIndex(prev => Math.min(questions.length - 1, prev + 1))}
               disabled={!answers[questions[currentQuestionIndex].id]}
             >
               Next
