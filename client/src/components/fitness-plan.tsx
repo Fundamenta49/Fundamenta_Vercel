@@ -43,6 +43,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
   const [weeklyProgress, setWeeklyProgress] = useState(0);
   const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isValidatingVideos, setIsValidatingVideos] = useState(false);
 
   useEffect(() => {
     const initializeProfile = async () => {
@@ -78,10 +79,10 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
     try {
       const response = await fetch(`/api/youtube-search?videoId=${videoId}`);
       if (!response.ok) {
-        return false;
+        throw new Error('Failed to validate video');
       }
       const data = await response.json();
-      return data.items && data.items.length > 0;
+      return data.isValid || false;
     } catch (error) {
       console.error('Error validating YouTube video:', error);
       return false;
@@ -93,29 +94,30 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       const savedPlan = localStorage.getItem('workoutPlan');
       if (savedPlan) {
         const plan = JSON.parse(savedPlan);
+        setWorkoutPlan(plan); // Set plan immediately for better UX
 
-        // Create a copy of the plan to modify
+        // Validate videos in background
+        setIsValidatingVideos(true);
         const validatedPlan = { ...plan };
-
-        // Validate YouTube videos for each exercise
-        await Promise.all(
-          validatedPlan.exercises.map(async (exercise) => {
-            if (exercise.videoId) {
-              const isValid = await validateYouTubeVideo(exercise.videoId);
-              if (!isValid) {
-                exercise.videoId = undefined;
-              }
+        const validationPromises = validatedPlan.exercises.map(async (exercise) => {
+          if (exercise.videoId) {
+            const isValid = await validateYouTubeVideo(exercise.videoId);
+            if (!isValid) {
+              exercise.videoId = undefined;
             }
-          })
-        );
+          }
+        });
 
+        await Promise.all(validationPromises);
         setWorkoutPlan(validatedPlan);
         localStorage.setItem('workoutPlan', JSON.stringify(validatedPlan));
+        setIsValidatingVideos(false);
       } else {
         await generateWorkoutPlan();
       }
     } catch (error) {
       console.error('Error loading saved workout plan:', error);
+      setIsValidatingVideos(false);
       await generateWorkoutPlan();
     }
   };
@@ -141,20 +143,21 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       }
 
       const plan = await response.json();
+      setWorkoutPlan(plan); // Set plan immediately
 
-      // Validate YouTube videos in parallel
-      await Promise.all(
-        plan.exercises.map(async (exercise) => {
-          if (exercise.videoId) {
-            const isValid = await validateYouTubeVideo(exercise.videoId);
-            if (!isValid) {
-              exercise.videoId = undefined;
-            }
+      // Validate videos in background
+      setIsValidatingVideos(true);
+      const validationPromises = plan.exercises.map(async (exercise) => {
+        if (exercise.videoId) {
+          const isValid = await validateYouTubeVideo(exercise.videoId);
+          if (!isValid) {
+            exercise.videoId = undefined;
           }
-        })
-      );
+        }
+      });
 
-      setWorkoutPlan(plan);
+      await Promise.all(validationPromises);
+      setWorkoutPlan({ ...plan }); // Update with validated videos
       localStorage.setItem('workoutPlan', JSON.stringify(plan));
 
       toast({
@@ -170,6 +173,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       });
     } finally {
       setIsLoading(false);
+      setIsValidatingVideos(false);
     }
   };
 
@@ -197,12 +201,12 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
             </div>
             <Button
               onClick={() => generateWorkoutPlan()}
-              disabled={isLoading}
+              disabled={isLoading || isValidatingVideos}
               size="sm"
               variant="outline"
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Regenerate Plan
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              {isLoading ? 'Generating...' : 'Regenerate Plan'}
             </Button>
           </div>
         </CardHeader>
@@ -219,6 +223,11 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
             {workoutPlan && (
               <div>
                 <h3 className="text-lg font-semibold mb-4">Your Workout Plan</h3>
+                {isValidatingVideos && (
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Validating video tutorials...
+                  </p>
+                )}
                 <div className="grid gap-4">
                   {workoutPlan.exercises.map((exercise, index) => (
                     <Card key={index} className="p-4">

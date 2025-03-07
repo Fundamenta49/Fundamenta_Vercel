@@ -358,16 +358,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const videoId = req.query.videoId as string;
       const query = req.query.q as string;
 
+      if (!process.env.YOUTUBE_API_KEY) {
+        throw new Error("YouTube API key not configured");
+      }
+
       if (videoId) {
         // Validate specific video
         const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
           params: {
-            part: 'snippet',
+            part: 'snippet,status',
             id: videoId,
             key: process.env.YOUTUBE_API_KEY,
           }
         });
-        res.json(response.data);
+
+        // Check if video exists and is available
+        const isValid = response.data.items && 
+                       response.data.items.length > 0 && 
+                       response.data.items[0].status.privacyStatus === 'public';
+
+        res.json({
+          items: isValid ? response.data.items : [],
+          isValid
+        });
       } else if (query) {
         // Search for videos
         const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
