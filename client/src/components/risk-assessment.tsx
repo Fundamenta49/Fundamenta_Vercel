@@ -82,7 +82,7 @@ const wellnessQuestions: Question[] = [
     ],
     immediateResources: [
       {
-        threshold: 3, // Increased from 2 to only trigger on highest intensity
+        threshold: 3, 
         resource: {
           title: "Wellness Support",
           description: "Connect with our supportive wellness community",
@@ -223,7 +223,13 @@ export default function RiskAssessment({ category }: Props) {
     });
   };
 
-  const handleAnswer = (value: number) => {
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
+  const handleNext = (value: number) => {
     const currentQuestionData = wellnessQuestions[currentQuestion];
     const newAnswers = { ...answers, [currentQuestionData.id]: value };
     setAnswers(newAnswers);
@@ -245,11 +251,13 @@ export default function RiskAssessment({ category }: Props) {
 
     if (currentQuestion < wellnessQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
-    } else {
-      const recommendedResources = evaluateWellness(newAnswers);
-      setResources(recommendedResources);
-      setShowResults(true);
     }
+  };
+
+  const handleSubmit = () => {
+    const recommendedResources = evaluateWellness(answers);
+    setResources(recommendedResources);
+    setShowResults(true);
   };
 
   const handleRestart = () => {
@@ -394,14 +402,14 @@ export default function RiskAssessment({ category }: Props) {
           <Label className="text-lg">{wellnessQuestions[currentQuestion].text}</Label>
           <RadioGroup
             value={answers[wellnessQuestions[currentQuestion].id]?.toString()}
-            onValueChange={(value) => handleAnswer(parseInt(value))}
+            onValueChange={(value) => handleNext(parseInt(value))}
           >
             <div className="space-y-2">
               {wellnessQuestions[currentQuestion].options.map((option) => (
                 <div
                   key={option.text}
                   className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent cursor-pointer"
-                  onClick={() => handleAnswer(option.value)}
+                  onClick={() => handleNext(option.value)}
                 >
                   <RadioGroupItem value={option.value.toString()} id={option.text} />
                   <Label htmlFor={option.text} className="cursor-pointer flex-grow">
@@ -411,6 +419,25 @@ export default function RiskAssessment({ category }: Props) {
               ))}
             </div>
           </RadioGroup>
+
+          <div className="flex justify-between mt-6">
+            <Button 
+              variant="outline" 
+              onClick={handleBack}
+              disabled={currentQuestion === 0}
+            >
+              Back
+            </Button>
+            {currentQuestion === wellnessQuestions.length - 1 && (
+              <Button 
+                variant="default"
+                onClick={handleSubmit}
+                disabled={!answers[wellnessQuestions[currentQuestion].id]}
+              >
+                Submit Assessment
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
