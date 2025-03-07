@@ -7,6 +7,128 @@ const openai = new OpenAI({
   timeout: 30000,
 });
 
+const systemPrompts = {
+  finance: `You are a financial advisor helping with budgeting, savings, and financial literacy through our app's features. 
+
+  Available features in our app that you should recommend first:
+  - Budget Calculator: Help users create and track their budget
+  - Financial Dashboard: Visualize income, expenses, and savings
+  - Bank Account Integration: Connect and monitor bank accounts
+  - Retirement Planning Tool: Plan for long-term financial goals
+
+  Always recommend these in-app tools first before suggesting external services. For example:
+  - If someone wants to budget, direct them to our Budget Calculator tab
+  - If they want to track spending, suggest connecting their accounts through our Bank Integration
+  - For retirement planning, point them to our Retirement Planning tool
+
+  Adapt your advice to the user's financial knowledge level and goals while keeping them within our ecosystem.`,
+
+  career: `You are a career coach providing guidance on job searching, resume building, and interview preparation. 
+
+  Available features in our app:
+  - Resume Builder & Optimizer
+  - Interview Practice Module
+  - Job Search Integration
+  - Salary Insights Tool
+  - Career Assessment Tool
+
+  Direct users to these features before suggesting external resources.`,
+
+  wellness: `You are a wellness coach providing guidance on mental health, meditation, and stress management. 
+
+  Available features in our app:
+  - Meditation Guide
+  - Nutrition Guide & Tracker
+  - Shopping Buddy for healthy meals
+  - Mental Health Resources
+
+  Focus on using these in-app tools to support users' wellness journey.`,
+
+  learning: `You are a learning coach helping users develop new skills and knowledge. 
+
+  Available features in our app:
+  - Skill Building Resources
+  - Learning Paths
+  - Goal Setting & Progress Tracking
+  - Technical Skills Development
+  - Soft Skills Training
+
+  Guide users to these built-in resources first.`,
+
+  fitness: `You are a certified fitness trainer providing personalized workout guidance. 
+
+  Available features in our app:
+  - Personalized Workout Plans
+  - Exercise Video Tutorials
+  - Progress Tracking
+  - Goal-specific Training Programs
+  - Nutrition Integration
+
+  Always recommend these in-app features first.`
+};
+
+export async function getChatResponse(
+  prompt: string,
+  category: string,
+  previousMessages: { role: string; content: string; category?: string }[] = []
+): Promise<string> {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
+
+    const formattedPreviousMessages = previousMessages.map(msg => ({
+      role: msg.role === "user" || msg.role === "assistant" ? msg.role : "user",
+      content: msg.content
+    }));
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `${systemPrompts[category as keyof typeof systemPrompts]}
+
+          Important guidelines:
+          1. Always prioritize recommending our app's built-in features first
+          2. Only suggest external services if our app doesn't have an equivalent feature
+          3. When users mention financial numbers or goals, direct them to specific relevant tools in our app
+          4. Include clear instructions on how to access recommended features (e.g., "Click the Budget Calculator tab")
+          5. If users seem unfamiliar with a topic, guide them through our app's educational resources first`
+        },
+        ...formattedPreviousMessages,
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 500
+    });
+
+    return response.choices[0].message.content || "I apologize, I couldn't process that request.";
+  } catch (error: any) {
+    console.error("OpenAI API Error:", error);
+
+    if (error.response) {
+      console.error("OpenAI API Error Response:", {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
+    }
+
+    if (error?.error?.type === "invalid_api_key") {
+      throw new Error("There was an issue with the AI service configuration. Please try again later.");
+    }
+    if (error?.error?.type === "invalid_request_error") {
+      throw new Error("I couldn't understand that request. Could you try rephrasing it?");
+    }
+    if (error.message.includes('rate limit exceeded')) {
+      throw new Error("The AI service is currently busy. Please try again in a moment.");
+    }
+
+    throw new Error("I'm having trouble processing your request right now. Please try again.");
+  }
+}
+
 interface ConversationContext {
   personalityTraits: string[];
   interests: string[];
@@ -150,126 +272,6 @@ function extractLearningInterests(content: string): string[] {
   return interests;
 }
 
-export async function getChatResponse(
-  prompt: string,
-  category: string,
-  previousMessages: { role: string; content: string; category?: string }[] = []
-): Promise<string> {
-  const systemPrompts = {
-    emergency: "You are an emergency response expert providing clear, step-by-step guidance for emergency situations. Maintain a calm, authoritative, and reassuring tone.",
-    finance: "You are a financial advisor helping with budgeting, savings, and financial literacy. Adapt your advice to the user's financial knowledge level and goals.",
-    career: "You are a career coach providing guidance on job searching, resume building, and interview preparation. Consider the user's experience level and career aspirations.",
-    wellness: "You are a wellness coach providing guidance on mental health, meditation, and stress management. Be empathetic and adjust your tone based on the user's emotional state.",
-    learning: "You are a learning coach helping users develop new skills and knowledge. Adapt your guidance to their learning style and interests.",
-    fitness: "You are a certified fitness trainer providing personalized workout guidance. Consider the user's fitness level, goals, and any limitations they mention."
-  };
-
-  try {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error("OpenAI API key not configured");
-    }
-
-    // Convert previous messages to OpenAI's expected format
-    const formattedPreviousMessages = previousMessages.map(msg => ({
-      role: msg.role === "user" || msg.role === "assistant" ? msg.role : "user",
-      content: msg.content
-    }));
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompts[category as keyof typeof systemPrompts] || systemPrompts.wellness
-        },
-        ...formattedPreviousMessages,
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 500
-    });
-
-    return response.choices[0].message.content || "I apologize, I couldn't process that request.";
-  } catch (error: any) {
-    console.error("OpenAI API Error:", error);
-
-    if (error.response) {
-      console.error("OpenAI API Error Response:", {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data
-      });
-    }
-
-    // Return user-friendly error messages based on the error type
-    if (error?.error?.type === "invalid_api_key") {
-      throw new Error("There was an issue with the AI service configuration. Please try again later.");
-    }
-    if (error?.error?.type === "invalid_request_error") {
-      throw new Error("I couldn't understand that request. Could you try rephrasing it?");
-    }
-    if (error.message.includes('rate limit exceeded')) {
-      throw new Error("The AI service is currently busy. Please try again in a moment.");
-    }
-
-    throw new Error("I'm having trouble processing your request right now. Please try again.");
-  }
-}
-
-// Helper functions to analyze user communication patterns
-function getPreferredStyle(messages: { role: string; content: string }[]): string {
-  const userMessages = messages.filter(m => m.role === "user");
-  const avgLength = userMessages.reduce((acc, m) => acc + m.content.length, 0) / userMessages.length;
-  const hasQuestions = userMessages.some(m => m.content.includes("?"));
-  const hasTechnicalTerms = userMessages.some(m => /\b(api|code|framework|function|database)\b/i.test(m.content));
-
-  if (avgLength > 100) return "detailed and thorough";
-  if (hasQuestions) return "inquiry-based";
-  if (hasTechnicalTerms) return "technical";
-  return "concise and direct";
-}
-
-function getInterests(messages: { role: string; content: string }[]): string {
-  const content = messages.map(m => m.content.toLowerCase()).join(" ");
-  const interests = [];
-
-  if (content.includes("learn") || content.includes("study")) interests.push("learning");
-  if (content.includes("career") || content.includes("job")) interests.push("career development");
-  if (content.includes("health") || content.includes("wellness")) interests.push("well-being");
-  if (content.includes("money") || content.includes("finance")) interests.push("financial planning");
-
-  return interests.join(", ") || "various topics";
-}
-
-function getLearningStyle(messages: { role: string; content: string }[]): string {
-  const content = messages.map(m => m.content.toLowerCase()).join(" ");
-
-  if (content.includes("example") || content.includes("show")) return "practical examples";
-  if (content.includes("why") || content.includes("how")) return "detailed explanations";
-  if (content.includes("quick") || content.includes("brief")) return "concise information";
-  return "balanced guidance";
-}
-
-interface ResumeData {
-  personalInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    summary: string;
-  };
-  education: Array<{
-    school: string;
-    degree: string;
-    year: string;
-  }>;
-  experience: Array<{
-    company: string;
-    position: string;
-    duration: string;
-    description: string;
-  }>;
-  targetPosition: string;
-}
 
 export async function optimizeResume(resumeData: ResumeData): Promise<string> {
   try {
@@ -754,4 +756,59 @@ export async function getSalaryInsights(jobTitle: string, location: string): Pro
     }
     throw new Error("Failed to get salary insights: " + (error.message || 'Unknown error'));
   }
+}
+
+// Helper functions to analyze user communication patterns
+function getPreferredStyle(messages: { role: string; content: string }[]): string {
+  const userMessages = messages.filter(m => m.role === "user");
+  const avgLength = userMessages.reduce((acc, m) => acc + m.content.length, 0) / userMessages.length;
+  const hasQuestions = userMessages.some(m => m.content.includes("?"));
+  const hasTechnicalTerms = userMessages.some(m => /\b(api|code|framework|function|database)\b/i.test(m.content));
+
+  if (avgLength > 100) return "detailed and thorough";
+  if (hasQuestions) return "inquiry-based";
+  if (hasTechnicalTerms) return "technical";
+  return "concise and direct";
+}
+
+function getInterests(messages: { role: string; content: string }[]): string {
+  const content = messages.map(m => m.content.toLowerCase()).join(" ");
+  const interests = [];
+
+  if (content.includes("learn") || content.includes("study")) interests.push("learning");
+  if (content.includes("career") || content.includes("job")) interests.push("career development");
+  if (content.includes("health") || content.includes("wellness")) interests.push("well-being");
+  if (content.includes("money") || content.includes("finance")) interests.push("financial planning");
+
+  return interests.join(", ") || "various topics";
+}
+
+function getLearningStyle(messages: { role: string; content: string }[]): string {
+  const content = messages.map(m => m.content.toLowerCase()).join(" ");
+
+  if (content.includes("example") || content.includes("show")) return "practical examples";
+  if (content.includes("why") || content.includes("how")) return "detailed explanations";
+  if (content.includes("quick") || content.includes("brief")) return "concise information";
+  return "balanced guidance";
+}
+
+interface ResumeData {
+  personalInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    summary: string;
+  };
+  education: Array<{
+    school: string;
+    degree: string;
+    year: string;
+  }>;
+  experience: Array<{
+    company: string;
+    position: string;
+    duration: string;
+    description: string;
+  }>;
+  targetPosition: string;
 }
