@@ -12,6 +12,7 @@ import JobSearch from "@/components/job-search";
 import SalaryInsights from "@/components/salary-insights";
 import EmploymentRights from "@/components/employment-rights";
 import RiasecTest from "@/components/riasec-test";
+import EmotionalResilienceTracker from "@/components/emotional-resilience-tracker";
 
 export default function Career() {
   return (
@@ -22,6 +23,7 @@ export default function Career() {
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
+            <TabsTrigger value="resilience">EQ & Resilience</TabsTrigger>
             <TabsTrigger value="chat">Career AI Coach</TabsTrigger>
             <TabsTrigger value="search">Job Search</TabsTrigger>
             <TabsTrigger value="salary">Salary Insights</TabsTrigger>
@@ -32,6 +34,10 @@ export default function Career() {
 
         <TabsContent value="assessment">
           <RiasecTest />
+        </TabsContent>
+
+        <TabsContent value="resilience">
+          <EmotionalResilienceTracker />
         </TabsContent>
 
         <TabsContent value="chat">
