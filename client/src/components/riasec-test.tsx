@@ -13,15 +13,64 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // Start with a few test questions before implementing all 72
 const QUESTIONS = [
-  "I like to build things",
-  "I enjoy solving problems",
-  "I like to help others",
-  "I am good at organizing",
-  "I enjoy creative work"
+  { text: "I like to build things", category: "R" },
+  { text: "I enjoy solving problems", category: "I" },
+  { text: "I like to help others", category: "S" },
+  { text: "I am good at organizing", category: "C" },
+  { text: "I enjoy creative work", category: "A" }
 ];
 
 type Answer = {
   [key: number]: string;
+};
+
+type RiasecScores = {
+  R: number; // Realistic
+  I: number; // Investigative
+  A: number; // Artistic
+  S: number; // Social
+  E: number; // Enterprising
+  C: number; // Conventional
+};
+
+const calculateScores = (answers: Answer): RiasecScores => {
+  const scores: RiasecScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+
+  Object.entries(answers).forEach(([questionIndex, answer]) => {
+    const category = QUESTIONS[Number(questionIndex)].category;
+    const value = {
+      'strongly-agree': 5,
+      'agree': 4,
+      'neutral': 3,
+      'disagree': 2,
+      'strongly-disagree': 1
+    }[answer] || 0;
+
+    if (category in scores) {
+      scores[category as keyof RiasecScores] += value;
+    }
+  });
+
+  return scores;
+};
+
+const getTopCategories = (scores: RiasecScores): string[] => {
+  return Object.entries(scores)
+    .sort(([, a], [, b]) => b - a)
+    .map(([category]) => category)
+    .slice(0, 3);
+};
+
+const getCategoryDescription = (category: string): string => {
+  const descriptions: { [key: string]: string } = {
+    R: "Realistic - Hands-on problem solver who likes working with tools, machines, or nature",
+    I: "Investigative - Analytical thinker who likes exploring ideas and solving complex problems",
+    A: "Artistic - Creative individual who enjoys self-expression through art and design",
+    S: "Social - Helper who enjoys working with people and making a difference",
+    E: "Enterprising - Leader who likes to influence, persuade, and perform",
+    C: "Conventional - Organizer who excels at working with data, numbers, and details"
+  };
+  return descriptions[category] || "";
 };
 
 export default function RiasecTest() {
@@ -56,6 +105,9 @@ export default function RiasecTest() {
   };
 
   if (showResults) {
+    const scores = calculateScores(answers);
+    const topCategories = getTopCategories(scores);
+
     return (
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
@@ -66,18 +118,31 @@ export default function RiasecTest() {
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            <div className="text-center">
-              <p className="text-lg mb-4">
-                Thank you for completing the assessment! Your results are being calculated.
-              </p>
+            <div className="space-y-4">
+              {topCategories.map((category, index) => (
+                <div key={category} className="space-y-2">
+                  <h3 className="text-lg font-medium">
+                    {index + 1}. {getCategoryDescription(category)}
+                  </h3>
+                  <Progress 
+                    value={(scores[category as keyof RiasecScores] / (5 * QUESTIONS.length)) * 100} 
+                    className="h-2"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-6 border-t">
               <Button
                 variant="outline"
                 onClick={() => {
                   setShowResults(false);
-                  setCurrentQuestion(0); //Reset to the first question.
+                  setCurrentQuestion(0);
+                  setAnswers({});
                 }}
+                className="w-full"
               >
-                Back to Questions
+                Start Over
               </Button>
             </div>
           </div>
@@ -106,7 +171,7 @@ export default function RiasecTest() {
 
           <div className="space-y-4">
             <Label className="text-lg font-medium">
-              {QUESTIONS[currentQuestion]}
+              {QUESTIONS[currentQuestion].text}
             </Label>
 
             <RadioGroup
