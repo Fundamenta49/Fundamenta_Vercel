@@ -82,7 +82,7 @@ const wellnessQuestions: Question[] = [
     ],
     immediateResources: [
       {
-        threshold: 3, 
+        threshold: 3,
         resource: {
           title: "Wellness Support",
           description: "Connect with our supportive wellness community",
@@ -229,26 +229,7 @@ export default function RiskAssessment({ category }: Props) {
     }
   };
 
-  const handleNext = (value: number) => {
-    const currentQuestionData = wellnessQuestions[currentQuestion];
-    const newAnswers = { ...answers, [currentQuestionData.id]: value };
-    setAnswers(newAnswers);
-
-    if (currentQuestionData.immediateResources) {
-      const immediateResource = currentQuestionData.immediateResources.find(
-        r => value >= r.threshold
-      )?.resource;
-
-      if (immediateResource) {
-        setImmediateResource(immediateResource);
-        toast({
-          title: "Resources Available",
-          description: "We've identified some helpful resources based on your response.",
-          duration: 5000,
-        });
-      }
-    }
-
+  const handleNext = () => {
     if (currentQuestion < wellnessQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -398,47 +379,72 @@ export default function RiskAssessment({ category }: Props) {
           </Alert>
         )}
 
-        <div className="space-y-4">
-          <Label className="text-lg">{wellnessQuestions[currentQuestion].text}</Label>
-          <RadioGroup
-            value={answers[wellnessQuestions[currentQuestion].id]?.toString()}
-            onValueChange={(value) => handleNext(parseInt(value))}
-          >
-            <div className="space-y-2">
-              {wellnessQuestions[currentQuestion].options.map((option) => (
-                <div
-                  key={option.text}
-                  className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent cursor-pointer"
-                  onClick={() => handleNext(option.value)}
-                >
-                  <RadioGroupItem value={option.value.toString()} id={option.text} />
-                  <Label htmlFor={option.text} className="cursor-pointer flex-grow">
-                    {option.text}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </RadioGroup>
+        <Label className="text-lg">{wellnessQuestions[currentQuestion].text}</Label>
+        <RadioGroup
+          value={answers[wellnessQuestions[currentQuestion].id]?.toString()}
+          onValueChange={(value) => {
+            const currentQuestionData = wellnessQuestions[currentQuestion];
+            const newAnswers = { ...answers, [currentQuestionData.id]: parseInt(value) };
+            setAnswers(newAnswers);
 
-          <div className="flex justify-between mt-6">
-            <Button 
-              variant="outline" 
-              onClick={handleBack}
-              disabled={currentQuestion === 0}
-            >
-              Back
-            </Button>
-            {currentQuestion === wellnessQuestions.length - 1 && (
-              <Button 
-                variant="default"
-                onClick={handleSubmit}
-                disabled={!answers[wellnessQuestions[currentQuestion].id]}
+            if (currentQuestionData.immediateResources) {
+              const immediateResource = currentQuestionData.immediateResources.find(
+                r => parseInt(value) >= r.threshold
+              )?.resource;
+
+              if (immediateResource) {
+                setImmediateResource(immediateResource);
+                toast({
+                  title: "Resources Available",
+                  description: "We've identified some helpful resources based on your response.",
+                  duration: 5000,
+                });
+              }
+            }
+          }}
+        >
+          <div className="space-y-2">
+            {wellnessQuestions[currentQuestion].options.map((option) => (
+              <div
+                key={option.text}
+                className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent cursor-pointer"
               >
-                Submit Assessment
-              </Button>
-            )}
+                <RadioGroupItem value={option.value.toString()} id={option.text} />
+                <Label htmlFor={option.text} className="cursor-pointer flex-grow">
+                  {option.text}
+                </Label>
+              </div>
+            ))}
           </div>
+        </RadioGroup>
+
+        <div className="flex justify-between mt-6">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={currentQuestion === 0}
+          >
+            Back
+          </Button>
+          {currentQuestion < wellnessQuestions.length - 1 ? (
+            <Button
+              variant="default"
+              onClick={() => handleNext()}
+              disabled={!answers[wellnessQuestions[currentQuestion].id]}
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              onClick={handleSubmit}
+              disabled={!answers[wellnessQuestions[currentQuestion].id]}
+            >
+              Submit Assessment
+            </Button>
+          )}
         </div>
+
       </CardContent>
     </Card>
   );
