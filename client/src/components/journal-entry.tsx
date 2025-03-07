@@ -30,6 +30,12 @@ import {
   Brain,
 } from "lucide-react";
 import { format } from "date-fns";
+import { analyzeJournalEntry, analyzeMoodTrends, type JournalAnalysis } from "@/lib/journal-analysis";
+import WordCloud from "./word-cloud";
+import { Progress } from "@/components/ui/progress";
+import { useQuery } from "@tanstack/react-query";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
 
 interface JournalEntry {
   id: string;
@@ -103,6 +109,28 @@ const promptCategories = [
   { value: "future", label: "Future Self", icon: Calendar },
 ];
 
+interface InsightCardProps {
+  title: string;
+  description: string;
+  score?: number;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+function InsightCard({ title, description, score, icon: Icon }: InsightCardProps) {
+  return (
+    <div className="p-4 border rounded-lg space-y-2">
+      <div className="flex items-center gap-2">
+        <Icon className="h-5 w-5 text-primary" />
+        <h3 className="font-medium">{title}</h3>
+      </div>
+      {score !== undefined && (
+        <Progress value={score} className="h-2" />
+      )}
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+
 export default function JournalEntry() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -117,6 +145,14 @@ export default function JournalEntry() {
     title: "",
     content: "",
     mood: "",
+  });
+  const [showInsights, setShowInsights] = useState(false);
+  const [currentAnalysis, setCurrentAnalysis] = useState<JournalAnalysis | null>(null);
+
+  const { data: moodTrends } = useQuery({
+    queryKey: ['moodTrends'],
+    queryFn: () => analyzeMoodTrends(entries),
+    enabled: entries.length > 0
   });
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,28 +178,36 @@ export default function JournalEntry() {
     setCurrentPrompt(getRandomPrompt(category));
   };
 
-  const handleEntrySubmit = () => {
+  const handleEntrySubmit = async () => {
     if (!currentEntry.title || !currentEntry.content) return;
 
-    const newEntry: JournalEntry = {
-      id: Date.now().toString(),
-      title: currentEntry.title,
-      content: currentEntry.content,
-      mood: currentEntry.mood,
-      imageUrl: previewUrl || undefined,
-      timestamp: new Date().toISOString(),
-      prompt: currentPrompt,
-      category: selectedCategory,
-      ...(selectedCategory === "future" && futureEmail.email && futureEmail.date
-        ? { futureEmail }
-        : {}),
-    };
+    try {
+      const analysis = await analyzeJournalEntry(currentEntry.content);
+      setCurrentAnalysis(analysis);
 
-    setEntries([newEntry, ...entries]);
-    setCurrentEntry({ title: "", content: "", mood: "" });
-    setSelectedImage(null);
-    setPreviewUrl(null);
-    setFutureEmail({ email: "", date: "" });
+      const newEntry: JournalEntry = {
+        id: Date.now().toString(),
+        title: currentEntry.title,
+        content: currentEntry.content,
+        mood: currentEntry.mood,
+        imageUrl: previewUrl || undefined,
+        timestamp: new Date().toISOString(),
+        prompt: currentPrompt,
+        category: selectedCategory,
+        ...(selectedCategory === "future" && futureEmail.email && futureEmail.date
+          ? { futureEmail }
+          : {}),
+      };
+
+      setEntries([newEntry, ...entries]);
+      setCurrentEntry({ title: "", content: "", mood: "" });
+      setSelectedImage(null);
+      setPreviewUrl(null);
+      setFutureEmail({ email: "", date: "" });
+      setShowInsights(true);
+    } catch (error) {
+      console.error('Error analyzing entry:', error);
+    }
   };
 
   return (
@@ -305,6 +349,80 @@ export default function JournalEntry() {
           )}
         </CardContent>
       </Card>
+
+      {/* AI Insights Section */}
+      {showInsights && currentAnalysis && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              AI Insights
+            </CardTitle>
+            <CardDescription>
+              Analysis and suggestions based on your journal entry
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-4">
+              <InsightCard
+                title="Emotional Score"
+                description={`Your entry shows ${currentAnalysis.sentiment} sentiment`}
+                score={currentAnalysis.emotionalScore}
+                icon={Heart}
+              />
+              <InsightCard
+                title="Mood Trend"
+                description={currentAnalysis.moodTrend}
+                icon={Sparkles}
+              />
+            </div>
+
+            <div>
+              <h3 className="font-medium mb-4">Word Cloud</h3>
+              <WordCloud
+                words={Object.entries(currentAnalysis.wordFrequency).map(([text, size]) => ({
+                  text,
+                  size: Math.min(size * 2, 10)
+                }))}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="font-medium">AI Suggestions</h3>
+              <div className="space-y-2">
+                {currentAnalysis.suggestions.map((suggestion, index) => (
+                  <Alert key={index}>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{suggestion}</AlertDescription>
+                  </Alert>
+                ))}
+              </div>
+            </div>
+
+            {moodTrends && (
+              <div className="space-y-2">
+                <h3 className="font-medium">Mood Trends</h3>
+                <div className="space-y-2">
+                  {moodTrends.trends.map((trend, index) => (
+                    <p key={index} className="text-sm text-muted-foreground">
+                      {trend}
+                    </p>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <h4 className="font-medium mb-2">Recommendations</h4>
+                  {moodTrends.recommendations.map((rec, index) => (
+                    <Alert key={index} className="mb-2">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{rec}</AlertDescription>
+                    </Alert>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Past Entries Section */}
       <Card>

@@ -441,6 +441,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/journal/analyze", async (req, res) => {
+    try {
+      const { content } = z.object({ content: z.string() }).parse(req.body);
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "You are an AI therapist analyzing journal entries. Provide analysis in JSON format including emotional score (0-100), sentiment, key themes, and suggestions for mental well-being."
+          },
+          {
+            role: "user",
+            content
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      const analysis = JSON.parse(response.choices[0].message.content || "{}");
+
+      // Calculate word frequency
+      const words = content.toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .split(/\s+/)
+        .filter(word => word.length > 3);
+
+      const wordFrequency: Record<string, number> = {};
+      words.forEach(word => {
+        wordFrequency[word] = (wordFrequency[word] || 0) + 1;
+      });
+
+      res.json({
+        emotionalScore: analysis.emotionalScore,
+        sentiment: analysis.sentiment,
+        wordFrequency,
+        suggestions: analysis.suggestions,
+        moodTrend: analysis.moodTrend
+      });
+    } catch (error) {
+      console.error('Error analyzing journal entry:', error);
+      res.status(500).json({ error: 'Failed to analyze journal entry' });
+    }
+  });
+
+  app.post("/api/journal/analyze-trends", async (req, res) => {
+    try {
+      const { entries } = z.object({
+        entries: z.array(z.object({
+          content: z.string(),
+          timestamp: z.string()
+        }))
+      }).parse(req.body);
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "Analyze the mood trends across multiple journal entries and provide insights and recommendations in JSON format."
+          },
+          {
+            role: "user",
+            content: JSON.stringify(entries)
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      const analysis = JSON.parse(response.choices[0].message.content || "{}");
+
+      res.json({
+        trends: analysis.trends,
+        recommendations: analysis.recommendations
+      });
+    } catch (error) {
+      console.error('Error analyzing mood trends:', error);
+      res.status(500).json({ error: 'Failed to analyze mood trends' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
