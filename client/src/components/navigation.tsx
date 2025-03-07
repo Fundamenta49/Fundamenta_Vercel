@@ -14,7 +14,6 @@ import {
   Activity,
   GraduationCap,
   AlertCircle,
-  Home
 } from "lucide-react";
 import {
   Sheet,
@@ -52,12 +51,7 @@ export default function Navigation() {
   const isHomePage = location === "/";
 
   // Select which navigation items to show based on current location
-  const navItems = isHomePage ? defaultNavItems : [
-    // Always include home as first item when not on home page
-    { href: "/", label: "Home", icon: Home },
-    // Filter out the current page from feature navigation
-    ...featureNavItems.filter(item => item.href !== location)
-  ];
+  const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
 
   useEffect(() => {
     document.documentElement.style.setProperty(
