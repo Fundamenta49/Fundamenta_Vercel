@@ -11,7 +11,6 @@ import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-// Start with a few test questions before implementing all 72
 const QUESTIONS = [
   { text: "I like to build things", category: "R" },
   { text: "I enjoy solving problems", category: "I" },
@@ -20,129 +19,72 @@ const QUESTIONS = [
   { text: "I enjoy creative work", category: "A" }
 ];
 
-type Answer = {
-  [key: number]: string;
-};
-
-type RiasecScores = {
-  R: number; // Realistic
-  I: number; // Investigative
-  A: number; // Artistic
-  S: number; // Social
-  E: number; // Enterprising
-  C: number; // Conventional
-};
-
-const calculateScores = (answers: Answer): RiasecScores => {
-  const scores: RiasecScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
-
-  Object.entries(answers).forEach(([questionIndex, answer]) => {
-    const category = QUESTIONS[Number(questionIndex)].category;
-    const value = {
-      'strongly-agree': 5,
-      'agree': 4,
-      'neutral': 3,
-      'disagree': 2,
-      'strongly-disagree': 1
-    }[answer] || 0;
-
-    if (category in scores) {
-      scores[category as keyof RiasecScores] += value;
-    }
-  });
-
-  return scores;
-};
-
-const getTopCategories = (scores: RiasecScores): string[] => {
-  return Object.entries(scores)
-    .sort(([, a], [, b]) => b - a)
-    .map(([category]) => category)
-    .slice(0, 3);
-};
-
-const getCategoryDescription = (category: string): string => {
-  const descriptions: { [key: string]: string } = {
-    R: "Realistic - Hands-on problem solver who likes working with tools, machines, or nature",
-    I: "Investigative - Analytical thinker who likes exploring ideas and solving complex problems",
-    A: "Artistic - Creative individual who enjoys self-expression through art and design",
-    S: "Social - Helper who enjoys working with people and making a difference",
-    E: "Enterprising - Leader who likes to influence, persuade, and perform",
-    C: "Conventional - Organizer who excels at working with data, numbers, and details"
-  };
-  return descriptions[category] || "";
+// Simplified result mapping
+const RESULT_DESCRIPTIONS = {
+  R: "Realistic: You enjoy working with your hands and solving practical problems. Consider careers in engineering, construction, or technical fields.",
+  I: "Investigative: You like analyzing problems and discovering new things. Look into scientific research, technology, or medical careers.",
+  A: "Artistic: You have a strong creative drive and value self-expression. Explore careers in design, music, writing, or the arts.",
+  S: "Social: You enjoy working with and helping others. Consider careers in teaching, counseling, or healthcare.",
+  E: "Enterprising: You like leading and persuading others. Look into business, sales, or management roles.",
+  C: "Conventional: You enjoy organizing and working with data. Consider careers in accounting, administration, or IT."
 };
 
 export default function RiasecTest() {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Answer>({});
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<{[key: number]: string}>({});
   const [showResults, setShowResults] = useState(false);
 
-  const progress = ((currentQuestion + 1) / QUESTIONS.length) * 100;
-  const isLastQuestion = currentQuestion === QUESTIONS.length - 1;
+  const calculateResults = () => {
+    const scores: {[key: string]: number} = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
 
-  const handleAnswer = (value: string) => {
-    setAnswers(prev => ({
-      ...prev,
-      [currentQuestion]: value
-    }));
-  };
+    Object.entries(answers).forEach(([idx, answer]) => {
+      const question = QUESTIONS[Number(idx)];
+      const value = answer === 'strongly-agree' ? 5 : 
+                    answer === 'agree' ? 4 : 
+                    answer === 'neutral' ? 3 : 
+                    answer === 'disagree' ? 2 : 1;
 
-  const handlePrevious = () => {
-    if (showResults) {
-      setShowResults(false);
-    } else if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-    }
-  };
+      if (question.category in scores) {
+        scores[question.category] += value;
+      }
+    });
 
-  const handleNext = () => {
-    if (isLastQuestion) {
-      setShowResults(true);
-    } else {
-      setCurrentQuestion(currentQuestion + 1);
-    }
+    return Object.entries(scores)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([category]) => RESULT_DESCRIPTIONS[category as keyof typeof RESULT_DESCRIPTIONS]);
   };
 
   if (showResults) {
-    const scores = calculateScores(answers);
-    const topCategories = getTopCategories(scores);
+    const results = calculateResults();
 
     return (
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Your RIASEC Assessment Results</CardTitle>
+          <CardTitle className="text-2xl">Your Career Path Results</CardTitle>
           <CardDescription>
-            Based on your answers, here are your career interest areas
+            Based on your answers, here are your top career directions
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            <div className="space-y-4">
-              {topCategories.map((category, index) => (
-                <div key={category} className="space-y-2">
-                  <h3 className="text-lg font-medium">
-                    {index + 1}. {getCategoryDescription(category)}
-                  </h3>
-                  <Progress 
-                    value={(scores[category as keyof RiasecScores] / (5 * QUESTIONS.length)) * 100} 
-                    className="h-2"
-                  />
-                </div>
-              ))}
-            </div>
+            {results.map((result, index) => (
+              <div key={index} className="bg-muted rounded-lg p-4">
+                <h3 className="font-semibold mb-2">#{index + 1}</h3>
+                <p>{result}</p>
+              </div>
+            ))}
 
-            <div className="pt-6 border-t">
-              <Button
-                variant="outline"
+            <div className="pt-6 border-t mt-6">
+              <Button 
+                className="w-full"
                 onClick={() => {
                   setShowResults(false);
-                  setCurrentQuestion(0);
+                  setQuestionIndex(0);
                   setAnswers({});
                 }}
-                className="w-full"
               >
-                Start Over
+                Take Test Again
               </Button>
             </div>
           </div>
@@ -151,68 +93,63 @@ export default function RiasecTest() {
     );
   }
 
+  const progress = ((questionIndex + 1) / QUESTIONS.length) * 100;
+  const isLastQuestion = questionIndex === QUESTIONS.length - 1;
+
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Educational Path Assessment</CardTitle>
         <CardDescription>
-          Answer these questions to get personalized recommendations for university degrees or trade school programs
+          Question {questionIndex + 1} of {QUESTIONS.length} ({Math.round(progress)}% Complete)
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Question {currentQuestion + 1} of {QUESTIONS.length}</span>
-              <span>{Math.round(progress)}% Complete</span>
-            </div>
-            <Progress value={progress} />
-          </div>
+          <Progress value={progress} />
 
           <div className="space-y-4">
             <Label className="text-lg font-medium">
-              {QUESTIONS[currentQuestion].text}
+              {QUESTIONS[questionIndex].text}
             </Label>
 
             <RadioGroup
-              value={answers[currentQuestion] || ""}
-              onValueChange={handleAnswer}
+              value={answers[questionIndex] || ""}
+              onValueChange={(value) => setAnswers(prev => ({ ...prev, [questionIndex]: value }))}
               className="space-y-3"
             >
-              <div className="flex items-center space-x-3 border rounded-lg p-4">
-                <RadioGroupItem value="strongly-disagree" id="strongly-disagree" />
-                <Label htmlFor="strongly-disagree">Strongly Disagree</Label>
-              </div>
-              <div className="flex items-center space-x-3 border rounded-lg p-4">
-                <RadioGroupItem value="disagree" id="disagree" />
-                <Label htmlFor="disagree">Disagree</Label>
-              </div>
-              <div className="flex items-center space-x-3 border rounded-lg p-4">
-                <RadioGroupItem value="neutral" id="neutral" />
-                <Label htmlFor="neutral">Neutral</Label>
-              </div>
-              <div className="flex items-center space-x-3 border rounded-lg p-4">
-                <RadioGroupItem value="agree" id="agree" />
-                <Label htmlFor="agree">Agree</Label>
-              </div>
-              <div className="flex items-center space-x-3 border rounded-lg p-4">
-                <RadioGroupItem value="strongly-agree" id="strongly-agree" />
-                <Label htmlFor="strongly-agree">Strongly Agree</Label>
-              </div>
+              {[
+                ["strongly-disagree", "Strongly Disagree"],
+                ["disagree", "Disagree"],
+                ["neutral", "Neutral"],
+                ["agree", "Agree"],
+                ["strongly-agree", "Strongly Agree"]
+              ].map(([value, label]) => (
+                <div key={value} className="flex items-center space-x-3 border rounded-lg p-4">
+                  <RadioGroupItem value={value} id={value} />
+                  <Label htmlFor={value}>{label}</Label>
+                </div>
+              ))}
             </RadioGroup>
           </div>
 
           <div className="flex justify-between pt-6 border-t">
             <Button
               variant="outline"
-              onClick={handlePrevious}
-              disabled={currentQuestion === 0}
+              onClick={() => setQuestionIndex(prev => prev - 1)}
+              disabled={questionIndex === 0}
             >
               Previous
             </Button>
             <Button
-              onClick={handleNext}
-              disabled={!answers[currentQuestion]}
+              onClick={() => {
+                if (isLastQuestion) {
+                  setShowResults(true);
+                } else {
+                  setQuestionIndex(prev => prev + 1);
+                }
+              }}
+              disabled={!answers[questionIndex]}
             >
               {isLastQuestion ? "View Results" : "Next"}
             </Button>
