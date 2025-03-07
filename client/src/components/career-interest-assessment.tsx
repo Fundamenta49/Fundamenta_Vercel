@@ -19,99 +19,25 @@ interface Question {
   category: 'R' | 'I' | 'A' | 'S' | 'E' | 'C';
 }
 
-// Standard RIASEC questions from Open Source Psychometrics Project
 const riasecQuestions: Question[] = [
-  // Realistic questions
-  {
-    id: 1,
-    text: "I like to work on cars",
-    category: 'R'
-  },
-  {
-    id: 2,
-    text: "I like to do puzzles",
-    category: 'I'
-  },
-  {
-    id: 3,
-    text: "I am good at working independently",
-    category: 'A'
-  },
-  {
-    id: 4,
-    text: "I like to work in teams",
-    category: 'S'
-  },
-  {
-    id: 5,
-    text: "I am an ambitious person, I set goals for myself",
-    category: 'E'
-  },
-  {
-    id: 6,
-    text: "I like to organize things, (files, desks/offices)",
-    category: 'C'
-  },
-  {
-    id: 7,
-    text: "I like to build things",
-    category: 'R'
-  },
-  {
-    id: 8,
-    text: "I like to read about art and music",
-    category: 'A'
-  },
-  {
-    id: 9,
-    text: "I like to have clear instructions to follow",
-    category: 'C'
-  },
-  {
-    id: 10,
-    text: "I like to try to influence or persuade people",
-    category: 'E'
-  },
-  {
-    id: 11,
-    text: "I like to do experiments",
-    category: 'I'
-  },
-  {
-    id: 12,
-    text: "I like to teach or train people",
-    category: 'S'
-  },
-  {
-    id: 13,
-    text: "I like trying to help people solve their problems",
-    category: 'S'
-  },
-  {
-    id: 14,
-    text: "I like to take care of animals",
-    category: 'R'
-  },
-  {
-    id: 15,
-    text: "I wouldn't mind working 8 hours per day in an office",
-    category: 'C'
-  },
-  {
-    id: 16,
-    text: "I like selling things",
-    category: 'E'
-  },
-  {
-    id: 17,
-    text: "I enjoy creative writing",
-    category: 'A'
-  },
-  {
-    id: 18,
-    text: "I enjoy science",
-    category: 'I'
-  }
+  { id: 1, text: "I like to work on cars", category: 'R' },
+  { id: 2, text: "I like to do puzzles", category: 'I' },
+  { id: 3, text: "I am good at working independently", category: 'A' },
+  { id: 4, text: "I like to work in teams", category: 'S' },
+  { id: 5, text: "I am an ambitious person, I set goals for myself", category: 'E' },
+  { id: 6, text: "I like to organize things, (files, desks/offices)", category: 'C' },
+  { id: 7, text: "I like to build things", category: 'R' },
+  { id: 8, text: "I like to read about art and music", category: 'A' },
+  { id: 9, text: "I like to have clear instructions to follow", category: 'C' },
+  { id: 10, text: "I like to try to influence or persuade people", category: 'E' },
+  { id: 11, text: "I like to do experiments", category: 'I' },
+  { id: 12, text: "I like to teach or train people", category: 'S' },
+  { id: 13, text: "I like trying to help people solve their problems", category: 'S' },
+  { id: 14, text: "I like to take care of animals", category: 'R' },
+  { id: 15, text: "I wouldn't mind working 8 hours per day in an office", category: 'C' },
+  { id: 16, text: "I like selling things", category: 'E' },
+  { id: 17, text: "I enjoy creative writing", category: 'A' },
+  { id: 18, text: "I enjoy science", category: 'I' }
 ];
 
 const answerOptions = [
@@ -132,29 +58,35 @@ export default function CareerInterestAssessment() {
 
   const progress = (currentQuestion / riasecQuestions.length) * 100;
 
+  const handleAnswerSelect = (value: string) => {
+    const numValue = parseInt(value);
+    setAnswers(prev => ({
+      ...prev,
+      [riasecQuestions[currentQuestion].id]: numValue
+    }));
+  };
+
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(prev => prev - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentQuestion < riasecQuestions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+    }
+  };
+
   const calculateScores = () => {
     const newScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
-
     Object.entries(answers).forEach(([questionId, answer]) => {
       const question = riasecQuestions.find(q => q.id === parseInt(questionId));
       if (question) {
         newScores[question.category] += answer;
       }
     });
-
     setScores(newScores);
-  };
-
-  const handleBack = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentQuestion < riasecQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    }
   };
 
   const handleSubmit = () => {
@@ -178,7 +110,6 @@ export default function CareerInterestAssessment() {
       E: ["Business Manager", "Sales Representative", "Entrepreneur", "Project Manager"],
       C: ["Accountant", "Data Analyst", "Administrative Manager", "Quality Control Specialist"]
     };
-
     return interests.flatMap(interest => suggestions[interest] || []);
   };
 
@@ -211,10 +142,10 @@ export default function CareerInterestAssessment() {
                     {category === 'C' && "Conventional (Organizers)"}
                   </Label>
                   <span className="text-sm text-muted-foreground">
-                    {Math.round((score / 18) * 100)}%
+                    {Math.round((score / 15) * 100)}%
                   </span>
                 </div>
-                <Progress value={(score / 18) * 100} />
+                <Progress value={(score / 15) * 100} />
               </div>
             ))}
           </div>
@@ -242,7 +173,6 @@ export default function CareerInterestAssessment() {
               setScores({ R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 });
             }}
             variant="outline"
-            className="mt-4"
           >
             Retake Assessment
           </Button>
@@ -259,76 +189,68 @@ export default function CareerInterestAssessment() {
           Career Interest Assessment
         </CardTitle>
         <CardDescription>
-          Discover your career interests and natural inclinations through this assessment
+          Rate how well each statement describes you
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Question {currentQuestion + 1} of {riasecQuestions.length}</span>
-            <span>{Math.round(progress)}% Complete</span>
-          </div>
-          <Progress value={progress} />
-        </div>
-
+      <CardContent>
         <div className="space-y-6">
-          <Label className="text-lg font-medium">
-            {riasecQuestions[currentQuestion].text}
-          </Label>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Question {currentQuestion + 1} of {riasecQuestions.length}</span>
+              <span>{Math.round(progress)}% Complete</span>
+            </div>
+            <Progress value={progress} />
+          </div>
 
-          <RadioGroup
-            value={answers[riasecQuestions[currentQuestion].id]?.toString()}
-            onValueChange={(value) => {
-              const numValue = parseInt(value);
-              setAnswers(prev => ({
-                ...prev,
-                [riasecQuestions[currentQuestion].id]: numValue
-              }));
-            }}
-          >
-            <div className="space-y-3">
+          <div className="space-y-4">
+            <Label className="text-lg font-medium">
+              {riasecQuestions[currentQuestion].text}
+            </Label>
+
+            <RadioGroup
+              value={answers[riasecQuestions[currentQuestion].id]?.toString()}
+              onValueChange={handleAnswerSelect}
+              className="space-y-3"
+            >
               {answerOptions.map((option) => (
                 <div
                   key={option.value}
-                  className="flex items-center space-x-3 border rounded-lg p-4 hover:bg-accent"
+                  className="flex items-center space-x-3 border rounded-lg p-4 hover:bg-accent cursor-pointer"
                 >
-                  <RadioGroupItem
-                    value={option.value}
-                    id={option.value}
-                  />
-                  <Label htmlFor={option.value} className="flex-grow">
+                  <RadioGroupItem value={option.value} id={option.value} />
+                  <Label htmlFor={option.value} className="flex-grow cursor-pointer">
                     {option.label}
                   </Label>
                 </div>
               ))}
-            </div>
-          </RadioGroup>
-        </div>
+            </RadioGroup>
+          </div>
 
-        <div className="flex justify-between pt-6 border-t">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={currentQuestion === 0}
-          >
-            Back
-          </Button>
+          <div className="flex justify-between pt-6 border-t">
+            <Button
+              variant="outline"
+              onClick={handleBack}
+              disabled={currentQuestion === 0}
+            >
+              Back
+            </Button>
 
-          {currentQuestion < riasecQuestions.length - 1 ? (
-            <Button
-              onClick={handleNext}
-              disabled={!answers[riasecQuestions[currentQuestion].id]}
-            >
-              Next Question
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSubmit}
-              disabled={!answers[riasecQuestions[currentQuestion].id]}
-            >
-              Submit Assessment
-            </Button>
-          )}
+            {currentQuestion < riasecQuestions.length - 1 ? (
+              <Button
+                onClick={handleNext}
+                disabled={!answers[riasecQuestions[currentQuestion].id]}
+              >
+                Next Question
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                disabled={!answers[riasecQuestions[currentQuestion].id]}
+              >
+                Submit Assessment
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
