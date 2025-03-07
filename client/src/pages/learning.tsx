@@ -122,7 +122,7 @@ const convertLinksToHtml = (text: string) => {
     if (!line.trim()) return null;
 
     return (
-      <p key={i} className="mb-3">
+      <div key={i} className="mb-4">
         {line.split(urlRegex).map((part, j) => {
           if (part.match(urlRegex)) {
             return (
@@ -138,9 +138,9 @@ const convertLinksToHtml = (text: string) => {
               </a>
             );
           }
-          return part;
+          return <span>{part}</span>;
         })}
-      </p>
+      </div>
     );
   }).filter(Boolean);
 };
@@ -205,8 +205,8 @@ export default function Learning() {
                         {section.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="prose max-w-none">
-                      <div className="space-y-2">
+                    <CardContent>
+                      <div className="space-y-2 text-[15px] leading-relaxed">
                         {convertLinksToHtml(section.content)}
                       </div>
                     </CardContent>

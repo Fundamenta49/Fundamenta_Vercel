@@ -317,37 +317,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
             role: "system",
             content: `You are an expert learning advisor specializing in ${skillArea === "technical" ? "technical skills like programming, data analysis, and digital tools" : "soft skills like communication, leadership, and problem-solving"}. 
 
-            Structure your response in clear sections without using asterisks (*), hashtags (#), or any other special formatting characters. Write in plain text with clear section headings.
+Structure your response in clear sections using plain text. Do not use any special characters or formatting symbols.
 
-            Include:
+Format each section with a clear heading followed by concise, actionable content:
 
-            Learning Resources:
-            - List each resource on a new line
-            - For online resources, include the full URL
-            - Include a mix of online courses, books, and practice platforms
-            - Briefly describe each resource (1-2 sentences)
+Learning Resources:
+Keep descriptions brief and focused. List each resource with a short 1-line description.
+Include direct URLs where applicable.
 
-            Learning Path:
-            - Break down the learning journey into clear steps
-            - Each step should be a natural progression
-            - Include estimated time for each step
+Learning Path:
+Break down the journey into 3-5 main steps.
+Keep each step description to 2-3 lines maximum.
 
-            Practice Projects:
-            - Suggest specific projects or exercises
-            - Include clear objectives for each
-            - List any tools or prerequisites needed
+Practice Projects:
+List 2-3 concrete projects with clear objectives.
+Keep descriptions focused and actionable.
 
-            Time Investment:
-            - Give realistic time estimates
-            - Break down by learning phases
-            - Include both quick wins and long-term goals
+Time Investment:
+Provide brief, realistic estimates.
+Break down into short-term and long-term goals.
 
-            Measuring Progress:
-            - Provide clear milestones
-            - Include specific skills to master
-            - Suggest ways to validate learning
+Measuring Progress:
+List 3-4 key milestones.
+Include specific, measurable outcomes.
 
-            Keep the tone conversational and encouraging. Use full sentences and proper formatting.`
+Keep all content concise and scannable. Avoid long paragraphs.`
           },
           {
             role: "user",
