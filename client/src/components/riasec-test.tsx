@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,98 +9,75 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-// Simple initial state
-type State = {
-  currentQuestion: number;
-  answer: string;
-};
-
-type Action = 
-  | { type: 'SET_ANSWER'; payload: string }
-  | { type: 'NEXT_QUESTION' }
-  | { type: 'PREV_QUESTION' };
-
-const initialState: State = {
-  currentQuestion: 0,
-  answer: '',
-};
-
-function reducer(state: State, action: Action): State {
-  console.log('Reducer action:', action.type, 'Current state:', state);
-
-  switch (action.type) {
-    case 'SET_ANSWER':
-      return {
-        ...state,
-        answer: action.payload,
-      };
-    case 'NEXT_QUESTION':
-      return {
-        ...state,
-        currentQuestion: state.currentQuestion + 1,
-        answer: '',
-      };
-    case 'PREV_QUESTION':
-      return {
-        ...state,
-        currentQuestion: Math.max(0, state.currentQuestion - 1),
-        answer: '',
-      };
-    default:
-      return state;
-  }
-}
-
-const questions = [
-  "I like to build things",
-  "I enjoy problem solving",
-  "I like helping others",
-];
-
-const options = [
-  "Strongly Disagree",
-  "Disagree",
-  "Neutral",
-  "Agree",
-  "Strongly Agree"
-];
+const QUESTIONS = ["I like to build things"];
 
 export default function RiasecTest() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  console.log('Current state:', state);
+  const [questionNumber, setQuestionNumber] = useState(0);
+  const [answer, setAnswer] = useState("");
+
+  function handleNext() {
+    setQuestionNumber(questionNumber + 1);
+    setAnswer("");
+  }
+
+  function handlePrevious() {
+    setQuestionNumber(questionNumber - 1);
+    setAnswer("");
+  }
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{questions[state.currentQuestion]}</CardTitle>
+        <CardTitle>{QUESTIONS[questionNumber]}</CardTitle>
       </CardHeader>
       <CardContent>
-        <RadioGroup
-          value={state.answer}
-          onValueChange={(value) => dispatch({ type: 'SET_ANSWER', payload: value })}
-        >
-          {options.map((option) => (
-            <div key={option} className="flex items-center space-x-3 border rounded-lg p-4">
-              <RadioGroupItem value={option.toLowerCase().replace(/ /g, '-')} id={option.toLowerCase().replace(/ /g, '-')} />
-              <Label htmlFor={option.toLowerCase().replace(/ /g, '-')}>{option}</Label>
+        <div className="space-y-4">
+          <RadioGroup 
+            value={answer}
+            onValueChange={setAnswer}
+            className="space-y-3"
+          >
+            <div className="flex items-center space-x-3 border rounded-lg p-4">
+              <RadioGroupItem value="strongly-disagree" id="strongly-disagree" />
+              <Label htmlFor="strongly-disagree">Strongly Disagree</Label>
             </div>
-          ))}
-        </RadioGroup>
 
-        <div className="flex justify-between mt-6">
-          <Button
-            variant="outline"
-            onClick={() => dispatch({ type: 'PREV_QUESTION' })}
-            disabled={state.currentQuestion === 0}
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={() => dispatch({ type: 'NEXT_QUESTION' })}
-            disabled={!state.answer}
-          >
-            Next
-          </Button>
+            <div className="flex items-center space-x-3 border rounded-lg p-4">
+              <RadioGroupItem value="disagree" id="disagree" />
+              <Label htmlFor="disagree">Disagree</Label>
+            </div>
+
+            <div className="flex items-center space-x-3 border rounded-lg p-4">
+              <RadioGroupItem value="neutral" id="neutral" />
+              <Label htmlFor="neutral">Neutral</Label>
+            </div>
+
+            <div className="flex items-center space-x-3 border rounded-lg p-4">
+              <RadioGroupItem value="agree" id="agree" />
+              <Label htmlFor="agree">Agree</Label>
+            </div>
+
+            <div className="flex items-center space-x-3 border rounded-lg p-4">
+              <RadioGroupItem value="strongly-agree" id="strongly-agree" />
+              <Label htmlFor="strongly-agree">Strongly Agree</Label>
+            </div>
+          </RadioGroup>
+
+          <div className="flex justify-between pt-6">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={questionNumber === 0}
+            >
+              Previous
+            </Button>
+            <Button
+              onClick={handleNext}
+              disabled={!answer}
+            >
+              Next  
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
