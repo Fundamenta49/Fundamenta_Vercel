@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -21,29 +21,31 @@ interface Achievement {
   icon: "star" | "trophy" | "award";
 }
 
+interface Exercise {
+  name: string;
+  sets: number;
+  reps: number;
+  description: string;
+  technique?: string;
+  mistakes?: string[];
+  modifications?: {
+    easier: string;
+    harder: string;
+  };
+  goalAlignment?: string;
+  videoId?: string;
+}
+
 interface WorkoutPlan {
-  exercises: Array<{
-    name: string;
-    sets: number;
-    reps: number;
-    description: string;
-    technique: string;
-    mistakes: string[];
-    modifications: {
-      easier: string;
-      harder: string;
-    };
-    goalAlignment: string;
-    videoId?: string;
-  }>;
+  exercises: Exercise[];
   schedule: string;
-  progressionPlan: string;
+  progressionPlan?: string;
   tips: {
-    general: string[];
-    goalSpecific: {
+    general?: string[];
+    goalSpecific?: {
       [key: string]: string[];
     };
-    safety: string[];
+    safety?: string[];
   };
 }
 
@@ -119,11 +121,11 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       const savedPlan = localStorage.getItem('workoutPlan');
       if (savedPlan) {
         const plan = JSON.parse(savedPlan);
-        setWorkoutPlan(plan); 
+        setWorkoutPlan(plan);
 
         setFailedValidations(new Set());
-
         setIsValidatingVideos(true);
+
         const validatedPlan = { ...plan };
         const validationPromises = validatedPlan.exercises.map(async (exercise) => {
           if (exercise.videoId) {
@@ -150,7 +152,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
 
   const generateWorkoutPlan = async () => {
     setIsLoading(true);
-    setFailedValidations(new Set()); 
+    setFailedValidations(new Set());
 
     try {
       const response = await fetch('/api/generate-workout', {
@@ -171,7 +173,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       }
 
       const plan = await response.json();
-      setWorkoutPlan(plan); 
+      setWorkoutPlan(plan);
 
       setIsValidatingVideos(true);
       const validationPromises = plan.exercises.map(async (exercise) => {
@@ -184,7 +186,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       });
 
       await Promise.all(validationPromises);
-      setWorkoutPlan({ ...plan }); 
+      setWorkoutPlan({ ...plan });
       localStorage.setItem('workoutPlan', JSON.stringify(plan));
 
       toast({
@@ -289,63 +291,80 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div>
-                            <h4 className="font-medium mb-2">Proper Form</h4>
-                            <p className="text-sm">{exercise.technique}</p>
+                            <h4 className="font-medium mb-2">Instructions</h4>
+                            <p className="text-sm">{exercise.description}</p>
                           </div>
 
-                          <div>
-                            <h4 className="font-medium mb-2">Common Mistakes to Avoid</h4>
-                            <ul className="list-disc list-inside text-sm space-y-1">
-                              {exercise.mistakes.map((mistake, i) => (
-                                <li key={i}>{mistake}</li>
-                              ))}
-                            </ul>
-                          </div>
+                          {exercise.technique && (
+                            <div>
+                              <h4 className="font-medium mb-2">Proper Form</h4>
+                              <p className="text-sm">{exercise.technique}</p>
+                            </div>
+                          )}
 
-                          <div>
-                            <h4 className="font-medium mb-2">Modifications</h4>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <p className="font-medium text-green-600 dark:text-green-400">Easier Version</p>
-                                <p>{exercise.modifications.easier}</p>
-                              </div>
-                              <div>
-                                <p className="font-medium text-blue-600 dark:text-blue-400">Challenge Version</p>
-                                <p>{exercise.modifications.harder}</p>
+                          {exercise.mistakes && exercise.mistakes.length > 0 && (
+                            <div>
+                              <h4 className="font-medium mb-2">Common Mistakes to Avoid</h4>
+                              <ul className="list-disc list-inside text-sm space-y-1">
+                                {exercise.mistakes.map((mistake, i) => (
+                                  <li key={i}>{mistake}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {exercise.modifications && (
+                            <div>
+                              <h4 className="font-medium mb-2">Modifications</h4>
+                              <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                  <p className="font-medium text-green-600 dark:text-green-400">Easier Version</p>
+                                  <p>{exercise.modifications.easier}</p>
+                                </div>
+                                <div>
+                                  <p className="font-medium text-blue-600 dark:text-blue-400">Challenge Version</p>
+                                  <p>{exercise.modifications.harder}</p>
+                                </div>
                               </div>
                             </div>
-                          </div>
+                          )}
 
-                          <div>
-                            <h4 className="font-medium mb-2">Goal Alignment</h4>
-                            <p className="text-sm">{exercise.goalAlignment}</p>
-                          </div>
+                          {exercise.goalAlignment && (
+                            <div>
+                              <h4 className="font-medium mb-2">Goal Alignment</h4>
+                              <p className="text-sm">{exercise.goalAlignment}</p>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
                     ))}
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Progression Plan</h3>
-                  <p className="text-sm text-muted-foreground whitespace-pre-line">
-                    {workoutPlan.progressionPlan}
-                  </p>
-                </div>
+                {workoutPlan.progressionPlan && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Progression Plan</h3>
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">
+                      {workoutPlan.progressionPlan}
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">General Tips</h3>
-                    <ul className="list-disc list-inside space-y-1">
-                      {workoutPlan.tips.general.map((tip, index) => (
-                        <li key={index} className="text-sm text-muted-foreground">
-                          {tip}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {workoutPlan.tips.general && workoutPlan.tips.general.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">General Tips</h3>
+                      <ul className="list-disc list-inside space-y-1">
+                        {workoutPlan.tips.general.map((tip, index) => (
+                          <li key={index} className="text-sm text-muted-foreground">
+                            {tip}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-                  {Object.entries(workoutPlan.tips.goalSpecific).map(([goal, tips]) => (
+                  {workoutPlan.tips.goalSpecific && Object.entries(workoutPlan.tips.goalSpecific).map(([goal, tips]) => (
                     <div key={goal}>
                       <h3 className="text-lg font-semibold mb-2">Tips for {goal}</h3>
                       <ul className="list-disc list-inside space-y-1">
@@ -358,45 +377,47 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
                     </div>
                   ))}
 
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Safety Guidelines</h3>
-                    <ul className="list-disc list-inside space-y-1">
-                      {workoutPlan.tips.safety.map((tip, index) => (
-                        <li key={index} className="text-sm text-muted-foreground">
-                          {tip}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Achievements</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {achievements.map((achievement) => (
-                      <div
-                        key={achievement.id}
-                        className={`p-4 rounded-lg border ${
-                          achievement.isUnlocked
-                            ? "bg-primary/10 border-primary"
-                            : "bg-muted/50 border-muted"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          {getIconComponent(achievement.icon)}
-                          <div>
-                            <h4 className="font-medium">{achievement.title}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {achievement.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  {workoutPlan.tips.safety && workoutPlan.tips.safety.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Safety Guidelines</h3>
+                      <ul className="list-disc list-inside space-y-1">
+                        {workoutPlan.tips.safety.map((tip, index) => (
+                          <li key={index} className="text-sm text-muted-foreground">
+                            {tip}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
+
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Achievements</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {achievements.map((achievement) => (
+                  <div
+                    key={achievement.id}
+                    className={`p-4 rounded-lg border ${
+                      achievement.isUnlocked
+                        ? "bg-primary/10 border-primary"
+                        : "bg-muted/50 border-muted"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {getIconComponent(achievement.icon)}
+                      <div>
+                        <h4 className="font-medium">{achievement.title}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {achievement.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
