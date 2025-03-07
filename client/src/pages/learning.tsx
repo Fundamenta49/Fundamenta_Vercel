@@ -58,6 +58,31 @@ interface SkillGuidanceResponse {
   guidance: string;
 }
 
+// Function to convert URLs in text to clickable links
+const convertLinksToHtml = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.split('\n').map((line, i) => (
+    <p key={i}>
+      {line.split(urlRegex).map((part, j) => {
+        if (part.match(urlRegex)) {
+          return (
+            <a
+              key={j}
+              href={part}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              {part}
+            </a>
+          );
+        }
+        return part;
+      })}
+    </p>
+  ));
+};
+
 export default function Learning() {
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
@@ -128,121 +153,128 @@ export default function Learning() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 md:grid-cols-2">
-                {/* Technical Skills */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Technical Skills</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {TECHNICAL_SKILLS.map((skill) => (
-                        <div key={skill.name} className="space-y-2">
-                          <Button
-                            variant={selectedSkill === skill.name ? "default" : "outline"}
-                            className="w-full justify-start"
-                            onClick={() => {
-                              setSelectedSkill(skill.name);
-                              setSelectedArea(null);
-                              setGuidance(null);
-                            }}
-                          >
-                            {skill.name}
-                          </Button>
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Skills Selection */}
+                <div className="space-y-6">
+                  {/* Technical Skills */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Technical Skills</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {TECHNICAL_SKILLS.map((skill) => (
+                          <div key={skill.name} className="space-y-2">
+                            <Button
+                              variant={selectedSkill === skill.name ? "default" : "outline"}
+                              className="w-full justify-start"
+                              onClick={() => {
+                                setSelectedSkill(skill.name);
+                                setSelectedArea(null);
+                                setGuidance(null);
+                              }}
+                            >
+                              {skill.name}
+                            </Button>
 
-                          {selectedSkill === skill.name && (
-                            <div className="pl-4 space-y-2">
-                              {skill.areas.map((area) => (
-                                <Button
-                                  key={area}
-                                  variant={selectedArea === area ? "default" : "outline"}
-                                  size="sm"
-                                  className="w-full justify-start"
-                                  onClick={() => {
-                                    setSelectedArea(area);
-                                    getSkillGuidance("technical", area);
-                                  }}
-                                >
-                                  {area}
-                                </Button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Soft Skills */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Soft Skills</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {SOFT_SKILLS.map((skill) => (
-                        <div key={skill.name} className="space-y-2">
-                          <Button
-                            variant={selectedSkill === skill.name ? "default" : "outline"}
-                            className="w-full justify-start"
-                            onClick={() => {
-                              setSelectedSkill(skill.name);
-                              setSelectedArea(null);
-                              setGuidance(null);
-                            }}
-                          >
-                            {skill.name}
-                          </Button>
-
-                          {selectedSkill === skill.name && (
-                            <div className="pl-4 space-y-2">
-                              {skill.areas.map((area) => (
-                                <Button
-                                  key={area}
-                                  variant={selectedArea === area ? "default" : "outline"}
-                                  size="sm"
-                                  className="w-full justify-start"
-                                  onClick={() => {
-                                    setSelectedArea(area);
-                                    getSkillGuidance("soft", area);
-                                  }}
-                                >
-                                  {area}
-                                </Button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Guidance Display */}
-              {(isLoading || guidance) && (
-                <Card className="mt-6">
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      {selectedArea} - Learning Path
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {isLoading ? (
-                      <div className="text-center text-muted-foreground">
-                        Loading personalized guidance...
-                      </div>
-                    ) : (
-                      <div className="prose max-w-none">
-                        {guidance?.split('\n').map((line, i) => (
-                          <p key={i}>{line}</p>
+                            {selectedSkill === skill.name && (
+                              <div className="pl-4 space-y-2">
+                                {skill.areas.map((area) => (
+                                  <Button
+                                    key={area}
+                                    variant={selectedArea === area ? "default" : "outline"}
+                                    size="sm"
+                                    className="w-full justify-start"
+                                    onClick={() => {
+                                      setSelectedArea(area);
+                                      getSkillGuidance("technical", area);
+                                    }}
+                                  >
+                                    {area}
+                                  </Button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         ))}
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Soft Skills */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Soft Skills</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {SOFT_SKILLS.map((skill) => (
+                          <div key={skill.name} className="space-y-2">
+                            <Button
+                              variant={selectedSkill === skill.name ? "default" : "outline"}
+                              className="w-full justify-start"
+                              onClick={() => {
+                                setSelectedSkill(skill.name);
+                                setSelectedArea(null);
+                                setGuidance(null);
+                              }}
+                            >
+                              {skill.name}
+                            </Button>
+
+                            {selectedSkill === skill.name && (
+                              <div className="pl-4 space-y-2">
+                                {skill.areas.map((area) => (
+                                  <Button
+                                    key={area}
+                                    variant={selectedArea === area ? "default" : "outline"}
+                                    size="sm"
+                                    className="w-full justify-start"
+                                    onClick={() => {
+                                      setSelectedArea(area);
+                                      getSkillGuidance("soft", area);
+                                    }}
+                                  >
+                                    {area}
+                                  </Button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Guidance Display */}
+                <div className="h-full">
+                  <Card className="h-full">
+                    <CardHeader>
+                      <CardTitle className="text-lg">
+                        {selectedArea ? `${selectedArea} - Learning Path` : 'Select a Skill'}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ScrollArea className="h-[600px] pr-4">
+                        {isLoading ? (
+                          <div className="text-center text-muted-foreground">
+                            Loading personalized guidance...
+                          </div>
+                        ) : guidance ? (
+                          <div className="prose max-w-none">
+                            {convertLinksToHtml(guidance)}
+                          </div>
+                        ) : (
+                          <div className="text-center text-muted-foreground">
+                            Select a skill area to get personalized guidance
+                          </div>
+                        )}
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
