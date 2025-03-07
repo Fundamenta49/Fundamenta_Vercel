@@ -322,8 +322,10 @@ Structure your response in clear sections using plain text. Do not use any speci
 Format each section with a clear heading followed by concise, actionable content:
 
 Learning Resources:
-Keep descriptions brief and focused. List each resource with a short 1-line description.
-Include direct URLs where applicable.
+- For each resource, provide the full URL starting with https:// or www.
+- Include a brief one-line description after each URL
+- Focus on high-quality, accessible resources
+- Separate each resource with a line break
 
 Learning Path:
 Break down the journey into 3-5 main steps.

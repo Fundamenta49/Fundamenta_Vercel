@@ -117,7 +117,8 @@ const formatGuidanceContent = (content: string) => {
 
 // Function to convert URLs in text to clickable links with better formatting
 const convertLinksToHtml = (text: string) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  // Updated regex to catch both www. and http(s):// URLs
+  const urlRegex = /((?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?)/g;
   return text.split('\n').map((line, i) => {
     if (!line.trim()) return null;
 
@@ -125,10 +126,11 @@ const convertLinksToHtml = (text: string) => {
       <div key={i} className="mb-4">
         {line.split(urlRegex).map((part, j) => {
           if (part.match(urlRegex)) {
+            const url = part.startsWith('http') ? part : `https://${part}`;
             return (
               <a
                 key={j}
-                href={part}
+                href={url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
@@ -138,7 +140,7 @@ const convertLinksToHtml = (text: string) => {
               </a>
             );
           }
-          return <span>{part}</span>;
+          return <span key={j}>{part}</span>;
         })}
       </div>
     );
