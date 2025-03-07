@@ -45,44 +45,34 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Initialize achievements and load saved workout plan
-    const baseAchievements: Achievement[] = [
-      {
-        id: "profile-created",
-        title: "Getting Started",
-        description: "Created your fitness profile",
-        isUnlocked: true,
-        icon: "star"
-      }
-    ];
+    const initializeProfile = async () => {
+      // Initialize achievements
+      const baseAchievements: Achievement[] = [
+        {
+          id: "profile-created",
+          title: "Getting Started",
+          description: "Created your fitness profile",
+          isUnlocked: true,
+          icon: "star"
+        }
+      ];
 
-    profile.goals.forEach(goal => {
-      baseAchievements.push({
-        id: `goal-${goal.toLowerCase().replace(/\s+/g, '-')}`,
-        title: `${goal} Champion`,
-        description: `Make progress in your ${goal.toLowerCase()} journey`,
-        isUnlocked: false,
-        icon: "trophy"
+      profile.goals.forEach(goal => {
+        baseAchievements.push({
+          id: `goal-${goal.toLowerCase().replace(/\s+/g, '-')}`,
+          title: `${goal} Champion`,
+          description: `Make progress in your ${goal.toLowerCase()} journey`,
+          isUnlocked: false,
+          icon: "trophy"
+        });
       });
-    });
 
-    setAchievements(baseAchievements);
-    loadSavedWorkoutPlan();
+      setAchievements(baseAchievements);
+      await loadSavedWorkoutPlan();
+    };
+
+    initializeProfile();
   }, [profile]);
-
-  const loadSavedWorkoutPlan = () => {
-    try {
-      const savedPlan = localStorage.getItem('workoutPlan');
-      if (savedPlan) {
-        setWorkoutPlan(JSON.parse(savedPlan));
-      } else {
-        generateWorkoutPlan();
-      }
-    } catch (error) {
-      console.error('Error loading saved workout plan:', error);
-      generateWorkoutPlan();
-    }
-  };
 
   const validateYouTubeVideo = async (videoId: string): Promise<boolean> => {
     try {
@@ -95,6 +85,38 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
     } catch (error) {
       console.error('Error validating YouTube video:', error);
       return false;
+    }
+  };
+
+  const loadSavedWorkoutPlan = async () => {
+    try {
+      const savedPlan = localStorage.getItem('workoutPlan');
+      if (savedPlan) {
+        const plan = JSON.parse(savedPlan);
+
+        // Create a copy of the plan to modify
+        const validatedPlan = { ...plan };
+
+        // Validate YouTube videos for each exercise
+        await Promise.all(
+          validatedPlan.exercises.map(async (exercise) => {
+            if (exercise.videoId) {
+              const isValid = await validateYouTubeVideo(exercise.videoId);
+              if (!isValid) {
+                exercise.videoId = undefined;
+              }
+            }
+          })
+        );
+
+        setWorkoutPlan(validatedPlan);
+        localStorage.setItem('workoutPlan', JSON.stringify(validatedPlan));
+      } else {
+        await generateWorkoutPlan();
+      }
+    } catch (error) {
+      console.error('Error loading saved workout plan:', error);
+      await generateWorkoutPlan();
     }
   };
 
@@ -120,15 +142,17 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
 
       const plan = await response.json();
 
-      // Validate YouTube videos
-      for (const exercise of plan.exercises) {
-        if (exercise.videoId) {
-          const isValid = await validateYouTubeVideo(exercise.videoId);
-          if (!isValid) {
-            exercise.videoId = undefined; // Remove invalid video ID
+      // Validate YouTube videos in parallel
+      await Promise.all(
+        plan.exercises.map(async (exercise) => {
+          if (exercise.videoId) {
+            const isValid = await validateYouTubeVideo(exercise.videoId);
+            if (!isValid) {
+              exercise.videoId = undefined;
+            }
           }
-        }
-      }
+        })
+      );
 
       setWorkoutPlan(plan);
       localStorage.setItem('workoutPlan', JSON.stringify(plan));
@@ -172,7 +196,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
               </CardDescription>
             </div>
             <Button
-              onClick={generateWorkoutPlan}
+              onClick={() => generateWorkoutPlan()}
               disabled={isLoading}
               size="sm"
               variant="outline"
