@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge"; // Added import for Badge
 import { useToast } from "@/hooks/use-toast";
 import { FitnessProfile } from "./fitness-profile";
 import FitnessPlan from "./fitness-plan";
