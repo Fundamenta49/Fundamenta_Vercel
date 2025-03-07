@@ -8,6 +8,13 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
+  DollarSign,
+  Briefcase,
+  Heart,
+  Activity,
+  GraduationCap,
+  AlertCircle,
+  Home
 } from "lucide-react";
 import {
   Sheet,
@@ -18,17 +25,39 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 
-const navItems = [
+// Default navigation items for home page
+const defaultNavItems = [
   { href: "/why-fundamenta", label: "Why Fundamenta", icon: HeartHandshake },
   { href: "/partner", label: "Partner With Us", icon: HandshakeIcon },
   { href: "/privacy", label: "Privacy Hub", icon: Shield },
   { href: "/invite", label: "Invite Friends", icon: Users },
 ];
 
+// Feature cards navigation items
+const featureNavItems = [
+  { href: "/finance", label: "Financial Literacy", icon: DollarSign },
+  { href: "/career", label: "Career Development", icon: Briefcase },
+  { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
+  { href: "/active", label: "Active You", icon: Activity },
+  { href: "/learning", label: "Life Skills", icon: GraduationCap },
+  { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
+];
+
 export default function Navigation() {
   const [location] = useLocation();
   const isMobile = useIsMobile();
   const [isMinimized, setIsMinimized] = useState(false);
+
+  // Determine if we're on the home page
+  const isHomePage = location === "/";
+
+  // Select which navigation items to show based on current location
+  const navItems = isHomePage ? defaultNavItems : [
+    // Always include home as first item when not on home page
+    { href: "/", label: "Home", icon: Home },
+    // Filter out the current page from feature navigation
+    ...featureNavItems.filter(item => item.href !== location)
+  ];
 
   useEffect(() => {
     document.documentElement.style.setProperty(
