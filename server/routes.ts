@@ -261,6 +261,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  // Add this endpoint after the other chat-related endpoints
+  app.post("/api/career-guidance", async (req, res) => {
+    try {
+      const { message, riasecResults, conversationHistory } = z.object({
+        message: z.string(),
+        riasecResults: z.array(z.string()),
+        conversationHistory: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string()
+        }))
+      }).parse(req.body);
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", 
+        messages: [
+          {
+            role: "system",
+            content: `You are a career guidance counselor with expertise in the RIASEC model. 
+            The user has completed a RIASEC assessment with the following top matches:
+            ${riasecResults.join('\n')}
+
+            Provide personalized guidance based on these results and the user's questions.
+            Focus on practical next steps, education paths, and specific career opportunities.
+            Be encouraging but realistic, and always provide actionable advice.`
+          },
+          ...conversationHistory,
+          { role: "user", content: message }
+        ]
+      });
+
+      res.json({
+        response: response.choices[0].message.content || "I apologize, but I'm having trouble providing guidance right now. Please try again."
+      });
+    } catch (error) {
+      console.error("Career guidance error:", error);
+      res.status(500).json({
+        error: "Failed to get career guidance. Please try again later."
+      });
+    }
+  });
 
   app.post("/api/jobs/search", async (req, res) => {
     try {

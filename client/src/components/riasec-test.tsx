@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import CareerGuidance from "./career-guidance";
 
 const QUESTIONS = [
   // Realistic questions
@@ -74,6 +75,8 @@ export default function RiasecTest() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<{[key: number]: string}>({});
   const [showResults, setShowResults] = useState(false);
+  const [showGuidance, setShowGuidance] = useState(false);
+  const [results, setResults] = useState<string[]>([]);
 
   const calculateResults = () => {
     const scores: {[key: string]: number} = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
@@ -96,8 +99,19 @@ export default function RiasecTest() {
       .map(([category]) => RESULT_DESCRIPTIONS[category as keyof typeof RESULT_DESCRIPTIONS]);
   };
 
+  if (showGuidance) {
+    return (
+      <CareerGuidance
+        riasecResults={results}
+        onBack={() => setShowGuidance(false)}
+      />
+    );
+  }
+
   if (showResults) {
-    const results = calculateResults();
+    if (results.length === 0) {
+      setResults(calculateResults());
+    }
 
     return (
       <Card className="max-w-2xl mx-auto">
@@ -116,13 +130,21 @@ export default function RiasecTest() {
               </div>
             ))}
 
-            <div className="pt-6 border-t mt-6">
+            <div className="space-y-4 pt-6 border-t mt-6">
               <Button 
+                className="w-full"
+                onClick={() => setShowGuidance(true)}
+              >
+                Get AI Career Guidance
+              </Button>
+              <Button 
+                variant="outline"
                 className="w-full"
                 onClick={() => {
                   setShowResults(false);
                   setQuestionIndex(0);
                   setAnswers({});
+                  setResults([]);
                 }}
               >
                 Take Test Again
