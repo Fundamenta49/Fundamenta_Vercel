@@ -417,7 +417,6 @@ export default function RiskAssessment({ category }: Props) {
             ))}
           </div>
         </RadioGroup>
-
         <div className="flex justify-between mt-6">
           <Button
             variant="outline"
@@ -444,7 +443,6 @@ export default function RiskAssessment({ category }: Props) {
             </Button>
           )}
         </div>
-
       </CardContent>
     </Card>
   );
