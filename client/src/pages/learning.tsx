@@ -19,58 +19,58 @@ import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
 import { useState } from "react";
-import { 
-  GraduationCap, 
-  Book, 
-  Target, 
-  Brain, 
-  Lightbulb, 
-  Clock, 
+import {
+  GraduationCap,
+  Book,
+  Target,
+  Brain,
+  Lightbulb,
+  Clock,
   ListChecks,
   Laptop,
   ScrollText,
   Trophy,
-  Car, 
-  Wrench 
+  Car,
+  Wrench,
 } from "lucide-react";
 
 // Skill categories with their learning paths
 const TECHNICAL_SKILLS = [
   {
     name: "Programming & Development",
-    areas: ["Web Development", "Mobile Apps", "Data Science", "Cloud Computing"]
+    areas: ["Web Development", "Mobile Apps", "Data Science", "Cloud Computing"],
   },
   {
     name: "Data Analysis",
-    areas: ["SQL", "Python", "Data Visualization", "Statistical Analysis"]
+    areas: ["SQL", "Python", "Data Visualization", "Statistical Analysis"],
   },
   {
     name: "Digital Marketing",
-    areas: ["SEO", "Social Media", "Content Marketing", "Analytics"]
+    areas: ["SEO", "Social Media", "Content Marketing", "Analytics"],
   },
   {
     name: "Design & Creative Tools",
-    areas: ["UI/UX Design", "Graphic Design", "Video Editing", "3D Modeling"]
-  }
+    areas: ["UI/UX Design", "Graphic Design", "Video Editing", "3D Modeling"],
+  },
 ];
 
 const SOFT_SKILLS = [
   {
     name: "Communication",
-    areas: ["Public Speaking", "Writing", "Active Listening", "Presentation"]
+    areas: ["Public Speaking", "Writing", "Active Listening", "Presentation"],
   },
   {
     name: "Leadership",
-    areas: ["Team Management", "Decision Making", "Strategic Planning", "Delegation"]
+    areas: ["Team Management", "Decision Making", "Strategic Planning", "Delegation"],
   },
   {
     name: "Problem Solving",
-    areas: ["Critical Thinking", "Innovation", "Research", "Analysis"]
+    areas: ["Critical Thinking", "Innovation", "Research", "Analysis"],
   },
   {
     name: "Time Management",
-    areas: ["Priority Setting", "Goal Planning", "Productivity", "Organization"]
-  }
+    areas: ["Priority Setting", "Goal Planning", "Productivity", "Organization"],
+  },
 ];
 
 interface SkillGuidanceResponse {
@@ -79,8 +79,8 @@ interface SkillGuidanceResponse {
 
 // Function to format the guidance content into sections
 const formatGuidanceContent = (content: string) => {
-  // Split content into sections based on numbers or common section markers
-  const sections = content.split(/(?=\d+\.|Learning Resources:|Step-by-step|Practice Projects:|Time Investment:|Measuring Progress:)/g);
+  // Split content into sections based on clear headers
+  const sections = content.split(/(?=Learning Resources:|Learning Path:|Practice Projects:|Time Investment:|Measuring Progress:)/g);
 
   return sections.map((section) => {
     const trimmed = section.trim();
@@ -90,19 +90,19 @@ const formatGuidanceContent = (content: string) => {
     let icon = Laptop;
     let title = "Guide";
 
-    if (trimmed.toLowerCase().includes("resources")) {
+    if (trimmed.toLowerCase().includes("learning resources")) {
       icon = Book;
       title = "Learning Resources";
-    } else if (trimmed.toLowerCase().includes("step-by-step")) {
+    } else if (trimmed.toLowerCase().includes("learning path")) {
       icon = ListChecks;
       title = "Learning Path";
-    } else if (trimmed.toLowerCase().includes("practice") || trimmed.toLowerCase().includes("projects")) {
+    } else if (trimmed.toLowerCase().includes("practice projects")) {
       icon = Target;
       title = "Practice Projects";
-    } else if (trimmed.toLowerCase().includes("time")) {
+    } else if (trimmed.toLowerCase().includes("time investment")) {
       icon = Clock;
       title = "Time Investment";
-    } else if (trimmed.toLowerCase().includes("progress") || trimmed.toLowerCase().includes("measuring")) {
+    } else if (trimmed.toLowerCase().includes("measuring progress")) {
       icon = Trophy;
       title = "Measuring Progress";
     }
@@ -110,34 +110,39 @@ const formatGuidanceContent = (content: string) => {
     return {
       icon,
       title,
-      content: trimmed
+      content: trimmed.replace(/(Learning Resources:|Learning Path:|Practice Projects:|Time Investment:|Measuring Progress:)/, "").trim(),
     };
   }).filter(Boolean);
 };
 
-// Function to convert URLs in text to clickable links
+// Function to convert URLs in text to clickable links with better formatting
 const convertLinksToHtml = (text: string) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.split('\n').map((line, i) => (
-    <p key={i} className="mb-2">
-      {line.split(urlRegex).map((part, j) => {
-        if (part.match(urlRegex)) {
-          return (
-            <a
-              key={j}
-              href={part}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline font-medium"
-            >
-              {part}
-            </a>
-          );
-        }
-        return part;
-      })}
-    </p>
-  ));
+  return text.split('\n').map((line, i) => {
+    if (!line.trim()) return null;
+
+    return (
+      <p key={i} className="mb-3">
+        {line.split(urlRegex).map((part, j) => {
+          if (part.match(urlRegex)) {
+            return (
+              <a
+                key={j}
+                href={part}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+              >
+                <Book className="h-4 w-4" />
+                {part}
+              </a>
+            );
+          }
+          return part;
+        })}
+      </p>
+    );
+  }).filter(Boolean);
 };
 
 export default function Learning() {
@@ -156,8 +161,8 @@ export default function Learning() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           skillArea: skillType,
-          userQuery: `I want to learn ${area}. Please provide a detailed learning path and resources.`
-        })
+          userQuery: `I want to learn ${area}. Please provide a detailed learning path and resources.`,
+        }),
       });
 
       const data: SkillGuidanceResponse = await response.json();
@@ -201,7 +206,9 @@ export default function Learning() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="prose max-w-none">
-                      {convertLinksToHtml(section.content)}
+                      <div className="space-y-2">
+                        {convertLinksToHtml(section.content)}
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
