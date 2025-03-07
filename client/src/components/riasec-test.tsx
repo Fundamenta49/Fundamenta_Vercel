@@ -11,43 +11,27 @@ import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
+// Simple test questions until we get the full 72
 const questions = [
   { id: 1, text: "I like to build things" },
-  { id: 2, text: "I like to do puzzles" },
-  { id: 3, text: "I am good at working independently" },
-  { id: 4, text: "I like to work in teams" },
-  { id: 5, text: "I am an ambitious person" },
-  { id: 6, text: "I like to organize things" },
-  { id: 7, text: "I like to help others" },
-  { id: 8, text: "I enjoy learning new things" },
-  { id: 9, text: "I like to solve problems" },
-  { id: 10, text: "I enjoy creative activities" }
-];
-
-const answerOptions = [
-  "Strongly Disagree",
-  "Disagree", 
-  "Neutral",
-  "Agree",
-  "Strongly Agree"
+  { id: 2, text: "I like to solve problems" },
+  { id: 3, text: "I enjoy helping others" }
 ];
 
 export default function RiasecTest() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
-
-  const progress = (currentQuestionIndex / questions.length) * 100;
+  const [selectedAnswers, setSelectedAnswers] = useState({});
 
   return (
-    <Card>
+    <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Question {currentQuestionIndex + 1} of {questions.length}</CardTitle>
-        <CardDescription>{Math.round(progress)}% Complete</CardDescription>
+        <CardDescription>0% Complete</CardDescription>
       </CardHeader>
 
       <CardContent>
         <div className="space-y-6">
-          <Progress value={progress} />
+          <Progress value={0} />
 
           <div className="space-y-4">
             <Label className="text-lg">
@@ -55,48 +39,50 @@ export default function RiasecTest() {
             </Label>
 
             <RadioGroup
-              value={answers[questions[currentQuestionIndex].id]}
+              value={selectedAnswers[questions[currentQuestionIndex].id]}
               onValueChange={(value) => {
-                setAnswers(prev => ({
-                  ...prev,
+                setSelectedAnswers({
+                  ...selectedAnswers,
                   [questions[currentQuestionIndex].id]: value
-                }));
+                });
               }}
-              className="space-y-3"
             >
-              {answerOptions.map((option) => (
-                <div
-                  key={option}
-                  className="flex items-center space-x-3 border rounded-lg p-4"
-                >
-                  <RadioGroupItem value={option} id={option} />
-                  <Label htmlFor={option} className="flex-grow">
-                    {option}
-                  </Label>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 border rounded-lg p-4">
+                  <RadioGroupItem value="Strongly Disagree" id="strongly-disagree" />
+                  <Label htmlFor="strongly-disagree">Strongly Disagree</Label>
                 </div>
-              ))}
+                <div className="flex items-center space-x-2 border rounded-lg p-4">
+                  <RadioGroupItem value="Disagree" id="disagree" />
+                  <Label htmlFor="disagree">Disagree</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg p-4">
+                  <RadioGroupItem value="Neutral" id="neutral" />
+                  <Label htmlFor="neutral">Neutral</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg p-4">
+                  <RadioGroupItem value="Agree" id="agree" />
+                  <Label htmlFor="agree">Agree</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg p-4">
+                  <RadioGroupItem value="Strongly Agree" id="strongly-agree" />
+                  <Label htmlFor="strongly-agree">Strongly Agree</Label>
+                </div>
+              </div>
             </RadioGroup>
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex justify-between pt-6">
             <Button
               variant="outline"
-              onClick={() => {
-                if (currentQuestionIndex > 0) {
-                  setCurrentQuestionIndex(currentQuestionIndex - 1);
-                }
-              }}
+              onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
               disabled={currentQuestionIndex === 0}
             >
               Previous
             </Button>
             <Button
-              onClick={() => {
-                if (currentQuestionIndex < questions.length - 1) {
-                  setCurrentQuestionIndex(currentQuestionIndex + 1);
-                }
-              }}
-              disabled={!answers[questions[currentQuestionIndex].id]}
+              onClick={() => setCurrentQuestionIndex(Math.min(questions.length - 1, currentQuestionIndex + 1))}
+              disabled={!selectedAnswers[questions[currentQuestionIndex].id]}
             >
               Next
             </Button>
