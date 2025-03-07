@@ -8,9 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Award, Star, Trophy, Play } from "lucide-react";
+import { Award, Star, Trophy, Play, RefreshCw } from "lucide-react";
 import { FitnessProfile } from "./fitness-profile";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 interface Achievement {
   id: string;
@@ -44,7 +45,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Initialize achievements based on profile goals
+    // Initialize achievements and load saved workout plan
     const baseAchievements: Achievement[] = [
       {
         id: "profile-created",
@@ -66,17 +67,34 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
     });
 
     setAchievements(baseAchievements);
-    generateWorkoutPlan();
+    loadSavedWorkoutPlan();
   }, [profile]);
 
-  const getIconComponent = (iconName: Achievement["icon"]) => {
-    switch (iconName) {
-      case "star":
-        return <Star className="h-5 w-5" />;
-      case "trophy":
-        return <Trophy className="h-5 w-5" />;
-      case "award":
-        return <Award className="h-5 w-5" />;
+  const loadSavedWorkoutPlan = () => {
+    try {
+      const savedPlan = localStorage.getItem('workoutPlan');
+      if (savedPlan) {
+        setWorkoutPlan(JSON.parse(savedPlan));
+      } else {
+        generateWorkoutPlan();
+      }
+    } catch (error) {
+      console.error('Error loading saved workout plan:', error);
+      generateWorkoutPlan();
+    }
+  };
+
+  const validateYouTubeVideo = async (videoId: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`/api/youtube-search?videoId=${videoId}`);
+      if (!response.ok) {
+        return false;
+      }
+      const data = await response.json();
+      return data.items && data.items.length > 0;
+    } catch (error) {
+      console.error('Error validating YouTube video:', error);
+      return false;
     }
   };
 
@@ -101,7 +119,19 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       }
 
       const plan = await response.json();
+
+      // Validate YouTube videos
+      for (const exercise of plan.exercises) {
+        if (exercise.videoId) {
+          const isValid = await validateYouTubeVideo(exercise.videoId);
+          if (!isValid) {
+            exercise.videoId = undefined; // Remove invalid video ID
+          }
+        }
+      }
+
       setWorkoutPlan(plan);
+      localStorage.setItem('workoutPlan', JSON.stringify(plan));
 
       toast({
         title: "Workout Plan Generated!",
@@ -119,14 +149,38 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
     }
   };
 
+  const getIconComponent = (iconName: Achievement["icon"]) => {
+    switch (iconName) {
+      case "star":
+        return <Star className="h-5 w-5" />;
+      case "trophy":
+        return <Trophy className="h-5 w-5" />;
+      case "award":
+        return <Award className="h-5 w-5" />;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Your Fitness Journey</CardTitle>
-          <CardDescription>
-            Track your progress and earn achievements
-          </CardDescription>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Your Personalized Fitness Plan</CardTitle>
+              <CardDescription>
+                Track your progress and follow your customized workout routine
+              </CardDescription>
+            </div>
+            <Button
+              onClick={generateWorkoutPlan}
+              disabled={isLoading}
+              size="sm"
+              variant="outline"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Regenerate Plan
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -140,7 +194,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
 
             {workoutPlan && (
               <div>
-                <h3 className="text-lg font-semibold mb-4">Your Personalized Workout Plan</h3>
+                <h3 className="text-lg font-semibold mb-4">Your Workout Plan</h3>
                 <div className="grid gap-4">
                   {workoutPlan.exercises.map((exercise, index) => (
                     <Card key={index} className="p-4">
@@ -167,16 +221,18 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
                     </Card>
                   ))}
                 </div>
-                <div className="mt-4">
-                  <h4 className="font-medium mb-2">Training Tips:</h4>
-                  <ul className="list-disc list-inside space-y-1">
-                    {workoutPlan.tips.map((tip, index) => (
-                      <li key={index} className="text-sm text-muted-foreground">
-                        {tip}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {workoutPlan.tips.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-medium mb-2">Training Tips:</h4>
+                    <ul className="list-disc list-inside space-y-1">
+                      {workoutPlan.tips.map((tip, index) => (
+                        <li key={index} className="text-sm text-muted-foreground">
+                          {tip}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
 

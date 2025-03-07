@@ -355,22 +355,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/youtube-search", async (req, res) => {
     try {
+      const videoId = req.query.videoId as string;
       const query = req.query.q as string;
-      if (!query) {
-        return res.status(400).json({ error: "Search query is required" });
+
+      if (videoId) {
+        // Validate specific video
+        const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
+          params: {
+            part: 'snippet',
+            id: videoId,
+            key: process.env.YOUTUBE_API_KEY,
+          }
+        });
+        res.json(response.data);
+      } else if (query) {
+        // Search for videos
+        const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+          params: {
+            part: 'snippet',
+            q: query,
+            type: 'video',
+            maxResults: 3,
+            key: process.env.YOUTUBE_API_KEY,
+          }
+        });
+        res.json(response.data);
+      } else {
+        res.status(400).json({ error: "Either videoId or search query is required" });
       }
-
-      const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
-        params: {
-          part: 'snippet',
-          q: query,
-          type: 'video',
-          maxResults: 3,
-          key: process.env.YOUTUBE_API_KEY,
-        }
-      });
-
-      res.json(response.data);
     } catch (error) {
       console.error("YouTube API error:", error);
       res.status(500).json({ error: "Failed to fetch videos" });
