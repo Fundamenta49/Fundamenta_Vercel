@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -38,7 +39,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       career: "Welcome! I'm your career development coach. I'll help guide you based on your experience and aspirations. What brings you here today?",
       wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
       learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
-      fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. Whether you're into weightlifting, yoga, running, or meditation, I'll provide personalized guidance for your fitness journey. What would you like to work on today?"
+      fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?"
     };
 
     setMessages([{ role: "assistant", content: greetings[category], category }]);
@@ -46,7 +47,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
   const chatMutation = useMutation({
     mutationFn: async (content: string) => {
-      const res = await apiRequest("POST", "/api/chat", { 
+      const response = await apiRequest("POST", "/api/chat", { 
         content, 
         category,
         previousMessages: messages.map(m => ({
@@ -55,7 +56,13 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           category: m.category || category
         }))
       });
-      return res.json();
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to send message");
+      }
+
+      return response.json();
     },
     onSuccess: (data) => {
       setMessages((prev) => [
@@ -64,19 +71,20 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       ]);
       setInput("");
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: error.message || "Failed to send message. Please try again.",
       });
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || chatMutation.isPending) return;
 
+    // Add user message immediately
     setMessages((prev) => [...prev, { role: "user", content: input, category }]);
     chatMutation.mutate(input);
   };
@@ -121,6 +129,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type your message..."
           className="flex-1 min-h-[80px]"
+          disabled={chatMutation.isPending}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
@@ -133,7 +142,14 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           className="self-end"
           disabled={chatMutation.isPending || !input.trim()}
         >
-          Send
+          {chatMutation.isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            'Send'
+          )}
         </Button>
       </form>
     </div>

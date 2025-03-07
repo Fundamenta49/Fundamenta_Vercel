@@ -160,40 +160,29 @@ export async function getChatResponse(
     finance: "You are a financial advisor helping with budgeting, savings, and financial literacy. Adapt your advice to the user's financial knowledge level and goals.",
     career: "You are a career coach providing guidance on job searching, resume building, and interview preparation. Consider the user's experience level and career aspirations.",
     wellness: "You are a wellness coach providing guidance on mental health, meditation, and stress management. Be empathetic and adjust your tone based on the user's emotional state.",
-    learning: "You are a learning coach helping users develop new skills and knowledge. Adapt your guidance to their learning style and interests."
+    learning: "You are a learning coach helping users develop new skills and knowledge. Adapt your guidance to their learning style and interests.",
+    fitness: "You are a certified fitness trainer providing personalized workout guidance. Consider the user's fitness level, goals, and any limitations they mention."
   };
-
-  const crossCategoryContext = analyzeCrossCategory(previousMessages);
-  const personalityAnalysis = previousMessages.length > 0 
-    ? `Based on our conversation and cross-category analysis:
-       - Communication style: ${getPreferredStyle(previousMessages)}
-       - Interests: ${getInterests(previousMessages)}
-       - Learning approach: ${getLearningStyle(previousMessages)}
-       - Financial mindset: ${crossCategoryContext.finance.budgetingStyle || "unknown"}
-       - Career interests: ${crossCategoryContext.career.workPreferences?.join(", ") || "unknown"}
-       - Wellness priorities: ${crossCategoryContext.wellness.healthGoals?.join(", ") || "unknown"}
-       - Learning focus: ${crossCategoryContext.learning.interests?.join(", ") || "unknown"}
-
-       I'll adapt my responses to provide holistic guidance that considers all aspects of your development.`
-    : "";
 
   try {
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OpenAI API key not configured");
     }
 
+    // Convert previous messages to OpenAI's expected format
+    const formattedPreviousMessages = previousMessages.map(msg => ({
+      role: msg.role === "user" || msg.role === "assistant" ? msg.role : "user",
+      content: msg.content
+    }));
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `${systemPrompts[category as keyof typeof systemPrompts]}
-                   ${personalityAnalysis}
-                   Consider the user's full context across all categories when providing advice.
-                   Integrate relevant insights from finance, career, wellness, and learning when appropriate.
-                   Maintain a consistent and personalized approach based on the user's communication preferences.`
+          content: systemPrompts[category as keyof typeof systemPrompts] || systemPrompts.wellness
         },
-        ...previousMessages,
+        ...formattedPreviousMessages,
         { role: "user", content: prompt }
       ],
       temperature: 0.7,
@@ -203,6 +192,7 @@ export async function getChatResponse(
     return response.choices[0].message.content || "I apologize, I couldn't process that request.";
   } catch (error: any) {
     console.error("OpenAI API Error:", error);
+
     if (error.response) {
       console.error("OpenAI API Error Response:", {
         status: error.response.status,
@@ -210,7 +200,19 @@ export async function getChatResponse(
         data: error.response.data
       });
     }
-    return "I'm sorry, I'm having trouble processing your request right now.";
+
+    // Return user-friendly error messages based on the error type
+    if (error?.error?.type === "invalid_api_key") {
+      throw new Error("There was an issue with the AI service configuration. Please try again later.");
+    }
+    if (error?.error?.type === "invalid_request_error") {
+      throw new Error("I couldn't understand that request. Could you try rephrasing it?");
+    }
+    if (error.message.includes('rate limit exceeded')) {
+      throw new Error("The AI service is currently busy. Please try again in a moment.");
+    }
+
+    throw new Error("I'm having trouble processing your request right now. Please try again.");
   }
 }
 
