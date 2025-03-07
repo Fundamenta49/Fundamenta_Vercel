@@ -11,12 +11,23 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   AlertCircle,
   Image as ImageIcon,
   Calendar,
   Smile,
   Clock,
   Camera,
+  Mail,
+  Sparkles,
+  Heart,
+  Brain,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -27,6 +38,12 @@ interface JournalEntry {
   mood: string;
   imageUrl?: string;
   timestamp: string;
+  futureEmail?: {
+    date: string;
+    email: string;
+  };
+  prompt?: string;
+  category?: string;
 }
 
 const moods = [
@@ -36,12 +53,66 @@ const moods = [
   { emoji: "😤", label: "Frustrated" },
   { emoji: "😴", label: "Tired" },
   { emoji: "🤔", label: "Thoughtful" },
+  { emoji: "😰", label: "Anxious" },
+  { emoji: "🌟", label: "Inspired" },
+];
+
+const journalPrompts = {
+  daily: [
+    "What's one thing you're grateful for today?",
+    "What made you smile today?",
+    "What's one small win you had today?",
+    "What's something you're looking forward to?",
+    "Who made a positive impact on your day?",
+  ],
+  cbt: [
+    "Describe a situation that challenged you today. What thoughts and feelings came up?",
+    "What evidence supports and challenges your thoughts about this situation?",
+    "How else could you look at this situation?",
+    "What would you tell a friend in this situation?",
+    "What's a more balanced way to think about this?",
+  ],
+  healing: [
+    "What makes you feel safe and supported?",
+    "Write about a moment when you felt strong",
+    "What would you tell your younger self?",
+    "What boundaries do you want to set or maintain?",
+    "What positive changes have you noticed in yourself?",
+  ],
+  confidence: [
+    "List three things you're good at",
+    "Describe a challenge you overcame",
+    "What qualities do others appreciate in you?",
+    "Write about a time you were proud of yourself",
+    "What unique perspectives do you bring?",
+  ],
+  future: [
+    "Where do you see yourself in one year?",
+    "What dreams would you pursue if you knew you couldn't fail?",
+    "What habits would you like to develop?",
+    "What would make you feel fulfilled?",
+    "What legacy do you want to leave?",
+  ],
+};
+
+const promptCategories = [
+  { value: "daily", label: "Daily Reflection", icon: Sparkles },
+  { value: "cbt", label: "Therapeutic Reflection", icon: Brain },
+  { value: "healing", label: "Healing & Growth", icon: Heart },
+  { value: "confidence", label: "Building Confidence", icon: Smile },
+  { value: "future", label: "Future Self", icon: Calendar },
 ];
 
 export default function JournalEntry() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("daily");
+  const [currentPrompt, setCurrentPrompt] = useState<string>(journalPrompts.daily[0]);
+  const [futureEmail, setFutureEmail] = useState({
+    email: "",
+    date: "",
+  });
   const [currentEntry, setCurrentEntry] = useState({
     title: "",
     content: "",
@@ -60,6 +131,17 @@ export default function JournalEntry() {
     }
   };
 
+  const getRandomPrompt = (category: string) => {
+    const prompts = journalPrompts[category as keyof typeof journalPrompts];
+    const randomIndex = Math.floor(Math.random() * prompts.length);
+    return prompts[randomIndex];
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPrompt(getRandomPrompt(category));
+  };
+
   const handleEntrySubmit = () => {
     if (!currentEntry.title || !currentEntry.content) return;
 
@@ -70,12 +152,18 @@ export default function JournalEntry() {
       mood: currentEntry.mood,
       imageUrl: previewUrl || undefined,
       timestamp: new Date().toISOString(),
+      prompt: currentPrompt,
+      category: selectedCategory,
+      ...(selectedCategory === "future" && futureEmail.email && futureEmail.date
+        ? { futureEmail }
+        : {}),
     };
 
     setEntries([newEntry, ...entries]);
     setCurrentEntry({ title: "", content: "", mood: "" });
     setSelectedImage(null);
     setPreviewUrl(null);
+    setFutureEmail({ email: "", date: "" });
   };
 
   return (
@@ -92,6 +180,40 @@ export default function JournalEntry() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-4">
+            <Select
+              value={selectedCategory}
+              onValueChange={handleCategoryChange}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a journaling focus" />
+              </SelectTrigger>
+              <SelectContent>
+                {promptCategories.map((category) => (
+                  <SelectItem key={category.value} value={category.value}>
+                    <div className="flex items-center gap-2">
+                      <category.icon className="h-4 w-4" />
+                      {category.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="bg-muted p-4 rounded-lg">
+              <p className="text-sm font-medium mb-2">Today's Prompt:</p>
+              <p className="text-muted-foreground">{currentPrompt}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={() => setCurrentPrompt(getRandomPrompt(selectedCategory))}
+              >
+                Try Another Prompt
+              </Button>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Input
               placeholder="Entry Title"
@@ -128,6 +250,31 @@ export default function JournalEntry() {
               setCurrentEntry((prev) => ({ ...prev, content: e.target.value }))
             }
           />
+
+          {selectedCategory === "future" && (
+            <div className="space-y-2 bg-muted p-4 rounded-lg">
+              <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                Send to Future Self
+              </h3>
+              <Input
+                type="email"
+                placeholder="Your email"
+                value={futureEmail.email}
+                onChange={(e) =>
+                  setFutureEmail((prev) => ({ ...prev, email: e.target.value }))
+                }
+              />
+              <Input
+                type="date"
+                value={futureEmail.date}
+                min={format(new Date(), "yyyy-MM-dd")}
+                onChange={(e) =>
+                  setFutureEmail((prev) => ({ ...prev, date: e.target.value }))
+                }
+              />
+            </div>
+          )}
 
           <div className="flex items-center justify-between">
             <div>
@@ -185,6 +332,19 @@ export default function JournalEntry() {
                         <Smile className="h-4 w-4" />
                         Feeling {entry.mood}
                       </span>
+                    )}
+                    {entry.prompt && (
+                      <div className="text-sm text-muted-foreground mt-2">
+                        <span className="font-medium">Prompt: </span>
+                        {entry.prompt}
+                      </div>
+                    )}
+                    {entry.futureEmail && (
+                      <div className="text-sm text-muted-foreground flex items-center gap-1">
+                        <Mail className="h-4 w-4" />
+                        Will be sent to {entry.futureEmail.email} on{" "}
+                        {format(new Date(entry.futureEmail.date), "PP")}
+                      </div>
                     )}
                   </CardHeader>
                   <CardContent className="p-4 pt-0">
