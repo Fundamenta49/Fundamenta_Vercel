@@ -13,10 +13,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Brain, Briefcase, Lightbulb, AlertCircle } from "lucide-react";
 
-interface Props {
-  category: string;
-}
-
 interface Question {
   id: number;
   text: string;
@@ -126,7 +122,7 @@ const answerOptions = [
   { value: "5", label: "Strongly Agree" }
 ];
 
-export default function CareerInterestAssessment({ category }: Props) {
+export default function CareerInterestAssessment() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
