@@ -33,6 +33,7 @@ import {
   Car,
   Wrench,
 } from "lucide-react";
+import LearningCalendar from "@/components/learning-calendar";
 
 // Skill categories with their learning paths
 const TECHNICAL_SKILLS = [
@@ -250,6 +251,7 @@ export default function Learning() {
             <TabsTrigger value="chat">AI Learning Coach</TabsTrigger>
             <TabsTrigger value="skills">Skill Building</TabsTrigger>
             <TabsTrigger value="courses">Learning Paths</TabsTrigger>
+            <TabsTrigger value="calendar">Schedule</TabsTrigger>
             <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
             <TabsTrigger value="handyman">Home Repairs</TabsTrigger>
             <TabsTrigger value="goals">Goal Setting</TabsTrigger>
@@ -414,6 +416,10 @@ export default function Learning() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="calendar">
+          <LearningCalendar />
         </TabsContent>
 
         <TabsContent value="goals">
