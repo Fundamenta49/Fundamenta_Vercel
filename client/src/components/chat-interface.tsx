@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import ChatOnboarding from "./chat-onboarding";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -21,8 +22,28 @@ interface ChatInterfaceProps {
 export default function ChatInterface({ category }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
+  const [showOnboarding, setShowOnboarding] = useState(true);
   const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Check if user has completed onboarding for this category
+    const hasCompletedOnboarding = localStorage.getItem(`chat-onboarding-${category}`);
+    if (hasCompletedOnboarding) {
+      setShowOnboarding(false);
+      // Set initial greeting based on category
+      const greetings = {
+        emergency: "Hello, I'm here to help you with any emergency situation. What's happening?",
+        finance: "Hi! I'm your financial advisor. I'll adapt my guidance to your financial goals and knowledge level. What would you like to discuss?",
+        career: "Welcome! I'm your career development coach. I'll help guide you based on your experience and aspirations. What brings you here today?",
+        wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
+        learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
+        fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?"
+      };
+
+      setMessages([{ role: "assistant", content: greetings[category], category }]);
+    }
+  }, [category]);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
@@ -30,20 +51,6 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
-
-  // Set initial greeting based on category
-  useEffect(() => {
-    const greetings = {
-      emergency: "Hello, I'm here to help you with any emergency situation. What's happening?",
-      finance: "Hi! I'm your financial advisor. I'll adapt my guidance to your financial goals and knowledge level. What would you like to discuss?",
-      career: "Welcome! I'm your career development coach. I'll help guide you based on your experience and aspirations. What brings you here today?",
-      wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
-      learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
-      fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?"
-    };
-
-    setMessages([{ role: "assistant", content: greetings[category], category }]);
-  }, [category]);
 
   const chatMutation = useMutation({
     mutationFn: async (content: string) => {
@@ -88,6 +95,26 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     setMessages((prev) => [...prev, { role: "user", content: input, category }]);
     chatMutation.mutate(input);
   };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    localStorage.setItem(`chat-onboarding-${category}`, 'true');
+    // Set initial greeting after onboarding
+    const greetings = {
+      emergency: "Now that you know how I can help, what's the emergency situation?",
+      finance: "Great! Now that you know how I can help with your finances, what would you like to discuss?",
+      career: "Excellent! I'm ready to help with your career development. What would you like to explore first?",
+      wellness: "Perfect! Now that you know how I can support your wellness journey, what would you like to focus on?",
+      learning: "Wonderful! I'm ready to help you learn. What skills would you like to develop?",
+      fitness: "Awesome! Now that you know how I can help with your fitness goals, what would you like to work on first?"
+    };
+
+    setMessages([{ role: "assistant", content: greetings[category], category }]);
+  };
+
+  if (showOnboarding) {
+    return <ChatOnboarding category={category} onComplete={handleOnboardingComplete} />;
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-16rem)] min-h-[500px]">
