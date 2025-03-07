@@ -13,13 +13,26 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
 import { useState } from "react";
-import { GraduationCap, Book, Target, Brain, Lightbulb, Car, Wrench } from "lucide-react";
+import { 
+  GraduationCap, 
+  Book, 
+  Target, 
+  Brain, 
+  Lightbulb, 
+  Clock, 
+  ListChecks,
+  Laptop,
+  ScrollText,
+  Trophy,
+  Car, 
+  Wrench 
+} from "lucide-react";
 
 // Skill categories with their learning paths
 const TECHNICAL_SKILLS = [
@@ -64,11 +77,49 @@ interface SkillGuidanceResponse {
   guidance: string;
 }
 
+// Function to format the guidance content into sections
+const formatGuidanceContent = (content: string) => {
+  // Split content into sections based on numbers or common section markers
+  const sections = content.split(/(?=\d+\.|Learning Resources:|Step-by-step|Practice Projects:|Time Investment:|Measuring Progress:)/g);
+
+  return sections.map((section) => {
+    const trimmed = section.trim();
+    if (!trimmed) return null;
+
+    // Determine section type and assign appropriate icon
+    let icon = Laptop;
+    let title = "Guide";
+
+    if (trimmed.toLowerCase().includes("resources")) {
+      icon = Book;
+      title = "Learning Resources";
+    } else if (trimmed.toLowerCase().includes("step-by-step")) {
+      icon = ListChecks;
+      title = "Learning Path";
+    } else if (trimmed.toLowerCase().includes("practice") || trimmed.toLowerCase().includes("projects")) {
+      icon = Target;
+      title = "Practice Projects";
+    } else if (trimmed.toLowerCase().includes("time")) {
+      icon = Clock;
+      title = "Time Investment";
+    } else if (trimmed.toLowerCase().includes("progress") || trimmed.toLowerCase().includes("measuring")) {
+      icon = Trophy;
+      title = "Measuring Progress";
+    }
+
+    return {
+      icon,
+      title,
+      content: trimmed
+    };
+  }).filter(Boolean);
+};
+
 // Function to convert URLs in text to clickable links
 const convertLinksToHtml = (text: string) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   return text.split('\n').map((line, i) => (
-    <p key={i}>
+    <p key={i} className="mb-2">
       {line.split(urlRegex).map((part, j) => {
         if (part.match(urlRegex)) {
           return (
@@ -77,7 +128,7 @@ const convertLinksToHtml = (text: string) => {
               href={part}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary hover:underline font-medium"
             >
               {part}
             </a>
@@ -124,20 +175,36 @@ export default function Learning() {
       <h1 className="text-3xl font-bold mb-6">Learning & Development</h1>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh]">
+        <DialogContent className="max-w-3xl max-h-[80vh]">
           <DialogHeader>
-            <DialogTitle>
-              {selectedArea ? `${selectedArea} - Learning Path` : 'Learning Guidance'}
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <GraduationCap className="h-6 w-6 text-primary" />
+              {selectedArea} Learning Path
             </DialogTitle>
           </DialogHeader>
           <ScrollArea className="h-[60vh] pr-4">
             {isLoading ? (
-              <div className="text-center text-muted-foreground">
-                Loading personalized guidance...
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center text-muted-foreground">
+                  <Brain className="h-8 w-8 mb-4 mx-auto animate-pulse" />
+                  <p>Crafting your personalized learning path...</p>
+                </div>
               </div>
             ) : guidance ? (
-              <div className="prose max-w-none">
-                {convertLinksToHtml(guidance)}
+              <div className="space-y-6">
+                {formatGuidanceContent(guidance).map((section, index) => (
+                  <Card key={index} className="border-l-4 border-l-primary">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <section.icon className="h-5 w-5 text-primary" />
+                        {section.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="prose max-w-none">
+                      {convertLinksToHtml(section.content)}
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             ) : null}
           </ScrollArea>
