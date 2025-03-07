@@ -322,9 +322,10 @@ Structure your response in clear sections using plain text. Do not use any speci
 Format each section with a clear heading followed by concise, actionable content:
 
 Learning Resources:
-- For each resource, provide the full URL starting with https:// or www.
-- Include a brief one-line description after each URL
-- Focus on high-quality, accessible resources
+- For each resource, provide only verified and current learning platforms/URLs (e.g., coursera.org, udemy.com, freecodecamp.org, edx.org)
+- Include the full URL starting with https:// 
+- Add a brief one-line description after each URL
+- Focus on high-quality, popular learning platforms
 - Separate each resource with a line break
 
 Learning Path:

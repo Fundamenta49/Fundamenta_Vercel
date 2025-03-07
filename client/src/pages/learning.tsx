@@ -127,16 +127,40 @@ const convertLinksToHtml = (text: string) => {
         {line.split(urlRegex).map((part, j) => {
           if (part.match(urlRegex)) {
             const url = part.startsWith('http') ? part : `https://${part}`;
+            const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+
+            // List of known reliable learning platforms
+            const knownPlatforms = [
+              'coursera.org',
+              'udemy.com',
+              'edx.org',
+              'freecodecamp.org',
+              'linkedin.com/learning',
+              'pluralsight.com',
+              'codecademy.com',
+              'youtube.com',
+              'github.com',
+              'developer.mozilla.org'
+            ];
+
+            const isKnownPlatform = knownPlatforms.some(platform => 
+              domain.includes(platform) || platform.includes(domain)
+            );
+
             return (
               <a
                 key={j}
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+                className={`inline-flex items-center gap-1 ${
+                  isKnownPlatform ? 'text-primary' : 'text-yellow-600'
+                } hover:underline font-medium`}
+                title={isKnownPlatform ? 'Visit resource' : 'This link may be outdated - please verify before proceeding'}
               >
                 <Book className="h-4 w-4" />
-                {part}
+                {domain}
+                {!isKnownPlatform && <span className="text-xs ml-1">(verify link)</span>}
               </a>
             );
           }
