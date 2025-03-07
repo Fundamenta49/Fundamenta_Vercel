@@ -1,22 +1,22 @@
 {
   "variant": "professional",
-  "primary": "hsl(34, 33%, 75%)",
+  "primary": "hsl(230, 60%, 60%)",
   "appearance": "light",
-  "radius": 0.5,
+  "radius": 0.75,
   "colors": {
-    "background": "hsl(34, 33%, 75%)",
-    "foreground": "hsl(20, 29%, 28%)",
-    "muted": "hsl(46, 33%, 91%)",
-    "accent": "hsl(177, 48%, 46%)",
+    "background": "hsl(0, 0%, 100%)",
+    "foreground": "hsl(222, 47%, 11%)",
+    "muted": "hsl(210, 40%, 96%)",
+    "accent": "hsl(262, 83%, 58%)",
     "primary": {
-      "default": "hsl(34, 33%, 75%)",
-      "light": "hsl(34, 33%, 85%)",
-      "dark": "hsl(34, 33%, 65%)"
+      "default": "hsl(230, 60%, 60%)",
+      "light": "hsl(230, 60%, 70%)",
+      "dark": "hsl(230, 60%, 50%)"
     },
     "secondary": {
-      "default": "hsl(177, 48%, 46%)",
-      "light": "hsl(177, 48%, 56%)",
-      "dark": "hsl(177, 48%, 36%)"
+      "default": "hsl(262, 83%, 58%)",
+      "light": "hsl(262, 83%, 68%)",
+      "dark": "hsl(262, 83%, 48%)"
     },
     "wood": {
       "default": "hsl(20, 29%, 28%)",
@@ -26,13 +26,14 @@
   },
   "effects": {
     "shadows": {
-      "sm": "0 1px 2px 0 rgb(92 64 51 / 0.1)",
-      "md": "0 4px 6px -1px rgb(92 64 51 / 0.15)",
-      "lg": "0 10px 15px -3px rgb(92 64 51 / 0.2)"
+      "sm": "0 2px 4px 0 rgb(0 0 0 / 0.05)",
+      "md": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
     },
     "gradients": {
-      "wood": "linear-gradient(45deg, var(--wood-dark), var(--wood-light))",
-      "sandstone": "linear-gradient(to right, var(--primary-light), var(--primary-dark))"
+      "primary": "linear-gradient(135deg, var(--primary-light), var(--primary-dark))",
+      "accent": "linear-gradient(135deg, var(--secondary-light), var(--secondary-dark))",
+      "modern": "linear-gradient(135deg, var(--primary-light), var(--secondary-dark))"
     }
   }
 }
