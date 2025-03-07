@@ -12,6 +12,7 @@ import CPRGuide from "@/components/cpr-guide";
 import DomesticViolenceHelp from "@/components/domestic-violence-help";
 import LegalRightsGuide from "@/components/legal-rights-guide";
 import SurvivorStories from "@/components/survivor-stories";
+import RiskAssessment from "@/components/risk-assessment";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Emergency() {
@@ -23,6 +24,7 @@ export default function Emergency() {
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Assistant</TabsTrigger>
+            <TabsTrigger value="assessment">Am I at Risk?</TabsTrigger>
             <TabsTrigger value="guides">Emergency Guides</TabsTrigger>
             <TabsTrigger value="cpr">CPR Training</TabsTrigger>
             <TabsTrigger value="safety">Safety Resources</TabsTrigger>
@@ -43,6 +45,10 @@ export default function Emergency() {
               <ChatInterface category="emergency" />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="assessment">
+          <RiskAssessment />
         </TabsContent>
 
         <TabsContent value="guides">
