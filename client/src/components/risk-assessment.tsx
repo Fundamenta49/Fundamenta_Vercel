@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, Heart, Sparkles, Phone } from "lucide-react";
+import { Brain, Heart, Sparkles, Phone, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Props {
@@ -26,6 +26,20 @@ interface Question {
     text: string;
     value: number;
   }>;
+  immediateResources?: Array<{
+    threshold: number;
+    resource: Resource;
+  }>;
+}
+
+interface Resource {
+  title: string;
+  description: string;
+  action: string;
+  link?: string;
+  phone?: string;
+  urgent: boolean;
+  category: 'emotional' | 'physical' | 'mental' | 'social';
 }
 
 const wellnessQuestions: Question[] = [
@@ -38,6 +52,19 @@ const wellnessQuestions: Question[] = [
       { text: "Generally good with some ups and downs", value: 1 },
       { text: "More down than usual", value: 2 },
       { text: "Consistently struggling", value: 3 }
+    ],
+    immediateResources: [
+      {
+        threshold: 2,
+        resource: {
+          title: "Talk to Someone Now",
+          description: "Connect with a mental health professional immediately",
+          action: "Get Support",
+          phone: "988",
+          urgent: true,
+          category: 'emotional'
+        }
+      }
     ]
   },
   {
@@ -49,6 +76,19 @@ const wellnessQuestions: Question[] = [
       { text: "Some nights are better than others", value: 1 },
       { text: "Often having trouble sleeping", value: 2 },
       { text: "Severe sleep difficulties", value: 3 }
+    ],
+    immediateResources: [
+      {
+        threshold: 2,
+        resource: {
+          title: "Sleep Improvement Guide",
+          description: "Access immediate relaxation techniques and sleep hygiene tips",
+          action: "View Guide",
+          link: "/wellness/sleep",
+          urgent: false,
+          category: 'physical'
+        }
+      }
     ]
   },
   {
@@ -60,6 +100,19 @@ const wellnessQuestions: Question[] = [
       { text: "Occasionally", value: 1 },
       { text: "Frequently", value: 2 },
       { text: "Almost constantly", value: 3 }
+    ],
+    immediateResources: [
+      {
+        threshold: 2,
+        resource: {
+          title: "Stress Relief Tools",
+          description: "Try these immediate stress-reduction techniques",
+          action: "Start Now",
+          link: "/wellness/stress-relief",
+          urgent: false,
+          category: 'mental'
+        }
+      }
     ]
   },
   {
@@ -71,6 +124,19 @@ const wellnessQuestions: Question[] = [
       { text: "Moderately connected", value: 1 },
       { text: "Somewhat isolated", value: 2 },
       { text: "Very isolated", value: 3 }
+    ],
+    immediateResources: [
+      {
+        threshold: 2,
+        resource: {
+          title: "Community Connection",
+          description: "Join our supportive community and connect with others",
+          action: "Connect Now",
+          link: "/wellness/community",
+          urgent: false,
+          category: 'social'
+        }
+      }
     ]
   },
   {
@@ -82,84 +148,103 @@ const wellnessQuestions: Question[] = [
       { text: "Generally able to cope", value: 1 },
       { text: "Sometimes struggle to cope", value: 2 },
       { text: "Often feel unable to cope", value: 3 }
+    ],
+    immediateResources: [
+      {
+        threshold: 2,
+        resource: {
+          title: "Coping Skills Workshop",
+          description: "Learn and practice effective coping strategies",
+          action: "Start Learning",
+          link: "/wellness/coping-skills",
+          urgent: false,
+          category: 'mental'
+        }
+      }
     ]
   }
 ];
 
-interface Resource {
-  title: string;
-  description: string;
-  action: string;
-  link?: string;
-  phone?: string;
-  urgent: boolean;
-}
+const generalResources: Resource[] = [
+  {
+    title: "Guided Meditation",
+    description: "Take a moment to center yourself with our guided meditation",
+    action: "Start Now",
+    link: "/wellness/meditation",
+    urgent: false,
+    category: 'mental'
+  },
+  {
+    title: "Wellness Journal",
+    description: "Track your emotional well-being and identify patterns",
+    action: "Start Journaling",
+    link: "/wellness/journal",
+    urgent: false,
+    category: 'emotional'
+  },
+  {
+    title: "Community Support",
+    description: "Connect with others on similar wellness journeys",
+    action: "Join Community",
+    link: "/wellness/community",
+    urgent: false,
+    category: 'social'
+  }
+];
 
 export default function RiskAssessment({ category }: Props) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [resources, setResources] = useState<Resource[]>([]);
+  const [immediateResource, setImmediateResource] = useState<Resource | null>(null);
   const { toast } = useToast();
 
   const progress = (currentQuestion / wellnessQuestions.length) * 100;
 
   const evaluateWellness = (answers: Record<number, number>) => {
-    const totalScore = Object.values(answers).reduce((sum, val) => sum + val, 0);
-    const maxPossibleScore = wellnessQuestions.length * 3;
-    const wellnessLevel = totalScore / maxPossibleScore;
+    const recommendedResources = [...generalResources];
 
-    const recommendedResources: Resource[] = [
-      {
-        title: "Guided Meditation",
-        description: "Take a moment to center yourself with our guided meditation",
-        action: "Start Now",
-        link: "/wellness/meditation",
-        urgent: false
-      },
-      {
-        title: "Wellness Journal",
-        description: "Track your emotional well-being and identify patterns",
-        action: "Start Journaling",
-        link: "/wellness/journal",
-        urgent: false
-      },
-      {
-        title: "Community Support",
-        description: "Connect with others on similar wellness journeys",
-        action: "Join Community",
-        link: "/wellness/community",
-        urgent: false
+    // Add category-specific resources based on answers
+    Object.entries(answers).forEach(([questionId, value]) => {
+      const question = wellnessQuestions.find(q => q.id === parseInt(questionId));
+      if (question?.immediateResources) {
+        question.immediateResources.forEach(({ threshold, resource }) => {
+          if (value >= threshold && !recommendedResources.some(r => r.title === resource.title)) {
+            recommendedResources.push(resource);
+          }
+        });
       }
-    ];
+    });
 
-    // Add specific resources based on answers
-    if (answers[1] >= 2) { // High emotional distress
-      recommendedResources.unshift({
-        title: "Talk to Someone",
-        description: "Connect with a mental health professional",
-        action: "Get Support Now",
-        phone: "988",
-        urgent: true
-      });
-    }
-
-    if (answers[2] >= 2) { // Sleep issues
-      recommendedResources.push({
-        title: "Sleep Improvement Guide",
-        description: "Expert tips for better sleep quality",
-        action: "View Guide",
-        link: "/wellness/sleep",
-        urgent: false
-      });
-    }
-
-    return recommendedResources;
+    // Prioritize urgent resources
+    return recommendedResources.sort((a, b) => {
+      if (a.urgent && !b.urgent) return -1;
+      if (!a.urgent && b.urgent) return 1;
+      return 0;
+    });
   };
 
   const handleAnswer = (value: number) => {
-    const newAnswers = { ...answers, [wellnessQuestions[currentQuestion].id]: value };
+    const currentQuestionData = wellnessQuestions[currentQuestion];
+    const newAnswers = { ...answers, [currentQuestionData.id]: value };
     setAnswers(newAnswers);
+
+    // Check for immediate resources based on the answer
+    if (currentQuestionData.immediateResources) {
+      const immediateResource = currentQuestionData.immediateResources.find(
+        r => value >= r.threshold
+      )?.resource;
+
+      if (immediateResource) {
+        setImmediateResource(immediateResource);
+        toast({
+          title: "Resources Available",
+          description: "We've identified some helpful resources based on your response.",
+          duration: 5000,
+        });
+      }
+    }
 
     if (currentQuestion < wellnessQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
@@ -175,6 +260,7 @@ export default function RiskAssessment({ category }: Props) {
     setAnswers({});
     setShowResults(false);
     setResources([]);
+    setImmediateResource(null);
   };
 
   if (showResults) {
@@ -223,6 +309,7 @@ export default function RiskAssessment({ category }: Props) {
                       }
                     }}
                   >
+                    <ExternalLink className="h-4 w-4 mr-2" />
                     {resource.action}
                   </Button>
                 )}
@@ -267,6 +354,34 @@ export default function RiskAssessment({ category }: Props) {
           </div>
           <Progress value={progress} />
         </div>
+
+        {immediateResource && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <Heart className="h-4 w-4 text-blue-500" />
+            <AlertDescription className="flex items-center justify-between">
+              <span className="text-blue-800">{immediateResource.description}</span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-2"
+                onClick={() => {
+                  if (immediateResource.phone) {
+                    window.location.href = `tel:${immediateResource.phone}`;
+                  } else if (immediateResource.link) {
+                    window.location.href = immediateResource.link;
+                  }
+                }}
+              >
+                {immediateResource.phone ? (
+                  <Phone className="h-4 w-4 mr-2" />
+                ) : (
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                )}
+                {immediateResource.action}
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="space-y-4">
           <Label className="text-lg">{wellnessQuestions[currentQuestion].text}</Label>
