@@ -241,14 +241,6 @@ export default function RiskAssessment({ category }: Props) {
     setShowResults(true);
   };
 
-  const handleRestart = () => {
-    setCurrentQuestion(0);
-    setAnswers({});
-    setShowResults(false);
-    setResources([]);
-    setImmediateResource(null);
-  };
-
   const handleResourceClick = (resource: Resource) => {
     if (resource.phone) {
       window.location.href = `tel:${resource.phone}`;
@@ -353,11 +345,10 @@ export default function RiskAssessment({ category }: Props) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Brain className="h-6 w-6 text-primary" />
-          BrainTap Check-In
+          Educational Assessment
         </CardTitle>
         <CardDescription>
-          Take a moment to reflect on your well-being. Your responses will help us
-          provide personalized resources and support.
+          Take a moment to reflect on your learning preferences and goals.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -369,55 +360,39 @@ export default function RiskAssessment({ category }: Props) {
           <Progress value={progress} />
         </div>
 
-        {immediateResource && (
-          <Alert className="bg-blue-50 border-blue-200">
-            <Heart className="h-4 w-4 text-blue-500" />
-            <AlertDescription className="flex items-center justify-between">
-              <span className="text-blue-800">{immediateResource.description}</span>
-              {renderResourceButton(immediateResource)}
-            </AlertDescription>
-          </Alert>
-        )}
+        <div className="space-y-6">
+          <Label className="text-lg font-medium">
+            {wellnessQuestions[currentQuestion].text}
+          </Label>
 
-        <Label className="text-lg">{wellnessQuestions[currentQuestion].text}</Label>
-        <RadioGroup
-          value={answers[wellnessQuestions[currentQuestion].id]?.toString()}
-          onValueChange={(value) => {
-            const currentQuestionData = wellnessQuestions[currentQuestion];
-            const newAnswers = { ...answers, [currentQuestionData.id]: parseInt(value) };
-            setAnswers(newAnswers);
+          <RadioGroup
+            value={answers[wellnessQuestions[currentQuestion].id]?.toString()}
+            onValueChange={(value) => {
+              const currentQuestionData = wellnessQuestions[currentQuestion];
+              const numValue = parseInt(value);
+              setAnswers(prev => ({ ...prev, [currentQuestionData.id]: numValue }));
+            }}
+          >
+            <div className="space-y-3">
+              {wellnessQuestions[currentQuestion].options.map((option) => (
+                <div
+                  key={option.text}
+                  className="flex items-center space-x-3 border rounded-lg p-4 hover:bg-accent"
+                >
+                  <RadioGroupItem
+                    value={option.value.toString()}
+                    id={option.text}
+                  />
+                  <Label htmlFor={option.text} className="flex-grow">
+                    {option.text}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </RadioGroup>
+        </div>
 
-            if (currentQuestionData.immediateResources) {
-              const immediateResource = currentQuestionData.immediateResources.find(
-                r => parseInt(value) >= r.threshold
-              )?.resource;
-
-              if (immediateResource) {
-                setImmediateResource(immediateResource);
-                toast({
-                  title: "Resources Available",
-                  description: "We've identified some helpful resources based on your response.",
-                  duration: 5000,
-                });
-              }
-            }
-          }}
-        >
-          <div className="space-y-2">
-            {wellnessQuestions[currentQuestion].options.map((option) => (
-              <div
-                key={option.text}
-                className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent"
-              >
-                <RadioGroupItem value={option.value.toString()} id={option.text} />
-                <Label htmlFor={option.text} className="flex-grow">
-                  {option.text}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </RadioGroup>
-        <div className="flex justify-between mt-6">
+        <div className="flex justify-between pt-6 border-t">
           <Button
             variant="outline"
             onClick={handleBack}
@@ -425,17 +400,16 @@ export default function RiskAssessment({ category }: Props) {
           >
             Back
           </Button>
+
           {currentQuestion < wellnessQuestions.length - 1 ? (
             <Button
-              variant="default"
               onClick={handleNext}
               disabled={!answers[wellnessQuestions[currentQuestion].id]}
             >
-              Next
+              Next Question
             </Button>
           ) : (
             <Button
-              variant="default"
               onClick={handleSubmit}
               disabled={!answers[wellnessQuestions[currentQuestion].id]}
             >
