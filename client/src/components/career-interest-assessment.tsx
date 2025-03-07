@@ -21,87 +21,100 @@ interface Question {
   id: number;
   text: string;
   category: 'R' | 'I' | 'A' | 'S' | 'E' | 'C';
-  type: 'activity' | 'competency' | 'occupation';
 }
 
+// Standard RIASEC questions from Open Source Psychometrics Project
 const riasecQuestions: Question[] = [
   // Realistic questions
   {
     id: 1,
-    text: "Do you enjoy working with your hands and using tools?",
-    category: 'R',
-    type: 'activity'
+    text: "I like to work on cars",
+    category: 'R'
   },
   {
     id: 2,
-    text: "Are you interested in fixing mechanical things or machines?",
-    category: 'R',
-    type: 'activity'
+    text: "I like to do puzzles",
+    category: 'I'
   },
-  // Investigative questions
   {
     id: 3,
-    text: "Do you like solving complex problems and puzzles?",
-    category: 'I',
-    type: 'activity'
+    text: "I am good at working independently",
+    category: 'A'
   },
   {
     id: 4,
-    text: "Are you interested in conducting research and experiments?",
-    category: 'I',
-    type: 'activity'
+    text: "I like to work in teams",
+    category: 'S'
   },
-  // Artistic questions
   {
     id: 5,
-    text: "Do you enjoy expressing yourself creatively?",
-    category: 'A',
-    type: 'activity'
+    text: "I am an ambitious person, I set goals for myself",
+    category: 'E'
   },
   {
     id: 6,
-    text: "Are you drawn to artistic, musical, or written forms of expression?",
-    category: 'A',
-    type: 'activity'
+    text: "I like to organize things, (files, desks/offices)",
+    category: 'C'
   },
-  // Social questions
   {
     id: 7,
-    text: "Do you like helping and teaching others?",
-    category: 'S',
-    type: 'activity'
+    text: "I like to build things",
+    category: 'R'
   },
   {
     id: 8,
-    text: "Are you interested in working with people to solve their problems?",
-    category: 'S',
-    type: 'activity'
+    text: "I like to read about art and music",
+    category: 'A'
   },
-  // Enterprising questions
   {
     id: 9,
-    text: "Do you enjoy leading and persuading others?",
-    category: 'E',
-    type: 'activity'
+    text: "I like to have clear instructions to follow",
+    category: 'C'
   },
   {
     id: 10,
-    text: "Are you interested in starting and managing projects?",
-    category: 'E',
-    type: 'activity'
+    text: "I like to try to influence or persuade people",
+    category: 'E'
   },
-  // Conventional questions
   {
     id: 11,
-    text: "Do you like working with numbers and organizing information?",
-    category: 'C',
-    type: 'activity'
+    text: "I like to do experiments",
+    category: 'I'
   },
   {
     id: 12,
-    text: "Are you interested in following detailed instructions and maintaining records?",
-    category: 'C',
-    type: 'activity'
+    text: "I like to teach or train people",
+    category: 'S'
+  },
+  {
+    id: 13,
+    text: "I like trying to help people solve their problems",
+    category: 'S'
+  },
+  {
+    id: 14,
+    text: "I like to take care of animals",
+    category: 'R'
+  },
+  {
+    id: 15,
+    text: "I wouldn't mind working 8 hours per day in an office",
+    category: 'C'
+  },
+  {
+    id: 16,
+    text: "I like selling things",
+    category: 'E'
+  },
+  {
+    id: 17,
+    text: "I enjoy creative writing",
+    category: 'A'
+  },
+  {
+    id: 18,
+    text: "I enjoy science",
+    category: 'I'
   }
 ];
 
@@ -125,7 +138,7 @@ export default function CareerInterestAssessment({ category }: Props) {
 
   const calculateScores = () => {
     const newScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
-    
+
     Object.entries(answers).forEach(([questionId, answer]) => {
       const question = riasecQuestions.find(q => q.id === parseInt(questionId));
       if (question) {
@@ -202,10 +215,10 @@ export default function CareerInterestAssessment({ category }: Props) {
                     {category === 'C' && "Conventional (Organizers)"}
                   </Label>
                   <span className="text-sm text-muted-foreground">
-                    {Math.round((score / 10) * 100)}%
+                    {Math.round((score / 18) * 100)}%
                   </span>
                 </div>
-                <Progress value={(score / 10) * 100} />
+                <Progress value={(score / 18) * 100} />
               </div>
             ))}
           </div>
