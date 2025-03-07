@@ -44,6 +44,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
   const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isValidatingVideos, setIsValidatingVideos] = useState(false);
+  const [failedValidations, setFailedValidations] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const initializeProfile = async () => {
@@ -76,15 +77,26 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
   }, [profile]);
 
   const validateYouTubeVideo = async (videoId: string): Promise<boolean> => {
+    if (failedValidations.has(videoId)) {
+      return false;
+    }
+
     try {
       const response = await fetch(`/api/youtube-search?videoId=${videoId}`);
       if (!response.ok) {
         throw new Error('Failed to validate video');
       }
       const data = await response.json();
-      return data.isValid || false;
+
+      if (!data.isValid) {
+        setFailedValidations(prev => new Set([...prev, videoId]));
+        return false;
+      }
+
+      return true;
     } catch (error) {
       console.error('Error validating YouTube video:', error);
+      setFailedValidations(prev => new Set([...prev, videoId]));
       return false;
     }
   };
@@ -95,6 +107,9 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       if (savedPlan) {
         const plan = JSON.parse(savedPlan);
         setWorkoutPlan(plan); // Set plan immediately for better UX
+
+        // Clear previous validation failures
+        setFailedValidations(new Set());
 
         // Validate videos in background
         setIsValidatingVideos(true);
@@ -124,6 +139,8 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
 
   const generateWorkoutPlan = async () => {
     setIsLoading(true);
+    setFailedValidations(new Set()); // Clear previous validation failures
+
     try {
       const response = await fetch('/api/generate-workout', {
         method: 'POST',

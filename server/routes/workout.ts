@@ -11,6 +11,11 @@ router.post('/generate-workout', async (req, res) => {
 
     const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitness goals: ${profile.goals.join(', ')}. 
     Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
+    For video IDs, prefer videos from reputable fitness channels that demonstrate proper form. For common exercises like push-ups and planks, use these reliable video IDs:
+    - Push-ups: "IODxDxX7oi4"
+    - Plank: "ASdvN_XEl_c"
+    - Squats: "YaXPRqUwItQ"
+
     Format the response as a JSON object with the following structure:
     {
       "exercises": [
@@ -35,7 +40,7 @@ router.post('/generate-workout', async (req, res) => {
       response_format: { type: "json_object" }
     });
 
-    const workoutPlan = JSON.parse(response.choices[0].message.content);
+    const workoutPlan = JSON.parse(response.choices[0].message.content || "{}");
     res.json(workoutPlan);
 
   } catch (error) {
