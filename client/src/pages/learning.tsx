@@ -9,18 +9,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
-import CareerInterestAssessment from "@/components/career-interest-assessment";
-import { GraduationCap, Book, Target, Brain, Lightbulb, Car, Wrench } from "lucide-react";
+import RiasecTest from "@/components/career-interest-assessment";
+import { Book, Target, Brain, Lightbulb, Car, Wrench } from "lucide-react";
 
 export default function Learning() {
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Learning & Development</h1>
 
-      <Tabs defaultValue="assessment">
+      <Tabs defaultValue="riasec">
         <div className="tabs-container">
           <TabsList className="mb-4">
-            <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
+            <TabsTrigger value="riasec">Career Assessment</TabsTrigger>
             <TabsTrigger value="chat">AI Learning Coach</TabsTrigger>
             <TabsTrigger value="skills">Skill Building</TabsTrigger>
             <TabsTrigger value="courses">Learning Paths</TabsTrigger>
@@ -29,18 +29,8 @@ export default function Learning() {
           </TabsList>
         </div>
 
-        <TabsContent value="assessment" className="mt-6">
-          <Card className="border-0 shadow-none">
-            <CardHeader>
-              <CardTitle>Holland Code (RIASEC) Career Assessment</CardTitle>
-              <CardDescription>
-                Discover your career interests and learning preferences through this standardized assessment
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <CareerInterestAssessment />
-            </CardContent>
-          </Card>
+        <TabsContent value="riasec" className="mt-6">
+          <RiasecTest />
         </TabsContent>
 
         <TabsContent value="chat" className="mt-6">
