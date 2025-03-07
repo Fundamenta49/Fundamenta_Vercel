@@ -399,7 +399,7 @@ export default function JournalEntry() {
               </div>
             </div>
 
-            {moodTrends && (
+            {moodTrends && moodTrends.trends && moodTrends.trends.length > 0 && (
               <div className="space-y-2">
                 <h3 className="font-medium">Mood Trends</h3>
                 <div className="space-y-2">
@@ -409,15 +409,17 @@ export default function JournalEntry() {
                     </p>
                   ))}
                 </div>
-                <div className="mt-4">
-                  <h4 className="font-medium mb-2">Recommendations</h4>
-                  {moodTrends.recommendations.map((rec, index) => (
-                    <Alert key={index} className="mb-2">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>{rec}</AlertDescription>
-                    </Alert>
-                  ))}
-                </div>
+                {moodTrends.recommendations && moodTrends.recommendations.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-medium mb-2">Recommendations</h4>
+                    {moodTrends.recommendations.map((rec, index) => (
+                      <Alert key={index} className="mb-2">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{rec}</AlertDescription>
+                      </Alert>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
