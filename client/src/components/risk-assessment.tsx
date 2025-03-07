@@ -11,73 +11,77 @@ import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { PhoneCall, Brain, Sparkles } from "lucide-react";
+import { Brain, Heart, Sparkles, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+interface Props {
+  category: string;
+}
 
 interface Question {
   id: number;
   text: string;
-  category: 'mental_health' | 'substance' | 'safety';
+  category: 'emotional' | 'physical' | 'mental' | 'social';
   options: Array<{
     text: string;
-    value: number; // Higher numbers indicate higher risk
+    value: number;
   }>;
 }
 
-const assessmentQuestions: Question[] = [
+const wellnessQuestions: Question[] = [
   {
     id: 1,
-    text: "Over the past two weeks, how often have you felt down, depressed, or hopeless?",
-    category: 'mental_health',
+    text: "How have you been feeling emotionally over the past two weeks?",
+    category: 'emotional',
     options: [
-      { text: "Not at all", value: 0 },
-      { text: "Several days", value: 1 },
-      { text: "More than half the days", value: 2 },
-      { text: "Nearly every day", value: 3 }
+      { text: "Very positive and stable", value: 0 },
+      { text: "Generally good with some ups and downs", value: 1 },
+      { text: "More down than usual", value: 2 },
+      { text: "Consistently struggling", value: 3 }
     ]
   },
   {
     id: 2,
-    text: "How often do you have thoughts of harming yourself?",
-    category: 'mental_health',
+    text: "How would you rate your sleep quality lately?",
+    category: 'physical',
     options: [
-      { text: "Never", value: 0 },
-      { text: "Rarely", value: 1 },
-      { text: "Sometimes", value: 2 },
-      { text: "Often", value: 3 }
+      { text: "Sleeping well consistently", value: 0 },
+      { text: "Some nights are better than others", value: 1 },
+      { text: "Often having trouble sleeping", value: 2 },
+      { text: "Severe sleep difficulties", value: 3 }
     ]
   },
   {
     id: 3,
-    text: "Do you feel in control of your substance use (including alcohol)?",
-    category: 'substance',
+    text: "How often do you feel overwhelmed by stress?",
+    category: 'mental',
     options: [
-      { text: "Always in control", value: 0 },
-      { text: "Usually in control", value: 1 },
-      { text: "Sometimes struggle with control", value: 2 },
-      { text: "Often feel out of control", value: 3 }
+      { text: "Rarely or never", value: 0 },
+      { text: "Occasionally", value: 1 },
+      { text: "Frequently", value: 2 },
+      { text: "Almost constantly", value: 3 }
     ]
   },
   {
     id: 4,
-    text: "How safe do you feel in your current environment?",
-    category: 'safety',
+    text: "How connected do you feel to others in your life?",
+    category: 'social',
     options: [
-      { text: "Very safe", value: 0 },
-      { text: "Mostly safe", value: 1 },
-      { text: "Sometimes unsafe", value: 2 },
-      { text: "Often unsafe", value: 3 }
+      { text: "Very connected and supported", value: 0 },
+      { text: "Moderately connected", value: 1 },
+      { text: "Somewhat isolated", value: 2 },
+      { text: "Very isolated", value: 3 }
     ]
   },
   {
     id: 5,
-    text: "How often do you feel overwhelmed by your current situation?",
-    category: 'mental_health',
+    text: "How do you feel about your ability to cope with challenges?",
+    category: 'mental',
     options: [
-      { text: "Rarely or never", value: 0 },
-      { text: "Sometimes", value: 1 },
-      { text: "Often", value: 2 },
-      { text: "Almost always", value: 3 }
+      { text: "Very confident in my coping skills", value: 0 },
+      { text: "Generally able to cope", value: 1 },
+      { text: "Sometimes struggle to cope", value: 2 },
+      { text: "Often feel unable to cope", value: 3 }
     ]
   }
 ];
@@ -91,61 +95,61 @@ interface Resource {
   urgent: boolean;
 }
 
-export default function RiskAssessment() {
+export default function RiskAssessment({ category }: Props) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [resources, setResources] = useState<Resource[]>([]);
   const { toast } = useToast();
 
-  const progress = (currentQuestion / assessmentQuestions.length) * 100;
+  const progress = (currentQuestion / wellnessQuestions.length) * 100;
 
-  const evaluateRisk = (answers: Record<number, number>) => {
+  const evaluateWellness = (answers: Record<number, number>) => {
     const totalScore = Object.values(answers).reduce((sum, val) => sum + val, 0);
-    const maxPossibleScore = assessmentQuestions.length * 3;
-    const riskLevel = totalScore / maxPossibleScore;
+    const maxPossibleScore = wellnessQuestions.length * 3;
+    const wellnessLevel = totalScore / maxPossibleScore;
 
     const recommendedResources: Resource[] = [
       {
-        title: "24/7 Crisis Hotline",
-        description: "Speak with a trained counselor immediately",
-        action: "Call Now",
-        phone: "1-800-273-8255",
-        urgent: true
-      },
-      {
-        title: "Grounding Exercise",
-        description: "Try this simple 5-4-3-2-1 technique to feel more present",
-        action: "Start Exercise",
-        link: "/emergency/grounding",
+        title: "Guided Meditation",
+        description: "Take a moment to center yourself with our guided meditation",
+        action: "Start Now",
+        link: "/wellness/meditation",
         urgent: false
       },
       {
-        title: "Local Support Services",
-        description: "Find professional help in your area",
-        action: "Find Help",
-        link: "/emergency/local-services",
+        title: "Wellness Journal",
+        description: "Track your emotional well-being and identify patterns",
+        action: "Start Journaling",
+        link: "/wellness/journal",
+        urgent: false
+      },
+      {
+        title: "Community Support",
+        description: "Connect with others on similar wellness journeys",
+        action: "Join Community",
+        link: "/wellness/community",
         urgent: false
       }
     ];
 
     // Add specific resources based on answers
-    if (answers[2] >= 2) { // High score on self-harm question
+    if (answers[1] >= 2) { // High emotional distress
       recommendedResources.unshift({
-        title: "Immediate Crisis Support",
-        description: "You're not alone. Talk to someone who understands.",
-        action: "Get Help Now",
+        title: "Talk to Someone",
+        description: "Connect with a mental health professional",
+        action: "Get Support Now",
         phone: "988",
         urgent: true
       });
     }
 
-    if (answers[3] >= 2) { // High score on substance use
+    if (answers[2] >= 2) { // Sleep issues
       recommendedResources.push({
-        title: "Substance Use Support",
-        description: "Connect with substance use specialists",
-        action: "Get Support",
-        phone: "1-800-662-4357",
+        title: "Sleep Improvement Guide",
+        description: "Expert tips for better sleep quality",
+        action: "View Guide",
+        link: "/wellness/sleep",
         urgent: false
       });
     }
@@ -154,13 +158,13 @@ export default function RiskAssessment() {
   };
 
   const handleAnswer = (value: number) => {
-    const newAnswers = { ...answers, [assessmentQuestions[currentQuestion].id]: value };
+    const newAnswers = { ...answers, [wellnessQuestions[currentQuestion].id]: value };
     setAnswers(newAnswers);
 
-    if (currentQuestion < assessmentQuestions.length - 1) {
+    if (currentQuestion < wellnessQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      const recommendedResources = evaluateRisk(newAnswers);
+      const recommendedResources = evaluateWellness(newAnswers);
       setResources(recommendedResources);
       setShowResults(true);
     }
@@ -178,11 +182,11 @@ export default function RiskAssessment() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Brain className="h-6 w-6 text-primary" />
-            Assessment Results
+            <Sparkles className="h-6 w-6 text-primary" />
+            Your Wellness Insights
           </CardTitle>
           <CardDescription>
-            Based on your responses, here are some recommended resources:
+            Based on your responses, here are some personalized resources for your well-being:
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -195,7 +199,7 @@ export default function RiskAssessment() {
                 }`}
               >
                 <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                  {resource.urgent && <PhoneCall className="h-5 w-5 text-red-500" />}
+                  {resource.urgent ? <Phone className="h-5 w-5 text-red-500" /> : <Heart className="h-5 w-5 text-primary" />}
                   {resource.title}
                 </h3>
                 <p className="text-muted-foreground mb-3">{resource.description}</p>
@@ -204,11 +208,10 @@ export default function RiskAssessment() {
                     variant="default" 
                     className={resource.urgent ? 'bg-red-500 hover:bg-red-600' : ''}
                     onClick={() => {
-                      // In a real app, this would use proper phone handling
                       window.location.href = `tel:${resource.phone}`;
                     }}
                   >
-                    <PhoneCall className="h-4 w-4 mr-2" />
+                    <Phone className="h-4 w-4 mr-2" />
                     {resource.action}: {resource.phone}
                   </Button>
                 ) : (
@@ -216,7 +219,6 @@ export default function RiskAssessment() {
                     variant={resource.urgent ? "destructive" : "default"}
                     onClick={() => {
                       if (resource.link) {
-                        // Navigate to the resource
                         window.location.href = resource.link;
                       }
                     }}
@@ -226,12 +228,12 @@ export default function RiskAssessment() {
                 )}
               </div>
             ))}
-            
+
             <div className="mt-6">
               <Alert>
                 <AlertDescription>
-                  Remember, this is just a preliminary assessment. If you're in immediate danger,
-                  please call emergency services (911) or your local crisis hotline.
+                  Remember, this is just a preliminary assessment. For personalized guidance,
+                  consider speaking with a mental health professional.
                 </AlertDescription>
               </Alert>
             </div>
@@ -250,30 +252,30 @@ export default function RiskAssessment() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Brain className="h-6 w-6 text-primary" />
-          Self-Assessment Tool
+          BrainTap Check-In
         </CardTitle>
         <CardDescription>
-          This quick assessment will help identify if you might benefit from additional support.
-          Your responses are private and not stored.
+          Take a moment to reflect on your well-being. Your responses will help us
+          provide personalized resources and support.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Question {currentQuestion + 1} of {assessmentQuestions.length}</span>
+            <span>Question {currentQuestion + 1} of {wellnessQuestions.length}</span>
             <span>{Math.round(progress)}% Complete</span>
           </div>
           <Progress value={progress} />
         </div>
 
         <div className="space-y-4">
-          <Label className="text-lg">{assessmentQuestions[currentQuestion].text}</Label>
+          <Label className="text-lg">{wellnessQuestions[currentQuestion].text}</Label>
           <RadioGroup
-            value={answers[assessmentQuestions[currentQuestion].id]?.toString()}
+            value={answers[wellnessQuestions[currentQuestion].id]?.toString()}
             onValueChange={(value) => handleAnswer(parseInt(value))}
           >
             <div className="space-y-2">
-              {assessmentQuestions[currentQuestion].options.map((option) => (
+              {wellnessQuestions[currentQuestion].options.map((option) => (
                 <div
                   key={option.text}
                   className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent cursor-pointer"

@@ -10,6 +10,7 @@ import ChatInterface from "@/components/chat-interface";
 import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
+import RiskAssessment from "@/components/risk-assessment";
 
 export default function Wellness() {
   return (
@@ -20,6 +21,7 @@ export default function Wellness() {
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Wellness Coach</TabsTrigger>
+            <TabsTrigger value="braintap">BrainTap</TabsTrigger>
             <TabsTrigger value="nutrition">Nutrition Guide</TabsTrigger>
             <TabsTrigger value="tracker">Food Tracker</TabsTrigger>
             <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
@@ -36,6 +38,20 @@ export default function Wellness() {
             </CardHeader>
             <CardContent className="p-0">
               <ChatInterface category="wellness" />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="braintap">
+          <Card>
+            <CardHeader>
+              <CardTitle>BrainTap</CardTitle>
+              <CardDescription>
+                Check in with yourself and discover personalized mental wellness resources
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RiskAssessment category="wellness" />
             </CardContent>
           </Card>
         </TabsContent>
