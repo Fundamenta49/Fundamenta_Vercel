@@ -42,6 +42,33 @@ interface Resource {
   category: 'emotional' | 'physical' | 'mental' | 'social';
 }
 
+const generalResources: Resource[] = [
+  {
+    title: "Guided Meditation",
+    description: "Take a moment to center yourself with our guided meditation",
+    action: "Start Now",
+    link: "/wellness?tab=meditation", 
+    urgent: false,
+    category: 'mental'
+  },
+  {
+    title: "Wellness Journal",
+    description: "Track your emotional well-being and identify patterns",
+    action: "Start Journaling",
+    link: "/wellness?tab=journal", 
+    urgent: false,
+    category: 'emotional'
+  },
+  {
+    title: "Community Support",
+    description: "Connect with others on similar wellness journeys",
+    action: "Join Community",
+    link: "/wellness?tab=chat", 
+    urgent: false,
+    category: 'social'
+  }
+];
+
 const wellnessQuestions: Question[] = [
   {
     id: 1,
@@ -84,7 +111,7 @@ const wellnessQuestions: Question[] = [
           title: "Sleep Improvement Guide",
           description: "Access immediate relaxation techniques and sleep hygiene tips",
           action: "View Guide",
-          link: "/wellness/sleep",
+          link: "/wellness?tab=sleep",
           urgent: false,
           category: 'physical'
         }
@@ -108,7 +135,7 @@ const wellnessQuestions: Question[] = [
           title: "Stress Relief Tools",
           description: "Try these immediate stress-reduction techniques",
           action: "Start Now",
-          link: "/wellness/stress-relief",
+          link: "/wellness?tab=stress",
           urgent: false,
           category: 'mental'
         }
@@ -132,7 +159,7 @@ const wellnessQuestions: Question[] = [
           title: "Community Connection",
           description: "Join our supportive community and connect with others",
           action: "Connect Now",
-          link: "/wellness/community",
+          link: "/wellness?tab=chat",
           urgent: false,
           category: 'social'
         }
@@ -156,39 +183,12 @@ const wellnessQuestions: Question[] = [
           title: "Coping Skills Workshop",
           description: "Learn and practice effective coping strategies",
           action: "Start Learning",
-          link: "/wellness/coping-skills",
+          link: "/wellness?tab=coping",
           urgent: false,
           category: 'mental'
         }
       }
     ]
-  }
-];
-
-const generalResources: Resource[] = [
-  {
-    title: "Guided Meditation",
-    description: "Take a moment to center yourself with our guided meditation",
-    action: "Start Now",
-    link: "/wellness/meditation",
-    urgent: false,
-    category: 'mental'
-  },
-  {
-    title: "Wellness Journal",
-    description: "Track your emotional well-being and identify patterns",
-    action: "Start Journaling",
-    link: "/wellness/journal",
-    urgent: false,
-    category: 'emotional'
-  },
-  {
-    title: "Community Support",
-    description: "Connect with others on similar wellness journeys",
-    action: "Join Community",
-    link: "/wellness/community",
-    urgent: false,
-    category: 'social'
   }
 ];
 
@@ -205,7 +205,6 @@ export default function RiskAssessment({ category }: Props) {
   const evaluateWellness = (answers: Record<number, number>) => {
     const recommendedResources = [...generalResources];
 
-    // Add category-specific resources based on answers
     Object.entries(answers).forEach(([questionId, value]) => {
       const question = wellnessQuestions.find(q => q.id === parseInt(questionId));
       if (question?.immediateResources) {
@@ -217,7 +216,6 @@ export default function RiskAssessment({ category }: Props) {
       }
     });
 
-    // Prioritize urgent resources
     return recommendedResources.sort((a, b) => {
       if (a.urgent && !b.urgent) return -1;
       if (!a.urgent && b.urgent) return 1;
@@ -230,7 +228,6 @@ export default function RiskAssessment({ category }: Props) {
     const newAnswers = { ...answers, [currentQuestionData.id]: value };
     setAnswers(newAnswers);
 
-    // Check for immediate resources based on the answer
     if (currentQuestionData.immediateResources) {
       const immediateResource = currentQuestionData.immediateResources.find(
         r => value >= r.threshold
@@ -263,6 +260,56 @@ export default function RiskAssessment({ category }: Props) {
     setImmediateResource(null);
   };
 
+  const handleResourceClick = (resource: Resource) => {
+    if (resource.phone) {
+      window.location.href = `tel:${resource.phone}`;
+    } else if (resource.link) {
+      if (resource.link.startsWith('/wellness')) {
+        const tabMatch = resource.link.match(/\?tab=(.+)/);
+        const tab = tabMatch ? tabMatch[1] : null;
+
+        if (tab) {
+          window.location.href = `/wellness`;
+          setTimeout(() => {
+            const tabElement = document.querySelector(`[value="${tab}"]`) as HTMLElement;
+            if (tabElement) {
+              tabElement.click();
+            }
+          }, 100);
+        } else {
+          window.location.href = resource.link;
+        }
+      } else {
+        window.location.href = resource.link;
+      }
+    }
+  };
+
+  const renderResourceButton = (resource: Resource) => {
+    if (resource.phone) {
+      return (
+        <Button 
+          variant="default" 
+          className={resource.urgent ? 'bg-red-500 hover:bg-red-600' : ''}
+          onClick={() => handleResourceClick(resource)}
+        >
+          <Phone className="h-4 w-4 mr-2" />
+          {resource.action}: {resource.phone}
+        </Button>
+      );
+    }
+
+    return (
+      <Button 
+        variant={resource.urgent ? "destructive" : "default"}
+        onClick={() => handleResourceClick(resource)}
+      >
+        <ExternalLink className="h-4 w-4 mr-2" />
+        {resource.action}
+      </Button>
+    );
+  };
+
   if (showResults) {
     return (
       <Card>
@@ -289,30 +336,7 @@ export default function RiskAssessment({ category }: Props) {
                   {resource.title}
                 </h3>
                 <p className="text-muted-foreground mb-3">{resource.description}</p>
-                {resource.phone ? (
-                  <Button 
-                    variant="default" 
-                    className={resource.urgent ? 'bg-red-500 hover:bg-red-600' : ''}
-                    onClick={() => {
-                      window.location.href = `tel:${resource.phone}`;
-                    }}
-                  >
-                    <Phone className="h-4 w-4 mr-2" />
-                    {resource.action}: {resource.phone}
-                  </Button>
-                ) : (
-                  <Button 
-                    variant={resource.urgent ? "destructive" : "default"}
-                    onClick={() => {
-                      if (resource.link) {
-                        window.location.href = resource.link;
-                      }
-                    }}
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    {resource.action}
-                  </Button>
-                )}
+                {renderResourceButton(resource)}
               </div>
             ))}
 
@@ -364,13 +388,7 @@ export default function RiskAssessment({ category }: Props) {
                 variant="outline"
                 size="sm"
                 className="ml-2"
-                onClick={() => {
-                  if (immediateResource.phone) {
-                    window.location.href = `tel:${immediateResource.phone}`;
-                  } else if (immediateResource.link) {
-                    window.location.href = immediateResource.link;
-                  }
-                }}
+                onClick={() => handleResourceClick(immediateResource)}
               >
                 {immediateResource.phone ? (
                   <Phone className="h-4 w-4 mr-2" />
