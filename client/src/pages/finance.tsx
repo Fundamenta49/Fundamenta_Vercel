@@ -35,8 +35,8 @@ export default function Finance() {
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Financial Advisor</TabsTrigger>
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
             <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
           </TabsList>
@@ -63,10 +63,6 @@ export default function Finance() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="dashboard">
-          <FinancialDashboard budgetData={budgetData} />
-        </TabsContent>
-
         <TabsContent value="budget">
           <Card>
             <CardHeader>
@@ -79,6 +75,10 @@ export default function Finance() {
               <BudgetCalculator onBudgetUpdate={setBudgetData} />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="dashboard">
+          <FinancialDashboard budgetData={budgetData} />
         </TabsContent>
 
         <TabsContent value="retirement">
