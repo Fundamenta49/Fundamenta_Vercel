@@ -19,34 +19,18 @@ export default function Career() {
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Career Development</h1>
 
-      <Tabs defaultValue="assessment">
+      <Tabs defaultValue="chat">
         <div className="tabs-container">
           <TabsList className="mb-4">
-            <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
+            <TabsTrigger value="chat">Career AI Coach</TabsTrigger>
             <TabsTrigger value="search">Job Search</TabsTrigger>
+            <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
             <TabsTrigger value="salary">Salary Insights</TabsTrigger>
-            <TabsTrigger value="rights">Employment Rights</TabsTrigger>
-            <TabsTrigger value="chat">Career Coach</TabsTrigger>
             <TabsTrigger value="resume">Resume Builder</TabsTrigger>
             <TabsTrigger value="interview">Interview Practice</TabsTrigger>
+            <TabsTrigger value="rights">Employment Rights</TabsTrigger>
           </TabsList>
         </div>
-
-        <TabsContent value="assessment">
-          <CareerAssessment />
-        </TabsContent>
-
-        <TabsContent value="search">
-          <JobSearch />
-        </TabsContent>
-
-        <TabsContent value="salary">
-          <SalaryInsights />
-        </TabsContent>
-
-        <TabsContent value="rights">
-          <EmploymentRights />
-        </TabsContent>
 
         <TabsContent value="chat">
           <Card>
@@ -62,12 +46,28 @@ export default function Career() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="search">
+          <JobSearch />
+        </TabsContent>
+
+        <TabsContent value="assessment">
+          <CareerAssessment />
+        </TabsContent>
+
+        <TabsContent value="salary">
+          <SalaryInsights />
+        </TabsContent>
+
         <TabsContent value="resume">
           <ResumeBuilder />
         </TabsContent>
 
         <TabsContent value="interview">
           <InterviewPractice />
+        </TabsContent>
+
+        <TabsContent value="rights">
+          <EmploymentRights />
         </TabsContent>
       </Tabs>
     </div>
