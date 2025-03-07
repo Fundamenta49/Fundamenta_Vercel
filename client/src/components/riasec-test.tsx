@@ -27,8 +27,10 @@ type Answer = {
 export default function RiasecTest() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Answer>({});
+  const [showResults, setShowResults] = useState(false);
 
   const progress = ((currentQuestion + 1) / QUESTIONS.length) * 100;
+  const isLastQuestion = currentQuestion === QUESTIONS.length - 1;
 
   const handleAnswer = (value: string) => {
     setAnswers(prev => ({
@@ -38,16 +40,51 @@ export default function RiasecTest() {
   };
 
   const handlePrevious = () => {
-    if (currentQuestion > 0) {
+    if (showResults) {
+      setShowResults(false);
+    } else if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
     }
   };
 
   const handleNext = () => {
-    if (currentQuestion < QUESTIONS.length - 1) {
+    if (isLastQuestion) {
+      setShowResults(true);
+    } else {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
+
+  if (showResults) {
+    return (
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Your RIASEC Assessment Results</CardTitle>
+          <CardDescription>
+            Based on your answers, here are your career interest areas
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <div className="text-center">
+              <p className="text-lg mb-4">
+                Thank you for completing the assessment! Your results are being calculated.
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowResults(false);
+                  setCurrentQuestion(0); //Reset to the first question.
+                }}
+              >
+                Back to Questions
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="max-w-2xl mx-auto">
@@ -112,7 +149,7 @@ export default function RiasecTest() {
               onClick={handleNext}
               disabled={!answers[currentQuestion]}
             >
-              Next
+              {isLastQuestion ? "View Results" : "Next"}
             </Button>
           </div>
         </div>
