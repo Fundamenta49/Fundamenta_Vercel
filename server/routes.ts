@@ -317,7 +317,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             role: "system",
             content: `You are an expert learning advisor specializing in ${skillArea === "technical" ? "technical skills like programming, data analysis, and digital tools" : "soft skills like communication, leadership, and problem-solving"}. 
 
-            Structure your response in clear sections without using asterisks (*) or hashtags (#). Use clear headings and paragraphs.
+            Structure your response in clear sections without using asterisks (*), hashtags (#), or any other special formatting characters. Write in plain text with clear section headings.
 
             Include:
 
