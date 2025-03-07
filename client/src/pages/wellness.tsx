@@ -11,6 +11,7 @@ import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 import RiskAssessment from "@/components/risk-assessment";
+import JournalEntry from "@/components/journal-entry";
 
 export default function Wellness() {
   return (
@@ -22,6 +23,7 @@ export default function Wellness() {
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Wellness Coach</TabsTrigger>
             <TabsTrigger value="braintap">BrainTap</TabsTrigger>
+            <TabsTrigger value="journal">Journal</TabsTrigger>
             <TabsTrigger value="nutrition">Nutrition Guide</TabsTrigger>
             <TabsTrigger value="tracker">Food Tracker</TabsTrigger>
             <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
@@ -54,6 +56,10 @@ export default function Wellness() {
               <RiskAssessment category="wellness" />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="journal">
+          <JournalEntry />
         </TabsContent>
 
         <TabsContent value="nutrition">
