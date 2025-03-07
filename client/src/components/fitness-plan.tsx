@@ -27,10 +27,24 @@ interface WorkoutPlan {
     sets: number;
     reps: number;
     description: string;
+    technique: string;
+    mistakes: string[];
+    modifications: {
+      easier: string;
+      harder: string;
+    };
+    goalAlignment: string;
     videoId?: string;
   }>;
   schedule: string;
-  tips: string[];
+  progressionPlan: string;
+  tips: {
+    general: string[];
+    goalSpecific: {
+      [key: string]: string[];
+    };
+    safety: string[];
+  };
 }
 
 interface FitnessPlanProps {
@@ -48,7 +62,6 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
 
   useEffect(() => {
     const initializeProfile = async () => {
-      // Initialize achievements
       const baseAchievements: Achievement[] = [
         {
           id: "profile-created",
@@ -106,12 +119,10 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       const savedPlan = localStorage.getItem('workoutPlan');
       if (savedPlan) {
         const plan = JSON.parse(savedPlan);
-        setWorkoutPlan(plan); // Set plan immediately for better UX
+        setWorkoutPlan(plan); 
 
-        // Clear previous validation failures
         setFailedValidations(new Set());
 
-        // Validate videos in background
         setIsValidatingVideos(true);
         const validatedPlan = { ...plan };
         const validationPromises = validatedPlan.exercises.map(async (exercise) => {
@@ -139,7 +150,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
 
   const generateWorkoutPlan = async () => {
     setIsLoading(true);
-    setFailedValidations(new Set()); // Clear previous validation failures
+    setFailedValidations(new Set()); 
 
     try {
       const response = await fetch('/api/generate-workout', {
@@ -160,9 +171,8 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       }
 
       const plan = await response.json();
-      setWorkoutPlan(plan); // Set plan immediately
+      setWorkoutPlan(plan); 
 
-      // Validate videos in background
       setIsValidatingVideos(true);
       const validationPromises = plan.exercises.map(async (exercise) => {
         if (exercise.videoId) {
@@ -174,7 +184,7 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
       });
 
       await Promise.all(validationPromises);
-      setWorkoutPlan({ ...plan }); // Update with validated videos
+      setWorkoutPlan({ ...plan }); 
       localStorage.setItem('workoutPlan', JSON.stringify(plan));
 
       toast({
@@ -238,79 +248,155 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
             </div>
 
             {workoutPlan && (
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Your Workout Plan</h3>
-                {isValidatingVideos && (
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Validating video tutorials...
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Your Workout Schedule</h3>
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">
+                    {workoutPlan.schedule}
                   </p>
-                )}
-                <div className="grid gap-4">
-                  {workoutPlan.exercises.map((exercise, index) => (
-                    <Card key={index} className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">{exercise.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {exercise.sets} sets × {exercise.reps} reps
-                          </p>
-                          <p className="text-sm mt-1">{exercise.description}</p>
-                        </div>
-                        {exercise.videoId && (
-                          <a
-                            href={`https://www.youtube.com/watch?v=${exercise.videoId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center text-primary hover:text-primary/80"
-                          >
-                            <Play className="h-5 w-5 mr-1" />
-                            Watch Tutorial
-                          </a>
-                        )}
-                      </div>
-                    </Card>
-                  ))}
                 </div>
-                {workoutPlan.tips.length > 0 && (
-                  <div className="mt-4">
-                    <h4 className="font-medium mb-2">Training Tips:</h4>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Exercises</h3>
+                  {isValidatingVideos && (
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Validating video tutorials...
+                    </p>
+                  )}
+                  <div className="grid gap-4">
+                    {workoutPlan.exercises.map((exercise, index) => (
+                      <Card key={index} className="overflow-hidden">
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <CardTitle className="text-xl">{exercise.name}</CardTitle>
+                              <CardDescription>
+                                {exercise.sets} sets × {exercise.reps} reps
+                              </CardDescription>
+                            </div>
+                            {exercise.videoId && (
+                              <a
+                                href={`https://www.youtube.com/watch?v=${exercise.videoId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center text-primary hover:text-primary/80"
+                              >
+                                <Play className="h-5 w-5 mr-1" />
+                                Watch Tutorial
+                              </a>
+                            )}
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div>
+                            <h4 className="font-medium mb-2">Proper Form</h4>
+                            <p className="text-sm">{exercise.technique}</p>
+                          </div>
+
+                          <div>
+                            <h4 className="font-medium mb-2">Common Mistakes to Avoid</h4>
+                            <ul className="list-disc list-inside text-sm space-y-1">
+                              {exercise.mistakes.map((mistake, i) => (
+                                <li key={i}>{mistake}</li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div>
+                            <h4 className="font-medium mb-2">Modifications</h4>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <p className="font-medium text-green-600 dark:text-green-400">Easier Version</p>
+                                <p>{exercise.modifications.easier}</p>
+                              </div>
+                              <div>
+                                <p className="font-medium text-blue-600 dark:text-blue-400">Challenge Version</p>
+                                <p>{exercise.modifications.harder}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <h4 className="font-medium mb-2">Goal Alignment</h4>
+                            <p className="text-sm">{exercise.goalAlignment}</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Progression Plan</h3>
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">
+                    {workoutPlan.progressionPlan}
+                  </p>
+                </div>
+
+                <div className="grid gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">General Tips</h3>
                     <ul className="list-disc list-inside space-y-1">
-                      {workoutPlan.tips.map((tip, index) => (
+                      {workoutPlan.tips.general.map((tip, index) => (
                         <li key={index} className="text-sm text-muted-foreground">
                           {tip}
                         </li>
                       ))}
                     </ul>
                   </div>
-                )}
+
+                  {Object.entries(workoutPlan.tips.goalSpecific).map(([goal, tips]) => (
+                    <div key={goal}>
+                      <h3 className="text-lg font-semibold mb-2">Tips for {goal}</h3>
+                      <ul className="list-disc list-inside space-y-1">
+                        {tips.map((tip, index) => (
+                          <li key={index} className="text-sm text-muted-foreground">
+                            {tip}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Safety Guidelines</h3>
+                    <ul className="list-disc list-inside space-y-1">
+                      {workoutPlan.tips.safety.map((tip, index) => (
+                        <li key={index} className="text-sm text-muted-foreground">
+                          {tip}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Achievements</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {achievements.map((achievement) => (
+                      <div
+                        key={achievement.id}
+                        className={`p-4 rounded-lg border ${
+                          achievement.isUnlocked
+                            ? "bg-primary/10 border-primary"
+                            : "bg-muted/50 border-muted"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {getIconComponent(achievement.icon)}
+                          <div>
+                            <h4 className="font-medium">{achievement.title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {achievement.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Achievements</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {achievements.map((achievement) => (
-                  <div
-                    key={achievement.id}
-                    className={`p-4 rounded-lg border ${
-                      achievement.isUnlocked
-                        ? "bg-primary/10 border-primary"
-                        : "bg-muted/50 border-muted"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      {getIconComponent(achievement.icon)}
-                      <div>
-                        <h4 className="font-medium">{achievement.title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {achievement.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>

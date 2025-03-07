@@ -10,11 +10,30 @@ router.post('/generate-workout', async (req, res) => {
     const { profile } = req.body;
 
     const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitness goals: ${profile.goals.join(', ')}. 
-    Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
-    For video IDs, prefer videos from reputable fitness channels that demonstrate proper form. For common exercises like push-ups and planks, use these reliable video IDs:
+
+    Consider these specific aspects for the workout plan:
+    1. Current Fitness Level: ${profile.fitnessLevel}
+    2. Goals: ${profile.goals.map(goal => `\n       - ${goal}`).join('')}
+
+    Provide a detailed, encouraging, and educational workout plan that includes:
+    1. A thorough explanation of each exercise, including:
+       - Proper form and technique
+       - Common mistakes to avoid
+       - Modifications for different fitness levels
+       - How this exercise specifically helps with their goals
+    2. Progressive overload recommendations
+    3. Rest periods and recovery tips
+    4. Goal-specific guidance (e.g. for weight loss: intensity recommendations, for flexibility: proper stretching technique)
+    5. Safety precautions specific to their fitness level
+
+    For video tutorials, use these verified IDs for common exercises (these are from reputable trainers with proper form demonstrations):
     - Push-ups: "IODxDxX7oi4"
     - Plank: "ASdvN_XEl_c"
     - Squats: "YaXPRqUwItQ"
+    - Mountain Climbers: "nmwgirgXLYM"
+    - Lunges: "QOVaHwm-Q6U"
+    - Stretching Basics: "g_tea8ZNk5A"
+    - Core Workout: "DHD1-2P94DM"
 
     Format the response as a JSON object with the following structure:
     {
@@ -23,18 +42,35 @@ router.post('/generate-workout', async (req, res) => {
           "name": string,
           "sets": number,
           "reps": number,
-          "description": string,
+          "description": string (detailed form instructions),
+          "technique": string (proper form guidance),
+          "mistakes": string[] (common mistakes to avoid),
+          "modifications": {
+            "easier": string,
+            "harder": string
+          },
+          "goalAlignment": string (how this exercise helps with their specific goals),
           "videoId": string (YouTube video ID)
         }
       ],
-      "schedule": string,
-      "tips": string[]
+      "schedule": string (weekly plan with rest days),
+      "progressionPlan": string (how to advance over time),
+      "tips": {
+        "general": string[],
+        "goalSpecific": {
+          "goalName": string[],
+        },
+        "safety": string[]
+      }
     }`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
-        { role: "system", content: "You are a professional fitness trainer experienced in creating personalized workout plans." },
+        { 
+          role: "system", 
+          content: "You are a professional fitness trainer with expertise in creating personalized workout plans. You specialize in providing detailed, encouraging, and educational guidance that helps people achieve their specific fitness goals safely and effectively." 
+        },
         { role: "user", content: prompt }
       ],
       response_format: { type: "json_object" }
