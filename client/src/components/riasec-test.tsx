@@ -12,21 +12,62 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const QUESTIONS = [
+  // Realistic questions
   { text: "I like to build things", category: "R" },
-  { text: "I enjoy solving problems", category: "I" },
+  { text: "I enjoy working with tools and machines", category: "R" },
+  { text: "I prefer hands-on physical work", category: "R" },
+  { text: "I like to repair things", category: "R" },
+  { text: "I enjoy working outdoors", category: "R" },
+
+  // Investigative questions
+  { text: "I enjoy solving complex problems", category: "I" },
+  { text: "I like to analyze data and information", category: "I" },
+  { text: "I enjoy scientific research", category: "I" },
+  { text: "I like to investigate how things work", category: "I" },
+  { text: "I enjoy learning about new theories", category: "I" },
+
+  // Artistic questions
+  { text: "I enjoy creative activities", category: "A" },
+  { text: "I like to express myself artistically", category: "A" },
+  { text: "I enjoy designing things", category: "A" },
+  { text: "I like to think of new ideas", category: "A" },
+  { text: "I enjoy working with visual designs", category: "A" },
+
+  // Social questions
   { text: "I like to help others", category: "S" },
-  { text: "I am good at organizing", category: "C" },
-  { text: "I enjoy creative work", category: "A" }
+  { text: "I enjoy teaching or training people", category: "S" },
+  { text: "I like working in teams", category: "S" },
+  { text: "I enjoy counseling and advising others", category: "S" },
+  { text: "I like to work on improving society", category: "S" },
+
+  // Enterprising questions
+  { text: "I enjoy leading projects", category: "E" },
+  { text: "I like to persuade others", category: "E" },
+  { text: "I enjoy starting new initiatives", category: "E" },
+  { text: "I like to manage people and resources", category: "E" },
+  { text: "I enjoy making business decisions", category: "E" },
+
+  // Conventional questions
+  { text: "I am good at organizing information", category: "C" },
+  { text: "I enjoy working with numbers", category: "C" },
+  { text: "I like following clear procedures", category: "C" },
+  { text: "I enjoy maintaining accurate records", category: "C" },
+  { text: "I like creating systematic approaches", category: "C" }
 ];
 
-// Simplified result mapping
+// Result descriptions for each category
 const RESULT_DESCRIPTIONS = {
-  R: "Realistic: You enjoy working with your hands and solving practical problems. Consider careers in engineering, construction, or technical fields.",
-  I: "Investigative: You like analyzing problems and discovering new things. Look into scientific research, technology, or medical careers.",
-  A: "Artistic: You have a strong creative drive and value self-expression. Explore careers in design, music, writing, or the arts.",
-  S: "Social: You enjoy working with and helping others. Consider careers in teaching, counseling, or healthcare.",
-  E: "Enterprising: You like leading and persuading others. Look into business, sales, or management roles.",
-  C: "Conventional: You enjoy organizing and working with data. Consider careers in accounting, administration, or IT."
+  R: "Realistic: You enjoy working with your hands and solving practical problems. Your strengths lie in mechanical, technical, and physical activities. Consider careers in engineering, construction, manufacturing, agriculture, or technical fields. Jobs like mechanical engineer, electrician, carpenter, or pilot might suit you well.",
+
+  I: "Investigative: You have a strong analytical mindset and enjoy solving complex problems. You excel at gathering information, researching, and understanding scientific or mathematical concepts. Consider careers in scientific research, technology, medicine, or analysis. Roles like research scientist, data analyst, doctor, or software developer could be great fits.",
+
+  A: "Artistic: You have a strong creative drive and value self-expression. Your strengths include creativity, innovation, and artistic expression. Explore careers in design, fine arts, music, writing, or performing arts. Jobs like graphic designer, architect, writer, musician, or interior designer might align with your interests.",
+
+  S: "Social: You enjoy working with and helping others. Your strengths include teaching, counseling, and supporting people. Consider careers in education, healthcare, counseling, or social services. Roles like teacher, nurse, counselor, social worker, or human resources specialist could be fulfilling for you.",
+
+  E: "Enterprising: You excel at leading and persuading others. Your strengths include management, sales, and entrepreneurship. Look into careers in business, sales, management, or entrepreneurship. Positions like business manager, sales director, entrepreneur, or marketing executive might suit your skills.",
+
+  C: "Conventional: You enjoy organizing and working with data. Your strengths include attention to detail, organization, and systematic thinking. Consider careers in finance, administration, logistics, or information management. Jobs like accountant, financial analyst, project coordinator, or database administrator could be excellent matches."
 };
 
 export default function RiasecTest() {
