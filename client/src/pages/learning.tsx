@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
+import CareerInterestAssessment from "@/components/career-interest-assessment";
 import { GraduationCap, Book, Target, Brain, Lightbulb, Car, Wrench } from "lucide-react";
 
 export default function Learning() {
@@ -16,17 +17,31 @@ export default function Learning() {
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Learning & Development</h1>
 
-      <Tabs defaultValue="chat">
+      <Tabs defaultValue="assessment">
         <div className="tabs-container">
           <TabsList className="mb-4">
+            <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
             <TabsTrigger value="chat">AI Learning Coach</TabsTrigger>
             <TabsTrigger value="skills">Skill Building</TabsTrigger>
             <TabsTrigger value="courses">Learning Paths</TabsTrigger>
             <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
             <TabsTrigger value="handyman">Home Repairs</TabsTrigger>
-            <TabsTrigger value="goals">Goal Setting</TabsTrigger>
           </TabsList>
         </div>
+
+        <TabsContent value="assessment" className="mt-6">
+          <Card className="border-0 shadow-none">
+            <CardHeader>
+              <CardTitle>Holland Code (RIASEC) Career Assessment</CardTitle>
+              <CardDescription>
+                Discover your career interests and learning preferences through this standardized assessment
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <CareerInterestAssessment />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="chat" className="mt-6">
           <Card className="border-0 shadow-none">
@@ -118,35 +133,6 @@ export default function Learning() {
                       <li>Business Analytics</li>
                       <li>Project Management</li>
                     </ul>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="goals">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-yellow-500" />
-                Goal Setting & Progress Tracking
-              </CardTitle>
-              <CardDescription>
-                Set and track your learning objectives
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Your Learning Goals</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      Set up your learning goals and track your progress over time.
-                      Coming soon!
-                    </p>
                   </CardContent>
                 </Card>
               </div>
