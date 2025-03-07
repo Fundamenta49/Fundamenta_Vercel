@@ -8,7 +8,24 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Award, Star, Trophy, Play, RefreshCw } from "lucide-react";
+import {
+  Award,
+  Star,
+  Trophy,
+  Play,
+  RefreshCw,
+  Dumbbell,
+  Heart,
+  Activity,
+  MoveVertical,
+  Timer,
+  Zap,
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  Yoga,
+  Bird as YogaIcon,
+} from "lucide-react";
 import { FitnessProfile } from "./fitness-profile";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -34,6 +51,7 @@ interface Exercise {
   };
   goalAlignment?: string;
   videoId?: string;
+  illustration?: string;
 }
 
 interface WorkoutPlan {
@@ -217,6 +235,27 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
     }
   };
 
+  const getExerciseIcon = (iconName?: string) => {
+    switch (iconName?.toLowerCase()) {
+      case "dumbbell":
+        return <Dumbbell className="h-6 w-6 text-primary" />;
+      case "heart":
+        return <Heart className="h-6 w-6 text-red-500" />;
+      case "activity":
+        return <Activity className="h-6 w-6 text-green-500" />;
+      case "movevertical":
+        return <MoveVertical className="h-6 w-6 text-blue-500" />;
+      case "timer":
+        return <Timer className="h-6 w-6 text-orange-500" />;
+      case "zap":
+        return <Zap className="h-6 w-6 text-yellow-500" />;
+      case "yoga":
+        return <YogaIcon className="h-6 w-6 text-purple-500" />;
+      default:
+        return <Dumbbell className="h-6 w-6 text-primary" />;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -270,11 +309,14 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
                       <Card key={index} className="overflow-hidden">
                         <CardHeader>
                           <div className="flex items-center justify-between">
-                            <div>
-                              <CardTitle className="text-xl">{exercise.name}</CardTitle>
-                              <CardDescription>
-                                {exercise.sets} sets × {exercise.reps} reps
-                              </CardDescription>
+                            <div className="flex items-center gap-3">
+                              {getExerciseIcon(exercise.illustration)}
+                              <div>
+                                <CardTitle className="text-xl">{exercise.name}</CardTitle>
+                                <CardDescription>
+                                  {exercise.sets} sets × {exercise.reps} reps
+                                </CardDescription>
+                              </div>
                             </div>
                             {exercise.videoId && (
                               <a
@@ -290,48 +332,54 @@ export default function FitnessPlan({ profile }: FitnessPlanProps) {
                           </div>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                          <div>
-                            <h4 className="font-medium mb-2">Instructions</h4>
-                            <p className="text-sm">{exercise.description}</p>
+                          <div className="flex items-start gap-3">
+                            <AlertCircle className="h-5 w-5 mt-1 flex-shrink-0 text-primary" />
+                            <div>
+                              <h4 className="font-medium mb-2">Instructions</h4>
+                              <p className="text-sm">{exercise.description}</p>
+                            </div>
                           </div>
 
                           {exercise.technique && (
-                            <div>
-                              <h4 className="font-medium mb-2">Proper Form</h4>
-                              <p className="text-sm">{exercise.technique}</p>
+                            <div className="flex items-start gap-3">
+                              <ChevronUp className="h-5 w-5 mt-1 flex-shrink-0 text-green-500" />
+                              <div>
+                                <h4 className="font-medium mb-2">Proper Form</h4>
+                                <p className="text-sm">{exercise.technique}</p>
+                              </div>
                             </div>
                           )}
 
                           {exercise.mistakes && exercise.mistakes.length > 0 && (
-                            <div>
-                              <h4 className="font-medium mb-2">Common Mistakes to Avoid</h4>
-                              <ul className="list-disc list-inside text-sm space-y-1">
-                                {exercise.mistakes.map((mistake, i) => (
-                                  <li key={i}>{mistake}</li>
-                                ))}
-                              </ul>
+                            <div className="flex items-start gap-3">
+                              <ChevronDown className="h-5 w-5 mt-1 flex-shrink-0 text-red-500" />
+                              <div>
+                                <h4 className="font-medium mb-2">Common Mistakes to Avoid</h4>
+                                <ul className="list-disc list-inside text-sm space-y-1">
+                                  {exercise.mistakes.map((mistake, i) => (
+                                    <li key={i}>{mistake}</li>
+                                  ))}
+                                </ul>
+                              </div>
                             </div>
                           )}
 
                           {exercise.modifications && (
-                            <div>
-                              <h4 className="font-medium mb-2">Modifications</h4>
-                              <div className="grid grid-cols-2 gap-4 text-sm">
-                                <div>
-                                  <p className="font-medium text-green-600 dark:text-green-400">Easier Version</p>
-                                  <p>{exercise.modifications.easier}</p>
-                                </div>
-                                <div>
-                                  <p className="font-medium text-blue-600 dark:text-blue-400">Challenge Version</p>
-                                  <p>{exercise.modifications.harder}</p>
-                                </div>
+                            <div className="grid grid-cols-2 gap-4 text-sm border-t pt-4">
+                              <div>
+                                <p className="font-medium text-green-600 dark:text-green-400 mb-2">Easier Version</p>
+                                <p>{exercise.modifications.easier}</p>
+                              </div>
+                              <div>
+                                <p className="font-medium text-blue-600 dark:text-blue-400 mb-2">Challenge Version</p>
+                                <p>{exercise.modifications.harder}</p>
                               </div>
                             </div>
                           )}
 
                           {exercise.goalAlignment && (
-                            <div>
-                              <h4 className="font-medium mb-2">Goal Alignment</h4>
+                            <div className="border-t pt-4">
+                              <h4 className="font-medium mb-2">How This Helps Your Goals</h4>
                               <p className="text-sm">{exercise.goalAlignment}</p>
                             </div>
                           )}
