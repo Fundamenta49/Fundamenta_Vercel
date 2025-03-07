@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from 'react';
 import {
   Card,
   CardContent,
@@ -9,54 +9,66 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-// Simple test question for now
-const question = "I like to build things";
+const initialQuestions = [
+  { id: 1, text: "I like to build things" },
+  { id: 2, text: "I enjoy solving complex problems" },
+  { id: 3, text: "I prefer working with people" },
+  { id: 4, text: "I like organizing information" },
+  { id: 5, text: "I enjoy creative activities" },
+  // ... Add 67 more questions here ...
+];
+
+const AnswerOption = React.memo(({ value, label }: { value: string; label: string }) => (
+  <div className="flex items-center space-x-3 border rounded-lg p-4">
+    <RadioGroupItem value={value} id={value} />
+    <Label htmlFor={value} className="flex-grow">
+      {label}
+    </Label>
+  </div>
+));
 
 export default function RiasecTest() {
-  const [selected, setSelected] = useState<string | undefined>();
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [answers, setAnswers] = React.useState<Record<number, string>>({});
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{question}</CardTitle>
+        <CardTitle>{initialQuestions[currentIndex].text}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <RadioGroup
-            value={selected}
-            onValueChange={setSelected}
-            className="space-y-2"
-          >
-            <div className="flex items-center space-x-2 border rounded-lg p-4">
-              <RadioGroupItem value="strongly-disagree" id="strongly-disagree" />
-              <Label htmlFor="strongly-disagree">Strongly Disagree</Label>
-            </div>
-            <div className="flex items-center space-x-2 border rounded-lg p-4">
-              <RadioGroupItem value="disagree" id="disagree" />
-              <Label htmlFor="disagree">Disagree</Label>
-            </div>
-            <div className="flex items-center space-x-2 border rounded-lg p-4">
-              <RadioGroupItem value="neutral" id="neutral" />
-              <Label htmlFor="neutral">Neutral</Label>
-            </div>
-            <div className="flex items-center space-x-2 border rounded-lg p-4">
-              <RadioGroupItem value="agree" id="agree" />
-              <Label htmlFor="agree">Agree</Label>
-            </div>
-            <div className="flex items-center space-x-2 border rounded-lg p-4">
-              <RadioGroupItem value="strongly-agree" id="strongly-agree" />
-              <Label htmlFor="strongly-agree">Strongly Agree</Label>
-            </div>
-          </RadioGroup>
 
-          <div className="flex justify-between pt-6">
-            <Button variant="outline" disabled>
-              Previous
-            </Button>
-            <Button disabled={!selected}>
-              Next
-            </Button>
-          </div>
+      <CardContent>
+        <RadioGroup
+          value={answers[initialQuestions[currentIndex].id]}
+          onValueChange={(value) => {
+            setAnswers(prev => ({
+              ...prev,
+              [initialQuestions[currentIndex].id]: value
+            }));
+          }}
+          className="space-y-3"
+        >
+          <AnswerOption value="strongly-disagree" label="Strongly Disagree" />
+          <AnswerOption value="disagree" label="Disagree" />
+          <AnswerOption value="neutral" label="Neutral" />
+          <AnswerOption value="agree" label="Agree" />
+          <AnswerOption value="strongly-agree" label="Strongly Agree" />
+        </RadioGroup>
+
+        <div className="flex justify-between mt-6">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentIndex(i => Math.max(0, i - 1))}
+            disabled={currentIndex === 0}
+          >
+            Previous
+          </Button>
+          <Button
+            onClick={() => setCurrentIndex(i => Math.min(initialQuestions.length -1, i + 1))}
+            disabled={!answers[initialQuestions[currentIndex].id]}
+          >
+            Next
+          </Button>
         </div>
       </CardContent>
     </Card>
