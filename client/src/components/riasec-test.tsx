@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,63 +9,67 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-const initialQuestions = [
-  { id: 1, text: "I like to build things" },
-  { id: 2, text: "I enjoy solving complex problems" },
-  { id: 3, text: "I prefer working with people" },
-  { id: 4, text: "I like organizing information" },
-  { id: 5, text: "I enjoy creative activities" },
-  // ... Add 67 more questions here ...
+const questions = [
+  "I like to build things",
+  "I enjoy solving complex problems",
+  "I prefer working with people",
+  "I like organizing information",
+  "I enjoy creative activities"
 ];
 
-const AnswerOption = React.memo(({ value, label }: { value: string; label: string }) => (
-  <div className="flex items-center space-x-3 border rounded-lg p-4">
-    <RadioGroupItem value={value} id={value} />
-    <Label htmlFor={value} className="flex-grow">
-      {label}
-    </Label>
-  </div>
-));
+const options = [
+  "Strongly Disagree",
+  "Disagree",
+  "Neutral",
+  "Agree",
+  "Strongly Agree"
+];
 
 export default function RiasecTest() {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [answers, setAnswers] = React.useState<Record<number, string>>({});
+  const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState("");
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{initialQuestions[currentIndex].text}</CardTitle>
+        <CardTitle>{questions[index]}</CardTitle>
       </CardHeader>
-
       <CardContent>
         <RadioGroup
-          value={answers[initialQuestions[currentIndex].id]}
-          onValueChange={(value) => {
-            setAnswers(prev => ({
-              ...prev,
-              [initialQuestions[currentIndex].id]: value
-            }));
-          }}
-          className="space-y-3"
+          value={selected}
+          onValueChange={setSelected}
         >
-          <AnswerOption value="strongly-disagree" label="Strongly Disagree" />
-          <AnswerOption value="disagree" label="Disagree" />
-          <AnswerOption value="neutral" label="Neutral" />
-          <AnswerOption value="agree" label="Agree" />
-          <AnswerOption value="strongly-agree" label="Strongly Agree" />
+          {options.map((option) => (
+            <div key={option} className="flex items-center space-x-3 border rounded-lg p-4">
+              <RadioGroupItem value={option} id={option} />
+              <Label htmlFor={option} className="flex-grow">
+                {option}
+              </Label>
+            </div>
+          ))}
         </RadioGroup>
 
         <div className="flex justify-between mt-6">
           <Button
             variant="outline"
-            onClick={() => setCurrentIndex(i => Math.max(0, i - 1))}
-            disabled={currentIndex === 0}
+            onClick={() => {
+              if (index > 0) {
+                setIndex(index - 1);
+                setSelected("");
+              }
+            }}
+            disabled={index === 0}
           >
             Previous
           </Button>
           <Button
-            onClick={() => setCurrentIndex(i => Math.min(initialQuestions.length -1, i + 1))}
-            disabled={!answers[initialQuestions[currentIndex].id]}
+            onClick={() => {
+              if (index < questions.length - 1) {
+                setIndex(index + 1);
+                setSelected("");
+              }
+            }}
+            disabled={!selected}
           >
             Next
           </Button>
