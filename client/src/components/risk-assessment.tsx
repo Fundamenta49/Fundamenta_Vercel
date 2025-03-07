@@ -47,7 +47,7 @@ const generalResources: Resource[] = [
     title: "Guided Meditation",
     description: "Take a moment to center yourself with our guided meditation",
     action: "Start Now",
-    link: "/wellness?tab=meditation", 
+    link: "/wellness?tab=meditation",
     urgent: false,
     category: 'mental'
   },
@@ -55,7 +55,7 @@ const generalResources: Resource[] = [
     title: "Wellness Journal",
     description: "Track your emotional well-being and identify patterns",
     action: "Start Journaling",
-    link: "/wellness?tab=journal", 
+    link: "/wellness?tab=journal",
     urgent: false,
     category: 'emotional'
   },
@@ -63,7 +63,7 @@ const generalResources: Resource[] = [
     title: "Community Support",
     description: "Connect with others on similar wellness journeys",
     action: "Join Community",
-    link: "/wellness?tab=chat", 
+    link: "/wellness?tab=chat",
     urgent: false,
     category: 'social'
   }
@@ -82,13 +82,13 @@ const wellnessQuestions: Question[] = [
     ],
     immediateResources: [
       {
-        threshold: 2,
+        threshold: 3, // Increased from 2 to only trigger on highest intensity
         resource: {
-          title: "Talk to Someone Now",
-          description: "Connect with a mental health professional immediately",
-          action: "Get Support",
-          phone: "988",
-          urgent: true,
+          title: "Wellness Support",
+          description: "Connect with our supportive wellness community",
+          action: "Learn More",
+          link: "/wellness?tab=chat",
+          urgent: false,
           category: 'emotional'
         }
       }
@@ -288,20 +288,21 @@ export default function RiskAssessment({ category }: Props) {
   const renderResourceButton = (resource: Resource) => {
     if (resource.phone) {
       return (
-        <Button 
-          variant="default" 
-          className={resource.urgent ? 'bg-red-500 hover:bg-red-600' : ''}
+        <Button
+          variant="outline"
+          className="bg-blue-50 hover:bg-blue-100 text-blue-700"
           onClick={() => handleResourceClick(resource)}
         >
           <Phone className="h-4 w-4 mr-2" />
-          {resource.action}: {resource.phone}
+          {resource.action}
         </Button>
       );
     }
 
     return (
-      <Button 
-        variant={resource.urgent ? "destructive" : "default"}
+      <Button
+        variant="outline"
+        className="bg-primary/10 hover:bg-primary/20"
         onClick={() => handleResourceClick(resource)}
       >
         <ExternalLink className="h-4 w-4 mr-2" />
@@ -384,19 +385,7 @@ export default function RiskAssessment({ category }: Props) {
             <Heart className="h-4 w-4 text-blue-500" />
             <AlertDescription className="flex items-center justify-between">
               <span className="text-blue-800">{immediateResource.description}</span>
-              <Button
-                variant="outline"
-                size="sm"
-                className="ml-2"
-                onClick={() => handleResourceClick(immediateResource)}
-              >
-                {immediateResource.phone ? (
-                  <Phone className="h-4 w-4 mr-2" />
-                ) : (
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                )}
-                {immediateResource.action}
-              </Button>
+              {renderResourceButton(immediateResource)}
             </AlertDescription>
           </Alert>
         )}
