@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import {
   Card,
   CardContent,
@@ -9,12 +9,52 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
+// Simple initial state
+type State = {
+  currentQuestion: number;
+  answer: string;
+};
+
+type Action = 
+  | { type: 'SET_ANSWER'; payload: string }
+  | { type: 'NEXT_QUESTION' }
+  | { type: 'PREV_QUESTION' };
+
+const initialState: State = {
+  currentQuestion: 0,
+  answer: '',
+};
+
+function reducer(state: State, action: Action): State {
+  console.log('Reducer action:', action.type, 'Current state:', state);
+
+  switch (action.type) {
+    case 'SET_ANSWER':
+      return {
+        ...state,
+        answer: action.payload,
+      };
+    case 'NEXT_QUESTION':
+      return {
+        ...state,
+        currentQuestion: state.currentQuestion + 1,
+        answer: '',
+      };
+    case 'PREV_QUESTION':
+      return {
+        ...state,
+        currentQuestion: Math.max(0, state.currentQuestion - 1),
+        answer: '',
+      };
+    default:
+      return state;
+  }
+}
+
 const questions = [
   "I like to build things",
-  "I enjoy solving complex problems",
-  "I prefer working with people",
-  "I like organizing information",
-  "I enjoy creative activities"
+  "I enjoy problem solving",
+  "I like helping others",
 ];
 
 const options = [
@@ -26,25 +66,23 @@ const options = [
 ];
 
 export default function RiasecTest() {
-  const [index, setIndex] = useState(0);
-  const [selected, setSelected] = useState("");
+  const [state, dispatch] = useReducer(reducer, initialState);
+  console.log('Current state:', state);
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{questions[index]}</CardTitle>
+        <CardTitle>{questions[state.currentQuestion]}</CardTitle>
       </CardHeader>
       <CardContent>
         <RadioGroup
-          value={selected}
-          onValueChange={setSelected}
+          value={state.answer}
+          onValueChange={(value) => dispatch({ type: 'SET_ANSWER', payload: value })}
         >
           {options.map((option) => (
             <div key={option} className="flex items-center space-x-3 border rounded-lg p-4">
-              <RadioGroupItem value={option} id={option} />
-              <Label htmlFor={option} className="flex-grow">
-                {option}
-              </Label>
+              <RadioGroupItem value={option.toLowerCase().replace(/ /g, '-')} id={option.toLowerCase().replace(/ /g, '-')} />
+              <Label htmlFor={option.toLowerCase().replace(/ /g, '-')}>{option}</Label>
             </div>
           ))}
         </RadioGroup>
@@ -52,24 +90,14 @@ export default function RiasecTest() {
         <div className="flex justify-between mt-6">
           <Button
             variant="outline"
-            onClick={() => {
-              if (index > 0) {
-                setIndex(index - 1);
-                setSelected("");
-              }
-            }}
-            disabled={index === 0}
+            onClick={() => dispatch({ type: 'PREV_QUESTION' })}
+            disabled={state.currentQuestion === 0}
           >
             Previous
           </Button>
           <Button
-            onClick={() => {
-              if (index < questions.length - 1) {
-                setIndex(index + 1);
-                setSelected("");
-              }
-            }}
-            disabled={!selected}
+            onClick={() => dispatch({ type: 'NEXT_QUESTION' })}
+            disabled={!state.answer}
           >
             Next
           </Button>
