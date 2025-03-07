@@ -407,10 +407,10 @@ export default function RiskAssessment({ category }: Props) {
             {wellnessQuestions[currentQuestion].options.map((option) => (
               <div
                 key={option.text}
-                className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent cursor-pointer"
+                className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent"
               >
                 <RadioGroupItem value={option.value.toString()} id={option.text} />
-                <Label htmlFor={option.text} className="cursor-pointer flex-grow">
+                <Label htmlFor={option.text} className="flex-grow">
                   {option.text}
                 </Label>
               </div>
@@ -429,7 +429,7 @@ export default function RiskAssessment({ category }: Props) {
           {currentQuestion < wellnessQuestions.length - 1 ? (
             <Button
               variant="default"
-              onClick={() => handleNext()}
+              onClick={handleNext}
               disabled={!answers[wellnessQuestions[currentQuestion].id]}
             >
               Next
