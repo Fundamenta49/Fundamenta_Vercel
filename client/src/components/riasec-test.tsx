@@ -11,66 +11,26 @@ import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-// Official RIASEC Test questions from Open Source Psychometrics Project
+// Questions from Open Source Psychometrics Project's RIASEC Test
 const questions = [
-  {
-    id: 1,
-    text: "I like to work on cars",
-    category: "R"
-  },
-  {
-    id: 2,
-    text: "I like to do puzzles",
-    category: "I"
-  },
-  {
-    id: 3,
-    text: "I am good at working independently",
-    category: "A"
-  },
-  {
-    id: 4,
-    text: "I like to work in teams",
-    category: "S"
-  },
-  {
-    id: 5,
-    text: "I am an ambitious person, I set goals for myself",
-    category: "E"
-  },
-  {
-    id: 6,
-    text: "I like to organize things (files, desks/offices)",
-    category: "C"
-  },
-  {
-    id: 7,
-    text: "I like to build things",
-    category: "R"
-  },
-  {
-    id: 8,
-    text: "I like to read about art and music",
-    category: "A"
-  },
-  {
-    id: 9,
-    text: "I like to have clear instructions to follow",
-    category: "C"
-  },
-  {
-    id: 10,
-    text: "I like to try to influence or persuade people",
-    category: "E"
-  }
+  { id: 1, text: "I like to work on cars", category: "R" },
+  { id: 2, text: "I like to do puzzles", category: "I" },
+  { id: 3, text: "I am good at working independently", category: "A" },
+  { id: 4, text: "I like to work in teams", category: "S" },
+  { id: 5, text: "I am an ambitious person, I set goals for myself", category: "E" },
+  { id: 6, text: "I like to organize things (files, desks/offices)", category: "C" },
+  { id: 7, text: "I like to build things", category: "R" },
+  { id: 8, text: "I like to read about art and music", category: "A" },
+  { id: 9, text: "I like to have clear instructions to follow", category: "C" },
+  { id: 10, text: "I like to try to influence or persuade people", category: "E" }
 ];
 
 const answerOptions = [
-  { value: "1", label: "Strongly Disagree" },
-  { value: "2", label: "Disagree" },
-  { value: "3", label: "Neutral" },
-  { value: "4", label: "Agree" },
-  { value: "5", label: "Strongly Agree" }
+  "Strongly Disagree",
+  "Disagree",
+  "Neutral",
+  "Agree",
+  "Strongly Agree"
 ];
 
 export default function RiasecTest() {
@@ -84,6 +44,16 @@ export default function RiasecTest() {
       ...prev,
       [questions[currentQuestionIndex].id]: value
     }));
+  };
+
+  const handlePrevious = () => {
+    setCurrentQuestionIndex(prev => Math.max(0, prev - 1));
+  };
+
+  const handleNext = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    }
   };
 
   return (
@@ -108,14 +78,14 @@ export default function RiasecTest() {
               onValueChange={handleSelectAnswer}
               className="space-y-3"
             >
-              {answerOptions.map((option, idx) => (
+              {answerOptions.map((option) => (
                 <div
-                  key={idx}
+                  key={option}
                   className="flex items-center space-x-3 border rounded-lg p-4"
                 >
-                  <RadioGroupItem value={option.value} id={`option-${idx}`} />
-                  <Label htmlFor={`option-${idx}`} className="flex-grow">
-                    {option.label}
+                  <RadioGroupItem value={option} id={option} />
+                  <Label htmlFor={option} className="flex-grow">
+                    {option}
                   </Label>
                 </div>
               ))}
@@ -125,13 +95,13 @@ export default function RiasecTest() {
           <div className="flex justify-between pt-6">
             <Button
               variant="outline"
-              onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
+              onClick={handlePrevious}
               disabled={currentQuestionIndex === 0}
             >
               Previous
             </Button>
             <Button
-              onClick={() => setCurrentQuestionIndex(prev => Math.min(questions.length - 1, prev + 1))}
+              onClick={handleNext}
               disabled={!answers[questions[currentQuestionIndex].id]}
             >
               Next
