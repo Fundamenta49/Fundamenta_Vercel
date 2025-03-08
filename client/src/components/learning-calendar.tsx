@@ -55,6 +55,15 @@ export default function LearningCalendar() {
       urgency: "urgent"
     }
   ]);
+  
+  // Handle notification preference changes
+  const handleFrequencyChange = (feature: string, value: "daily" | "weekly" | "custom") => {
+    setNotificationPrefs(prev => 
+      prev.map(pref => 
+        pref.feature === feature ? { ...pref, frequency: value } : pref
+      )
+    );
+  };
 
   const [workSchedule, setWorkSchedule] = useState({
     enabled: false,
@@ -110,6 +119,20 @@ export default function LearningCalendar() {
     toast({
       title: `Work schedule integration ${checked ? 'enabled' : 'disabled'}`,
       description: checked ? "Learning schedule will adapt to your work hours" : "Work schedule integration turned off",
+    });
+  };
+
+  const handleWorkScheduleToggle = (enabled: boolean) => {
+    setWorkSchedule(prev => ({
+      ...prev,
+      enabled
+    }));
+    
+    toast({
+      title: enabled ? "Work Schedule Enabled" : "Work Schedule Disabled",
+      description: enabled 
+        ? "Learning activities will be scheduled around your work hours" 
+        : "Work schedule integration has been disabled",
     });
   };
 
@@ -265,6 +288,42 @@ export default function LearningCalendar() {
               </div>
 
               <div>
+                <h4 className="font-medium mb-4">Notification Preferences</h4>
+                {notificationPrefs.map((pref) => (
+                  <div key={pref.feature} className="mb-4 bg-muted/50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label htmlFor={`notification-${pref.feature}`} className="text-base">{pref.feature}</Label>
+                      <Switch
+                        id={`notification-${pref.feature}`}
+                        checked={pref.enabled}
+                        onCheckedChange={(checked) => {
+                          setNotificationPrefs(prev =>
+                            prev.map(p => p.feature === pref.feature ? { ...p, enabled: checked } : p)
+                          );
+                        }}
+                      />
+                    </div>
+                    {pref.enabled && (
+                      <div className="mt-2">
+                        <Label htmlFor={`frequency-${pref.feature}`} className="text-sm mb-1 block">Frequency</Label>
+                        <Select
+                          value={pref.frequency}
+                          onValueChange={(value) => handleFrequencyChange(pref.feature, value as "daily" | "weekly" | "custom")}
+                        >
+                          <SelectTrigger id={`frequency-${pref.feature}`}>
+                            <SelectValue placeholder="Select frequency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="custom">Custom</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                
                 <h4 className="font-medium mb-4">Smart Scheduling</h4>
                 <div className="bg-muted/50 rounded-lg p-4">
                   <div className="flex items-center justify-between">
