@@ -69,7 +69,7 @@ export default function Navigation() {
   };
 
   const NavContent = () => (
-    <nav className="flex flex-col gap-2">
+    <nav className="flex flex-col gap-6">
       {navItems.map(({ href, label, icon: Icon }) => (
         <button
           key={href}
@@ -100,14 +100,16 @@ export default function Navigation() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="bg-[#1C3D5A]">
-          <button 
-            onClick={() => handleNavigation("/")}
-            className="flex items-center gap-2 px-4 py-2 mb-4 w-full text-left text-white"
-          >
-            <HeartHandshake className="h-6 w-6" />
-            <span className="text-2xl font-bold">Fundamenta</span>
-          </button>
-          <NavContent />
+          <div className="flex flex-col h-full">
+            <button 
+              onClick={() => handleNavigation("/")}
+              className="flex items-center gap-2 px-4 py-2 mb-8 w-full text-left text-white"
+            >
+              <HeartHandshake className="h-6 w-6" />
+              <span className="text-2xl font-bold">Fundamenta</span>
+            </button>
+            <NavContent />
+          </div>
         </SheetContent>
       </Sheet>
     );
@@ -118,22 +120,24 @@ export default function Navigation() {
       "fixed left-0 top-0 h-screen bg-[#1C3D5A] p-4 transition-all duration-300 z-50",
       isMinimized ? "w-20" : "w-64"
     )}>
-      <div className="flex items-center justify-between mb-8">
-        <button 
-          onClick={() => handleNavigation("/")}
-          className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white hover:bg-[#A3C6C4] hover:text-[#1C3D5A]",
-            location === "/" ? "" : ""
-          )}
-        >
-          <HeartHandshake className="h-6 w-6" />
-          {!isMinimized && <h1 className="text-2xl font-bold">Fundamenta</h1>}
-        </button>
+      <div className="flex flex-col min-h-full">
+        <div className="flex items-center justify-between mb-8">
+          <button 
+            onClick={() => handleNavigation("/")}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-white hover:bg-[#A3C6C4] hover:text-[#1C3D5A] w-full text-left"
+          >
+            <HeartHandshake className="h-6 w-6 flex-shrink-0" />
+            {!isMinimized && <span className="text-2xl font-bold truncate">Fundamenta</span>}
+          </button>
+        </div>
+        <div className="flex-grow">
+          <NavContent />
+        </div>
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsMinimized(!isMinimized)}
-          className="ml-auto text-white hover:text-[#A3C6C4]"
+          className="absolute top-5 right-4 text-white hover:text-[#A3C6C4] flex-shrink-0"
         >
           {isMinimized ? (
             <ChevronRight className="h-4 w-4" />
@@ -142,7 +146,6 @@ export default function Navigation() {
           )}
         </Button>
       </div>
-      <NavContent />
     </div>
   );
 }
