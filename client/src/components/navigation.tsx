@@ -8,11 +8,11 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
   DollarSign,
   Briefcase,
   Heart,
   Activity,
-  GraduationCap,
   AlertCircle,
 } from "lucide-react";
 import {
@@ -47,12 +47,16 @@ export default function Navigation() {
   const { isMinimized, setIsMinimized } = useContext(SidebarContext);
   const [isOpen, setIsOpen] = useState(false);
 
-  const isHomePage = location === "/";
-  const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
-
   const handleNavigation = (href: string) => {
     navigate(href);
     setIsOpen(false);
+  };
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Toggle clicked, current state:', isMinimized);
+    setIsMinimized(!isMinimized);
   };
 
   const NavContent = () => (
@@ -62,18 +66,24 @@ export default function Navigation() {
           key={href}
           onClick={() => handleNavigation(href)}
           className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left",
-            location === href
-              ? "bg-[#1C3D5A] text-[#D8BFAA]"
-              : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
+            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:bg-[#A3C6C4] hover:text-[#1C3D5A] w-full text-left",
+            location === href ? "bg-[#1C3D5A] text-[#D8BFAA]" : ""
           )}
         >
-          <Icon className="h-5 w-5" />
-          {!isMinimized && <span>{label}</span>}
+          <Icon className="h-5 w-5 flex-shrink-0" />
+          <span className={cn(
+            "transition-all duration-300",
+            isMinimized ? "opacity-0 w-0" : "opacity-100"
+          )}>
+            {label}
+          </span>
         </button>
       ))}
     </nav>
   );
+
+  const isHomePage = location === "/";
+  const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
 
   if (isMobile) {
     return (
@@ -84,13 +94,10 @@ export default function Navigation() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left">
-          <button 
-            onClick={() => handleNavigation("/")}
-            className="flex items-center gap-2 px-4 py-2 mb-4 w-full text-left"
-          >
+          <div className="flex items-center gap-2 mb-6">
             <HeartHandshake className="h-6 w-6" />
-            <span className="text-2xl font-bold">Fundamenta</span>
-          </button>
+            <span className="text-xl font-bold">Fundamenta</span>
+          </div>
           <NavContent />
         </SheetContent>
       </Sheet>
@@ -100,8 +107,8 @@ export default function Navigation() {
   return (
     <aside 
       className={cn(
-        "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] transition-all duration-300",
-        isMinimized ? "w-20" : "w-64"
+        "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] z-50",
+        isMinimized ? "w-[80px]" : "w-[256px]"
       )}
     >
       <div className="p-4 pt-16">
@@ -110,17 +117,19 @@ export default function Navigation() {
           className="flex items-center gap-2 mb-6"
         >
           <HeartHandshake className="h-6 w-6 flex-shrink-0" />
-          {!isMinimized && <span className="text-xl font-bold">Fundamenta</span>}
+          <span className={cn(
+            "text-xl font-bold transition-all duration-300",
+            isMinimized ? "opacity-0 w-0" : "opacity-100"
+          )}>
+            Fundamenta
+          </span>
         </button>
 
         <Button
           variant="ghost"
           size="icon"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMinimized(!isMinimized);
-          }}
-          className="absolute right-2 top-4 z-10 hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
+          onClick={handleToggle}
+          className="absolute right-2 top-4 z-50 hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
         >
           {isMinimized ? (
             <ChevronRight className="h-4 w-4" />

@@ -37,7 +37,7 @@ function Router() {
         <main 
           className={cn(
             "flex-1 relative overflow-y-auto transition-all duration-300",
-            isMinimized ? "ml-20" : "ml-64"
+            isMinimized ? "ml-[80px]" : "ml-[256px]"
           )}
         >
           <div className="p-4 sm:p-6 md:p-8">
