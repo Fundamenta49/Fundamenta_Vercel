@@ -40,10 +40,9 @@
   /* Main content area and sidebar adjustments */
   main {
     flex: 1;
-    width: calc(100% - var(--sidebar-width));
-    max-width: 100vw;
-    margin-left: var(--sidebar-width);
     padding: 1rem;
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
     transition: all 0.3s ease;
   }
 
@@ -56,8 +55,17 @@
     margin-left: auto;
     margin-right: auto;
     width: 100%;
-    transition: all 0.3s ease;
     padding: 0 1rem;
+  }
+
+  /* Navigation styles */
+  nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 50;
+    transition: width 0.3s ease;
   }
 
   /* Card and container styles */
@@ -83,12 +91,18 @@
     border-color: rgba(92, 64, 51, 0.2);
   }
 
-  /* Navigation styles */
-  nav {
-    position: fixed;
-    z-index: 50;
-    height: 100vh;
-    transition: width 0.3s ease;
+  /* Text and heading styles */
+  h1 {
+    @apply text-2xl font-bold text-center mb-6;
+  }
+
+  @media (min-width: 640px) {
+    h1 {
+      @apply text-3xl;
+    }
+    .card {
+      @apply p-6;
+    }
   }
 
   /* Tabs container */
@@ -110,22 +124,24 @@
     padding: 0 0.5rem;
   }
 
-  /* Text and heading styles */
-  h1 {
-    @apply text-2xl font-bold text-center mb-6;
-  }
-
-  @media (min-width: 640px) {
-    h1 {
-      @apply text-3xl;
-    }
-    .card {
-      @apply p-6;
-    }
-    .tabs-container {
-      padding-bottom: 1rem;
-      margin-bottom: -1rem;
-    }
+  /* Form elements */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  textarea,
+  select,
+  .text-box {
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
+    border: 1px solid rgba(92, 64, 51, 0.2);
+    @apply rounded-sm focus:border-wood/40 focus:ring-wood/30 transition-all duration-200;
+    padding: 0.625rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 
   /* Interactive elements */
@@ -149,24 +165,13 @@
     @apply transition-colors duration-200;
   }
 
-  /* Form elements */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="search"],
-  input[type="number"],
-  input[type="tel"],
-  input[type="url"],
-  textarea,
-  select,
-  .text-box {
-    background-color: #F5F5F5 !important;
-    color: #2E2E2E !important;
-    border: 1px solid rgba(92, 64, 51, 0.2);
-    @apply rounded-sm focus:border-wood/40 focus:ring-wood/30 transition-all duration-200;
-    padding: 0.625rem;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
+  /* Background textures */
+  .bg-texture {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: auto;
+    background-position: center;
   }
 
   /* Root element styles */
@@ -181,6 +186,14 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+  }
+
+  /* Responsive utilities */
+  @media (max-width: 639px) {
+    main {
+      margin-left: 0;
+      width: 100%;
+    }
   }
 
   /* Scrollbar styles */
@@ -203,23 +216,6 @@
   .scroll-container-x::-webkit-scrollbar-thumb:hover,
   .tabs-container::-webkit-scrollbar-thumb:hover {
     background: var(--wood-light);
-  }
-
-  /* Background textures */
-  .bg-texture {
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-attachment: fixed;
-    background-size: auto;
-    background-position: center;
-  }
-
-  /* Responsive utilities */
-  @media (max-width: 639px) {
-    main {
-      margin-left: 0;
-      width: 100%;
-    }
   }
 }
 
