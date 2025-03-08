@@ -12,8 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { Bell, Calendar as CalendarIcon, Clock, BellRing, Clock8, CalendarDays, Settings } from "lucide-react";
+import { Bell, Calendar as CalendarIcon, BellRing, Clock8, CalendarDays, Settings } from "lucide-react";
 import { format } from "date-fns";
 
 interface NotificationPreference {
@@ -149,7 +148,7 @@ export default function LearningCalendar() {
       </Card>
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Calendar Settings</DialogTitle>
             <DialogDescription>
@@ -157,149 +156,52 @@ export default function LearningCalendar() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-6 py-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Bell className="h-5 w-5 text-primary" />
-                  Notification Preferences
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {notificationPrefs.map((pref) => (
-                  <div key={pref.feature} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor={`${pref.feature}-toggle`} className="flex items-center gap-2">
-                        {pref.urgency === "urgent" ? 
-                          <BellRing className="h-4 w-4 text-red-500" /> : 
-                          <Bell className="h-4 w-4 text-muted-foreground" />
-                        }
-                        {pref.feature}
-                      </Label>
-                      <Switch
-                        id={`${pref.feature}-toggle`}
-                        checked={pref.enabled}
-                        onCheckedChange={() => handleNotificationToggle(pref.feature)}
-                      />
-                    </div>
-                    {pref.enabled && (
-                      <div className="pl-6 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Select
-                            defaultValue={pref.frequency}
-                            onValueChange={(value: "daily" | "weekly" | "custom") =>
-                              handleFrequencyChange(pref.feature, value)
-                            }
-                          >
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Select frequency" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="daily">Daily</SelectItem>
-                              <SelectItem value="weekly">Weekly</SelectItem>
-                              <SelectItem value="custom">Custom</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Select
-                            defaultValue={pref.urgency}
-                            onValueChange={(value: "urgent" | "passive") =>
-                              handleUrgencyChange(pref.feature, value)
-                            }
-                          >
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Select urgency" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="urgent">Urgent Alert</SelectItem>
-                              <SelectItem value="passive">Passive Reminder</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Clock8 className="h-5 w-5 text-primary" />
-                  Smart Scheduling
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Work Schedule Integration</Label>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-4">
+              <h4 className="font-medium leading-none">Notification Preferences</h4>
+              {notificationPrefs.map((pref) => (
+                <div key={pref.feature} className="flex items-center space-x-4">
                   <Switch
-                    checked={workSchedule.enabled}
-                    onCheckedChange={(checked) => 
-                      setWorkSchedule(prev => ({ ...prev, enabled: checked }))
-                    }
+                    id={`${pref.feature}-toggle`}
+                    checked={pref.enabled}
+                    onCheckedChange={() => handleNotificationToggle(pref.feature)}
                   />
+                  <Label htmlFor={`${pref.feature}-toggle`}>{pref.feature}</Label>
                 </div>
-                {workSchedule.enabled && (
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label>Start Time</Label>
-                        <input
-                          type="time"
-                          value={workSchedule.startTime}
-                          onChange={(e) => 
-                            setWorkSchedule(prev => ({ ...prev, startTime: e.target.value }))
-                          }
-                          className="w-full mt-1 rounded-md border"
-                        />
-                      </div>
-                      <div>
-                        <Label>End Time</Label>
-                        <input
-                          type="time"
-                          value={workSchedule.endTime}
-                          onChange={(e) => 
-                            setWorkSchedule(prev => ({ ...prev, endTime: e.target.value }))
-                          }
-                          className="w-full mt-1 rounded-md border"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              ))}
+            </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <CalendarDays className="h-5 w-5 text-primary" />
-                  Calendar Integration
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Google Calendar</Label>
-                  <Button variant="outline" size="sm">
-                    Connect
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label>Apple Calendar</Label>
-                  <Button variant="outline" size="sm">
-                    Connect
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label>Outlook Calendar</Label>
-                  <Button variant="outline" size="sm">
-                    Connect
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-4">
+              <h4 className="font-medium leading-none">Smart Scheduling</h4>
+              <div className="flex items-center space-x-4">
+                <Switch
+                  id="work-schedule"
+                  checked={workSchedule.enabled}
+                  onCheckedChange={(checked) => 
+                    setWorkSchedule(prev => ({ ...prev, enabled: checked }))
+                  }
+                />
+                <Label htmlFor="work-schedule">Work Schedule Integration</Label>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-medium leading-none">Calendar Integration</h4>
+              <div className="space-y-2">
+                <Button variant="outline" className="w-full justify-start">
+                  <CalendarDays className="mr-2 h-4 w-4" />
+                  Connect Google Calendar
+                </Button>
+                <Button variant="outline" className="w-full justify-start">
+                  <CalendarDays className="mr-2 h-4 w-4" />
+                  Connect Apple Calendar
+                </Button>
+                <Button variant="outline" className="w-full justify-start">
+                  <CalendarDays className="mr-2 h-4 w-4" />
+                  Connect Outlook Calendar
+                </Button>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
