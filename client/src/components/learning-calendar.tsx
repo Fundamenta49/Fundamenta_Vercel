@@ -5,9 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 import { format } from "date-fns";
 
+const features = [
+  { id: 'skill-building', name: 'Skill Building' },
+  { id: 'learning-goals', name: 'Learning Goals' },
+  { id: 'practice-projects', name: 'Practice Projects' }
+];
+
 export default function LearningCalendar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [showSettings, setShowSettings] = useState(false);
+  const [enabledFeatures, setEnabledFeatures] = useState<string[]>([]);
+
+  const toggleFeature = (featureId: string) => {
+    setEnabledFeatures(prev => 
+      prev.includes(featureId)
+        ? prev.filter(f => f !== featureId)
+        : [...prev, featureId]
+    );
+  };
 
   return (
     <Card className="max-w-3xl mx-auto">
@@ -28,10 +43,19 @@ export default function LearningCalendar() {
         <div className="grid gap-6">
           {showSettings ? (
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Calendar Settings</h3>
-              <p className="text-muted-foreground">
-                Calendar settings and integrations will be available soon.
-              </p>
+              <h3 className="text-lg font-medium">Learning Features</h3>
+              <div className="grid gap-2">
+                {features.map((feature) => (
+                  <Button
+                    key={feature.id}
+                    variant={enabledFeatures.includes(feature.id) ? "default" : "outline"}
+                    className="w-full justify-start text-left"
+                    onClick={() => toggleFeature(feature.id)}
+                  >
+                    {feature.name}: {enabledFeatures.includes(feature.id) ? 'Enabled' : 'Disabled'}
+                  </Button>
+                ))}
+              </div>
             </div>
           ) : (
             <>
