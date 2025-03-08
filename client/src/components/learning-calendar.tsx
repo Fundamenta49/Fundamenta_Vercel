@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -69,8 +69,8 @@ export default function LearningCalendar() {
   });
 
   const handleNotificationToggle = (feature: string) => {
-    setNotificationPrefs(prefs =>
-      prefs.map(pref =>
+    setNotificationPrefs(prev =>
+      prev.map(pref =>
         pref.feature === feature ? { ...pref, enabled: !pref.enabled } : pref
       )
     );
@@ -81,8 +81,8 @@ export default function LearningCalendar() {
   };
 
   const handleFrequencyChange = (feature: string, frequency: "daily" | "weekly" | "custom") => {
-    setNotificationPrefs(prefs =>
-      prefs.map(pref =>
+    setNotificationPrefs(prev =>
+      prev.map(pref =>
         pref.feature === feature ? { ...pref, frequency } : pref
       )
     );
@@ -93,8 +93,8 @@ export default function LearningCalendar() {
   };
 
   const handleUrgencyChange = (feature: string, urgency: "urgent" | "passive") => {
-    setNotificationPrefs(prefs =>
-      prefs.map(pref =>
+    setNotificationPrefs(prev =>
+      prev.map(pref =>
         pref.feature === feature ? { ...pref, urgency } : pref
       )
     );
@@ -151,9 +151,6 @@ export default function LearningCalendar() {
               Settings
             </Button>
           </div>
-          <CardDescription>
-            Plan your learning journey and set reminders
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6 md:grid-cols-2">
@@ -167,23 +164,19 @@ export default function LearningCalendar() {
             />
 
             <div className="space-y-4">
-              <h3 className="font-medium">Upcoming Reminders</h3>
-              {notificationPrefs
-                .filter(pref => pref.enabled)
-                .map(pref => (
-                  <div key={pref.feature} className="flex items-center justify-between py-2 border-b">
-                    <div className="flex items-center gap-2">
-                      {pref.urgency === "urgent" ?
-                        <BellRing className="h-4 w-4 text-red-500" /> :
-                        <Bell className="h-4 w-4 text-muted-foreground" />
-                      }
-                      <span>{pref.feature}</span>
-                    </div>
-                    <span className="text-sm text-muted-foreground">
-                      {pref.frequency}
-                    </span>
-                  </div>
-                ))}
+              <div>
+                <h3 className="font-medium mb-2">Selected Date: {date && format(date, "PPP")}</h3>
+                <div className="space-y-2">
+                  <Button variant="outline" className="w-full justify-start">
+                    <BellRing className="mr-2 h-4 w-4" />
+                    Set Reminders
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Bell className="mr-2 h-4 w-4" />
+                    Configure Notifications
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -197,48 +190,6 @@ export default function LearningCalendar() {
               Customize your learning schedule and notification preferences
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-4">
-              <h4 className="font-medium leading-none">Notification Preferences</h4>
-              
-              {notificationPrefs.map((pref, index) => (
-                <div key={pref.feature} className="flex items-center justify-between py-2 border-b">
-                  <div>
-                    <span className="font-medium">{pref.feature}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Switch 
-                      checked={pref.enabled} 
-                      onCheckedChange={(checked) => {
-                        const newPrefs = [...notificationPrefs];
-                        newPrefs[index].enabled = checked;
-                        setNotificationPrefs(newPrefs);
-                      }}
-                    />
-                    
-                    {pref.enabled && (
-                      <Select 
-                        value={pref.frequency} 
-                        onValueChange={(value) => {
-                          const newPrefs = [...notificationPrefs];
-                          newPrefs[index].frequency = value as "daily" | "weekly" | "custom";
-                          setNotificationPrefs(newPrefs);
-                        }}
-                      >
-                        <SelectTrigger className="w-24">
-                          <SelectValue placeholder="Frequency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                          <SelectItem value="custom">Custom</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
 
           <div className="grid gap-4 py-4">
             <div className="space-y-4">
