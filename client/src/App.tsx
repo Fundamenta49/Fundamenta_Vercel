@@ -2,7 +2,7 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import Navigation from "@/components/navigation";
+import Sidebar from "@/components/sidebar";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
@@ -16,7 +16,7 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
-import { createContext, useState, useCallback } from "react";
+import { createContext, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export const SidebarContext = createContext<{
@@ -30,19 +30,14 @@ export const SidebarContext = createContext<{
 function Router() {
   const [isMinimized, setIsMinimized] = useState(false);
 
-  const handleSetIsMinimized = useCallback((value: boolean) => {
-    console.log('App: Setting isMinimized to:', value);
-    setIsMinimized(value);
-  }, []);
-
   return (
-    <SidebarContext.Provider value={{ isMinimized, setIsMinimized: handleSetIsMinimized }}>
+    <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>
       <div className="min-h-screen flex bg-background">
-        <Navigation />
+        <Sidebar />
         <main 
           className={cn(
-            "flex-1 relative overflow-y-auto transition-[margin] duration-300",
-            isMinimized ? "ml-[80px]" : "ml-[256px]"
+            "flex-1 relative overflow-y-auto transition-all duration-300",
+            isMinimized ? "ml-20" : "ml-64"
           )}
         >
           <div className="p-4 sm:p-6 md:p-8">
