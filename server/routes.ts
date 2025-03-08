@@ -77,7 +77,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
-      const response = await getChatResponse(validatedData.message, validatedData.category, validatedData.context);
+      const response = await getChatResponse(
+        validatedData.message,
+        validatedData.category,
+        validatedData.context
+      );
       res.json({ response });
     } catch (error) {
       console.error("Chat error:", error);

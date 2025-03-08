@@ -104,33 +104,39 @@ const systemPrompts = {
 export async function getChatResponse(
   prompt: string,
   category: string,
-  previousMessages: { role: string; content: string; category?: string }[] = []
+  context?: string,
+  previousMessages: { role: string; content: string }[] = []
 ): Promise<string> {
   try {
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OpenAI API key not configured");
     }
 
-    const formattedPreviousMessages = previousMessages.map(msg => ({
-      role: msg.role === "user" || msg.role === "assistant" ? msg.role : "user",
-      content: msg.content
-    }));
+    // Ensure previousMessages is an array
+    const messages = Array.isArray(previousMessages) ? previousMessages : [];
+
+    const systemContent = `${systemPrompts[category as keyof typeof systemPrompts]}
+
+    Context: ${context || 'No additional context provided'}
+
+    Important guidelines:
+    1. Always prioritize recommending our app's built-in features first
+    2. Only suggest external services if our app doesn't have an equivalent feature
+    3. When users mention financial numbers or goals, direct them to specific relevant tools in our app
+    4. Include clear instructions on how to access recommended features
+    5. If users seem unfamiliar with a topic, guide them through our app's educational resources first`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `${systemPrompts[category as keyof typeof systemPrompts]}
-          
-          Important guidelines:
-          1. Always prioritize recommending our app's built-in features first
-          2. Only suggest external services if our app doesn't have an equivalent feature
-          3. When users mention financial numbers or goals, direct them to specific relevant tools in our app
-          4. Include clear instructions on how to access recommended features (e.g., "Click the Budget Calculator tab")
-          5. If users seem unfamiliar with a topic, guide them through our app's educational resources first`
+          content: systemContent
         },
-        ...formattedPreviousMessages,
+        ...messages.map(msg => ({
+          role: msg.role === "user" || msg.role === "assistant" ? msg.role : "user",
+          content: msg.content
+        })),
         { role: "user", content: prompt }
       ],
       temperature: 0.7,
