@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { SidebarContext } from "@/App";
 
 // Default navigation items for home page
@@ -54,13 +54,6 @@ export default function Navigation() {
 
   // Select which navigation items to show based on current location
   const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty(
-      '--sidebar-width',
-      isMinimized ? '5rem' : '16rem'
-    );
-  }, [isMinimized]);
 
   const handleNavigation = (href: string) => {
     navigate(href);
@@ -114,7 +107,7 @@ export default function Navigation() {
 
   return (
     <div className={cn(
-      "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300",
+      "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300 ease-in-out",
       isMinimized ? "w-20" : "w-64"
     )}>
       <div className="flex items-center justify-between mb-8">

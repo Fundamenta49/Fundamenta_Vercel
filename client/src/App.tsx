@@ -16,7 +16,7 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
-import { createContext, useContext, useState } from "react";
+import { createContext, useState } from "react";
 
 // Create context for sidebar state
 export const SidebarContext = createContext({ isMinimized: false, setIsMinimized: (value: boolean) => {} });
@@ -28,13 +28,29 @@ function Router() {
     <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>
       <div className="min-h-screen flex overflow-hidden bg-texture">
         <Navigation />
-        <main className={`flex-1 relative z-0 overflow-y-auto transition-all duration-300 ease-in-out ${
-          isMinimized ? 'md:ml-20' : 'md:ml-[240px]'
-        }`}>
+        <main 
+          className={`
+            flex-1 
+            relative 
+            z-0 
+            overflow-y-auto 
+            transition-all 
+            duration-300 
+            ease-in-out
+            ${isMinimized ? 'md:ml-20' : 'md:ml-64'}
+          `}
+        >
           <div className="p-4 sm:p-6 md:p-8">
-            <div className={`mx-auto space-y-6 transition-all duration-300 ease-in-out ${
-              isMinimized ? 'max-w-[calc(100vw-80px)]' : 'max-w-7xl'
-            }`}>
+            <div 
+              className={`
+                mx-auto 
+                space-y-6 
+                transition-all 
+                duration-300 
+                ease-in-out
+                ${isMinimized ? 'md:max-w-5xl md:mx-auto' : 'md:max-w-6xl'}
+              `}
+            >
               <Switch>
                 <Route path="/" component={Home} />
                 <Route path="/why-fundamenta" component={WhyFundamenta} />
