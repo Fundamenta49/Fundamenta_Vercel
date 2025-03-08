@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, HelpCircle } from "lucide-react";
 import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 
 const features = [
   {
@@ -48,9 +49,22 @@ const features = [
 ];
 
 export default function Home() {
+  const restartTour = () => {
+    localStorage.removeItem("hasSeenTour");
+    window.location.reload();
+  };
+
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={restartTour}
+          className="absolute right-0 top-0 text-muted-foreground hover:text-primary"
+        >
+          <HelpCircle className="h-5 w-5" />
+        </Button>
         <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
           Welcome to Fundamenta
         </h1>
