@@ -8,9 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Bell, Calendar as CalendarIcon, BellRing, CalendarDays, Settings, Check } from "lucide-react";
 import { format } from "date-fns";
@@ -117,7 +117,6 @@ export default function LearningCalendar() {
       [type]: { ...prev[type], connecting: true }
     }));
 
-    // Simulate API call
     setTimeout(() => {
       setCalendarSync(prev => ({
         ...prev,
@@ -190,9 +189,9 @@ export default function LearningCalendar() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 py-4">
+          <div className="py-4 space-y-4">
             {notificationPrefs.map((pref) => (
-              <div key={pref.feature} className="space-y-4">
+              <div key={pref.feature} className="border rounded-lg p-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <Label htmlFor={`${pref.feature}-toggle`}>
                     {pref.feature}
@@ -205,19 +204,19 @@ export default function LearningCalendar() {
                 </div>
 
                 {pref.enabled && (
-                  <div className="ml-6 space-y-4">
-                    <div className="space-y-2">
+                  <div className="space-y-4">
+                    <div>
                       <Label>Frequency</Label>
                       <Select
-                        defaultValue={pref.frequency}
+                        value={pref.frequency}
                         onValueChange={(value: "daily" | "weekly" | "custom") =>
                           handleFrequencyChange(pref.feature, value)
                         }
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select frequency" />
+                        <SelectTrigger className="w-full mt-2">
+                          <SelectValue />
                         </SelectTrigger>
-                        <SelectContent align="end">
+                        <SelectContent>
                           <SelectItem value="daily">Daily</SelectItem>
                           <SelectItem value="weekly">Weekly</SelectItem>
                           <SelectItem value="custom">Custom</SelectItem>
@@ -225,18 +224,18 @@ export default function LearningCalendar() {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
+                    <div>
                       <Label>Priority</Label>
                       <Select
-                        defaultValue={pref.urgency}
+                        value={pref.urgency}
                         onValueChange={(value: "urgent" | "passive") =>
                           handleUrgencyChange(pref.feature, value)
                         }
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select priority" />
+                        <SelectTrigger className="w-full mt-2">
+                          <SelectValue />
                         </SelectTrigger>
-                        <SelectContent align="end">
+                        <SelectContent>
                           <SelectItem value="urgent">Urgent Alert</SelectItem>
                           <SelectItem value="passive">Passive Reminder</SelectItem>
                         </SelectContent>
@@ -247,7 +246,7 @@ export default function LearningCalendar() {
               </div>
             ))}
 
-            <div className="space-y-4">
+            <div className="border rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="work-schedule">Work Schedule Integration</Label>
                 <Switch
@@ -258,7 +257,7 @@ export default function LearningCalendar() {
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="border rounded-lg p-4 space-y-4">
               <h4 className="font-medium">Calendar Integration</h4>
               <div className="space-y-2">
                 {Object.entries(calendarSync).map(([type, status]) => (
