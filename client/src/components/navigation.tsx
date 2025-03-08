@@ -99,10 +99,7 @@ export default function Navigation() {
 
   return (
     <aside 
-      style={{
-        width: isMinimized ? '80px' : '256px',
-        transition: 'width 300ms ease-in-out'
-      }}
+      style={{ width: isMinimized ? '80px' : '256px' }}
       className="fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] border-r border-[#1C3D5A]"
     >
       <div className="p-4">
@@ -111,12 +108,7 @@ export default function Navigation() {
           className="flex items-center gap-2 px-2 py-2 rounded-lg transition-colors hover:bg-[#A3C6C4] hover:text-[#1C3D5A] mb-6 w-full"
         >
           <HeartHandshake className="h-6 w-6 flex-shrink-0" />
-          <span className={cn(
-            "text-xl font-bold truncate transition-opacity duration-300",
-            isMinimized ? "opacity-0 w-0" : "opacity-100"
-          )}>
-            Fundamenta
-          </span>
+          {!isMinimized && <span className="text-xl font-bold">Fundamenta</span>}
         </button>
 
         <Button

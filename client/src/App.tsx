@@ -34,10 +34,7 @@ function Router() {
       <div className="min-h-screen flex">
         <Navigation />
         <main 
-          style={{
-            marginLeft: isMinimized ? '80px' : '256px',
-            transition: 'margin-left 300ms ease-in-out'
-          }}
+          style={{ marginLeft: isMinimized ? '80px' : '256px' }}
           className="flex-1 relative overflow-y-auto"
         >
           <div className="p-4 sm:p-6 md:p-8">
