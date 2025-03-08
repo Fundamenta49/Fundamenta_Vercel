@@ -19,57 +19,99 @@ import {
   Activity,
   AlertCircle,
   MessageSquare,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const tourSteps = [
   {
     title: "Welcome to Fundamenta! 👋",
-    description: "I'm your AI guide! Let me show you around our features. Feel free to ask any questions along the way!",
+    description: "Hi! I'm your AI guide. I'll walk you through our amazing features and help you get started. Ready for a quick tour?",
     icon: null,
     path: "/",
+    suggestedQuestions: [
+      "What can Fundamenta help me with?",
+      "How long will the tour take?",
+      "Can I skip parts of the tour?"
+    ]
   },
   {
     title: "Life Skills",
-    description: "This is where your growth journey begins! Let's take a look at the Life Skills section.",
+    description: "Let's start with Life Skills - your personal growth hub! Here you can learn everything from home repairs to communication skills. Want to see how it works?",
     icon: <GraduationCap className="h-8 w-8 text-orange-500" />,
     path: "/learning",
+    suggestedQuestions: [
+      "What kind of skills can I learn?",
+      "How does the learning path work?",
+      "Can I track my progress?"
+    ]
   },
   {
     title: "Financial Literacy",
-    description: "Master your finances with our AI-powered tools. Let's check out the budgeting features!",
+    description: "Now, let's check out our smart money tools! I can help you create budgets, track spending, and plan for your future. Shall we look at the budget calculator?",
     icon: <DollarSign className="h-8 w-8 text-green-500" />,
     path: "/finance",
+    suggestedQuestions: [
+      "How can I start budgeting?",
+      "What financial tools are available?",
+      "Can you help with investment planning?"
+    ]
   },
   {
     title: "Career Development",
-    description: "Build your professional future. Want to see how our AI helps with resume building?",
+    description: "Time to boost your career! Let me show you how our AI helps with resumes, interview prep, and finding your dream job.",
     icon: <Briefcase className="h-8 w-8 text-blue-500" />,
     path: "/career",
+    suggestedQuestions: [
+      "Can you help improve my resume?",
+      "How do I prepare for interviews?",
+      "What career paths suit me?"
+    ]
   },
   {
     title: "Wellness & Nutrition",
-    description: "Take care of your mental and physical health. Let's explore meditation guides!",
+    description: "Your well-being matters! Let's explore our meditation guides and nutrition planning tools. Want to try a quick meditation session?",
     icon: <Heart className="h-8 w-8 text-purple-500" />,
     path: "/wellness",
+    suggestedQuestions: [
+      "How do I start meditating?",
+      "Can you help with meal planning?",
+      "What wellness programs are available?"
+    ]
   },
   {
     title: "Active You",
-    description: "Stay fit with personalized workout plans. Shall we look at the fitness tracking features?",
+    description: "Ready to get moving? I'll show you our personalized workout plans and progress tracking. Let's check out some exercises!",
     icon: <Activity className="h-8 w-8 text-pink-500" />,
     path: "/active",
+    suggestedQuestions: [
+      "How do I create a workout plan?",
+      "Can you track my progress?",
+      "What types of exercises are included?"
+    ]
   },
   {
     title: "Emergency Guidance",
-    description: "Quick help when you need it most. Important to know where this is!",
+    description: "Lastly, here's our Emergency Guidance section - quick help when you need it most. Let's see where to find crucial information.",
     icon: <AlertCircle className="h-8 w-8 text-red-500" />,
     path: "/emergency",
+    suggestedQuestions: [
+      "What emergency resources are available?",
+      "How quickly can I access help?",
+      "Are there offline guides?"
+    ]
   },
   {
     title: "You're All Set! 🎉",
-    description: "Remember, I'm here to help anytime. Just click the chat icon in any section!",
+    description: "Great job completing the tour! Remember, I'm here to help anytime - just click the chat icon in any section. Want to explore something specific?",
     icon: null,
     path: "/",
+    suggestedQuestions: [
+      "Where should I start first?",
+      "How do I contact support?",
+      "Can you show me around again?"
+    ]
   },
 ];
 
@@ -77,6 +119,7 @@ export default function WelcomeTour() {
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [userQuestion, setUserQuestion] = useState("");
+  const [showQuestions, setShowQuestions] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [aiResponse, setAiResponse] = useState<string | null>(null);
@@ -95,6 +138,7 @@ export default function WelcomeTour() {
     const nextStep = currentStep + 1;
     if (nextStep < tourSteps.length) {
       setCurrentStep(nextStep);
+      setShowQuestions(false);
       // Navigate to the feature's page
       if (tourSteps[nextStep].path !== "/") {
         setLocation(tourSteps[nextStep].path);
@@ -117,15 +161,21 @@ export default function WelcomeTour() {
     setLocation("/");
   };
 
-  const handleAskQuestion = async () => {
-    if (!userQuestion.trim()) return;
+  const handleSuggestedQuestion = (question: string) => {
+    setUserQuestion(question);
+    handleAskQuestion(question);
+  };
+
+  const handleAskQuestion = async (question?: string) => {
+    const queryQuestion = question || userQuestion;
+    if (!queryQuestion.trim()) return;
 
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: userQuestion,
+          message: queryQuestion,
           category: "tour",
           context: `User is on step ${currentStep + 1} of the tour: ${tourSteps[currentStep].title}`
         })
@@ -136,6 +186,7 @@ export default function WelcomeTour() {
       const data = await response.json();
       setAiResponse(data.response);
       setUserQuestion("");
+      setShowQuestions(false);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -177,21 +228,58 @@ export default function WelcomeTour() {
           )}
         </AnimatePresence>
 
-        <div className="flex gap-2 mt-4">
-          <Input
-            placeholder="Ask me anything about this feature..."
-            value={userQuestion}
-            onChange={(e) => setUserQuestion(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleAskQuestion()}
-          />
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleAskQuestion}
-            disabled={!userQuestion.trim()}
-          >
-            <MessageSquare className="h-4 w-4" />
-          </Button>
+        <div className="mt-4">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Ask me anything..."
+              value={userQuestion}
+              onChange={(e) => setUserQuestion(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleAskQuestion()}
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setShowQuestions(!showQuestions)}
+            >
+              {showQuestions ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handleAskQuestion()}
+              disabled={!userQuestion.trim()}
+            >
+              <MessageSquare className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <AnimatePresence>
+            {showQuestions && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="grid gap-2 mt-2">
+                  {tourSteps[currentStep].suggestedQuestions.map((question, index) => (
+                    <Button
+                      key={index}
+                      variant="ghost"
+                      className="justify-start text-sm"
+                      onClick={() => handleSuggestedQuestion(question)}
+                    >
+                      {question}
+                    </Button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="flex justify-center gap-2 mt-4">
