@@ -197,6 +197,48 @@ export default function LearningCalendar() {
               Customize your learning schedule and notification preferences
             </DialogDescription>
           </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-4">
+              <h4 className="font-medium leading-none">Notification Preferences</h4>
+              
+              {notificationPrefs.map((pref, index) => (
+                <div key={pref.feature} className="flex items-center justify-between py-2 border-b">
+                  <div>
+                    <span className="font-medium">{pref.feature}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch 
+                      checked={pref.enabled} 
+                      onCheckedChange={(checked) => {
+                        const newPrefs = [...notificationPrefs];
+                        newPrefs[index].enabled = checked;
+                        setNotificationPrefs(newPrefs);
+                      }}
+                    />
+                    
+                    {pref.enabled && (
+                      <Select 
+                        value={pref.frequency} 
+                        onValueChange={(value) => {
+                          const newPrefs = [...notificationPrefs];
+                          newPrefs[index].frequency = value as "daily" | "weekly" | "custom";
+                          setNotificationPrefs(newPrefs);
+                        }}
+                      >
+                        <SelectTrigger className="w-24">
+                          <SelectValue placeholder="Frequency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="daily">Daily</SelectItem>
+                          <SelectItem value="weekly">Weekly</SelectItem>
+                          <SelectItem value="custom">Custom</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
 
           <div className="grid gap-4 py-4">
             <div className="space-y-4">
