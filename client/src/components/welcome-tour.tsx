@@ -149,7 +149,7 @@ export default function WelcomeTour() {
     if (isActive && isAutoplaying && !isMinimized && !showQuestions) {
       timer = setTimeout(() => {
         handleNext();
-      }, 5000); // 5 seconds between steps
+      }, 7000); // 7 seconds between steps
     }
     return () => clearTimeout(timer);
   }, [isActive, isAutoplaying, currentStep, isMinimized, showQuestions, handleNext]);
