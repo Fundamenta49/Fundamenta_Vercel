@@ -47,42 +47,23 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // importantly only setup vite in development and after
+  // setting up all the other routes so the catch-all route
+  // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // Try ports sequentially starting from the initial port
-  const tryPort = async (port: number, maxAttempts: number = 10): Promise<void> => {
-    try {
-      await new Promise<void>((resolve, reject) => {
-        server.listen({
-          port,
-          host: "0.0.0.0",
-          reusePort: true,
-        })
-        .once('listening', () => {
-          log(`Server started successfully on port ${port}`);
-          resolve();
-        })
-        .once('error', (err: any) => {
-          if (err.code === 'EADDRINUSE' && port < (port + maxAttempts)) {
-            log(`Port ${port} is in use, trying port ${port + 1}...`);
-            server.close();
-            tryPort(port + 1, maxAttempts).then(resolve).catch(reject);
-          } else {
-            reject(err);
-          }
-        });
-      });
-    } catch (error) {
-      console.error('Failed to start server:', error);
-      process.exit(1);
-    }
-  };
-
-  // Start with port 5001 or use environment variable
-  const initialPort = Number(process.env.PORT) || 5001;
-  await tryPort(initialPort);
+  // ALWAYS serve the app on port 5000
+  // this serves both the API and the client
+  const port = 5000;
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true,
+  }, () => {
+    log(`serving on port ${port}`);
+  });
 })();

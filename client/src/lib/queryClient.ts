@@ -55,6 +55,3 @@ export const queryClient = new QueryClient({
     },
   },
 });
-
-// Use port 5001 for API connections
-export const apiBaseUrl = "http://localhost:5001/api";
