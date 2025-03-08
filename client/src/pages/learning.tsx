@@ -33,7 +33,6 @@ import {
   Car,
   Wrench,
 } from "lucide-react";
-import LearningCalendar from "@/components/learning-calendar";
 
 // Skill categories with their learning paths
 const TECHNICAL_SKILLS = [
@@ -224,21 +223,24 @@ export default function Learning() {
               </div>
             ) : guidance ? (
               <div className="space-y-6">
-                {formatGuidanceContent(guidance).map((section, index) => (
-                  <Card key={index} className="border-l-4 border-l-primary">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        <section.icon className="h-5 w-5 text-primary" />
-                        {section.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2 text-[15px] leading-relaxed">
-                        {convertLinksToHtml(section.content)}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                {formatGuidanceContent(guidance).map((section, index) => {
+                  if (!section) return null;
+                  return (
+                    <Card key={index} className="border-l-4 border-l-primary">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <section.icon className="h-5 w-5 text-primary" />
+                          {section.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2 text-[15px] leading-relaxed">
+                          {convertLinksToHtml(section.content)}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             ) : null}
           </ScrollArea>
@@ -251,7 +253,6 @@ export default function Learning() {
             <TabsTrigger value="chat">AI Learning Coach</TabsTrigger>
             <TabsTrigger value="skills">Skill Building</TabsTrigger>
             <TabsTrigger value="courses">Learning Paths</TabsTrigger>
-            <TabsTrigger value="calendar">Schedule</TabsTrigger>
             <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
             <TabsTrigger value="handyman">Home Repairs</TabsTrigger>
             <TabsTrigger value="goals">Goal Setting</TabsTrigger>
@@ -416,10 +417,6 @@ export default function Learning() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="calendar">
-          <LearningCalendar />
         </TabsContent>
 
         <TabsContent value="goals">
