@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Bell, Calendar as CalendarIcon, Clock, BellRing, Clock8, CalendarDays, Settings } from "lucide-react";
-import { format, addDays } from "date-fns";
+import { format } from "date-fns";
 
 interface NotificationPreference {
   feature: string;
@@ -121,7 +121,8 @@ export default function LearningCalendar() {
               selected={date}
               onSelect={setDate}
               className="rounded-md border"
-              aria-label="Select learning date"
+              disabled={(date) => date < new Date()}
+              initialFocus
             />
 
             <div className="space-y-4">
@@ -148,7 +149,7 @@ export default function LearningCalendar() {
       </Card>
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Calendar Settings</DialogTitle>
             <DialogDescription>
@@ -157,7 +158,6 @@ export default function LearningCalendar() {
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
-            {/* Notification Preferences */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -185,7 +185,6 @@ export default function LearningCalendar() {
                     {pref.enabled && (
                       <div className="pl-6 space-y-2">
                         <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
                           <Select
                             defaultValue={pref.frequency}
                             onValueChange={(value: "daily" | "weekly" | "custom") =>
@@ -203,7 +202,6 @@ export default function LearningCalendar() {
                           </Select>
                         </div>
                         <div className="flex items-center gap-2">
-                          <BellRing className="h-4 w-4 text-muted-foreground" />
                           <Select
                             defaultValue={pref.urgency}
                             onValueChange={(value: "urgent" | "passive") =>
@@ -226,7 +224,6 @@ export default function LearningCalendar() {
               </CardContent>
             </Card>
 
-            {/* Smart Scheduling */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -275,7 +272,6 @@ export default function LearningCalendar() {
               </CardContent>
             </Card>
 
-            {/* Calendar Integration */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
