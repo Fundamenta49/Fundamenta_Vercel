@@ -84,7 +84,9 @@ export default function WelcomeTour() {
   useEffect(() => {
     // Check if this is the first visit
     const hasSeenTour = localStorage.getItem("hasSeenTour");
+    console.log("Welcome Tour - First Visit Check:", !hasSeenTour);
     if (!hasSeenTour) {
+      console.log("Opening welcome tour...");
       setOpen(true);
     }
   }, []);
