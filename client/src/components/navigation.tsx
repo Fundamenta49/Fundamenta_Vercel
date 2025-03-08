@@ -47,8 +47,6 @@ export default function Navigation() {
   const { isMinimized, setIsMinimized } = useContext(SidebarContext);
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log('Navigation render - isMinimized:', isMinimized);
-
   const isHomePage = location === "/";
   const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
 
@@ -81,10 +79,7 @@ export default function Navigation() {
     return (
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            className="fixed top-4 left-4 z-50"
-          >
+          <Button variant="ghost" className="fixed top-4 left-4 z-50">
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
@@ -107,7 +102,7 @@ export default function Navigation() {
       "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300 ease-in-out",
       isMinimized ? "w-20" : "w-64"
     )}>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center mb-8">
         <button 
           onClick={() => handleNavigation("/")}
           className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
@@ -115,25 +110,26 @@ export default function Navigation() {
           <HeartHandshake className="h-6 w-6" />
           {!isMinimized && <h1 className="text-2xl font-bold">Fundamenta</h1>}
         </button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const newValue = !isMinimized;
-            console.log('Toggle clicked - current:', isMinimized, 'new:', newValue);
-            setIsMinimized(newValue);
-          }}
-          className="ml-auto text-[#D8BFAA] hover:text-[#A3C6C4]"
-        >
-          {isMinimized ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </Button>
       </div>
+
+      {/* Separate toggle button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => {
+          const newValue = !isMinimized;
+          console.log('Toggle clicked - current:', isMinimized, 'new:', newValue);
+          setIsMinimized(newValue);
+        }}
+        className="absolute right-2 top-4 text-[#D8BFAA] hover:text-[#A3C6C4]"
+      >
+        {isMinimized ? (
+          <ChevronRight className="h-4 w-4" />
+        ) : (
+          <ChevronLeft className="h-4 w-4" />
+        )}
+      </Button>
+
       <NavContent />
     </div>
   );

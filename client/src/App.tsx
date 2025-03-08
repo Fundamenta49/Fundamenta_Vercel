@@ -45,7 +45,7 @@ function Router() {
             transition-all 
             duration-300 
             ease-in-out
-            ${isMinimized ? 'md:ml-20' : 'md:ml-64'}
+            ${isMinimized ? 'ml-20' : 'ml-64'}
           `}
         >
           <div className="p-4 sm:p-6 md:p-8">
@@ -56,7 +56,7 @@ function Router() {
                 transition-all 
                 duration-300 
                 ease-in-out
-                ${isMinimized ? 'md:max-w-5xl md:mx-auto' : 'md:max-w-6xl'}
+                ${isMinimized ? 'max-w-5xl mx-auto' : 'max-w-6xl'}
               `}
             >
               <Switch>
