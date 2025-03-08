@@ -72,6 +72,27 @@ export default function LearningCalendar() {
     apple: { connected: false, connecting: false },
     outlook: { connected: false, connecting: false }
   });
+  
+  const handleCalendarConnect = (type: 'google' | 'apple' | 'outlook') => {
+    // Set connecting state
+    setCalendarSync(prev => ({
+      ...prev,
+      [type]: { ...prev[type], connecting: true }
+    }));
+    
+    // Simulate connection process
+    setTimeout(() => {
+      setCalendarSync(prev => ({
+        ...prev,
+        [type]: { connecting: false, connected: true }
+      }));
+      
+      toast({
+        title: "Calendar Connected",
+        description: `Successfully connected to ${type.charAt(0).toUpperCase() + type.slice(1)} Calendar.`,
+      });
+    }, 1500);
+  };
 
   const handleNotificationToggle = (feature: string) => {
     setNotificationPrefs(prev =>
