@@ -16,7 +16,7 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
-import { createContext, useState } from "react";
+import { createContext, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 export const SidebarContext = createContext<{
@@ -30,13 +30,18 @@ export const SidebarContext = createContext<{
 function Router() {
   const [isMinimized, setIsMinimized] = useState(false);
 
+  const handleSetIsMinimized = useCallback((value: boolean) => {
+    console.log('App: Setting isMinimized to:', value);
+    setIsMinimized(value);
+  }, []);
+
   return (
-    <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>
+    <SidebarContext.Provider value={{ isMinimized, setIsMinimized: handleSetIsMinimized }}>
       <div className="min-h-screen flex bg-background">
         <Navigation />
         <main 
           className={cn(
-            "flex-1 relative overflow-y-auto transition-all duration-300",
+            "flex-1 relative overflow-y-auto transition-[margin] duration-300",
             isMinimized ? "ml-[80px]" : "ml-[256px]"
           )}
         >
