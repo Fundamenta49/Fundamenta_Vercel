@@ -204,7 +204,7 @@ export default function Learning() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Learning & Development</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Learning & Development</h1>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[80vh]">
