@@ -19,7 +19,13 @@ import WelcomeTour from "@/components/welcome-tour";
 import { createContext, useState } from "react";
 
 // Create context for sidebar state
-export const SidebarContext = createContext({ isMinimized: false, setIsMinimized: (value: boolean) => {} });
+export const SidebarContext = createContext<{
+  isMinimized: boolean;
+  setIsMinimized: (value: boolean) => void;
+}>({
+  isMinimized: false,
+  setIsMinimized: () => {},
+});
 
 function Router() {
   const [isMinimized, setIsMinimized] = useState(false);
