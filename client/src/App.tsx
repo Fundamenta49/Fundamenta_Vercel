@@ -16,7 +16,7 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 export const SidebarContext = createContext<{
@@ -29,6 +29,11 @@ export const SidebarContext = createContext<{
 
 function Router() {
   const [isMinimized, setIsMinimized] = useState(false);
+
+  // Debug effect to track state changes
+  useEffect(() => {
+    console.log('Sidebar state changed:', isMinimized);
+  }, [isMinimized]);
 
   return (
     <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>

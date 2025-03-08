@@ -23,6 +23,11 @@ export default function Sidebar() {
   const [location] = useLocation();
   const { isMinimized, setIsMinimized } = useContext(SidebarContext);
 
+  const handleToggle = () => {
+    console.log('Toggle button clicked. Previous state:', isMinimized);
+    setIsMinimized(!isMinimized);
+  };
+
   return (
     <aside 
       className={cn(
@@ -46,7 +51,7 @@ export default function Sidebar() {
 
         <button
           type="button"
-          onClick={() => setIsMinimized(!isMinimized)}
+          onClick={handleToggle}
           className="absolute right-2 top-4 p-2 rounded hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
         >
           {isMinimized ? (
