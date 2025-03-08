@@ -20,7 +20,7 @@ export default function Finance() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Financial Literacy</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Financial Literacy</h1>
 
       <Alert variant="default" className="mb-6 border-amber-500 bg-amber-50">
         <AlertCircle className="h-5 w-5 text-amber-500" />

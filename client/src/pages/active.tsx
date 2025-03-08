@@ -87,7 +87,7 @@ export default function Active() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Active You</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Active You</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4">
