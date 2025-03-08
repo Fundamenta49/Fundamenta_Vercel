@@ -30,27 +30,27 @@ export default function LearningCalendar() {
   const { toast } = useToast();
 
   const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreference[]>([
-    { 
-      feature: "Skill Building", 
-      enabled: true, 
+    {
+      feature: "Skill Building",
+      enabled: true,
       frequency: "weekly",
       urgency: "passive"
     },
-    { 
-      feature: "Learning Goals", 
-      enabled: true, 
+    {
+      feature: "Learning Goals",
+      enabled: true,
       frequency: "daily",
       urgency: "urgent"
     },
-    { 
-      feature: "Practice Projects", 
-      enabled: true, 
+    {
+      feature: "Practice Projects",
+      enabled: true,
       frequency: "weekly",
       urgency: "passive"
     },
-    { 
-      feature: "Emergency Guidance", 
-      enabled: true, 
+    {
+      feature: "Emergency Guidance",
+      enabled: true,
       frequency: "daily",
       urgency: "urgent"
     }
@@ -174,8 +174,8 @@ export default function LearningCalendar() {
                 .map(pref => (
                   <div key={pref.feature} className="flex items-center justify-between py-2 border-b">
                     <div className="flex items-center gap-2">
-                      {pref.urgency === "urgent" ? 
-                        <BellRing className="h-4 w-4 text-red-500" /> : 
+                      {pref.urgency === "urgent" ?
+                        <BellRing className="h-4 w-4 text-red-500" /> :
                         <Bell className="h-4 w-4 text-muted-foreground" />
                       }
                       <span>{pref.feature}</span>
@@ -191,7 +191,7 @@ export default function LearningCalendar() {
       </Card>
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Calendar Settings</DialogTitle>
             <DialogDescription>
@@ -199,96 +199,108 @@ export default function LearningCalendar() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="space-y-4">
-              <h4 className="font-medium leading-none">Notification Preferences</h4>
-              {notificationPrefs.map((pref) => (
-                <div key={pref.feature} className="space-y-3">
+          <div className="grid gap-6 py-4">
+            <div className="space-y-6">
+              <div>
+                <h4 className="font-medium mb-4">Notification Preferences</h4>
+                {notificationPrefs.map((pref) => (
+                  <div key={pref.feature} className="mb-6 space-y-4 bg-muted/50 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`${pref.feature}-toggle`} className="text-base">
+                        {pref.feature}
+                      </Label>
+                      <Switch
+                        id={`${pref.feature}-toggle`}
+                        checked={pref.enabled}
+                        onCheckedChange={() => handleNotificationToggle(pref.feature)}
+                      />
+                    </div>
+                    {pref.enabled && (
+                      <div className="space-y-4 pl-0">
+                        <div className="space-y-2">
+                          <Label className="text-sm text-muted-foreground">Frequency</Label>
+                          <Select
+                            value={pref.frequency}
+                            onValueChange={(value: "daily" | "weekly" | "custom") =>
+                              handleFrequencyChange(pref.feature, value)
+                            }
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select frequency" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="daily">Daily</SelectItem>
+                              <SelectItem value="weekly">Weekly</SelectItem>
+                              <SelectItem value="custom">Custom</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm text-muted-foreground">Priority</Label>
+                          <Select
+                            value={pref.urgency}
+                            onValueChange={(value: "urgent" | "passive") =>
+                              handleUrgencyChange(pref.feature, value)
+                            }
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select priority" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="urgent">Urgent Alert</SelectItem>
+                              <SelectItem value="passive">Passive Reminder</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-4">Smart Scheduling</h4>
+                <div className="bg-muted/50 rounded-lg p-4">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor={`${pref.feature}-toggle`} className="flex items-center gap-2">
-                      {pref.feature}
-                    </Label>
+                    <Label htmlFor="work-schedule" className="text-base">Work Schedule Integration</Label>
                     <Switch
-                      id={`${pref.feature}-toggle`}
-                      checked={pref.enabled}
-                      onCheckedChange={() => handleNotificationToggle(pref.feature)}
+                      id="work-schedule"
+                      checked={workSchedule.enabled}
+                      onCheckedChange={handleWorkScheduleToggle}
                     />
                   </div>
-                  {pref.enabled && (
-                    <div className="pl-4 space-y-2">
-                      <Select
-                        value={pref.frequency}
-                        onValueChange={(value: "daily" | "weekly" | "custom") =>
-                          handleFrequencyChange(pref.feature, value)
-                        }
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select frequency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                          <SelectItem value="custom">Custom</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select
-                        value={pref.urgency}
-                        onValueChange={(value: "urgent" | "passive") =>
-                          handleUrgencyChange(pref.feature, value)
-                        }
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select priority" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="urgent">Urgent Alert</SelectItem>
-                          <SelectItem value="passive">Passive Reminder</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
                 </div>
-              ))}
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-medium leading-none">Smart Scheduling</h4>
-              <div className="flex items-center space-x-4">
-                <Switch
-                  id="work-schedule"
-                  checked={workSchedule.enabled}
-                  onCheckedChange={handleWorkScheduleToggle}
-                />
-                <Label htmlFor="work-schedule">Work Schedule Integration</Label>
               </div>
-            </div>
 
-            <div className="space-y-4">
-              <h4 className="font-medium leading-none">Calendar Integration</h4>
-              <div className="space-y-2">
-                {Object.entries(calendarSync).map(([type, status]) => (
-                  <Button
-                    key={type}
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={() => !status.connected && handleCalendarConnect(type as 'google' | 'apple' | 'outlook')}
-                    disabled={status.connecting}
-                  >
-                    <CalendarDays className="mr-2 h-4 w-4" />
-                    {status.connected ? (
-                      <>
-                        Connected to {type.charAt(0).toUpperCase() + type.slice(1)} Calendar
-                        <Check className="ml-2 h-4 w-4 text-green-500" />
-                      </>
-                    ) : (
-                      status.connecting ? (
-                        <span>Connecting to {type.charAt(0).toUpperCase() + type.slice(1)} Calendar...</span>
-                      ) : (
-                        `Connect ${type.charAt(0).toUpperCase() + type.slice(1)} Calendar`
-                      )
-                    )}
-                  </Button>
-                ))}
+              <div>
+                <h4 className="font-medium mb-4">Calendar Integration</h4>
+                <div className="space-y-3">
+                  {Object.entries(calendarSync).map(([type, status]) => (
+                    <Button
+                      key={type}
+                      variant="outline"
+                      className="w-full justify-start h-auto py-3"
+                      onClick={() => !status.connected && handleCalendarConnect(type as 'google' | 'apple' | 'outlook')}
+                      disabled={status.connecting}
+                    >
+                      <CalendarDays className="mr-2 h-4 w-4 flex-shrink-0" />
+                      <span className="flex-grow text-left">
+                        {status.connected ? (
+                          <>
+                            Connected to {type.charAt(0).toUpperCase() + type.slice(1)} Calendar
+                            <Check className="ml-2 h-4 w-4 text-green-500 inline" />
+                          </>
+                        ) : (
+                          status.connecting ? (
+                            <span>Connecting to {type.charAt(0).toUpperCase() + type.slice(1)} Calendar...</span>
+                          ) : (
+                            `Connect ${type.charAt(0).toUpperCase() + type.slice(1)} Calendar`
+                          )
+                        )}
+                      </span>
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
