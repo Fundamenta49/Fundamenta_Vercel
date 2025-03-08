@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Bell, Calendar as CalendarIcon, BellRing, Clock8, CalendarDays, Settings, Check } from "lucide-react";
+import { Bell, Calendar as CalendarIcon, BellRing, CalendarDays, Settings, Check } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
@@ -191,7 +191,7 @@ export default function LearningCalendar() {
       </Card>
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Calendar Settings</DialogTitle>
             <DialogDescription>
@@ -199,7 +199,7 @@ export default function LearningCalendar() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-6 py-4">
+          <div className="grid gap-6 py-4 max-h-[60vh] overflow-y-auto pr-2">
             <div className="space-y-6">
               <div>
                 <h4 className="font-medium mb-4">Notification Preferences</h4>
@@ -216,19 +216,22 @@ export default function LearningCalendar() {
                       />
                     </div>
                     {pref.enabled && (
-                      <div className="space-y-4 pl-0">
+                      <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label className="text-sm text-muted-foreground">Frequency</Label>
+                          <Label htmlFor={`${pref.feature}-frequency`}>Frequency</Label>
                           <Select
                             value={pref.frequency}
                             onValueChange={(value: "daily" | "weekly" | "custom") =>
                               handleFrequencyChange(pref.feature, value)
                             }
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger 
+                              id={`${pref.feature}-frequency`}
+                              className="w-full"
+                            >
                               <SelectValue placeholder="Select frequency" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent position="popper">
                               <SelectItem value="daily">Daily</SelectItem>
                               <SelectItem value="weekly">Weekly</SelectItem>
                               <SelectItem value="custom">Custom</SelectItem>
@@ -236,17 +239,20 @@ export default function LearningCalendar() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-sm text-muted-foreground">Priority</Label>
+                          <Label htmlFor={`${pref.feature}-priority`}>Priority</Label>
                           <Select
                             value={pref.urgency}
                             onValueChange={(value: "urgent" | "passive") =>
                               handleUrgencyChange(pref.feature, value)
                             }
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger 
+                              id={`${pref.feature}-priority`}
+                              className="w-full"
+                            >
                               <SelectValue placeholder="Select priority" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent position="popper">
                               <SelectItem value="urgent">Urgent Alert</SelectItem>
                               <SelectItem value="passive">Passive Reminder</SelectItem>
                             </SelectContent>
