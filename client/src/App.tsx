@@ -34,7 +34,7 @@ function Router() {
 
   return (
     <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>
-      <div className="min-h-screen flex overflow-hidden bg-texture">
+      <div className="min-h-screen flex">
         <Navigation />
         <main 
           className={`

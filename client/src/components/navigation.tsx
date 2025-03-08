@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { SidebarContext } from "@/App";
 
 const defaultNavItems = [
@@ -49,6 +49,10 @@ export default function Navigation() {
 
   const isHomePage = location === "/";
   const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
+
+  useEffect(() => {
+    console.log('Navigation effect - isMinimized changed:', isMinimized);
+  }, [isMinimized]);
 
   const handleNavigation = (href: string) => {
     navigate(href);
@@ -102,7 +106,7 @@ export default function Navigation() {
       "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300 ease-in-out",
       isMinimized ? "w-20" : "w-64"
     )}>
-      <div className="flex items-center mb-8">
+      <div className="flex items-center gap-2">
         <button 
           onClick={() => handleNavigation("/")}
           className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
@@ -112,7 +116,7 @@ export default function Navigation() {
         </button>
       </div>
 
-      {/* Separate toggle button */}
+      {/* Toggle button */}
       <Button
         variant="ghost"
         size="icon"
