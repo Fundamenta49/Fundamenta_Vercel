@@ -19,11 +19,11 @@ export default function Finance() {
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
 
   return (
-    <div className="max-w-4xl mx-auto px-4">
-      <h1 className="text-3xl font-bold text-center mb-6">Financial Literacy</h1>
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Financial Literacy</h1>
 
-      <Alert variant="default" className="mb-6 border-amber-500 bg-amber-50 text-center">
-        <AlertCircle className="h-5 w-5 text-amber-500 mx-auto mb-2" />
+      <Alert variant="default" className="mb-6 border-amber-500 bg-amber-50">
+        <AlertCircle className="h-5 w-5 text-amber-500" />
         <AlertDescription className="text-amber-800">
           This app provides general financial information for educational purposes only.
           It is not intended to be financial advice. Please consult a qualified financial
@@ -31,8 +31,8 @@ export default function Finance() {
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="chat" className="space-y-6">
-        <div className="tabs-container flex justify-center">
+      <Tabs defaultValue="chat">
+        <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Financial Advisor</TabsTrigger>
             <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
@@ -44,13 +44,13 @@ export default function Finance() {
 
         <TabsContent value="chat" className="mt-6">
           <Card className="border-0 shadow-none">
-            <CardHeader className="text-center">
+            <CardHeader>
               <CardTitle>Financial AI Advisor</CardTitle>
               <CardDescription>
                 Get personalized financial advice and guidance
               </CardDescription>
-              <Alert className="mt-4 border-blue-500 bg-blue-50 text-center">
-                <AlertCircle className="h-4 w-4 text-blue-500 mx-auto mb-2" />
+              <Alert className="mt-4 border-blue-500 bg-blue-50">
+                <AlertCircle className="h-4 w-4 text-blue-500" />
                 <AlertDescription className="text-blue-800 text-sm">
                   The AI advisor provides general guidance based on publicly available financial information.
                   For specific advice, please consult with a qualified financial professional.
@@ -65,7 +65,7 @@ export default function Finance() {
 
         <TabsContent value="budget">
           <Card>
-            <CardHeader className="text-center">
+            <CardHeader>
               <CardTitle>Smart Budget Planner</CardTitle>
               <CardDescription>
                 Track your income, expenses, and set savings goals
@@ -87,7 +87,7 @@ export default function Finance() {
 
         <TabsContent value="bank">
           <Card>
-            <CardHeader className="text-center">
+            <CardHeader>
               <CardTitle>Bank Accounts & Transactions</CardTitle>
               <CardDescription>
                 Connect your bank accounts to track spending in real-time
