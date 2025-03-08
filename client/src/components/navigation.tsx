@@ -75,9 +75,9 @@ export default function Navigation() {
           key={href}
           onClick={() => handleNavigation(href)}
           className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left",
+            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white",
             location === href
-              ? "bg-[#1C3D5A] text-[#D8BFAA]"
+              ? "bg-[#1C3D5A]"
               : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
           )}
         >
@@ -99,10 +99,10 @@ export default function Navigation() {
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="left" className="bg-[#1C3D5A]">
           <button 
             onClick={() => handleNavigation("/")}
-            className="flex items-center gap-2 px-4 py-2 mb-4 w-full text-left"
+            className="flex items-center gap-2 px-4 py-2 mb-4 w-full text-left text-white"
           >
             <HeartHandshake className="h-6 w-6" />
             <span className="text-2xl font-bold">Fundamenta</span>
@@ -115,15 +115,15 @@ export default function Navigation() {
 
   return (
     <div className={cn(
-      "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300 z-50",
+      "fixed left-0 top-0 h-screen bg-[#1C3D5A] p-4 transition-all duration-300 z-50",
       isMinimized ? "w-20" : "w-64"
     )}>
       <div className="flex items-center justify-between mb-8">
         <button 
           onClick={() => handleNavigation("/")}
           className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left hover:bg-[#A3C6C4] hover:text-[#1C3D5A]",
-            location === "/" && "bg-[#1C3D5A] text-[#D8BFAA]"
+            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white hover:bg-[#A3C6C4] hover:text-[#1C3D5A]",
+            location === "/" ? "" : ""
           )}
         >
           <HeartHandshake className="h-6 w-6" />
@@ -133,7 +133,7 @@ export default function Navigation() {
           variant="ghost"
           size="icon"
           onClick={() => setIsMinimized(!isMinimized)}
-          className="ml-auto text-[#D8BFAA] hover:text-[#A3C6C4]"
+          className="ml-auto text-white hover:text-[#A3C6C4]"
         >
           {isMinimized ? (
             <ChevronRight className="h-4 w-4" />
