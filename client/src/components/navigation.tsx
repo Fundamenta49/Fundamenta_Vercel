@@ -24,7 +24,6 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 
-// Default navigation items for home page
 const defaultNavItems = [
   { href: "/why-fundamenta", label: "Why Fundamenta", icon: HeartHandshake },
   { href: "/partner", label: "Partner With Us", icon: HandshakeIcon },
@@ -32,7 +31,6 @@ const defaultNavItems = [
   { href: "/invite", label: "Invite Friends", icon: Users },
 ];
 
-// Feature cards navigation items
 const featureNavItems = [
   { href: "/learning", label: "Life Skills", icon: GraduationCap },
   { href: "/finance", label: "Financial Literacy", icon: DollarSign },
@@ -48,10 +46,7 @@ export default function Navigation() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Determine if we're on the home page
   const isHomePage = location === "/";
-
-  // Select which navigation items to show based on current location
   const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
 
   useEffect(() => {
@@ -59,34 +54,13 @@ export default function Navigation() {
       '--sidebar-width',
       isMinimized ? '5rem' : '16rem'
     );
-    // Add a class to the body to help with content positioning
     document.body.classList.toggle('sidebar-minimized', isMinimized);
   }, [isMinimized]);
 
   const handleNavigation = (href: string) => {
     navigate(href);
-    setIsOpen(false); // Close the sheet after navigation
+    setIsOpen(false);
   };
-
-  const NavContent = () => (
-    <nav className="flex flex-col gap-6">
-      {navItems.map(({ href, label, icon: Icon }) => (
-        <button
-          key={href}
-          onClick={() => handleNavigation(href)}
-          className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white",
-            location === href
-              ? "bg-[#1C3D5A]"
-              : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
-          )}
-        >
-          <Icon className="h-5 w-5" />
-          {!isMinimized && <span>{label}</span>}
-        </button>
-      ))}
-    </nav>
-  );
 
   if (isMobile) {
     return (
@@ -100,15 +74,29 @@ export default function Navigation() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="bg-[#1C3D5A]">
-          <div className="flex flex-col h-full">
-            <button 
-              onClick={() => handleNavigation("/")}
-              className="flex items-center gap-2 px-4 py-2 mb-8 w-full text-left text-white"
-            >
-              <HeartHandshake className="h-6 w-6" />
-              <span className="text-2xl font-bold">Fundamenta</span>
-            </button>
-            <NavContent />
+          <button 
+            onClick={() => handleNavigation("/")}
+            className="flex items-center gap-2 px-4 py-2 mb-8 w-full text-left text-white"
+          >
+            <HeartHandshake className="h-6 w-6" />
+            <span className="text-2xl font-bold">Fundamenta</span>
+          </button>
+          <div className="flex flex-col gap-4">
+            {navItems.map(({ href, label, icon: Icon }) => (
+              <button
+                key={href}
+                onClick={() => handleNavigation(href)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white",
+                  location === href
+                    ? "bg-[#1C3D5A]"
+                    : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span>{label}</span>
+              </button>
+            ))}
           </div>
         </SheetContent>
       </Sheet>
@@ -116,28 +104,24 @@ export default function Navigation() {
   }
 
   return (
-    <div className={cn(
+    <nav className={cn(
       "fixed left-0 top-0 h-screen bg-[#1C3D5A] p-4 transition-all duration-300 z-50",
       isMinimized ? "w-20" : "w-64"
     )}>
-      <div className="flex flex-col min-h-full">
-        <div className="flex items-center justify-between mb-8">
-          <button 
-            onClick={() => handleNavigation("/")}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-white hover:bg-[#A3C6C4] hover:text-[#1C3D5A] w-full text-left"
-          >
-            <HeartHandshake className="h-6 w-6 flex-shrink-0" />
-            {!isMinimized && <span className="text-2xl font-bold truncate">Fundamenta</span>}
-          </button>
-        </div>
-        <div className="flex-grow">
-          <NavContent />
-        </div>
+      <div className="relative">
+        <button 
+          onClick={() => handleNavigation("/")}
+          className="flex items-center gap-2 px-4 py-2 mb-8 w-full text-left text-white hover:bg-[#A3C6C4] hover:text-[#1C3D5A] rounded-lg"
+        >
+          <HeartHandshake className="h-6 w-6" />
+          {!isMinimized && <span className="text-2xl font-bold">Fundamenta</span>}
+        </button>
+
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsMinimized(!isMinimized)}
-          className="absolute top-5 right-4 text-white hover:text-[#A3C6C4] flex-shrink-0"
+          className="absolute top-2 -right-2 text-white hover:text-[#A3C6C4]"
         >
           {isMinimized ? (
             <ChevronRight className="h-4 w-4" />
@@ -146,6 +130,24 @@ export default function Navigation() {
           )}
         </Button>
       </div>
-    </div>
+
+      <div className="flex flex-col gap-4">
+        {navItems.map(({ href, label, icon: Icon }) => (
+          <button
+            key={href}
+            onClick={() => handleNavigation(href)}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white",
+              location === href
+                ? "bg-[#1C3D5A]"
+                : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
+            )}
+          >
+            <Icon className="h-5 w-5" />
+            {!isMinimized && <span>{label}</span>}
+          </button>
+        ))}
+      </div>
+    </nav>
   );
 }
