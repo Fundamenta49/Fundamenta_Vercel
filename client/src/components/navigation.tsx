@@ -34,11 +34,11 @@ const defaultNavItems = [
 
 // Feature cards navigation items
 const featureNavItems = [
+  { href: "/learning", label: "Life Skills", icon: GraduationCap },
   { href: "/finance", label: "Financial Literacy", icon: DollarSign },
   { href: "/career", label: "Career Development", icon: Briefcase },
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
   { href: "/active", label: "Active You", icon: Activity },
-  { href: "/learning", label: "Life Skills", icon: GraduationCap },
   { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
 ];
 

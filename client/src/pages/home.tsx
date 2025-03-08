@@ -4,6 +4,13 @@ import { Link } from "wouter";
 
 const features = [
   {
+    title: "Life Skills",
+    description: "Learn essential skills, personal development, and continuous learning",
+    icon: GraduationCap,
+    href: "/learning",
+    color: "text-orange-500",
+  },
+  {
     title: "Financial Literacy",
     description: "Learn budgeting, savings, and financial planning",
     icon: DollarSign,
@@ -30,13 +37,6 @@ const features = [
     icon: Activity,
     href: "/active",
     color: "text-pink-500",
-  },
-  {
-    title: "Life Skills",
-    description: "Learn essential skills, personal development, and continuous learning",
-    icon: GraduationCap,
-    href: "/learning",
-    color: "text-orange-500",
   },
   {
     title: "Emergency Guidance",
