@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import {
@@ -21,6 +14,9 @@ import {
   MessageSquare,
   ChevronDown,
   ChevronUp,
+  X,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -116,10 +112,11 @@ const tourSteps = [
 ];
 
 export default function WelcomeTour() {
-  const [open, setOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [userQuestion, setUserQuestion] = useState("");
   const [showQuestions, setShowQuestions] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [aiResponse, setAiResponse] = useState<string | null>(null);
@@ -130,7 +127,7 @@ export default function WelcomeTour() {
     console.log("Welcome Tour - First Visit Check:", !hasSeenTour);
     if (!hasSeenTour) {
       console.log("Opening welcome tour...");
-      setOpen(true);
+      setIsActive(true);
     }
   }, []);
 
@@ -150,14 +147,14 @@ export default function WelcomeTour() {
 
   const handleComplete = () => {
     localStorage.setItem("hasSeenTour", "true");
-    setOpen(false);
+    setIsActive(false);
     setCurrentStep(0);
     setLocation("/");
   };
 
   const handleSkip = () => {
     localStorage.setItem("hasSeenTour", "true");
-    setOpen(false);
+    setIsActive(false);
     setLocation("/");
   };
 
@@ -196,125 +193,153 @@ export default function WelcomeTour() {
     }
   };
 
+  if (!isActive) return null;
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="flex items-center justify-center mb-4"
-          >
-            {tourSteps[currentStep].icon}
-          </motion.div>
-          <DialogTitle className="text-center text-xl">
-            {tourSteps[currentStep].title}
-          </DialogTitle>
-          <DialogDescription className="text-center pt-2">
-            {tourSteps[currentStep].description}
-          </DialogDescription>
-        </DialogHeader>
-
-        <AnimatePresence mode="wait">
-          {aiResponse && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-primary/10 p-4 rounded-lg mt-4"
-            >
-              <p className="text-sm">{aiResponse}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="mt-4">
-          <div className="flex gap-2">
-            <Input
-              placeholder="Ask me anything..."
-              value={userQuestion}
-              onChange={(e) => setUserQuestion(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleAskQuestion()}
-            />
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setShowQuestions(!showQuestions)}
-            >
-              {showQuestions ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handleAskQuestion()}
-              disabled={!userQuestion.trim()}
-            >
-              <MessageSquare className="h-4 w-4" />
-            </Button>
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 100 }}
+      className="fixed bottom-4 right-4 z-50"
+    >
+      <Card className="w-[400px] shadow-lg border-2 border-primary/20">
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              {tourSteps[currentStep].icon}
+              <h3 className="font-semibold">{tourSteps[currentStep].title}</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMinimized(!isMinimized)}
+              >
+                {isMinimized ? (
+                  <Maximize2 className="h-4 w-4" />
+                ) : (
+                  <Minimize2 className="h-4 w-4" />
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSkip}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
-          <AnimatePresence>
-            {showQuestions && (
+          <AnimatePresence mode="wait">
+            {!isMinimized && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
+                className="space-y-4"
               >
-                <div className="grid gap-2 mt-2">
-                  {tourSteps[currentStep].suggestedQuestions.map((question, index) => (
+                <p className="text-sm text-muted-foreground">
+                  {tourSteps[currentStep].description}
+                </p>
+
+                {aiResponse && (
+                  <div className="bg-primary/10 p-3 rounded-lg">
+                    <p className="text-sm">{aiResponse}</p>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Ask me anything..."
+                      value={userQuestion}
+                      onChange={(e) => setUserQuestion(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && handleAskQuestion()}
+                      className="text-sm"
+                    />
                     <Button
-                      key={index}
-                      variant="ghost"
-                      className="justify-start text-sm"
-                      onClick={() => handleSuggestedQuestion(question)}
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setShowQuestions(!showQuestions)}
                     >
-                      {question}
+                      {showQuestions ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
                     </Button>
-                  ))}
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleAskQuestion()}
+                      disabled={!userQuestion.trim()}
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <AnimatePresence>
+                    {showQuestions && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="grid gap-1">
+                          {tourSteps[currentStep].suggestedQuestions.map((question, index) => (
+                            <Button
+                              key={index}
+                              variant="ghost"
+                              className="justify-start text-sm h-8"
+                              onClick={() => handleSuggestedQuestion(question)}
+                            >
+                              {question}
+                            </Button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="flex items-center justify-between gap-4 pt-2">
+                  <div className="flex gap-1">
+                    {tourSteps.map((_, index) => (
+                      <motion.div
+                        key={index}
+                        animate={{
+                          scale: index === currentStep ? 1.2 : 1,
+                          backgroundColor: index === currentStep ? "var(--primary)" : "var(--muted)"
+                        }}
+                        className="h-1.5 w-1.5 rounded-full"
+                      />
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    {currentStep > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setCurrentStep(currentStep - 1);
+                          setLocation(tourSteps[currentStep - 1].path);
+                        }}
+                      >
+                        Back
+                      </Button>
+                    )}
+                    <Button size="sm" onClick={handleNext}>
+                      {currentStep === tourSteps.length - 1 ? "Get Started" : "Next"}
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-
-        <div className="flex justify-center gap-2 mt-4">
-          <div className="flex gap-1">
-            {tourSteps.map((_, index) => (
-              <motion.div
-                key={index}
-                animate={{
-                  scale: index === currentStep ? 1.2 : 1,
-                  backgroundColor: index === currentStep ? "var(--primary)" : "var(--muted)"
-                }}
-                className={`h-1.5 w-1.5 rounded-full`}
-              />
-            ))}
-          </div>
-        </div>
-
-        <DialogFooter className="flex justify-between mt-6">
-          {currentStep === 0 ? (
-            <Button variant="ghost" onClick={handleSkip}>
-              Skip Tour
-            </Button>
-          ) : (
-            <Button variant="ghost" onClick={() => {
-              setCurrentStep(currentStep - 1);
-              setLocation(tourSteps[currentStep - 1].path);
-            }}>
-              Back
-            </Button>
-          )}
-          <Button onClick={handleNext}>
-            {currentStep === tourSteps.length - 1 ? "Get Started" : "Next"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Card>
+    </motion.div>
   );
 }
