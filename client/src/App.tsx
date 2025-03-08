@@ -17,7 +17,6 @@ import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
 import { createContext, useState } from "react";
-import { cn } from "@/lib/utils";
 
 export const SidebarContext = createContext<{
   isMinimized: boolean;
@@ -35,10 +34,11 @@ function Router() {
       <div className="min-h-screen flex">
         <Navigation />
         <main 
-          className={cn(
-            "flex-1 relative overflow-y-auto transition-all duration-300 ease-in-out",
-            isMinimized ? "ml-[80px]" : "ml-[256px]"
-          )}
+          style={{
+            marginLeft: isMinimized ? '80px' : '256px',
+            transition: 'margin-left 300ms ease-in-out'
+          }}
+          className="flex-1 relative overflow-y-auto"
         >
           <div className="p-4 sm:p-6 md:p-8">
             <div className="mx-auto max-w-5xl space-y-6">

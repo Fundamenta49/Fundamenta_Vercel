@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { SidebarContext } from "@/App";
 
 const defaultNavItems = [
@@ -99,18 +99,24 @@ export default function Navigation() {
 
   return (
     <aside 
-      className={cn(
-        "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] transition-all duration-300 ease-in-out z-50",
-        isMinimized ? "w-[80px]" : "w-[256px]"
-      )}
+      style={{
+        width: isMinimized ? '80px' : '256px',
+        transition: 'width 300ms ease-in-out'
+      }}
+      className="fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] border-r border-[#1C3D5A]"
     >
       <div className="p-4">
         <button 
           onClick={() => handleNavigation("/")}
-          className="flex items-center gap-2 px-2 py-2 rounded-lg transition-colors hover:bg-[#A3C6C4] hover:text-[#1C3D5A] mb-6"
+          className="flex items-center gap-2 px-2 py-2 rounded-lg transition-colors hover:bg-[#A3C6C4] hover:text-[#1C3D5A] mb-6 w-full"
         >
           <HeartHandshake className="h-6 w-6 flex-shrink-0" />
-          {!isMinimized && <span className="text-xl font-bold truncate">Fundamenta</span>}
+          <span className={cn(
+            "text-xl font-bold truncate transition-opacity duration-300",
+            isMinimized ? "opacity-0 w-0" : "opacity-100"
+          )}>
+            Fundamenta
+          </span>
         </button>
 
         <Button
