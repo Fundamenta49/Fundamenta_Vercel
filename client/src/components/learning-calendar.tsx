@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-} from "@/components/ui/dropdown-menu"; // Assuming these components exist in a separate file
+} from "@/components/ui/dropdown-menu";
 
 interface NotificationPreference {
   feature: string;
@@ -254,46 +254,45 @@ export default function LearningCalendar() {
             ))}
           </div>
 
-            <div className="border rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="work-schedule">Work Schedule Integration</Label>
-                <Switch
-                  id="work-schedule"
-                  checked={workSchedule.enabled}
-                  onCheckedChange={handleWorkScheduleToggle}
-                />
-              </div>
+          <div className="border rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="work-schedule">Work Schedule Integration</Label>
+              <Switch
+                id="work-schedule"
+                checked={workSchedule.enabled}
+                onCheckedChange={handleWorkScheduleToggle}
+              />
             </div>
+          </div>
 
-            <div className="border rounded-lg p-4 space-y-4">
-              <h4 className="font-medium">Calendar Integration</h4>
-              <div className="space-y-2">
-                {Object.entries(calendarSync).map(([type, status]) => (
-                  <Button
-                    key={type}
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={() => !status.connected && handleCalendarConnect(type as 'google' | 'apple' | 'outlook')}
-                    disabled={status.connecting}
-                  >
-                    <CalendarDays className="mr-2 h-4 w-4" />
-                    <span className="flex-1 text-left">
-                      {status.connected ? (
-                        <>
-                          Connected to {type.charAt(0).toUpperCase() + type.slice(1)} Calendar
-                          <Check className="ml-2 h-4 w-4 text-green-500 inline" />
-                        </>
+          <div className="border rounded-lg p-4 space-y-4">
+            <h4 className="font-medium">Calendar Integration</h4>
+            <div className="space-y-2">
+              {Object.entries(calendarSync).map(([type, status]) => (
+                <Button
+                  key={type}
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => !status.connected && handleCalendarConnect(type as 'google' | 'apple' | 'outlook')}
+                  disabled={status.connecting}
+                >
+                  <CalendarDays className="mr-2 h-4 w-4" />
+                  <span className="flex-1 text-left">
+                    {status.connected ? (
+                      <>
+                        Connected to {type.charAt(0).toUpperCase() + type.slice(1)} Calendar
+                        <Check className="ml-2 h-4 w-4 text-green-500 inline" />
+                      </>
+                    ) : (
+                      status.connecting ? (
+                        <span>Connecting...</span>
                       ) : (
-                        status.connecting ? (
-                          <span>Connecting...</span>
-                        ) : (
-                          `Connect ${type.charAt(0).toUpperCase() + type.slice(1)} Calendar`
-                        )
-                      )}
-                    </span>
-                  </Button>
-                ))}
-              </div>
+                        `Connect ${type.charAt(0).toUpperCase() + type.slice(1)} Calendar`
+                      )
+                    )}
+                  </span>
+                </Button>
+              ))}
             </div>
           </div>
         </DialogContent>
