@@ -120,6 +120,7 @@ export default function LearningCalendar() {
               selected={date}
               onSelect={setDate}
               className="rounded-md border"
+              aria-label="Select learning date"
             />
 
             <div className="space-y-4">
@@ -146,9 +147,15 @@ export default function LearningCalendar() {
       </Card>
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent 
+          className="max-w-3xl"
+          aria-describedby="settings-description"
+        >
           <DialogHeader>
             <DialogTitle>Calendar Settings</DialogTitle>
+            <p id="settings-description" className="text-sm text-muted-foreground">
+              Customize your learning schedule and notification preferences
+            </p>
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
