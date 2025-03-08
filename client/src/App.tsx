@@ -17,8 +17,8 @@ import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
 import { createContext, useState } from "react";
+import { cn } from "@/lib/utils";
 
-// Create context for sidebar state
 export const SidebarContext = createContext<{
   isMinimized: boolean;
   setIsMinimized: (value: boolean) => void;
@@ -30,35 +30,18 @@ export const SidebarContext = createContext<{
 function Router() {
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
-  console.log('Router render - isMinimized:', isMinimized);
-
   return (
     <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>
       <div className="min-h-screen flex">
         <Navigation />
         <main 
-          className={`
-            flex-1 
-            relative 
-            z-0 
-            overflow-y-auto 
-            transition-all 
-            duration-300 
-            ease-in-out
-            ${isMinimized ? 'ml-20' : 'ml-64'}
-          `}
+          className={cn(
+            "flex-1 relative overflow-y-auto transition-all duration-300 ease-in-out",
+            isMinimized ? "ml-[80px]" : "ml-[256px]"
+          )}
         >
           <div className="p-4 sm:p-6 md:p-8">
-            <div 
-              className={`
-                mx-auto 
-                space-y-6 
-                transition-all 
-                duration-300 
-                ease-in-out
-                ${isMinimized ? 'max-w-5xl mx-auto' : 'max-w-6xl'}
-              `}
-            >
+            <div className="mx-auto max-w-5xl space-y-6">
               <Switch>
                 <Route path="/" component={Home} />
                 <Route path="/why-fundamenta" component={WhyFundamenta} />
