@@ -2,25 +2,21 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import {
   HeartHandshake,
+  HandshakeIcon,
+  Shield,
+  Users,
   ChevronLeft,
   ChevronRight,
-  GraduationCap,
-  DollarSign,
-  Briefcase,
-  Heart,
-  Activity,
-  AlertCircle,
 } from "lucide-react";
 import { useContext } from "react";
 import { SidebarContext } from "@/App";
 
+// Navigation items matching the image
 const navItems = [
-  { href: "/learning", label: "Life Skills", icon: GraduationCap },
-  { href: "/finance", label: "Financial Literacy", icon: DollarSign },
-  { href: "/career", label: "Career Development", icon: Briefcase },
-  { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
-  { href: "/active", label: "Active You", icon: Activity },
-  { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
+  { href: "/why-fundamenta", label: "Why Fundamenta", icon: HeartHandshake },
+  { href: "/partner", label: "Partner With Us", icon: HandshakeIcon },
+  { href: "/privacy", label: "Privacy Hub", icon: Shield },
+  { href: "/invite", label: "Invite Friends", icon: Users },
 ];
 
 export default function Sidebar() {
@@ -30,8 +26,9 @@ export default function Sidebar() {
   return (
     <aside 
       className={cn(
-        "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] transition-all duration-300",
-        isMinimized ? "w-20" : "w-64"
+        "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA]",
+        isMinimized ? "w-20" : "w-64",
+        "transition-all duration-300 ease-in-out"
       )}
     >
       <div className="p-4 pt-16">

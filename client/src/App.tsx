@@ -36,8 +36,9 @@ function Router() {
         <Sidebar />
         <main 
           className={cn(
-            "flex-1 relative overflow-y-auto transition-all duration-300",
-            isMinimized ? "ml-20" : "ml-64"
+            "flex-1 relative overflow-y-auto",
+            isMinimized ? "ml-20" : "ml-64",
+            "transition-all duration-300 ease-in-out"
           )}
         >
           <div className="p-4 sm:p-6 md:p-8">
