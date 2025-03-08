@@ -28,7 +28,9 @@ export const SidebarContext = createContext<{
 });
 
 function Router() {
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+
+  console.log('Router render - isMinimized:', isMinimized);
 
   return (
     <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>

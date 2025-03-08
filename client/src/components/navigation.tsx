@@ -47,10 +47,9 @@ export default function Navigation() {
   const { isMinimized, setIsMinimized } = useContext(SidebarContext);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Determine if we're on the home page
-  const isHomePage = location === "/";
+  console.log('Navigation render - isMinimized:', isMinimized);
 
-  // Select which navigation items to show based on current location
+  const isHomePage = location === "/";
   const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
 
   const handleNavigation = (href: string) => {
@@ -119,10 +118,12 @@ export default function Navigation() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => {
-            console.log('Button clicked, current state:', isMinimized);
-            setIsMinimized(!isMinimized);
-            console.log('After setIsMinimized call');
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const newValue = !isMinimized;
+            console.log('Toggle clicked - current:', isMinimized, 'new:', newValue);
+            setIsMinimized(newValue);
           }}
           className="ml-auto text-[#D8BFAA] hover:text-[#A3C6C4]"
         >
