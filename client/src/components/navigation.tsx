@@ -22,7 +22,8 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
+import { SidebarContext } from "@/App";
 
 // Default navigation items for home page
 const defaultNavItems = [
@@ -45,7 +46,7 @@ const featureNavItems = [
 export default function Navigation() {
   const [location, navigate] = useLocation();
   const isMobile = useIsMobile();
-  const [isMinimized, setIsMinimized] = useState(false);
+  const { isMinimized, setIsMinimized } = useContext(SidebarContext);
   const [isOpen, setIsOpen] = useState(false);
 
   // Determine if we're on the home page

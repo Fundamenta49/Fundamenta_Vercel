@@ -16,34 +16,46 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
+import { createContext, useContext, useState } from "react";
+
+// Create context for sidebar state
+export const SidebarContext = createContext({ isMinimized: false, setIsMinimized: (value: boolean) => {} });
 
 function Router() {
+  const [isMinimized, setIsMinimized] = useState(false);
+
   return (
-    <div className="min-h-screen flex overflow-hidden bg-texture">
-      <Navigation />
-      <main className="flex-1 relative z-0 overflow-y-auto md:ml-[240px]">
-        <div className="p-4 sm:p-6 md:p-8">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <Switch>
-              <Route path="/" component={Home} />
-              <Route path="/why-fundamenta" component={WhyFundamenta} />
-              <Route path="/partner" component={Partner} />
-              <Route path="/privacy" component={Privacy} />
-              <Route path="/invite" component={Invite} />
-              <Route path="/emergency" component={Emergency} />
-              <Route path="/finance" component={Finance} />
-              <Route path="/career" component={Career} />
-              <Route path="/wellness" component={Wellness} />
-              <Route path="/active" component={Active} />
-              <Route path="/learning" component={Learning} />
-              <Route component={NotFound} />
-            </Switch>
+    <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>
+      <div className="min-h-screen flex overflow-hidden bg-texture">
+        <Navigation />
+        <main className={`flex-1 relative z-0 overflow-y-auto transition-all duration-300 ease-in-out ${
+          isMinimized ? 'md:ml-20' : 'md:ml-[240px]'
+        }`}>
+          <div className="p-4 sm:p-6 md:p-8">
+            <div className={`mx-auto space-y-6 transition-all duration-300 ease-in-out ${
+              isMinimized ? 'max-w-[calc(100vw-80px)]' : 'max-w-7xl'
+            }`}>
+              <Switch>
+                <Route path="/" component={Home} />
+                <Route path="/why-fundamenta" component={WhyFundamenta} />
+                <Route path="/partner" component={Partner} />
+                <Route path="/privacy" component={Privacy} />
+                <Route path="/invite" component={Invite} />
+                <Route path="/emergency" component={Emergency} />
+                <Route path="/finance" component={Finance} />
+                <Route path="/career" component={Career} />
+                <Route path="/wellness" component={Wellness} />
+                <Route path="/active" component={Active} />
+                <Route path="/learning" component={Learning} />
+                <Route component={NotFound} />
+              </Switch>
+            </div>
           </div>
-        </div>
-      </main>
-      <WelcomeTour />
-      <Toaster />
-    </div>
+        </main>
+        <WelcomeTour />
+        <Toaster />
+      </div>
+    </SidebarContext.Provider>
   );
 }
 
