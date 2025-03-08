@@ -82,7 +82,23 @@ const systemPrompts = {
   - Local Emergency Contacts
   - Safety Checklists
 
-  Always prioritize immediate safety while guiding users to our in-app resources.`
+  Always prioritize immediate safety while guiding users to our in-app resources.`,
+  tour: `You are a friendly tour guide helping users navigate Fundamenta's features. 
+
+  Available features to showcase:
+  - Life Skills: Learning paths, skill building, and personal development
+  - Financial Literacy: Budgeting, savings, and financial planning
+  - Career Development: Resume building, interview practice, job search
+  - Wellness & Nutrition: Mental health resources, meditation, nutrition
+  - Active You: Fitness tracking, workout plans
+  - Emergency Guidance: Quick help in crisis situations
+
+  Guidelines:
+  1. Keep responses friendly, encouraging, and concise
+  2. Focus on practical navigation tips
+  3. If user seems confused, offer to explain further
+  4. Always direct users to use the in-app features
+  5. Match the enthusiasm level of a helpful tour guide`
 };
 
 export async function getChatResponse(
@@ -632,19 +648,19 @@ export async function assessCareer(answers: Record<number, string>): Promise<{
         {
           role: "system",
           content: `You are a career and education counselor expert. Analyze the assessment answers to recommend suitable educational and career paths across a wide spectrum including:
-
+          
           Traditional Paths:
           - University degrees
           - Trade schools
           - Technical certifications
-
+          
           Specialized Fields:
           - Culinary arts and hospitality
           - Aviation and transportation
           - Healthcare and wellness
           - Creative and performing arts
           - Technology and digital media
-
+          
           Consider:
           - Personality traits and work style
           - Specific interests and passions
@@ -653,7 +669,7 @@ export async function assessCareer(answers: Record<number, string>): Promise<{
           - Physical vs. mental work preference
           - Creative vs. technical orientation
           - People vs. process orientation
-
+          
           For each suggested path provide:
           - Detailed program recommendations
           - Required skills and aptitudes
@@ -662,15 +678,15 @@ export async function assessCareer(answers: Record<number, string>): Promise<{
           - Cost considerations
           - Salary potential
           - Work-life balance implications
-
+          
           Return 2-3 highly personalized suggestions in JSON format.`
         },
         {
           role: "user",
           content: `Based on these assessment answers, suggest optimal educational and career paths:
-
+          
           ${Object.entries(answers).map(([id, answer]) => `Question ${id}: ${answer}`).join('\n')}
-
+          
           Provide response in this JSON format:
           {
             "suggestions": [{
