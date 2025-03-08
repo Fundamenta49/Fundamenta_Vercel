@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,6 +17,8 @@ import {
   X,
   Maximize2,
   Minimize2,
+  Pause,
+  Play,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -117,18 +119,12 @@ export default function WelcomeTour() {
   const [userQuestion, setUserQuestion] = useState("");
   const [showQuestions, setShowQuestions] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isAutoplaying, setIsAutoplaying] = useState(true);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [aiResponse, setAiResponse] = useState<string | null>(null);
 
-  useEffect(() => {
-    const hasSeenTour = localStorage.getItem("hasSeenTour");
-    if (!hasSeenTour) {
-      setIsActive(true);
-    }
-  }, []);
-
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     const nextStep = currentStep + 1;
     if (nextStep < tourSteps.length) {
       setCurrentStep(nextStep);
@@ -139,7 +135,24 @@ export default function WelcomeTour() {
     } else {
       handleComplete();
     }
-  };
+  }, [currentStep, setLocation]);
+
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem("hasSeenTour");
+    if (!hasSeenTour) {
+      setIsActive(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isActive && isAutoplaying && !isMinimized && !showQuestions) {
+      timer = setTimeout(() => {
+        handleNext();
+      }, 5000); // 5 seconds between steps
+    }
+    return () => clearTimeout(timer);
+  }, [isActive, isAutoplaying, currentStep, isMinimized, showQuestions, handleNext]);
 
   const handleComplete = () => {
     localStorage.setItem("hasSeenTour", "true");
@@ -180,6 +193,7 @@ export default function WelcomeTour() {
       setAiResponse(data.response);
       setUserQuestion("");
       setShowQuestions(false);
+      setIsAutoplaying(false); // Pause autoplay when user asks a question
     } catch (error) {
       toast({
         variant: "destructive",
@@ -206,6 +220,18 @@ export default function WelcomeTour() {
               <h3 className="font-semibold text-sm">{tourSteps[currentStep].title}</h3>
             </div>
             <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsAutoplaying(!isAutoplaying)}
+                className="h-8 w-8"
+              >
+                {isAutoplaying ? (
+                  <Pause className="h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"
@@ -325,6 +351,7 @@ export default function WelcomeTour() {
                         onClick={() => {
                           setCurrentStep(currentStep - 1);
                           setLocation(tourSteps[currentStep - 1].path);
+                          setIsAutoplaying(false);
                         }}
                         className="h-7 text-xs"
                       >
@@ -333,7 +360,10 @@ export default function WelcomeTour() {
                     )}
                     <Button
                       size="sm"
-                      onClick={handleNext}
+                      onClick={() => {
+                        handleNext();
+                        setIsAutoplaying(true);
+                      }}
                       className="h-7 text-xs"
                     >
                       {currentStep === tourSteps.length - 1 ? "Get Started" : "Next"}
