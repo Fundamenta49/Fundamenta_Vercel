@@ -15,6 +15,7 @@ import Career from "@/pages/career";
 import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
+import WelcomeTour from "@/components/welcome-tour";
 
 function Router() {
   return (
@@ -40,6 +41,7 @@ function Router() {
           </div>
         </div>
       </main>
+      <WelcomeTour />
       <Toaster />
     </div>
   );
