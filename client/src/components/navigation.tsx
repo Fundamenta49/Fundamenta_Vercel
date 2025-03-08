@@ -43,9 +43,10 @@ const featureNavItems = [
 ];
 
 export default function Navigation() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const isMobile = useIsMobile();
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   // Determine if we're on the home page
   const isHomePage = location === "/";
@@ -60,44 +61,50 @@ export default function Navigation() {
     );
   }, [isMinimized]);
 
+  const handleNavigation = (href: string) => {
+    navigate(href);
+    setIsOpen(false); // Close the sheet after navigation
+  };
+
   const NavContent = () => (
     <nav className="flex flex-col gap-2">
       {navItems.map(({ href, label, icon: Icon }) => (
-        <Link key={href} href={href}>
-          <button
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left",
-              location === href
-                ? "bg-[#1C3D5A] text-[#D8BFAA]"
-                : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
-            )}
-          >
-            <Icon className="h-5 w-5" />
-            {!isMinimized && <span>{label}</span>}
-          </button>
-        </Link>
+        <button
+          key={href}
+          onClick={() => handleNavigation(href)}
+          className={cn(
+            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left",
+            location === href
+              ? "bg-[#1C3D5A] text-[#D8BFAA]"
+              : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
+          )}
+        >
+          <Icon className="h-5 w-5" />
+          {!isMinimized && <span>{label}</span>}
+        </button>
       ))}
     </nav>
   );
 
   if (isMobile) {
     return (
-      <Sheet>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button
             variant="ghost"
-            className="fixed top-4 right-4 z-50"
+            className="fixed top-4 left-4 z-50"
           >
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent>
-          <Link href="/">
-            <button className="flex items-center gap-2 px-4 py-2 mb-4 w-full text-left">
-              <HeartHandshake className="h-6 w-6" />
-              <span className="text-2xl font-bold">Fundamenta</span>
-            </button>
-          </Link>
+        <SheetContent side="left">
+          <button 
+            onClick={() => handleNavigation("/")}
+            className="flex items-center gap-2 px-4 py-2 mb-4 w-full text-left"
+          >
+            <HeartHandshake className="h-6 w-6" />
+            <span className="text-2xl font-bold">Fundamenta</span>
+          </button>
           <NavContent />
         </SheetContent>
       </Sheet>
@@ -110,15 +117,16 @@ export default function Navigation() {
       isMinimized ? "w-20" : "w-64"
     )}>
       <div className="flex items-center justify-between mb-8">
-        <Link href="/">
-          <button className={cn(
+        <button 
+          onClick={() => handleNavigation("/")}
+          className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left hover:bg-[#A3C6C4] hover:text-[#1C3D5A]",
             location === "/" && "bg-[#1C3D5A] text-[#D8BFAA]"
-          )}>
-            <HeartHandshake className="h-6 w-6" />
-            {!isMinimized && <h1 className="text-2xl font-bold">Fundamenta</h1>}
-          </button>
-        </Link>
+          )}
+        >
+          <HeartHandshake className="h-6 w-6" />
+          {!isMinimized && <h1 className="text-2xl font-bold">Fundamenta</h1>}
+        </button>
         <Button
           variant="ghost"
           size="icon"
