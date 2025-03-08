@@ -47,34 +47,42 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // Try port 5001 first, then try 5002 if that fails
-  const attemptListen = (port: number) => {
-    server.listen({
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    }, () => {
-      log(`serving on port ${port}`);
-    }).on('error', (err: any) => {
-      if (err.code === 'EADDRINUSE' && port === 5001) {
-        log(`Port ${port} is in use, trying port 5002...`);
-        attemptListen(5002);
-      } else {
-        console.error('Server error:', err);
-      }
-    });
+  // Try ports sequentially starting from the initial port
+  const tryPort = async (port: number, maxAttempts: number = 10): Promise<void> => {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        server.listen({
+          port,
+          host: "0.0.0.0",
+          reusePort: true,
+        })
+        .once('listening', () => {
+          log(`Server started successfully on port ${port}`);
+          resolve();
+        })
+        .once('error', (err: any) => {
+          if (err.code === 'EADDRINUSE' && port < (port + maxAttempts)) {
+            log(`Port ${port} is in use, trying port ${port + 1}...`);
+            server.close();
+            tryPort(port + 1, maxAttempts).then(resolve).catch(reject);
+          } else {
+            reject(err);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Failed to start server:', error);
+      process.exit(1);
+    }
   };
-  
-  // Use environment port variable or fallback to 5001
+
+  // Start with port 5001 or use environment variable
   const initialPort = Number(process.env.PORT) || 5001;
-  attemptListen(initialPort);
+  await tryPort(initialPort);
 })();
