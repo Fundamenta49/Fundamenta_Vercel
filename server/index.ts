@@ -56,13 +56,25 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Use environment port variable or fallback to 5001 to avoid conflicts
-  const port = process.env.PORT || 5001;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+  // Try port 5001 first, then try 5002 if that fails
+  const attemptListen = (port: number) => {
+    server.listen({
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    }, () => {
+      log(`serving on port ${port}`);
+    }).on('error', (err: any) => {
+      if (err.code === 'EADDRINUSE' && port === 5001) {
+        log(`Port ${port} is in use, trying port 5002...`);
+        attemptListen(5002);
+      } else {
+        console.error('Server error:', err);
+      }
+    });
+  };
+  
+  // Use environment port variable or fallback to 5001
+  const initialPort = Number(process.env.PORT) || 5001;
+  attemptListen(initialPort);
 })();
