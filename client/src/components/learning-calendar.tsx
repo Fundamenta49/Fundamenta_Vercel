@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +14,13 @@ import {
 import { Bell, Calendar as CalendarIcon, BellRing, CalendarDays, Settings, Check } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@/components/ui/dropdown-menu"; // Assuming these components exist in a separate file
 
 interface NotificationPreference {
   feature: string;
@@ -77,6 +83,14 @@ export default function LearningCalendar() {
       title: `${feature} notifications ${notificationPrefs.find(p => p.feature === feature)?.enabled ? 'disabled' : 'enabled'}`,
       description: "Your notification preferences have been updated",
     });
+  };
+
+  const updateFrequency = (feature: string, frequency: "daily" | "weekly" | "custom") => {
+    handleFrequencyChange(feature, frequency);
+  };
+
+  const updateUrgency = (feature: string, urgency: "urgent" | "passive") => {
+    handleUrgencyChange(feature, urgency);
   };
 
   const handleFrequencyChange = (feature: string, frequency: "daily" | "weekly" | "custom") => {
@@ -190,61 +204,55 @@ export default function LearningCalendar() {
           </DialogHeader>
 
           <div className="py-4 space-y-4">
-            {notificationPrefs.map((pref) => (
-              <div key={pref.feature} className="border rounded-lg p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor={`${pref.feature}-toggle`}>
-                    {pref.feature}
-                  </Label>
-                  <Switch
-                    id={`${pref.feature}-toggle`}
-                    checked={pref.enabled}
-                    onCheckedChange={() => handleNotificationToggle(pref.feature)}
-                  />
-                </div>
-
-                {pref.enabled && (
-                  <div className="space-y-4">
-                    <div>
-                      <Label>Frequency</Label>
-                      <Select
+            <h4 className="font-medium">Notification Settings</h4>
+            {notificationPrefs.map((pref, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <span>{pref.feature}</span>
+                <div className="flex space-x-2">
+                  {/* Frequency Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        {pref.frequency.charAt(0).toUpperCase() + pref.frequency.slice(1)}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuRadioGroup
                         value={pref.frequency}
-                        onValueChange={(value: "daily" | "weekly" | "custom") =>
-                          handleFrequencyChange(pref.feature, value)
+                        onValueChange={(value: string) =>
+                          updateFrequency(pref.feature, value as "daily" | "weekly" | "custom")
                         }
                       >
-                        <SelectTrigger className="w-full mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                          <SelectItem value="custom">Custom</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                        <DropdownMenuRadioItem value="daily">Daily</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="weekly">Weekly</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="custom">Custom</DropdownMenuRadioItem>
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
-                    <div>
-                      <Label>Priority</Label>
-                      <Select
+                  {/* Urgency Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        {pref.urgency.charAt(0).toUpperCase() + pref.urgency.slice(1)}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuRadioGroup
                         value={pref.urgency}
-                        onValueChange={(value: "urgent" | "passive") =>
-                          handleUrgencyChange(pref.feature, value)
+                        onValueChange={(value: string) =>
+                          updateUrgency(pref.feature, value as "urgent" | "passive")
                         }
                       >
-                        <SelectTrigger className="w-full mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="urgent">Urgent Alert</SelectItem>
-                          <SelectItem value="passive">Passive Reminder</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                )}
+                        <DropdownMenuRadioItem value="urgent">Urgent</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="passive">Passive</DropdownMenuRadioItem>
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             ))}
+          </div>
 
             <div className="border rounded-lg p-4">
               <div className="flex items-center justify-between">
