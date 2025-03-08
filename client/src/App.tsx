@@ -27,16 +27,13 @@ export const SidebarContext = createContext<{
 });
 
 function Router() {
-  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   return (
     <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>
-      <div className="min-h-screen flex">
+      <div className="min-h-screen flex bg-background">
         <Navigation />
-        <main 
-          style={{ marginLeft: isMinimized ? '80px' : '256px' }}
-          className="flex-1 relative overflow-y-auto"
-        >
+        <main style={{ marginLeft: isMinimized ? '80px' : '256px' }} className="flex-1 relative overflow-y-auto">
           <div className="p-4 sm:p-6 md:p-8">
             <div className="mx-auto max-w-5xl space-y-6">
               <Switch>
