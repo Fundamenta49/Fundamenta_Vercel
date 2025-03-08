@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -154,9 +155,9 @@ export default function LearningCalendar() {
         >
           <DialogHeader>
             <DialogTitle id="calendar-settings-title">Calendar Settings</DialogTitle>
-            <p id="calendar-settings-description" className="text-sm text-muted-foreground">
+            <DialogDescription id="calendar-settings-description">
               Customize your learning schedule and notification preferences
-            </p>
+            </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
