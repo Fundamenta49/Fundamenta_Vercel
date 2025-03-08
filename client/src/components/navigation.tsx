@@ -25,7 +25,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useContext, useState } from "react";
 import { SidebarContext } from "@/App";
 
-// Default navigation items for home page
 const defaultNavItems = [
   { href: "/why-fundamenta", label: "Why Fundamenta", icon: HeartHandshake },
   { href: "/partner", label: "Partner With Us", icon: HandshakeIcon },
@@ -33,7 +32,6 @@ const defaultNavItems = [
   { href: "/invite", label: "Invite Friends", icon: Users },
 ];
 
-// Feature cards navigation items
 const featureNavItems = [
   { href: "/learning", label: "Life Skills", icon: GraduationCap },
   { href: "/finance", label: "Financial Literacy", icon: DollarSign },
@@ -57,12 +55,7 @@ export default function Navigation() {
 
   const handleNavigation = (href: string) => {
     navigate(href);
-    setIsOpen(false); // Close the sheet after navigation
-  };
-
-  const handleMinimizeToggle = () => {
-    console.log('Toggle clicked, current state:', isMinimized);
-    setIsMinimized(!isMinimized);
+    setIsOpen(false);
   };
 
   const NavContent = () => (
@@ -118,10 +111,7 @@ export default function Navigation() {
       <div className="flex items-center justify-between mb-8">
         <button 
           onClick={() => handleNavigation("/")}
-          className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left hover:bg-[#A3C6C4] hover:text-[#1C3D5A]",
-            location === "/" && "bg-[#1C3D5A] text-[#D8BFAA]"
-          )}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
         >
           <HeartHandshake className="h-6 w-6" />
           {!isMinimized && <h1 className="text-2xl font-bold">Fundamenta</h1>}
@@ -129,7 +119,11 @@ export default function Navigation() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleMinimizeToggle}
+          onClick={() => {
+            console.log('Button clicked, current state:', isMinimized);
+            setIsMinimized(!isMinimized);
+            console.log('After setIsMinimized call');
+          }}
           className="ml-auto text-[#D8BFAA] hover:text-[#A3C6C4]"
         >
           {isMinimized ? (
