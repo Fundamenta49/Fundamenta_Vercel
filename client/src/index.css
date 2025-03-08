@@ -29,12 +29,35 @@
     --radius: 0.75rem;
   }
 
+  /* Interactive elements cursor styles */
+  button,
+  a,
+  [role="button"],
+  select,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"] {
+    cursor: pointer;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  textarea {
+    cursor: text;
+  }
+
   body {
     @apply bg-texture font-serif text-wood;
     min-height: 100vh;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    cursor: default;
   }
 
   /* Main content area */
@@ -138,6 +161,7 @@
   .scroll-container-x::-webkit-scrollbar,
   .tabs-container::-webkit-scrollbar {
     height: 8px;
+    cursor: pointer;
   }
 
   .scroll-container-x::-webkit-scrollbar-track,
