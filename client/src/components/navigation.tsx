@@ -98,20 +98,12 @@ export default function Navigation() {
   }
 
   return (
-    <aside className="fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA]" style={{ width: isMinimized ? '80px' : '256px' }}>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setIsMinimized(!isMinimized)}
-        className="absolute right-2 top-4 z-10 hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
-      >
-        {isMinimized ? (
-          <ChevronRight className="h-4 w-4" />
-        ) : (
-          <ChevronLeft className="h-4 w-4" />
-        )}
-      </Button>
-
+    <aside 
+      className={cn(
+        "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] transition-all duration-300",
+        isMinimized ? "w-20" : "w-64"
+      )}
+    >
       <div className="p-4 pt-16">
         <button 
           onClick={() => handleNavigation("/")}
@@ -120,6 +112,22 @@ export default function Navigation() {
           <HeartHandshake className="h-6 w-6 flex-shrink-0" />
           {!isMinimized && <span className="text-xl font-bold">Fundamenta</span>}
         </button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMinimized(!isMinimized);
+          }}
+          className="absolute right-2 top-4 z-10 hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
+        >
+          {isMinimized ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
 
         <NavContent />
       </div>
