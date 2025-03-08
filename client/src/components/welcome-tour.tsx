@@ -120,22 +120,10 @@ export default function WelcomeTour() {
   const [showQuestions, setShowQuestions] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isAutoplaying, setIsAutoplaying] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [aiResponse, setAiResponse] = useState<string | null>(null);
-
-  const handleNext = useCallback(() => {
-    const nextStep = currentStep + 1;
-    if (nextStep < tourSteps.length) {
-      setCurrentStep(nextStep);
-      setShowQuestions(false);
-      if (tourSteps[nextStep].path !== "/") {
-        setLocation(tourSteps[nextStep].path);
-      }
-    } else {
-      handleComplete();
-    }
-  }, [currentStep, setLocation]);
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem("hasSeenTour");
@@ -152,7 +140,21 @@ export default function WelcomeTour() {
       }, 7000); // 7 seconds between steps
     }
     return () => clearTimeout(timer);
-  }, [isActive, isAutoplaying, currentStep, isMinimized, showQuestions, handleNext]);
+  }, [isActive, isAutoplaying, currentStep, isMinimized, showQuestions]);
+
+  const handleNext = useCallback(() => {
+    const nextStep = currentStep + 1;
+    if (nextStep < tourSteps.length) {
+      setCurrentStep(nextStep);
+      setShowQuestions(false);
+      setAiResponse(null);
+      if (tourSteps[nextStep].path !== "/") {
+        setLocation(tourSteps[nextStep].path);
+      }
+    } else {
+      handleComplete();
+    }
+  }, [currentStep, setLocation]);
 
   const handleComplete = () => {
     localStorage.setItem("hasSeenTour", "true");
@@ -174,7 +176,10 @@ export default function WelcomeTour() {
 
   const handleAskQuestion = async (question?: string) => {
     const queryQuestion = question || userQuestion;
-    if (!queryQuestion.trim()) return;
+    if (!queryQuestion.trim() || isLoading) return;
+
+    setIsLoading(true);
+    setIsAutoplaying(false); // Pause autoplay when user asks a question
 
     try {
       const response = await fetch("/api/chat", {
@@ -183,23 +188,28 @@ export default function WelcomeTour() {
         body: JSON.stringify({
           message: queryQuestion,
           category: "tour",
-          context: `User is on step ${currentStep + 1} of the tour: ${tourSteps[currentStep].title}`
+          context: `User is on step ${currentStep + 1} of the tour, viewing ${tourSteps[currentStep].title}`,
+          previousMessages: [] // Add conversation history if needed
         })
       });
 
-      if (!response.ok) throw new Error("Failed to get AI response");
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
 
       const data = await response.json();
       setAiResponse(data.response);
       setUserQuestion("");
       setShowQuestions(false);
-      setIsAutoplaying(false); // Pause autoplay when user asks a question
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Chat error:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Couldn't get an answer. Please try again.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -225,6 +235,7 @@ export default function WelcomeTour() {
                 size="sm"
                 onClick={() => setIsAutoplaying(!isAutoplaying)}
                 className="h-8 w-8"
+                disabled={isLoading}
               >
                 {isAutoplaying ? (
                   <Pause className="h-4 w-4" />
@@ -281,12 +292,14 @@ export default function WelcomeTour() {
                       onChange={(e) => setUserQuestion(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleAskQuestion()}
                       className="text-xs h-8"
+                      disabled={isLoading}
                     />
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setShowQuestions(!showQuestions)}
                       className="h-8 w-8"
+                      disabled={isLoading}
                     >
                       {showQuestions ? (
                         <ChevronUp className="h-3 w-3" />
@@ -298,10 +311,10 @@ export default function WelcomeTour() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleAskQuestion()}
-                      disabled={!userQuestion.trim()}
+                      disabled={!userQuestion.trim() || isLoading}
                       className="h-8 w-8"
                     >
-                      <MessageSquare className="h-3 w-3" />
+                      <MessageSquare className={`h-3 w-3 ${isLoading ? 'animate-pulse' : ''}`} />
                     </Button>
                   </div>
 
@@ -320,6 +333,7 @@ export default function WelcomeTour() {
                               variant="ghost"
                               className="justify-start text-xs h-7 px-2"
                               onClick={() => handleSuggestedQuestion(question)}
+                              disabled={isLoading}
                             >
                               {question}
                             </Button>
@@ -354,6 +368,7 @@ export default function WelcomeTour() {
                           setIsAutoplaying(false);
                         }}
                         className="h-7 text-xs"
+                        disabled={isLoading}
                       >
                         Back
                       </Button>
@@ -365,6 +380,7 @@ export default function WelcomeTour() {
                         setIsAutoplaying(true);
                       }}
                       className="h-7 text-xs"
+                      disabled={isLoading}
                     >
                       {currentStep === tourSteps.length - 1 ? "Get Started" : "Next"}
                     </Button>
