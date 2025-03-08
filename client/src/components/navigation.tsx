@@ -59,6 +59,8 @@ export default function Navigation() {
       '--sidebar-width',
       isMinimized ? '5rem' : '16rem'
     );
+    // Add a class to the body to help with content positioning
+    document.body.classList.toggle('sidebar-minimized', isMinimized);
   }, [isMinimized]);
 
   const handleNavigation = (href: string) => {
@@ -113,7 +115,7 @@ export default function Navigation() {
 
   return (
     <div className={cn(
-      "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300",
+      "fixed left-0 top-0 h-screen bg-[#1C3D5A] text-[#D8BFAA] p-4 transition-all duration-300 z-50",
       isMinimized ? "w-20" : "w-64"
     )}>
       <div className="flex items-center justify-between mb-8">
