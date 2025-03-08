@@ -12,8 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Bell, Calendar as CalendarIcon, BellRing, Clock8, CalendarDays, Settings } from "lucide-react";
+import { Bell, Calendar as CalendarIcon, BellRing, Clock8, CalendarDays, Settings, Check } from "lucide-react";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 interface NotificationPreference {
   feature: string;
@@ -26,6 +27,8 @@ interface NotificationPreference {
 export default function LearningCalendar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { toast } = useToast();
+
   const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreference[]>([
     { 
       feature: "Skill Building", 
@@ -61,9 +64,9 @@ export default function LearningCalendar() {
   });
 
   const [calendarSync, setCalendarSync] = useState({
-    googleEnabled: false,
-    appleEnabled: false,
-    outlookEnabled: false
+    google: { connected: false, connecting: false },
+    apple: { connected: false, connecting: false },
+    outlook: { connected: false, connecting: false }
   });
 
   const handleNotificationToggle = (feature: string) => {
@@ -72,6 +75,10 @@ export default function LearningCalendar() {
         pref.feature === feature ? { ...pref, enabled: !pref.enabled } : pref
       )
     );
+    toast({
+      title: `${feature} notifications ${notificationPrefs.find(p => p.feature === feature)?.enabled ? 'disabled' : 'enabled'}`,
+      description: "Your notification preferences have been updated",
+    });
   };
 
   const handleFrequencyChange = (feature: string, frequency: "daily" | "weekly" | "custom") => {
@@ -80,6 +87,10 @@ export default function LearningCalendar() {
         pref.feature === feature ? { ...pref, frequency } : pref
       )
     );
+    toast({
+      title: "Notification frequency updated",
+      description: `${feature} notifications will now be sent ${frequency}`,
+    });
   };
 
   const handleUrgencyChange = (feature: string, urgency: "urgent" | "passive") => {
@@ -88,6 +99,38 @@ export default function LearningCalendar() {
         pref.feature === feature ? { ...pref, urgency } : pref
       )
     );
+    toast({
+      title: "Notification urgency updated",
+      description: `${feature} notifications set to ${urgency} priority`,
+    });
+  };
+
+  const handleWorkScheduleToggle = (checked: boolean) => {
+    setWorkSchedule(prev => ({ ...prev, enabled: checked }));
+    toast({
+      title: `Work schedule integration ${checked ? 'enabled' : 'disabled'}`,
+      description: checked ? "Learning schedule will adapt to your work hours" : "Work schedule integration turned off",
+    });
+  };
+
+  const handleCalendarConnect = async (type: 'google' | 'apple' | 'outlook') => {
+    setCalendarSync(prev => ({
+      ...prev,
+      [type]: { ...prev[type], connecting: true }
+    }));
+
+    // Simulate API call
+    setTimeout(() => {
+      setCalendarSync(prev => ({
+        ...prev,
+        [type]: { connected: true, connecting: false }
+      }));
+
+      toast({
+        title: "Calendar connected",
+        description: `Successfully connected to ${type.charAt(0).toUpperCase() + type.slice(1)} Calendar`,
+      });
+    }, 1500);
   };
 
   return (
@@ -160,13 +203,50 @@ export default function LearningCalendar() {
             <div className="space-y-4">
               <h4 className="font-medium leading-none">Notification Preferences</h4>
               {notificationPrefs.map((pref) => (
-                <div key={pref.feature} className="flex items-center space-x-4">
-                  <Switch
-                    id={`${pref.feature}-toggle`}
-                    checked={pref.enabled}
-                    onCheckedChange={() => handleNotificationToggle(pref.feature)}
-                  />
-                  <Label htmlFor={`${pref.feature}-toggle`}>{pref.feature}</Label>
+                <div key={pref.feature} className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={`${pref.feature}-toggle`} className="flex items-center gap-2">
+                      {pref.feature}
+                    </Label>
+                    <Switch
+                      id={`${pref.feature}-toggle`}
+                      checked={pref.enabled}
+                      onCheckedChange={() => handleNotificationToggle(pref.feature)}
+                    />
+                  </div>
+                  {pref.enabled && (
+                    <div className="pl-4 space-y-2">
+                      <Select
+                        value={pref.frequency}
+                        onValueChange={(value: "daily" | "weekly" | "custom") =>
+                          handleFrequencyChange(pref.feature, value)
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select frequency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="daily">Daily</SelectItem>
+                          <SelectItem value="weekly">Weekly</SelectItem>
+                          <SelectItem value="custom">Custom</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select
+                        value={pref.urgency}
+                        onValueChange={(value: "urgent" | "passive") =>
+                          handleUrgencyChange(pref.feature, value)
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="urgent">Urgent Alert</SelectItem>
+                          <SelectItem value="passive">Passive Reminder</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -177,9 +257,7 @@ export default function LearningCalendar() {
                 <Switch
                   id="work-schedule"
                   checked={workSchedule.enabled}
-                  onCheckedChange={(checked) => 
-                    setWorkSchedule(prev => ({ ...prev, enabled: checked }))
-                  }
+                  onCheckedChange={handleWorkScheduleToggle}
                 />
                 <Label htmlFor="work-schedule">Work Schedule Integration</Label>
               </div>
@@ -188,18 +266,29 @@ export default function LearningCalendar() {
             <div className="space-y-4">
               <h4 className="font-medium leading-none">Calendar Integration</h4>
               <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
-                  <CalendarDays className="mr-2 h-4 w-4" />
-                  Connect Google Calendar
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <CalendarDays className="mr-2 h-4 w-4" />
-                  Connect Apple Calendar
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <CalendarDays className="mr-2 h-4 w-4" />
-                  Connect Outlook Calendar
-                </Button>
+                {Object.entries(calendarSync).map(([type, status]) => (
+                  <Button
+                    key={type}
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => !status.connected && handleCalendarConnect(type as 'google' | 'apple' | 'outlook')}
+                    disabled={status.connecting}
+                  >
+                    <CalendarDays className="mr-2 h-4 w-4" />
+                    {status.connected ? (
+                      <>
+                        Connected to {type.charAt(0).toUpperCase() + type.slice(1)} Calendar
+                        <Check className="ml-2 h-4 w-4 text-green-500" />
+                      </>
+                    ) : (
+                      status.connecting ? (
+                        <span>Connecting to {type.charAt(0).toUpperCase() + type.slice(1)} Calendar...</span>
+                      ) : (
+                        `Connect ${type.charAt(0).toUpperCase() + type.slice(1)} Calendar`
+                      )
+                    )}
+                  </Button>
+                ))}
               </div>
             </div>
           </div>
