@@ -2,7 +2,7 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import Sidebar from "@/components/sidebar";
+import Navigation from "@/components/navigation";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
@@ -16,59 +16,34 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
-import { createContext, useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-
-export const SidebarContext = createContext<{
-  isMinimized: boolean;
-  setIsMinimized: (value: boolean) => void;
-}>({
-  isMinimized: false,
-  setIsMinimized: () => {},
-});
 
 function Router() {
-  const [isMinimized, setIsMinimized] = useState(false);
-
-  // Debug effect to track state changes
-  useEffect(() => {
-    console.log('Sidebar state changed:', isMinimized);
-  }, [isMinimized]);
-
   return (
-    <SidebarContext.Provider value={{ isMinimized, setIsMinimized }}>
-      <div className="min-h-screen flex bg-background">
-        <Sidebar />
-        <main 
-          className={cn(
-            "flex-1 relative overflow-y-auto",
-            isMinimized ? "ml-20" : "ml-64",
-            "transition-all duration-300 ease-in-out"
-          )}
-        >
-          <div className="p-4 sm:p-6 md:p-8">
-            <div className="mx-auto max-w-5xl space-y-6">
-              <Switch>
-                <Route path="/" component={Home} />
-                <Route path="/why-fundamenta" component={WhyFundamenta} />
-                <Route path="/partner" component={Partner} />
-                <Route path="/privacy" component={Privacy} />
-                <Route path="/invite" component={Invite} />
-                <Route path="/emergency" component={Emergency} />
-                <Route path="/finance" component={Finance} />
-                <Route path="/career" component={Career} />
-                <Route path="/wellness" component={Wellness} />
-                <Route path="/active" component={Active} />
-                <Route path="/learning" component={Learning} />
-                <Route component={NotFound} />
-              </Switch>
-            </div>
+    <div className="min-h-screen flex overflow-hidden bg-texture">
+      <Navigation />
+      <main className="flex-1 relative z-0 overflow-y-auto md:ml-[240px]">
+        <div className="p-4 sm:p-6 md:p-8">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <Switch>
+              <Route path="/" component={Home} />
+              <Route path="/why-fundamenta" component={WhyFundamenta} />
+              <Route path="/partner" component={Partner} />
+              <Route path="/privacy" component={Privacy} />
+              <Route path="/invite" component={Invite} />
+              <Route path="/emergency" component={Emergency} />
+              <Route path="/finance" component={Finance} />
+              <Route path="/career" component={Career} />
+              <Route path="/wellness" component={Wellness} />
+              <Route path="/active" component={Active} />
+              <Route path="/learning" component={Learning} />
+              <Route component={NotFound} />
+            </Switch>
           </div>
-        </main>
-        <WelcomeTour />
-        <Toaster />
-      </div>
-    </SidebarContext.Provider>
+        </div>
+      </main>
+      <WelcomeTour />
+      <Toaster />
+    </div>
   );
 }
 
