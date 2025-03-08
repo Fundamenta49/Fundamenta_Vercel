@@ -60,6 +60,11 @@ export default function Navigation() {
     setIsOpen(false); // Close the sheet after navigation
   };
 
+  const handleMinimizeToggle = () => {
+    console.log('Toggle clicked, current state:', isMinimized);
+    setIsMinimized(!isMinimized);
+  };
+
   const NavContent = () => (
     <nav className="flex flex-col gap-2">
       {navItems.map(({ href, label, icon: Icon }) => (
@@ -124,7 +129,7 @@ export default function Navigation() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setIsMinimized(!isMinimized)}
+          onClick={handleMinimizeToggle}
           className="ml-auto text-[#D8BFAA] hover:text-[#A3C6C4]"
         >
           {isMinimized ? (
