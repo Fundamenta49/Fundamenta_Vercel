@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Bell, Calendar as CalendarIcon, Clock, BellRing, Clock8, CalendarDays, Settings } from "lucide-react";
-import { addDays, format } from "date-fns";
+import { format, addDays } from "date-fns";
 
 interface NotificationPreference {
   feature: string;
@@ -148,14 +148,10 @@ export default function LearningCalendar() {
       </Card>
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent 
-          className="max-w-3xl"
-          aria-labelledby="calendar-settings-title"
-          aria-describedby="calendar-settings-description"
-        >
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle id="calendar-settings-title">Calendar Settings</DialogTitle>
-            <DialogDescription id="calendar-settings-description">
+            <DialogTitle>Calendar Settings</DialogTitle>
+            <DialogDescription>
               Customize your learning schedule and notification preferences
             </DialogDescription>
           </DialogHeader>
