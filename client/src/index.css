@@ -46,6 +46,7 @@
     transition: margin-left 0.3s ease;
   }
 
+  /* Sidebar minimized state */
   body.sidebar-minimized {
     --sidebar-width: 5rem;
   }
@@ -58,6 +59,7 @@
     height: 100vh;
     z-index: 50;
     transition: width 0.3s ease;
+    background-color: #1C3D5A;
   }
 
   /* Card styles */
