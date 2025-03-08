@@ -14,7 +14,6 @@ import {
   Activity,
   GraduationCap,
   AlertCircle,
-  Home,
 } from "lucide-react";
 import {
   Sheet,
@@ -71,20 +70,6 @@ export default function Navigation() {
 
   const NavContent = () => (
     <nav className="flex flex-col gap-2">
-      {/* Home button always visible at the top */}
-      <button
-        onClick={() => handleNavigation("/")}
-        className={cn(
-          "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white",
-          location === "/" ? "bg-[#1C3D5A]" : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
-        )}
-      >
-        <Home className="h-5 w-5" />
-        {!isMinimized && <span>Home</span>}
-      </button>
-
-      <div className="my-2 border-t border-white/20" />
-
       {navItems.map(({ href, label, icon: Icon }) => (
         <button
           key={href}
