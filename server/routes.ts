@@ -11,9 +11,15 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Update the messageSchema to include 'tour' category
 const messageSchema = z.object({
-  content: z.string(),
-  category: z.enum(["emergency", "finance", "career", "wellness"]),
+  message: z.string(),
+  category: z.enum(["emergency", "finance", "career", "wellness", "tour"]),
+  context: z.string().optional(),
+  previousMessages: z.array(z.object({
+    role: z.enum(["user", "assistant"]),
+    content: z.string()
+  })).optional()
 });
 
 const resumeSchema = z.object({
@@ -70,10 +76,11 @@ const interviewAnalysisSchema = z.object({
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
-      const { content, category } = messageSchema.parse(req.body);
-      const response = await getChatResponse(content, category);
+      const validatedData = messageSchema.parse(req.body);
+      const response = await getChatResponse(validatedData.message, validatedData.category, validatedData.context);
       res.json({ response });
     } catch (error) {
+      console.error("Chat error:", error);
       res.status(400).json({ error: "Invalid request" });
     }
   });

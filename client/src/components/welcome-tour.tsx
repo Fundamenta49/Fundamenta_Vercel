@@ -188,8 +188,7 @@ export default function WelcomeTour() {
         body: JSON.stringify({
           message: queryQuestion,
           category: "tour",
-          context: `User is on step ${currentStep + 1} of the tour, viewing ${tourSteps[currentStep].title}`,
-          previousMessages: [] // Add conversation history if needed
+          context: `User is on step ${currentStep + 1} of the tour, viewing ${tourSteps[currentStep].title}`
         })
       });
 
