@@ -122,11 +122,8 @@ export default function WelcomeTour() {
   const [aiResponse, setAiResponse] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if this is the first visit
     const hasSeenTour = localStorage.getItem("hasSeenTour");
-    console.log("Welcome Tour - First Visit Check:", !hasSeenTour);
     if (!hasSeenTour) {
-      console.log("Opening welcome tour...");
       setIsActive(true);
     }
   }, []);
@@ -136,7 +133,6 @@ export default function WelcomeTour() {
     if (nextStep < tourSteps.length) {
       setCurrentStep(nextStep);
       setShowQuestions(false);
-      // Navigate to the feature's page
       if (tourSteps[nextStep].path !== "/") {
         setLocation(tourSteps[nextStep].path);
       }
@@ -200,20 +196,21 @@ export default function WelcomeTour() {
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 100 }}
-      className="fixed bottom-4 right-4 z-50"
+      className="fixed bottom-4 left-4 z-50"
     >
-      <Card className="w-[400px] shadow-lg border-2 border-primary/20">
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
+      <Card className="w-[300px] shadow-lg border-2 border-primary/20">
+        <div className="p-3">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               {tourSteps[currentStep].icon}
-              <h3 className="font-semibold">{tourSteps[currentStep].title}</h3>
+              <h3 className="font-semibold text-sm">{tourSteps[currentStep].title}</h3>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
-                size="icon"
+                size="sm"
                 onClick={() => setIsMinimized(!isMinimized)}
+                className="h-8 w-8"
               >
                 {isMinimized ? (
                   <Maximize2 className="h-4 w-4" />
@@ -223,8 +220,9 @@ export default function WelcomeTour() {
               </Button>
               <Button
                 variant="ghost"
-                size="icon"
+                size="sm"
                 onClick={handleSkip}
+                className="h-8 w-8"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -237,45 +235,47 @@ export default function WelcomeTour() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="space-y-4"
+                className="space-y-3"
               >
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   {tourSteps[currentStep].description}
                 </p>
 
                 {aiResponse && (
-                  <div className="bg-primary/10 p-3 rounded-lg">
-                    <p className="text-sm">{aiResponse}</p>
+                  <div className="bg-primary/10 p-2 rounded-lg text-xs">
+                    <p>{aiResponse}</p>
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <Input
                       placeholder="Ask me anything..."
                       value={userQuestion}
                       onChange={(e) => setUserQuestion(e.target.value)}
-                      onKeyPress={(e) => e.key === "Enter" && handleAskQuestion()}
-                      className="text-sm"
+                      onKeyDown={(e) => e.key === "Enter" && handleAskQuestion()}
+                      className="text-xs h-8"
                     />
                     <Button
                       variant="outline"
-                      size="icon"
+                      size="sm"
                       onClick={() => setShowQuestions(!showQuestions)}
+                      className="h-8 w-8"
                     >
                       {showQuestions ? (
-                        <ChevronUp className="h-4 w-4" />
+                        <ChevronUp className="h-3 w-3" />
                       ) : (
-                        <ChevronDown className="h-4 w-4" />
+                        <ChevronDown className="h-3 w-3" />
                       )}
                     </Button>
                     <Button
                       variant="outline"
-                      size="icon"
+                      size="sm"
                       onClick={() => handleAskQuestion()}
                       disabled={!userQuestion.trim()}
+                      className="h-8 w-8"
                     >
-                      <MessageSquare className="h-4 w-4" />
+                      <MessageSquare className="h-3 w-3" />
                     </Button>
                   </div>
 
@@ -292,7 +292,7 @@ export default function WelcomeTour() {
                             <Button
                               key={index}
                               variant="ghost"
-                              className="justify-start text-sm h-8"
+                              className="justify-start text-xs h-7 px-2"
                               onClick={() => handleSuggestedQuestion(question)}
                             >
                               {question}
@@ -304,7 +304,7 @@ export default function WelcomeTour() {
                   </AnimatePresence>
                 </div>
 
-                <div className="flex items-center justify-between gap-4 pt-2">
+                <div className="flex items-center justify-between gap-3 pt-2">
                   <div className="flex gap-1">
                     {tourSteps.map((_, index) => (
                       <motion.div
@@ -313,11 +313,11 @@ export default function WelcomeTour() {
                           scale: index === currentStep ? 1.2 : 1,
                           backgroundColor: index === currentStep ? "var(--primary)" : "var(--muted)"
                         }}
-                        className="h-1.5 w-1.5 rounded-full"
+                        className="h-1 w-1 rounded-full"
                       />
                     ))}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     {currentStep > 0 && (
                       <Button
                         variant="ghost"
@@ -326,11 +326,16 @@ export default function WelcomeTour() {
                           setCurrentStep(currentStep - 1);
                           setLocation(tourSteps[currentStep - 1].path);
                         }}
+                        className="h-7 text-xs"
                       >
                         Back
                       </Button>
                     )}
-                    <Button size="sm" onClick={handleNext}>
+                    <Button
+                      size="sm"
+                      onClick={handleNext}
+                      className="h-7 text-xs"
+                    >
                       {currentStep === tourSteps.length - 1 ? "Get Started" : "Next"}
                     </Button>
                   </div>
