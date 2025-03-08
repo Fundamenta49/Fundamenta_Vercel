@@ -149,11 +149,12 @@ export default function LearningCalendar() {
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
         <DialogContent 
           className="max-w-3xl"
-          aria-describedby="settings-description"
+          aria-labelledby="calendar-settings-title"
+          aria-describedby="calendar-settings-description"
         >
           <DialogHeader>
-            <DialogTitle>Calendar Settings</DialogTitle>
-            <p id="settings-description" className="text-sm text-muted-foreground">
+            <DialogTitle id="calendar-settings-title">Calendar Settings</DialogTitle>
+            <p id="calendar-settings-description" className="text-sm text-muted-foreground">
               Customize your learning schedule and notification preferences
             </p>
           </DialogHeader>
