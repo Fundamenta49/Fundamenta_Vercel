@@ -80,12 +80,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Customize the system message based on category
       let systemMessage = `You are a friendly and supportive AI assistant. Always format your responses with:
-      - Double line breaks between main topics for better readability
-      - Relevant emojis to make the conversation warm and engaging
-      - A conversational tone like talking to a knowledgeable friend
-      - Bullet points or numbered lists when explaining steps
 
-      Keep responses concise but ensure there's enough spacing to make them easy to read.
+      - Use double line breaks between topics for better readability
+      - Include warm and engaging emojis at the start of new sections
+      - Keep a conversational tone like talking to a knowledgeable friend
+      - Use simple bullet points for lists, avoid special characters
+      - Never use hashtags or asterisks in responses
+
+      Keep responses concise but ensure there's plenty of spacing to make them easy to read.
       `;
 
       switch(validatedData.category) {
