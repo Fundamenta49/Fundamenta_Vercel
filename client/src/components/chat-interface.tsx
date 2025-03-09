@@ -6,7 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import ChatOnboarding from "./chat-onboarding";
 
 interface ChatMessage {
@@ -18,6 +17,21 @@ interface ChatMessage {
 interface ChatInterfaceProps {
   category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking";
 }
+
+const formatAssistantMessage = (content: string) => {
+  // Split content by double line breaks or emoji sections
+  const sections = content.split(/\n\n+|\n(?=[-•🎯💡⏰🎬🔗✨🌟💪🧘‍♀️📊⭐👉])/g);
+
+  return sections.map((section, idx) => (
+    <div key={idx} className="mb-4 last:mb-0">
+      {section.split('\n').map((line, lineIdx) => (
+        <p key={lineIdx} className={`${line.trim().startsWith('-') || line.trim().startsWith('•') ? 'ml-4' : ''} mb-2`}>
+          {line}
+        </p>
+      ))}
+    </div>
+  ));
+};
 
 export default function ChatInterface({ category }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -37,7 +51,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
         learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
         fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?",
-        cooking: "Hi! I'm your cooking assistant. I'm here to help you develop your culinary skills and confidence in the kitchen. What would you like to cook today?"
+        cooking: "Hi! 👩‍🍳 I'm your cooking assistant. I'm here to help you develop your culinary skills and confidence in the kitchen. What would you like to cook today?"
       };
 
       setMessages([{ role: "assistant", content: greetings[category], category }]);
@@ -124,7 +138,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         ref={scrollRef} 
         className="flex-1 pr-4"
       >
-        <div className="space-y-4 pb-4">
+        <div className="space-y-6">
           {messages.map((message, i) => (
             <div
               key={i}
@@ -133,13 +147,16 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
               }`}
             >
               <div
-                className={`max-w-[80%] p-3 rounded-lg ${
+                className={`max-w-[85%] p-4 rounded-lg ${
                   message.role === "assistant"
                     ? "bg-accent text-accent-foreground"
                     : "bg-primary text-primary-foreground"
                 }`}
               >
-                {message.content}
+                {message.role === "assistant" 
+                  ? formatAssistantMessage(message.content)
+                  : <p>{message.content}</p>
+                }
               </div>
             </div>
           ))}
