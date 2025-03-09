@@ -324,7 +324,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const videoResults = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
         params: {
           part: 'snippet',
-          q: userQuery,
+          q: `how to ${userQuery} tutorial guide`,
           type: 'video',
           maxResults: 3,
           key: process.env.YOUTUBE_API_KEY,
@@ -356,17 +356,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           description: item.snippet.description
         }));
 
-      // Create video section content for AI prompt
-      const videoSection = availableVideos
-        .map(video => `[${video.id}] - ${video.title}`)
-        .join('\n');
-
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
             role: "system",
-            content: `You are a friendly, encouraging life coach who loves helping people learn new skills. Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
+            content: `You are a friendly, encouraging life coach creating a guide about "${userQuery}". Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
 
 Structure your advice in these friendly sections:
 
@@ -380,7 +375,8 @@ Share some helpful tricks and shortcuts you've learned along the way. Think of t
 Give easy-to-remember guidelines about how often to practice this skill and how to make it a natural part of their routine.
 
 🎬 Video Tutorials
-${videoSection}
+Here are some helpful video tutorials I found:
+${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
 
 🔗 Resources & Tools
 Share some trusted websites, tools, or communities that can help them learn more.
@@ -389,7 +385,7 @@ End with a warm, encouraging note!`
           },
           {
             role: "user",
-            content: userQuery
+            content: `Please provide a friendly guide about ${userQuery}`
           }
         ]
       });

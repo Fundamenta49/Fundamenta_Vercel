@@ -155,6 +155,7 @@ export default function Learning() {
       const data: SkillGuidanceResponse = await response.json();
       setGuidance(data.guidance);
       setVideos(data.videos);
+      setSelectedSkill(searchQuery); // Set the selected skill to the search query
     } catch (error) {
       console.error("Error searching skills:", error);
       setGuidance("Sorry, we couldn't process your search right now. Please try again later.");
@@ -174,7 +175,7 @@ export default function Learning() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           skillArea: "life",
-          userQuery: `${prompt.title}: ${prompt.description}`,
+          userQuery: prompt.title,
         }),
       });
 
