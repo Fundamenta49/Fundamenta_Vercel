@@ -101,6 +101,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const hasCompletedOnboarding = localStorage.getItem(`chat-onboarding-${category}`);
@@ -146,6 +147,19 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         .map(result => result[0].transcript)
         .join('');
       setInput(transcript);
+
+      // Reset silence timeout
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
+
+      // Set new silence timeout
+      silenceTimeoutRef.current = setTimeout(() => {
+        if (transcript.trim()) {
+          stopRecording();
+          handleSubmit(new Event('submit') as any);
+        }
+      }, 1500); // 1.5 seconds of silence will trigger send
     };
 
     recognition.onerror = (event) => {
@@ -159,7 +173,10 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     };
 
     recognition.onend = () => {
-      stopRecording();
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
+      setIsRecording(false);
     };
 
     return recognition;
@@ -175,7 +192,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       setIsRecording(true);
       toast({
         title: "Listening...",
-        description: "Speak clearly into your microphone.",
+        description: "Speak clearly into your microphone. Message will send automatically after you finish speaking.",
       });
     }
   };
@@ -184,6 +201,9 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
       setIsRecording(false);
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
     }
   };
 
