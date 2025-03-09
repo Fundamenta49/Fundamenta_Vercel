@@ -71,7 +71,6 @@ What would you like to know more about? You can ask about:
     };
 
     recognition.onend = () => {
-      // Only restart if we're still supposed to be recording
       if (isRecording) {
         recognition.start();
       }
@@ -90,7 +89,7 @@ What would you like to know more about? You can ask about:
       setIsRecording(true);
       toast({
         title: "Listening...",
-        description: "Speak clearly into your microphone. Press Send when you're ready to send your message.",
+        description: "Speak clearly into your microphone. Press the mic button again or send to finish.",
       });
     }
   };
@@ -173,7 +172,7 @@ What would you like to know more about? You can ask about:
                 >
                   <div className="bg-[#E8F4F4] rounded-lg p-4">
                     {message.content.split('\n').map((line, i) => (
-                      <p key={i} className="mb-2">{line}</p>
+                      <p key={i} className="text-[#8b7e74] mb-2">{line}</p>
                     ))}
                   </div>
                 </div>

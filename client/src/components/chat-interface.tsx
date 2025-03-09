@@ -57,9 +57,7 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
       {sections.map((section, idx) => (
         <div key={idx} className="mb-4 last:mb-0">
           {section.split('\n').map((line, lineIdx) => (
-            <p key={lineIdx} className={`${line.trim().startsWith('-') || line.trim().startsWith('•') ? 'ml-4' : ''} mb-2`}>
-              {line}
-            </p>
+            <p key={lineIdx} className="text-[#8b7e74] mb-2">{line}</p>
           ))}
         </div>
       ))}
@@ -342,7 +340,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
               <div className="bg-[#E8F4F4] rounded-lg p-4">
                 {message.role === "assistant" 
                   ? formatAssistantMessage(message.content, message.suggestions)
-                  : <p>{message.content}</p>
+                  : <p className="text-[#8b7e74]">{message.content}</p>
                 }
               </div>
             </div>
