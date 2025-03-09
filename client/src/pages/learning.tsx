@@ -15,7 +15,6 @@ import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
 import {
   Book,
-  Target,
   Brain,
   Lightbulb,
   Car,
@@ -27,7 +26,8 @@ import {
   Video,
   Link2,
   ExternalLink,
-  ChefHat
+  ChefHat,
+  GraduationCap
 } from "lucide-react";
 import LearningCalendar from "@/components/learning-calendar";
 import { useState } from "react";
@@ -69,11 +69,9 @@ const scheduleFormSchema = z.object({
 type ScheduleFormValues = z.infer<typeof scheduleFormSchema>;
 
 const formatContent = (content: string) => {
-  // Regular expression to match URLs
   const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   return content.split('\n').map((line, idx) => {
-    // Replace URLs with clickable links
     const parts = line.split(urlRegex);
     return (
       <p key={idx} className="mb-2 leading-relaxed">
@@ -298,7 +296,6 @@ const LIFE_SKILLS_PROMPTS = [
 ];
 
 const formatVideoDuration = (duration: string) => {
-  // Convert ISO 8601 duration to readable format
   const match = duration?.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
   if (!match) return "00:00";
 
@@ -310,7 +307,7 @@ const formatVideoDuration = (duration: string) => {
 };
 
 const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) => {
-  console.log("Video section received videos:", videos); // Debug log
+  console.log("Video section received videos:", videos);
 
   if (!videos?.length) {
     return (
@@ -380,7 +377,7 @@ export default function Learning() {
       const data: SkillGuidanceResponse = await response.json();
       setGuidance(data.guidance);
       setVideos(data.videos);
-      setSelectedSkill(searchQuery); // Set the selected skill to the search query
+      setSelectedSkill(searchQuery);
     } catch (error) {
       console.error("Error searching skills:", error);
       setGuidance("Sorry, we couldn't process your search right now. Please try again later.");
@@ -425,7 +422,6 @@ export default function Learning() {
   const formatGuidance = (text: string) => {
     if (!text) return [];
 
-    // Split content by emoji headers
     const sections = text.split(/(?=🎯|💡|⏰|🎬|🔗)/g);
 
     return sections.map(section => {
@@ -444,8 +440,126 @@ export default function Learning() {
 
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Learning & Development</h1>
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          Learning & Development
+        </h1>
+        <p className="text-muted-foreground text-lg">
+          Master essential life skills with interactive guides and expert assistance
+        </p>
+      </div>
+
+      <Tabs defaultValue="chat" className="space-y-8">
+        <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 pb-4 border-b">
+          <TabsList className="h-auto flex flex-wrap gap-2 p-2 bg-muted/50">
+            <TabsTrigger value="chat" className="flex items-center gap-2">
+              <Brain className="h-4 w-4" />
+              AI Learning Coach
+            </TabsTrigger>
+            <TabsTrigger value="skills" className="flex items-center gap-2">
+              <GraduationCap className="h-4 w-4" />
+              Life Skills
+            </TabsTrigger>
+            <TabsTrigger value="cooking" className="flex items-center gap-2">
+              <ChefHat className="h-4 w-4" />
+              Cooking Basics
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Schedule
+            </TabsTrigger>
+            <TabsTrigger value="vehicle" className="flex items-center gap-2">
+              <Car className="h-4 w-4" />
+              Vehicle Care
+            </TabsTrigger>
+            <TabsTrigger value="handyman" className="flex items-center gap-2">
+              <Wrench className="h-4 w-4" />
+              Home Repairs
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
+        <TabsContent value="chat" className="space-y-4">
+          <Card className="border-0 shadow-none">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-2xl">
+                <Brain className="h-6 w-6 text-primary" />
+                AI Learning Coach
+              </CardTitle>
+              <CardDescription className="text-base">
+                Get personalized guidance and answers to your learning questions
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <ChatInterface category="learning" />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="skills">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-2xl">
+                <Home className="h-6 w-6 text-primary" />
+                Essential Life Skills
+              </CardTitle>
+              <CardDescription className="text-base">
+                Learn practical skills for everyday life with step-by-step guides
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Search for life skills..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                    className="flex-1"
+                  />
+                  <Button onClick={handleSearch} variant="outline">
+                    <Search className="h-4 w-4 mr-2" />
+                    Search
+                  </Button>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
+                    <Card
+                      key={index}
+                      className="cursor-pointer hover:bg-accent/50 transition-colors border border-muted"
+                      onClick={() => handlePromptClick(prompt)}
+                    >
+                      <CardHeader>
+                        <CardTitle className="text-lg">{prompt.title}</CardTitle>
+                        <CardDescription>{prompt.description}</CardDescription>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="cooking">
+          <CookingGuide />
+        </TabsContent>
+
+        <TabsContent value="calendar">
+          <LearningCalendar />
+        </TabsContent>
+
+        <TabsContent value="vehicle">
+          <VehicleGuide />
+        </TabsContent>
+
+        <TabsContent value="handyman">
+          <HandymanGuide />
+        </TabsContent>
+      </Tabs>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl">
@@ -455,7 +569,7 @@ export default function Learning() {
               {selectedSkill || "Life Skills Guide"}
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="h-[60vh] pr-4">
+          <ScrollArea className="h-[70vh] pr-4">
             {isLoading ? (
               <div className="flex items-center justify-center h-40">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -488,96 +602,6 @@ export default function Learning() {
           </ScrollArea>
         </DialogContent>
       </Dialog>
-
-      <Tabs defaultValue="chat">
-        <div className="tabs-container">
-          <TabsList className="mb-4">
-            <TabsTrigger value="chat">AI Learning Coach</TabsTrigger>
-            <TabsTrigger value="skills">Life Skills</TabsTrigger>
-            <TabsTrigger value="cooking">Cooking Basics</TabsTrigger>
-            <TabsTrigger value="calendar">Schedule</TabsTrigger>
-            <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
-            <TabsTrigger value="handyman">Home Repairs</TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value="chat">
-          <Card className="border-0 shadow-none">
-            <CardHeader>
-              <CardTitle>Learning AI Coach</CardTitle>
-              <CardDescription>
-                Get personalized guidance for your learning journey
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ChatInterface category="learning" />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="skills">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Home className="h-5 w-5 text-primary" />
-                Essential Life Skills
-              </CardTitle>
-              <CardDescription>
-                Learn practical skills for everyday life
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    placeholder="Search for life skills..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                    className="flex-1"
-                  />
-                  <Button onClick={handleSearch} variant="outline">
-                    <Search className="h-4 w-4 mr-2" />
-                    Search
-                  </Button>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
-                    <Card
-                      key={index}
-                      className="cursor-pointer hover:bg-accent/50 transition-colors"
-                      onClick={() => handlePromptClick(prompt)}
-                    >
-                      <CardHeader>
-                        <CardTitle className="text-lg">{prompt.title}</CardTitle>
-                        <CardDescription>{prompt.description}</CardDescription>
-                      </CardHeader>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="cooking">
-          <CookingGuide />
-        </TabsContent>
-
-        <TabsContent value="calendar">
-          <LearningCalendar />
-        </TabsContent>
-
-        <TabsContent value="vehicle">
-          <VehicleGuide />
-        </TabsContent>
-
-        <TabsContent value="handyman">
-          <HandymanGuide />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }
