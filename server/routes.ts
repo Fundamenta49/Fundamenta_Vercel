@@ -313,13 +313,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update the skill-guidance endpoint handler
   app.post("/api/skill-guidance", async (req, res) => {
     try {
       const { skillArea, userQuery } = z.object({
         skillArea: z.enum(["technical", "soft", "search", "life"]),
         userQuery: z.string()
       }).parse(req.body);
+
+      // First, search for relevant YouTube videos
+      const videoResults = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+        params: {
+          part: 'snippet',
+          q: userQuery,
+          type: 'video',
+          maxResults: 3,
+          key: process.env.YOUTUBE_API_KEY,
+        }
+      });
+
+      // Get video details for the search results
+      const videoIds = videoResults.data.items.map((item: any) => item.id.videoId);
+      const videoDetails = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+        params: {
+          part: 'snippet,contentDetails,status',
+          id: videoIds.join(','),
+          key: process.env.YOUTUBE_API_KEY
+        }
+      });
+
+      // Filter for public videos only
+      const availableVideos = videoDetails.data.items
+        .filter((item: any) => item.status.privacyStatus === 'public')
+        .map((item: any) => ({
+          id: item.id,
+          title: item.snippet.title,
+          thumbnail: {
+            url: item.snippet.thumbnails.medium.url,
+            width: item.snippet.thumbnails.medium.width,
+            height: item.snippet.thumbnails.medium.height
+          },
+          duration: item.contentDetails.duration,
+          description: item.snippet.description
+        }));
+
+      // Create video section content for AI prompt
+      const videoSection = availableVideos
+        .map(video => `[${video.id}] - ${video.title}`)
+        .join('\n');
 
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -349,15 +389,7 @@ Structure your response in engaging sections:
 - Add tips for building good habits
 
 🎬 Video Tutorials
-For each recommended video, follow this exact format:
-[videoId] - Title/Description (Duration)
-
-IMPORTANT: Only recommend videos that are directly related to the user's query.
-Choose 2-3 highly relevant, beginner-friendly tutorials from reputable channels.
-Each video should focus specifically on the skill or task being discussed.
-Example format for a kitchen cleaning query:
-[AbC123xyz45] - Professional Kitchen Cleaning Tips (8 mins)
-[XyZ987abc12] - Deep Clean Your Kitchen Like a Pro (12 mins)
+${videoSection}
 
 🔗 Helpful Resources
 - Share links to detailed guides and articles
@@ -374,59 +406,9 @@ End with a short, encouraging note about mastering this skill!`
         ]
       });
 
-      const guidanceText = response.choices[0].message.content || "";
-      console.log("AI Response:", guidanceText); // Debug log
-
-      // Extract video IDs from the guidance using improved regex
-      const videoSection = guidanceText.split('🎬')[1]?.split('🔗')[0] || '';
-      const videoIds = videoSection.match(/\[([\w-]{11})\]/g)?.map(id => id.replace(/[\[\]]/g, '')) || [];
-      console.log("Extracted video IDs:", videoIds); // Debug log
-
-      // Get video details from YouTube API if we have video IDs
-      let videoDetails = [];
-      if (videoIds.length > 0 && process.env.YOUTUBE_API_KEY) {
-        try {
-          // Validate video IDs before making API call
-          const validVideoIds = videoIds.filter(id => /^[\w-]{11}$/.test(id));
-          console.log("Valid video IDs:", validVideoIds); // Debug log
-
-          if (validVideoIds.length > 0) {
-            const videoResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
-              params: {
-                part: 'snippet,contentDetails,status',
-                id: validVideoIds.join(','),
-                key: process.env.YOUTUBE_API_KEY
-              }
-            });
-
-            console.log("YouTube API Response:", videoResponse.data); // Debug log
-
-            if (videoResponse.data.items) {
-              videoDetails = videoResponse.data.items
-                .filter(item => item.status.privacyStatus === 'public')
-                .map(item => ({
-                  id: item.id,
-                  title: item.snippet.title,
-                  thumbnail: {
-                    url: item.snippet.thumbnails.medium.url,
-                    width: item.snippet.thumbnails.medium.width,
-                    height: item.snippet.thumbnails.medium.height
-                  },
-                  duration: item.contentDetails.duration,
-                  description: item.snippet.description
-                }));
-            }
-          }
-        } catch (error) {
-          console.error("YouTube API error:", error);
-        }
-      }
-
-      console.log("Final video details:", videoDetails); // Debug log
-
       res.json({
-        guidance: guidanceText,
-        videos: videoDetails
+        guidance: response.choices[0].message.content,
+        videos: availableVideos
       });
     } catch (error) {
       console.error("Skill guidance error:", error);
