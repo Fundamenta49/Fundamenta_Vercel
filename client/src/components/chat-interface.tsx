@@ -325,12 +325,13 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="relative flex flex-col h-[calc(100vh-16rem)] min-h-[500px] overflow-hidden">
+    <div className="flex flex-col h-full relative">
       <ScrollArea 
         ref={scrollRef} 
-        className="flex-1 pr-4 overflow-y-auto"
+        className="flex-1 pr-4"
+        style={{ height: 'calc(100vh - 16rem - 100px)' }}
       >
-        <div className="space-y-6 pb-32">
+        <div className="space-y-6 pb-[120px]">
           {messages.map((message, i) => (
             <div
               key={i}
@@ -361,49 +362,51 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         </div>
       </ScrollArea>
 
-      <form 
-        onSubmit={handleSubmit} 
-        className="absolute bottom-0 left-0 right-0 flex gap-2 p-4 bg-background border-t shadow-lg"
-      >
-        <Textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-          className="flex-1 min-h-[80px]"
-          disabled={chatMutation.isPending || isRecording}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSubmit(e);
-            }
-          }}
-        />
-        <div className="flex flex-col gap-2 self-end">
-          <Button
-            type="button"
-            variant={isRecording ? "outline" : "secondary"}
-            size="icon"
-            className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
-            onClick={isRecording ? stopRecording : startRecording}
-            disabled={chatMutation.isPending}
-          >
-            <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
-          </Button>
-          <Button
-            type="submit"
-            disabled={chatMutation.isPending || !input.trim() || isRecording}
-          >
-            {chatMutation.isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Sending...
-              </>
-            ) : (
-              'Send'
-            )}
-          </Button>
-        </div>
-      </form>
+      <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg" style={{ maxWidth: 'inherit' }}>
+        <form 
+          onSubmit={handleSubmit} 
+          className="flex gap-2 p-4"
+        >
+          <Textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1 min-h-[80px]"
+            disabled={chatMutation.isPending || isRecording}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+          />
+          <div className="flex flex-col gap-2 self-end">
+            <Button
+              type="button"
+              variant={isRecording ? "outline" : "secondary"}
+              size="icon"
+              className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
+              onClick={isRecording ? stopRecording : startRecording}
+              disabled={chatMutation.isPending}
+            >
+              <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
+            </Button>
+            <Button
+              type="submit"
+              disabled={chatMutation.isPending || !input.trim() || isRecording}
+            >
+              {chatMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                'Send'
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
