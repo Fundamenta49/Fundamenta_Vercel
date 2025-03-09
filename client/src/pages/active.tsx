@@ -65,8 +65,8 @@ export default function Active() {
         <div className="space-y-4 max-w-4xl mx-auto">
           <Card className="border-0 shadow-none">
             <CardHeader>
-              <CardTitle className="text-gray-900">Welcome to Active You! 🎉</CardTitle>
-              <CardDescription className="text-gray-500">
+              <CardTitle className="text-[#1C3D5A]">Welcome to Active You! 🎉</CardTitle>
+              <CardDescription className="text-muted-foreground">
                 Let's create your personalized fitness profile to help you achieve your goals.
                 This will help us provide customized recommendations across all features.
               </CardDescription>
@@ -77,7 +77,7 @@ export default function Active() {
             <Button
               variant="ghost"
               onClick={() => setSkipProfile(true)}
-              className="text-gray-500 hover:text-gray-900"
+              className="text-muted-foreground hover:text-primary"
             >
               Skip for now and explore
             </Button>
@@ -90,7 +90,7 @@ export default function Active() {
   return (
     <div className="min-h-screen bg-white px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">Active You</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-[#1C3D5A]">Active You</h1>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-4">
@@ -105,8 +105,8 @@ export default function Active() {
           <TabsContent value="chat">
             <Card className="border-0 shadow-none">
               <CardHeader>
-                <CardTitle className="text-gray-900">Fitness AI Coach</CardTitle>
-                <CardDescription className="text-gray-500">
+                <CardTitle className="text-[#1C3D5A]">Fitness AI Coach</CardTitle>
+                <CardDescription className="text-muted-foreground">
                   Get personalized workout guidance and fitness tips
                 </CardDescription>
               </CardHeader>
