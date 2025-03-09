@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, Mic, MicOff } from "lucide-react";
 import ChatOnboarding from "./chat-onboarding";
 import { Link } from "wouter";
 
@@ -50,7 +50,6 @@ const APP_ROUTES = {
 };
 
 const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) => {
-  // Split content by double line breaks or emoji sections
   const sections = content.split(/\n\n+|\n(?=[-•🎯💡⏰🎬🔗✨🌟💪🧘‍♀️📊⭐👉])/g);
 
   return (
@@ -98,8 +97,10 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
   const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
     const hasCompletedOnboarding = localStorage.getItem(`chat-onboarding-${category}`);
@@ -125,6 +126,67 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     }
   }, [messages]);
 
+  const initializeSpeechRecognition = () => {
+    if (!('webkitSpeechRecognition' in window)) {
+      toast({
+        variant: "destructive",
+        title: "Speech Recognition Not Available",
+        description: "Your browser doesn't support speech recognition.",
+      });
+      return null;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join('');
+      setInput(transcript);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      stopRecording();
+      toast({
+        variant: "destructive",
+        title: "Speech Recognition Error",
+        description: "There was an error with speech recognition. Please try again.",
+      });
+    };
+
+    recognition.onend = () => {
+      stopRecording();
+    };
+
+    return recognition;
+  };
+
+  const startRecording = () => {
+    if (!recognitionRef.current) {
+      recognitionRef.current = initializeSpeechRecognition();
+    }
+
+    if (recognitionRef.current) {
+      recognitionRef.current.start();
+      setIsRecording(true);
+      toast({
+        title: "Listening...",
+        description: "Speak clearly into your microphone.",
+      });
+    }
+  };
+
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
   const chatMutation = useMutation({
     mutationFn: async (content: string) => {
       const response = await apiRequest("POST", "/api/chat", {
@@ -145,7 +207,6 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     },
     onSuccess: (data) => {
       if (data.success && data.response) {
-        // Generate app suggestions based on the response and category
         const suggestions = generateSuggestions(data.response, category);
 
         setMessages((prev) => [
@@ -175,7 +236,6 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     const suggestions: AppSuggestion[] = [];
     const routes = APP_ROUTES[category as keyof typeof APP_ROUTES] || {};
 
-    // Add relevant suggestions based on response content and category
     Object.entries(routes).forEach(([key, value]) => {
       const keywords = {
         cooking: {
@@ -213,7 +273,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       }
     });
 
-    return suggestions.slice(0, 3); // Limit to 3 most relevant suggestions
+    return suggestions.slice(0, 3); 
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -287,7 +347,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type your message..."
           className="flex-1 min-h-[80px]"
-          disabled={chatMutation.isPending}
+          disabled={chatMutation.isPending || isRecording}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
@@ -295,20 +355,35 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
             }
           }}
         />
-        <Button
-          type="submit"
-          className="self-end"
-          disabled={chatMutation.isPending || !input.trim()}
-        >
-          {chatMutation.isPending ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Sending...
-            </>
-          ) : (
-            'Send'
-          )}
-        </Button>
+        <div className="flex flex-col gap-2 self-end">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-10 w-10"
+            onClick={isRecording ? stopRecording : startRecording}
+            disabled={chatMutation.isPending}
+          >
+            {isRecording ? (
+              <MicOff className="h-4 w-4 text-destructive" />
+            ) : (
+              <Mic className="h-4 w-4" />
+            )}
+          </Button>
+          <Button
+            type="submit"
+            disabled={chatMutation.isPending || !input.trim() || isRecording}
+          >
+            {chatMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              'Send'
+            )}
+          </Button>
+        </div>
       </form>
     </div>
   );
