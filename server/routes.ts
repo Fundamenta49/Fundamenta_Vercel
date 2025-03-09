@@ -349,12 +349,12 @@ Structure your response in engaging sections:
 - Add tips for building good habits
 
 🎬 Video Tutorials
-- Recommend 2-3 high-quality video tutorials from trusted sources
-- Focus on beginner-friendly content
-- Each recommendation should include:
-  * A brief description of what the video covers
-  * Why it's particularly helpful
-  * The video's length (approximate)
+For each tutorial recommendation, provide:
+- YouTube video ID (e.g., dQw4w9WgXcQ)
+- A brief description of what it covers
+- Why it's particularly helpful
+- Approximate duration
+Format as: [videoID] - Description (Duration)
 
 🔗 Helpful Resources
 - Share links to detailed guides and articles
@@ -373,8 +373,38 @@ Keep everything practical and actionable, but with a friendly, supportive tone t
         ]
       });
 
+      const guidanceText = response.choices[0].message.content || "";
+
+      // Extract video IDs from the guidance
+      const videoSection = guidanceText.split('🎬')[1]?.split('🔗')[0] || '';
+      const videoIds = videoSection.match(/\[([\w-]+)\]/g)?.map(id => id.replace(/[\[\]]/g, '')) || [];
+
+      // Get video details from YouTube API if we have video IDs
+      let videoDetails = [];
+      if (videoIds.length > 0) {
+        try {
+          const videoResponse = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
+            params: {
+              part: 'snippet,contentDetails',
+              id: videoIds.join(','),
+              key: process.env.YOUTUBE_API_KEY,
+            }
+          });
+
+          videoDetails = videoResponse.data.items.map(item => ({
+            id: item.id,
+            title: item.snippet.title,
+            thumbnail: item.snippet.thumbnails.medium.url,
+            duration: item.contentDetails.duration
+          }));
+        } catch (error) {
+          console.error("YouTube API error:", error);
+        }
+      }
+
       res.json({
-        guidance: response.choices[0].message.content || "I apologize, but I'm having trouble providing guidance right now. Please try again."
+        guidance: guidanceText,
+        videos: videoDetails
       });
     } catch (error) {
       console.error("Skill guidance error:", error);

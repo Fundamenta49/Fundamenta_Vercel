@@ -33,6 +33,16 @@ import { useState } from "react";
 
 interface SkillGuidanceResponse {
   guidance: string;
+  videos: Array<{
+    id: string;
+    title: string;
+    thumbnail: {
+      url: string;
+      width: number;
+      height: number;
+    };
+    duration: string;
+  }>;
 }
 
 const LIFE_SKILLS_PROMPTS = [
@@ -62,9 +72,58 @@ const LIFE_SKILLS_PROMPTS = [
   }
 ];
 
+const formatVideoDuration = (duration: string) => {
+  // Convert ISO 8601 duration to readable format
+  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+  const hours = match[1] ? match[1].replace('H', '') : '0';
+  const minutes = match[2] ? match[2].replace('M', '') : '0';
+  const seconds = match[3] ? match[3].replace('S', '') : '0';
+
+  if (hours !== '0') {
+    return `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+  }
+  return `${minutes}:${seconds.padStart(2, '0')}`;
+};
+
+const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) => {
+  if (!videos?.length) return null;
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {videos.map((video) => (
+        <Card key={video.id} className="overflow-hidden">
+          <div className="relative aspect-video">
+            <img
+              src={video.thumbnail.url}
+              alt={video.title}
+              className="object-cover w-full"
+            />
+            <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 text-xs rounded">
+              {formatVideoDuration(video.duration)}
+            </div>
+          </div>
+          <CardContent className="p-4">
+            <Button
+              variant="link"
+              className="p-0 h-auto font-medium text-primary hover:text-primary/80 text-left"
+              onClick={() => window.open(`https://youtube.com/watch?v=${video.id}`, '_blank')}
+            >
+              <span className="flex items-center gap-1">
+                {video.title}
+                <ExternalLink className="h-3 w-3" />
+              </span>
+            </Button>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+};
+
 export default function Learning() {
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
+  const [videos, setVideos] = useState<SkillGuidanceResponse['videos']>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
@@ -86,6 +145,7 @@ export default function Learning() {
 
       const data: SkillGuidanceResponse = await response.json();
       setGuidance(data.guidance);
+      setVideos(data.videos);
     } catch (error) {
       console.error("Error searching skills:", error);
       setGuidance("Sorry, we couldn't process your search right now. Please try again later.");
@@ -111,6 +171,7 @@ export default function Learning() {
 
       const data: SkillGuidanceResponse = await response.json();
       setGuidance(data.guidance);
+      setVideos(data.videos);
     } catch (error) {
       console.error("Error getting guidance:", error);
       setGuidance("Sorry, we couldn't load the guidance right now. Please try again later.");
@@ -200,7 +261,11 @@ export default function Learning() {
                     </CardHeader>
                     <CardContent>
                       <div className="prose prose-slate max-w-none">
-                        {formatContent(section.content)}
+                        {section.title.includes('🎬') ? (
+                          <VideoSection videos={videos} />
+                        ) : (
+                          formatContent(section.content)
+                        )}
                       </div>
                     </CardContent>
                   </Card>
