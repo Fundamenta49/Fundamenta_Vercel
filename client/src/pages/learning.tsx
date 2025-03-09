@@ -8,6 +8,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
@@ -19,10 +21,15 @@ import {
   Car,
   Wrench,
   Search,
-  Home
+  Home,
+  Loader2
 } from "lucide-react";
 import LearningCalendar from "@/components/learning-calendar";
 import { useState } from "react";
+
+interface SkillGuidanceResponse {
+  guidance: string;
+}
 
 const LIFE_SKILLS_PROMPTS = [
   {
@@ -53,15 +60,88 @@ const LIFE_SKILLS_PROMPTS = [
 
 export default function Learning() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [guidance, setGuidance] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    // Handle search functionality
+
+    setIsLoading(true);
+    setDialogOpen(true);
+    try {
+      const response = await fetch("/api/skill-guidance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skillArea: "life",
+          userQuery: searchQuery,
+        }),
+      });
+
+      const data: SkillGuidanceResponse = await response.json();
+      setGuidance(data.guidance);
+    } catch (error) {
+      console.error("Error searching skills:", error);
+      setGuidance("Sorry, we couldn't process your search right now. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePromptClick = async (prompt: typeof LIFE_SKILLS_PROMPTS[0]) => {
+    setSelectedSkill(prompt.title);
+    setIsLoading(true);
+    setDialogOpen(true);
+
+    try {
+      const response = await fetch("/api/skill-guidance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skillArea: "life",
+          userQuery: `${prompt.title}: ${prompt.description}`,
+        }),
+      });
+
+      const data: SkillGuidanceResponse = await response.json();
+      setGuidance(data.guidance);
+    } catch (error) {
+      console.error("Error getting guidance:", error);
+      setGuidance("Sorry, we couldn't load the guidance right now. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">Learning & Development</h1>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Brain className="h-6 w-6 text-primary" />
+              {selectedSkill || "Life Skills Guide"}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-40">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              <div className="prose prose-slate max-w-none">
+                {guidance?.split('\n').map((paragraph, idx) => (
+                  <p key={idx}>{paragraph}</p>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
       <Tabs defaultValue="chat">
         <div className="tabs-container">
@@ -109,6 +189,7 @@ export default function Learning() {
                     placeholder="Search for life skills..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     className="flex-1"
                   />
                   <Button onClick={handleSearch} variant="outline">
@@ -120,7 +201,11 @@ export default function Learning() {
                 {/* Skills Grid */}
                 <div className="grid gap-4 md:grid-cols-2">
                   {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
-                    <Card key={index} className="cursor-pointer hover:bg-accent/50 transition-colors">
+                    <Card 
+                      key={index} 
+                      className="cursor-pointer hover:bg-accent/50 transition-colors"
+                      onClick={() => handlePromptClick(prompt)}
+                    >
                       <CardHeader>
                         <CardTitle className="text-lg">{prompt.title}</CardTitle>
                         <CardDescription>{prompt.description}</CardDescription>
@@ -133,16 +218,16 @@ export default function Learning() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="calendar">
+          <LearningCalendar />
+        </TabsContent>
+
         <TabsContent value="vehicle">
           <VehicleGuide />
         </TabsContent>
 
         <TabsContent value="handyman">
           <HandymanGuide />
-        </TabsContent>
-
-        <TabsContent value="calendar">
-          <LearningCalendar />
         </TabsContent>
 
         <TabsContent value="goals">

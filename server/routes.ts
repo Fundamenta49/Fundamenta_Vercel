@@ -317,7 +317,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/skill-guidance", async (req, res) => {
     try {
       const { skillArea, userQuery } = z.object({
-        skillArea: z.enum(["technical", "soft", "search"]),
+        skillArea: z.enum(["technical", "soft", "search", "life"]),
         userQuery: z.string()
       }).parse(req.body);
 
@@ -326,36 +326,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messages: [
           {
             role: "system",
-            content: `You are an expert learning advisor specializing in skill development and career growth. 
+            content: `You are an expert life skills advisor specializing in practical, everyday tasks and home management. 
 
-Structure your response in clear sections using plain text. Do not use any special characters or formatting symbols.
+Structure your response in clear sections using plain text:
 
-Format each section with a clear heading followed by concise, actionable content:
+Step-by-Step Instructions:
+- Break down the process into clear, numbered steps
+- Keep each step concise and actionable
+- Include specific details about tools or products needed
+- Mention safety precautions where applicable
 
-Learning Resources:
-- For each resource, provide only verified and current learning platforms/URLs (e.g., coursera.org, udemy.com, freecodecamp.org, edx.org)
-- Include the full URL starting with https:// 
-- Add a brief one-line description after each URL
-- Focus on high-quality, popular learning platforms
-- Separate each resource with a line break
+Tips and Tricks:
+- List 3-4 expert tips that make the task easier
+- Include time-saving techniques
+- Mention common mistakes to avoid
 
-Learning Path:
-Break down the journey into 3-5 main steps.
-Keep each step description to 2-3 lines maximum.
+Maintenance Schedule:
+- Suggest how often to perform the task
+- Include a quick checklist for regular upkeep
+- Provide guidelines for deep cleaning or thorough maintenance
 
-Practice Projects:
-List 2-3 concrete projects with clear objectives.
-Keep descriptions focused and actionable.
+Additional Resources:
+- Recommend specific tools or products that help
+- Suggest eco-friendly alternatives where applicable
+- Include any relevant safety equipment needed
 
-Time Investment:
-Provide brief, realistic estimates.
-Break down into short-term and long-term goals.
-
-Measuring Progress:
-List 3-4 key milestones.
-Include specific, measurable outcomes.
-
-Keep all content concise and scannable. Avoid long paragraphs.`
+Keep all content practical and easy to follow. Focus on real-world application.`
           },
           {
             role: "user",
