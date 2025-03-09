@@ -157,9 +157,9 @@ What would you like to know more about? You can ask about:
       </CardHeader>
       <CardContent>
         <div className="flex flex-col h-[500px]">
-          <div className="flex-1 relative">
+          <div className="flex-1 overflow-hidden">
             <ScrollArea
-              className="absolute inset-0"
+              className="h-full"
             >
               <div className="space-y-4 p-4">
                 {messages.map((message, index) => (
@@ -178,7 +178,7 @@ What would you like to know more about? You can ask about:
             </ScrollArea>
           </div>
 
-          <div className="flex-shrink-0 border-t bg-background">
+          <div className="flex-none border-t bg-background">
             <form
               onSubmit={handleSubmit}
               className="flex gap-2 p-4"

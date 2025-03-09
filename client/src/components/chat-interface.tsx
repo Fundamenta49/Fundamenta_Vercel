@@ -323,10 +323,10 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
   return (
     <div className="flex flex-col h-[calc(100vh-16rem)]">
-      <div className="flex-1 relative">
+      <div className="flex-1 overflow-hidden">
         <ScrollArea 
           ref={scrollRef}
-          className="absolute inset-0"
+          className="h-full"
         >
           <div className="space-y-4 p-4">
             {messages.map((message, i) => (
@@ -352,7 +352,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         </ScrollArea>
       </div>
 
-      <div className="flex-shrink-0 border-t bg-background">
+      <div className="flex-none border-t bg-background">
         <form 
           onSubmit={handleSubmit} 
           className="flex gap-2 p-4"
