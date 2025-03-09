@@ -160,7 +160,6 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     };
 
     recognition.onend = () => {
-      // Only restart if we're still supposed to be recording
       if (isRecording) {
         recognition.start();
       }
@@ -338,17 +337,9 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           {messages.map((message, i) => (
             <div
               key={i}
-              className={`flex ${
-                message.role === "assistant" ? "justify-start" : "justify-end"
-              }`}
+              className="mb-4"
             >
-              <div
-                className={`max-w-[85%] p-4 rounded-lg ${
-                  message.role === "assistant"
-                    ? "bg-accent text-accent-foreground"
-                    : "bg-primary text-primary-foreground"
-                }`}
-              >
+              <div className="bg-[#E8F4F4] rounded-lg p-4">
                 {message.role === "assistant" 
                   ? formatAssistantMessage(message.content, message.suggestions)
                   : <p>{message.content}</p>
@@ -365,10 +356,10 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         </div>
       </ScrollArea>
 
-      <div className="absolute bottom-0 left-0 right-0 bg-background pt-2 border-t">
+      <div className="absolute bottom-0 left-0 right-0 bg-background pt-2">
         <form 
           onSubmit={handleSubmit} 
-          className="flex gap-2 p-4"
+          className="flex gap-2 p-4 bg-background"
         >
           <Textarea
             value={input}

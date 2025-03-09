@@ -169,15 +169,13 @@ What would you like to know more about? You can ask about:
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`mb-4 ${
-                    message.role === "assistant"
-                      ? "bg-muted"
-                      : "bg-primary/10"
-                  } rounded-lg p-4`}
+                  className="mb-4"
                 >
-                  {message.content.split('\n').map((line, i) => (
-                    <p key={i} className="mb-2">{line}</p>
-                  ))}
+                  <div className="bg-[#E8F4F4] rounded-lg p-4">
+                    {message.content.split('\n').map((line, i) => (
+                      <p key={i} className="mb-2">{line}</p>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
