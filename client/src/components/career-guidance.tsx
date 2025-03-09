@@ -160,29 +160,36 @@ What would you like to know more about? You can ask about:
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="relative flex flex-col h-[500px] overflow-hidden">
-            <ScrollArea className="flex-1 pr-4 overflow-y-auto">
-              <div className="space-y-4 pb-32">
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`mb-4 ${
-                      message.role === "assistant"
-                        ? "bg-muted"
-                        : "bg-primary/10"
-                    } rounded-lg p-4`}
-                  >
-                    {message.content.split('\n').map((line, i) => (
-                      <p key={i} className="mb-2">{line}</p>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
+        <div className="relative h-[500px]">
+          <ScrollArea 
+            className="absolute inset-0 pr-4"
+            style={{ 
+              bottom: '100px', 
+              paddingBottom: '1rem'
+            }}
+          >
+            <div className="space-y-4">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`mb-4 ${
+                    message.role === "assistant"
+                      ? "bg-muted"
+                      : "bg-primary/10"
+                  } rounded-lg p-4`}
+                >
+                  {message.content.split('\n').map((line, i) => (
+                    <p key={i} className="mb-2">{line}</p>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
 
+          <div className="absolute bottom-0 left-0 right-0 bg-background pt-2">
             <form 
               onSubmit={handleSubmit} 
-              className="absolute bottom-0 left-0 right-0 flex gap-2 p-4 bg-background border-t shadow-lg"
+              className="flex gap-2 bg-background"
             >
               <Input
                 value={input}
@@ -210,6 +217,8 @@ What would you like to know more about? You can ask about:
               </div>
             </form>
           </div>
+        </div>
+
         <Button
           variant="outline"
           onClick={onBack}
