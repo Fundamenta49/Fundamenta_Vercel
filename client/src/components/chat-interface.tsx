@@ -378,17 +378,13 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         <div className="flex flex-col gap-2 self-end">
           <Button
             type="button"
-            variant="outline"
+            variant={isRecording ? "secondary" : "outline"}
             size="icon"
-            className="h-10 w-10"
+            className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
             onClick={isRecording ? stopRecording : startRecording}
             disabled={chatMutation.isPending}
           >
-            {isRecording ? (
-              <MicOff className="h-4 w-4 text-destructive" />
-            ) : (
-              <Mic className="h-4 w-4" />
-            )}
+            <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
           </Button>
           <Button
             type="submit"
