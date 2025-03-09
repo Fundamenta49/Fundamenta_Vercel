@@ -13,16 +13,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
-import { 
-  Book, 
-  Target, 
-  Brain, 
+import {
+  Book,
+  Target,
+  Brain,
   Lightbulb,
   Car,
   Wrench,
   Search,
   Home,
-  Loader2
+  Loader2,
+  Clock,
 } from "lucide-react";
 import LearningCalendar from "@/components/learning-calendar";
 import { useState } from "react";
@@ -115,6 +116,25 @@ export default function Learning() {
     }
   };
 
+  const formatGuidance = (text: string) => {
+    if (!text) return [];
+
+    // Split content by emoji headers
+    const sections = text.split(/(?=🎯|💡|⏰|🛠️)/g);
+
+    return sections.map(section => {
+      const [header, ...content] = section.trim().split('\n');
+      return {
+        title: header.trim(),
+        content: content.join('\n').trim(),
+        icon: header.includes('🎯') ? Brain :
+              header.includes('💡') ? Lightbulb :
+              header.includes('⏰') ? Clock :
+              header.includes('🛠️') ? Wrench : Brain
+      };
+    }).filter(section => section.title && section.content);
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">Learning & Development</h1>
@@ -132,13 +152,29 @@ export default function Learning() {
               <div className="flex items-center justify-center h-40">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
-            ) : (
-              <div className="prose prose-slate max-w-none">
-                {guidance?.split('\n').map((paragraph, idx) => (
-                  <p key={idx}>{paragraph}</p>
+            ) : guidance ? (
+              <div className="space-y-6">
+                {formatGuidance(guidance).map((section, index) => (
+                  <Card key={index} className="border-l-4 border-l-primary bg-card hover:bg-accent/5 transition-colors">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        {section.icon && <section.icon className="h-5 w-5 text-primary" />}
+                        {section.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="prose prose-slate max-w-none">
+                        {section.content.split('\n').map((paragraph, idx) => (
+                          <p key={idx} className="mb-2 leading-relaxed">
+                            {paragraph.trim()}
+                          </p>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
-            )}
+            ) : null}
           </ScrollArea>
         </DialogContent>
       </Dialog>
@@ -182,7 +218,6 @@ export default function Learning() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {/* Search Bar */}
                 <div className="flex gap-2">
                   <Input
                     type="text"
@@ -198,11 +233,10 @@ export default function Learning() {
                   </Button>
                 </div>
 
-                {/* Skills Grid */}
                 <div className="grid gap-4 md:grid-cols-2">
                   {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
-                    <Card 
-                      key={index} 
+                    <Card
+                      key={index}
                       className="cursor-pointer hover:bg-accent/50 transition-colors"
                       onClick={() => handlePromptClick(prompt)}
                     >
