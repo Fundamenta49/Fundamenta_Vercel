@@ -19,11 +19,11 @@ import WelcomeTour from "@/components/welcome-tour";
 
 function Router() {
   return (
-    <div className="min-h-screen flex overflow-hidden bg-texture">
+    <div className="min-h-screen flex overflow-hidden">
       <Navigation />
       <main className="flex-1 relative z-0 overflow-y-auto md:ml-[240px]">
         <div className="p-4 sm:p-6 md:p-8">
-          <div className="max-w-7xl mx-auto space-y-6">
+          <div>
             <Switch>
               <Route path="/" component={Home} />
               <Route path="/why-fundamenta" component={WhyFundamenta} />
