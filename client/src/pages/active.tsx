@@ -61,78 +61,82 @@ export default function Active() {
 
   if (!hasProfile && !skipProfile) {
     return (
-      <div className="space-y-4">
-        <Card className="border-0 shadow-none bg-white">
-          <CardHeader>
-            <CardTitle className="text-gray-900">Welcome to Active You! 🎉</CardTitle>
-            <CardDescription className="text-gray-500">
-              Let's create your personalized fitness profile to help you achieve your goals.
-              This will help us provide customized recommendations across all features.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-        <FitnessProfile onComplete={handleProfileComplete} />
-        <div className="text-center mt-4">
-          <Button
-            variant="ghost"
-            onClick={() => setSkipProfile(true)}
-            className="text-gray-500 hover:text-gray-900"
-          >
-            Skip for now and explore
-          </Button>
+      <div className="min-h-screen bg-white px-4 py-8">
+        <div className="space-y-4 max-w-4xl mx-auto">
+          <Card className="border-0 shadow-none">
+            <CardHeader>
+              <CardTitle className="text-gray-900">Welcome to Active You! 🎉</CardTitle>
+              <CardDescription className="text-gray-500">
+                Let's create your personalized fitness profile to help you achieve your goals.
+                This will help us provide customized recommendations across all features.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+          <FitnessProfile onComplete={handleProfileComplete} />
+          <div className="text-center mt-4">
+            <Button
+              variant="ghost"
+              onClick={() => setSkipProfile(true)}
+              className="text-gray-500 hover:text-gray-900"
+            >
+              Skip for now and explore
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">Active You</h1>
+    <div className="min-h-screen bg-white px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">Active You</h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
-          <TabsTrigger value="activeyou">ActiveYou</TabsTrigger>
-          <TabsTrigger value="meditation">Meditation</TabsTrigger>
-          <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
-          <TabsTrigger value="yoga">Yoga</TabsTrigger>
-          <TabsTrigger value="running">Running</TabsTrigger>
-        </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-4">
+            <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
+            <TabsTrigger value="activeyou">ActiveYou</TabsTrigger>
+            <TabsTrigger value="meditation">Meditation</TabsTrigger>
+            <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
+            <TabsTrigger value="yoga">Yoga</TabsTrigger>
+            <TabsTrigger value="running">Running</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="chat">
-          <Card className="border-0 shadow-none bg-white">
-            <CardHeader>
-              <CardTitle className="text-gray-900">Fitness AI Coach</CardTitle>
-              <CardDescription className="text-gray-500">
-                Get personalized workout guidance and fitness tips
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ChatInterface category="fitness" />
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="chat">
+            <Card className="border-0 shadow-none">
+              <CardHeader>
+                <CardTitle className="text-gray-900">Fitness AI Coach</CardTitle>
+                <CardDescription className="text-gray-500">
+                  Get personalized workout guidance and fitness tips
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ChatInterface category="fitness" />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="activeyou">
-          <ProfileManager onUpdate={handleProfileComplete} />
-        </TabsContent>
+          <TabsContent value="activeyou">
+            <ProfileManager onUpdate={handleProfileComplete} />
+          </TabsContent>
 
-        <TabsContent value="meditation">
-          <ActiveYou defaultTab="meditation" />
-        </TabsContent>
+          <TabsContent value="meditation">
+            <ActiveYou defaultTab="meditation" />
+          </TabsContent>
 
-        <TabsContent value="weightlifting">
-          <ActiveYou defaultTab="weightlifting" />
-        </TabsContent>
+          <TabsContent value="weightlifting">
+            <ActiveYou defaultTab="weightlifting" />
+          </TabsContent>
 
-        <TabsContent value="yoga">
-          <ActiveYou defaultTab="yoga" />
-        </TabsContent>
+          <TabsContent value="yoga">
+            <ActiveYou defaultTab="yoga" />
+          </TabsContent>
 
-        <TabsContent value="running">
-          <ActiveYou defaultTab="running" />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="running">
+            <ActiveYou defaultTab="running" />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
