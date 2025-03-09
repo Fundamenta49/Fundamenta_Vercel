@@ -53,14 +53,11 @@ What would you like to know more about? You can ask about:
     recognition.lang = 'en-US';
 
     recognition.onresult = (event) => {
-      const transcript = Array.from(event.results)
-        .map(result => result[0].transcript)
-        .join(' ');
-      // Append new text to existing input instead of replacing
-      setInput(prev => {
-        const newInput = prev ? `${prev} ${transcript}` : transcript;
-        return newInput.trim();
-      });
+      const lastResult = event.results[event.results.length - 1];
+      if (lastResult.isFinal) {
+        const transcript = lastResult[0].transcript;
+        setInput(transcript);
+      }
     };
 
     recognition.onerror = (event) => {
@@ -74,8 +71,7 @@ What would you like to know more about? You can ask about:
     };
 
     recognition.onend = () => {
-      // Only stop recording if there was an error
-      // Otherwise, restart recognition to keep it going
+      // Only restart if we're still supposed to be recording
       if (isRecording) {
         recognition.start();
       }
@@ -94,7 +90,7 @@ What would you like to know more about? You can ask about:
       setIsRecording(true);
       toast({
         title: "Listening...",
-        description: "Speak clearly into your microphone. Click the mic button again to stop recording.",
+        description: "Speak clearly into your microphone. Press Send when you're ready to send your message.",
       });
     }
   };
@@ -121,7 +117,10 @@ What would you like to know more about? You can ask about:
     const userMessage = input.trim();
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
 
-    // Don't clear input here, wait for successful response
+    if (isRecording) {
+      stopRecording();
+    }
+
     setIsLoading(true);
 
     try {
@@ -137,11 +136,7 @@ What would you like to know more about? You can ask about:
 
       const data = await response.json();
       setMessages(prev => [...prev, { role: "assistant", content: data.response }]);
-      // Clear input and stop recording only after successful send
       setInput("");
-      if (isRecording) {
-        stopRecording();
-      }
     } catch (error) {
       console.error("Error getting career guidance:", error);
       setMessages(prev => [...prev, {
@@ -163,10 +158,10 @@ What would you like to know more about? You can ask about:
       </CardHeader>
       <CardContent>
         <div className="relative h-[500px]">
-          <ScrollArea 
+          <ScrollArea
             className="absolute inset-0 pr-4"
-            style={{ 
-              bottom: '100px', 
+            style={{
+              bottom: '100px',
               paddingBottom: '1rem'
             }}
           >
@@ -189,8 +184,8 @@ What would you like to know more about? You can ask about:
           </ScrollArea>
 
           <div className="absolute bottom-0 left-0 right-0 bg-background pt-2">
-            <form 
-              onSubmit={handleSubmit} 
+            <form
+              onSubmit={handleSubmit}
               className="flex gap-2 bg-background"
             >
               <Input
@@ -210,8 +205,8 @@ What would you like to know more about? You can ask about:
                 >
                   <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
                 </Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isLoading || !input.trim()}
                 >
                   <Send className="h-4 w-4" />

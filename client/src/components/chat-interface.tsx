@@ -142,17 +142,15 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     recognition.lang = 'en-US';
 
     recognition.onresult = (event) => {
-      const transcript = Array.from(event.results)
-        .map(result => result[0].transcript)
-        .join(' ');
-      setInput(prev => {
-        const newInput = prev ? `${prev} ${transcript}` : transcript;
-        return newInput.trim();
-      });
+      const lastResult = event.results[event.results.length - 1];
+      if (lastResult.isFinal) {
+        const transcript = lastResult[0].transcript;
+        setInput(transcript);
+      }
     };
 
     recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
+      console.error("Speech recognition error:", event.error);
       stopRecording();
       toast({
         variant: "destructive",
@@ -162,6 +160,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     };
 
     recognition.onend = () => {
+      // Only restart if we're still supposed to be recording
       if (isRecording) {
         recognition.start();
       }
@@ -180,7 +179,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       setIsRecording(true);
       toast({
         title: "Listening...",
-        description: "Speak clearly into your microphone. Click the mic button again to stop recording.",
+        description: "Speak clearly into your microphone. Press the mic button again or send to finish.",
       });
     }
   };
@@ -292,11 +291,16 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     return suggestions.slice(0, 3); 
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || chatMutation.isPending) return;
 
-    setMessages((prev) => [...prev, { role: "user", content: input, category }]);
+    setMessages((prev) => [...prev, { role: "user", content: input.trim(), category }]);
+
+    if (isRecording) {
+      stopRecording();
+    }
+
     chatMutation.mutate(input);
   };
 
