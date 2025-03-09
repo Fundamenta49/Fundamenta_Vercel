@@ -30,6 +30,18 @@ import {
 } from "lucide-react";
 import LearningCalendar from "@/components/learning-calendar";
 import { useState } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 interface SkillGuidanceResponse {
   guidance: string;
@@ -44,6 +56,165 @@ interface SkillGuidanceResponse {
     duration: string;
   }>;
 }
+
+const scheduleFormSchema = z.object({
+  spaceType: z.enum(["apartment", "house", "studio"]),
+  roomCount: z.enum(["1-2", "3-4", "5+"]),
+  occupants: z.enum(["1", "2", "3-4", "5+"]),
+  cleaningFrequency: z.enum(["daily", "weekly", "biweekly"]),
+});
+
+type ScheduleFormValues = z.infer<typeof scheduleFormSchema>;
+
+const CleaningScheduleGenerator = () => {
+  const [schedule, setSchedule] = useState<string | null>(null);
+
+  const form = useForm<ScheduleFormValues>({
+    resolver: zodResolver(scheduleFormSchema),
+    defaultValues: {
+      spaceType: "apartment",
+      roomCount: "1-2",
+      occupants: "1",
+      cleaningFrequency: "weekly",
+    },
+  });
+
+  const onSubmit = async (values: ScheduleFormValues) => {
+    try {
+      const response = await fetch("/api/skill-guidance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skillArea: "life",
+          userQuery: `Generate a cleaning schedule for a ${values.spaceType} with ${values.roomCount} rooms, ${values.occupants} occupants, cleaning ${values.cleaningFrequency}`,
+        }),
+      });
+
+      const data = await response.json();
+      setSchedule(data.guidance);
+    } catch (error) {
+      console.error("Error generating schedule:", error);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="spaceType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Type of Living Space</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select living space type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="apartment">Apartment</SelectItem>
+                    <SelectItem value="house">House</SelectItem>
+                    <SelectItem value="studio">Studio</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="roomCount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Number of Rooms</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select number of rooms" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="1-2">1-2 rooms</SelectItem>
+                    <SelectItem value="3-4">3-4 rooms</SelectItem>
+                    <SelectItem value="5+">5+ rooms</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="occupants"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Number of Occupants</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select number of occupants" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="1">1 person</SelectItem>
+                    <SelectItem value="2">2 people</SelectItem>
+                    <SelectItem value="3-4">3-4 people</SelectItem>
+                    <SelectItem value="5+">5+ people</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="cleaningFrequency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Preferred Cleaning Frequency</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select cleaning frequency" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type="submit" className="w-full">
+            Generate Schedule
+          </Button>
+        </form>
+      </Form>
+
+      {schedule && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Your Personalized Cleaning Schedule</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="prose prose-slate max-w-none">
+              {formatContent(schedule)}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
 
 const LIFE_SKILLS_PROMPTS = [
   {
@@ -173,6 +344,13 @@ export default function Learning() {
     setIsLoading(true);
     setDialogOpen(true);
 
+    if (prompt.title === "Cleaning Schedule Generator") {
+      setGuidance(null);
+      setVideos([]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/skill-guidance", {
         method: "POST",
@@ -263,6 +441,8 @@ export default function Learning() {
               <div className="flex items-center justify-center h-40">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
+            ) : selectedSkill === "Cleaning Schedule Generator" ? (
+              <CleaningScheduleGenerator />
             ) : guidance ? (
               <div className="space-y-6">
                 {formatGuidance(guidance).map((section, index) => (
