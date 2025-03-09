@@ -402,7 +402,11 @@ End with a short, encouraging note about mastering this skill!`
                 .map(item => ({
                   id: item.id,
                   title: item.snippet.title,
-                  thumbnail: item.snippet.thumbnails.medium.url,
+                  thumbnail: {
+                    url: item.snippet.thumbnails.medium.url,
+                    width: item.snippet.thumbnails.medium.width,
+                    height: item.snippet.thumbnails.medium.height
+                  },
                   duration: item.contentDetails.duration,
                   description: item.snippet.description
                 }));
