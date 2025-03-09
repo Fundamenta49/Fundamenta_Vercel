@@ -361,7 +361,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 min-h-[80px] resize-none"
+            className="flex-1 min-h-[120px] resize-none text-base p-4 rounded-xl"
             disabled={chatMutation.isPending}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -375,15 +375,16 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
               type="button"
               variant={isRecording ? "outline" : "secondary"}
               size="icon"
-              className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
+              className={`h-12 w-12 rounded-full transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
               onClick={toggleRecording}
               disabled={chatMutation.isPending}
             >
-              <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
+              <Mic className={`h-5 w-5 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
             </Button>
             <Button
               type="submit"
               disabled={chatMutation.isPending || !input.trim()}
+              className="h-12 px-6 rounded-full"
             >
               {chatMutation.isPending ? (
                 <>
