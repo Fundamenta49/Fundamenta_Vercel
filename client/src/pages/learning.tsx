@@ -495,7 +495,6 @@ export default function Learning() {
             <TabsTrigger value="calendar">Schedule</TabsTrigger>
             <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
             <TabsTrigger value="handyman">Home Repairs</TabsTrigger>
-            <TabsTrigger value="goals">Goal Setting</TabsTrigger>
           </TabsList>
         </div>
 
@@ -570,35 +569,6 @@ export default function Learning() {
 
         <TabsContent value="handyman">
           <HandymanGuide />
-        </TabsContent>
-
-        <TabsContent value="goals">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-primary" />
-                Goal Setting & Progress Tracking
-              </CardTitle>
-              <CardDescription>
-                Set and track your learning objectives
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Your Learning Goals</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      Set up your learning goals and track your progress over time.
-                      Coming soon!
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>
