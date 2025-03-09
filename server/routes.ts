@@ -11,10 +11,10 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Update the messageSchema to include 'tour' category
+// Update the messageSchema to include 'cooking' and 'learning' categories
 const messageSchema = z.object({
   message: z.string(),
-  category: z.enum(["emergency", "finance", "career", "wellness", "tour"]),
+  category: z.enum(["emergency", "finance", "career", "wellness", "tour", "cooking", "learning"]),
   context: z.string().optional(),
   previousMessages: z.array(z.object({
     role: z.enum(["user", "assistant"]),
@@ -77,12 +77,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
-      const response = await getChatResponse(
-        validatedData.message,
-        validatedData.category,
-        validatedData.context
-      );
-      res.json({ response });
+
+      // Customize the system message based on category
+      let systemMessage = "You are a friendly and supportive AI assistant. ";
+
+      switch(validatedData.category) {
+        case "cooking":
+          systemMessage += "As a patient cooking instructor, you help users learn kitchen skills with enthusiasm and care for safety. Share practical tips and explain cooking concepts in simple terms.";
+          break;
+        case "learning":
+          systemMessage += "As a supportive learning coach, you encourage users and break down complex topics into manageable steps. Celebrate their progress and provide constructive guidance.";
+          break;
+        case "emergency":
+          systemMessage += "Remain calm and clear while providing crucial guidance. Be direct but reassuring.";
+          break;
+        case "finance":
+          systemMessage += "Explain financial concepts in simple, relatable terms. Be encouraging and non-judgmental about money matters.";
+          break;
+        case "career":
+          systemMessage += "Act as a supportive career mentor, offering encouraging but practical advice for professional growth.";
+          break;
+        case "wellness":
+          systemMessage += "Provide compassionate guidance for health and wellbeing, being supportive and understanding.";
+          break;
+        case "tour":
+          systemMessage += "Be welcoming and enthusiastic while guiding users through features, like a friendly tour guide.";
+          break;
+      }
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: systemMessage
+          },
+          ...(validatedData.previousMessages || []),
+          {
+            role: "user",
+            content: validatedData.message
+          }
+        ]
+      });
+
+      res.json({ response: response.choices[0].message.content });
     } catch (error) {
       console.error("Chat error:", error);
       res.status(400).json({ error: "Invalid request" });
@@ -361,7 +399,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messages: [
           {
             role: "system",
-            content: userQuery.includes("cooking guide") ? 
+            content: userQuery.includes("cooking guide") ?
               `You are a professional chef and cooking instructor creating a guide about "${userQuery.replace('cooking guide:', '')}". 
               Speak naturally and conversationally, while maintaining focus on safety and proper technique.
 
