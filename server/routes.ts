@@ -375,10 +375,12 @@ End with a short, encouraging note about mastering this skill!`
       });
 
       const guidanceText = response.choices[0].message.content || "";
+      console.log("AI Response:", guidanceText); // Debug log
 
       // Extract video IDs from the guidance using improved regex
       const videoSection = guidanceText.split('🎬')[1]?.split('🔗')[0] || '';
       const videoIds = videoSection.match(/\[([\w-]{11})\]/g)?.map(id => id.replace(/[\[\]]/g, '')) || [];
+      console.log("Extracted video IDs:", videoIds); // Debug log
 
       // Get video details from YouTube API if we have video IDs
       let videoDetails = [];
@@ -386,6 +388,7 @@ End with a short, encouraging note about mastering this skill!`
         try {
           // Validate video IDs before making API call
           const validVideoIds = videoIds.filter(id => /^[\w-]{11}$/.test(id));
+          console.log("Valid video IDs:", validVideoIds); // Debug log
 
           if (validVideoIds.length > 0) {
             const videoResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
@@ -395,6 +398,8 @@ End with a short, encouraging note about mastering this skill!`
                 key: process.env.YOUTUBE_API_KEY
               }
             });
+
+            console.log("YouTube API Response:", videoResponse.data); // Debug log
 
             if (videoResponse.data.items) {
               videoDetails = videoResponse.data.items
@@ -416,6 +421,8 @@ End with a short, encouraging note about mastering this skill!`
           console.error("YouTube API error:", error);
         }
       }
+
+      console.log("Final video details:", videoDetails); // Debug log
 
       res.json({
         guidance: guidanceText,

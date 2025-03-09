@@ -85,7 +85,15 @@ const formatVideoDuration = (duration: string) => {
 };
 
 const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) => {
-  if (!videos?.length) return null;
+  console.log("Video section received videos:", videos); // Debug log
+
+  if (!videos?.length) {
+    return (
+      <div className="text-center text-muted-foreground py-4">
+        No video tutorials available at the moment.
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -95,6 +103,8 @@ const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) =
             <img
               src={video.thumbnail.url}
               alt={video.title}
+              width={video.thumbnail.width}
+              height={video.thumbnail.height}
               className="object-cover w-full"
             />
             <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 text-xs rounded">
