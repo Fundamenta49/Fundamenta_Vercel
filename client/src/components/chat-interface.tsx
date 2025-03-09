@@ -359,9 +359,15 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         >
           <Textarea
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              // Auto-adjust height
+              e.target.style.height = 'auto';
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
             placeholder="Type your message..."
-            className="flex-1 min-h-[80px] resize-none"
+            className="flex-1 resize-none w-full overflow-hidden p-2"
+            style={{ minHeight: '44px' }}
             disabled={chatMutation.isPending}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
