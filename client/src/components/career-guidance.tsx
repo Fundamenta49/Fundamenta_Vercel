@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send } from "lucide-react";
+import { Send, Mic } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   role: "user" | "assistant";
@@ -19,7 +20,7 @@ export default function CareerGuidance({ riasecResults, onBack }: Props) {
   const [messages, setMessages] = useState<Message[]>([{
     role: "assistant",
     content: `Based on your RIASEC assessment results, I can help guide you through career options and next steps. Your top matches are:
-    
+
 ${riasecResults.map((result, i) => `${i + 1}. ${result}`).join('\n')}
 
 What would you like to know more about? You can ask about:
@@ -29,9 +30,93 @@ What would you like to know more about? You can ask about:
 - Skills development recommendations
 - Work environment preferences`
   }]);
-  
+
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const { toast } = useToast();
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const initializeSpeechRecognition = () => {
+    if (!('webkitSpeechRecognition' in window)) {
+      toast({
+        variant: "destructive",
+        title: "Speech Recognition Not Available",
+        description: "Your browser doesn't support speech recognition.",
+      });
+      return null;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join('');
+      setInput(transcript);
+
+      // Reset silence timeout
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
+
+      // Set new silence timeout
+      silenceTimeoutRef.current = setTimeout(() => {
+        if (transcript.trim()) {
+          stopRecording();
+          handleSubmit(new Event('submit') as any);
+        }
+      }, 1500); // 1.5 seconds of silence will trigger send
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      stopRecording();
+      toast({
+        variant: "destructive",
+        title: "Speech Recognition Error",
+        description: "There was an error with speech recognition. Please try again.",
+      });
+    };
+
+    recognition.onend = () => {
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
+      setIsRecording(false);
+    };
+
+    return recognition;
+  };
+
+  const startRecording = () => {
+    if (!recognitionRef.current) {
+      recognitionRef.current = initializeSpeechRecognition();
+    }
+
+    if (recognitionRef.current) {
+      recognitionRef.current.start();
+      setIsRecording(true);
+      toast({
+        title: "Listening...",
+        description: "Speak clearly into your microphone. Message will send automatically after you finish speaking.",
+      });
+    }
+  };
+
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,11 +183,26 @@ What would you like to know more about? You can ask about:
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about career paths, education, or next steps..."
-              disabled={isLoading}
+              disabled={isLoading || isRecording}
             />
-            <Button type="submit" disabled={isLoading || !input.trim()}>
-              <Send className="h-4 w-4" />
-            </Button>
+            <div className="flex flex-col gap-2">
+              <Button
+                type="button"
+                variant={isRecording ? "outline" : "secondary"}
+                size="icon"
+                className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
+                onClick={isRecording ? stopRecording : startRecording}
+                disabled={isLoading}
+              >
+                <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={isLoading || !input.trim() || isRecording}
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
           </form>
 
           <Button
