@@ -18,11 +18,47 @@ import EmploymentRights from "@/components/employment-rights";
 import RiasecTest from "@/components/riasec-test";
 import EmotionalResilienceTracker from "@/components/emotional-resilience-tracker";
 import { useState } from "react";
-import { GraduationCap, Search } from "lucide-react";
+import { GraduationCap, Search, ExternalLink } from "lucide-react";
 
 interface SkillGuidanceResponse {
   guidance: string;
 }
+
+// List of curated learning platforms with their URLs
+const LEARNING_RESOURCES = [
+  {
+    name: "Interactive Learning Platforms",
+    links: [
+      { title: "Codecademy", url: "https://www.codecademy.com" },
+      { title: "freeCodeCamp", url: "https://www.freecodecamp.org" },
+      { title: "Coursera", url: "https://www.coursera.org" }
+    ]
+  },
+  {
+    name: "Video Tutorials",
+    links: [
+      { title: "Khan Academy", url: "https://www.khanacademy.org" },
+      { title: "LinkedIn Learning", url: "https://www.linkedin.com/learning" },
+      { title: "Udemy", url: "https://www.udemy.com" }
+    ]
+  },
+  {
+    name: "Practice Exercises",
+    links: [
+      { title: "LeetCode", url: "https://leetcode.com" },
+      { title: "HackerRank", url: "https://www.hackerrank.com" },
+      { title: "Exercism", url: "https://exercism.org" }
+    ]
+  },
+  {
+    name: "Community Forums",
+    links: [
+      { title: "Stack Overflow", url: "https://stackoverflow.com" },
+      { title: "GitHub Discussions", url: "https://github.com/discussions" },
+      { title: "Dev.to", url: "https://dev.to" }
+    ]
+  }
+];
 
 export default function Career() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -121,6 +157,34 @@ export default function Career() {
                     Search
                   </Button>
                 </div>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                {LEARNING_RESOURCES.map((resource, idx) => (
+                  <Card key={idx}>
+                    <CardHeader>
+                      <CardTitle className="text-lg">{resource.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {resource.links.map((link, linkIdx) => (
+                          <li key={linkIdx}>
+                            <Button
+                              variant="link"
+                              className="p-0 h-auto font-normal text-primary hover:text-primary/80"
+                              onClick={() => window.open(link.url, '_blank')}
+                            >
+                              <span className="flex items-center gap-1">
+                                {link.title}
+                                <ExternalLink className="h-3 w-3" />
+                              </span>
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </CardContent>
           </Card>
