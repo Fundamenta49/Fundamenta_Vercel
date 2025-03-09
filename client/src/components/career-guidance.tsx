@@ -36,7 +36,6 @@ What would you like to know more about? You can ask about:
   const [isRecording, setIsRecording] = useState(false);
   const { toast } = useToast();
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const initializeSpeechRecognition = () => {
     if (!('webkitSpeechRecognition' in window)) {
@@ -56,21 +55,12 @@ What would you like to know more about? You can ask about:
     recognition.onresult = (event) => {
       const transcript = Array.from(event.results)
         .map(result => result[0].transcript)
-        .join('');
-      setInput(transcript);
-
-      // Reset silence timeout
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
-      }
-
-      // Set new silence timeout
-      silenceTimeoutRef.current = setTimeout(() => {
-        if (transcript.trim()) {
-          stopRecording();
-          handleSubmit(new Event('submit') as any);
-        }
-      }, 1500); // 1.5 seconds of silence will trigger send
+        .join(' ');
+      // Append new text to existing input instead of replacing
+      setInput(prev => {
+        const newInput = prev ? `${prev} ${transcript}` : transcript;
+        return newInput.trim();
+      });
     };
 
     recognition.onerror = (event) => {
@@ -84,10 +74,11 @@ What would you like to know more about? You can ask about:
     };
 
     recognition.onend = () => {
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
+      // Only stop recording if there was an error
+      // Otherwise, restart recognition to keep it going
+      if (isRecording) {
+        recognition.start();
       }
-      setIsRecording(false);
     };
 
     return recognition;
@@ -103,7 +94,7 @@ What would you like to know more about? You can ask about:
       setIsRecording(true);
       toast({
         title: "Listening...",
-        description: "Speak clearly into your microphone. Message will send automatically after you finish speaking.",
+        description: "Speak clearly into your microphone. Click the mic button again to stop recording.",
       });
     }
   };
@@ -112,9 +103,14 @@ What would you like to know more about? You can ask about:
     if (recognitionRef.current) {
       recognitionRef.current.stop();
       setIsRecording(false);
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
-      }
+    }
+  };
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
     }
   };
 
@@ -123,8 +119,9 @@ What would you like to know more about? You can ask about:
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
-    setInput("");
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+
+    // Don't clear input here, wait for successful response
     setIsLoading(true);
 
     try {
@@ -140,6 +137,11 @@ What would you like to know more about? You can ask about:
 
       const data = await response.json();
       setMessages(prev => [...prev, { role: "assistant", content: data.response }]);
+      // Clear input and stop recording only after successful send
+      setInput("");
+      if (isRecording) {
+        stopRecording();
+      }
     } catch (error) {
       console.error("Error getting career guidance:", error);
       setMessages(prev => [...prev, {
@@ -195,7 +197,7 @@ What would you like to know more about? You can ask about:
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about career paths, education, or next steps..."
-                disabled={isLoading || isRecording}
+                disabled={isLoading}
               />
               <div className="flex flex-col gap-2">
                 <Button
@@ -203,14 +205,14 @@ What would you like to know more about? You can ask about:
                   variant={isRecording ? "outline" : "secondary"}
                   size="icon"
                   className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
-                  onClick={isRecording ? stopRecording : startRecording}
+                  onClick={toggleRecording}
                   disabled={isLoading}
                 >
                   <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
                 </Button>
                 <Button 
                   type="submit" 
-                  disabled={isLoading || !input.trim() || isRecording}
+                  disabled={isLoading || !input.trim()}
                 >
                   <Send className="h-4 w-4" />
                 </Button>

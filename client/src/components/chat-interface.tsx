@@ -101,7 +101,6 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const hasCompletedOnboarding = localStorage.getItem(`chat-onboarding-${category}`);
@@ -145,21 +144,11 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     recognition.onresult = (event) => {
       const transcript = Array.from(event.results)
         .map(result => result[0].transcript)
-        .join('');
-      setInput(transcript);
-
-      // Reset silence timeout
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
-      }
-
-      // Set new silence timeout
-      silenceTimeoutRef.current = setTimeout(() => {
-        if (transcript.trim()) {
-          stopRecording();
-          handleSubmit(new Event('submit') as any);
-        }
-      }, 1500); // 1.5 seconds of silence will trigger send
+        .join(' ');
+      setInput(prev => {
+        const newInput = prev ? `${prev} ${transcript}` : transcript;
+        return newInput.trim();
+      });
     };
 
     recognition.onerror = (event) => {
@@ -173,10 +162,9 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     };
 
     recognition.onend = () => {
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
+      if (isRecording) {
+        recognition.start();
       }
-      setIsRecording(false);
     };
 
     return recognition;
@@ -192,7 +180,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       setIsRecording(true);
       toast({
         title: "Listening...",
-        description: "Speak clearly into your microphone. Message will send automatically after you finish speaking.",
+        description: "Speak clearly into your microphone. Click the mic button again to stop recording.",
       });
     }
   };
@@ -201,9 +189,14 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
       setIsRecording(false);
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
-      }
+    }
+  };
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
     }
   };
 
@@ -239,6 +232,9 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           }
         ]);
         setInput("");
+        if (isRecording) {
+          stopRecording();
+        }
       } else {
         throw new Error("Invalid response format");
       }
@@ -375,7 +371,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             className="flex-1 min-h-[80px]"
-            disabled={chatMutation.isPending || isRecording}
+            disabled={chatMutation.isPending}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -389,14 +385,14 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
               variant={isRecording ? "outline" : "secondary"}
               size="icon"
               className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
-              onClick={isRecording ? stopRecording : startRecording}
+              onClick={toggleRecording}
               disabled={chatMutation.isPending}
             >
               <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
             </Button>
             <Button
               type="submit"
-              disabled={chatMutation.isPending || !input.trim() || isRecording}
+              disabled={chatMutation.isPending || !input.trim()}
             >
               {chatMutation.isPending ? (
                 <>
