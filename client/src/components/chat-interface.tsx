@@ -5,32 +5,93 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import ChatOnboarding from "./chat-onboarding";
+import { Link } from "wouter";
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   category?: string;
+  suggestions?: AppSuggestion[];
+}
+
+interface AppSuggestion {
+  text: string;
+  path: string;
+  description: string;
 }
 
 interface ChatInterfaceProps {
   category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking";
 }
 
-const formatAssistantMessage = (content: string) => {
+const APP_ROUTES = {
+  cooking: {
+    basics: { path: "/learning?tab=cooking", text: "Cooking Basics Guide" },
+    schedule: { path: "/learning?tab=skills", text: "Cleaning Schedule Generator" },
+    kitchen: { path: "/learning?tab=skills", text: "Kitchen Organization Tips" },
+  },
+  career: {
+    assessment: { path: "/career?tab=assessment", text: "Career Assessment" },
+    interview: { path: "/career?tab=interview", text: "Interview Practice" },
+    resume: { path: "/career?tab=learning", text: "Resume Building" },
+  },
+  finance: {
+    budget: { path: "/finance?tab=budget", text: "Budget Calculator" },
+    planning: { path: "/finance?tab=planning", text: "Financial Planning" },
+    savings: { path: "/finance?tab=savings", text: "Savings Goals" },
+  },
+  wellness: {
+    mood: { path: "/wellness?tab=mood", text: "Mood Tracking" },
+    meditation: { path: "/wellness?tab=meditation", text: "Meditation Guide" },
+    journal: { path: "/wellness?tab=journal", text: "Wellness Journal" },
+  }
+};
+
+const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) => {
   // Split content by double line breaks or emoji sections
   const sections = content.split(/\n\n+|\n(?=[-•🎯💡⏰🎬🔗✨🌟💪🧘‍♀️📊⭐👉])/g);
 
-  return sections.map((section, idx) => (
-    <div key={idx} className="mb-4 last:mb-0">
-      {section.split('\n').map((line, lineIdx) => (
-        <p key={lineIdx} className={`${line.trim().startsWith('-') || line.trim().startsWith('•') ? 'ml-4' : ''} mb-2`}>
-          {line}
-        </p>
+  return (
+    <div className="space-y-4">
+      {sections.map((section, idx) => (
+        <div key={idx} className="mb-4 last:mb-0">
+          {section.split('\n').map((line, lineIdx) => (
+            <p key={lineIdx} className={`${line.trim().startsWith('-') || line.trim().startsWith('•') ? 'ml-4' : ''} mb-2`}>
+              {line}
+            </p>
+          ))}
+        </div>
       ))}
+
+      {suggestions && suggestions.length > 0 && (
+        <div className="mt-6 space-y-3">
+          <p className="font-medium text-primary">📱 Helpful Resources in the App:</p>
+          {suggestions.map((suggestion, idx) => (
+            <Link 
+              key={idx} 
+              href={suggestion.path}
+              className="block"
+            >
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left"
+              >
+                <span className="flex items-center gap-2">
+                  <ArrowRight className="h-4 w-4" />
+                  <div>
+                    <p className="font-medium">{suggestion.text}</p>
+                    <p className="text-sm text-muted-foreground">{suggestion.description}</p>
+                  </div>
+                </span>
+              </Button>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
-  ));
+  );
 };
 
 export default function ChatInterface({ category }: ChatInterfaceProps) {
@@ -77,18 +138,24 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to send message");
+        throw new Error('Failed to send message');
       }
 
-      const data = await response.json();
-      return data;
+      return response.json();
     },
     onSuccess: (data) => {
       if (data.success && data.response) {
+        // Generate app suggestions based on the response and category
+        const suggestions = generateSuggestions(data.response, category);
+
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: data.response, category }
+          { 
+            role: "assistant", 
+            content: data.response, 
+            category,
+            suggestions 
+          }
         ]);
         setInput("");
       } else {
@@ -103,6 +170,51 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       });
     },
   });
+
+  const generateSuggestions = (response: string, category: string): AppSuggestion[] => {
+    const suggestions: AppSuggestion[] = [];
+    const routes = APP_ROUTES[category as keyof typeof APP_ROUTES] || {};
+
+    // Add relevant suggestions based on response content and category
+    Object.entries(routes).forEach(([key, value]) => {
+      const keywords = {
+        cooking: {
+          basics: ['beginner', 'start', 'learn', 'basic', 'fundamental'],
+          schedule: ['clean', 'organize', 'schedule', 'routine'],
+          kitchen: ['organize', 'setup', 'arrangement', 'tools'],
+        },
+        career: {
+          assessment: ['test', 'evaluate', 'assessment', 'career path'],
+          interview: ['interview', 'practice', 'question', 'answer'],
+          resume: ['resume', 'cv', 'application', 'job'],
+        },
+        finance: {
+          budget: ['budget', 'spending', 'track', 'expenses'],
+          planning: ['plan', 'future', 'goals', 'strategy'],
+          savings: ['save', 'emergency fund', 'investment'],
+        },
+        wellness: {
+          mood: ['mood', 'feeling', 'emotion', 'track'],
+          meditation: ['stress', 'relax', 'calm', 'mindful'],
+          journal: ['journal', 'write', 'reflect', 'diary'],
+        },
+      };
+
+      const categoryKeywords = keywords[category as keyof typeof keywords];
+      if (categoryKeywords && categoryKeywords[key as keyof typeof categoryKeywords]) {
+        const matchingKeywords = categoryKeywords[key as keyof typeof categoryKeywords];
+        if (matchingKeywords.some(keyword => response.toLowerCase().includes(keyword))) {
+          suggestions.push({
+            text: value.text,
+            path: value.path,
+            description: `Explore our ${value.text.toLowerCase()} resources and tools`,
+          });
+        }
+      }
+    });
+
+    return suggestions.slice(0, 3); // Limit to 3 most relevant suggestions
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,7 +266,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
                 }`}
               >
                 {message.role === "assistant" 
-                  ? formatAssistantMessage(message.content)
+                  ? formatAssistantMessage(message.content, message.suggestions)
                   : <p>{message.content}</p>
                 }
               </div>
