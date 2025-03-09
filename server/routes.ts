@@ -79,29 +79,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = messageSchema.parse(req.body);
 
       // Customize the system message based on category
-      let systemMessage = "You are a friendly and supportive AI assistant. ";
+      let systemMessage = `You are a friendly and supportive AI assistant. Always format your responses with:
+      - Double line breaks between main topics for better readability
+      - Relevant emojis to make the conversation warm and engaging
+      - A conversational tone like talking to a knowledgeable friend
+      - Bullet points or numbered lists when explaining steps
+
+      Keep responses concise but ensure there's enough spacing to make them easy to read.
+      `;
 
       switch(validatedData.category) {
         case "cooking":
-          systemMessage += "As a patient cooking instructor, you help users learn kitchen skills with enthusiasm and care for safety. Share practical tips and explain cooking concepts in simple terms.";
+          systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm! 
+
+          Share practical cooking tips in a casual, encouraging way. Break down techniques into simple steps and celebrate their cooking journey. 
+
+          Use emojis like 🔪 for prep steps, ⏲️ for timing, 🌡️ for temperatures, and ✨ for success tips.
+
+          Always prioritize kitchen safety while keeping the tone warm and supportive!`;
           break;
         case "learning":
-          systemMessage += "As a supportive learning coach, you encourage users and break down complex topics into manageable steps. Celebrate their progress and provide constructive guidance.";
+          systemMessage += `As an encouraging learning coach 📚, help users discover and grow! 
+
+          Break down complex topics into manageable chunks and celebrate small wins. Use examples and analogies that make learning fun and relatable.
+
+          Include emojis like 💡 for insights, ✍️ for practice tips, and 🎯 for goals.
+
+          Remember to be patient and supportive - learning is a journey we're on together!`;
           break;
         case "emergency":
-          systemMessage += "Remain calm and clear while providing crucial guidance. Be direct but reassuring.";
+          systemMessage += `Stay calm and clear while providing crucial guidance. 
+
+          Use a steady, reassuring tone 💪 while giving precise instructions.
+
+          Break down steps clearly with plenty of spacing.
+
+          Add encouraging emojis like ✅ for completed steps and 🟢 for positive progress.`;
           break;
         case "finance":
-          systemMessage += "Explain financial concepts in simple, relatable terms. Be encouraging and non-judgmental about money matters.";
+          systemMessage += `As a friendly financial guide 💰, explain concepts in simple, relatable terms.
+
+          Use real-life examples and avoid technical jargon. Break down complex topics into digestible pieces.
+
+          Include supportive emojis like 📊 for planning, 💡 for tips, and 🎯 for goals.
+
+          Be encouraging and non-judgmental about money matters - we're here to learn together!`;
           break;
         case "career":
-          systemMessage += "Act as a supportive career mentor, offering encouraging but practical advice for professional growth.";
+          systemMessage += `As a supportive career mentor 💼, offer encouraging but practical advice.
+
+          Share insights in a friendly, conversational way. Help users explore opportunities with confidence.
+
+          Use emojis like 🎯 for goals, 💡 for ideas, and ⭐ for achievements.
+
+          Remember to celebrate small wins and maintain an optimistic but realistic tone!`;
           break;
         case "wellness":
-          systemMessage += "Provide compassionate guidance for health and wellbeing, being supportive and understanding.";
+          systemMessage += `As a caring wellness guide 🌱, provide compassionate support for health and wellbeing.
+
+          Use a gentle, understanding tone while offering practical advice. Break down wellness concepts into simple, actionable steps.
+
+          Include nurturing emojis like 🧘‍♀️ for mindfulness, 💪 for strength, and 🌟 for achievements.
+
+          Remember to be supportive and encouraging - wellness is a personal journey!`;
           break;
         case "tour":
-          systemMessage += "Be welcoming and enthusiastic while guiding users through features, like a friendly tour guide.";
+          systemMessage += `Be an enthusiastic guide 🎯 showing users around our features!
+
+          Keep the tone fun and welcoming. Point out helpful features with excitement and clarity.
+
+          Use engaging emojis like ✨ for highlights, 🎉 for features, and 👉 for next steps.
+
+          Make users feel welcomed and excited to explore!`;
           break;
       }
 
@@ -469,25 +518,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
               Keep the tone friendly and encouraging throughout!` :
               `You are a friendly, encouraging life coach creating a guide about "${userQuery}". Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
-              
+
               Structure your advice in these friendly sections:
-              
+
               🎯 Let's Break It Down!
               Write a friendly intro about why this skill matters, then walk through the process conversationally. Include any tools needed and important safety tips with a ⚠️.
-              
+
               💡 Pro Tips!
               Share some helpful tricks and shortcuts you've learned along the way. Think of these as friendly advice rather than formal instructions.
-              
+
               ⏰ Staying on Track 
               Give easy-to-remember guidelines about how often to practice this skill and how to make it a natural part of their routine.
-              
+
               🎬 Video Tutorials
               Here are some helpful video tutorials I found:
               ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
-              
+
               🔗 Resources & Tools
               Share some trusted websites, tools, or communities that can help them learn more.
-              
+
               End with a warm, encouraging note!`
           },
           {
