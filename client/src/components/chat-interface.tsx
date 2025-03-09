@@ -66,8 +66,8 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
         <div className="mt-6 space-y-3">
           <p className="font-medium text-gray-900">📱 Helpful Resources in the App:</p>
           {suggestions.map((suggestion, idx) => (
-            <Link 
-              key={idx} 
+            <Link
+              key={idx}
               href={suggestion.path}
               className="block"
             >
@@ -220,11 +220,11 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
         setMessages((prev) => [
           ...prev,
-          { 
-            role: "assistant", 
-            content: data.response, 
+          {
+            role: "assistant",
+            content: data.response,
             category,
-            suggestions 
+            suggestions
           }
         ]);
         setInput("");
@@ -285,7 +285,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       }
     });
 
-    return suggestions.slice(0, 3); 
+    return suggestions.slice(0, 3);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -324,7 +324,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   return (
     <div className="flex flex-col h-[calc(100vh-16rem)]">
       <div className="flex-1 overflow-hidden">
-        <ScrollArea 
+        <ScrollArea
           ref={scrollRef}
           className="h-full"
         >
@@ -335,7 +335,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
                 className="mb-6 last:mb-0"
               >
                 <div className="rounded-lg px-4">
-                  {message.role === "assistant" 
+                  {message.role === "assistant"
                     ? formatAssistantMessage(message.content, message.suggestions)
                     : <p className="text-gray-700">{message.content}</p>
                   }
@@ -353,15 +353,15 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       </div>
 
       <div className="flex-none border-t bg-white">
-        <form 
-          onSubmit={handleSubmit} 
+        <form
+          onSubmit={handleSubmit}
           className="flex gap-2 p-4"
         >
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 min-h-[120px] resize-none text-base p-4 rounded-xl"
+            className="flex-1 min-h-[80px] resize-none"
             disabled={chatMutation.isPending}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -375,16 +375,15 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
               type="button"
               variant={isRecording ? "outline" : "secondary"}
               size="icon"
-              className={`h-12 w-12 rounded-full transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
+              className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
               onClick={toggleRecording}
               disabled={chatMutation.isPending}
             >
-              <Mic className={`h-5 w-5 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
+              <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
             </Button>
             <Button
               type="submit"
               disabled={chatMutation.isPending || !input.trim()}
-              className="h-12 px-6 rounded-full"
             >
               {chatMutation.isPending ? (
                 <>
