@@ -26,7 +26,8 @@ import {
   Clock,
   Video,
   Link2,
-  ExternalLink
+  ExternalLink,
+  ChefHat
 } from "lucide-react";
 import LearningCalendar from "@/components/learning-calendar";
 import { useState } from "react";
@@ -42,6 +43,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import CookingGuide from "@/components/cooking-guide";
 
 interface SkillGuidanceResponse {
   guidance: string;
@@ -492,6 +494,7 @@ export default function Learning() {
           <TabsList className="mb-4">
             <TabsTrigger value="chat">AI Learning Coach</TabsTrigger>
             <TabsTrigger value="skills">Life Skills</TabsTrigger>
+            <TabsTrigger value="cooking">Cooking Basics</TabsTrigger>
             <TabsTrigger value="calendar">Schedule</TabsTrigger>
             <TabsTrigger value="vehicle">Vehicle Maintenance</TabsTrigger>
             <TabsTrigger value="handyman">Home Repairs</TabsTrigger>
@@ -557,6 +560,10 @@ export default function Learning() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="cooking">
+          <CookingGuide />
         </TabsContent>
 
         <TabsContent value="calendar">

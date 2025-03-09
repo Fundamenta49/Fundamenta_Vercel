@@ -361,7 +361,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messages: [
           {
             role: "system",
-            content: userQuery.includes("cleaning schedule") ? 
+            content: userQuery.includes("cooking guide") ? 
+              `You are a professional chef and cooking instructor creating a guide about "${userQuery.replace('cooking guide:', '')}". 
+              Speak naturally and conversationally, while maintaining focus on safety and proper technique.
+
+              Structure your response like this:
+
+              🎯 Essential Safety First!
+              Start with the most important safety considerations for this cooking topic.
+
+              👩‍🍳 Step-by-Step Guide
+              Break down the process into clear, manageable steps. Include specific techniques and tools needed.
+
+              ⚠️ Common Mistakes to Avoid
+              List potential pitfalls and how to prevent them.
+
+              💡 Pro Chef Tips
+              Share professional insights that will help improve results.
+
+              🧰 Required Tools & Equipment
+              List essential items needed, including safety equipment if applicable.
+
+              ⏰ Timing Guidelines
+              Include any relevant timing information, temperatures, or storage guidelines.
+
+              🎬 Video Tutorials
+              Here are some helpful video tutorials I found:
+              ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
+
+              Keep the tone friendly and encouraging while emphasizing safety and proper technique!` :
+              userQuery.includes("cleaning schedule") ?
               `You are a professional home organization expert creating a customized cleaning schedule. 
               Create a practical, easy-to-follow cleaning schedule that's encouraging and detailed.
 
@@ -390,7 +419,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
               Share 2-3 practical tips for maintaining the schedule
 
               Keep the tone friendly and encouraging throughout!` :
-              // Original system message for other queries
               `You are a friendly, encouraging life coach creating a guide about "${userQuery}". Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
               
               Structure your advice in these friendly sections:
@@ -415,7 +443,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           },
           {
             role: "user",
-            content: `Please provide a ${userQuery.includes("cleaning schedule") ? "customized cleaning schedule" : "friendly guide"} about ${userQuery}`
+            content: `Please provide a ${userQuery.includes("cleaning schedule") ? "customized cleaning schedule" : userQuery.includes("cooking guide") ? "guide" : "friendly guide"} about ${userQuery}`
           }
         ]
       });
