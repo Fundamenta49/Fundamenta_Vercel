@@ -12,8 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
-import ProfileManager from "@/components/profile-manager"; // Assuming this component exists
-
+import ProfileManager from "@/components/profile-manager";
 
 export default function Active() {
   const { toast } = useToast();
@@ -63,10 +62,10 @@ export default function Active() {
   if (!hasProfile && !skipProfile) {
     return (
       <div className="space-y-4">
-        <Card className="border-0 shadow-none">
+        <Card className="border-0 shadow-none bg-white">
           <CardHeader>
-            <CardTitle>Welcome to Active You! 🎉</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-gray-900">Welcome to Active You! 🎉</CardTitle>
+            <CardDescription className="text-gray-500">
               Let's create your personalized fitness profile to help you achieve your goals.
               This will help us provide customized recommendations across all features.
             </CardDescription>
@@ -77,6 +76,7 @@ export default function Active() {
           <Button
             variant="ghost"
             onClick={() => setSkipProfile(true)}
+            className="text-gray-500 hover:text-gray-900"
           >
             Skip for now and explore
           </Button>
@@ -87,7 +87,7 @@ export default function Active() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Active You</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">Active You</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4">
@@ -100,10 +100,10 @@ export default function Active() {
         </TabsList>
 
         <TabsContent value="chat">
-          <Card className="border-0 shadow-none">
+          <Card className="border-0 shadow-none bg-white">
             <CardHeader>
-              <CardTitle>Fitness AI Coach</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-gray-900">Fitness AI Coach</CardTitle>
+              <CardDescription className="text-gray-500">
                 Get personalized workout guidance and fitness tips
               </CardDescription>
             </CardHeader>

@@ -71,7 +71,7 @@ export default function CookingGuide() {
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     setIsLoading(true);
     try {
       const response = await fetch("/api/skill-guidance", {
@@ -95,13 +95,13 @@ export default function CookingGuide() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ChefHat className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-gray-900">
+            <ChefHat className="h-5 w-5" />
             Cooking Basics Guide
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-gray-500">
             Learn essential cooking skills and kitchen safety
           </CardDescription>
         </CardHeader>
@@ -126,21 +126,21 @@ export default function CookingGuide() {
               {COOKING_BASICS.map((topic, index) => (
                 <Card
                   key={index}
-                  className="cursor-pointer hover:bg-accent/50 transition-colors"
+                  className="cursor-pointer hover:shadow-sm transition-all bg-white"
                   onClick={() => {
                     setSearchQuery(topic.title);
                     handleSearch();
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      {topic.icon && <topic.icon className="h-5 w-5 text-primary" />}
+                    <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
+                      {topic.icon && <topic.icon className="h-5 w-5" />}
                       {topic.title}
                     </CardTitle>
-                    <CardDescription>{topic.description}</CardDescription>
+                    <CardDescription className="text-gray-500">{topic.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="list-disc list-inside text-sm text-muted-foreground">
+                    <ul className="list-disc list-inside text-sm text-gray-500">
                       {topic.topics.map((item, idx) => (
                         <li key={idx}>{item}</li>
                       ))}
@@ -155,18 +155,18 @@ export default function CookingGuide() {
 
       {isLoading ? (
         <div className="flex items-center justify-center h-40">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
         </div>
       ) : guidance ? (
-        <Card>
+        <Card className="bg-white">
           <CardHeader>
-            <CardTitle>Cooking Guide</CardTitle>
+            <CardTitle className="text-gray-900">Cooking Guide</CardTitle>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[400px] pr-4">
-              <div className="prose prose-slate max-w-none">
+              <div className="prose prose-gray max-w-none">
                 {guidance.split('\n').map((line, idx) => (
-                  <p key={idx} className="mb-2">{line}</p>
+                  <p key={idx} className="mb-2 text-gray-700">{line}</p>
                 ))}
               </div>
             </ScrollArea>
@@ -174,10 +174,10 @@ export default function CookingGuide() {
         </Card>
       ) : null}
 
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
-          <CardTitle>AI Cooking Assistant</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-gray-900">AI Cooking Assistant</CardTitle>
+          <CardDescription className="text-gray-500">
             Get personalized help with cooking questions
           </CardDescription>
         </CardHeader>
