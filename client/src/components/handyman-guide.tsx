@@ -217,8 +217,9 @@ export default function HandymanGuide() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-2">
+          <div>
             <Input
+              type="text"
               placeholder="Search for any home repair task..."
               value={customMaintenanceQuery}
               onChange={(e) => setCustomMaintenanceQuery(e.target.value)}
@@ -227,21 +228,23 @@ export default function HandymanGuide() {
                   handleCustomSearch();
                 }
               }}
-              className="border-wood/20"
+              className="w-full mb-4"
             />
-            <Button variant="wood" onClick={handleCustomSearch}>
-              <Search className="h-4 w-4 mr-2" />
-              Search
-            </Button>
-            <Button
-              variant="outline"
-              onClick={addCustomTask}
-              disabled={!customMaintenanceQuery.trim()}
-              className="hover:bg-wood hover:text-[#f4f1de]"
-            >
-              <Star className="h-4 w-4 mr-2" />
-              Save
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="wood" onClick={handleCustomSearch} className="flex-none">
+                <Search className="h-4 w-4 mr-2" />
+                Search
+              </Button>
+              <Button
+                variant="outline"
+                onClick={addCustomTask}
+                disabled={!customMaintenanceQuery.trim()}
+                className="flex-none hover:bg-wood hover:text-[#f4f1de]"
+              >
+                <Star className="h-4 w-4 mr-2" />
+                Save
+              </Button>
+            </div>
           </div>
 
           <div className="text-sm text-muted-foreground mb-4">
