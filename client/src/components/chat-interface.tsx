@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, ArrowRight, Mic, MicOff } from "lucide-react";
+import { Loader2, ArrowRight, Mic } from "lucide-react";
 import ChatOnboarding from "./chat-onboarding";
 import { Link } from "wouter";
 
@@ -325,13 +325,12 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-16rem)] min-h-[500px]">
+    <div className="relative flex flex-col h-[calc(100vh-16rem)] min-h-[500px] overflow-hidden">
       <ScrollArea 
         ref={scrollRef} 
         className="flex-1 pr-4 overflow-y-auto"
-        style={{ paddingBottom: "120px" }} // Add padding to prevent content from being hidden behind input
       >
-        <div className="space-y-6">
+        <div className="space-y-6 pb-32">
           {messages.map((message, i) => (
             <div
               key={i}
@@ -362,7 +361,10 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         </div>
       </ScrollArea>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 pt-4 sticky bottom-0 bg-background">
+      <form 
+        onSubmit={handleSubmit} 
+        className="absolute bottom-0 left-0 right-0 flex gap-2 p-4 bg-background border-t shadow-lg"
+      >
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}

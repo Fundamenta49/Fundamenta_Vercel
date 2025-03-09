@@ -160,59 +160,63 @@ What would you like to know more about? You can ask about:
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col h-[500px]">
-          <ScrollArea className="flex-1 pr-4 overflow-y-auto" style={{ paddingBottom: "120px" }}>
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`mb-4 ${
-                  message.role === "assistant"
-                    ? "bg-muted"
-                    : "bg-primary/10"
-                } rounded-lg p-4`}
-              >
-                {message.content.split('\n').map((line, i) => (
-                  <p key={i} className="mb-2">{line}</p>
+        <div className="relative flex flex-col h-[500px] overflow-hidden">
+            <ScrollArea className="flex-1 pr-4 overflow-y-auto">
+              <div className="space-y-4 pb-32">
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`mb-4 ${
+                      message.role === "assistant"
+                        ? "bg-muted"
+                        : "bg-primary/10"
+                    } rounded-lg p-4`}
+                  >
+                    {message.content.split('\n').map((line, i) => (
+                      <p key={i} className="mb-2">{line}</p>
+                    ))}
+                  </div>
                 ))}
               </div>
-            ))}
-          </ScrollArea>
+            </ScrollArea>
 
-          <form onSubmit={handleSubmit} className="flex gap-2 pt-4 sticky bottom-0 bg-background">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about career paths, education, or next steps..."
-              disabled={isLoading || isRecording}
-            />
-            <div className="flex flex-col gap-2">
-              <Button
-                type="button"
-                variant={isRecording ? "outline" : "secondary"}
-                size="icon"
-                className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
-                onClick={isRecording ? stopRecording : startRecording}
-                disabled={isLoading}
-              >
-                <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
-              </Button>
-              <Button 
-                type="submit" 
-                disabled={isLoading || !input.trim() || isRecording}
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-          </form>
-
-          <Button
-            variant="outline"
-            onClick={onBack}
-            className="w-full mt-4"
-          >
-            Back to Results
-          </Button>
-        </div>
+            <form 
+              onSubmit={handleSubmit} 
+              className="absolute bottom-0 left-0 right-0 flex gap-2 p-4 bg-background border-t shadow-lg"
+            >
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about career paths, education, or next steps..."
+                disabled={isLoading || isRecording}
+              />
+              <div className="flex flex-col gap-2">
+                <Button
+                  type="button"
+                  variant={isRecording ? "outline" : "secondary"}
+                  size="icon"
+                  className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={isLoading}
+                >
+                  <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={isLoading || !input.trim() || isRecording}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </form>
+          </div>
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className="w-full mt-4"
+        >
+          Back to Results
+        </Button>
       </CardContent>
     </Card>
   );
