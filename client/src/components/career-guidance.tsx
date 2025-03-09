@@ -160,8 +160,8 @@ What would you like to know more about? You can ask about:
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <ScrollArea className="h-[400px] pr-4">
+        <div className="flex flex-col h-[500px]">
+          <ScrollArea className="flex-1 pr-4 overflow-y-auto" style={{ paddingBottom: "120px" }}>
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -178,7 +178,7 @@ What would you like to know more about? You can ask about:
             ))}
           </ScrollArea>
 
-          <form onSubmit={handleSubmit} className="flex gap-2">
+          <form onSubmit={handleSubmit} className="flex gap-2 pt-4 sticky bottom-0 bg-background">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}

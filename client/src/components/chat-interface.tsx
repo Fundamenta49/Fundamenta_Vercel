@@ -328,7 +328,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     <div className="flex flex-col h-[calc(100vh-16rem)] min-h-[500px]">
       <ScrollArea 
         ref={scrollRef} 
-        className="flex-1 pr-4"
+        className="flex-1 pr-4 overflow-y-auto"
+        style={{ paddingBottom: "120px" }} // Add padding to prevent content from being hidden behind input
       >
         <div className="space-y-6">
           {messages.map((message, i) => (
