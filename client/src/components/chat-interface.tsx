@@ -16,7 +16,7 @@ interface ChatMessage {
 }
 
 interface ChatInterfaceProps {
-  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness";
+  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking";
 }
 
 export default function ChatInterface({ category }: ChatInterfaceProps) {
@@ -27,25 +27,23 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Check if user has completed onboarding for this category
     const hasCompletedOnboarding = localStorage.getItem(`chat-onboarding-${category}`);
     if (hasCompletedOnboarding) {
       setShowOnboarding(false);
-      // Set initial greeting based on category
       const greetings = {
         emergency: "Hello, I'm here to help you with any emergency situation. What's happening?",
         finance: "Hi! I'm your financial advisor. I'll adapt my guidance to your financial goals and knowledge level. What would you like to discuss?",
         career: "Welcome! I'm your career development coach. I'll help guide you based on your experience and aspirations. What brings you here today?",
         wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
         learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
-        fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?"
+        fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?",
+        cooking: "Hi! I'm your cooking assistant. I'm here to help you develop your culinary skills and confidence in the kitchen. What would you like to cook today?"
       };
 
       setMessages([{ role: "assistant", content: greetings[category], category }]);
     }
   }, [category]);
 
-  // Auto scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -54,8 +52,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
   const chatMutation = useMutation({
     mutationFn: async (content: string) => {
-      const response = await apiRequest("POST", "/api/chat", { 
-        content, 
+      const response = await apiRequest("POST", "/api/chat", {
+        message: content,
         category,
         previousMessages: messages.map(m => ({
           role: m.role,
@@ -69,14 +67,19 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         throw new Error(error.error || "Failed to send message");
       }
 
-      return response.json();
+      const data = await response.json();
+      return data;
     },
     onSuccess: (data) => {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.response, category }
-      ]);
-      setInput("");
+      if (data.success && data.response) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.response, category }
+        ]);
+        setInput("");
+      } else {
+        throw new Error("Invalid response format");
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -91,7 +94,6 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     e.preventDefault();
     if (!input.trim() || chatMutation.isPending) return;
 
-    // Add user message immediately
     setMessages((prev) => [...prev, { role: "user", content: input, category }]);
     chatMutation.mutate(input);
   };
@@ -99,14 +101,14 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
     localStorage.setItem(`chat-onboarding-${category}`, 'true');
-    // Set initial greeting after onboarding
     const greetings = {
       emergency: "Now that you know how I can help, what's the emergency situation?",
       finance: "Great! Now that you know how I can help with your finances, what would you like to discuss?",
       career: "Excellent! I'm ready to help with your career development. What would you like to explore first?",
       wellness: "Perfect! Now that you know how I can support your wellness journey, what would you like to focus on?",
       learning: "Wonderful! I'm ready to help you learn. What skills would you like to develop?",
-      fitness: "Awesome! Now that you know how I can help with your fitness goals, what would you like to work on first?"
+      fitness: "Awesome! Now that you know how I can help with your fitness goals, what would you like to work on first?",
+      cooking: "Great! Now that you know how I can help in the kitchen, what would you like to learn about?"
     };
 
     setMessages([{ role: "assistant", content: greetings[category], category }]);
