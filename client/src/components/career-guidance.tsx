@@ -156,34 +156,32 @@ What would you like to know more about? You can ask about:
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="relative h-[500px]">
-          <ScrollArea
-            className="absolute inset-0 pr-4"
-            style={{
-              bottom: '100px',
-              paddingBottom: '1rem'
-            }}
-          >
-            <div className="space-y-4">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className="mb-4"
-                >
-                  <div className="bg-[#E8F4F4] rounded-lg p-4">
-                    {message.content.split('\n').map((line, i) => (
-                      <p key={i} className="text-[#8b7e74] mb-2">{line}</p>
-                    ))}
+        <div className="flex flex-col h-[500px]">
+          <div className="flex-1 relative">
+            <ScrollArea
+              className="absolute inset-0"
+            >
+              <div className="space-y-4 p-4">
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className="mb-4"
+                  >
+                    <div className="bg-[#E8F4F4] rounded-lg p-4">
+                      {message.content.split('\n').map((line, i) => (
+                        <p key={i} className="text-[#8b7e74] mb-2">{line}</p>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
 
-          <div className="absolute bottom-0 left-0 right-0 bg-background pt-2">
+          <div className="flex-shrink-0 border-t bg-background">
             <form
               onSubmit={handleSubmit}
-              className="flex gap-2 bg-background"
+              className="flex gap-2 p-4"
             >
               <Input
                 value={input}
