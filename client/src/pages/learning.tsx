@@ -66,8 +66,41 @@ const scheduleFormSchema = z.object({
 
 type ScheduleFormValues = z.infer<typeof scheduleFormSchema>;
 
+const formatContent = (content: string) => {
+  // Regular expression to match URLs
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  return content.split('\n').map((line, idx) => {
+    // Replace URLs with clickable links
+    const parts = line.split(urlRegex);
+    return (
+      <p key={idx} className="mb-2 leading-relaxed">
+        {parts.map((part, partIdx) => {
+          if (part.match(urlRegex)) {
+            return (
+              <Button
+                key={partIdx}
+                variant="link"
+                className="px-0 h-auto font-normal text-primary hover:text-primary/80"
+                onClick={() => window.open(part, '_blank')}
+              >
+                <span className="flex items-center gap-1">
+                  {new URL(part).hostname.replace('www.', '')}
+                  <ExternalLink className="h-3 w-3" />
+                </span>
+              </Button>
+            );
+          }
+          return part;
+        })}
+      </p>
+    );
+  });
+};
+
 const CleaningScheduleGenerator = () => {
   const [schedule, setSchedule] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<ScheduleFormValues>({
     resolver: zodResolver(scheduleFormSchema),
@@ -80,20 +113,28 @@ const CleaningScheduleGenerator = () => {
   });
 
   const onSubmit = async (values: ScheduleFormValues) => {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/skill-guidance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           skillArea: "life",
-          userQuery: `Generate a cleaning schedule for a ${values.spaceType} with ${values.roomCount} rooms, ${values.occupants} occupants, cleaning ${values.cleaningFrequency}`,
+          userQuery: `Create a detailed cleaning schedule for a ${values.spaceType} with ${values.roomCount} rooms and ${values.occupants} occupants. The schedule should be ${values.cleaningFrequency}. Include specific tasks for each area, estimated time required, and recommended cleaning supplies.`,
         }),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate schedule');
+      }
 
       const data = await response.json();
       setSchedule(data.guidance);
     } catch (error) {
       console.error("Error generating schedule:", error);
+      setSchedule("Sorry, we couldn't generate your cleaning schedule. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -194,8 +235,15 @@ const CleaningScheduleGenerator = () => {
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Generate Schedule
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating Schedule...
+              </>
+            ) : (
+              'Generate Schedule'
+            )}
           </Button>
         </form>
       </Form>
@@ -392,37 +440,6 @@ export default function Learning() {
     }).filter(section => section.title && section.content);
   };
 
-  const formatContent = (content: string) => {
-    // Regular expression to match URLs
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-
-    return content.split('\n').map((line, idx) => {
-      // Replace URLs with clickable links
-      const parts = line.split(urlRegex);
-      return (
-        <p key={idx} className="mb-2 leading-relaxed">
-          {parts.map((part, partIdx) => {
-            if (part.match(urlRegex)) {
-              return (
-                <Button
-                  key={partIdx}
-                  variant="link"
-                  className="px-0 h-auto font-normal text-primary hover:text-primary/80"
-                  onClick={() => window.open(part, '_blank')}
-                >
-                  <span className="flex items-center gap-1">
-                    {new URL(part).hostname.replace('www.', '')}
-                    <ExternalLink className="h-3 w-3" />
-                  </span>
-                </Button>
-              );
-            }
-            return part;
-          })}
-        </p>
-      );
-    });
-  };
 
   return (
     <div className="max-w-4xl mx-auto">

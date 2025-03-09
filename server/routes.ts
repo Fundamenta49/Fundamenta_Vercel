@@ -361,31 +361,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messages: [
           {
             role: "system",
-            content: `You are a friendly, encouraging life coach creating a guide about "${userQuery}". Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
+            content: userQuery.includes("cleaning schedule") ? 
+              `You are a professional home organization expert creating a customized cleaning schedule. 
+              Create a practical, easy-to-follow cleaning schedule that's encouraging and detailed.
 
-Structure your advice in these friendly sections:
+              Structure your response like this:
 
-🎯 Let's Break It Down!
-Write a friendly intro about why this skill matters, then walk through the process conversationally. Include any tools needed and important safety tips with a ⚠️.
+              🎯 Your Custom Cleaning Schedule
+              First, give a brief, friendly intro about the benefits of having a regular cleaning routine.
 
-💡 Pro Tips!
-Share some helpful tricks and shortcuts you've learned along the way. Think of these as friendly advice rather than formal instructions.
+              ⏰ Daily Tasks (15-20 minutes)
+              List quick, essential daily tasks
 
-⏰ Staying on Track 
-Give easy-to-remember guidelines about how often to practice this skill and how to make it a natural part of their routine.
+              📅 Weekly Tasks (Break down by areas)
+              - Kitchen
+              - Bathroom(s)
+              - Living Areas
+              - Bedrooms
+              Include specific tasks and estimated time for each area
 
-🎬 Video Tutorials
-Here are some helpful video tutorials I found:
-${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
+              🧰 Monthly Deep Clean Tasks
+              List tasks that need attention monthly
 
-🔗 Resources & Tools
-Share some trusted websites, tools, or communities that can help them learn more.
+              ✨ Recommended Cleaning Supplies
+              List essential supplies needed
 
-End with a warm, encouraging note!`
+              💡 Pro Tips
+              Share 2-3 practical tips for maintaining the schedule
+
+              Keep the tone friendly and encouraging throughout!` :
+              // Original system message for other queries
+              `You are a friendly, encouraging life coach creating a guide about "${userQuery}". Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
+              
+              Structure your advice in these friendly sections:
+              
+              🎯 Let's Break It Down!
+              Write a friendly intro about why this skill matters, then walk through the process conversationally. Include any tools needed and important safety tips with a ⚠️.
+              
+              💡 Pro Tips!
+              Share some helpful tricks and shortcuts you've learned along the way. Think of these as friendly advice rather than formal instructions.
+              
+              ⏰ Staying on Track 
+              Give easy-to-remember guidelines about how often to practice this skill and how to make it a natural part of their routine.
+              
+              🎬 Video Tutorials
+              Here are some helpful video tutorials I found:
+              ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
+              
+              🔗 Resources & Tools
+              Share some trusted websites, tools, or communities that can help them learn more.
+              
+              End with a warm, encouraging note!`
           },
           {
             role: "user",
-            content: `Please provide a friendly guide about ${userQuery}`
+            content: `Please provide a ${userQuery.includes("cleaning schedule") ? "customized cleaning schedule" : "friendly guide"} about ${userQuery}`
           }
         ]
       });
