@@ -349,12 +349,12 @@ Structure your response in engaging sections:
 - Add tips for building good habits
 
 🎬 Video Tutorials
-For each tutorial recommendation, provide:
-- YouTube video ID (e.g., dQw4w9WgXcQ)
-- A brief description of what it covers
-- Why it's particularly helpful
-- Approximate duration
-Format as: [videoID] - Description (Duration)
+For each recommended video, follow this exact format:
+[videoId] - Title/Description (Duration)
+Example:
+[dQw4w9WgXcQ] - Complete Guide to Kitchen Cleaning (15 mins)
+[xYzzQh9cB8A] - Expert Tips for Deep Cleaning (10 mins)
+Include 2-3 beginner-friendly tutorials from reputable channels.
 
 🔗 Helpful Resources
 - Share links to detailed guides and articles
@@ -362,9 +362,7 @@ Format as: [videoID] - Description (Duration)
 - Include community forums or discussion groups
 - For product recommendations, suggest both budget and premium options
 
-End with a short, encouraging note about mastering this skill!
-
-Keep everything practical and actionable, but with a friendly, supportive tone throughout.`
+End with a short, encouraging note about mastering this skill!`
           },
           {
             role: "user",
@@ -375,28 +373,30 @@ Keep everything practical and actionable, but with a friendly, supportive tone t
 
       const guidanceText = response.choices[0].message.content || "";
 
-      // Extract video IDs from the guidance
+      // Extract video IDs from the guidance using improved regex
       const videoSection = guidanceText.split('🎬')[1]?.split('🔗')[0] || '';
-      const videoIds = videoSection.match(/\[([\w-]+)\]/g)?.map(id => id.replace(/[\[\]]/g, '')) || [];
+      const videoIds = videoSection.match(/\[([\w-]{11})\]/g)?.map(id => id.replace(/[\[\]]/g, '')) || [];
 
       // Get video details from YouTube API if we have video IDs
       let videoDetails = [];
-      if (videoIds.length > 0) {
+      if (videoIds.length > 0 && process.env.YOUTUBE_API_KEY) {
         try {
-          const videoResponse = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
+          const videoResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
             params: {
               part: 'snippet,contentDetails',
               id: videoIds.join(','),
-              key: process.env.YOUTUBE_API_KEY,
+              key: process.env.YOUTUBE_API_KEY
             }
           });
 
-          videoDetails = videoResponse.data.items.map(item => ({
-            id: item.id,
-            title: item.snippet.title,
-            thumbnail: item.snippet.thumbnails.medium.url,
-            duration: item.contentDetails.duration
-          }));
+          if (videoResponse.data.items) {
+            videoDetails = videoResponse.data.items.map(item => ({
+              id: item.id,
+              title: item.snippet.title,
+              thumbnail: item.snippet.thumbnails.medium,
+              duration: item.contentDetails.duration
+            }));
+          }
         } catch (error) {
           console.error("YouTube API error:", error);
         }

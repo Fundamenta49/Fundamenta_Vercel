@@ -74,15 +74,14 @@ const LIFE_SKILLS_PROMPTS = [
 
 const formatVideoDuration = (duration: string) => {
   // Convert ISO 8601 duration to readable format
-  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-  const hours = match[1] ? match[1].replace('H', '') : '0';
-  const minutes = match[2] ? match[2].replace('M', '') : '0';
-  const seconds = match[3] ? match[3].replace('S', '') : '0';
+  const match = duration?.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+  if (!match) return "00:00";
 
-  if (hours !== '0') {
-    return `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
-  }
-  return `${minutes}:${seconds.padStart(2, '0')}`;
+  const hours = (match[1] ? parseInt(match[1].replace('H', '')) : 0).toString();
+  const minutes = (match[2] ? parseInt(match[2].replace('M', '')) : 0).toString().padStart(2, '0');
+  const seconds = (match[3] ? parseInt(match[3].replace('S', '')) : 0).toString().padStart(2, '0');
+
+  return hours !== '0' ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
 };
 
 const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) => {
