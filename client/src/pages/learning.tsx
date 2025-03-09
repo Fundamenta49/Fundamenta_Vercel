@@ -266,6 +266,14 @@ const CleaningScheduleGenerator = () => {
 
 const LIFE_SKILLS_PROMPTS = [
   {
+    title: "Cleaning Schedule Generator",
+    description: "Personalized schedule based on apartment/home size",
+  },
+  {
+    title: "How to Load a Dishwasher",
+    description: "Efficient loading techniques, optimal cleaning results",
+  },
+  {
     title: "How to Properly Clean a Kitchen",
     description: "Washing dishes, sanitizing countertops, handling grease",
   },
@@ -284,14 +292,6 @@ const LIFE_SKILLS_PROMPTS = [
   {
     title: "Decluttering & Minimalist Living Tips",
     description: "Staying organized in small spaces",
-  },
-  {
-    title: "Cleaning Schedule Generator",
-    description: "Personalized schedule based on apartment/home size",
-  },
-  {
-    title: "How to Load a Dishwasher",
-    description: "Efficient loading techniques, optimal cleaning results",
   }
 ];
 
