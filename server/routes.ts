@@ -285,7 +285,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", 
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
@@ -351,10 +351,13 @@ Structure your response in engaging sections:
 🎬 Video Tutorials
 For each recommended video, follow this exact format:
 [videoId] - Title/Description (Duration)
-Example:
-[dQw4w9WgXcQ] - Complete Guide to Kitchen Cleaning (15 mins)
-[xYzzQh9cB8A] - Expert Tips for Deep Cleaning (10 mins)
-Include 2-3 beginner-friendly tutorials from reputable channels.
+
+IMPORTANT: Only recommend videos that are directly related to the user's query.
+Choose 2-3 highly relevant, beginner-friendly tutorials from reputable channels.
+Each video should focus specifically on the skill or task being discussed.
+Example format for a kitchen cleaning query:
+[AbC123xyz45] - Professional Kitchen Cleaning Tips (8 mins)
+[XyZ987abc12] - Deep Clean Your Kitchen Like a Pro (12 mins)
 
 🔗 Helpful Resources
 - Share links to detailed guides and articles
@@ -381,21 +384,29 @@ End with a short, encouraging note about mastering this skill!`
       let videoDetails = [];
       if (videoIds.length > 0 && process.env.YOUTUBE_API_KEY) {
         try {
-          const videoResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
-            params: {
-              part: 'snippet,contentDetails',
-              id: videoIds.join(','),
-              key: process.env.YOUTUBE_API_KEY
-            }
-          });
+          // Validate video IDs before making API call
+          const validVideoIds = videoIds.filter(id => /^[\w-]{11}$/.test(id));
 
-          if (videoResponse.data.items) {
-            videoDetails = videoResponse.data.items.map(item => ({
-              id: item.id,
-              title: item.snippet.title,
-              thumbnail: item.snippet.thumbnails.medium,
-              duration: item.contentDetails.duration
-            }));
+          if (validVideoIds.length > 0) {
+            const videoResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+              params: {
+                part: 'snippet,contentDetails,status',
+                id: validVideoIds.join(','),
+                key: process.env.YOUTUBE_API_KEY
+              }
+            });
+
+            if (videoResponse.data.items) {
+              videoDetails = videoResponse.data.items
+                .filter(item => item.status.privacyStatus === 'public')
+                .map(item => ({
+                  id: item.id,
+                  title: item.snippet.title,
+                  thumbnail: item.snippet.thumbnails.medium.url,
+                  duration: item.contentDetails.duration,
+                  description: item.snippet.description
+                }));
+            }
           }
         } catch (error) {
           console.error("YouTube API error:", error);
@@ -525,9 +536,9 @@ End with a short, encouraging note about mastering this skill!`
         });
 
         // Check if video exists and is available
-        const isValid = response.data.items && 
-                       response.data.items.length > 0 && 
-                       response.data.items[0].status.privacyStatus === 'public';
+        const isValid = response.data.items &&
+          response.data.items.length > 0 &&
+          response.data.items[0].status.privacyStatus === 'public';
 
         res.json({
           items: isValid ? response.data.items : [],
