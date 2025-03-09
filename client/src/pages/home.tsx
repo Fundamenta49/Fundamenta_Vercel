@@ -55,40 +55,38 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="text-center mb-12 relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={restartTour}
-            className="absolute right-0 top-0 text-muted-foreground hover:text-primary"
-          >
-            <HelpCircle className="h-5 w-5" />
-          </Button>
-          <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
-            Welcome to Fundamenta
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Your AI-powered assistant for life skills and wellness
-          </p>
-        </div>
+    <div className="px-4 py-8">
+      <div className="text-center mb-12 relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={restartTour}
+          className="absolute right-0 top-0 text-muted-foreground hover:text-primary"
+        >
+          <HelpCircle className="h-5 w-5" />
+        </Button>
+        <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
+          Welcome to Fundamenta
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Your AI-powered assistant for life skills and wellness
+        </p>
+      </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {features.map((feature) => (
-            <Link key={feature.href} href={feature.href}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200">
-                <CardHeader>
-                  <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
-                  <CardTitle className="text-[#1C3D5A]">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">{feature.description}</p>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+      <div className="grid md:grid-cols-2 gap-6">
+        {features.map((feature) => (
+          <Link key={feature.href} href={feature.href}>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200">
+              <CardHeader>
+                <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
+                <CardTitle className="text-[#1C3D5A]">{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">{feature.description}</p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </div>
     </div>
   );

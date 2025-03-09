@@ -61,8 +61,8 @@ export default function Active() {
 
   if (!hasProfile && !skipProfile) {
     return (
-      <div className="min-h-screen bg-white px-4 py-8">
-        <div className="space-y-4 max-w-4xl mx-auto">
+      <div className="px-4 py-8">
+        <div className="space-y-4">
           <Card className="border-0 shadow-none">
             <CardHeader>
               <CardTitle className="text-[#1C3D5A]">Welcome to Active You! 🎉</CardTitle>
@@ -88,55 +88,53 @@ export default function Active() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-center text-[#1C3D5A]">Active You</h1>
+    <div className="px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6 text-center text-[#1C3D5A]">Active You</h1>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
-            <TabsTrigger value="activeyou">ActiveYou</TabsTrigger>
-            <TabsTrigger value="meditation">Meditation</TabsTrigger>
-            <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
-            <TabsTrigger value="yoga">Yoga</TabsTrigger>
-            <TabsTrigger value="running">Running</TabsTrigger>
-          </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
+          <TabsTrigger value="activeyou">ActiveYou</TabsTrigger>
+          <TabsTrigger value="meditation">Meditation</TabsTrigger>
+          <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
+          <TabsTrigger value="yoga">Yoga</TabsTrigger>
+          <TabsTrigger value="running">Running</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="chat">
-            <Card className="border-0 shadow-none">
-              <CardHeader>
-                <CardTitle className="text-[#1C3D5A]">Fitness AI Coach</CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Get personalized workout guidance and fitness tips
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ChatInterface category="fitness" />
-              </CardContent>
-            </Card>
-          </TabsContent>
+        <TabsContent value="chat">
+          <Card className="border-0 shadow-none">
+            <CardHeader>
+              <CardTitle className="text-[#1C3D5A]">Fitness AI Coach</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Get personalized workout guidance and fitness tips
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <ChatInterface category="fitness" />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <TabsContent value="activeyou">
-            <ProfileManager onUpdate={handleProfileComplete} />
-          </TabsContent>
+        <TabsContent value="activeyou">
+          <ProfileManager onUpdate={handleProfileComplete} />
+        </TabsContent>
 
-          <TabsContent value="meditation">
-            <ActiveYou defaultTab="meditation" />
-          </TabsContent>
+        <TabsContent value="meditation">
+          <ActiveYou defaultTab="meditation" />
+        </TabsContent>
 
-          <TabsContent value="weightlifting">
-            <ActiveYou defaultTab="weightlifting" />
-          </TabsContent>
+        <TabsContent value="weightlifting">
+          <ActiveYou defaultTab="weightlifting" />
+        </TabsContent>
 
-          <TabsContent value="yoga">
-            <ActiveYou defaultTab="yoga" />
-          </TabsContent>
+        <TabsContent value="yoga">
+          <ActiveYou defaultTab="yoga" />
+        </TabsContent>
 
-          <TabsContent value="running">
-            <ActiveYou defaultTab="running" />
-          </TabsContent>
-        </Tabs>
-      </div>
+        <TabsContent value="running">
+          <ActiveYou defaultTab="running" />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
