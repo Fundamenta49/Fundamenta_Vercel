@@ -69,6 +69,10 @@ const LIFE_SKILLS_PROMPTS = [
   {
     title: "Cleaning Schedule Generator",
     description: "Personalized schedule based on apartment/home size",
+  },
+  {
+    title: "How to Load a Dishwasher",
+    description: "Efficient loading techniques, optimal cleaning results",
   }
 ];
 
