@@ -313,11 +313,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Add this after the career-guidance endpoint
+  // Update the skill-guidance endpoint handler
   app.post("/api/skill-guidance", async (req, res) => {
     try {
       const { skillArea, userQuery } = z.object({
-        skillArea: z.enum(["technical", "soft"]),
+        skillArea: z.enum(["technical", "soft", "search"]),
         userQuery: z.string()
       }).parse(req.body);
 
@@ -326,7 +326,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messages: [
           {
             role: "system",
-            content: `You are an expert learning advisor specializing in ${skillArea === "technical" ? "technical skills like programming, data analysis, and digital tools" : "soft skills like communication, leadership, and problem-solving"}. 
+            content: `You are an expert learning advisor specializing in skill development and career growth. 
 
 Structure your response in clear sections using plain text. Do not use any special characters or formatting symbols.
 

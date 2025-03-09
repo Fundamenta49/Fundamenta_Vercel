@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
@@ -32,6 +33,7 @@ import {
   Trophy,
   Car,
   Wrench,
+  Search,
 } from "lucide-react";
 import LearningCalendar from "@/components/learning-calendar";
 
@@ -144,7 +146,7 @@ const convertLinksToHtml = (text: string) => {
               'developer.mozilla.org'
             ];
 
-            const isKnownPlatform = knownPlatforms.some(platform => 
+            const isKnownPlatform = knownPlatforms.some(platform =>
               domain.includes(platform) || platform.includes(domain)
             );
 
@@ -178,6 +180,8 @@ export default function Learning() {
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<string | null>(null);
 
   const getSkillGuidance = async (skillType: "technical" | "soft", area: string) => {
     setIsLoading(true);
@@ -202,6 +206,32 @@ export default function Learning() {
     }
   };
 
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+
+    setIsLoading(true);
+    setDialogOpen(true);
+    try {
+      const response = await fetch("/api/skill-guidance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skillArea: "search",
+          userQuery: searchQuery,
+        }),
+      });
+
+      const data: SkillGuidanceResponse = await response.json();
+      setSearchResults(data.guidance);
+      setGuidance(data.guidance);
+    } catch (error) {
+      console.error("Error searching skills:", error);
+      setSearchResults("Sorry, we couldn't process your search right now. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">Learning & Development</h1>
@@ -211,7 +241,7 @@ export default function Learning() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
               <GraduationCap className="h-6 w-6 text-primary" />
-              {selectedArea} Learning Path
+              {selectedArea ? `${selectedArea} Learning Path` : 'Skill Learning Path'}
             </DialogTitle>
           </DialogHeader>
           <ScrollArea className="h-[60vh] pr-4">
@@ -258,7 +288,7 @@ export default function Learning() {
           </TabsList>
         </div>
 
-        <TabsContent value="chat" className="mt-6">
+        <TabsContent value="chat">
           <Card className="border-0 shadow-none">
             <CardHeader>
               <CardTitle>Learning AI Coach</CardTitle>
@@ -284,6 +314,24 @@ export default function Learning() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {/* Add search bar */}
+              <div className="mb-6">
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Search for any skill you want to learn..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                    className="flex-1"
+                  />
+                  <Button onClick={handleSearch} variant="outline">
+                    <Search className="h-4 w-4 mr-2" />
+                    Search
+                  </Button>
+                </div>
+              </div>
+
               <div className="grid gap-6 md:grid-cols-2">
                 {/* Technical Skills */}
                 <Card>
