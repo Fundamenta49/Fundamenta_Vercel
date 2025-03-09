@@ -24,6 +24,9 @@ import {
   Home,
   Loader2,
   Clock,
+  Video,
+  Link2,
+  ExternalLink
 } from "lucide-react";
 import LearningCalendar from "@/components/learning-calendar";
 import { useState } from "react";
@@ -120,7 +123,7 @@ export default function Learning() {
     if (!text) return [];
 
     // Split content by emoji headers
-    const sections = text.split(/(?=🎯|💡|⏰|🛠️)/g);
+    const sections = text.split(/(?=🎯|💡|⏰|🎬|🔗)/g);
 
     return sections.map(section => {
       const [header, ...content] = section.trim().split('\n');
@@ -130,9 +133,42 @@ export default function Learning() {
         icon: header.includes('🎯') ? Brain :
               header.includes('💡') ? Lightbulb :
               header.includes('⏰') ? Clock :
-              header.includes('🛠️') ? Wrench : Brain
+              header.includes('🎬') ? Video :
+              header.includes('🔗') ? Link2 : Brain
       };
     }).filter(section => section.title && section.content);
+  };
+
+  const formatContent = (content: string) => {
+    // Regular expression to match URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    return content.split('\n').map((line, idx) => {
+      // Replace URLs with clickable links
+      const parts = line.split(urlRegex);
+      return (
+        <p key={idx} className="mb-2 leading-relaxed">
+          {parts.map((part, partIdx) => {
+            if (part.match(urlRegex)) {
+              return (
+                <Button
+                  key={partIdx}
+                  variant="link"
+                  className="px-0 h-auto font-normal text-primary hover:text-primary/80"
+                  onClick={() => window.open(part, '_blank')}
+                >
+                  <span className="flex items-center gap-1">
+                    {new URL(part).hostname.replace('www.', '')}
+                    <ExternalLink className="h-3 w-3" />
+                  </span>
+                </Button>
+              );
+            }
+            return part;
+          })}
+        </p>
+      );
+    });
   };
 
   return (
@@ -164,11 +200,7 @@ export default function Learning() {
                     </CardHeader>
                     <CardContent>
                       <div className="prose prose-slate max-w-none">
-                        {section.content.split('\n').map((paragraph, idx) => (
-                          <p key={idx} className="mb-2 leading-relaxed">
-                            {paragraph.trim()}
-                          </p>
-                        ))}
+                        {formatContent(section.content)}
                       </div>
                     </CardContent>
                   </Card>

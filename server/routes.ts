@@ -348,10 +348,19 @@ Structure your response in engaging sections:
 - Create an easy-to-follow maintenance checklist
 - Add tips for building good habits
 
-🛠️ Helpful Tools & Resources
-- Recommend specific tools that make life easier
-- Suggest eco-friendly alternatives
-- Include any safety equipment needed
+🎬 Video Tutorials
+- Recommend 2-3 high-quality video tutorials from trusted sources
+- Focus on beginner-friendly content
+- Each recommendation should include:
+  * A brief description of what the video covers
+  * Why it's particularly helpful
+  * The video's length (approximate)
+
+🔗 Helpful Resources
+- Share links to detailed guides and articles
+- Recommend useful apps or tools
+- Include community forums or discussion groups
+- For product recommendations, suggest both budget and premium options
 
 End with a short, encouraging note about mastering this skill!
 
