@@ -9,12 +9,28 @@ import { createLinkToken, exchangePublicToken, getTransactions } from "./plaid";
 import axios from 'axios';
 import OpenAI from 'openai';
 
+// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+// No changes needed here as the model name is correct according to the development guidelines
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Update the messageSchema to include 'tour' category
+// Verify if we have the required API keys
+async function checkSecrets(): Promise<boolean> {
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+  const youtubeApiKey = process.env.YOUTUBE_API_KEY;
+
+  if (!openaiApiKey || !youtubeApiKey) {
+    console.error("Missing required API keys. OPENAI_API_KEY and YOUTUBE_API_KEY must be set.");
+    return false;
+  }
+  return true;
+}
+
+
+// Update the messageSchema to include all available categories
 const messageSchema = z.object({
   message: z.string(),
-  category: z.enum(["emergency", "finance", "career", "wellness", "tour"]),
+  category: z.enum(["emergency", "finance", "career", "wellness", "learning", "fitness", "cooking"]),
   context: z.string().optional(),
   previousMessages: z.array(z.object({
     role: z.enum(["user", "assistant"]),
@@ -74,6 +90,13 @@ const interviewAnalysisSchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  let hasRequiredSecrets = await checkSecrets(); // add this check
+
+  if (!hasRequiredSecrets) {
+    //Handle missing API keys appropriately, e.g., return an error or disable certain functionalities.
+    return createServer(app); // Return a server that won't work properly.
+  }
+
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
@@ -361,7 +384,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messages: [
           {
             role: "system",
-            content: userQuery.includes("cooking guide") ? 
+            content: userQuery.includes("cooking guide") ?
               `You are a professional chef and cooking instructor creating a guide about "${userQuery.replace('cooking guide:', '')}". 
               Speak naturally and conversationally, while maintaining focus on safety and proper technique.
 
