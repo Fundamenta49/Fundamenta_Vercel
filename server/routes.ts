@@ -120,10 +120,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ]
       });
 
-      res.json({ response: response.choices[0].message.content });
+      if (!response.choices[0].message?.content) {
+        throw new Error('No response content received from AI');
+      }
+
+      res.json({ 
+        response: response.choices[0].message.content,
+        success: true
+      });
+
     } catch (error) {
       console.error("Chat error:", error);
-      res.status(400).json({ error: "Invalid request" });
+      res.status(400).json({ 
+        error: "Failed to get response. Please try again.",
+        success: false
+      });
     }
   });
 
