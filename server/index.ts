@@ -6,6 +6,15 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Add startup timestamp
+const startTime = Date.now();
+
+// Basic health check route before any middleware
+app.get("/ping", (_req, res) => {
+  res.send("OK");
+});
+
+// Add request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -37,33 +46,65 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerRoutes(app);
+  try {
+    // Log environment and startup info
+    log(`Environment: ${app.get("env")}`);
+    log("Node Version:", process.version);
+    log("Initializing server...");
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    // Register routes first
+    const server = await registerRoutes(app);
+    log("Routes registered successfully");
 
-    res.status(status).json({ message });
-    throw err;
-  });
+    // Global error handler
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      log(`Error occurred: ${err.message}`, "error");
+      console.error("Full error details:", err);
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+
+      res.status(status).json({ message });
+    });
+
+    // Setup middleware based on environment
+    if (app.get("env") === "development") {
+      log("Setting up Vite middleware for development");
+      try {
+        await setupVite(app, server);
+        log("Vite middleware setup complete");
+      } catch (error) {
+        log(`Failed to setup Vite middleware: ${(error as Error).message}`, "error");
+        throw error;
+      }
+    } else {
+      log("Setting up static file serving for production");
+      try {
+        serveStatic(app);
+        log("Static file serving setup complete");
+      } catch (error) {
+        log(`Failed to setup static file serving: ${(error as Error).message}`, "error");
+        throw error;
+      }
+    }
+
+    const port = 5000;
+    server.listen({
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    }, () => {
+      const startupDuration = Date.now() - startTime;
+      log(`Server startup completed in ${startupDuration}ms`);
+      log(`Server listening on port ${port}`);
+    }).on('error', (error: Error) => {
+      log(`Failed to start server: ${error.message}`, "error");
+      throw error;
+    });
+
+  } catch (error) {
+    log(`Fatal error during server startup: ${(error as Error).message}`, "error");
+    console.error("Full startup error:", error);
+    process.exit(1);
   }
-
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
 })();
