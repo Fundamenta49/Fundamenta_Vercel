@@ -161,15 +161,15 @@ What would you like to know more about? You can ask about:
             <ScrollArea
               className="h-full"
             >
-              <div className="space-y-4 p-4">
+              <div className="space-y-6 p-4">
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className="mb-4"
+                    className="mb-6 last:mb-0"
                   >
-                    <div className="bg-[#E8F4F4] rounded-lg p-4">
+                    <div className="rounded-lg px-4">
                       {message.content.split('\n').map((line, i) => (
-                        <p key={i} className="text-[#8b7e74] mb-2">{line}</p>
+                        <p key={i} className="text-gray-700 mb-2">{line}</p>
                       ))}
                     </div>
                   </div>
@@ -178,7 +178,7 @@ What would you like to know more about? You can ask about:
             </ScrollArea>
           </div>
 
-          <div className="flex-none border-t bg-background">
+          <div className="flex-none border-t bg-white">
             <form
               onSubmit={handleSubmit}
               className="flex gap-2 p-4"
@@ -188,6 +188,7 @@ What would you like to know more about? You can ask about:
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about career paths, education, or next steps..."
                 disabled={isLoading}
+                className="flex-1"
               />
               <div className="flex flex-col gap-2">
                 <Button

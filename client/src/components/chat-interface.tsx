@@ -57,14 +57,14 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
       {sections.map((section, idx) => (
         <div key={idx} className="mb-4 last:mb-0">
           {section.split('\n').map((line, lineIdx) => (
-            <p key={lineIdx} className="text-[#8b7e74] mb-2">{line}</p>
+            <p key={lineIdx} className="text-gray-700 mb-2">{line}</p>
           ))}
         </div>
       ))}
 
       {suggestions && suggestions.length > 0 && (
         <div className="mt-6 space-y-3">
-          <p className="font-medium text-primary">📱 Helpful Resources in the App:</p>
+          <p className="font-medium text-gray-900">📱 Helpful Resources in the App:</p>
           {suggestions.map((suggestion, idx) => (
             <Link 
               key={idx} 
@@ -73,13 +73,13 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
             >
               <Button
                 variant="outline"
-                className="w-full justify-start text-left"
+                className="w-full justify-start text-left hover:bg-gray-50"
               >
                 <span className="flex items-center gap-2">
                   <ArrowRight className="h-4 w-4" />
                   <div>
-                    <p className="font-medium">{suggestion.text}</p>
-                    <p className="text-sm text-muted-foreground">{suggestion.description}</p>
+                    <p className="font-medium text-gray-900">{suggestion.text}</p>
+                    <p className="text-sm text-gray-500">{suggestion.description}</p>
                   </div>
                 </span>
               </Button>
@@ -328,22 +328,22 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           ref={scrollRef}
           className="h-full"
         >
-          <div className="space-y-4 p-4">
+          <div className="space-y-6 p-4">
             {messages.map((message, i) => (
               <div
                 key={i}
-                className="mb-4"
+                className="mb-6 last:mb-0"
               >
-                <div className="bg-[#E8F4F4] rounded-lg p-4">
+                <div className="rounded-lg px-4">
                   {message.role === "assistant" 
                     ? formatAssistantMessage(message.content, message.suggestions)
-                    : <p className="text-[#8b7e74]">{message.content}</p>
+                    : <p className="text-gray-700">{message.content}</p>
                   }
                 </div>
               </div>
             ))}
             {chatMutation.isPending && (
-              <div className="flex items-center gap-2 text-muted-foreground pl-2">
+              <div className="flex items-center gap-2 text-gray-500 pl-4">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Thinking...
               </div>
@@ -352,7 +352,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         </ScrollArea>
       </div>
 
-      <div className="flex-none border-t bg-background">
+      <div className="flex-none border-t bg-white">
         <form 
           onSubmit={handleSubmit} 
           className="flex gap-2 p-4"
@@ -361,7 +361,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 min-h-[80px]"
+            className="flex-1 min-h-[80px] resize-none"
             disabled={chatMutation.isPending}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
