@@ -373,7 +373,6 @@ export default function VehicleGuide() {
           setIsLoadingNHTSA(false);
           return;
         }
-
       } else {
         const normalizedMake = vehicleInfo.make.trim().toLowerCase();
         const normalizedModel = vehicleInfo.model.trim().toLowerCase();
