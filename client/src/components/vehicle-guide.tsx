@@ -306,8 +306,9 @@ export default function VehicleGuide() {
       if (vehicleInfo.vin) {
         const vin = vehicleInfo.vin.trim();
 
-        if (vin.length !== 17) {
-          setValidationError("VIN must be exactly 17 characters long");
+        // Validate VIN format
+        if (!/^[A-HJ-NPR-Z0-9]{17}$/i.test(vin)) {
+          setValidationError("Invalid VIN format. VIN must be 17 characters long and contain only letters (except I, O, Q) and numbers.");
           setIsLoadingNHTSA(false);
           return;
         }
@@ -315,11 +316,11 @@ export default function VehicleGuide() {
         // First API call - Decode VIN
         try {
           const vinResponse = await fetch(
-            `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${encodeURIComponent(vin)}?format=json`
+            `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${encodeURIComponent(vin)}?format=json`
           );
 
           if (!vinResponse.ok) {
-            throw new Error('Failed to fetch VIN information');
+            throw new Error(`VIN lookup failed: ${vinResponse.status}`);
           }
 
           const vinData = await vinResponse.json();
@@ -328,7 +329,13 @@ export default function VehicleGuide() {
             throw new Error('Invalid VIN or no data available');
           }
 
-          const vinInfo = vinData.Results[0];
+          // Extract relevant information from the VIN decode response
+          const vinInfo = vinData.Results.reduce((acc: any, item: any) => {
+            if (item.Value && item.Value !== "null" && item.Value !== "Not Applicable") {
+              acc[item.Variable.replace(/\s+/g, '')] = item.Value;
+            }
+            return acc;
+          }, {});
 
           // Second API call - Get recalls
           const recallResponse = await fetch(
@@ -366,6 +373,7 @@ export default function VehicleGuide() {
           setIsLoadingNHTSA(false);
           return;
         }
+
       } else {
         const normalizedMake = vehicleInfo.make.trim().toLowerCase();
         const normalizedModel = vehicleInfo.model.trim().toLowerCase();
