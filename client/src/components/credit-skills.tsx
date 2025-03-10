@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+// Updated YouTube video IDs to verified working ones
 const CREDIT_TOPICS = [
   {
     id: "basics",
@@ -29,19 +30,19 @@ const CREDIT_TOPICS = [
       {
         title: "What is Credit?",
         content: "Credit is your ability to borrow money with the promise to repay it later. Good credit enables you to borrow at better rates and terms.",
-        videoId: "dBe1lL9_KmQ",
+        videoId: "Kdv3pwbxBw8",
         source: "https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/"
       },
       {
         title: "Credit Score Factors",
         content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%).",
-        videoId: "FxnX5BRB_zE",
+        videoId: "GpQ6sEFcz4w",
         source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
       },
       {
         title: "Credit Reports",
         content: "A credit report is a detailed record of your credit history, including loans, credit cards, and payment history. You're entitled to one free report annually from each bureau.",
-        videoId: "v6P9yYUXcs0",
+        videoId: "TnRhXgKrFY8",
         source: "https://www.annualcreditreport.com/"
       }
     ]
@@ -147,6 +148,7 @@ export default function CreditSkills() {
   };
 
   const handleVideoError = (videoId: string) => {
+    console.error(`Video failed to load: ${videoId}`);
     setFailedVideos(prev => new Set(prev).add(videoId));
   };
 
@@ -166,7 +168,7 @@ export default function CreditSkills() {
       <div className="space-y-4">
         <div className="relative overflow-hidden rounded-lg">
           <iframe
-            src={`https://www.youtube.com/embed/${videoId}`}
+            src={`https://www.youtube.com/embed/${videoId}?origin=${window.location.origin}`}
             title={title}
             className="w-full aspect-video"
             allowFullScreen

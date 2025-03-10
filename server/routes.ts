@@ -93,7 +93,7 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-✨ Next Topic
+:✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
@@ -176,7 +176,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4", // Changed from gpt-4o
         messages: [
           {
             role: "system",
@@ -403,7 +403,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4", // Changed from gpt-4o
         messages: [
           {
             role: "system",
@@ -475,7 +475,7 @@ Remember to suggest relevant features in the app that could help the user.`;
         }));
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4", // Changed from gpt-4o
         messages: [
           {
             role: "system",
@@ -740,7 +740,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4", // Changed from gpt-4o
         messages: [
           { role: "system", content: "You are a professional fitness trainer experienced in creating personalized workout plans." },
           { role: "user", content: prompt }
@@ -762,7 +762,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       const { content } = z.object({ content: z.string() }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4", // Changed from gpt-4o
         messages: [
           {
             role: "system",
@@ -812,7 +812,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4", // Changed from gpt-4o
         messages: [
           {
             role: "system",
