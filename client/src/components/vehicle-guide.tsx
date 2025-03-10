@@ -50,10 +50,20 @@ interface NHTSAData {
     Component: string;
     Summary: string;
     Consequence: string;
+    Remedy: string;
+    NHTSACampaignNumber?: string;
   }>;
-  bulletins?: Array<{
+  complaints?: Array<{
+    Component: string;
+    Summary: string;
+    FailureMileage: string;
+    Crash: string;
+    Fire: string;
+  }>;
+  tsbs?: Array<{
     ItemNumber: string;
     Summary: string;
+    ComponentDescription: string;
   }>;
   vehicleDetails?: {
     Make: string;
@@ -65,6 +75,7 @@ interface NHTSAData {
     BodyClass?: string;
     FuelTypePrimary?: string;
     DriveType?: string;
+    ManufacturerName?: string;
   };
 }
 
@@ -283,132 +294,175 @@ export default function VehicleGuide() {
   };
 
   const validateAndFetchVehicleData = async () => {
-    if (!isVehicleInfoComplete()) return;
+    if (!vehicleInfo.vin && !isVehicleInfoComplete()) {
+      setValidationError("Please enter either a VIN or complete vehicle information");
+      return;
+    }
 
     setIsLoadingNHTSA(true);
     setValidationError(null);
 
     try {
-      const normalizedMake = vehicleInfo.make.trim().toLowerCase();
-      const normalizedModel = vehicleInfo.model.trim().toLowerCase();
-      const year = vehicleInfo.year.trim();
-      const vin = vehicleInfo.vin?.trim();
+      if (vehicleInfo.vin) {
+        const vin = vehicleInfo.vin.trim();
 
-      if (!/^\d{4}$/.test(year) || parseInt(year) < 1950 || parseInt(year) > new Date().getFullYear() + 1) {
-        setValidationError("Please enter a valid year between 1950 and " + (new Date().getFullYear() + 1));
-        setIsLoadingNHTSA(false);
-        return;
-      }
-
-      if (vin) {
         if (vin.length !== 17) {
           setValidationError("VIN must be exactly 17 characters long");
           setIsLoadingNHTSA(false);
           return;
         }
 
-        try {
-          const vinResponse = await fetch(
-            `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`
-          );
+        // Decode VIN
+        const vinResponse = await fetch(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`
+        );
 
-          if (!vinResponse.ok) {
-            throw new Error('Failed to fetch VIN information');
-          }
-
-          const vinData = await vinResponse.json();
-          const results = vinData.Results;
-
-          const vinDetails = {
-            Make: results.find((r: any) => r.Variable === "Make")?.Value,
-            Model: results.find((r: any) => r.Variable === "Model")?.Value,
-            ModelYear: results.find((r: any) => r.Variable === "Model Year")?.Value,
-            PlantCountry: results.find((r: any) => r.Variable === "Plant Country")?.Value,
-            BodyClass: results.find((r: any) => r.Variable === "Body Class")?.Value,
-            FuelTypePrimary: results.find((r: any) => r.Variable === "Fuel Type - Primary")?.Value,
-            DriveType: results.find((r: any) => r.Variable === "Drive Type")?.Value,
-          };
-
-          setVinLookupData(vinDetails);
-        } catch (error) {
-          console.error('VIN lookup error:', error);
+        if (!vinResponse.ok) {
+          throw new Error('Failed to fetch VIN information');
         }
-      }
 
+        const vinData = await vinResponse.json();
+        const results = vinData.Results;
 
-      const validationResponse = await fetch(
-        `https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/${encodeURIComponent(normalizedMake)}?format=json`
-      );
+        // Get basic vehicle info from VIN
+        const vinDetails = {
+          Make: results.find((r: any) => r.Variable === "Make")?.Value,
+          Model: results.find((r: any) => r.Variable === "Model")?.Value,
+          ModelYear: results.find((r: any) => r.Variable === "Model Year")?.Value,
+          PlantCountry: results.find((r: any) => r.Variable === "Plant Country")?.Value,
+          BodyClass: results.find((r: any) => r.Variable === "Body Class")?.Value,
+          FuelTypePrimary: results.find((r: any) => r.Variable === "Fuel Type - Primary")?.Value,
+          DriveType: results.find((r: any) => r.Variable === "Drive Type")?.Value,
+          ManufacturerName: results.find((r: any) => r.Variable === "Manufacturer Name")?.Value,
+          VIN: vin
+        };
 
-      if (!validationResponse.ok) {
-        throw new Error(`Vehicle validation failed (${validationResponse.status})`);
-      }
-
-      const validationData = await validationResponse.json();
-
-      if (!validationData.Results || validationData.Results.length === 0) {
-        setValidationError(`No vehicle data found for make: ${vehicleInfo.make}. Please check your input.`);
-        setIsLoadingNHTSA(false);
-        return;
-      }
-
-      const matchingModels = validationData.Results.filter((model: any) =>
-        model.Model_Name.toLowerCase().includes(normalizedModel) ||
-        normalizedModel.includes(model.Model_Name.toLowerCase())
-      );
-
-      if (matchingModels.length === 0) {
-        setValidationError(
-          `Could not find model: ${vehicleInfo.model} for make: ${vehicleInfo.make}. ` +
-          `Available models: ${validationData.Results.map((m: any) => m.Model_Name).join(', ')}`
-        );
-        setIsLoadingNHTSA(false);
-        return;
-      }
-
-      let recallsData;
-      try {
-        const recallsResponse = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/RecallsByVehicle/${encodeURIComponent(normalizedMake)}/${encodeURIComponent(normalizedModel)}/${year}?format=json`
+        // Fetch recalls specific to the VIN
+        const recallResponse = await fetch(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/RecallsByVIN/${encodeURIComponent(vin)}?format=json`
         );
 
-        if (!recallsResponse.ok) {
+        if (!recallResponse.ok) {
           throw new Error('Failed to fetch recall information');
         }
 
-        recallsData = await recallsResponse.json();
-      } catch (error) {
-        console.error('Recalls fetch error:', error);
-        recallsData = { Results: [] };
-      }
+        const recallData = await recallResponse.json();
 
-      let tsData;
-      try {
-        const tsResponse = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/complaintsByVehicle/${encodeURIComponent(normalizedMake)}/${encodeURIComponent(normalizedModel)}/${year}?format=json`
+        // Fetch complaints for the vehicle
+        const complaintResponse = await fetch(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/ComplaintsByVIN/${encodeURIComponent(vin)}?format=json`
         );
 
-        if (!tsResponse.ok) {
+        if (!complaintResponse.ok) {
+          throw new Error('Failed to fetch complaint information');
+        }
+
+        const complaintData = await complaintResponse.json();
+
+        // Fetch TSBs
+        const tsbResponse = await fetch(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/TechnicalServiceBulletinsByVIN/${encodeURIComponent(vin)}?format=json`
+        );
+
+        if (!tsbResponse.ok) {
           throw new Error('Failed to fetch technical service bulletins');
         }
 
-        tsData = await tsResponse.json();
-      } catch (error) {
-        console.error('TSB fetch error:', error);
-        tsData = { Results: [] };
-      }
+        const tsbData = await tsbResponse.json();
 
-      setNhtsaData({
-        recalls: recallsData.Results?.slice(0, 5) || [],
-        bulletins: tsData.Results?.slice(0, 5) || [],
-        vehicleDetails: {
-          Make: vehicleInfo.make,
-          Model: vehicleInfo.model,
-          ModelYear: year,
-          VehicleType: matchingModels[0]?.Vehicle_Type || matchingModels[0]?.Model_Name || 'Unknown',
-          ...vinLookupData
+        setNhtsaData({
+          recalls: recallData.Results || [],
+          complaints: complaintData.Results || [],
+          tsbs: tsbData.Results || [],
+          vehicleDetails: vinDetails
+        });
+
+      } else {
+        const normalizedMake = vehicleInfo.make.trim().toLowerCase();
+        const normalizedModel = vehicleInfo.model.trim().toLowerCase();
+        const year = vehicleInfo.year.trim();
+
+        if (!/^\d{4}$/.test(year) || parseInt(year) < 1950 || parseInt(year) > new Date().getFullYear() + 1) {
+          setValidationError("Please enter a valid year between 1950 and " + (new Date().getFullYear() + 1));
+          setIsLoadingNHTSA(false);
+          return;
         }
-      });
+
+
+        const validationResponse = await fetch(
+          `https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/${encodeURIComponent(normalizedMake)}?format=json`
+        );
+
+        if (!validationResponse.ok) {
+          throw new Error(`Vehicle validation failed (${validationResponse.status})`);
+        }
+
+        const validationData = await validationResponse.json();
+
+        if (!validationData.Results || validationData.Results.length === 0) {
+          setValidationError(`No vehicle data found for make: ${vehicleInfo.make}. Please check your input.`);
+          setIsLoadingNHTSA(false);
+          return;
+        }
+
+        const matchingModels = validationData.Results.filter((model: any) =>
+          model.Model_Name.toLowerCase().includes(normalizedModel) ||
+          normalizedModel.includes(model.Model_Name.toLowerCase())
+        );
+
+        if (matchingModels.length === 0) {
+          setValidationError(
+            `Could not find model: ${vehicleInfo.model} for make: ${vehicleInfo.make}. ` +
+            `Available models: ${validationData.Results.map((m: any) => m.Model_Name).join(', ')}`
+          );
+          setIsLoadingNHTSA(false);
+          return;
+        }
+
+        let recallsData;
+        try {
+          const recallsResponse = await fetch(
+            `https://vpic.nhtsa.dot.gov/api/vehicles/RecallsByVehicle/${encodeURIComponent(normalizedMake)}/${encodeURIComponent(normalizedModel)}/${year}?format=json`
+          );
+
+          if (!recallsResponse.ok) {
+            throw new Error('Failed to fetch recall information');
+          }
+
+          recallsData = await recallsResponse.json();
+        } catch (error) {
+          console.error('Recalls fetch error:', error);
+          recallsData = { Results: [] };
+        }
+
+        let tsData;
+        try {
+          const tsResponse = await fetch(
+            `https://vpic.nhtsa.dot.gov/api/vehicles/complaintsByVehicle/${encodeURIComponent(normalizedMake)}/${encodeURIComponent(normalizedModel)}/${year}?format=json`
+          );
+
+          if (!tsResponse.ok) {
+            throw new Error('Failed to fetch technical service bulletins');
+          }
+
+          tsData = await tsResponse.json();
+        } catch (error) {
+          console.error('TSB fetch error:', error);
+          tsData = { Results: [] };
+        }
+
+        setNhtsaData({
+          recalls: recallsData.Results?.slice(0, 5) || [],
+          bulletins: tsData.Results?.slice(0, 5) || [],
+          vehicleDetails: {
+            Make: vehicleInfo.make,
+            Model: vehicleInfo.model,
+            ModelYear: year,
+            VehicleType: matchingModels[0]?.Vehicle_Type || matchingModels[0]?.Model_Name || 'Unknown',
+            ...vinLookupData
+          }
+        });
+      }
 
     } catch (error) {
       console.error('Error fetching NHTSA data:', error);
@@ -473,7 +527,7 @@ export default function VehicleGuide() {
                   className="w-full pr-8"
                   maxLength={17}
                 />
-                <Info 
+                <Info
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help"
                   title="Vehicle Identification Number - Provides additional vehicle details"
                 />
@@ -489,9 +543,9 @@ export default function VehicleGuide() {
                 className="w-full mb-4"
               />
               <div className="flex gap-2">
-                <Button 
-                  variant="default" 
-                  onClick={handleSearch} 
+                <Button
+                  variant="default"
+                  onClick={handleSearch}
                   className="flex-none"
                   disabled={!isVehicleInfoComplete() || !customMaintenanceQuery.trim()}
                 >
@@ -537,18 +591,32 @@ export default function VehicleGuide() {
             {nhtsaData && (
               <Card className="mt-4">
                 <CardHeader>
-                  <CardTitle className="text-lg">Vehicle Information</CardTitle>
+                  <CardTitle className="text-lg">Vehicle Safety Information</CardTitle>
+                  {nhtsaData.vehicleDetails?.VIN && (
+                    <CardDescription>
+                      VIN: {nhtsaData.vehicleDetails.VIN}
+                    </CardDescription>
+                  )}
                 </CardHeader>
                 <CardContent>
+                  {/* Recalls Section */}
                   {nhtsaData.recalls && nhtsaData.recalls.length > 0 && (
-                    <div className="mb-4">
-                      <h3 className="font-medium text-red-600 mb-2">Active Recalls</h3>
-                      <div className="space-y-2">
+                    <div className="mb-6">
+                      <h3 className="font-medium text-red-600 mb-2">⚠️ Open Safety Recalls</h3>
+                      <div className="space-y-4">
                         {nhtsaData.recalls.map((recall, index) => (
                           <Alert key={index} variant="destructive">
                             <AlertTriangle className="h-4 w-4" />
                             <AlertDescription>
-                              <strong>{recall.Component}</strong>: {recall.Summary} ({recall.Consequence})
+                              <div className="space-y-2">
+                                <strong>Component: {recall.Component}</strong>
+                                <p>{recall.Summary}</p>
+                                <p className="text-red-700">Consequence: {recall.Consequence}</p>
+                                <p className="text-green-700">Recommended Action: {recall.Remedy}</p>
+                                {recall.NHTSACampaignNumber && (
+                                  <p className="text-sm">Campaign #: {recall.NHTSACampaignNumber}</p>
+                                )}
+                              </div>
                             </AlertDescription>
                           </Alert>
                         ))}
@@ -556,28 +624,66 @@ export default function VehicleGuide() {
                     </div>
                   )}
 
-                  {nhtsaData.bulletins && nhtsaData.bulletins.length > 0 && (
-                    <div>
-                      <h3 className="font-medium text-orange-600 mb-2">Technical Service Bulletins</h3>
-                      <div className="space-y-2">
-                        {nhtsaData.bulletins.map((bulletin, index) => (
-                          <Alert key={index}>
+                  {/* Complaints Section */}
+                  {nhtsaData.complaints && nhtsaData.complaints.length > 0 && (
+                    <div className="mb-6">
+                      <h3 className="font-medium text-orange-600 mb-2">⚠️ Manufacturer Defect Reports</h3>
+                      <div className="space-y-4">
+                        {nhtsaData.complaints.map((complaint, index) => (
+                          <Alert key={index} variant="warning">
                             <AlertDescription>
-                              {bulletin.Summary}
+                              <div className="space-y-2">
+                                <strong>Component: {complaint.Component}</strong>
+                                <p>{complaint.Summary}</p>
+                                <p className="text-sm">
+                                  Failure Mileage: {complaint.FailureMileage}
+                                  {complaint.Crash === "Yes" && (
+                                    <span className="text-red-600 ml-2">• Resulted in crash</span>
+                                  )}
+                                  {complaint.Fire === "Yes" && (
+                                    <span className="text-red-600 ml-2">• Involved fire</span>
+                                  )}
+                                </p>
+                              </div>
                             </AlertDescription>
                           </Alert>
                         ))}
                       </div>
                     </div>
                   )}
-                  {nhtsaData.vehicleDetails && (
+
+                  {/* Technical Service Bulletins */}
+                  {nhtsaData.tsbs && nhtsaData.tsbs.length > 0 && (
                     <div>
+                      <h3 className="font-medium text-blue-600 mb-2">📋 Technical Service Bulletins</h3>
+                      <div className="space-y-4">
+                        {nhtsaData.tsbs.map((tsb, index) => (
+                          <Alert key={index}>
+                            <AlertDescription>
+                              <div className="space-y-2">
+                                <strong>{tsb.ComponentDescription}</strong>
+                                <p>{tsb.Summary}</p>
+                                <p className="text-sm">Bulletin #: {tsb.ItemNumber}</p>
+                              </div>
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Basic Vehicle Information */}
+                  {nhtsaData.vehicleDetails && (
+                    <div className="mt-6">
                       <h3 className="font-medium mb-2">Vehicle Details</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <p>Make: {nhtsaData.vehicleDetails.Make}</p>
                         <p>Model: {nhtsaData.vehicleDetails.Model}</p>
                         <p>Year: {nhtsaData.vehicleDetails.ModelYear}</p>
                         <p>Vehicle Type: {nhtsaData.vehicleDetails.VehicleType}</p>
+                        {nhtsaData.vehicleDetails.ManufacturerName && (
+                          <p>Manufacturer: {nhtsaData.vehicleDetails.ManufacturerName}</p>
+                        )}
                         {nhtsaData.vehicleDetails.PlantCountry && (
                           <p>Manufacturing Country: {nhtsaData.vehicleDetails.PlantCountry}</p>
                         )}
