@@ -20,6 +20,12 @@ import { Car, Wrench, Star, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+interface VehicleInfo {
+  year: string;
+  make: string;
+  model: string;
+}
+
 interface MaintenanceTask {
   id: string;
   title: string;
@@ -151,7 +157,11 @@ export default function VehicleGuide() {
   const [searchQuery, setSearchQuery] = useState("");
   const [customMaintenanceQuery, setCustomMaintenanceQuery] = useState("");
   const [selectedTask, setSelectedTask] = useState<MaintenanceTask | null>(null);
-  const [vehicleModel, setVehicleModel] = useState("");
+  const [vehicleInfo, setVehicleInfo] = useState<VehicleInfo>({
+    year: "",
+    make: "",
+    model: ""
+  });
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>(COMMON_TASKS);
@@ -191,17 +201,28 @@ export default function VehicleGuide() {
       };
 
       setMaintenanceTasks(prev => [...prev, newTask]);
-      if (vehicleModel) {
+      if (isVehicleInfoComplete()) {
         fetchYouTubeVideos(newTask);
       }
       setCustomMaintenanceQuery("");
     }
   };
 
+  const isVehicleInfoComplete = () => {
+    return vehicleInfo.year && vehicleInfo.make && vehicleInfo.model;
+  };
+
+  const getVehicleString = () => {
+    return `${vehicleInfo.year} ${vehicleInfo.make} ${vehicleInfo.model}`.trim();
+  };
+
   const fetchYouTubeVideos = async (task: MaintenanceTask) => {
+    if (!isVehicleInfoComplete()) return;
+
     setIsLoadingVideos(true);
     try {
-      const query = `${vehicleModel} ${task.title} tutorial`;
+      const vehicleString = getVehicleString();
+      const query = `${vehicleString} ${task.title} tutorial how to`;
       const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(query)}`);
       const data = await response.json();
       setVideos(data.items.map((item: any) => ({
@@ -230,6 +251,30 @@ export default function VehicleGuide() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <Input
+                type="text"
+                placeholder="Vehicle Year"
+                value={vehicleInfo.year}
+                onChange={(e) => setVehicleInfo(prev => ({ ...prev, year: e.target.value }))}
+                className="w-full"
+              />
+              <Input
+                type="text"
+                placeholder="Vehicle Make"
+                value={vehicleInfo.make}
+                onChange={(e) => setVehicleInfo(prev => ({ ...prev, make: e.target.value }))}
+                className="w-full"
+              />
+              <Input
+                type="text"
+                placeholder="Vehicle Model"
+                value={vehicleInfo.model}
+                onChange={(e) => setVehicleInfo(prev => ({ ...prev, model: e.target.value }))}
+                className="w-full"
+              />
+            </div>
+
             <div>
               <Input
                 type="text"
@@ -244,14 +289,19 @@ export default function VehicleGuide() {
                 className="w-full mb-4"
               />
               <div className="flex gap-2">
-                <Button variant="default" onClick={addCustomTask} className="flex-none">
+                <Button 
+                  variant="default" 
+                  onClick={addCustomTask} 
+                  className="flex-none"
+                  disabled={!isVehicleInfoComplete()}
+                >
                   <Search className="h-4 w-4 mr-2" />
                   Search
                 </Button>
                 <Button
                   variant="outline"
                   onClick={addCustomTask}
-                  disabled={!customMaintenanceQuery.trim()}
+                  disabled={!customMaintenanceQuery.trim() || !isVehicleInfoComplete()}
                   className="flex-none hover:bg-primary/5"
                 >
                   <Star className="h-4 w-4 mr-2" />
@@ -260,13 +310,13 @@ export default function VehicleGuide() {
               </div>
             </div>
 
-            <Input
-              type="text"
-              placeholder="Enter your vehicle make and model..."
-              value={vehicleModel}
-              onChange={(e) => setVehicleModel(e.target.value)}
-              className="w-full"
-            />
+            {!isVehicleInfoComplete() && (
+              <Alert>
+                <AlertDescription>
+                  Please enter your vehicle's year, make, and model to see specific maintenance guides
+                </AlertDescription>
+              </Alert>
+            )}
 
             <div className="text-sm text-muted-foreground mb-4">
               Or choose from common repairs:
@@ -288,7 +338,7 @@ export default function VehicleGuide() {
                       value={task.id}
                       onSelect={() => {
                         setSelectedTask(task);
-                        if (vehicleModel) {
+                        if (isVehicleInfoComplete()) {
                           fetchYouTubeVideos(task);
                         }
                       }}
@@ -316,6 +366,11 @@ export default function VehicleGuide() {
                 <CardHeader>
                   <CardTitle>{selectedTask.title}</CardTitle>
                   <CardDescription>{selectedTask.description}</CardDescription>
+                  {isVehicleInfoComplete() && (
+                    <div className="text-sm text-muted-foreground">
+                      For: {getVehicleString()}
+                    </div>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div>
@@ -336,17 +391,17 @@ export default function VehicleGuide() {
                     </ol>
                   </div>
 
-                  {!vehicleModel && (
+                  {!isVehicleInfoComplete() && (
                     <Alert>
                       <AlertDescription>
-                        Enter your vehicle make and model to see specific video guides
+                        Enter your vehicle's year, make, and model to see specific video guides
                       </AlertDescription>
                     </Alert>
                   )}
 
                   {videos.length > 0 && (
                     <div className="space-y-4">
-                      <h3 className="font-medium">Video Guides for {vehicleModel}:</h3>
+                      <h3 className="font-medium">Video Guides for {getVehicleString()}:</h3>
                       <div className="grid gap-4">
                         {videos.map((video) => (
                           <div key={video.id} className="space-y-2">
