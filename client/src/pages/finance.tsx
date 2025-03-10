@@ -13,6 +13,7 @@ import { AlertCircle } from "lucide-react";
 import BankLink from "@/components/bank-link";
 import RetirementPlanning from "@/components/retirement-planning";
 import FinancialDashboard from "@/components/financial-dashboard";
+import CreditSkills from "@/components/credit-skills";
 import { useState } from "react";
 
 export default function Finance() {
@@ -37,6 +38,7 @@ export default function Finance() {
             <TabsTrigger value="chat">AI Financial Advisor</TabsTrigger>
             <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="credit">Credit Skills</TabsTrigger>
             <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
             <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
           </TabsList>
@@ -79,6 +81,10 @@ export default function Finance() {
 
         <TabsContent value="dashboard">
           <FinancialDashboard budgetData={budgetData} />
+        </TabsContent>
+
+        <TabsContent value="credit">
+          <CreditSkills />
         </TabsContent>
 
         <TabsContent value="retirement">
