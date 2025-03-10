@@ -8,14 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Info, Car, Wrench, Star, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -94,9 +86,13 @@ const COMMON_TASKS: MaintenanceTask[] = [
 ];
 
 export default function VehicleGuide() {
-  // VIN Safety Lookup State
   const [vin, setVin] = useState("");
+  const [make, setMake] = useState("");
+  const [model, setModel] = useState("");
+  const [year, setYear] = useState("");
   const [recalls, setRecalls] = useState([]);
+  const [vehicleDetails, setVehicleDetails] = useState([]);
+  const [crashRatings, setCrashRatings] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -133,15 +129,53 @@ export default function VehicleGuide() {
         `https://api.nhtsa.gov/recalls/recallsByVehicle?vin=${vin}`
       );
       const data = await response.json();
-
-      if (data && data.results && data.results.length > 0) {
-        setRecalls(data.results);
-      } else {
-        setRecalls([]);
-        setError("No recalls found for this VIN.");
-      }
+      setRecalls(data.results || []);
     } catch (err) {
       setError("Failed to fetch recall data. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch Vehicle Details by Make & Year
+  const fetchVehicleDetails = async () => {
+    if (!make || !year) {
+      setError("Please enter both Make and Year.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${year}?format=json`
+      );
+      const data = await response.json();
+      setVehicleDetails(data.Results || []);
+    } catch (err) {
+      setError("Failed to fetch vehicle details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch Crash Safety Ratings
+  const fetchCrashRatings = async () => {
+    if (!year || !make || !model) {
+      setError("Please enter Year, Make, and Model.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `https://api.nhtsa.gov/SafetyRatings/modelyear/${year}/make/${make}/model/${model}`
+      );
+      const data = await response.json();
+      setCrashRatings(data.Results || []);
+    } catch (err) {
+      setError("Failed to fetch crash ratings.");
     } finally {
       setLoading(false);
     }
@@ -280,10 +314,112 @@ export default function VehicleGuide() {
               <div className="mt-4">
                 <h3 className="text-lg font-semibold">Recall Results:</h3>
                 <ul className="mt-2 space-y-2">
-                  {recalls.map((recall:any, index) => (
+                  {recalls.map((recall, index) => (
                     <li key={index} className="p-3 bg-gray-100 rounded">
                       <strong>{recall.Component}</strong>
                       <p>{recall.Summary}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Vehicle Details Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Vehicle Details</CardTitle>
+          <CardDescription>Enter the Make and Year to get vehicle details.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Vehicle Make"
+              value={make}
+              onChange={(e) => setMake(e.target.value)}
+              className="w-full"
+            />
+            <Input
+              type="text"
+              placeholder="Vehicle Year"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="w-full"
+            />
+            <Button onClick={fetchVehicleDetails} disabled={loading} className="w-full">
+              {loading ? "Fetching..." : "Get Vehicle Details"}
+            </Button>
+            {error && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {vehicleDetails.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold">Vehicle Models:</h3>
+                <ul className="mt-2 space-y-2">
+                  {vehicleDetails.map((vehicle, index) => (
+                    <li key={index} className="p-3 bg-gray-100 rounded">
+                      {vehicle.Model_Name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+
+      {/* Crash Ratings Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Crash Safety Ratings</CardTitle>
+          <CardDescription>Enter Year, Make, and Model to check crash ratings.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Vehicle Year"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="w-full"
+            />
+            <Input
+              type="text"
+              placeholder="Vehicle Make"
+              value={make}
+              onChange={(e) => setMake(e.target.value)}
+              className="w-full"
+            />
+            <Input
+              type="text"
+              placeholder="Vehicle Model"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="w-full"
+            />
+            <Button onClick={fetchCrashRatings} disabled={loading} className="w-full">
+              {loading ? "Fetching..." : "Check Crash Ratings"}
+            </Button>
+            {error && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {crashRatings && crashRatings.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold">Crash Ratings:</h3>
+                <ul className="mt-2 space-y-2">
+                  {crashRatings.map((rating, index) => (
+                    <li key={index} className="p-3 bg-gray-100 rounded">
+                      <strong>{rating.OverallRating}</strong> - {rating.VehicleDescription}
                     </li>
                   ))}
                 </ul>
