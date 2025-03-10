@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-// Updated with working video IDs
+// Updated with verified working educational content
 const CREDIT_TOPICS = [
   {
     id: "basics",
@@ -36,13 +36,13 @@ const CREDIT_TOPICS = [
       {
         title: "Credit Score Factors",
         content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%).",
-        videoId: "5DGjQmt1OKk",
+        videoId: "HGn4YC4kkC8",
         source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
       },
       {
         title: "Credit Reports",
         content: "A credit report is a detailed record of your credit history, including loans, credit cards, and payment history. You're entitled to one free report annually from each bureau.",
-        videoId: "9zBJBE3GgHg",
+        videoId: "v6P9yYUXcs0",
         source: "https://www.annualcreditreport.com/"
       }
     ]
@@ -55,7 +55,7 @@ const CREDIT_TOPICS = [
       {
         title: "Secured Credit Cards",
         content: "A secured card requires a deposit and is an excellent way to start building credit with minimal risk.",
-        videoId: "nscIqEBV6tE",
+        videoId: "99G1pBPVwE4",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/improving-credit/building-credit/"
       },
       {
@@ -67,7 +67,7 @@ const CREDIT_TOPICS = [
       {
         title: "Credit-Builder Loans",
         content: "These loans are specifically designed to help build credit by reporting payments to credit bureaus.",
-        videoId: "rpEy_LKgHxM",
+        videoId: "YGzEf8y-8pw",
         source: "https://www.nerdwallet.com/article/loans/personal-loans/credit-builder-loans"
       }
     ]
@@ -170,7 +170,7 @@ export default function CreditSkills() {
           <iframe
             width="560"
             height="315"
-            src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0`}
+            src={`https://www.youtube.com/embed/${videoId}`}
             title={title}
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
