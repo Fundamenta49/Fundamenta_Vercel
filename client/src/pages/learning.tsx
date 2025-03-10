@@ -448,10 +448,10 @@ export default function Learning() {
       <h1 className="text-3xl font-bold mb-6 text-center">Learning & Development</h1>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl bg-white">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Brain className="h-6 w-6 text-primary" />
+            <DialogTitle className="flex items-center gap-2 text-2xl text-[#2C3E50]">
+              <Brain className="h-6 w-6 text-[#4D9EAF]" />
               {selectedSkill || "Life Skills Guide"}
             </DialogTitle>
           </DialogHeader>
@@ -547,7 +547,7 @@ export default function Learning() {
                   {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
                     <Card
                       key={index}
-                      className="cursor-pointer hover:bg-accent/50 transition-colors"
+                      className="cursor-pointer bg-white hover:bg-gray-50/50 transition-all duration-200"
                       onClick={() => handlePromptClick(prompt)}
                     >
                       <CardHeader>
