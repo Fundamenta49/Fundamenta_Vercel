@@ -282,42 +282,79 @@ export default function VehicleGuide() {
     setValidationError(null);
 
     try {
+      // First, normalize the input
+      const normalizedMake = vehicleInfo.make.trim().toLowerCase();
+      const normalizedModel = vehicleInfo.model.trim().toLowerCase();
+      const year = vehicleInfo.year.trim();
+
+      // Validate the year
+      if (!/^\d{4}$/.test(year)) {
+        setValidationError("Please enter a valid 4-digit year.");
+        return;
+      }
+
+      // First API call to validate make/model/year combination
       const validationResponse = await fetch(
-        `https://api.nhtsa.gov/vehicles/GetModelsForMakeYear/make/${encodeURIComponent(vehicleInfo.make)}/modelyear/${vehicleInfo.year}`
+        `https://api.nhtsa.gov/vehicles/GetModelsForMakeYear/make/${encodeURIComponent(normalizedMake)}/modelyear/${year}`
       );
+
+      if (!validationResponse.ok) {
+        throw new Error('Failed to validate vehicle information');
+      }
+
       const validationData = await validationResponse.json();
 
-      if (!validationData.Results.some(model =>
-        model.Model_Name.toLowerCase().includes(vehicleInfo.model.toLowerCase())
-      )) {
-        setValidationError("Vehicle not found in NHTSA database. Please check your input.");
+      // Check if any models match (case-insensitive partial match)
+      const matchingModels = validationData.Results.filter(model =>
+        model.Model_Name.toLowerCase().includes(normalizedModel) ||
+        normalizedModel.includes(model.Model_Name.toLowerCase())
+      );
+
+      if (matchingModels.length === 0) {
+        setValidationError(`Could not find ${year} ${vehicleInfo.make} ${vehicleInfo.model} in the NHTSA database. Please check your input.`);
         setIsLoadingNHTSA(false);
         return;
       }
 
+      // Fetch recalls
       const recallsResponse = await fetch(
-        `https://api.nhtsa.gov/recalls/recallsByVehicle?make=${encodeURIComponent(vehicleInfo.make)}&model=${encodeURIComponent(vehicleInfo.model)}&modelYear=${vehicleInfo.year}`
+        `https://api.nhtsa.gov/recalls/recallsByVehicle?make=${encodeURIComponent(normalizedMake)}&model=${encodeURIComponent(normalizedModel)}&modelYear=${year}`
       );
+
+      if (!recallsResponse.ok) {
+        throw new Error('Failed to fetch recall information');
+      }
+
       const recallsData = await recallsResponse.json();
 
+      // Fetch technical service bulletins
       const tsResponse = await fetch(
-        `https://api.nhtsa.gov/complaints/complaintsByVehicle?make=${encodeURIComponent(vehicleInfo.make)}&model=${encodeURIComponent(vehicleInfo.model)}&modelYear=${vehicleInfo.year}`
+        `https://api.nhtsa.gov/complaints/complaintsByVehicle?make=${encodeURIComponent(normalizedMake)}&model=${encodeURIComponent(normalizedModel)}&modelYear=${year}`
       );
+
+      if (!tsResponse.ok) {
+        throw new Error('Failed to fetch technical service bulletins');
+      }
+
       const tsData = await tsResponse.json();
 
       setNhtsaData({
-        recalls: recallsData.results.slice(0, 5),
-        bulletins: tsData.results.slice(0, 5),
+        recalls: recallsData.results?.slice(0, 5) || [],
+        bulletins: tsData.results?.slice(0, 5) || [],
         vehicleDetails: {
           Make: vehicleInfo.make,
           Model: vehicleInfo.model,
-          ModelYear: vehicleInfo.year,
-          VehicleType: validationData.Results[0]?.VehicleType || 'Unknown'
+          ModelYear: year,
+          VehicleType: matchingModels[0]?.VehicleType || 'Unknown'
         }
       });
+
     } catch (error) {
       console.error('Error fetching NHTSA data:', error);
-      setValidationError("Error fetching vehicle information. Please try again.");
+      setValidationError(
+        "Unable to fetch vehicle information. Please check your internet connection and try again. " +
+        "If the problem persists, the NHTSA service might be temporarily unavailable."
+      );
     } finally {
       setIsLoadingNHTSA(false);
     }
