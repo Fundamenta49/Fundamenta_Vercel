@@ -16,7 +16,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useState } from "react";
-import { Car, Wrench, Star, Search } from "lucide-react";
+import { Car, Wrench, Star, Search, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -42,6 +42,24 @@ interface YouTubeVideo {
   id: string;
   title: string;
   thumbnail: string;
+}
+
+interface NHTSAData {
+  recalls?: Array<{
+    Component: string;
+    Summary: string;
+    Consequence: string;
+  }>;
+  bulletins?: Array<{
+    ItemNumber: string;
+    Summary: string;
+  }>;
+  vehicleDetails?: {
+    Make: string;
+    Model: string;
+    ModelYear: string;
+    VehicleType: string;
+  };
 }
 
 const COMMON_TASKS: MaintenanceTask[] = [
@@ -165,6 +183,9 @@ export default function VehicleGuide() {
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>(COMMON_TASKS);
+  const [nhtsaData, setNhtsaData] = useState<NHTSAData | null>(null);
+  const [isLoadingNHTSA, setIsLoadingNHTSA] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const filteredTasks = maintenanceTasks.filter(task =>
     task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -254,6 +275,60 @@ export default function VehicleGuide() {
     }
   };
 
+  const validateAndFetchVehicleData = async () => {
+    if (!isVehicleInfoComplete()) return;
+
+    setIsLoadingNHTSA(true);
+    setValidationError(null);
+
+    try {
+      const validationResponse = await fetch(
+        `https://api.nhtsa.gov/vehicles/GetModelsForMakeYear/make/${encodeURIComponent(vehicleInfo.make)}/modelyear/${vehicleInfo.year}`
+      );
+      const validationData = await validationResponse.json();
+
+      if (!validationData.Results.some(model =>
+        model.Model_Name.toLowerCase().includes(vehicleInfo.model.toLowerCase())
+      )) {
+        setValidationError("Vehicle not found in NHTSA database. Please check your input.");
+        setIsLoadingNHTSA(false);
+        return;
+      }
+
+      const recallsResponse = await fetch(
+        `https://api.nhtsa.gov/recalls/recallsByVehicle?make=${encodeURIComponent(vehicleInfo.make)}&model=${encodeURIComponent(vehicleInfo.model)}&modelYear=${vehicleInfo.year}`
+      );
+      const recallsData = await recallsResponse.json();
+
+      const tsResponse = await fetch(
+        `https://api.nhtsa.gov/complaints/complaintsByVehicle?make=${encodeURIComponent(vehicleInfo.make)}&model=${encodeURIComponent(vehicleInfo.model)}&modelYear=${vehicleInfo.year}`
+      );
+      const tsData = await tsResponse.json();
+
+      setNhtsaData({
+        recalls: recallsData.results.slice(0, 5),
+        bulletins: tsData.results.slice(0, 5),
+        vehicleDetails: {
+          Make: vehicleInfo.make,
+          Model: vehicleInfo.model,
+          ModelYear: vehicleInfo.year,
+          VehicleType: validationData.Results[0]?.VehicleType || 'Unknown'
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching NHTSA data:', error);
+      setValidationError("Error fetching vehicle information. Please try again.");
+    } finally {
+      setIsLoadingNHTSA(false);
+    }
+  };
+
+  const handleVehicleInfoChange = (field: keyof VehicleInfo, value: string) => {
+    setVehicleInfo(prev => ({ ...prev, [field]: value }));
+    setNhtsaData(null);
+    setValidationError(null);
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -273,21 +348,21 @@ export default function VehicleGuide() {
                 type="text"
                 placeholder="Vehicle Year"
                 value={vehicleInfo.year}
-                onChange={(e) => setVehicleInfo(prev => ({ ...prev, year: e.target.value }))}
+                onChange={(e) => handleVehicleInfoChange('year', e.target.value)}
                 className="w-full"
               />
               <Input
                 type="text"
                 placeholder="Vehicle Make"
                 value={vehicleInfo.make}
-                onChange={(e) => setVehicleInfo(prev => ({ ...prev, make: e.target.value }))}
+                onChange={(e) => handleVehicleInfoChange('make', e.target.value)}
                 className="w-full"
               />
               <Input
                 type="text"
                 placeholder="Vehicle Model"
                 value={vehicleInfo.model}
-                onChange={(e) => setVehicleInfo(prev => ({ ...prev, model: e.target.value }))}
+                onChange={(e) => handleVehicleInfoChange('model', e.target.value)}
                 className="w-full"
               />
             </div>
@@ -322,10 +397,83 @@ export default function VehicleGuide() {
               </div>
             </div>
 
+            {isVehicleInfoComplete() && (
+              <Button
+                onClick={validateAndFetchVehicleData}
+                disabled={isLoadingNHTSA}
+                className="w-full"
+              >
+                Validate Vehicle Information
+              </Button>
+            )}
+
+            {isLoadingNHTSA && (
+              <div className="text-center py-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                <p className="text-sm text-gray-500 mt-2">Validating vehicle information...</p>
+              </div>
+            )}
+
+            {validationError && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>{validationError}</AlertDescription>
+              </Alert>
+            )}
+
+            {nhtsaData && (
+              <Card className="mt-4">
+                <CardHeader>
+                  <CardTitle className="text-lg">Vehicle Information</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {nhtsaData.recalls && nhtsaData.recalls.length > 0 && (
+                    <div className="mb-4">
+                      <h3 className="font-medium text-red-600 mb-2">Active Recalls</h3>
+                      <div className="space-y-2">
+                        {nhtsaData.recalls.map((recall, index) => (
+                          <Alert key={index} variant="destructive">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertDescription>
+                              <strong>{recall.Component}</strong>: {recall.Summary} ({recall.Consequence})
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {nhtsaData.bulletins && nhtsaData.bulletins.length > 0 && (
+                    <div>
+                      <h3 className="font-medium text-orange-600 mb-2">Technical Service Bulletins</h3>
+                      <div className="space-y-2">
+                        {nhtsaData.bulletins.map((bulletin, index) => (
+                          <Alert key={index}>
+                            <AlertDescription>
+                              {bulletin.Summary}
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {nhtsaData.vehicleDetails && (
+                    <div>
+                      <h3 className="font-medium mb-2">Vehicle Details</h3>
+                      <p>Make: {nhtsaData.vehicleDetails.Make}</p>
+                      <p>Model: {nhtsaData.vehicleDetails.Model}</p>
+                      <p>Year: {nhtsaData.vehicleDetails.ModelYear}</p>
+                      <p>Vehicle Type: {nhtsaData.vehicleDetails.VehicleType}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
             {!isVehicleInfoComplete() && (
               <Alert>
                 <AlertDescription>
-                  Please enter your vehicle's year, make, and model to see specific maintenance guides
+                  Please enter your vehicle's year, make, and model to see specific maintenance guides and NHTSA data.
                 </AlertDescription>
               </Alert>
             )}
