@@ -278,166 +278,7 @@ export default function VehicleGuide() {
 
   return (
     <div className="space-y-6">
-      {/* Safety Recall Lookup Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Vehicle Safety Lookup</CardTitle>
-          <CardDescription>
-            Enter your Vehicle Identification Number (VIN) to check for recalls and safety information
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Enter VIN (17 characters)"
-                value={vin}
-                onChange={(e) => setVin(e.target.value)}
-                className="w-full pr-8"
-                maxLength={17}
-              />
-              <Info
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help"
-                title="Vehicle Identification Number - Located on your vehicle registration or driver's side door frame"
-              />
-            </div>
-
-            <Button
-              onClick={fetchRecalls}
-              disabled={loading}
-              className="w-full"
-            >
-              {loading ? "Checking..." : "Check Recalls"}
-            </Button>
-
-            {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            {recalls.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">Recall Results:</h3>
-                <ul className="mt-2 space-y-2">
-                  {recalls.map((recall, index) => (
-                    <li key={index} className="p-3 bg-gray-100 rounded">
-                      <strong>{recall.Component}</strong>
-                      <p>{recall.Summary}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Vehicle Details Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Vehicle Details</CardTitle>
-          <CardDescription>Enter the Make and Year to get vehicle details.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Input
-              type="text"
-              placeholder="Vehicle Make"
-              value={make}
-              onChange={(e) => setMake(e.target.value)}
-              className="w-full"
-            />
-            <Input
-              type="text"
-              placeholder="Vehicle Year"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="w-full"
-            />
-            <Button onClick={fetchVehicleDetails} disabled={loading} className="w-full">
-              {loading ? "Fetching..." : "Get Vehicle Details"}
-            </Button>
-            {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            {vehicleDetails.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">Vehicle Models:</h3>
-                <ul className="mt-2 space-y-2">
-                  {vehicleDetails.map((vehicle, index) => (
-                    <li key={index} className="p-3 bg-gray-100 rounded">
-                      {vehicle.Model_Name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-
-      {/* Crash Ratings Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Crash Safety Ratings</CardTitle>
-          <CardDescription>Enter Year, Make, and Model to check crash ratings.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Input
-              type="text"
-              placeholder="Vehicle Year"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="w-full"
-            />
-            <Input
-              type="text"
-              placeholder="Vehicle Make"
-              value={make}
-              onChange={(e) => setMake(e.target.value)}
-              className="w-full"
-            />
-            <Input
-              type="text"
-              placeholder="Vehicle Model"
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              className="w-full"
-            />
-            <Button onClick={fetchCrashRatings} disabled={loading} className="w-full">
-              {loading ? "Fetching..." : "Check Crash Ratings"}
-            </Button>
-            {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            {crashRatings && crashRatings.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">Crash Ratings:</h3>
-                <ul className="mt-2 space-y-2">
-                  {crashRatings.map((rating, index) => (
-                    <li key={index} className="p-3 bg-gray-100 rounded">
-                      <strong>{rating.OverallRating}</strong> - {rating.VehicleDescription}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Maintenance Guide Section */}
+      {/* Maintenance Guide Section - Now First */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -611,6 +452,164 @@ export default function VehicleGuide() {
                   )}
                 </CardContent>
               </Card>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Safety Recall Lookup Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Vehicle Safety Lookup</CardTitle>
+          <CardDescription>
+            Enter your Vehicle Identification Number (VIN) to check for recalls and safety information
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Enter VIN (17 characters)"
+                value={vin}
+                onChange={(e) => setVin(e.target.value)}
+                className="w-full pr-8"
+                maxLength={17}
+              />
+              <Info
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help"
+                title="Vehicle Identification Number - Located on your vehicle registration or driver's side door frame"
+              />
+            </div>
+
+            <Button
+              onClick={fetchRecalls}
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? "Checking..." : "Check Recalls"}
+            </Button>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {recalls.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold">Recall Results:</h3>
+                <ul className="mt-2 space-y-2">
+                  {recalls.map((recall, index) => (
+                    <li key={index} className="p-3 bg-gray-100 rounded">
+                      <strong>{recall.Component}</strong>
+                      <p>{recall.Summary}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Vehicle Details Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Vehicle Details</CardTitle>
+          <CardDescription>Enter the Make and Year to get vehicle details.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Vehicle Make"
+              value={make}
+              onChange={(e) => setMake(e.target.value)}
+              className="w-full"
+            />
+            <Input
+              type="text"
+              placeholder="Vehicle Year"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="w-full"
+            />
+            <Button onClick={fetchVehicleDetails} disabled={loading} className="w-full">
+              {loading ? "Fetching..." : "Get Vehicle Details"}
+            </Button>
+            {error && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {vehicleDetails.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold">Vehicle Models:</h3>
+                <ul className="mt-2 space-y-2">
+                  {vehicleDetails.map((vehicle, index) => (
+                    <li key={index} className="p-3 bg-gray-100 rounded">
+                      {vehicle.Model_Name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Crash Ratings Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Crash Safety Ratings</CardTitle>
+          <CardDescription>Enter Year, Make, and Model to check crash ratings.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Vehicle Year"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="w-full"
+            />
+            <Input
+              type="text"
+              placeholder="Vehicle Make"
+              value={make}
+              onChange={(e) => setMake(e.target.value)}
+              className="w-full"
+            />
+            <Input
+              type="text"
+              placeholder="Vehicle Model"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="w-full"
+            />
+            <Button onClick={fetchCrashRatings} disabled={loading} className="w-full">
+              {loading ? "Fetching..." : "Check Crash Ratings"}
+            </Button>
+            {error && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {crashRatings && crashRatings.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold">Crash Ratings:</h3>
+                <ul className="mt-2 space-y-2">
+                  {crashRatings.map((rating, index) => (
+                    <li key={index} className="p-3 bg-gray-100 rounded">
+                      <strong>{rating.OverallRating}</strong> - {rating.VehicleDescription}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
         </CardContent>
