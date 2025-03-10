@@ -1,17 +1,17 @@
 {
   "variant": "professional",
-  "primary": "#3D7B98",
+  "primary": "#4D9EAF",
   "appearance": "light",
   "radius": 1.5,
   "colors": {
     "background": "#FFFFFF",
     "foreground": "#1A1A1A",
     "muted": "#F5F5F5",
-    "accent": "#3D7B98",
+    "accent": "#4D9EAF",
     "primary": {
-      "default": "#3D7B98",
-      "light": "#EBF4F8",
-      "dark": "#2C5A70"
+      "default": "#4D9EAF",
+      "light": "#E5F4F7",
+      "dark": "#3A7A8A"
     },
     "secondary": {
       "default": "#6B7280",
@@ -21,14 +21,14 @@
   },
   "effects": {
     "shadows": {
-      "sm": "0 1px 2px rgba(0, 0, 0, 0.05)",
-      "md": "0 4px 6px rgba(0, 0, 0, 0.05)",
-      "lg": "0 10px 15px rgba(0, 0, 0, 0.05)"
+      "sm": "0 2px 4px rgba(0, 0, 0, 0.05)",
+      "md": "0 4px 8px rgba(0, 0, 0, 0.1)",
+      "lg": "0 8px 16px rgba(0, 0, 0, 0.1)"
     },
     "gradients": {
-      "primary": "linear-gradient(135deg, #EBF4F8, #3D7B98)",
+      "primary": "linear-gradient(135deg, #E5F4F7, #4D9EAF)",
       "accent": "linear-gradient(135deg, #F3F4F6, #6B7280)",
-      "modern": "linear-gradient(135deg, #EBF4F8, #2C5A70)"
+      "modern": "linear-gradient(135deg, #E5F4F7, #3A7A8A)"
     }
   }
 }
