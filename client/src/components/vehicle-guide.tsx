@@ -344,16 +344,16 @@ export default function VehicleGuide() {
           setNhtsaData({
             recalls: recallData.Results || [],
             vehicleDetails: {
-              Make: vinInfo.Make,
-              Model: vinInfo.Model,
-              ModelYear: vinInfo.ModelYear,
-              VehicleType: vinInfo.VehicleType,
+              Make: vinInfo.Make || '',
+              Model: vinInfo.Model || '',
+              ModelYear: vinInfo.ModelYear || '',
+              VehicleType: vinInfo.VehicleType || '',
               VIN: vin,
-              PlantCountry: vinInfo.PlantCountry,
-              BodyClass: vinInfo.BodyClass,
-              FuelTypePrimary: vinInfo.FuelTypePrimary,
-              DriveType: vinInfo.DriveType,
-              ManufacturerName: vinInfo.Manufacturer
+              PlantCountry: vinInfo.PlantCountry || '',
+              BodyClass: vinInfo.BodyClass || '',
+              FuelTypePrimary: vinInfo.FuelTypePrimary || '',
+              DriveType: vinInfo.DriveType || '',
+              ManufacturerName: vinInfo.Manufacturer || ''
             }
           });
 
@@ -424,25 +424,8 @@ export default function VehicleGuide() {
           recallsData = { Results: [] };
         }
 
-        let tsData;
-        try {
-          const tsResponse = await fetch(
-            `https://vpic.nhtsa.dot.gov/api/vehicles/complaintsByVehicle/${encodeURIComponent(normalizedMake)}/${encodeURIComponent(normalizedModel)}/${year}?format=json`
-          );
-
-          if (!tsResponse.ok) {
-            throw new Error('Failed to fetch technical service bulletins');
-          }
-
-          tsData = await tsResponse.json();
-        } catch (error) {
-          console.error('TSB fetch error:', error);
-          tsData = { Results: [] };
-        }
-
         setNhtsaData({
           recalls: recallsData.Results?.slice(0, 5) || [],
-          bulletins: tsData.Results?.slice(0, 5) || [],
           vehicleDetails: {
             Make: vehicleInfo.make,
             Model: vehicleInfo.model,
