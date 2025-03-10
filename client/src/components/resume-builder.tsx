@@ -10,10 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Trash2, Wand2, Loader2, Upload } from "lucide-react";
+import { PlusCircle, Trash2, Wand2, Loader2, Upload, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 interface Education {
   school: string;
@@ -37,6 +38,74 @@ interface OptimizationSuggestions {
   }>;
   structuralChanges: string[];
 }
+
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: 'column',
+    backgroundColor: '#FFFFFF',
+    padding: 30,
+  },
+  section: {
+    marginBottom: 10,
+  },
+  heading: {
+    fontSize: 20,
+    marginBottom: 10,
+    color: '#2D3748',
+  },
+  subHeading: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: '#4A5568',
+  },
+  text: {
+    fontSize: 12,
+    marginBottom: 5,
+    color: '#1A202C',
+  },
+  contact: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+});
+
+const ResumePDF = ({ personalInfo, education, experience }) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      <View style={styles.section}>
+        <Text style={styles.heading}>{personalInfo.name}</Text>
+        <View style={styles.contact}>
+          <Text style={styles.text}>{personalInfo.email}</Text>
+          <Text style={styles.text}>{personalInfo.phone}</Text>
+        </View>
+        <Text style={styles.text}>{personalInfo.summary}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.heading}>Experience</Text>
+        {experience.map((exp, index) => (
+          <View key={index} style={styles.section}>
+            <Text style={styles.subHeading}>{exp.position} at {exp.company}</Text>
+            <Text style={styles.text}>{exp.duration}</Text>
+            <Text style={styles.text}>{exp.description}</Text>
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.heading}>Education</Text>
+        {education.map((edu, index) => (
+          <View key={index} style={styles.section}>
+            <Text style={styles.subHeading}>{edu.degree}</Text>
+            <Text style={styles.text}>{edu.school} - {edu.year}</Text>
+          </View>
+        ))}
+      </View>
+    </Page>
+  </Document>
+);
+
 
 export default function ResumeBuilder() {
   const { toast } = useToast();
@@ -597,57 +666,110 @@ export default function ResumeBuilder() {
       </Card>
 
       {suggestions && (
-        <Card>
-          <CardHeader>
-            <CardTitle>AI Suggestions</CardTitle>
-            <CardDescription>Recommended improvements for your resume</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Enhanced Summary</Label>
-              <div className="p-4 bg-muted rounded-lg">
-                <p>{suggestions.enhancedSummary}</p>
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>AI Suggestions</CardTitle>
+              <CardDescription>Recommended improvements for your resume</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Enhanced Summary</Label>
+                <div className="p-4 bg-muted rounded-lg">
+                  <p>{suggestions.enhancedSummary}</p>
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label>Recommended Keywords</Label>
-              <div className="flex flex-wrap gap-2">
-                {suggestions.keywords.map((keyword, index) => (
-                  <span
-                    key={index}
-                    className="px-2 py-1 bg-primary/10 rounded-full text-sm"
-                  >
-                    {keyword}
-                  </span>
-                ))}
+              <div className="space-y-2">
+                <Label>Recommended Keywords</Label>
+                <div className="flex flex-wrap gap-2">
+                  {suggestions.keywords.map((keyword, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 bg-primary/10 rounded-full text-sm"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label>Experience Improvements</Label>
-              <div className="space-y-4">
-                {suggestions.experienceSuggestions.map((suggestion, index) => (
-                  <div key={index} className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Original:</p>
-                    <p className="pl-4">{suggestion.original}</p>
-                    <p className="text-sm text-muted-foreground">Improved:</p>
-                    <p className="pl-4 text-primary">{suggestion.improved}</p>
-                  </div>
-                ))}
+              <div className="space-y-2">
+                <Label>Experience Improvements</Label>
+                <div className="space-y-4">
+                  {suggestions.experienceSuggestions.map((suggestion, index) => (
+                    <div key={index} className="space-y-2">
+                      <p className="text-sm text-muted-foreground">Original:</p>
+                      <p className="pl-4">{suggestion.original}</p>
+                      <p className="text-sm text-muted-foreground">Improved:</p>
+                      <p className="pl-4 text-primary">{suggestion.improved}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label>Structural Changes</Label>
-              <ul className="list-disc pl-4 space-y-1">
-                {suggestions.structuralChanges.map((change, index) => (
-                  <li key={index} className="text-sm">{change}</li>
-                ))}
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="space-y-2">
+                <Label>Structural Changes</Label>
+                <ul className="list-disc pl-4 space-y-1">
+                  {suggestions.structuralChanges.map((change, index) => (
+                    <li key={index} className="text-sm">{change}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex justify-end gap-4 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    // Apply AI suggestions to the form
+                    setPersonalInfo(prev => ({
+                      ...prev,
+                      summary: suggestions.enhancedSummary
+                    }));
+                    // Update experience descriptions with improved versions
+                    setExperience(prev =>
+                      prev.map((exp, idx) => ({
+                        ...exp,
+                        description: suggestions.experienceSuggestions[idx]?.improved || exp.description
+                      }))
+                    );
+                    toast({
+                      title: "AI Suggestions Applied",
+                      description: "Your resume has been updated with the optimized content."
+                    });
+                  }}
+                >
+                  <Wand2 className="h-4 w-4 mr-2" />
+                  Apply Suggestions
+                </Button>
+
+                <PDFDownloadLink
+                  document={<ResumePDF
+                    personalInfo={personalInfo}
+                    education={education}
+                    experience={experience}
+                  />}
+                  fileName={`${personalInfo.name.replace(/\s+/g, '_')}_Resume.pdf`}
+                >
+                  {({ loading }) => (
+                    <Button disabled={loading}>
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Generating PDF...
+                        </>
+                      ) : (
+                        <>
+                          <Download className="h-4 w-4 mr-2" />
+                          Download PDF
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
     </div>
   );
