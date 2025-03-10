@@ -5,6 +5,13 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import ChatInterface from "@/components/chat-interface";
 
 const COOKING_BASICS = [
@@ -71,6 +78,7 @@ export default function CookingGuide() {
   const [isLoading, setIsLoading] = useState(false);
   const [videos, setVideos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchGuidance = async (topic: string) => {
     setIsLoading(true);
@@ -99,6 +107,7 @@ export default function CookingGuide() {
 
       setGuidance(data.guidance);
       setVideos(data.videos || []);
+      setIsDialogOpen(true); // Open dialog when guidance is received
     } catch (error) {
       console.error("Error fetching guidance:", error);
       setError("Failed to load cooking guidance. Please try again.");
@@ -112,7 +121,7 @@ export default function CookingGuide() {
     await fetchGuidance(searchQuery);
   };
 
-  const renderGuidance = () => {
+  const renderGuidanceContent = () => {
     if (isLoading) {
       return (
         <div className="flex items-center justify-center h-40">
@@ -132,55 +141,48 @@ export default function CookingGuide() {
     if (!guidance) return null;
 
     return (
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Cooking Guide</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[500px] pr-4">
-            <div className="prose prose-gray max-w-none space-y-4">
-              {guidance.split('\n\n').map((section, idx) => {
-                if (section.startsWith('🎯') || section.startsWith('👩‍🍳') || 
-                    section.startsWith('⚠️') || section.startsWith('💡') || 
-                    section.startsWith('🧰') || section.startsWith('⏰')) {
-                  const [title, ...content] = section.split('\n');
-                  return (
-                    <div key={idx} className="mb-6">
-                      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-                      <div className="space-y-2">
-                        {content.map((line, lineIdx) => (
-                          <p key={lineIdx} className="text-gray-700">{line}</p>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                }
-                return <p key={idx} className="text-gray-700">{section}</p>;
-              })}
-            </div>
-
-            {videos.length > 0 && (
-              <div className="mt-8 space-y-6">
-                <h3 className="text-lg font-semibold">Tutorial Videos</h3>
-                <div className="grid gap-6">
-                  {videos.map((video) => (
-                    <div key={video.id} className="space-y-2">
-                      <iframe
-                        src={`https://www.youtube.com/embed/${video.id}`}
-                        title={video.title}
-                        className="w-full aspect-video rounded-lg"
-                        allowFullScreen
-                      />
-                      <p className="text-sm font-medium">{video.title}</p>
-                      <p className="text-sm text-gray-500">{video.description}</p>
-                    </div>
-                  ))}
+      <div className="space-y-6">
+        <div className="prose prose-gray max-w-none space-y-4">
+          {guidance.split('\n\n').map((section, idx) => {
+            if (section.startsWith('🎯') || section.startsWith('👩‍🍳') || 
+                section.startsWith('⚠️') || section.startsWith('💡') || 
+                section.startsWith('🧰') || section.startsWith('⏰')) {
+              const [title, ...content] = section.split('\n');
+              return (
+                <div key={idx} className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2">{title}</h3>
+                  <div className="space-y-2">
+                    {content.map((line, lineIdx) => (
+                      <p key={lineIdx} className="text-gray-700">{line}</p>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-          </ScrollArea>
-        </CardContent>
-      </Card>
+              );
+            }
+            return <p key={idx} className="text-gray-700">{section}</p>;
+          })}
+        </div>
+
+        {videos.length > 0 && (
+          <div className="mt-8 space-y-6">
+            <h3 className="text-lg font-semibold">Tutorial Videos</h3>
+            <div className="grid gap-6">
+              {videos.map((video) => (
+                <div key={video.id} className="space-y-2">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${video.id}`}
+                    title={video.title}
+                    className="w-full aspect-video rounded-lg"
+                    allowFullScreen
+                  />
+                  <p className="text-sm font-medium">{video.title}</p>
+                  <p className="text-sm text-gray-500">{video.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -197,7 +199,7 @@ export default function CookingGuide() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="flex gap-2">
               <Input
                 type="text"
@@ -247,7 +249,19 @@ export default function CookingGuide() {
         </CardContent>
       </Card>
 
-      {renderGuidance()}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{searchQuery}</DialogTitle>
+            <DialogDescription>
+              Step-by-step guide and helpful resources
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="pr-4">
+            {renderGuidanceContent()}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
       <Card>
         <CardHeader>
