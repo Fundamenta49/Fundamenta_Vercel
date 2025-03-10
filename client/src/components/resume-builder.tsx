@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Trash2, Wand2, Loader2 } from "lucide-react";
+import { PlusCircle, Trash2, Wand2, Loader2, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -46,6 +46,9 @@ export default function ResumeBuilder() {
     phone: "",
     summary: "",
   });
+
+  const [uploadedResume, setUploadedResume] = useState<File | null>(null);
+  const [isParsingResume, setIsParsingResume] = useState(false);
 
   const [targetPosition, setTargetPosition] = useState("");
   const [education, setEducation] = useState<Education[]>([
@@ -126,7 +129,7 @@ export default function ResumeBuilder() {
         experience,
         targetPosition,
         company,
-        keyExperience: experience.map(exp => 
+        keyExperience: experience.map((exp) =>
           `${exp.position} at ${exp.company}: ${exp.description}`
         ),
         additionalNotes,
@@ -163,24 +166,128 @@ export default function ResumeBuilder() {
       return;
     }
 
-    const formattedExperience = experience.map(exp => 
+    const formattedExperience = experience.map((exp) =>
       `${exp.position} at ${exp.company}: ${exp.description}`
     );
 
-    const formattedEducation = education.map(edu =>
+    const formattedEducation = education.map((edu) =>
       `${edu.degree} from ${edu.school} (${edu.year})`
     );
 
     const allExperience = [
       ...formattedExperience,
-      ...keyExperience
-    ].filter(exp => exp.trim());
+      ...keyExperience,
+    ].filter((exp) => exp.trim());
 
     coverLetterMutation.mutate();
   };
 
+  const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Only accept PDF and Word documents
+    if (!file.type.match('application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+      toast({
+        variant: "destructive",
+        title: "Invalid File Type",
+        description: "Please upload a PDF or Word document.",
+      });
+      return;
+    }
+
+    setUploadedResume(file);
+    setIsParsingResume(true);
+
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    try {
+      const response = await fetch('/api/resume/parse', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to parse resume');
+      }
+
+      const data = await response.json();
+
+      // Update the form with parsed data
+      setPersonalInfo({
+        name: data.name || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        summary: data.summary || '',
+      });
+
+      if (data.experience) {
+        setExperience(data.experience.map((exp: any) => ({
+          company: exp.company || '',
+          position: exp.position || '',
+          duration: exp.duration || '',
+          description: exp.description || '',
+        })));
+      }
+
+      if (data.education) {
+        setEducation(data.education.map((edu: any) => ({
+          school: edu.school || '',
+          degree: edu.degree || '',
+          year: edu.year || '',
+        })));
+      }
+
+      toast({
+        title: "Resume Parsed Successfully",
+        description: "Your resume has been analyzed and the information has been populated. You can now edit and optimize it for your target position.",
+      });
+
+    } catch (error) {
+      console.error('Error parsing resume:', error);
+      toast({
+        variant: "destructive",
+        title: "Parsing Failed",
+        description: "Failed to parse your resume. Please try again or enter the information manually.",
+      });
+    } finally {
+      setIsParsingResume(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Upload Existing Resume</CardTitle>
+          <CardDescription>
+            Upload your current resume and let AI help you optimize it for your target position
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleResumeUpload}
+              disabled={isParsingResume}
+              className="flex-1"
+            />
+            {isParsingResume && (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Analyzing resume...</span>
+              </div>
+            )}
+          </div>
+          {uploadedResume && (
+            <p className="text-sm text-muted-foreground">
+              Uploaded: {uploadedResume.name}
+            </p>
+          )}
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Personal Information</CardTitle>

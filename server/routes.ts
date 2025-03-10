@@ -8,15 +8,16 @@ import { searchJobs } from "./jobs";
 import { createLinkToken, exchangePublicToken, getTransactions } from "./plaid";
 import axios from 'axios';
 import OpenAI from 'openai';
+import multer from "multer";
+import mammoth from "mammoth";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Update the messageSchema to include cooking
+// Define schemas
 const messageSchema = z.object({
-  skillArea: z.enum(["technical", "soft", "search", "life", "cooking"]),
+  skillArea: z.enum(["technical", "soft", "search", "life", "cooking", "career", "emergency", "finance", "wellness", "tour", "learning"]),
   userQuery: z.string()
 });
-
 
 const resumeSchema = z.object({
   personalInfo: z.object({
@@ -69,15 +70,35 @@ const interviewAnalysisSchema = z.object({
   industry: z.string(),
 });
 
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  }
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
 
       let systemMessage = `You are a friendly and supportive AI assistant.
-
+      
 Format your responses following these strict rules:
-
+      
 - Use only plain text - no special formatting characters
 - Never use asterisks (*) or hashtags (#) in your responses
 - Never use markdown syntax
@@ -85,56 +106,55 @@ Format your responses following these strict rules:
 - Add double line breaks between topics
 - Start new sections with friendly emojis
 - Keep everything in a conversational, friendly tone
-
+      
 Example formatting:
 🌟 Main Topic
 Here's the first point about this topic.
-
+      
 - First item in a list
 - Second item in a list
-
+      
 :✨ Next Topic
 Continue with the next section here.
-
+      
 Remember to suggest relevant features in the app that could help the user.`;
-
       // Category-specific system messages
       switch(validatedData.skillArea) {
         case "cooking":
           systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm! 
-
+          
           Share practical cooking tips in a casual, encouraging way. Break down techniques into simple steps and celebrate their cooking journey. 
-
+          
           Use emojis like 🔪 for prep steps, ⏲️ for timing, 🌡️ for temperatures, and ✨ for success tips.
-
+          
           Remember to:
           - Guide users to relevant cooking tutorials in the app
           - Mention our interactive cooking guides when relevant
           - Suggest the cleaning schedule generator for kitchen organization
           - Point users to our kitchen safety resources
-
+          
           Always prioritize kitchen safety while keeping the tone warm and supportive!`;
           break;
         case "career":
           systemMessage += `As a supportive career mentor 💼, offer encouraging but practical advice.
-
+          
           Share insights in a friendly, conversational way. Help users explore opportunities with confidence.
-
+          
           Remember to:
           - Suggest our career assessment tools when relevant
           - Point users to the interview practice section
           - Recommend our resume building resources
           - Guide users to salary insights tools
-
+          
           Use emojis like 🎯 for goals, 💡 for ideas, and ⭐ for achievements.`;
           break;
         case "emergency":
           systemMessage += `Stay calm and clear while providing crucial guidance. 
-
+          
           Use a steady, reassuring tone 💪 while giving precise instructions.
-
+          
           Break down steps clearly with plenty of spacing.
-
+          
           Add encouraging emojis like ✅ for completed steps and 🟢 for positive progress.`;
           break;
         case "finance":
@@ -410,7 +430,7 @@ Remember to suggest relevant features in the app that could help the user.`;
             content: `You are a career guidance counselor with expertise in the RIASEC model. 
             The user has completed a RIASEC assessment with the following top matches:
             ${riasecResults.join('\n')}
-
+            
             Provide personalized guidance based on these results and the user's questions.
             Focus on practical next steps, education paths, and specific career opportunities.
             Be encouraging but realistic, and always provide actionable advice.`
@@ -482,81 +502,81 @@ Remember to suggest relevant features in the app that could help the user.`;
             content: userQuery.includes("cooking guide") ?
               `You are a professional chef and cooking instructor creating a guide about "${userQuery.replace('cooking guide:', '')}". 
               Speak naturally and conversationally, while maintaining focus on safety and proper technique.
-
+              
               Structure your response like this:
-
+              
               🎯 Essential Safety First!
               Start with the most important safety considerations for this cooking topic.
-
+              
               👩‍🍳 Step-by-Step Guide
               Break down the process into clear, manageable steps. Include specific techniques and tools needed.
-
+              
               ⚠️ Common Mistakes to Avoid
               List potential pitfalls and how to prevent them.
-
+              
               💡 Pro Chef Tips
               Share professional insights that will help improve results.
-
+              
               🧰 Required Tools & Equipment
               List essential items needed, including safety equipment if applicable.
-
+              
               ⏰ Timing Guidelines
               Include any relevant timing information, temperatures, or storage guidelines.
-
+              
               🎬 Video Tutorials
               Here are some helpful video tutorials I found:
               ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
-
+              
               Keep the tone friendly and encouraging while emphasizing safety and proper technique!` :
               userQuery.includes("cleaning schedule") ?
               `You are a professional home organization expert creating a customized cleaning schedule. 
               Create a practical, easy-to-follow cleaning schedule that's encouraging and detailed.
-
+              
               Structure your response like this:
-
+              
               🎯 Your Custom Cleaning Schedule
               First, give a brief, friendly intro about the benefits of having a regular cleaning routine.
-
+              
               ⏰ Daily Tasks (15-20 minutes)
               List quick, essential daily tasks
-
+              
               📅 Weekly Tasks (Break down by areas)
               - Kitchen
               - Bathroom(s)
               - Living Areas
               - Bedrooms
               Include specific tasks and estimated time for each area
-
+              
               🧰 Monthly Deep Clean Tasks
               List tasks that need attention monthly
-
+              
               ✨ Recommended Cleaning Supplies
               List essential supplies needed
-
+              
               💡 Pro Tips
               Share 2-3 practical tips for maintaining the schedule
-
+              
               Keep the tone friendly and encouraging throughout!` :
               `You are a friendly, encouraging life coach creating a guide about "${userQuery}". Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
-
+              
               Structure your advice in these friendly sections:
-
+              
               🎯 Let's Break It Down!
               Write a friendly intro about why this skill matters, then walk through the process conversationally. Include any tools needed and important safety tips with a ⚠️.
-
+              
               💡 Pro Tips!
               Share some helpful tricks and shortcuts you've learned along the way. Think of these as friendly advice rather than formal instructions.
-
+              
               ⏰ Staying on Track 
               Give easy-to-remember guidelines about how often to practice this skill and how to make it a natural part of their routine.
-
+              
               🎬 Video Tutorials
               Here are some helpful video tutorials I found:
               ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
-
+              
               🔗 Resources & Tools
               Share some trusted websites, tools, or communities that can help them learn more.
-
+              
               End with a warm, encouraging note!`
           },
           {
@@ -891,11 +911,11 @@ Remember to suggest relevant features in the app that could help the user.`;
         });
       }
 
-      console.log(`Successfully validated video ${videoId}`);
+            console.log(`Successfully validated video ${videoId}`);
 
       res.json({
         id: video.id,
-        title: video.snippet.title,
+        title:video.snippet.title,
         thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
         error: false
       });
@@ -912,6 +932,121 @@ Remember to suggest relevant features in the app that could help the user.`;
         error: true,
         message: "Failed to validate video",
         details: error.response?.data?.error?.message || error.message
+      });
+    }
+  });
+
+  app.post("/api/resume/parse", upload.single('resume'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ 
+          error: true,
+          message: "Please upload a resume file (PDF or Word document)" 
+        });
+      }
+
+      console.log('Processing uploaded file:', {
+        filename: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
+
+      let textContent = '';
+
+      try {
+        console.log('Starting text extraction...');
+        if (req.file.mimetype === 'application/pdf') {
+          console.log('Processing PDF file...');
+          // Dynamically import pdf-parse only when needed
+          const pdfParse = await import('pdf-parse');
+          const pdfData = await pdfParse.default(req.file.buffer);
+          textContent = pdfData.text;
+          console.log('PDF text extracted successfully');
+        } else {
+          console.log('Processing Word document...');
+          const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+          textContent = result.value;
+          console.log('Word document text extracted successfully');
+        }
+
+        if (!textContent || textContent.trim().length === 0) {
+          throw new Error('No text content could be extracted from the document');
+        }
+
+        console.log('Text extraction completed successfully');
+      } catch (extractError) {
+        console.error('Text extraction error:', extractError);
+        return res.status(400).json({
+          error: true,
+          message: "Could not extract text from the uploaded file. Please ensure the file is not corrupted or password protected.",
+          details: extractError.message
+        });
+      }
+
+      try {
+        console.log('Starting OpenAI analysis...');
+        const response = await openai.chat.completions.create({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: `You are a professional resume parser. Extract structured information from the resume text into JSON format with the following structure:
+            {
+              "name": string,
+              "email": string,
+              "phone": string,
+              "summary": string,
+              "experience": [
+                {
+                  "company": string,
+                  "position": string,
+                  "duration": string,
+                  "description": string
+                }
+              ],
+              "education": [
+                {
+                  "school": string,
+                  "degree": string,
+                  "year": string
+                }
+              ]
+            }
+
+            Guidelines:
+            - If a field is not found, use an empty string or empty array
+            - Ensure all dates and durations are properly formatted
+            - Extract the most relevant information for each section
+            - Keep descriptions concise but informative
+            - Ensure the output is valid JSON`
+            },
+            {
+              role: "user",
+              content: textContent
+            }
+          ],
+          response_format: { type: "json_object" }
+        });
+
+        const parsedData = JSON.parse(response.choices[0].message.content);
+        console.log('Resume successfully parsed and analyzed');
+        res.json(parsedData);
+
+      } catch (aiError) {
+        console.error('AI processing error:', aiError);
+        return res.status(500).json({
+          error: true,
+          message: "Failed to analyze the resume content. Please try again.",
+          details: aiError.message
+        });
+      }
+
+    } catch (error) {
+      console.error("Resume parsing error:", error);
+      res.status(500).json({
+        error: true,
+        message: "An unexpected error occurred while processing your resume",
+        details: error.message
       });
     }
   });
