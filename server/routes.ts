@@ -11,14 +11,12 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Update the messageSchema to include cooking
 const messageSchema = z.object({
-  message: z.string(),
-  category: z.enum(["emergency", "finance", "career", "wellness", "tour", "cooking", "learning"]),
-  previousMessages: z.array(z.object({
-    role: z.enum(["user", "assistant"]),
-    content: z.string()
-  })).optional()
+  skillArea: z.enum(["technical", "soft", "search", "life", "cooking"]),
+  userQuery: z.string()
 });
+
 
 const resumeSchema = z.object({
   personalInfo: z.object({
@@ -101,7 +99,7 @@ Continue with the next section here.
 Remember to suggest relevant features in the app that could help the user.`;
 
       // Category-specific system messages
-      switch(validatedData.category) {
+      switch(validatedData.skillArea) {
         case "cooking":
           systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm! 
 
@@ -184,10 +182,9 @@ Remember to suggest relevant features in the app that could help the user.`;
             role: "system",
             content: systemMessage
           },
-          ...(validatedData.previousMessages || []),
           {
             role: "user",
-            content: validatedData.message
+            content: validatedData.userQuery
           }
         ]
       });
@@ -437,7 +434,7 @@ Remember to suggest relevant features in the app that could help the user.`;
   app.post("/api/skill-guidance", async (req, res) => {
     try {
       const { skillArea, userQuery } = z.object({
-        skillArea: z.enum(["technical", "soft", "search", "life"]),
+        skillArea: z.enum(["technical", "soft", "search", "life", "cooking"]),
         userQuery: z.string()
       }).parse(req.body);
 
