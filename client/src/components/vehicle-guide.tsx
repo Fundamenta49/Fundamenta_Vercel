@@ -21,10 +21,21 @@ import { AlertTriangle, Info, Car, Wrench, Star, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface VehicleInfo {
-  year: string;
-  make: string;
-  model: string;
   vin?: string;
+  make?: string;
+  model?: string;
+  year?: string;
+}
+
+interface VehicleDetails {
+  Make?: string;
+  Model?: string;
+  ModelYear?: string;
+  VehicleType?: string;
+  PlantCountry?: string;
+  BodyClass?: string;
+  EngineType?: string;
+  FuelTypePrimary?: string;
 }
 
 interface MaintenanceTask {
@@ -37,12 +48,6 @@ interface MaintenanceTask {
   tools: string[];
   icon: React.ReactNode;
   isCustom?: boolean;
-}
-
-interface YouTubeVideo {
-  id: string;
-  title: string;
-  thumbnail: string;
 }
 
 const COMMON_TASKS: MaintenanceTask[] = [
@@ -94,28 +99,100 @@ const COMMON_TASKS: MaintenanceTask[] = [
 ];
 
 export default function VehicleGuide() {
-  const [vin, setVin] = useState("");
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
-  const [year, setYear] = useState("");
-  const [recalls, setRecalls] = useState([]);
-  const [vehicleDetails, setVehicleDetails] = useState([]);
-  const [crashRatings, setCrashRatings] = useState(null);
+  const [vehicleInfo, setVehicleInfo] = useState<VehicleInfo>({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  // Maintenance Section State
+  const [error, setError] = useState<string | null>(null);
+  const [recalls, setRecalls] = useState<any[]>([]);
+  const [vehicleDetails, setVehicleDetails] = useState<VehicleDetails | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [customMaintenanceQuery, setCustomMaintenanceQuery] = useState("");
   const [selectedTask, setSelectedTask] = useState<MaintenanceTask | null>(null);
-  const [vehicleInfo, setVehicleInfo] = useState<VehicleInfo>({
-    year: "",
-    make: "",
-    model: ""
-  });
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>(COMMON_TASKS);
+
+
+  const fetchVehicleInfo = async () => {
+    if (!vehicleInfo.vin) {
+      setError("Please enter a VIN number.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setVehicleDetails(null);
+    setRecalls([]);
+
+    try {
+      // Step 1: Decode VIN
+      const vinResponse = await fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vehicleInfo.vin}?format=json`
+      );
+
+      if (!vinResponse.ok) {
+        throw new Error('Failed to fetch vehicle information');
+      }
+
+      const vinData = await vinResponse.json();
+
+      if (!vinData.Results) {
+        throw new Error('Invalid response from VIN lookup');
+      }
+
+      // Extract vehicle details from VIN decode
+      const details: VehicleDetails = {};
+      vinData.Results.forEach((item: any) => {
+        if (item.Value && item.Value !== "null" && item.Value !== "Not Applicable") {
+          switch (item.Variable) {
+            case "Make":
+              details.Make = item.Value;
+              break;
+            case "Model":
+              details.Model = item.Value;
+              break;
+            case "Model Year":
+              details.ModelYear = item.Value;
+              break;
+            case "Body Class":
+              details.BodyClass = item.Value;
+              break;
+            case "Plant Country":
+              details.PlantCountry = item.Value;
+              break;
+            case "Engine Type":
+              details.EngineType = item.Value;
+              break;
+            case "Fuel Type - Primary":
+              details.FuelTypePrimary = item.Value;
+              break;
+            case "Vehicle Type":
+              details.VehicleType = item.Value;
+              break;
+          }
+        }
+      });
+
+      setVehicleDetails(details);
+
+      // Step 2: Fetch recalls
+      const recallResponse = await fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/GetRecallsByVIN/${vehicleInfo.vin}?format=json`
+      );
+
+      if (!recallResponse.ok) {
+        throw new Error('Failed to fetch recall information');
+      }
+
+      const recallData = await recallResponse.json();
+      setRecalls(recallData.Results || []);
+
+    } catch (err) {
+      console.error('Error fetching vehicle information:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch vehicle information');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter tasks based on search
   const filteredTasks = maintenanceTasks.filter(task =>
@@ -123,86 +200,7 @@ export default function VehicleGuide() {
     task.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Fetch recall data from NHTSA API
-  const fetchRecalls = async () => {
-    if (!vin) {
-      setError("Please enter a VIN number.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        `https://api.nhtsa.gov/recalls/recallsByVehicle?vin=${vin}`
-      );
-      const data = await response.json();
-      setRecalls(data.results || []);
-    } catch (err) {
-      setError("Failed to fetch recall data. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch Vehicle Details by Make & Year
-  const fetchVehicleDetails = async () => {
-    if (!make || !year) {
-      setError("Please enter both Make and Year.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${year}?format=json`
-      );
-      const data = await response.json();
-      setVehicleDetails(data.Results || []);
-    } catch (err) {
-      setError("Failed to fetch vehicle details.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch Crash Safety Ratings
-  const fetchCrashRatings = async () => {
-    if (!year || !make || !model) {
-      setError("Please enter Year, Make, and Model.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        `https://api.nhtsa.gov/SafetyRatings/modelyear/${year}/make/${make}/model/${model}`
-      );
-      const data = await response.json();
-      setCrashRatings(data.Results || []);
-    } catch (err) {
-      setError("Failed to fetch crash ratings.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getDifficultyStyle = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy':
-        return 'bg-green-100 text-green-700 border-green-200';
-      case 'Moderate':
-        return 'bg-orange-100 text-orange-700 border-orange-200';
-      case 'Advanced':
-        return 'bg-red-100 text-red-700 border-red-200';
-      case 'Variable':
-        return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-      default:
-        return 'bg-gray-100 text-gray-700 border-gray-200';
-    }
-  };
+  // ...rest of the functions from original code...
 
   const handleSearch = () => {
     if (customMaintenanceQuery.trim() && isVehicleInfoComplete()) {
@@ -276,6 +274,22 @@ export default function VehicleGuide() {
     setVehicleInfo(prev => ({ ...prev, [field]: value }));
   };
 
+  const getDifficultyStyle = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Easy':
+        return 'bg-green-100 text-green-700 border-green-200';
+      case 'Moderate':
+        return 'bg-orange-100 text-orange-700 border-orange-200';
+      case 'Advanced':
+        return 'bg-red-100 text-red-700 border-red-200';
+      case 'Variable':
+        return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      default:
+        return 'bg-gray-100 text-gray-700 border-gray-200';
+    }
+  };
+
+
   return (
     <div className="space-y-6">
       {/* Maintenance Guide Section - Now First */}
@@ -295,21 +309,21 @@ export default function VehicleGuide() {
               <Input
                 type="text"
                 placeholder="Vehicle Year"
-                value={vehicleInfo.year}
+                value={vehicleInfo.year || ''}
                 onChange={(e) => handleVehicleInfoChange('year', e.target.value)}
                 className="w-full"
               />
               <Input
                 type="text"
                 placeholder="Vehicle Make"
-                value={vehicleInfo.make}
+                value={vehicleInfo.make || ''}
                 onChange={(e) => handleVehicleInfoChange('make', e.target.value)}
                 className="w-full"
               />
               <Input
                 type="text"
                 placeholder="Vehicle Model"
-                value={vehicleInfo.model}
+                value={vehicleInfo.model || ''}
                 onChange={(e) => handleVehicleInfoChange('model', e.target.value)}
                 className="w-full"
               />
@@ -457,12 +471,12 @@ export default function VehicleGuide() {
         </CardContent>
       </Card>
 
-      {/* Safety Recall Lookup Section */}
+      {/* Vehicle Information Lookup Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Vehicle Safety Lookup</CardTitle>
+          <CardTitle>Vehicle Information Lookup</CardTitle>
           <CardDescription>
-            Enter your Vehicle Identification Number (VIN) to check for recalls and safety information
+            Enter your Vehicle Identification Number (VIN) to get detailed information and check for recalls
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -471,8 +485,8 @@ export default function VehicleGuide() {
               <Input
                 type="text"
                 placeholder="Enter VIN (17 characters)"
-                value={vin}
-                onChange={(e) => setVin(e.target.value)}
+                value={vehicleInfo.vin || ''}
+                onChange={(e) => setVehicleInfo({ ...vehicleInfo, vin: e.target.value.toUpperCase() })}
                 className="w-full pr-8"
                 maxLength={17}
               />
@@ -483,11 +497,11 @@ export default function VehicleGuide() {
             </div>
 
             <Button
-              onClick={fetchRecalls}
-              disabled={loading}
+              onClick={fetchVehicleInfo}
+              disabled={loading || !vehicleInfo.vin || vehicleInfo.vin.length !== 17}
               className="w-full"
             >
-              {loading ? "Checking..." : "Check Recalls"}
+              {loading ? "Fetching Information..." : "Look Up Vehicle Information"}
             </Button>
 
             {error && (
@@ -495,125 +509,68 @@ export default function VehicleGuide() {
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
+            )}
+
+            {vehicleDetails && (
+              <Card className="mt-4">
+                <CardHeader>
+                  <CardTitle>Vehicle Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    {vehicleDetails.Make && <p><strong>Make:</strong> {vehicleDetails.Make}</p>}
+                    {vehicleDetails.Model && <p><strong>Model:</strong> {vehicleDetails.Model}</p>}
+                    {vehicleDetails.ModelYear && <p><strong>Year:</strong> {vehicleDetails.ModelYear}</p>}
+                    {vehicleDetails.VehicleType && <p><strong>Type:</strong> {vehicleDetails.VehicleType}</p>}
+                    {vehicleDetails.BodyClass && <p><strong>Body Style:</strong> {vehicleDetails.BodyClass}</p>}
+                    {vehicleDetails.EngineType && <p><strong>Engine:</strong> {vehicleDetails.EngineType}</p>}
+                    {vehicleDetails.FuelTypePrimary && <p><strong>Fuel Type:</strong> {vehicleDetails.FuelTypePrimary}</p>}
+                    {vehicleDetails.PlantCountry && <p><strong>Made in:</strong> {vehicleDetails.PlantCountry}</p>}
+                  </div>
+                </CardContent>
+              </Card>
             )}
 
             {recalls.length > 0 && (
               <div className="mt-4">
-                <h3 className="text-lg font-semibold">Recall Results:</h3>
-                <ul className="mt-2 space-y-2">
+                <h3 className="text-lg font-semibold mb-4">Safety Recalls</h3>
+                <div className="space-y-4">
                   {recalls.map((recall, index) => (
-                    <li key={index} className="p-3 bg-gray-100 rounded">
-                      <strong>{recall.Component}</strong>
-                      <p>{recall.Summary}</p>
-                    </li>
+                    <Alert key={index} variant="destructive">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        <div className="space-y-2">
+                          <strong>{recall.Component}</strong>
+                          <p>{recall.Summary}</p>
+                          <p className="text-red-700">Consequence: {recall.Consequence}</p>
+                          <p className="text-green-700">Remedy: {recall.Remedy}</p>
+                          {recall.NHTSACampaignNumber && (
+                            <p className="text-sm">Campaign #: {recall.NHTSACampaignNumber}</p>
+                          )}
+                        </div>
+                      </AlertDescription>
+                    </Alert>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Vehicle Details Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Vehicle Details</CardTitle>
-          <CardDescription>Enter the Make and Year to get vehicle details.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Input
-              type="text"
-              placeholder="Vehicle Make"
-              value={make}
-              onChange={(e) => setMake(e.target.value)}
-              className="w-full"
-            />
-            <Input
-              type="text"
-              placeholder="Vehicle Year"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="w-full"
-            />
-            <Button onClick={fetchVehicleDetails} disabled={loading} className="w-full">
-              {loading ? "Fetching..." : "Get Vehicle Details"}
-            </Button>
-            {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
+            {vehicleDetails && recalls.length === 0 && (
+              <Alert>
+                <AlertDescription>
+                  No active recalls found for this vehicle.
+                </AlertDescription>
               </Alert>
-            )}
-            {vehicleDetails.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">Vehicle Models:</h3>
-                <ul className="mt-2 space-y-2">
-                  {vehicleDetails.map((vehicle, index) => (
-                    <li key={index} className="p-3 bg-gray-100 rounded">
-                      {vehicle.Model_Name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Crash Ratings Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Crash Safety Ratings</CardTitle>
-          <CardDescription>Enter Year, Make, and Model to check crash ratings.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Input
-              type="text"
-              placeholder="Vehicle Year"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="w-full"
-            />
-            <Input
-              type="text"
-              placeholder="Vehicle Make"
-              value={make}
-              onChange={(e) => setMake(e.target.value)}
-              className="w-full"
-            />
-            <Input
-              type="text"
-              placeholder="Vehicle Model"
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              className="w-full"
-            />
-            <Button onClick={fetchCrashRatings} disabled={loading} className="w-full">
-              {loading ? "Fetching..." : "Check Crash Ratings"}
-            </Button>
-            {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            {crashRatings && crashRatings.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">Crash Ratings:</h3>
-                <ul className="mt-2 space-y-2">
-                  {crashRatings.map((rating, index) => (
-                    <li key={index} className="p-3 bg-gray-100 rounded">
-                      <strong>{rating.OverallRating}</strong> - {rating.VehicleDescription}
-                    </li>
-                  ))}
-                </ul>
-              </div>
             )}
           </div>
         </CardContent>
       </Card>
     </div>
   );
+}
+
+interface YouTubeVideo {
+  id: string;
+  title: string;
+  thumbnail: string;
 }
