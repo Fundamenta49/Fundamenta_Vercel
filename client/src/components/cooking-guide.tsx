@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
-import { Loader2, Search, Utensils, ChefHat, ThermometerSun, Trash2, Timer } from "lucide-react";
+import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import ChatInterface from "@/components/chat-interface";
 
 const COOKING_BASICS = [
@@ -68,29 +69,40 @@ export default function CookingGuide() {
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [videos, setVideos] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-
+  const fetchGuidance = async (topic: string) => {
     setIsLoading(true);
+    setError(null);
     try {
       const response = await fetch("/api/skill-guidance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           skillArea: "life",
-          userQuery: `cooking guide: ${searchQuery}`,
+          userQuery: `cooking guide: ${topic}`,
         }),
       });
 
+      if (!response.ok) {
+        throw new Error("Failed to fetch guidance");
+      }
+
       const data = await response.json();
       setGuidance(data.guidance);
+      setVideos(data.videos || []);
     } catch (error) {
-      console.error("Error searching cooking skills:", error);
-      setGuidance("Sorry, we couldn't process your search right now. Please try again later.");
+      console.error("Error fetching guidance:", error);
+      setError("Failed to load cooking guidance. Please try again.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    await fetchGuidance(searchQuery);
   };
 
   return (
@@ -117,8 +129,7 @@ export default function CookingGuide() {
                 className="flex-1"
               />
               <Button onClick={handleSearch} variant="outline">
-                <Search className="h-4 w-4 mr-2" />
-                Search
+                Search for guidance
               </Button>
             </div>
 
@@ -129,7 +140,7 @@ export default function CookingGuide() {
                   className="cursor-pointer hover:shadow-sm transition-all bg-white"
                   onClick={() => {
                     setSearchQuery(topic.title);
-                    handleSearch();
+                    fetchGuidance(topic.title);
                   }}
                 >
                   <CardHeader>
@@ -153,6 +164,12 @@ export default function CookingGuide() {
         </CardContent>
       </Card>
 
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       {isLoading ? (
         <div className="flex items-center justify-center h-40">
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
@@ -169,6 +186,24 @@ export default function CookingGuide() {
                   <p key={idx} className="mb-2 text-gray-700">{line}</p>
                 ))}
               </div>
+              {videos.length > 0 && (
+                <div className="mt-6 space-y-4">
+                  <h3 className="text-lg font-semibold">Video Tutorials</h3>
+                  <div className="grid gap-4">
+                    {videos.map((video) => (
+                      <div key={video.id} className="space-y-2">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${video.id}`}
+                          title={video.title}
+                          className="w-full aspect-video rounded-lg"
+                          allowFullScreen
+                        />
+                        <p className="text-sm font-medium">{video.title}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </ScrollArea>
           </CardContent>
         </Card>
