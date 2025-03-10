@@ -25,20 +25,24 @@ const CREDIT_TOPICS = [
     id: "basics",
     title: "Credit Basics",
     description: "Understanding the fundamentals of credit",
-    videoId: "Rn3yJgO9lFA",
-    source: "https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/",
     items: [
       {
         title: "What is Credit?",
-        content: "Credit is your ability to borrow money with the promise to repay it later. Good credit enables you to borrow at better rates and terms."
+        content: "Credit is your ability to borrow money with the promise to repay it later. Good credit enables you to borrow at better rates and terms.",
+        videoId: "Rn3yJgO9lFA",
+        source: "https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/"
       },
       {
         title: "Credit Score Factors",
-        content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%)."
+        content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%).",
+        videoId: "2rvPX8uZgKM",
+        source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
       },
       {
         title: "Credit Reports",
-        content: "A credit report is a detailed record of your credit history, including loans, credit cards, and payment history. You're entitled to one free report annually from each bureau."
+        content: "A credit report is a detailed record of your credit history, including loans, credit cards, and payment history. You're entitled to one free report annually from each bureau.",
+        videoId: "x5NzQ_AOj8w",
+        source: "https://www.annualcreditreport.com/"
       }
     ]
   },
@@ -46,20 +50,24 @@ const CREDIT_TOPICS = [
     id: "building",
     title: "Building Credit",
     description: "Steps to establish and improve credit",
-    videoId: "KQs1j4_wHGg",
-    source: "https://www.experian.com/blogs/ask-experian/credit-education/improving-credit/building-credit/",
     items: [
       {
         title: "Secured Credit Cards",
-        content: "A secured card requires a deposit and is an excellent way to start building credit with minimal risk."
+        content: "A secured card requires a deposit and is an excellent way to start building credit with minimal risk.",
+        videoId: "KQs1j4_wHGg",
+        source: "https://www.experian.com/blogs/ask-experian/credit-education/improving-credit/building-credit/"
       },
       {
         title: "Authorized User",
-        content: "Being added as an authorized user on someone's credit card can help build your credit history."
+        content: "Being added as an authorized user on someone's credit card can help build your credit history.",
+        videoId: "XoyzFYdJ_Mc",
+        source: "https://www.experian.com/blogs/ask-experian/credit-education/building-credit/authorized-user/"
       },
       {
         title: "Credit-Builder Loans",
-        content: "These loans are specifically designed to help build credit by reporting payments to credit bureaus."
+        content: "These loans are specifically designed to help build credit by reporting payments to credit bureaus.",
+        videoId: "rpuPVYb0h_g",
+        source: "https://www.nerdwallet.com/article/loans/personal-loans/credit-builder-loans"
       }
     ]
   },
@@ -67,20 +75,24 @@ const CREDIT_TOPICS = [
     id: "maintenance",
     title: "Credit Maintenance",
     description: "Tips for maintaining good credit",
-    videoId: "3G6YU6XhOkY",
-    source: "https://www.myfico.com/credit-education/improve-your-credit-score",
     items: [
       {
         title: "Payment Strategies",
-        content: "Always pay at least the minimum payment on time. Set up automatic payments to avoid missing due dates."
+        content: "Always pay at least the minimum payment on time. Set up automatic payments to avoid missing due dates.",
+        videoId: "3G6YU6XhOkY",
+        source: "https://www.myfico.com/credit-education/improve-your-credit-score"
       },
       {
         title: "Credit Utilization",
-        content: "Keep your credit utilization below 30%. This means using less than 30% of your available credit limit."
+        content: "Keep your credit utilization below 30%. This means using less than 30% of your available credit limit.",
+        videoId: "hJ8pnc6p5_E",
+        source: "https://www.experian.com/blogs/ask-experian/credit-education/score-basics/credit-utilization-rate/"
       },
       {
         title: "Regular Monitoring",
-        content: "Check your credit report regularly for errors and signs of identity theft. Dispute any inaccuracies promptly."
+        content: "Check your credit report regularly for errors and signs of identity theft. Dispute any inaccuracies promptly.",
+        videoId: "TT8BkYvOm_4",
+        source: "https://www.consumer.ftc.gov/articles/0155-free-credit-reports"
       }
     ]
   },
@@ -88,48 +100,54 @@ const CREDIT_TOPICS = [
     id: "repair",
     title: "Credit Repair",
     description: "Fixing and improving bad credit",
-    videoId: "jWPWnLbBvhY",
-    source: "https://www.ftc.gov/credit",
     items: [
       {
         title: "Addressing Late Payments",
-        content: "Contact creditors to negotiate removal of late payments or set up payment plans for outstanding debts."
+        content: "Contact creditors to negotiate removal of late payments or set up payment plans for outstanding debts.",
+        videoId: "jWPWnLbBvhY",
+        source: "https://www.ftc.gov/credit"
       },
       {
         title: "Debt Management",
-        content: "Consider debt consolidation or credit counseling services to help manage and reduce debt."
+        content: "Consider debt consolidation or credit counseling services to help manage and reduce debt.",
+        videoId: "k0fBbV9qzCM",
+        source: "https://www.nfcc.org/resources/blog/debt-management-programs/"
       },
       {
         title: "Recovery Timeline",
-        content: "Most negative items stay on your credit report for 7 years. Bankruptcy can remain for up to 10 years."
+        content: "Most negative items stay on your credit report for 7 years. Bankruptcy can remain for up to 10 years.",
+        videoId: "5YtCKgQPxKw",
+        source: "https://www.equifax.com/personal/education/credit/report/how-long-does-information-stay-on-credit-report/"
       }
     ]
   }
 ];
 
 export default function CreditSkills() {
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [videoError, setVideoError] = useState<Record<string, boolean>>({});
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
 
-    const results = CREDIT_TOPICS.flatMap(topic => 
-      topic.items.filter(item => 
+    const results = CREDIT_TOPICS.flatMap(topic =>
+      topic.items.filter(item =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.content.toLowerCase().includes(searchQuery.toLowerCase())
       ).map(item => ({
         ...item,
-        topic: topic.title,
-        source: topic.source,
-        videoId: topic.videoId
+        topic: topic.title
       }))
     );
 
     setSearchResults(results);
     setIsDialogOpen(true);
+  };
+
+  const handleVideoError = (videoId: string) => {
+    setVideoError(prev => ({ ...prev, [videoId]: true }));
   };
 
   return (
@@ -176,18 +194,21 @@ export default function CreditSkills() {
                     <AccordionContent>
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
-                        <div className="pt-4">
-                          <iframe
-                            src={`https://www.youtube.com/embed/${topic.videoId}`}
-                            title={`Tutorial for ${item.title}`}
-                            className="w-full aspect-video rounded-lg"
-                            allowFullScreen
-                          />
-                        </div>
-                        <Button 
-                          variant="outline" 
+                        {!videoError[item.videoId] && (
+                          <div className="pt-4">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${item.videoId}`}
+                              title={`Tutorial for ${item.title}`}
+                              className="w-full aspect-video rounded-lg"
+                              allowFullScreen
+                              onError={() => handleVideoError(item.videoId)}
+                            />
+                          </div>
+                        )}
+                        <Button
+                          variant="outline"
                           className="w-full mt-2"
-                          onClick={() => window.open(topic.source, '_blank')}
+                          onClick={() => window.open(item.source, '_blank')}
                         >
                           Learn More
                           <ExternalLink className="h-4 w-4 ml-2" />
@@ -221,14 +242,17 @@ export default function CreditSkills() {
                   <CardContent>
                     <p className="mb-4">{result.content}</p>
                     <div className="space-y-4">
-                      <iframe
-                        src={`https://www.youtube.com/embed/${result.videoId}`}
-                        title={`Tutorial for ${result.title}`}
-                        className="w-full aspect-video rounded-lg"
-                        allowFullScreen
-                      />
-                      <Button 
-                        variant="outline" 
+                      {!videoError[result.videoId] && (
+                        <iframe
+                          src={`https://www.youtube.com/embed/${result.videoId}`}
+                          title={`Tutorial for ${result.title}`}
+                          className="w-full aspect-video rounded-lg"
+                          allowFullScreen
+                          onError={() => handleVideoError(result.videoId)}
+                        />
+                      )}
+                      <Button
+                        variant="outline"
                         className="w-full"
                         onClick={() => window.open(result.source, '_blank')}
                       >
