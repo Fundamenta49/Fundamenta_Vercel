@@ -838,6 +838,61 @@ Remember to suggest relevant features in the app that could help the user.`;
     }
   });
 
+  app.get("/api/youtube/validate", async (req, res) => {
+    try {
+      const videoId = req.query.videoId as string;
+
+      if (!videoId) {
+        return res.status(400).json({ error: "Video ID is required" });
+      }
+
+      if (!process.env.YOUTUBE_API_KEY) {
+        throw new Error("YouTube API key not configured");
+      }
+
+      // Validate specific video
+      const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
+        params: {
+          part: 'snippet,status',
+          id: videoId,
+          key: process.env.YOUTUBE_API_KEY,
+        }
+      });
+
+      // Check if video exists and is available
+      if (!response.data.items || response.data.items.length === 0) {
+        return res.json({
+          error: true,
+          message: "Video not found"
+        });
+      }
+
+      const video = response.data.items[0];
+
+      // Check if video is available
+      if (video.status.privacyStatus !== 'public') {
+        return res.json({
+          error: true,
+          message: "Video is not publicly available"
+        });
+      }
+
+      res.json({
+        id: video.id,
+        title: video.snippet.title,
+        thumbnail: video.snippet.thumbnails.medium.url,
+        error: false
+      });
+
+    } catch (error) {
+      console.error("YouTube API error:", error);
+      res.status(500).json({ 
+        error: true,
+        message: "Failed to validate video" 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

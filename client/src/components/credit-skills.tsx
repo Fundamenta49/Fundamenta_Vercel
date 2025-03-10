@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -19,6 +19,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+interface YouTubeVideoDetails {
+  id: string;
+  title: string;
+  thumbnail: string;
+  error?: boolean;
+}
 
 const CREDIT_TOPICS = [
   {
@@ -127,7 +134,46 @@ export default function CreditSkills() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [videoError, setVideoError] = useState<Record<string, boolean>>({});
+  const [videoDetails, setVideoDetails] = useState<Record<string, YouTubeVideoDetails>>({});
+
+  useEffect(() => {
+    const allVideoIds = CREDIT_TOPICS.flatMap(topic =>
+      topic.items.map(item => item.videoId)
+    );
+
+    const uniqueVideoIds = [...new Set(allVideoIds)];
+    uniqueVideoIds.forEach(validateVideo);
+  }, []);
+
+  const validateVideo = async (videoId: string) => {
+    try {
+      const response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
+      if (!response.ok) {
+        throw new Error('Video validation failed');
+      }
+      const data = await response.json();
+      setVideoDetails(prev => ({
+        ...prev,
+        [videoId]: {
+          id: videoId,
+          title: data.title,
+          thumbnail: data.thumbnail,
+          error: false
+        }
+      }));
+    } catch (error) {
+      console.error(`Error validating video ${videoId}:`, error);
+      setVideoDetails(prev => ({
+        ...prev,
+        [videoId]: {
+          id: videoId,
+          title: '',
+          thumbnail: '',
+          error: true
+        }
+      }));
+    }
+  };
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -146,12 +192,11 @@ export default function CreditSkills() {
     setIsDialogOpen(true);
   };
 
-  const handleVideoError = (videoId: string) => {
-    setVideoError(prev => ({ ...prev, [videoId]: true }));
-  };
 
   const renderVideoContent = (videoId: string, title: string) => {
-    if (videoError[videoId]) {
+    const videoDetail = videoDetails[videoId];
+
+    if (!videoDetail || videoDetail.error) {
       return (
         <Alert className="bg-yellow-50 border-yellow-200">
           <AlertTriangle className="h-4 w-4 text-yellow-500" />
@@ -163,14 +208,24 @@ export default function CreditSkills() {
     }
 
     return (
-      <div className="pt-4">
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}`}
-          title={`Tutorial for ${title}`}
-          className="w-full aspect-video rounded-lg"
-          allowFullScreen
-          onError={() => handleVideoError(videoId)}
-        />
+      <div className="space-y-4">
+        <div className="pt-4">
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            title={videoDetail.title || title}
+            className="w-full aspect-video rounded-lg"
+            allowFullScreen
+            onError={() => {
+              setVideoDetails(prev => ({
+                ...prev,
+                [videoId]: { ...prev[videoId], error: true }
+              }));
+            }}
+          />
+        </div>
+        {videoDetail.title && (
+          <p className="text-sm text-muted-foreground">{videoDetail.title}</p>
+        )}
       </div>
     );
   };
