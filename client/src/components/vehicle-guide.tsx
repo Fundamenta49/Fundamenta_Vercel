@@ -16,7 +16,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useState } from "react";
-import { Car, Wrench, Search, ExternalLink } from "lucide-react";
+import { Car, Wrench, Star, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -24,11 +24,12 @@ interface MaintenanceTask {
   id: string;
   title: string;
   description: string;
-  difficulty: 'Easy' | 'Moderate' | 'Advanced';
+  difficulty: 'Easy' | 'Moderate' | 'Advanced' | 'Variable';
   estimatedTime: string;
   steps: string[];
   tools: string[];
   icon: React.ReactNode;
+  isCustom?: boolean;
 }
 
 interface YouTubeVideo {
@@ -148,12 +149,14 @@ const COMMON_TASKS: MaintenanceTask[] = [
 
 export default function VehicleGuide() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [customMaintenanceQuery, setCustomMaintenanceQuery] = useState("");
   const [selectedTask, setSelectedTask] = useState<MaintenanceTask | null>(null);
   const [vehicleModel, setVehicleModel] = useState("");
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
+  const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>(COMMON_TASKS);
 
-  const filteredTasks = COMMON_TASKS.filter(task =>
+  const filteredTasks = maintenanceTasks.filter(task =>
     task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     task.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -166,8 +169,32 @@ export default function VehicleGuide() {
         return 'bg-orange-100 text-orange-700 border-orange-200';
       case 'Advanced':
         return 'bg-red-100 text-red-700 border-red-200';
+      case 'Variable':
+        return 'bg-yellow-100 text-yellow-700 border-yellow-200';
       default:
         return 'bg-gray-100 text-gray-700 border-gray-200';
+    }
+  };
+
+  const addCustomTask = () => {
+    if (customMaintenanceQuery.trim()) {
+      const newTask: MaintenanceTask = {
+        id: `custom-${Date.now()}`,
+        title: customMaintenanceQuery,
+        description: "Custom saved maintenance task",
+        difficulty: 'Variable',
+        estimatedTime: 'Variable',
+        steps: ["Search YouTube for detailed instructions"],
+        tools: ["As shown in video guides"],
+        icon: <Star className="h-4 w-4 text-yellow-500" />,
+        isCustom: true
+      };
+
+      setMaintenanceTasks(prev => [...prev, newTask]);
+      if (vehicleModel) {
+        fetchYouTubeVideos(newTask);
+      }
+      setCustomMaintenanceQuery("");
     }
   };
 
@@ -198,64 +225,91 @@ export default function VehicleGuide() {
             Vehicle Maintenance Guide
           </CardTitle>
           <CardDescription>
-            Step-by-step maintenance instructions for your vehicle
+            Step-by-step instructions for vehicle maintenance
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex gap-4">
+            <div>
               <Input
                 type="text"
-                placeholder="Enter your vehicle make and model..."
-                value={vehicleModel}
-                onChange={(e) => setVehicleModel(e.target.value)}
-                className="flex-1"
+                placeholder="Search for any vehicle maintenance task..."
+                value={customMaintenanceQuery}
+                onChange={(e) => setCustomMaintenanceQuery(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    addCustomTask();
+                  }
+                }}
+                className="w-full mb-4"
               />
-              <Input
-                type="text"
-                placeholder="Search maintenance tasks..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1"
-              />
+              <div className="flex gap-2">
+                <Button variant="default" onClick={addCustomTask} className="flex-none">
+                  <Search className="h-4 w-4 mr-2" />
+                  Search
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={addCustomTask}
+                  disabled={!customMaintenanceQuery.trim()}
+                  className="flex-none hover:bg-primary/5"
+                >
+                  <Star className="h-4 w-4 mr-2" />
+                  Save
+                </Button>
+              </div>
             </div>
+
+            <Input
+              type="text"
+              placeholder="Enter your vehicle make and model..."
+              value={vehicleModel}
+              onChange={(e) => setVehicleModel(e.target.value)}
+              className="w-full"
+            />
 
             <div className="text-sm text-muted-foreground mb-4">
-              Common maintenance tasks:
+              Or choose from common repairs:
             </div>
 
-            <div className="space-y-4">
-              {filteredTasks.map((task) => (
-                <Card
-                  key={task.id}
-                  className="cursor-pointer hover:bg-gray-50/50 transition-all duration-200"
-                  onClick={() => {
-                    setSelectedTask(task);
-                    if (vehicleModel) {
-                      fetchYouTubeVideos(task);
-                    }
-                  }}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {task.icon}
-                        <div>
-                          <h3 className="font-medium text-lg text-[#2C3E50]">{task.title}</h3>
-                          <p className="text-sm text-gray-500">{task.description}</p>
-                        </div>
+            <Command className="rounded-lg border shadow-md bg-[#F3F4F6]">
+              <CommandInput
+                placeholder="Search available tasks..."
+                value={searchQuery}
+                onValueChange={setSearchQuery}
+                className="bg-[#F3F4F6]"
+              />
+              <CommandList className="bg-[#F3F4F6]">
+                <CommandEmpty>No maintenance tasks found.</CommandEmpty>
+                <CommandGroup heading="Common Tasks">
+                  {filteredTasks.map((task) => (
+                    <CommandItem
+                      key={task.id}
+                      value={task.id}
+                      onSelect={() => {
+                        setSelectedTask(task);
+                        if (vehicleModel) {
+                          fetchYouTubeVideos(task);
+                        }
+                      }}
+                      className="flex items-center justify-between py-2 hover:bg-primary/5"
+                    >
+                      <div className="flex items-center gap-2">
+                        {task.isCustom ? (
+                          <Star className="h-4 w-4 text-yellow-500" />
+                        ) : (
+                          task.icon
+                        )}
+                        <span>{task.title}</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-500">{task.estimatedTime}</span>
-                        <Badge variant="outline" className={getDifficultyStyle(task.difficulty)}>
-                          {task.difficulty}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <Badge variant="outline" className={getDifficultyStyle(task.difficulty)}>
+                        {task.difficulty}
+                      </Badge>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
 
             {selectedTask && (
               <Card className="mt-6">
