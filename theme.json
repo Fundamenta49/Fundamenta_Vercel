@@ -26,9 +26,10 @@
       "lg": "0 8px 16px rgba(0, 0, 0, 0.1)"
     },
     "gradients": {
-      "primary": "linear-gradient(135deg, #E5F4F7, #4D9EAF)",
-      "accent": "linear-gradient(135deg, #F3F4F6, #6B7280)",
-      "modern": "linear-gradient(135deg, #E5F4F7, #3A7A8A)"
+      "primary": "linear-gradient(135deg, #E5F4F7 0%, #4D9EAF 100%)",
+      "accent": "linear-gradient(135deg, #F3F4F6 0%, #6B7280 100%)",
+      "modern": "linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%)",
+      "card": "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)"
     }
   }
 }
