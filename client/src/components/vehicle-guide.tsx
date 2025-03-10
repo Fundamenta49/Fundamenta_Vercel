@@ -312,71 +312,60 @@ export default function VehicleGuide() {
           return;
         }
 
-        // Decode VIN
-        const vinResponse = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`
-        );
+        // First, decode VIN
+        try {
+          const vinResponse = await fetch(
+            `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${encodeURIComponent(vin)}?format=json`
+          );
 
-        if (!vinResponse.ok) {
-          throw new Error('Failed to fetch VIN information');
+          if (!vinResponse.ok) {
+            throw new Error('Failed to fetch VIN information');
+          }
+
+          const vinData = await vinResponse.json();
+
+          if (!vinData.Results || vinData.Results.length === 0) {
+            throw new Error('Invalid VIN or no data available');
+          }
+
+          const vinInfo = vinData.Results[0];
+
+          // Fetch recalls for this VIN
+          const recallResponse = await fetch(
+            `https://api.nhtsa.gov/recalls/recallsByVIN/${encodeURIComponent(vin)}?format=json`
+          );
+
+          if (!recallResponse.ok) {
+            throw new Error('Failed to fetch recall information');
+          }
+
+          const recallData = await recallResponse.json();
+
+          setNhtsaData({
+            recalls: recallData.results || [],
+            vehicleDetails: {
+              Make: vinInfo.Make,
+              Model: vinInfo.Model,
+              ModelYear: vinInfo.ModelYear,
+              VehicleType: vinInfo.VehicleType,
+              VIN: vin,
+              PlantCountry: vinInfo.PlantCountry,
+              BodyClass: vinInfo.BodyClass,
+              FuelTypePrimary: vinInfo.FuelTypePrimary,
+              DriveType: vinInfo.DriveType,
+              ManufacturerName: vinInfo.Manufacturer
+            }
+          });
+
+        } catch (error) {
+          console.error('VIN lookup error:', error);
+          setValidationError(
+            "Unable to validate VIN. Please check the VIN and try again. " +
+            "If the problem persists, the NHTSA service might be temporarily unavailable."
+          );
+          setIsLoadingNHTSA(false);
+          return;
         }
-
-        const vinData = await vinResponse.json();
-        const results = vinData.Results;
-
-        // Get basic vehicle info from VIN
-        const vinDetails = {
-          Make: results.find((r: any) => r.Variable === "Make")?.Value,
-          Model: results.find((r: any) => r.Variable === "Model")?.Value,
-          ModelYear: results.find((r: any) => r.Variable === "Model Year")?.Value,
-          PlantCountry: results.find((r: any) => r.Variable === "Plant Country")?.Value,
-          BodyClass: results.find((r: any) => r.Variable === "Body Class")?.Value,
-          FuelTypePrimary: results.find((r: any) => r.Variable === "Fuel Type - Primary")?.Value,
-          DriveType: results.find((r: any) => r.Variable === "Drive Type")?.Value,
-          ManufacturerName: results.find((r: any) => r.Variable === "Manufacturer Name")?.Value,
-          VIN: vin
-        };
-
-        // Fetch recalls specific to the VIN
-        const recallResponse = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/RecallsByVIN/${encodeURIComponent(vin)}?format=json`
-        );
-
-        if (!recallResponse.ok) {
-          throw new Error('Failed to fetch recall information');
-        }
-
-        const recallData = await recallResponse.json();
-
-        // Fetch complaints for the vehicle
-        const complaintResponse = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/complaints/vin/${encodeURIComponent(vin)}?format=json`
-        );
-
-        if (!complaintResponse.ok) {
-          throw new Error('Failed to fetch complaint information');
-        }
-
-        const complaintData = await complaintResponse.json();
-
-        // Fetch Technical Service Bulletins
-        const tsbResponse = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/tsbs/vin/${encodeURIComponent(vin)}?format=json`
-        );
-
-        if (!tsbResponse.ok) {
-          throw new Error('Failed to fetch technical service bulletins');
-        }
-
-        const tsbData = await tsbResponse.json();
-
-        setNhtsaData({
-          recalls: recallData.Results || [],
-          complaints: complaintData.Results || [],
-          tsbs: tsbData.Results || [],
-          vehicleDetails: vinDetails
-        });
-
       } else {
         const normalizedMake = vehicleInfo.make.trim().toLowerCase();
         const normalizedModel = vehicleInfo.model.trim().toLowerCase();
