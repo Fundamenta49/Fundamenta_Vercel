@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -6,14 +7,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { DollarSign, CreditCard, AlertTriangle, Wallet, LineChart } from "lucide-react";
+import { DollarSign, CreditCard, AlertTriangle, Wallet, LineChart, Search, ExternalLink } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const CREDIT_TOPICS = [
   {
     id: "basics",
     title: "Credit Basics",
     description: "Understanding the fundamentals of credit",
+    videoId: "Rn3yJgO9lFA",
+    source: "https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/",
     items: [
       {
         title: "What is Credit?",
@@ -33,6 +46,8 @@ const CREDIT_TOPICS = [
     id: "building",
     title: "Building Credit",
     description: "Steps to establish and improve credit",
+    videoId: "KQs1j4_wHGg",
+    source: "https://www.experian.com/blogs/ask-experian/credit-education/improving-credit/building-credit/",
     items: [
       {
         title: "Secured Credit Cards",
@@ -52,6 +67,8 @@ const CREDIT_TOPICS = [
     id: "maintenance",
     title: "Credit Maintenance",
     description: "Tips for maintaining good credit",
+    videoId: "3G6YU6XhOkY",
+    source: "https://www.myfico.com/credit-education/improve-your-credit-score",
     items: [
       {
         title: "Payment Strategies",
@@ -71,6 +88,8 @@ const CREDIT_TOPICS = [
     id: "repair",
     title: "Credit Repair",
     description: "Fixing and improving bad credit",
+    videoId: "jWPWnLbBvhY",
+    source: "https://www.ftc.gov/credit",
     items: [
       {
         title: "Addressing Late Payments",
@@ -89,18 +108,56 @@ const CREDIT_TOPICS = [
 ];
 
 export default function CreditSkills() {
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+
+  const handleSearch = () => {
+    if (!searchQuery.trim()) return;
+
+    const results = CREDIT_TOPICS.flatMap(topic => 
+      topic.items.filter(item => 
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.content.toLowerCase().includes(searchQuery.toLowerCase())
+      ).map(item => ({
+        ...item,
+        topic: topic.title,
+        source: topic.source,
+        videoId: topic.videoId
+      }))
+    );
+
+    setSearchResults(results);
+    setIsDialogOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <Alert className="bg-blue-50 border-blue-200">
         <CreditCard className="h-4 w-4 text-blue-500" />
         <AlertDescription className="text-blue-800">
-          Understanding and managing your credit is crucial for financial health. Here's your guide to mastering credit skills.
+          Understanding and managing your credit is crucial for financial health. Search for specific topics or browse our comprehensive guide.
         </AlertDescription>
       </Alert>
 
+      <div className="flex gap-4 mb-6">
+        <Input
+          placeholder="Search for credit-related topics..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1"
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+        />
+        <Button onClick={handleSearch}>
+          <Search className="h-4 w-4 mr-2" />
+          Search
+        </Button>
+      </div>
+
       <div className="grid gap-6 md:grid-cols-2">
         {CREDIT_TOPICS.map((topic) => (
-          <Card key={topic.id}>
+          <Card key={topic.id} className="hover:shadow-md transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 {topic.id === "basics" && <Wallet className="h-5 w-5 text-blue-500" />}
@@ -117,7 +174,25 @@ export default function CreditSkills() {
                   <AccordionItem key={index} value={`${topic.id}-${index}`}>
                     <AccordionTrigger>{item.title}</AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-muted-foreground">{item.content}</p>
+                      <div className="space-y-4">
+                        <p className="text-muted-foreground">{item.content}</p>
+                        <div className="pt-4">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${topic.videoId}`}
+                            title={`Tutorial for ${item.title}`}
+                            className="w-full aspect-video rounded-lg"
+                            allowFullScreen
+                          />
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          className="w-full mt-2"
+                          onClick={() => window.open(topic.source, '_blank')}
+                        >
+                          Learn More
+                          <ExternalLink className="h-4 w-4 ml-2" />
+                        </Button>
+                      </div>
                     </AccordionContent>
                   </AccordionItem>
                 ))}
@@ -126,6 +201,48 @@ export default function CreditSkills() {
           </Card>
         ))}
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Search Results</DialogTitle>
+            <DialogDescription>
+              Found {searchResults.length} matches for "{searchQuery}"
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh]">
+            <div className="space-y-6">
+              {searchResults.map((result, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{result.title}</CardTitle>
+                    <CardDescription>From: {result.topic}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="mb-4">{result.content}</p>
+                    <div className="space-y-4">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${result.videoId}`}
+                        title={`Tutorial for ${result.title}`}
+                        className="w-full aspect-video rounded-lg"
+                        allowFullScreen
+                      />
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={() => window.open(result.source, '_blank')}
+                      >
+                        View Source
+                        <ExternalLink className="h-4 w-4 ml-2" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
