@@ -327,11 +327,12 @@ export default function ResumeBuilder() {
 
   return (
     <div className="space-y-6">
+      {/* Step 1: Upload Resume */}
       <Card>
         <CardHeader>
           <CardTitle>Upload Existing Resume</CardTitle>
           <CardDescription>
-            Upload your current resume and let AI help you optimize it for your target position
+            Start by uploading your current resume and let AI help you optimize it
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -357,196 +358,47 @@ export default function ResumeBuilder() {
           )}
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              value={personalInfo.name}
-              onChange={(e) =>
-                setPersonalInfo({ ...personalInfo, name: e.target.value })
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={personalInfo.email}
-              onChange={(e) =>
-                setPersonalInfo({ ...personalInfo, email: e.target.value })
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
-            <Input
-              id="phone"
-              value={personalInfo.phone}
-              onChange={(e) =>
-                setPersonalInfo({ ...personalInfo, phone: e.target.value })
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="summary">Professional Summary</Label>
-            <Textarea
-              id="summary"
-              value={personalInfo.summary}
-              onChange={(e) =>
-                setPersonalInfo({ ...personalInfo, summary: e.target.value })
-              }
-            />
-          </div>
-        </CardContent>
-      </Card>
 
+      {/* Step 2: Optimize for Target Position */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex justify-between items-center">
-            Education
-            <Button variant="outline" size="sm" onClick={addEducation}>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Add Education
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {education.map((edu, index) => (
-            <div key={index} className="space-y-4 p-4 border rounded-lg">
-              <div className="flex justify-end">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeEducation(index)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="space-y-2">
-                <Label>School</Label>
-                <Input
-                  value={edu.school}
-                  onChange={(e) => {
-                    const newEducation = [...education];
-                    newEducation[index].school = e.target.value;
-                    setEducation(newEducation);
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Degree</Label>
-                <Input
-                  value={edu.degree}
-                  onChange={(e) => {
-                    const newEducation = [...education];
-                    newEducation[index].degree = e.target.value;
-                    setEducation(newEducation);
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Year</Label>
-                <Input
-                  value={edu.year}
-                  onChange={(e) => {
-                    const newEducation = [...education];
-                    newEducation[index].year = e.target.value;
-                    setEducation(newEducation);
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex justify-between items-center">
-            Experience
-            <Button variant="outline" size="sm" onClick={addExperience}>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Add Experience
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {experience.map((exp, index) => (
-            <div key={index} className="space-y-4 p-4 border rounded-lg">
-              <div className="flex justify-end">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeExperience(index)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="space-y-2">
-                <Label>Company</Label>
-                <Input
-                  value={exp.company}
-                  onChange={(e) => {
-                    const newExperience = [...experience];
-                    newExperience[index].company = e.target.value;
-                    setExperience(newExperience);
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Position</Label>
-                <Input
-                  value={exp.position}
-                  onChange={(e) => {
-                    const newExperience = [...experience];
-                    newExperience[index].position = e.target.value;
-                    setExperience(newExperience);
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Duration</Label>
-                <Input
-                  value={exp.duration}
-                  onChange={(e) => {
-                    const newExperience = [...experience];
-                    newExperience[index].duration = e.target.value;
-                    setExperience(newExperience);
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea
-                  value={exp.description}
-                  onChange={(e) => {
-                    const newExperience = [...experience];
-                    newExperience[index].description = e.target.value;
-                    setExperience(newExperience);
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Cover Letter Generator</CardTitle>
+          <CardTitle>Optimize for Target Position</CardTitle>
           <CardDescription>
-            Generate a customized cover letter based on your resume and additional details
+            Enter your target position to get AI-powered optimization suggestions
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="company">Company Name (Optional)</Label>
+            <Label htmlFor="targetPosition">Target Position</Label>
+            <Input
+              id="targetPosition"
+              value={targetPosition}
+              onChange={(e) => setTargetPosition(e.target.value)}
+              placeholder="e.g. Senior Software Engineer"
+            />
+          </div>
+          <Button
+            onClick={handleOptimize}
+            disabled={optimizeMutation.isPending || !targetPosition}
+            className="w-full"
+          >
+            <Wand2 className="h-4 w-4 mr-2" />
+            {optimizeMutation.isPending ? "Optimizing..." : "Optimize Resume"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Step 3: Cover Letter Generator */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Cover Letter Generator</CardTitle>
+          <CardDescription>
+            Generate a customized cover letter based on your optimized resume
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="company">Company Name</Label>
             <Input
               id="company"
               placeholder="Enter company name"
@@ -637,139 +489,291 @@ export default function ResumeBuilder() {
         </CardContent>
       </Card>
 
+      {/* Personal Information Form Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Optimize for Target Position</CardTitle>
-          <CardDescription>
-            After filling in your information above, enter your target position to get AI-powered optimization suggestions
-          </CardDescription>
+          <CardTitle>Personal Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="targetPosition">Target Position</Label>
+            <Label htmlFor="name">Full Name</Label>
             <Input
-              id="targetPosition"
-              value={targetPosition}
-              onChange={(e) => setTargetPosition(e.target.value)}
-              placeholder="e.g. Senior Software Engineer"
+              id="name"
+              value={personalInfo.name}
+              onChange={(e) =>
+                setPersonalInfo({ ...personalInfo, name: e.target.value })
+              }
             />
           </div>
-          <Button
-            onClick={handleOptimize}
-            disabled={optimizeMutation.isPending || !targetPosition}
-            className="w-full"
-          >
-            <Wand2 className="h-4 w-4 mr-2" />
-            {optimizeMutation.isPending ? "Optimizing..." : "Optimize Resume"}
-          </Button>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={personalInfo.email}
+              onChange={(e) =>
+                setPersonalInfo({ ...personalInfo, email: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              id="phone"
+              value={personalInfo.phone}
+              onChange={(e) =>
+                setPersonalInfo({ ...personalInfo, phone: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="summary">Professional Summary</Label>
+            <Textarea
+              id="summary"
+              value={personalInfo.summary}
+              onChange={(e) =>
+                setPersonalInfo({ ...personalInfo, summary: e.target.value })
+              }
+            />
+          </div>
         </CardContent>
       </Card>
 
-      {suggestions && (
-        <>
-          <Card>
-            <CardHeader>
-              <CardTitle>AI Suggestions</CardTitle>
-              <CardDescription>Recommended improvements for your resume</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Enhanced Summary</Label>
-                <div className="p-4 bg-muted rounded-lg">
-                  <p>{suggestions.enhancedSummary}</p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Recommended Keywords</Label>
-                <div className="flex flex-wrap gap-2">
-                  {suggestions.keywords.map((keyword, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 bg-primary/10 rounded-full text-sm"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Experience Improvements</Label>
-                <div className="space-y-4">
-                  {suggestions.experienceSuggestions.map((suggestion, index) => (
-                    <div key={index} className="space-y-2">
-                      <p className="text-sm text-muted-foreground">Original:</p>
-                      <p className="pl-4">{suggestion.original}</p>
-                      <p className="text-sm text-muted-foreground">Improved:</p>
-                      <p className="pl-4 text-primary">{suggestion.improved}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Structural Changes</Label>
-                <ul className="list-disc pl-4 space-y-1">
-                  {suggestions.structuralChanges.map((change, index) => (
-                    <li key={index} className="text-sm">{change}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex justify-end gap-4 mt-6">
+      {/* Education Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex justify-between items-center">
+            Education
+            <Button variant="outline" size="sm" onClick={addEducation}>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Add Education
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {education.map((edu, index) => (
+            <div key={index} className="space-y-4 p-4 border rounded-lg">
+              <div className="flex justify-end">
                 <Button
-                  variant="outline"
-                  onClick={() => {
-                    // Apply AI suggestions to the form
-                    setPersonalInfo(prev => ({
-                      ...prev,
-                      summary: suggestions.enhancedSummary
-                    }));
-                    // Update experience descriptions with improved versions
-                    setExperience(prev =>
-                      prev.map((exp, idx) => ({
-                        ...exp,
-                        description: suggestions.experienceSuggestions[idx]?.improved || exp.description
-                      }))
-                    );
-                    toast({
-                      title: "AI Suggestions Applied",
-                      description: "Your resume has been updated with the optimized content."
-                    });
-                  }}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeEducation(index)}
                 >
-                  <Wand2 className="h-4 w-4 mr-2" />
-                  Apply Suggestions
+                  <Trash2 className="h-4 w-4" />
                 </Button>
-
-                <PDFDownloadLink
-                  document={<ResumePDF
-                    personalInfo={personalInfo}
-                    education={education}
-                    experience={experience}
-                  />}
-                  fileName={`${personalInfo.name.replace(/\s+/g, '_')}_Resume.pdf`}
-                >
-                  {({ loading }) => (
-                    <Button disabled={loading}>
-                      {loading ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Generating PDF...
-                        </>
-                      ) : (
-                        <>
-                          <Download className="h-4 w-4 mr-2" />
-                          Download PDF
-                        </>
-                      )}
-                    </Button>
-                  )}
-                </PDFDownloadLink>
               </div>
-            </CardContent>
-          </Card>
-        </>
+              <div className="space-y-2">
+                <Label>School</Label>
+                <Input
+                  value={edu.school}
+                  onChange={(e) => {
+                    const newEducation = [...education];
+                    newEducation[index].school = e.target.value;
+                    setEducation(newEducation);
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Degree</Label>
+                <Input
+                  value={edu.degree}
+                  onChange={(e) => {
+                    const newEducation = [...education];
+                    newEducation[index].degree = e.target.value;
+                    setEducation(newEducation);
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Year</Label>
+                <Input
+                  value={edu.year}
+                  onChange={(e) => {
+                    const newEducation = [...education];
+                    newEducation[index].year = e.target.value;
+                    setEducation(newEducation);
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Experience Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex justify-between items-center">
+            Experience
+            <Button variant="outline" size="sm" onClick={addExperience}>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Add Experience
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {experience.map((exp, index) => (
+            <div key={index} className="space-y-4 p-4 border rounded-lg">
+              <div className="flex justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeExperience(index)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                <Label>Company</Label>
+                <Input
+                  value={exp.company}
+                  onChange={(e) => {
+                    const newExperience = [...experience];
+                    newExperience[index].company = e.target.value;
+                    setExperience(newExperience);
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Position</Label>
+                <Input
+                  value={exp.position}
+                  onChange={(e) => {
+                    const newExperience = [...experience];
+                    newExperience[index].position = e.target.value;
+                    setExperience(newExperience);
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Duration</Label>
+                <Input
+                  value={exp.duration}
+                  onChange={(e) => {
+                    const newExperience = [...experience];
+                    newExperience[index].duration = e.target.value;
+                    setExperience(newExperience);
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea
+                  value={exp.description}
+                  onChange={(e) => {
+                    const newExperience = [...experience];
+                    newExperience[index].description = e.target.value;
+                    setExperience(newExperience);
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* AI Suggestions and PDF Download */}
+      {suggestions && (
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Suggestions</CardTitle>
+            <CardDescription>Recommended improvements for your resume</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Enhanced Summary</Label>
+              <div className="p-4 bg-muted rounded-lg">
+                <p>{suggestions.enhancedSummary}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Recommended Keywords</Label>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.keywords.map((keyword, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-primary/10 rounded-full text-sm"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Experience Improvements</Label>
+              <div className="space-y-4">
+                {suggestions.experienceSuggestions.map((suggestion, index) => (
+                  <div key={index} className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Original:</p>
+                    <p className="pl-4">{suggestion.original}</p>
+                    <p className="text-sm text-muted-foreground">Improved:</p>
+                    <p className="pl-4 text-primary">{suggestion.improved}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Structural Changes</Label>
+              <ul className="list-disc pl-4 space-y-1">
+                {suggestions.structuralChanges.map((change, index) => (
+                  <li key={index} className="text-sm">{change}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex justify-end gap-4 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPersonalInfo(prev => ({
+                    ...prev,
+                    summary: suggestions.enhancedSummary
+                  }));
+                  setExperience(prev =>
+                    prev.map((exp, idx) => ({
+                      ...exp,
+                      description: suggestions.experienceSuggestions[idx]?.improved || exp.description
+                    }))
+                  );
+                  toast({
+                    title: "AI Suggestions Applied",
+                    description: "Your resume has been updated with the optimized content."
+                  });
+                }}
+              >
+                <Wand2 className="h-4 w-4 mr-2" />
+                Apply Suggestions
+              </Button>
+
+              <PDFDownloadLink
+                document={<ResumePDF
+                  personalInfo={personalInfo}
+                  education={education}
+                  experience={experience}
+                />}
+                fileName={`${personalInfo.name.replace(/\s+/g, '_')}_Resume.pdf`}
+              >
+                {({ loading }) => (
+                  <Button disabled={loading}>
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Generating PDF...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PDF
+                      </>
+                    )}
+                  </Button>
+                )}
+              </PDFDownloadLink>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
