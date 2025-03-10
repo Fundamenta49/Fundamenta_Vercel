@@ -186,8 +186,26 @@ export default function VehicleGuide() {
     }
   };
 
+  const handleSearch = () => {
+    if (customMaintenanceQuery.trim() && isVehicleInfoComplete()) {
+      const searchTask: MaintenanceTask = {
+        id: `search-${Date.now()}`,
+        title: customMaintenanceQuery,
+        description: "Custom maintenance task",
+        difficulty: 'Variable',
+        estimatedTime: 'Variable',
+        steps: ["Search YouTube for detailed instructions"],
+        tools: ["As shown in video guides"],
+        icon: <Wrench className="h-4 w-4 text-blue-500" />
+      };
+
+      setSelectedTask(searchTask);
+      fetchYouTubeVideos(searchTask);
+    }
+  };
+
   const addCustomTask = () => {
-    if (customMaintenanceQuery.trim()) {
+    if (customMaintenanceQuery.trim() && isVehicleInfoComplete()) {
       const newTask: MaintenanceTask = {
         id: `custom-${Date.now()}`,
         title: customMaintenanceQuery,
@@ -201,9 +219,8 @@ export default function VehicleGuide() {
       };
 
       setMaintenanceTasks(prev => [...prev, newTask]);
-      if (isVehicleInfoComplete()) {
-        fetchYouTubeVideos(newTask);
-      }
+      setSelectedTask(newTask);
+      fetchYouTubeVideos(newTask);
       setCustomMaintenanceQuery("");
     }
   };
@@ -281,19 +298,14 @@ export default function VehicleGuide() {
                 placeholder="Search for any vehicle maintenance task..."
                 value={customMaintenanceQuery}
                 onChange={(e) => setCustomMaintenanceQuery(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    addCustomTask();
-                  }
-                }}
                 className="w-full mb-4"
               />
               <div className="flex gap-2">
                 <Button 
                   variant="default" 
-                  onClick={addCustomTask} 
+                  onClick={handleSearch} 
                   className="flex-none"
-                  disabled={!isVehicleInfoComplete()}
+                  disabled={!isVehicleInfoComplete() || !customMaintenanceQuery.trim()}
                 >
                   <Search className="h-4 w-4 mr-2" />
                   Search
