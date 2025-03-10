@@ -16,7 +16,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useState } from "react";
-import { Car, Wrench, Star, Search, AlertTriangle } from "lucide-react";
+import { Car, Wrench, Star, Search, AlertTriangle, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -24,6 +24,7 @@ interface VehicleInfo {
   year: string;
   make: string;
   model: string;
+  vin?: string; // Make VIN optional
 }
 
 interface MaintenanceTask {
@@ -59,6 +60,11 @@ interface NHTSAData {
     Model: string;
     ModelYear: string;
     VehicleType: string;
+    VIN?: string;
+    PlantCountry?: string;
+    BodyClass?: string;
+    FuelTypePrimary?: string;
+    DriveType?: string;
   };
 }
 
@@ -186,6 +192,7 @@ export default function VehicleGuide() {
   const [nhtsaData, setNhtsaData] = useState<NHTSAData | null>(null);
   const [isLoadingNHTSA, setIsLoadingNHTSA] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [vinLookupData, setVinLookupData] = useState<any>(null);
 
   const filteredTasks = maintenanceTasks.filter(task =>
     task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -275,7 +282,6 @@ export default function VehicleGuide() {
     }
   };
 
-  // Update the validateAndFetchVehicleData function with the correct API endpoints
   const validateAndFetchVehicleData = async () => {
     if (!isVehicleInfoComplete()) return;
 
@@ -283,26 +289,53 @@ export default function VehicleGuide() {
     setValidationError(null);
 
     try {
-      // Normalize and validate input
       const normalizedMake = vehicleInfo.make.trim().toLowerCase();
       const normalizedModel = vehicleInfo.model.trim().toLowerCase();
       const year = vehicleInfo.year.trim();
+      const vin = vehicleInfo.vin?.trim();
 
-      // Validate year format
       if (!/^\d{4}$/.test(year) || parseInt(year) < 1950 || parseInt(year) > new Date().getFullYear() + 1) {
         setValidationError("Please enter a valid year between 1950 and " + (new Date().getFullYear() + 1));
         setIsLoadingNHTSA(false);
         return;
       }
 
-      // Validate make/model length
-      if (normalizedMake.length < 2 || normalizedModel.length < 2) {
-        setValidationError("Make and model must be at least 2 characters long");
-        setIsLoadingNHTSA(false);
-        return;
+      if (vin) {
+        if (vin.length !== 17) {
+          setValidationError("VIN must be exactly 17 characters long");
+          setIsLoadingNHTSA(false);
+          return;
+        }
+
+        try {
+          const vinResponse = await fetch(
+            `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`
+          );
+
+          if (!vinResponse.ok) {
+            throw new Error('Failed to fetch VIN information');
+          }
+
+          const vinData = await vinResponse.json();
+          const results = vinData.Results;
+
+          const vinDetails = {
+            Make: results.find((r: any) => r.Variable === "Make")?.Value,
+            Model: results.find((r: any) => r.Variable === "Model")?.Value,
+            ModelYear: results.find((r: any) => r.Variable === "Model Year")?.Value,
+            PlantCountry: results.find((r: any) => r.Variable === "Plant Country")?.Value,
+            BodyClass: results.find((r: any) => r.Variable === "Body Class")?.Value,
+            FuelTypePrimary: results.find((r: any) => r.Variable === "Fuel Type - Primary")?.Value,
+            DriveType: results.find((r: any) => r.Variable === "Drive Type")?.Value,
+          };
+
+          setVinLookupData(vinDetails);
+        } catch (error) {
+          console.error('VIN lookup error:', error);
+        }
       }
 
-      // First API call to validate make/model
+
       const validationResponse = await fetch(
         `https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/${encodeURIComponent(normalizedMake)}?format=json`
       );
@@ -313,14 +346,12 @@ export default function VehicleGuide() {
 
       const validationData = await validationResponse.json();
 
-      // Check if we got any results
       if (!validationData.Results || validationData.Results.length === 0) {
         setValidationError(`No vehicle data found for make: ${vehicleInfo.make}. Please check your input.`);
         setIsLoadingNHTSA(false);
         return;
       }
 
-      // Case-insensitive partial match for model
       const matchingModels = validationData.Results.filter((model: any) =>
         model.Model_Name.toLowerCase().includes(normalizedModel) ||
         normalizedModel.includes(model.Model_Name.toLowerCase())
@@ -335,7 +366,6 @@ export default function VehicleGuide() {
         return;
       }
 
-      // Fetch recalls with the correct endpoint
       let recallsData;
       try {
         const recallsResponse = await fetch(
@@ -349,10 +379,9 @@ export default function VehicleGuide() {
         recallsData = await recallsResponse.json();
       } catch (error) {
         console.error('Recalls fetch error:', error);
-        recallsData = { Results: [] }; // Gracefully handle recalls failure
+        recallsData = { Results: [] };
       }
 
-      // Fetch technical service bulletins with the correct endpoint
       let tsData;
       try {
         const tsResponse = await fetch(
@@ -366,10 +395,9 @@ export default function VehicleGuide() {
         tsData = await tsResponse.json();
       } catch (error) {
         console.error('TSB fetch error:', error);
-        tsData = { Results: [] }; // Gracefully handle TSB failure
+        tsData = { Results: [] };
       }
 
-      // Update the UI with all available data
       setNhtsaData({
         recalls: recallsData.Results?.slice(0, 5) || [],
         bulletins: tsData.Results?.slice(0, 5) || [],
@@ -377,7 +405,8 @@ export default function VehicleGuide() {
           Make: vehicleInfo.make,
           Model: vehicleInfo.model,
           ModelYear: year,
-          VehicleType: matchingModels[0]?.Vehicle_Type || matchingModels[0]?.Model_Name || 'Unknown'
+          VehicleType: matchingModels[0]?.Vehicle_Type || matchingModels[0]?.Model_Name || 'Unknown',
+          ...vinLookupData
         }
       });
 
@@ -396,6 +425,7 @@ export default function VehicleGuide() {
     setVehicleInfo(prev => ({ ...prev, [field]: value }));
     setNhtsaData(null);
     setValidationError(null);
+    setVinLookupData(null);
   };
 
   return (
@@ -412,7 +442,7 @@ export default function VehicleGuide() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Input
                 type="text"
                 placeholder="Vehicle Year"
@@ -434,6 +464,20 @@ export default function VehicleGuide() {
                 onChange={(e) => handleVehicleInfoChange('model', e.target.value)}
                 className="w-full"
               />
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="VIN (Optional)"
+                  value={vehicleInfo.vin || ''}
+                  onChange={(e) => handleVehicleInfoChange('vin', e.target.value)}
+                  className="w-full pr-8"
+                  maxLength={17}
+                />
+                <Info 
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help"
+                  title="Vehicle Identification Number - Provides additional vehicle details"
+                />
+              </div>
             </div>
 
             <div>
@@ -529,10 +573,24 @@ export default function VehicleGuide() {
                   {nhtsaData.vehicleDetails && (
                     <div>
                       <h3 className="font-medium mb-2">Vehicle Details</h3>
-                      <p>Make: {nhtsaData.vehicleDetails.Make}</p>
-                      <p>Model: {nhtsaData.vehicleDetails.Model}</p>
-                      <p>Year: {nhtsaData.vehicleDetails.ModelYear}</p>
-                      <p>Vehicle Type: {nhtsaData.vehicleDetails.VehicleType}</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p>Make: {nhtsaData.vehicleDetails.Make}</p>
+                        <p>Model: {nhtsaData.vehicleDetails.Model}</p>
+                        <p>Year: {nhtsaData.vehicleDetails.ModelYear}</p>
+                        <p>Vehicle Type: {nhtsaData.vehicleDetails.VehicleType}</p>
+                        {nhtsaData.vehicleDetails.PlantCountry && (
+                          <p>Manufacturing Country: {nhtsaData.vehicleDetails.PlantCountry}</p>
+                        )}
+                        {nhtsaData.vehicleDetails.BodyClass && (
+                          <p>Body Style: {nhtsaData.vehicleDetails.BodyClass}</p>
+                        )}
+                        {nhtsaData.vehicleDetails.FuelTypePrimary && (
+                          <p>Fuel Type: {nhtsaData.vehicleDetails.FuelTypePrimary}</p>
+                        )}
+                        {nhtsaData.vehicleDetails.DriveType && (
+                          <p>Drive Type: {nhtsaData.vehicleDetails.DriveType}</p>
+                        )}
+                      </div>
                     </div>
                   )}
                 </CardContent>
