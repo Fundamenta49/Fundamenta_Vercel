@@ -130,6 +130,8 @@ const CREDIT_TOPICS = [
   }
 ];
 
+const TEST_VIDEO_ID = "jNQXAC9IVRw"; // This is a known working YouTube video ID
+
 export default function CreditSkills() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -145,13 +147,40 @@ export default function CreditSkills() {
     uniqueVideoIds.forEach(validateVideo);
   }, []);
 
+  useEffect(() => {
+    // Test the YouTube API integration
+    const testYouTubeAPI = async () => {
+      try {
+        console.log('Testing YouTube API with video ID:', TEST_VIDEO_ID);
+        const response = await fetch(`/api/youtube/validate?videoId=${TEST_VIDEO_ID}`);
+        const data = await response.json();
+        console.log('YouTube API test response:', data);
+
+        if (data.error) {
+          console.error('YouTube API test failed:', data.message);
+        } else {
+          console.log('YouTube API test successful');
+        }
+      } catch (error) {
+        console.error('YouTube API test error:', error);
+      }
+    };
+
+    testYouTubeAPI();
+  }, []);
+
   const validateVideo = async (videoId: string) => {
     try {
+      console.log(`Validating video ID: ${videoId}`);
       const response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
-      if (!response.ok) {
-        throw new Error('Video validation failed');
-      }
       const data = await response.json();
+      console.log(`Validation response for ${videoId}:`, data);
+
+      if (data.error) {
+        console.warn(`Video ${videoId} validation failed:`, data.message);
+        throw new Error(data.message);
+      }
+
       setVideoDetails(prev => ({
         ...prev,
         [videoId]: {

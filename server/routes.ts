@@ -843,15 +843,21 @@ Remember to suggest relevant features in the app that could help the user.`;
       const videoId = req.query.videoId as string;
 
       if (!videoId) {
-        return res.status(400).json({ error: "Video ID is required" });
+        return res.status(400).json({ error: true, message: "Video ID is required" });
       }
 
       if (!process.env.YOUTUBE_API_KEY) {
+        console.error("YouTube API key not configured");
         throw new Error("YouTube API key not configured");
       }
 
+      console.log(`Validating YouTube video ID: ${videoId}`);
+
       // Validate specific video
-      const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
+      const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
+      console.log(`Making API request to: ${apiUrl}`);
+
+      const response = await axios.get(apiUrl, {
         params: {
           part: 'snippet,status',
           id: videoId,
@@ -859,8 +865,15 @@ Remember to suggest relevant features in the app that could help the user.`;
         }
       });
 
+      console.log('YouTube API Response:', {
+        status: response.status,
+        hasItems: !!response.data.items,
+        itemCount: response.data.items?.length
+      });
+
       // Check if video exists and is available
       if (!response.data.items || response.data.items.length === 0) {
+        console.log(`No video found for ID: ${videoId}`);
         return res.json({
           error: true,
           message: "Video not found"
@@ -871,24 +884,34 @@ Remember to suggest relevant features in the app that could help the user.`;
 
       // Check if video is available
       if (video.status.privacyStatus !== 'public') {
+        console.log(`Video ${videoId} is not public. Status: ${video.status.privacyStatus}`);
         return res.json({
           error: true,
           message: "Video is not publicly available"
         });
       }
 
+      console.log(`Successfully validated video ${videoId}`);
+
       res.json({
         id: video.id,
         title: video.snippet.title,
-        thumbnail: video.snippet.thumbnails.medium.url,
+        thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
         error: false
       });
 
     } catch (error) {
       console.error("YouTube API error:", error);
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+
       res.status(500).json({ 
         error: true,
-        message: "Failed to validate video" 
+        message: "Failed to validate video",
+        details: error.response?.data?.error?.message || error.message
       });
     }
   });
