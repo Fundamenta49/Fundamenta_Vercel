@@ -130,61 +130,84 @@ export default function VehicleGuide() {
     setRecalls([]);
 
     try {
-      // Step 1: Decode VIN using VPIC API
-      const vinDecodeUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${vehicleInfo.vin}?format=json`;
-      const vinResponse = await fetch(vinDecodeUrl);
+      // Step 1: VIN Decode
+      const vinUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vehicleInfo.vin)}?format=json`;
+      console.log('Fetching VIN details from:', vinUrl);
+
+      const vinResponse = await fetch(vinUrl);
+      console.log('VIN Response status:', vinResponse.status);
 
       if (!vinResponse.ok) {
         throw new Error(`VIN lookup failed: ${vinResponse.status}`);
       }
 
       const vinData = await vinResponse.json();
+      console.log('VIN Data:', vinData);
 
-      if (!vinData.Results || vinData.Results.length === 0) {
-        throw new Error('Invalid VIN or no data available');
+      if (!vinData.Results || !Array.isArray(vinData.Results)) {
+        throw new Error('Invalid response format from VIN lookup');
       }
 
-      const vinInfo = vinData.Results[0];
-
-      // Filter out null/"Not Applicable" values and set vehicle details
-      const details: VehicleDetails = {
-        Make: vinInfo.Make !== "Not Applicable" ? vinInfo.Make : undefined,
-        Model: vinInfo.Model !== "Not Applicable" ? vinInfo.Model : undefined,
-        ModelYear: vinInfo.ModelYear !== "Not Applicable" ? vinInfo.ModelYear : undefined,
-        VehicleType: vinInfo.VehicleType !== "Not Applicable" ? vinInfo.VehicleType : undefined,
-        PlantCountry: vinInfo.PlantCountry !== "Not Applicable" ? vinInfo.PlantCountry : undefined,
-        BodyClass: vinInfo.BodyClass !== "Not Applicable" ? vinInfo.BodyClass : undefined,
-        EngineType: vinInfo.EngineType !== "Not Applicable" ? vinInfo.EngineType : undefined,
-        FuelTypePrimary: vinInfo.FuelTypePrimary !== "Not Applicable" ? vinInfo.FuelTypePrimary : undefined,
-      };
+      // Extract vehicle details
+      const details: VehicleDetails = {};
+      vinData.Results.forEach((item: any) => {
+        if (item.Value && item.Value !== "null" && item.Value !== "Not Applicable") {
+          switch (item.Variable) {
+            case "Make":
+              details.Make = item.Value;
+              break;
+            case "Model":
+              details.Model = item.Value;
+              break;
+            case "Model Year":
+              details.ModelYear = item.Value;
+              break;
+            case "Body Class":
+              details.BodyClass = item.Value;
+              break;
+            case "Plant Country":
+              details.PlantCountry = item.Value;
+              break;
+            case "Engine Type":
+              details.EngineType = item.Value;
+              break;
+            case "Fuel Type - Primary":
+              details.FuelTypePrimary = item.Value;
+              break;
+            case "Vehicle Type":
+              details.VehicleType = item.Value;
+              break;
+          }
+        }
+      });
 
       setVehicleDetails(details);
 
-      // Step 2: Fetch recalls with error handling and timeout
-      const recallUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/RecallsByVIN/${vehicleInfo.vin}?format=json`;
-      const recallResponse = await Promise.race([
-        fetch(recallUrl),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Recall lookup timed out')), 10000)
-        )
-      ]);
+      // Step 2: Recalls with proper error handling
+      const recallUrl = `https://api.nhtsa.gov/recalls/recallsByVIN?vin=${encodeURIComponent(vehicleInfo.vin)}`;
+      console.log('Fetching recalls from:', recallUrl);
 
-      if (!recallResponse || typeof recallResponse === 'string') {
-        throw new Error('Failed to fetch recall information');
-      }
+      const recallResponse = await fetch(recallUrl);
+      console.log('Recall Response status:', recallResponse.status);
 
       if (!recallResponse.ok) {
         throw new Error(`Recall lookup failed: ${recallResponse.status}`);
       }
 
       const recallData = await recallResponse.json();
-      setRecalls(recallData.Results || []);
+      console.log('Recall Data:', recallData);
+
+      if (recallData.results) {
+        setRecalls(recallData.results);
+      } else {
+        setRecalls([]);
+      }
 
     } catch (error) {
-      console.error('Error fetching vehicle information:', error);
+      console.error('Error details:', error);
       setError(
         error instanceof Error
-          ? error.message
+          ? `Error: ${error.message}`
           : 'Failed to fetch vehicle information. Please try again later.'
       );
     } finally {
