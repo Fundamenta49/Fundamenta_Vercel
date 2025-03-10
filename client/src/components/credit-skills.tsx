@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -20,13 +20,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-interface YouTubeVideoDetails {
-  id: string;
-  title: string;
-  thumbnail: string;
-  error?: boolean;
-}
-
 const CREDIT_TOPICS = [
   {
     id: "basics",
@@ -36,19 +29,19 @@ const CREDIT_TOPICS = [
       {
         title: "What is Credit?",
         content: "Credit is your ability to borrow money with the promise to repay it later. Good credit enables you to borrow at better rates and terms.",
-        videoId: "1i8fms6EIxM",
+        videoId: "dBe1lL9_KmQ",
         source: "https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/"
       },
       {
         title: "Credit Score Factors",
         content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%).",
-        videoId: "HJuSGi8uPbM",
+        videoId: "FxnX5BRB_zE",
         source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
       },
       {
         title: "Credit Reports",
         content: "A credit report is a detailed record of your credit history, including loans, credit cards, and payment history. You're entitled to one free report annually from each bureau.",
-        videoId: "v_DoK37qHBE",
+        videoId: "v6P9yYUXcs0",
         source: "https://www.annualcreditreport.com/"
       }
     ]
@@ -61,19 +54,19 @@ const CREDIT_TOPICS = [
       {
         title: "Secured Credit Cards",
         content: "A secured card requires a deposit and is an excellent way to start building credit with minimal risk.",
-        videoId: "pYYE0N2_LF4",
+        videoId: "zdjC3IpMwGY",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/improving-credit/building-credit/"
       },
       {
         title: "Authorized User",
         content: "Being added as an authorized user on someone's credit card can help build your credit history.",
-        videoId: "s0Zf9ZxBuXg",
+        videoId: "XwozVKOkzz4",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/building-credit/authorized-user/"
       },
       {
         title: "Credit-Builder Loans",
         content: "These loans are specifically designed to help build credit by reporting payments to credit bureaus.",
-        videoId: "YHEnvKpQBLM",
+        videoId: "YGzEf8y-8pw",
         source: "https://www.nerdwallet.com/article/loans/personal-loans/credit-builder-loans"
       }
     ]
@@ -86,19 +79,19 @@ const CREDIT_TOPICS = [
       {
         title: "Payment Strategies",
         content: "Always pay at least the minimum payment on time. Set up automatic payments to avoid missing due dates.",
-        videoId: "L5TqQVumq8s",
+        videoId: "zYocum3D9H8",
         source: "https://www.myfico.com/credit-education/improve-your-credit-score"
       },
       {
         title: "Credit Utilization",
         content: "Keep your credit utilization below 30%. This means using less than 30% of your available credit limit.",
-        videoId: "dQFt3UQ9XHY",
+        videoId: "hEM8SjzHnG8",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/score-basics/credit-utilization-rate/"
       },
       {
         title: "Regular Monitoring",
         content: "Check your credit report regularly for errors and signs of identity theft. Dispute any inaccuracies promptly.",
-        videoId: "j9PG2-qPpig",
+        videoId: "QC_c5bHEc8c",
         source: "https://www.consumer.ftc.gov/articles/0155-free-credit-reports"
       }
     ]
@@ -111,98 +104,30 @@ const CREDIT_TOPICS = [
       {
         title: "Addressing Late Payments",
         content: "Contact creditors to negotiate removal of late payments or set up payment plans for outstanding debts.",
-        videoId: "h6NKmP7fAfQ",
+        videoId: "SXL_0c4VA9M",
         source: "https://www.ftc.gov/credit"
       },
       {
         title: "Debt Management",
         content: "Consider debt consolidation or credit counseling services to help manage and reduce debt.",
-        videoId: "YT9Sw_0oP0w",
+        videoId: "vz4thZOqCd4",
         source: "https://www.nfcc.org/resources/blog/debt-management-programs/"
       },
       {
         title: "Recovery Timeline",
         content: "Most negative items stay on your credit report for 7 years. Bankruptcy can remain for up to 10 years.",
-        videoId: "gQFHQvO8GGE",
+        videoId: "5WXyP_EJR8Y",
         source: "https://www.equifax.com/personal/education/credit/report/how-long-does-information-stay-on-credit-report/"
       }
     ]
   }
 ];
 
-const TEST_VIDEO_ID = "jNQXAC9IVRw"; // This is a known working YouTube video ID
-
 export default function CreditSkills() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [videoDetails, setVideoDetails] = useState<Record<string, YouTubeVideoDetails>>({});
-
-  useEffect(() => {
-    const allVideoIds = CREDIT_TOPICS.flatMap(topic =>
-      topic.items.map(item => item.videoId)
-    );
-
-    const uniqueVideoIds = [...new Set(allVideoIds)];
-    uniqueVideoIds.forEach(validateVideo);
-  }, []);
-
-  useEffect(() => {
-    // Test the YouTube API integration
-    const testYouTubeAPI = async () => {
-      try {
-        console.log('Testing YouTube API with video ID:', TEST_VIDEO_ID);
-        const response = await fetch(`/api/youtube/validate?videoId=${TEST_VIDEO_ID}`);
-        const data = await response.json();
-        console.log('YouTube API test response:', data);
-
-        if (data.error) {
-          console.error('YouTube API test failed:', data.message);
-        } else {
-          console.log('YouTube API test successful');
-        }
-      } catch (error) {
-        console.error('YouTube API test error:', error);
-      }
-    };
-
-    testYouTubeAPI();
-  }, []);
-
-  const validateVideo = async (videoId: string) => {
-    try {
-      console.log(`Validating video ID: ${videoId}`);
-      const response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
-      const data = await response.json();
-      console.log(`Validation response for ${videoId}:`, data);
-
-      if (data.error) {
-        console.warn(`Video ${videoId} validation failed:`, data.message);
-        throw new Error(data.message);
-      }
-
-      setVideoDetails(prev => ({
-        ...prev,
-        [videoId]: {
-          id: videoId,
-          title: data.title,
-          thumbnail: data.thumbnail,
-          error: false
-        }
-      }));
-    } catch (error) {
-      console.error(`Error validating video ${videoId}:`, error);
-      setVideoDetails(prev => ({
-        ...prev,
-        [videoId]: {
-          id: videoId,
-          title: '',
-          thumbnail: '',
-          error: true
-        }
-      }));
-    }
-  };
+  const [failedVideos, setFailedVideos] = useState<Set<string>>(new Set());
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -221,11 +146,12 @@ export default function CreditSkills() {
     setIsDialogOpen(true);
   };
 
+  const handleVideoError = (videoId: string) => {
+    setFailedVideos(prev => new Set(prev).add(videoId));
+  };
 
   const renderVideoContent = (videoId: string, title: string) => {
-    const videoDetail = videoDetails[videoId];
-
-    if (!videoDetail || videoDetail.error) {
+    if (failedVideos.has(videoId)) {
       return (
         <Alert className="bg-yellow-50 border-yellow-200">
           <AlertTriangle className="h-4 w-4 text-yellow-500" />
@@ -238,23 +164,16 @@ export default function CreditSkills() {
 
     return (
       <div className="space-y-4">
-        <div className="pt-4">
+        <div className="relative overflow-hidden rounded-lg">
           <iframe
             src={`https://www.youtube.com/embed/${videoId}`}
-            title={videoDetail.title || title}
-            className="w-full aspect-video rounded-lg"
+            title={title}
+            className="w-full aspect-video"
             allowFullScreen
-            onError={() => {
-              setVideoDetails(prev => ({
-                ...prev,
-                [videoId]: { ...prev[videoId], error: true }
-              }));
-            }}
+            onError={() => handleVideoError(videoId)}
+            loading="lazy"
           />
         </div>
-        {videoDetail.title && (
-          <p className="text-sm text-muted-foreground">{videoDetail.title}</p>
-        )}
       </div>
     );
   };
