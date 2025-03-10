@@ -51,7 +51,7 @@ interface NHTSAData {
     Summary: string;
     Consequence: string;
     Remedy: string;
-    NHTSACampaignNumber?: string;
+    NHTSACampaignNumber: string;
   }>;
   complaints?: Array<{
     Component: string;
@@ -350,7 +350,7 @@ export default function VehicleGuide() {
 
         // Fetch complaints for the vehicle
         const complaintResponse = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/ComplaintsByVIN/${encodeURIComponent(vin)}?format=json`
+          `https://vpic.nhtsa.dot.gov/api/vehicles/complaints/vin/${encodeURIComponent(vin)}?format=json`
         );
 
         if (!complaintResponse.ok) {
@@ -359,9 +359,9 @@ export default function VehicleGuide() {
 
         const complaintData = await complaintResponse.json();
 
-        // Fetch TSBs
+        // Fetch Technical Service Bulletins
         const tsbResponse = await fetch(
-          `https://vpic.nhtsa.dot.gov/api/vehicles/TechnicalServiceBulletinsByVIN/${encodeURIComponent(vin)}?format=json`
+          `https://vpic.nhtsa.dot.gov/api/vehicles/tsbs/vin/${encodeURIComponent(vin)}?format=json`
         );
 
         if (!tsbResponse.ok) {
