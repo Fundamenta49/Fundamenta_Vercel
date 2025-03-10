@@ -8,6 +8,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Info, Car, Wrench, Star, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
