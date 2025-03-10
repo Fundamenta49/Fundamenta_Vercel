@@ -75,13 +75,15 @@ export default function CookingGuide() {
   const fetchGuidance = async (topic: string) => {
     setIsLoading(true);
     setError(null);
+    setGuidance(null);
+
     try {
       const response = await fetch("/api/skill-guidance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          skillArea: "life",
-          userQuery: `cooking guide: ${topic}`,
+          skillArea: "cooking",
+          userQuery: topic,
         }),
       });
 
@@ -90,6 +92,11 @@ export default function CookingGuide() {
       }
 
       const data = await response.json();
+
+      if (!data.guidance) {
+        throw new Error("No guidance content received");
+      }
+
       setGuidance(data.guidance);
       setVideos(data.videos || []);
     } catch (error) {
@@ -105,15 +112,87 @@ export default function CookingGuide() {
     await fetchGuidance(searchQuery);
   };
 
+  const renderGuidance = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-40">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      );
+    }
+
+    if (!guidance) return null;
+
+    return (
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Cooking Guide</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[500px] pr-4">
+            <div className="prose prose-gray max-w-none space-y-4">
+              {guidance.split('\n\n').map((section, idx) => {
+                if (section.startsWith('🎯') || section.startsWith('👩‍🍳') || 
+                    section.startsWith('⚠️') || section.startsWith('💡') || 
+                    section.startsWith('🧰') || section.startsWith('⏰')) {
+                  const [title, ...content] = section.split('\n');
+                  return (
+                    <div key={idx} className="mb-6">
+                      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+                      <div className="space-y-2">
+                        {content.map((line, lineIdx) => (
+                          <p key={lineIdx} className="text-gray-700">{line}</p>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return <p key={idx} className="text-gray-700">{section}</p>;
+              })}
+            </div>
+
+            {videos.length > 0 && (
+              <div className="mt-8 space-y-6">
+                <h3 className="text-lg font-semibold">Tutorial Videos</h3>
+                <div className="grid gap-6">
+                  {videos.map((video) => (
+                    <div key={video.id} className="space-y-2">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${video.id}`}
+                        title={video.title}
+                        className="w-full aspect-video rounded-lg"
+                        allowFullScreen
+                      />
+                      <p className="text-sm font-medium">{video.title}</p>
+                      <p className="text-sm text-gray-500">{video.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </ScrollArea>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <div className="space-y-6">
-      <Card className="bg-white">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-gray-900">
+          <CardTitle className="flex items-center gap-2">
             <ChefHat className="h-5 w-5" />
             Cooking Basics Guide
           </CardTitle>
-          <CardDescription className="text-gray-500">
+          <CardDescription>
             Learn essential cooking skills and kitchen safety
           </CardDescription>
         </CardHeader>
@@ -128,8 +207,12 @@ export default function CookingGuide() {
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 className="flex-1"
               />
-              <Button onClick={handleSearch} variant="outline">
-                Search for guidance
+              <Button 
+                onClick={handleSearch} 
+                variant="outline"
+                disabled={isLoading}
+              >
+                {isLoading ? "Searching..." : "Search for guidance"}
               </Button>
             </div>
 
@@ -137,18 +220,18 @@ export default function CookingGuide() {
               {COOKING_BASICS.map((topic, index) => (
                 <Card
                   key={index}
-                  className="cursor-pointer hover:shadow-sm transition-all bg-white"
+                  className="cursor-pointer hover:shadow-sm transition-all"
                   onClick={() => {
                     setSearchQuery(topic.title);
                     fetchGuidance(topic.title);
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2 text-gray-900">
+                    <CardTitle className="text-lg flex items-center gap-2">
                       {topic.icon && <topic.icon className="h-5 w-5" />}
                       {topic.title}
                     </CardTitle>
-                    <CardDescription className="text-gray-500">{topic.description}</CardDescription>
+                    <CardDescription>{topic.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <ul className="list-disc list-inside text-sm text-gray-500">
@@ -164,55 +247,12 @@ export default function CookingGuide() {
         </CardContent>
       </Card>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+      {renderGuidance()}
 
-      {isLoading ? (
-        <div className="flex items-center justify-center h-40">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-        </div>
-      ) : guidance ? (
-        <Card className="bg-white">
-          <CardHeader>
-            <CardTitle className="text-gray-900">Cooking Guide</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[400px] pr-4">
-              <div className="prose prose-gray max-w-none">
-                {guidance.split('\n').map((line, idx) => (
-                  <p key={idx} className="mb-2 text-gray-700">{line}</p>
-                ))}
-              </div>
-              {videos.length > 0 && (
-                <div className="mt-6 space-y-4">
-                  <h3 className="text-lg font-semibold">Video Tutorials</h3>
-                  <div className="grid gap-4">
-                    {videos.map((video) => (
-                      <div key={video.id} className="space-y-2">
-                        <iframe
-                          src={`https://www.youtube.com/embed/${video.id}`}
-                          title={video.title}
-                          className="w-full aspect-video rounded-lg"
-                          allowFullScreen
-                        />
-                        <p className="text-sm font-medium">{video.title}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      ) : null}
-
-      <Card className="bg-white">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-gray-900">AI Cooking Assistant</CardTitle>
-          <CardDescription className="text-gray-500">
+          <CardTitle>AI Cooking Assistant</CardTitle>
+          <CardDescription>
             Get personalized help with cooking questions
           </CardDescription>
         </CardHeader>
