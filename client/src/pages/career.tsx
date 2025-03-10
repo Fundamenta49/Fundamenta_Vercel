@@ -17,12 +17,9 @@ import SalaryInsights from "@/components/salary-insights";
 import EmploymentRights from "@/components/employment-rights";
 import RiasecTest from "@/components/riasec-test";
 import EmotionalResilienceTracker from "@/components/emotional-resilience-tracker";
+import ResumeBuilder from "@/components/resume-builder";
 import { useState } from "react";
 import { GraduationCap, Search, ExternalLink } from "lucide-react";
-
-interface SkillGuidanceResponse {
-  guidance: string;
-}
 
 // List of curated learning platforms with their URLs
 const LEARNING_RESOURCES = [
@@ -119,6 +116,7 @@ export default function Career() {
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
+            <TabsTrigger value="resume">Resume Builder</TabsTrigger>
             <TabsTrigger value="learning">Learning Paths</TabsTrigger>
             <TabsTrigger value="resilience">EQ & Resilience</TabsTrigger>
             <TabsTrigger value="chat">Career AI Coach</TabsTrigger>
@@ -131,6 +129,10 @@ export default function Career() {
 
         <TabsContent value="assessment">
           <RiasecTest />
+        </TabsContent>
+
+        <TabsContent value="resume">
+          <ResumeBuilder />
         </TabsContent>
 
         <TabsContent value="learning">
@@ -226,4 +228,8 @@ export default function Career() {
       </Tabs>
     </div>
   );
+}
+
+interface SkillGuidanceResponse {
+  guidance: string;
 }
