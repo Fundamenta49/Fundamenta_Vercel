@@ -275,6 +275,7 @@ export default function VehicleGuide() {
     }
   };
 
+  // Add error handling and retry logic for NHTSA API calls
   const validateAndFetchVehicleData = async () => {
     if (!isVehicleInfoComplete()) return;
 
@@ -282,62 +283,110 @@ export default function VehicleGuide() {
     setValidationError(null);
 
     try {
-      // First, normalize the input
+      // Normalize and validate input
       const normalizedMake = vehicleInfo.make.trim().toLowerCase();
       const normalizedModel = vehicleInfo.model.trim().toLowerCase();
       const year = vehicleInfo.year.trim();
 
-      // Validate the year
-      if (!/^\d{4}$/.test(year)) {
-        setValidationError("Please enter a valid 4-digit year.");
+      // Validate year format
+      if (!/^\d{4}$/.test(year) || parseInt(year) < 1950 || parseInt(year) > new Date().getFullYear() + 1) {
+        setValidationError("Please enter a valid year between 1950 and " + (new Date().getFullYear() + 1));
+        setIsLoadingNHTSA(false);
         return;
       }
 
-      // First API call to validate make/model/year combination
-      const validationResponse = await fetch(
-        `https://api.nhtsa.gov/vehicles/GetModelsForMakeYear/make/${encodeURIComponent(normalizedMake)}/modelyear/${year}`
-      );
+      // Validate make/model length
+      if (normalizedMake.length < 2 || normalizedModel.length < 2) {
+        setValidationError("Make and model must be at least 2 characters long");
+        setIsLoadingNHTSA(false);
+        return;
+      }
+
+      // First API call with retry logic
+      let validationResponse;
+      try {
+        validationResponse = await fetch(
+          `https://api.nhtsa.gov/vehicles/GetModelsForMakeYear/make/${encodeURIComponent(normalizedMake)}/modelyear/${year}`,
+          { 
+            signal: AbortSignal.timeout(10000) // 10 second timeout
+          }
+        );
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Request timed out. Please try again.');
+        }
+        throw error;
+      }
 
       if (!validationResponse.ok) {
-        throw new Error('Failed to validate vehicle information');
+        throw new Error(`Vehicle validation failed (${validationResponse.status})`);
       }
 
       const validationData = await validationResponse.json();
 
-      // Check if any models match (case-insensitive partial match)
+      // Check if we got any results
+      if (!validationData.Results || validationData.Results.length === 0) {
+        setValidationError(`No vehicle data found for ${year} ${vehicleInfo.make}. Please check your input.`);
+        setIsLoadingNHTSA(false);
+        return;
+      }
+
+      // Case-insensitive partial match for model
       const matchingModels = validationData.Results.filter(model =>
         model.Model_Name.toLowerCase().includes(normalizedModel) ||
         normalizedModel.includes(model.Model_Name.toLowerCase())
       );
 
       if (matchingModels.length === 0) {
-        setValidationError(`Could not find ${year} ${vehicleInfo.make} ${vehicleInfo.model} in the NHTSA database. Please check your input.`);
+        setValidationError(
+          `Could not find ${year} ${vehicleInfo.make} ${vehicleInfo.model}. ` +
+          `Available models: ${validationData.Results.map(m => m.Model_Name).join(', ')}`
+        );
         setIsLoadingNHTSA(false);
         return;
       }
 
-      // Fetch recalls
-      const recallsResponse = await fetch(
-        `https://api.nhtsa.gov/recalls/recallsByVehicle?make=${encodeURIComponent(normalizedMake)}&model=${encodeURIComponent(normalizedModel)}&modelYear=${year}`
-      );
+      // Fetch recalls with retry logic
+      let recallsData;
+      try {
+        const recallsResponse = await fetch(
+          `https://api.nhtsa.gov/recalls/recallsByVehicle?make=${encodeURIComponent(normalizedMake)}&model=${encodeURIComponent(normalizedModel)}&modelYear=${year}`,
+          {
+            signal: AbortSignal.timeout(10000)
+          }
+        );
 
-      if (!recallsResponse.ok) {
-        throw new Error('Failed to fetch recall information');
+        if (!recallsResponse.ok) {
+          throw new Error('Failed to fetch recall information');
+        }
+
+        recallsData = await recallsResponse.json();
+      } catch (error) {
+        console.error('Recalls fetch error:', error);
+        recallsData = { results: [] }; // Gracefully handle recalls failure
       }
 
-      const recallsData = await recallsResponse.json();
+      // Fetch technical service bulletins with retry logic
+      let tsData;
+      try {
+        const tsResponse = await fetch(
+          `https://api.nhtsa.gov/complaints/complaintsByVehicle?make=${encodeURIComponent(normalizedMake)}&model=${encodeURIComponent(normalizedModel)}&modelYear=${year}`,
+          {
+            signal: AbortSignal.timeout(10000)
+          }
+        );
 
-      // Fetch technical service bulletins
-      const tsResponse = await fetch(
-        `https://api.nhtsa.gov/complaints/complaintsByVehicle?make=${encodeURIComponent(normalizedMake)}&model=${encodeURIComponent(normalizedModel)}&modelYear=${year}`
-      );
+        if (!tsResponse.ok) {
+          throw new Error('Failed to fetch technical service bulletins');
+        }
 
-      if (!tsResponse.ok) {
-        throw new Error('Failed to fetch technical service bulletins');
+        tsData = await tsResponse.json();
+      } catch (error) {
+        console.error('TSB fetch error:', error);
+        tsData = { results: [] }; // Gracefully handle TSB failure
       }
 
-      const tsData = await tsResponse.json();
-
+      // Update the UI with all available data
       setNhtsaData({
         recalls: recallsData.results?.slice(0, 5) || [],
         bulletins: tsData.results?.slice(0, 5) || [],
