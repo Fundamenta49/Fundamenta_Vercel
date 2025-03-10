@@ -275,7 +275,7 @@ export default function VehicleGuide() {
     }
   };
 
-  // Add error handling and retry logic for NHTSA API calls
+  // Update the validateAndFetchVehicleData function with the correct API endpoints
   const validateAndFetchVehicleData = async () => {
     if (!isVehicleInfoComplete()) return;
 
@@ -302,21 +302,10 @@ export default function VehicleGuide() {
         return;
       }
 
-      // First API call with retry logic
-      let validationResponse;
-      try {
-        validationResponse = await fetch(
-          `https://api.nhtsa.gov/vehicles/GetModelsForMakeYear/make/${encodeURIComponent(normalizedMake)}/modelyear/${year}`,
-          { 
-            signal: AbortSignal.timeout(10000) // 10 second timeout
-          }
-        );
-      } catch (error) {
-        if (error.name === 'AbortError') {
-          throw new Error('Request timed out. Please try again.');
-        }
-        throw error;
-      }
+      // First API call to validate make/model
+      const validationResponse = await fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/${encodeURIComponent(normalizedMake)}?format=json`
+      );
 
       if (!validationResponse.ok) {
         throw new Error(`Vehicle validation failed (${validationResponse.status})`);
@@ -326,34 +315,31 @@ export default function VehicleGuide() {
 
       // Check if we got any results
       if (!validationData.Results || validationData.Results.length === 0) {
-        setValidationError(`No vehicle data found for ${year} ${vehicleInfo.make}. Please check your input.`);
+        setValidationError(`No vehicle data found for make: ${vehicleInfo.make}. Please check your input.`);
         setIsLoadingNHTSA(false);
         return;
       }
 
       // Case-insensitive partial match for model
-      const matchingModels = validationData.Results.filter(model =>
+      const matchingModels = validationData.Results.filter((model: any) =>
         model.Model_Name.toLowerCase().includes(normalizedModel) ||
         normalizedModel.includes(model.Model_Name.toLowerCase())
       );
 
       if (matchingModels.length === 0) {
         setValidationError(
-          `Could not find ${year} ${vehicleInfo.make} ${vehicleInfo.model}. ` +
-          `Available models: ${validationData.Results.map(m => m.Model_Name).join(', ')}`
+          `Could not find model: ${vehicleInfo.model} for make: ${vehicleInfo.make}. ` +
+          `Available models: ${validationData.Results.map((m: any) => m.Model_Name).join(', ')}`
         );
         setIsLoadingNHTSA(false);
         return;
       }
 
-      // Fetch recalls with retry logic
+      // Fetch recalls with the correct endpoint
       let recallsData;
       try {
         const recallsResponse = await fetch(
-          `https://api.nhtsa.gov/recalls/recallsByVehicle?make=${encodeURIComponent(normalizedMake)}&model=${encodeURIComponent(normalizedModel)}&modelYear=${year}`,
-          {
-            signal: AbortSignal.timeout(10000)
-          }
+          `https://vpic.nhtsa.dot.gov/api/vehicles/RecallsByVehicle/${encodeURIComponent(normalizedMake)}/${encodeURIComponent(normalizedModel)}/${year}?format=json`
         );
 
         if (!recallsResponse.ok) {
@@ -363,17 +349,14 @@ export default function VehicleGuide() {
         recallsData = await recallsResponse.json();
       } catch (error) {
         console.error('Recalls fetch error:', error);
-        recallsData = { results: [] }; // Gracefully handle recalls failure
+        recallsData = { Results: [] }; // Gracefully handle recalls failure
       }
 
-      // Fetch technical service bulletins with retry logic
+      // Fetch technical service bulletins with the correct endpoint
       let tsData;
       try {
         const tsResponse = await fetch(
-          `https://api.nhtsa.gov/complaints/complaintsByVehicle?make=${encodeURIComponent(normalizedMake)}&model=${encodeURIComponent(normalizedModel)}&modelYear=${year}`,
-          {
-            signal: AbortSignal.timeout(10000)
-          }
+          `https://vpic.nhtsa.dot.gov/api/vehicles/complaintsByVehicle/${encodeURIComponent(normalizedMake)}/${encodeURIComponent(normalizedModel)}/${year}?format=json`
         );
 
         if (!tsResponse.ok) {
@@ -383,18 +366,18 @@ export default function VehicleGuide() {
         tsData = await tsResponse.json();
       } catch (error) {
         console.error('TSB fetch error:', error);
-        tsData = { results: [] }; // Gracefully handle TSB failure
+        tsData = { Results: [] }; // Gracefully handle TSB failure
       }
 
       // Update the UI with all available data
       setNhtsaData({
-        recalls: recallsData.results?.slice(0, 5) || [],
-        bulletins: tsData.results?.slice(0, 5) || [],
+        recalls: recallsData.Results?.slice(0, 5) || [],
+        bulletins: tsData.Results?.slice(0, 5) || [],
         vehicleDetails: {
           Make: vehicleInfo.make,
           Model: vehicleInfo.model,
           ModelYear: year,
-          VehicleType: matchingModels[0]?.VehicleType || 'Unknown'
+          VehicleType: matchingModels[0]?.Vehicle_Type || matchingModels[0]?.Model_Name || 'Unknown'
         }
       });
 
