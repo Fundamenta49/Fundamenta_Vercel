@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer, getSalaryInsights } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { searchJobs } from "./jobs";
@@ -11,67 +11,9 @@ import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
 
-// Import pdf-parse with require to avoid test file loading
-const pdfParse = require('pdf-parse/lib/pdf-parse');
-
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const messageSchema = z.object({
-  skillArea: z.enum(["technical", "soft", "search", "life", "cooking", "career", "emergency", "finance", "wellness", "tour", "learning"]),
-  userQuery: z.string()
-});
-
-const resumeSchema = z.object({
-  personalInfo: z.object({
-    name: z.string(),
-    email: z.string(),
-    phone: z.string(),
-    summary: z.string(),
-  }),
-  education: z.array(z.object({
-    school: z.string(),
-    degree: z.string(),
-    year: z.string(),
-  })),
-  experience: z.array(z.object({
-    company: z.string(),
-    position: z.string(),
-    duration: z.string(),
-    description: z.string(),
-  })),
-  targetPosition: z.string(),
-});
-
-const coverLetterSchema = z.object({
-  personalInfo: z.object({
-    name: z.string(),
-    email: z.string(),
-    phone: z.string(),
-    summary: z.string(),
-  }),
-  education: z.array(z.object({
-    school: z.string(),
-    degree: z.string(),
-    year: z.string(),
-  })),
-  experience: z.array(z.object({
-    company: z.string(),
-    position: z.string(),
-    duration: z.string(),
-    description: z.string(),
-  })),
-  targetPosition: z.string(),
-  company: z.string().optional(),
-  keyExperience: z.array(z.string()),
-  additionalNotes: z.string().optional(),
-});
-
-const interviewAnalysisSchema = z.object({
-  answer: z.string(),
-  question: z.string(),
-  industry: z.string(),
-});
-
+// Configure multer for file uploads
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -115,7 +57,7 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-✨ Next Topic
+:✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
@@ -914,8 +856,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       res.status(500).json({
         error: true,
         message: "Failed to validate video",
-        details: error.response?.data?.error?.message || error.message
-      });
+        details: error.response?.data?.error?.message || error.message      });
     }
   });
 
@@ -939,63 +880,59 @@ Remember to suggest relevant features in the app that could help the user.`;
       try {
         if (req.file.mimetype === 'application/pdf') {
           console.log("Processing PDF file...");
-          try {
-            const dataBuffer = Buffer.from(req.file.buffer);
-            const pdfData = await pdfParse(dataBuffer);
-            extractedText = pdfData.text;
-            console.log("PDF parsing successful, text length:", extractedText.length);
-          } catch (pdfError) {
-            console.error("PDF parsing error:", pdfError);
-            throw new Error("Could not parse PDF content. Please ensure the file is not corrupted or password protected.");
-          }
+          // Dynamically import pdf-parse to avoid ES module issues
+          const pdfParse = (await import('pdf-parse')).default;
+          const buffer = Buffer.from(req.file.buffer);
+          const data = await pdfParse(buffer);
+          extractedText = data.text;
+          console.log("PDF text extracted successfully");
         } else if (req.file.mimetype.includes('word')) {
           console.log("Processing Word document...");
           const result = await mammoth.extractRawText({ buffer: req.file.buffer });
           extractedText = result.value;
-          console.log("Word document parsed successfully, text length:", extractedText.length);
+          console.log("Word document text extracted successfully");
         }
 
         if (!extractedText || extractedText.trim().length === 0) {
           throw new Error("No text could be extracted from the document. Please ensure the file contains readable text.");
         }
 
-        console.log("Proceeding with resume analysis...");
+        console.log("Analyzing resume content...");
         const response = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
             {
               role: "system",
-              content: `You are a professional resume parser. Extract structured information from the resume text into JSON format with the following structure:
-            {
-              "personalInfo": {
-                "name": string,
-                "email": string,
-                "phone": string,
-                "summary": string
-              },
-              "experience": [
-                {
-                  "company": string,
-                  "position": string,
-                  "duration": string,
-                  "description": string
-                }
-              ],
-              "education": [
-                {
-                  "school": string,
-                  "degree": string,
-                  "year": string
-                }
-              ]
-            }
+              content: `Extract structured information from the resume text into JSON format matching this schema:
+              {
+                "personalInfo": {
+                  "name": string,
+                  "email": string,
+                  "phone": string,
+                  "summary": string
+                },
+                "education": [
+                  {
+                    "school": string,
+                    "degree": string,
+                    "year": string
+                  }
+                ],
+                "experience": [
+                  {
+                    "company": string,
+                    "position": string,
+                    "duration": string,
+                    "description": string
+                  }
+                ]
+              }
 
-            Guidelines:
-            - If a field is not found, use an empty string or empty array
-            - Ensure all dates and durations are properly formatted
-            - Extract the most relevant information for each section
-            - Keep descriptions concise but informative
-            - Ensure the output is valid JSON`
+              Guidelines:
+              - If a field can't be found, use an empty string
+              - Format dates consistently
+              - Keep descriptions concise
+              - Ensure valid JSON output`
             },
             {
               role: "user",
@@ -1006,7 +943,7 @@ Remember to suggest relevant features in the app that could help the user.`;
         });
 
         const parsedData = JSON.parse(response.choices[0].message.content || "{}");
-        console.log("Resume successfully parsed and analyzed");
+        console.log("Resume successfully parsed");
 
         res.json({
           success: true,
@@ -1017,11 +954,11 @@ Remember to suggest relevant features in the app that could help the user.`;
         console.error("Resume parsing error:", error);
         res.status(400).json({
           error: true,
-          message: error.message || "Failed to process the resume. Please try again with a different file."
+          message: error instanceof Error ? error.message : "Failed to process the resume"
         });
       }
-    } catch (outerError) {
-      console.error("Outer error handling:", outerError);
+    } catch (error) {
+      console.error("Unexpected error:", error);
       res.status(500).json({
         error: true,
         message: "An unexpected error occurred while processing your request."
@@ -1029,81 +966,82 @@ Remember to suggest relevant features in the app that could help the user.`;
     }
   });
 
-  app.get("/api/youtube/validate", async (req, res) => {
-    try {
-      const videoId = req.query.videoId as string;
-
-      if (!videoId) {
-        return res.status(400).json({ error: true, message: "Video ID is required" });
-      }
-
-      if (!process.env.YOUTUBE_API_KEY) {
-        console.error("YouTube API key not configured");
-        throw new Error("YouTube API key not configured");
-      }
-
-      console.log(`Validating YouTube video ID: ${videoId}`);
-
-      const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
-      console.log(`Making API request to: ${apiUrl}`);
-
-      const response = await axios.get(apiUrl, {
-        params: {
-          part: 'snippet,status',
-          id: videoId,
-          key: process.env.YOUTUBE_API_KEY,
-        }
-      });
-
-      console.log('YouTube API Response:', {
-        status: response.status,
-        hasItems: !!response.data.items,
-        itemCount: response.data.items?.length
-      });
-
-      if (!response.data.items || response.data.items.length === 0) {
-        console.log(`No video found for ID: ${videoId}`);
-        return res.json({
-          error: true,
-          message: "Video not found"
-        });
-      }
-
-      const video = response.data.items[0];
-
-      if (video.status.privacyStatus !== 'public') {
-        console.log(`Video ${videoId} is not public. Status: ${video.status.privacyStatus}`);
-        return res.json({
-          error: true,
-          message: "Video is not publicly available"
-        });
-      }
-
-      console.log(`Successfully validated video ${videoId}`);
-
-      res.json({
-        id: video.id,
-        title: video.snippet.title,
-        thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
-        error: false
-      });
-
-    } catch (error) {
-      console.error("YouTube API error:", error);
-      console.error("Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-
-      res.status(500).json({
-        error: true,
-        message: "Failed to validate video",
-        details: error.response?.data?.error?.message || error.message
-      });
-    }
-  });
-
   const httpServer = createServer(app);
   return httpServer;
 }
+
+const messageSchema = z.object({
+  skillArea: z.enum(["technical", "soft", "search", "life", "cooking", "career", "emergency", "finance", "wellness", "tour", "learning"]),
+  userQuery: z.string()
+});
+
+const resumeSchema = z.object({
+  personalInfo: z.object({
+    name: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    summary: z.string(),
+  }),
+  education: z.array(z.object({
+    school: z.string(),
+    degree: z.string(),
+    year: z.string(),
+  })),
+  experience: z.array(z.object({
+    company: z.string(),
+    position: z.string(),
+    duration: z.string(),
+    description: z.string(),
+  })),
+  targetPosition: z.string(),
+});
+
+const coverLetterSchema = z.object({
+  personalInfo: z.object({
+    name: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    summary: z.string(),
+  }),
+  education: z.array(z.object({
+    school: z.string(),
+    degree: z.string(),
+    year: z.string(),
+  })),
+  experience: z.array(z.object({
+    company: z.string(),
+    position: z.string(),
+    duration: z.string(),
+    description: z.string(),
+  })),
+  targetPosition: z.string(),
+  company: z.string().optional(),
+  keyExperience: z.array(z.string()),
+  additionalNotes: z.string().optional(),
+});
+
+const interviewAnalysisSchema = z.object({
+  answer: z.string(),
+  question: z.string(),
+  industry: z.string(),
+});
+
+const resumeParserSchema = z.object({
+  personalInfo: z.object({
+    name: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    summary: z.string(),
+  }),
+  education: z.array(z.object({
+    school: z.string(),
+    degree: z.string(),
+    year: z.string(),
+  })),
+  experience: z.array(z.object({
+    company: z.string(),
+    position: z.string(),
+    duration: z.string(),
+    description: z.string(),
+  }))
+});
