@@ -48,9 +48,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: `👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out.
-
-How can I help you today? You can ask me to:
+      content: `👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out. How can I help you today? You can ask me to:
 
 • Review your summary
 • Improve job descriptions
@@ -124,20 +122,23 @@ Just type your question or what you'd like me to help with!`
                 key={index}
                 className={`flex ${
                   message.role === 'assistant' ? 'justify-start' : 'justify-end'
-                } mb-4`}
+                }`}
               >
-                <div className="flex items-start max-w-[80%] gap-2">
+                <div className="flex items-start w-full">
                   {message.role === 'assistant' && (
                     <Bot className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
                   )}
                   <div
                     className={
                       message.role === 'assistant'
-                        ? 'bg-[#E8F1FE] text-gray-800 rounded-lg p-3'
-                        : 'bg-primary text-primary-foreground rounded-lg p-3 ml-auto'
+                        ? 'flex-1 bg-[#E8F1FE] text-[#1f2937] rounded-lg p-4 ml-2'
+                        : 'bg-primary text-primary-foreground rounded-lg p-4 max-w-[80%] ml-auto'
                     }
                   >
-                    <div className="text-sm whitespace-pre-line">
+                    <div className="text-base leading-6" style={{
+                      whiteSpace: 'pre-line',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                    }}>
                       {message.content}
                     </div>
                   </div>
