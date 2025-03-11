@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer } from "lucide-react";
+import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer, Maximize2, Minimize2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
@@ -79,6 +79,7 @@ export default function CookingGuide() {
   const [videos, setVideos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isVideoFocused, setIsVideoFocused] = useState(false);
 
   const fetchGuidance = async (topic: string) => {
     setIsLoading(true);
@@ -107,7 +108,7 @@ export default function CookingGuide() {
 
       setGuidance(data.guidance);
       setVideos(data.videos || []);
-      setIsDialogOpen(true); // Open dialog when guidance is received
+      setIsDialogOpen(true);
     } catch (error) {
       console.error("Error fetching guidance:", error);
       setError("Failed to load cooking guidance. Please try again.");
@@ -141,139 +142,177 @@ export default function CookingGuide() {
     if (!guidance) return null;
 
     return (
-      <div className="space-y-6">
-        <div className="prose prose-gray max-w-none space-y-4">
-          {guidance.split('\n\n').map((section, idx) => {
-            if (section.startsWith('🎯') || section.startsWith('👩‍🍳') || 
-                section.startsWith('⚠️') || section.startsWith('💡') || 
-                section.startsWith('🧰') || section.startsWith('⏰')) {
-              const [title, ...content] = section.split('\n');
-              return (
-                <div key={idx} className="mb-6">
-                  <h3 className="text-lg font-semibold mb-2">{title}</h3>
-                  <div className="space-y-2">
-                    {content.map((line, lineIdx) => (
-                      <p key={lineIdx} className="text-gray-700">{line}</p>
-                    ))}
-                  </div>
-                </div>
-              );
-            }
-            return <p key={idx} className="text-gray-700">{section}</p>;
-          })}
-        </div>
-
+      <div className="relative">
         {videos.length > 0 && (
-          <div className="mt-8 space-y-6">
-            <h3 className="text-lg font-semibold">Tutorial Videos</h3>
-            <div className="grid gap-6">
+          <div className={`
+            transition-all duration-300 ease-in-out
+            ${isVideoFocused ? 
+              'fixed inset-0 z-50 bg-background/95 p-6 flex flex-col items-center justify-center' : 
+              'relative w-full'
+            }
+          `}>
+            <div className="flex justify-between items-center w-full max-w-4xl mb-4">
+              <h3 className={`text-lg font-semibold ${isVideoFocused ? 'text-white' : ''}`}>
+                Tutorial Videos
+              </h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsVideoFocused(!isVideoFocused)}
+              >
+                {isVideoFocused ? (
+                  <><Minimize2 className="h-4 w-4 mr-2" /> Exit Focus Mode</>
+                ) : (
+                  <><Maximize2 className="h-4 w-4 mr-2" /> Enter Focus Mode</>
+                )}
+              </Button>
+            </div>
+
+            <div className={`
+              grid gap-6 w-full
+              ${isVideoFocused ? 'max-w-4xl' : ''}
+            `}>
               {videos.map((video) => (
                 <div key={video.id} className="space-y-2">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.id}`}
-                    title={video.title}
-                    className="w-full aspect-video rounded-lg"
-                    allowFullScreen
-                  />
-                  <p className="text-sm font-medium">{video.title}</p>
-                  <p className="text-sm text-gray-500">{video.description}</p>
+                  <div className="relative aspect-video">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`}
+                      title={video.title}
+                      className="absolute inset-0 w-full h-full rounded-lg"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  <p className={`text-sm font-medium ${isVideoFocused ? 'text-white' : ''}`}>
+                    {video.title}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         )}
+
+        <div className={`
+          space-y-6 transition-all duration-300
+          ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}
+        `}>
+          <div className="prose prose-gray max-w-none space-y-4">
+            {guidance.split('\n\n').map((section, idx) => {
+              if (section.startsWith('🎯') || section.startsWith('👩‍🍳') || 
+                  section.startsWith('⚠️') || section.startsWith('💡') || 
+                  section.startsWith('🧰') || section.startsWith('⏰')) {
+                const [title, ...content] = section.split('\n');
+                return (
+                  <div key={idx} className="mb-6">
+                    <h3 className="text-lg font-semibold mb-2">{title}</h3>
+                    <div className="space-y-2">
+                      {content.map((line, lineIdx) => (
+                        <p key={lineIdx} className="text-gray-700">{line}</p>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+              return <p key={idx} className="text-gray-700">{section}</p>;
+            })}
+          </div>
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ChefHat className="h-5 w-5" />
-            Cooking Basics Guide
-          </CardTitle>
-          <CardDescription>
-            Learn essential cooking skills and kitchen safety
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="Search cooking skills..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="flex-1"
-              />
-              <Button 
-                onClick={handleSearch} 
-                variant="outline"
-                disabled={isLoading}
-              >
-                {isLoading ? "Searching..." : "Search for guidance"}
-              </Button>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              {COOKING_BASICS.map((topic, index) => (
-                <Card
-                  key={index}
-                  className="cursor-pointer hover:shadow-sm transition-all"
-                  onClick={() => {
-                    setSearchQuery(topic.title);
-                    fetchGuidance(topic.title);
-                  }}
+    <div className={`space-y-6 ${isVideoFocused ? 'overflow-hidden h-screen' : ''}`}>
+      <div className={`transition-all duration-300 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ChefHat className="h-5 w-5" />
+              Cooking Basics Guide
+            </CardTitle>
+            <CardDescription>
+              Learn essential cooking skills and kitchen safety
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Search cooking skills..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="flex-1"
+                />
+                <Button 
+                  onClick={handleSearch} 
+                  variant="outline"
+                  disabled={isLoading}
                 >
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      {topic.icon && <topic.icon className="h-5 w-5" />}
-                      {topic.title}
-                    </CardTitle>
-                    <CardDescription>{topic.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="list-disc list-inside text-sm text-gray-500">
-                      {topic.topics.map((item, idx) => (
-                        <li key={idx}>{item}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
+                  {isLoading ? "Searching..." : "Search for guidance"}
+                </Button>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                {COOKING_BASICS.map((topic, index) => (
+                  <Card
+                    key={index}
+                    className="cursor-pointer hover:shadow-sm transition-all"
+                    onClick={() => {
+                      setSearchQuery(topic.title);
+                      fetchGuidance(topic.title);
+                    }}
+                  >
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        {topic.icon && <topic.icon className="h-5 w-5" />}
+                        {topic.title}
+                      </CardTitle>
+                      <CardDescription>{topic.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="list-disc list-inside text-sm text-gray-500">
+                        {topic.topics.map((item, idx) => (
+                          <li key={idx}>{item}</li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{searchQuery}</DialogTitle>
-            <DialogDescription>
-              Step-by-step guide and helpful resources
-            </DialogDescription>
-          </DialogHeader>
-          <ScrollArea className="pr-4">
-            {renderGuidanceContent()}
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{searchQuery}</DialogTitle>
+              <DialogDescription>
+                Step-by-step guide and helpful resources
+              </DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="pr-4">
+              {renderGuidanceContent()}
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>AI Cooking Assistant</CardTitle>
-          <CardDescription>
-            Get personalized help with cooking questions
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
-          <ChatInterface category="cooking" />
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Cooking Assistant</CardTitle>
+            <CardDescription>
+              Get personalized help with cooking questions
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ChatInterface category="cooking" />
+          </CardContent>
+        </Card>
+      </div>
+
+      {renderGuidanceContent()}
     </div>
   );
 }
