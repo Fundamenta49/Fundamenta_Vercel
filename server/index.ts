@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import multer from "multer";
-import pdf from 'pdf-parse';
+import * as pdfjsLib from 'pdfjs-dist';
 
 // Startup logging function
 function log(message: string) {
@@ -10,7 +10,7 @@ function log(message: string) {
 }
 
 const startTime = Date.now();
-log("Starting minimal PDF parsing server...");
+log("Starting minimal server...");
 
 // Initialize Express
 const app = express();
@@ -43,9 +43,7 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      log(`${req.method} ${path} ${res.statusCode} in ${duration}ms`);
-    }
+    log(`${req.method} ${path} ${res.statusCode} in ${duration}ms`);
   });
 
   next();
@@ -53,7 +51,39 @@ app.use((req, res, next) => {
 
 log(`Middleware setup complete (${Date.now() - startTime}ms)`);
 
-// PDF Test endpoint
+// Health check endpoint
+app.get("/api/health", (_req, res) => {
+  res.json({ status: "ok", uptime: Date.now() - startTime });
+});
+
+// Dynamic PDF parsing function
+const parsePDF = async (fileBuffer: Buffer) => {
+  try {
+    log("Starting PDF parsing...");
+    const data = await pdfjsLib.getDocument({ data: fileBuffer }).promise;
+    let fullText = '';
+
+    for (let i = 1; i <= data.numPages; i++) {
+      const page = await data.getPage(i);
+      const content = await page.getTextContent();
+      const pageText = content.items
+        .map((item: any) => ('str' in item ? item.str : ''))
+        .join(' ');
+      fullText += pageText + '\n';
+    }
+
+    return {
+      text: fullText,
+      numpages: data.numPages,
+      info: await data.getMetadata()
+    };
+  } catch (error) {
+    log(`PDF parsing error: ${error instanceof Error ? error.message : String(error)}`);
+    throw error;
+  }
+};
+
+// PDF parsing endpoint
 app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
   try {
     log("Received PDF parsing request");
@@ -65,15 +95,18 @@ app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
       });
     }
 
-    log(`Processing file: ${req.file.originalname} (${req.file.size} bytes)`);
+    log("PDF upload details:", {
+      filename: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+      bufferLength: req.file.buffer.length
+    });
 
     try {
-      // Create a fresh buffer from the file
       const dataBuffer = Buffer.from(req.file.buffer);
       log(`Buffer created: ${dataBuffer.length} bytes`);
 
-      // Parse PDF with no options
-      const data = await pdf(dataBuffer);
+      const data = await parsePDF(dataBuffer);
       log(`PDF parsed successfully: ${data.text.length} characters extracted`);
 
       res.json({
@@ -85,17 +118,11 @@ app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
       });
 
     } catch (pdfError) {
-      log(`PDF parsing error: ${pdfError.message}`);
-      console.error("PDF parsing error details:", {
-        name: pdfError.name,
-        message: pdfError.message,
-        stack: pdfError.stack
-      });
-
+      log(`PDF parsing error: ${pdfError instanceof Error ? pdfError.message : String(pdfError)}`);
       throw new Error("Could not parse PDF content. Please ensure the file is not corrupted or password protected.");
     }
   } catch (error) {
-    log(`Request error: ${error.message}`);
+    log(`Request error: ${error instanceof Error ? error.message : String(error)}`);
     res.status(500).json({
       error: true,
       message: error instanceof Error ? error.message : "An unexpected error occurred",
@@ -105,14 +132,12 @@ app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
 });
 
 // Error handling middleware
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  const status = err instanceof Error && 'status' in err ? (err as any).status : 500;
+  const message = err instanceof Error ? err.message : "Internal Server Error";
   log(`Error handler: ${status} - ${message}`);
   res.status(status).json({ message });
 });
-
-log(`Routes registered (${Date.now() - startTime}ms)`);
 
 // Start server
 const port = 5000;
