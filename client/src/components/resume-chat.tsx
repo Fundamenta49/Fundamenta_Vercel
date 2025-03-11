@@ -117,35 +117,35 @@ Just type your question or what you'd like me to help with!`
   return (
     <Card className="w-full h-[600px] flex flex-col">
       <CardContent className="p-6 flex-1 flex flex-col">
-        <ScrollArea className="flex-1 pr-4 -mr-4">
-          <div className="space-y-6 pb-4">
+        <ScrollArea className="flex-1">
+          <div className="space-y-4 pb-4">
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex items-start gap-3 ${
-                  message.role === 'assistant' ? 'flex-row' : 'flex-row-reverse'
-                }`}
+                className={`flex ${
+                  message.role === 'assistant' ? 'justify-start' : 'justify-end'
+                } mb-4`}
               >
-                {message.role === 'assistant' && (
-                  <div className="flex-shrink-0">
-                    <Bot className="w-8 h-8 text-primary" />
-                  </div>
-                )}
-                <div
-                  className={`rounded-lg p-4 max-w-[85%] shadow-sm overflow-hidden ${
-                    message.role === 'assistant'
-                      ? 'bg-blue-100 dark:bg-blue-900/20 text-foreground'
-                      : 'bg-primary text-primary-foreground ml-auto'
-                  }`}
-                >
-                  <div className="text-sm leading-relaxed tracking-wide break-words">
-                    {message.content}
+                <div className="flex items-start max-w-[80%] gap-2">
+                  {message.role === 'assistant' && (
+                    <Bot className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                  )}
+                  <div
+                    className={
+                      message.role === 'assistant'
+                        ? 'bg-[#E8F1FE] text-gray-800 rounded-lg p-3'
+                        : 'bg-primary text-primary-foreground rounded-lg p-3 ml-auto'
+                    }
+                  >
+                    <div className="text-sm whitespace-pre-line">
+                      {message.content}
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
             {chatMutation.isPending && (
-              <div className="flex items-center gap-2 text-muted-foreground pl-11">
+              <div className="flex items-center gap-2 text-muted-foreground pl-8">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span className="text-sm">Thinking...</span>
               </div>
