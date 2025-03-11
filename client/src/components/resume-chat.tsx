@@ -60,6 +60,9 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
         message,
         currentResume
       });
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
       return response.json();
     },
     onSuccess: (data) => {
@@ -87,52 +90,61 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
     }
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || chatMutation.isPending) return;
 
     const userMessage = input.trim();
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setInput('');
-    chatMutation.mutate(userMessage);
+
+    try {
+      await chatMutation.mutateAsync(userMessage);
+    } catch (error) {
+      console.error('Chat error:', error);
+    }
   };
 
   return (
-    <Card className="w-full">
-      <CardContent className="p-4 space-y-4">
-        <ScrollArea className="h-[400px] pr-4">
+    <Card className="w-full h-[600px] flex flex-col">
+      <CardContent className="p-4 flex-1 flex flex-col gap-4">
+        <ScrollArea className="flex-1 pr-4">
           <div className="space-y-4">
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex items-start gap-2 ${
+                className={`flex items-start gap-3 ${
                   message.role === 'assistant' ? 'flex-row' : 'flex-row-reverse'
                 }`}
               >
                 {message.role === 'assistant' && (
-                  <Bot className="w-6 h-6 text-primary mt-1" />
+                  <div className="flex-shrink-0">
+                    <Bot className="w-8 h-8 text-primary mt-1" />
+                  </div>
                 )}
                 <div
-                  className={`rounded-lg p-3 max-w-[80%] whitespace-pre-wrap ${
+                  className={`rounded-lg p-4 max-w-[85%] shadow-sm ${
                     message.role === 'assistant'
-                      ? 'bg-muted'
+                      ? 'bg-muted text-foreground'
                       : 'bg-primary text-primary-foreground ml-auto'
                   }`}
                 >
-                  {message.content}
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                    {message.content}
+                  </p>
                 </div>
               </div>
             ))}
             {chatMutation.isPending && (
-              <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="flex items-center gap-2 text-muted-foreground pl-11">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Thinking...
+                <span className="text-sm">Thinking...</span>
               </div>
             )}
           </div>
         </ScrollArea>
 
-        <form onSubmit={handleSubmit} className="flex gap-2">
+        <form onSubmit={handleSubmit} className="flex gap-2 mt-auto pt-4">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -140,7 +152,11 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
             disabled={chatMutation.isPending}
             className="flex-1"
           />
-          <Button type="submit" disabled={chatMutation.isPending || !input.trim()}>
+          <Button 
+            type="submit" 
+            disabled={chatMutation.isPending || !input.trim()}
+            className="px-4"
+          >
             {chatMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
