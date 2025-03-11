@@ -128,10 +128,13 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                         : 'bg-primary text-primary-foreground rounded-lg p-4 max-w-[80%] ml-auto'
                     }`}
                   >
-                    <div className="text-base leading-6" style={{
-                      whiteSpace: 'pre-line',
-                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-                    }}>
+                    <div 
+                      className="text-base leading-6" 
+                      style={{
+                        whiteSpace: 'pre-line',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                      }}
+                    >
                       {message.content}
                     </div>
                   </div>
