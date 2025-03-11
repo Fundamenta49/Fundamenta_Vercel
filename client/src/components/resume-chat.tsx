@@ -48,14 +48,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: `👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out. How can I help you today? You can ask me to:
-
-• Review your summary
-• Improve job descriptions
-• Highlight key achievements
-• Tailor your resume for specific roles
-
-Just type your question or what you'd like me to help with!`
+      content: "👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out. How can I help you today? You can ask me to: • Review your summary • Improve job descriptions • Highlight key achievements • Tailor your resume for specific roles Just type your question or what you'd like me to help with!"
     }
   ]);
   const [input, setInput] = useState('');
@@ -129,11 +122,11 @@ Just type your question or what you'd like me to help with!`
                     <Bot className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
                   )}
                   <div
-                    className={
+                    className={`flex-1 ${
                       message.role === 'assistant'
-                        ? 'flex-1 bg-[#E8F1FE] text-[#1f2937] rounded-lg p-4 ml-2'
+                        ? 'bg-[#E8F1FE] text-[#1f2937] rounded-lg p-4 ml-2 w-full'
                         : 'bg-primary text-primary-foreground rounded-lg p-4 max-w-[80%] ml-auto'
-                    }
+                    }`}
                   >
                     <div className="text-base leading-6" style={{
                       whiteSpace: 'pre-line',
