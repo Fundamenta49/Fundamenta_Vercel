@@ -237,6 +237,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { message, currentResume } = req.body;
 
+      if (!message || !currentResume) {
+        return res.status(400).json({
+          error: true,
+          message: "Message and current resume are required"
+        });
+      }
+
       const response = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [
@@ -252,6 +259,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             - Provide specific examples when possible
             - Use emojis occasionally to maintain a friendly tone
             - Always acknowledge the user's concerns or questions
+            - Keep text formatting simple and clean
 
             Return your response in this JSON format:
             {
@@ -285,11 +293,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             User request: ${message}`
           }
-        ],
-        response_format: { type: "json_object" }
+        ]
       });
 
-      const aiResponse = JSON.parse(response.choices[0].message.content || "{}");
+      if (!response.choices[0].message?.content) {
+        throw new Error('No response content received from AI');
+      }
+
+      const aiResponse = JSON.parse(response.choices[0].message.content);
 
       res.json({
         message: aiResponse.message || "I'll help you improve your resume. What would you like to focus on?",
@@ -310,9 +321,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = messageSchema.parse(req.body);
 
       let systemMessage = `You are a friendly and supportive AI assistant.
-
+      
 Format your responses following these strict rules:
-
+      
 - Use only plain text - no special formatting characters
 - Never use asterisks (*) or hashtags (#) in your responses
 - Never use markdown syntax
@@ -320,17 +331,17 @@ Format your responses following these strict rules:
 - Add double line breaks between topics
 - Start new sections with friendly emojis
 - Keep everything in a conversational, friendly tone
-
+      
 Example formatting:
 🌟 Main Topic
 Here's the first point about this topic.
-
+      
 - First item in a list
 - Second item in a list
-
-✨ Next Topic
+      
+:✨ Next Topic
 Continue with the next section here.
-
+      
 Remember to suggest relevant features in the app that could help the user.`;
       switch (validatedData.skillArea) {
         case "cooking":

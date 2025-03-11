@@ -55,7 +55,9 @@ How can I help you today? You can ask me to:
 • Review your summary
 • Improve job descriptions
 • Highlight key achievements
-• Tailor your resume for specific roles`
+• Tailor your resume for specific roles
+
+Just type your question or what you'd like me to help with!`
     }
   ]);
   const [input, setInput] = useState('');
@@ -68,7 +70,8 @@ How can I help you today? You can ask me to:
         currentResume
       });
       if (!response.ok) {
-        throw new Error("Failed to send message");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to send message");
       }
       return response.json();
     },
