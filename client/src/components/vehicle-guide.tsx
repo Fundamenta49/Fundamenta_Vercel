@@ -17,8 +17,10 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Info, Car, Wrench, Star, Search } from "lucide-react";
+import { AlertTriangle, Info, Car, Wrench, Star, Search, Maximize2, Minimize2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Loader2 } from 'lucide-react';
+
 
 interface VehicleInfo {
   vin?: string;
@@ -98,6 +100,12 @@ const COMMON_TASKS: MaintenanceTask[] = [
   // ... other common tasks
 ];
 
+interface YouTubeVideo {
+  id: string;
+  title: string;
+  thumbnail: string;
+}
+
 export default function VehicleGuide() {
   const [vehicleInfo, setVehicleInfo] = useState<VehicleInfo>({});
   const [loading, setLoading] = useState(false);
@@ -110,6 +118,7 @@ export default function VehicleGuide() {
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>(COMMON_TASKS);
+  const [isVideoFocused, setIsVideoFocused] = useState(false);
 
 
   const fetchVehicleInfo = async () => {
@@ -221,8 +230,6 @@ export default function VehicleGuide() {
     task.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // ...rest of the functions from original code...
-
   const handleSearch = () => {
     if (customMaintenanceQuery.trim() && isVehicleInfoComplete()) {
       const searchTask: MaintenanceTask = {
@@ -310,6 +317,75 @@ export default function VehicleGuide() {
     }
   };
 
+  const renderGuidanceContent = () => {
+    if (isLoadingVideos) {
+      return (
+        <div className="flex items-center justify-center h-40">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      );
+    }
+
+    if (!selectedTask) return null;
+
+    return (
+      <div className={`space-y-6 transition-all duration-300 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
+        <div className="prose prose-gray max-w-none space-y-4">
+          {selectedTask.steps.map((step, idx) => (
+            <p key={idx} className="text-gray-700">{step}</p>
+          ))}
+        </div>
+
+        {videos.length > 0 && (
+          <div className={`mt-8 space-y-6 transition-all duration-300 ${isVideoFocused ? 'fixed inset-0 z-50 bg-background/95 p-6' : ''}`}>
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Tutorial Videos</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsVideoFocused(!isVideoFocused)}
+                className="ml-2"
+              >
+                {isVideoFocused ? (
+                  <><Minimize2 className="h-4 w-4 mr-2" /> Exit Focus Mode</>
+                ) : (
+                  <><Maximize2 className="h-4 w-4 mr-2" /> Enter Focus Mode</>
+                )}
+              </Button>
+            </div>
+            <div className={`grid gap-6 ${isVideoFocused ? 'place-items-center h-[calc(100vh-200px)]' : ''}`}>
+              {videos.map((video) => (
+                <div key={video.id} className={`space-y-2 ${isVideoFocused ? 'w-full max-w-4xl' : ''}`}>
+                  <iframe
+                    src={`https://www.youtube.com/embed/${video.id}`}
+                    title={video.title}
+                    className={`w-full rounded-lg ${isVideoFocused ? 'aspect-video' : 'aspect-video'}`}
+                    allowFullScreen
+                  />
+                  <p className="text-sm font-medium">{video.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {isLoadingVideos && (
+          <div className="text-center py-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-2 text-sm text-gray-500">Loading video guides...</p>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -423,71 +499,8 @@ export default function VehicleGuide() {
               </CommandList>
             </Command>
 
-            {selectedTask && (
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle>{selectedTask.title}</CardTitle>
-                  <CardDescription>{selectedTask.description}</CardDescription>
-                  {isVehicleInfoComplete() && (
-                    <div className="text-sm text-muted-foreground">
-                      For: {getVehicleString()}
-                    </div>
-                  )}
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <h3 className="font-medium mb-2">Required Tools:</h3>
-                    <ul className="list-disc list-inside space-y-1">
-                      {selectedTask.tools.map((tool, index) => (
-                        <li key={index} className="text-sm text-gray-600">{tool}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="font-medium mb-2">Steps:</h3>
-                    <ol className="list-decimal list-inside space-y-2">
-                      {selectedTask.steps.map((step, index) => (
-                        <li key={index} className="text-sm text-gray-600">{step}</li>
-                      ))}
-                    </ol>
-                  </div>
+            {renderGuidanceContent()}
 
-                  {!isVehicleInfoComplete() && (
-                    <Alert>
-                      <AlertDescription>
-                        Enter your vehicle's year, make, and model to see specific video guides
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {videos.length > 0 && (
-                    <div className="space-y-4">
-                      <h3 className="font-medium">Video Guides for {getVehicleString()}:</h3>
-                      <div className="grid gap-4">
-                        {videos.map((video) => (
-                          <div key={video.id} className="space-y-2">
-                            <iframe
-                              src={`https://www.youtube.com/embed/${video.id}`}
-                              title={video.title}
-                              className="w-full aspect-video rounded-lg"
-                              allowFullScreen
-                            />
-                            <p className="text-sm font-medium">{video.title}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {isLoadingVideos && (
-                    <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                      <p className="mt-2 text-sm text-gray-500">Loading video guides...</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -588,10 +601,4 @@ export default function VehicleGuide() {
       </Card>
     </div>
   );
-}
-
-interface YouTubeVideo {
-  id: string;
-  title: string;
-  thumbnail: string;
 }
