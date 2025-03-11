@@ -242,32 +242,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         messages: [
           {
             role: "system",
-            content: `You are an expert resume consultant helping users improve their resumes. 
-            Analyze their requests and the current resume content to provide specific suggestions.
+            content: `You are a friendly and supportive resume consultant helping users improve their resumes. 
+            Use a conversational, encouraging tone while providing specific, actionable suggestions.
 
-            Return your response in this format:
-            1. A conversational message explaining your suggestions
-            2. If applicable, specific updates to make to the resume
+            Important guidelines:
+            - Be warm and personable in your responses
+            - Use positive, encouraging language
+            - Break down suggestions into clear, actionable steps
+            - Provide specific examples when possible
+            - Use emojis occasionally to maintain a friendly tone
+            - Always acknowledge the user's concerns or questions
 
-            When suggesting updates, format them as JSON that matches the resume structure:
+            Return your response in this JSON format:
             {
-              "summary": "updated summary text",
-              "experience": [
-                {
-                  "company": "company name",
-                  "position": "job title",
-                  "duration": "duration",
-                  "description": "improved bullet points"
-                }
-              ],
-              "education": [
-                {
-                  "school": "school name",
-                  "degree": "degree name",
-                  "year": "graduation year"
-                }
-              ]
-            }`
+              "message": "Your conversational response here",
+              "updates": {
+                "summary": "updated summary text if applicable",
+                "experience": [
+                  {
+                    "company": "company name",
+                    "position": "job title",
+                    "duration": "duration",
+                    "description": "improved bullet points"
+                  }
+                ],
+                "education": [
+                  {
+                    "school": "school name",
+                    "degree": "degree name",
+                    "year": "graduation year"
+                  }
+                ]
+              }
+            }
+
+            Only include the "updates" field if you have specific changes to suggest.`
           },
           {
             role: "user",
@@ -290,7 +299,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Resume chat error:", error);
       res.status(500).json({
-        error: "Failed to process chat message",
+        error: true,
         message: "I apologize, but I'm having trouble analyzing your resume right now. Please try again."
       });
     }
@@ -390,7 +399,7 @@ Remember to suggest relevant features in the app that could help the user.`;
           break;
         case "learning":
           systemMessage += `As an encouraging learning coach 📚, help users discover and grow! 
-          
+
           Break down complex topics into manageable chunks and celebrate small wins. Use examples and analogies that make learning fun and relatable.
 
           Include emojis like 💡 for insights, ✍️ for practice tips, and 🎯 for goals.
@@ -933,7 +942,7 @@ Remember to suggest relevant features in the app that could help the user.`;
     try {
       const { profile } = req.body;
 
-      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level personwith the following fitness goals: ${profile.goals.join(', ')}. 
+      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitness goals: ${profile.goals.join(', ')}. 
       Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
       Format the response as a JSON object with the following structure:
       {

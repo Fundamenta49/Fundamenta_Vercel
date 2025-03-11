@@ -3,7 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Send, Bot } from "lucide-react";
+import { Send, Bot, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -48,7 +48,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hi! I'm your resume assistant. I can help you optimize your resume and make it stand out. What would you like to improve?"
+      content: "👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out. How can I help you today? You can ask me to:\n\n- Review your summary\n- Improve job descriptions\n- Highlight key achievements\n- Tailor your resume for specific roles"
     }
   ]);
   const [input, setInput] = useState('');
@@ -63,6 +63,10 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
       return response.json();
     },
     onSuccess: (data) => {
+      if (data.error) {
+        throw new Error(data.message || "Failed to get response");
+      }
+
       setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
 
       // If the AI suggests changes, apply them
@@ -74,18 +78,18 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
         });
       }
     },
-    onError: () => {
+    onError: (error) => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to get a response. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to get a response. Please try again.",
       });
     }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || chatMutation.isPending) return;
 
     const userMessage = input.trim();
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
@@ -94,7 +98,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardContent className="p-4 space-y-4">
         <ScrollArea className="h-[400px] pr-4">
           <div className="space-y-4">
@@ -109,7 +113,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                   <Bot className="w-6 h-6 text-primary mt-1" />
                 )}
                 <div
-                  className={`rounded-lg p-3 max-w-[80%] ${
+                  className={`rounded-lg p-3 max-w-[80%] whitespace-pre-wrap ${
                     message.role === 'assistant'
                       ? 'bg-muted'
                       : 'bg-primary text-primary-foreground ml-auto'
@@ -119,6 +123,12 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                 </div>
               </div>
             ))}
+            {chatMutation.isPending && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Thinking...
+              </div>
+            )}
           </div>
         </ScrollArea>
 
@@ -128,9 +138,14 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about resume improvements..."
             disabled={chatMutation.isPending}
+            className="flex-1"
           />
-          <Button type="submit" disabled={chatMutation.isPending}>
-            <Send className="h-4 w-4" />
+          <Button type="submit" disabled={chatMutation.isPending || !input.trim()}>
+            {chatMutation.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
           </Button>
         </form>
       </CardContent>
