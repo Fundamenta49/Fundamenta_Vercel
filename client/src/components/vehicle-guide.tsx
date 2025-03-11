@@ -337,22 +337,23 @@ export default function VehicleGuide() {
     if (!selectedTask) return null;
 
     return (
-      <div className={`space-y-6 transition-all duration-300 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
-        <div className="prose prose-gray max-w-none space-y-4">
-          {selectedTask.steps.map((step, idx) => (
-            <p key={idx} className="text-gray-700">{step}</p>
-          ))}
-        </div>
-
+      <div className="relative">
         {videos.length > 0 && (
-          <div className={`mt-8 space-y-6 transition-all duration-300 ${isVideoFocused ? 'fixed inset-0 z-50 bg-background/95 p-6' : ''}`}>
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Tutorial Videos</h3>
+          <div className={`
+            transition-all duration-300 ease-in-out
+            ${isVideoFocused ? 
+              'fixed inset-0 z-50 bg-background/95 p-6 flex flex-col items-center justify-center' : 
+              'relative w-full'
+            }
+          `}>
+            <div className="flex justify-between items-center w-full max-w-4xl mb-4">
+              <h3 className={`text-lg font-semibold ${isVideoFocused ? 'text-white' : ''}`}>
+                Tutorial Videos
+              </h3>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsVideoFocused(!isVideoFocused)}
-                className="ml-2"
               >
                 {isVideoFocused ? (
                   <><Minimize2 className="h-4 w-4 mr-2" /> Exit Focus Mode</>
@@ -361,244 +362,175 @@ export default function VehicleGuide() {
                 )}
               </Button>
             </div>
-            <div className={`grid gap-6 ${isVideoFocused ? 'place-items-center h-[calc(100vh-200px)]' : ''}`}>
+
+            <div className={`
+              grid gap-6 w-full
+              ${isVideoFocused ? 'max-w-4xl' : ''}
+            `}>
               {videos.map((video) => (
-                <div key={video.id} className={`space-y-2 ${isVideoFocused ? 'w-full max-w-4xl' : ''}`}>
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.id}`}
-                    title={video.title}
-                    className={`w-full rounded-lg ${isVideoFocused ? 'aspect-video' : 'aspect-video'}`}
-                    allowFullScreen
-                  />
-                  <p className="text-sm font-medium">{video.title}</p>
+                <div key={video.id} className="space-y-2">
+                  <div className="relative aspect-video">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`}
+                      title={video.title}
+                      className="absolute inset-0 w-full h-full rounded-lg"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  <p className={`text-sm font-medium ${isVideoFocused ? 'text-white' : ''}`}>
+                    {video.title}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {isLoadingVideos && (
-          <div className="text-center py-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-sm text-gray-500">Loading video guides...</p>
+        <div className={`
+          space-y-6 transition-all duration-300
+          ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}
+        `}>
+          <div className="prose prose-gray max-w-none space-y-4">
+            <h3 className="text-lg font-semibold mb-4">{selectedTask.title}</h3>
+            <div className="grid gap-4">
+              <div>
+                <h4 className="font-medium mb-2">Steps:</h4>
+                <ol className="list-decimal list-inside space-y-2">
+                  {selectedTask.steps.map((step, idx) => (
+                    <li key={idx} className="text-gray-700">{step}</li>
+                  ))}
+                </ol>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">Required Tools:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {selectedTask.tools.map((tool, idx) => (
+                    <li key={idx} className="text-gray-700">{tool}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="space-y-6">
-      {/* Maintenance Guide Section - Now First */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Car className="h-5 w-5 text-[#4D9EAF]" />
-            Vehicle Maintenance Guide
-          </CardTitle>
-          <CardDescription>
-            Step-by-step instructions for vehicle maintenance
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input
-                type="text"
-                placeholder="Vehicle Year"
-                value={vehicleInfo.year || ''}
-                onChange={(e) => handleVehicleInfoChange('year', e.target.value)}
-                className="w-full"
-              />
-              <Input
-                type="text"
-                placeholder="Vehicle Make"
-                value={vehicleInfo.make || ''}
-                onChange={(e) => handleVehicleInfoChange('make', e.target.value)}
-                className="w-full"
-              />
-              <Input
-                type="text"
-                placeholder="Vehicle Model"
-                value={vehicleInfo.model || ''}
-                onChange={(e) => handleVehicleInfoChange('model', e.target.value)}
-                className="w-full"
-              />
-            </div>
-
-            <div>
-              <Input
-                type="text"
-                placeholder="Search for any vehicle maintenance task..."
-                value={customMaintenanceQuery}
-                onChange={(e) => setCustomMaintenanceQuery(e.target.value)}
-                className="w-full mb-4"
-              />
-              <div className="flex gap-2">
-                <Button
-                  variant="default"
-                  onClick={handleSearch}
-                  className="flex-none"
-                  disabled={!isVehicleInfoComplete() || !customMaintenanceQuery.trim()}
-                >
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={addCustomTask}
-                  disabled={!customMaintenanceQuery.trim() || !isVehicleInfoComplete()}
-                  className="flex-none hover:bg-primary/5"
-                >
-                  <Star className="h-4 w-4 mr-2" />
-                  Save
-                </Button>
+    <div className={`space-y-6 ${isVideoFocused ? 'overflow-hidden h-screen' : ''}`}>
+      <div className={`transition-all duration-300 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
+        {/* Vehicle Information Form */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Car className="h-5 w-5 text-[#4D9EAF]" />
+              Vehicle Maintenance Guide
+            </CardTitle>
+            <CardDescription>
+              Step-by-step instructions for vehicle maintenance
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Input
+                  type="text"
+                  placeholder="Vehicle Year"
+                  value={vehicleInfo.year || ''}
+                  onChange={(e) => handleVehicleInfoChange('year', e.target.value)}
+                  className="w-full"
+                />
+                <Input
+                  type="text"
+                  placeholder="Vehicle Make"
+                  value={vehicleInfo.make || ''}
+                  onChange={(e) => handleVehicleInfoChange('make', e.target.value)}
+                  className="w-full"
+                />
+                <Input
+                  type="text"
+                  placeholder="Vehicle Model"
+                  value={vehicleInfo.model || ''}
+                  onChange={(e) => handleVehicleInfoChange('model', e.target.value)}
+                  className="w-full"
+                />
               </div>
-            </div>
 
-            <div className="text-sm text-muted-foreground mb-4">
-              Or choose from common repairs:
-            </div>
-
-            <Command className="rounded-lg border shadow-md bg-[#F3F4F6]">
-              <CommandInput
-                placeholder="Search available tasks..."
-                value={searchQuery}
-                onValueChange={setSearchQuery}
-                className="bg-[#F3F4F6]"
-              />
-              <CommandList className="bg-[#F3F4F6]">
-                <CommandEmpty>No maintenance tasks found.</CommandEmpty>
-                <CommandGroup heading="Common Tasks">
-                  {filteredTasks.map((task) => (
-                    <CommandItem
-                      key={task.id}
-                      value={task.id}
-                      onSelect={() => {
-                        setSelectedTask(task);
-                        if (isVehicleInfoComplete()) {
-                          fetchYouTubeVideos(task);
-                        }
-                      }}
-                      className="flex items-center justify-between py-2 hover:bg-primary/5"
-                    >
-                      <div className="flex items-center gap-2">
-                        {task.isCustom ? (
-                          <Star className="h-4 w-4 text-yellow-500" />
-                        ) : (
-                          task.icon
-                        )}
-                        <span>{task.title}</span>
-                      </div>
-                      <Badge variant="outline" className={getDifficultyStyle(task.difficulty)}>
-                        {task.difficulty}
-                      </Badge>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-
-            {renderGuidanceContent()}
-
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Vehicle Information Lookup Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Vehicle Information Lookup</CardTitle>
-          <CardDescription>
-            Enter your Vehicle Identification Number (VIN) to get detailed information and check for recalls
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Enter VIN (17 characters)"
-                value={vehicleInfo.vin || ''}
-                onChange={(e) => setVehicleInfo({ ...vehicleInfo, vin: e.target.value.toUpperCase() })}
-                className="w-full pr-8"
-                maxLength={17}
-              />
-              <Info
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help"
-                title="Vehicle Identification Number - Located on your vehicle registration or driver's side door frame"
-              />
-            </div>
-
-            <Button
-              onClick={fetchVehicleInfo}
-              disabled={loading || !vehicleInfo.vin || vehicleInfo.vin.length !== 17}
-              className="w-full"
-            >
-              {loading ? "Fetching Information..." : "Look Up Vehicle Information"}
-            </Button>
-
-            {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            {vehicleDetails && (
-              <Card className="mt-4">
-                <CardHeader>
-                  <CardTitle>Vehicle Details</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    {vehicleDetails.Make && <p><strong>Make:</strong> {vehicleDetails.Make}</p>}
-                    {vehicleDetails.Model && <p><strong>Model:</strong> {vehicleDetails.Model}</p>}
-                    {vehicleDetails.ModelYear && <p><strong>Year:</strong> {vehicleDetails.ModelYear}</p>}
-                    {vehicleDetails.VehicleType && <p><strong>Type:</strong> {vehicleDetails.VehicleType}</p>}
-                    {vehicleDetails.BodyClass && <p><strong>Body Style:</strong> {vehicleDetails.BodyClass}</p>}
-                    {vehicleDetails.EngineType && <p><strong>Engine:</strong> {vehicleDetails.EngineType}</p>}
-                    {vehicleDetails.FuelTypePrimary && <p><strong>Fuel Type:</strong> {vehicleDetails.FuelTypePrimary}</p>}
-                    {vehicleDetails.PlantCountry && <p><strong>Made in:</strong> {vehicleDetails.PlantCountry}</p>}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {recalls.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold mb-4">Safety Recalls</h3>
-                <div className="space-y-4">
-                  {recalls.map((recall, index) => (
-                    <Alert key={index} variant="destructive">
-                      <AlertTriangle className="h-4 w-4" />
-                      <AlertDescription>
-                        <div className="space-y-2">
-                          <strong>{recall.Component}</strong>
-                          <p>{recall.Summary}</p>
-                          <p className="text-red-700">Consequence: {recall.Consequence}</p>
-                          <p className="text-green-700">Remedy: {recall.Remedy}</p>
-                          {recall.NHTSACampaignNumber && (
-                            <p className="text-sm">Campaign #: {recall.NHTSACampaignNumber}</p>
-                          )}
-                        </div>
-                      </AlertDescription>
-                    </Alert>
-                  ))}
+              <div>
+                <Input
+                  type="text"
+                  placeholder="Search for any vehicle maintenance task..."
+                  value={customMaintenanceQuery}
+                  onChange={(e) => setCustomMaintenanceQuery(e.target.value)}
+                  className="w-full mb-4"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="default"
+                    onClick={handleSearch}
+                    className="flex-none"
+                    disabled={!isVehicleInfoComplete() || !customMaintenanceQuery.trim()}
+                  >
+                    <Search className="h-4 w-4 mr-2" />
+                    Search
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={addCustomTask}
+                    disabled={!customMaintenanceQuery.trim() || !isVehicleInfoComplete()}
+                    className="flex-none hover:bg-primary/5"
+                  >
+                    <Star className="h-4 w-4 mr-2" />
+                    Save
+                  </Button>
                 </div>
               </div>
-            )}
 
-            {vehicleDetails && recalls.length === 0 && (
-              <Alert>
-                <AlertDescription>
-                  No active recalls found for this vehicle.
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              <Command className="rounded-lg border shadow-md">
+                <CommandInput
+                  placeholder="Search available tasks..."
+                  value={searchQuery}
+                  onValueChange={setSearchQuery}
+                />
+                <CommandList>
+                  <CommandEmpty>No maintenance tasks found.</CommandEmpty>
+                  <CommandGroup heading="Common Tasks">
+                    {filteredTasks.map((task) => (
+                      <CommandItem
+                        key={task.id}
+                        value={task.id}
+                        onSelect={() => {
+                          setSelectedTask(task);
+                          if (isVehicleInfoComplete()) {
+                            fetchYouTubeVideos(task);
+                          }
+                        }}
+                        className="flex items-center justify-between py-2 hover:bg-primary/5"
+                      >
+                        <div className="flex items-center gap-2">
+                          {task.isCustom ? (
+                            <Star className="h-4 w-4 text-yellow-500" />
+                          ) : (
+                            task.icon
+                          )}
+                          <span>{task.title}</span>
+                        </div>
+                        <Badge variant="outline" className={getDifficultyStyle(task.difficulty)}>
+                          {task.difficulty}
+                        </Badge>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {renderGuidanceContent()}
     </div>
   );
 }
