@@ -10,6 +10,7 @@ import axios from 'axios';
 import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
+import * as pdfjs from 'pdfjs-dist';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -34,6 +35,121 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Resume parsing route
+  app.post("/api/resume/parse", upload.single('resume'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          error: true,
+          message: "No file uploaded or invalid file type. Please upload a PDF or Word document."
+        });
+      }
+
+      console.log("Processing uploaded file:", {
+        filename: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
+
+      let extractedText = '';
+
+      try {
+        if (req.file.mimetype === 'application/pdf') {
+          console.log("Processing PDF file...");
+          const uint8Array = new Uint8Array(req.file.buffer);
+          const loadingTask = pdfjs.getDocument(uint8Array);
+          const pdfDocument = await loadingTask.promise;
+
+          let fullText = '';
+          for (let i = 1; i <= pdfDocument.numPages; i++) {
+            const page = await pdfDocument.getPage(i);
+            const content = await page.getTextContent();
+            const pageText = content.items.map((item: any) => item.str).join(' ');
+            fullText += pageText + '\n';
+          }
+
+          extractedText = fullText;
+          console.log("PDF text extracted successfully, length:", extractedText.length);
+        } else if (req.file.mimetype.includes('word')) {
+          console.log("Processing Word document...");
+          const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+          extractedText = result.value;
+          console.log("Word document text extracted successfully");
+        }
+
+        if (!extractedText || extractedText.trim().length === 0) {
+          throw new Error("No text could be extracted from the document. Please ensure the file contains readable text.");
+        }
+
+        console.log("Analyzing resume content...");
+        const response = await openai.chat.completions.create({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: `Extract structured information from the resume text into JSON format matching this schema:
+              {
+                "personalInfo": {
+                  "name": string,
+                  "email": string,
+                  "phone": string,
+                  "summary": string
+                },
+                "education": [
+                  {
+                    "school": string,
+                    "degree": string,
+                    "year": string
+                  }
+                ],
+                "experience": [
+                  {
+                    "company": string,
+                    "position": string,
+                    "duration": string,
+                    "description": string
+                  }
+                ]
+              }
+
+              Guidelines:
+              - If a field can't be found, use an empty string
+              - Format dates consistently
+              - Keep descriptions concise
+              - Ensure valid JSON output`
+            },
+            {
+              role: "user",
+              content: extractedText
+            }
+          ],
+          response_format: { type: "json_object" }
+        });
+
+        const parsedData = JSON.parse(response.choices[0].message.content || "{}");
+        console.log("Resume successfully parsed");
+
+        res.json({
+          success: true,
+          data: parsedData
+        });
+
+      } catch (error) {
+        console.error("Resume parsing error:", error);
+        res.status(400).json({
+          error: true,
+          message: error instanceof Error ? error.message : "Failed to process the resume"
+        });
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      res.status(500).json({
+        error: true,
+        message: "An unexpected error occurred while processing your request."
+      });
+    }
+  });
+
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
@@ -57,7 +173,7 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-:✨ Next Topic
+✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
@@ -880,12 +996,20 @@ Remember to suggest relevant features in the app that could help the user.`;
       try {
         if (req.file.mimetype === 'application/pdf') {
           console.log("Processing PDF file...");
-          // Dynamically import pdf-parse to avoid ES module issues
-          const pdfParse = (await import('pdf-parse')).default;
-          const buffer = Buffer.from(req.file.buffer);
-          const data = await pdfParse(buffer);
-          extractedText = data.text;
-          console.log("PDF text extracted successfully");
+          const uint8Array = new Uint8Array(req.file.buffer);
+          const loadingTask = pdfjs.getDocument(uint8Array);
+          const pdfDocument = await loadingTask.promise;
+
+          let fullText = '';
+          for (let i = 1; i <= pdfDocument.numPages; i++) {
+            const page = await pdfDocument.getPage(i);
+            const content = await page.getTextContent();
+            const pageText = content.items.map((item: any) => item.str).join(' ');
+            fullText += pageText + '\n';
+          }
+
+          extractedText = fullText;
+          console.log("PDF text extracted successfully, length:", extractedText.length);
         } else if (req.file.mimetype.includes('word')) {
           console.log("Processing Word document...");
           const result = await mammoth.extractRawText({ buffer: req.file.buffer });
