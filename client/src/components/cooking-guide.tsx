@@ -21,9 +21,19 @@ const COOKING_RESOURCES = [
     description: "A great site for reviews on the best tools and recipe ideas."
   },
   {
-    name: "Kitchen Confidential",
+    name: "Kitchen Confidential Community",
     url: "https://www.reddit.com/r/KitchenConfidential",
     description: "A wonderful community for professional and home cooks alike."
+  },
+  {
+    name: "Food Network Safety Tips",
+    url: "https://www.foodnetwork.com/kitchen/safety-tips",
+    description: "Comprehensive guides to maintaining a safe and healthy kitchen environment."
+  },
+  {
+    name: "Home Safety Smart Check",
+    url: "https://www.homesafety.com/kitchen-safety",
+    description: "Complete kitchen safety assessment and checklist for your home."
   }
 ];
 
@@ -159,8 +169,8 @@ export default function CookingGuide() {
         {videos.length > 0 && (
           <div className={`
             transition-all duration-300 ease-in-out
-            ${isVideoFocused ? 
-              'fixed inset-0 z-50 bg-background/95 p-6 flex flex-col items-center justify-center' : 
+            ${isVideoFocused ?
+              'fixed inset-0 z-50 bg-background/95 p-6 flex flex-col items-center justify-center' :
               'relative w-full'
             }
           `}>
@@ -211,9 +221,9 @@ export default function CookingGuide() {
         `}>
           <div className="prose prose-gray max-w-none space-y-4">
             {guidance.split('\n\n').map((section, idx) => {
-              if (section.startsWith('🎯') || section.startsWith('👩‍🍳') || 
-                  section.startsWith('⚠️') || section.startsWith('💡') || 
-                  section.startsWith('🧰') || section.startsWith('⏰')) {
+              if (section.startsWith('🎯') || section.startsWith('👩‍🍳') ||
+                section.startsWith('⚠️') || section.startsWith('💡') ||
+                section.startsWith('🧰') || section.startsWith('⏰')) {
                 const [title, ...content] = section.split('\n');
                 return (
                   <div key={idx} className="mb-6">
@@ -237,7 +247,11 @@ export default function CookingGuide() {
   const renderResources = () => {
     return (
       <div className={`space-y-4 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
-        <h3 className="text-lg font-semibold">Helpful Resources</h3>
+        <div className="prose prose-gray mb-4">
+          <p className="text-muted-foreground">
+            You can never have too many tips when it comes to safety, right? Check out these trusted platforms that provide comprehensive guides to maintaining a safe and healthy kitchen environment.
+          </p>
+        </div>
         <div className="grid gap-4">
           {COOKING_RESOURCES.map((resource, index) => (
             <a
@@ -280,8 +294,8 @@ export default function CookingGuide() {
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                   className="flex-1"
                 />
-                <Button 
-                  onClick={handleSearch} 
+                <Button
+                  onClick={handleSearch}
                   variant="outline"
                   disabled={isLoading}
                 >
@@ -361,7 +375,6 @@ export default function CookingGuide() {
           </CardContent>
         </Card>
       </div>
-
       {renderGuidanceContent()}
     </div>
   );
