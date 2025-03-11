@@ -107,9 +107,9 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
 
   return (
     <Card className="w-full h-[600px] flex flex-col">
-      <CardContent className="p-4 flex-1 flex flex-col gap-4">
+      <CardContent className="p-6 flex-1 flex flex-col gap-4">
         <ScrollArea className="flex-1 pr-4">
-          <div className="space-y-4">
+          <div className="space-y-6">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -125,11 +125,11 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                 <div
                   className={`rounded-lg p-4 max-w-[85%] shadow-sm ${
                     message.role === 'assistant'
-                      ? 'bg-muted text-foreground'
+                      ? 'bg-blue-100 dark:bg-blue-900/20 text-foreground'
                       : 'bg-primary text-primary-foreground ml-auto'
                   }`}
                 >
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed tracking-wide">
                     {message.content}
                   </p>
                 </div>
@@ -144,7 +144,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
           </div>
         </ScrollArea>
 
-        <form onSubmit={handleSubmit} className="flex gap-2 mt-auto pt-4">
+        <form onSubmit={handleSubmit} className="flex gap-3 mt-auto pt-4 border-t">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -155,7 +155,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
           <Button 
             type="submit" 
             disabled={chatMutation.isPending || !input.trim()}
-            className="px-4"
+            className="px-4 min-w-[44px]"
           >
             {chatMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
