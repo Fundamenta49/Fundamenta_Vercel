@@ -119,7 +119,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                     </div>
                   )}
                   <div
-                    className={`rounded-lg p-4 ${
+                    className={`rounded-lg p-4 break-words ${
                       message.role === 'assistant'
                         ? 'bg-[#E8F1FE] text-[#1f2937] max-w-[80%]'
                         : 'bg-primary text-primary-foreground ml-auto max-w-[80%]'
@@ -127,13 +127,11 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                     style={{
                       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                       fontSize: '15px',
-                      lineHeight: '1.4'
+                      lineHeight: '1.4',
+                      whiteSpace: 'pre-line'
                     }}
                   >
-                    <div 
-                      className="text-base leading-6" 
-                      style={{ whiteSpace: 'pre-line' }}
-                    >
+                    <div className="text-base leading-6">
                       {message.content}
                     </div>
                   </div>
