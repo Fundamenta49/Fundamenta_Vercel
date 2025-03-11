@@ -112,14 +112,14 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
           <div className="space-y-4 pb-4">
             {messages.map((message, index) => (
               <div key={index} className={`flex ${message.role === "assistant" ? "justify-start" : "justify-end"}`}>
-                <div className="flex items-start w-full">
+                <div className="inline-flex items-start max-w-[80%] break-words p-3 rounded-lg">
                   {message.role === 'assistant' && (
                     <div className="flex-shrink-0 mr-2">
                       <Bot className="w-6 h-6 text-primary" />
                     </div>
                   )}
                   <div
-                    className={`rounded-lg p-4 break-words ${
+                    className={`inline-block text-left p-3 ${
                       message.role === 'assistant'
                         ? 'bg-[#E8F1FE] text-[#1f2937] max-w-[80%]'
                         : 'bg-primary text-primary-foreground ml-auto max-w-[80%]'
@@ -128,12 +128,10 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                       fontSize: '15px',
                       lineHeight: '1.4',
-                      whiteSpace: 'pre-line'
+                      whiteSpace: 'pre-line',
                     }}
                   >
-                    <div className="text-base leading-6">
-                      {message.content}
-                    </div>
+                    {message.content}
                   </div>
                 </div>
               </div>
