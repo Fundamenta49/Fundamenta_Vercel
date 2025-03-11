@@ -116,9 +116,9 @@ Just type your question or what you'd like me to help with!`
 
   return (
     <Card className="w-full h-[600px] flex flex-col">
-      <CardContent className="p-6 flex-1 flex flex-col gap-4">
-        <ScrollArea className="flex-1 pr-4">
-          <div className="space-y-6">
+      <CardContent className="p-6 flex-1 flex flex-col">
+        <ScrollArea className="flex-1 pr-4 -mr-4">
+          <div className="space-y-6 pb-4">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -128,20 +128,19 @@ Just type your question or what you'd like me to help with!`
               >
                 {message.role === 'assistant' && (
                   <div className="flex-shrink-0">
-                    <Bot className="w-8 h-8 text-primary mt-1" />
+                    <Bot className="w-8 h-8 text-primary" />
                   </div>
                 )}
                 <div
-                  className={`rounded-lg p-4 max-w-[85%] shadow-sm ${
+                  className={`rounded-lg p-4 max-w-[85%] shadow-sm overflow-hidden ${
                     message.role === 'assistant'
                       ? 'bg-blue-100 dark:bg-blue-900/20 text-foreground'
                       : 'bg-primary text-primary-foreground ml-auto'
                   }`}
-                  style={{ whiteSpace: 'pre-line' }}
                 >
-                  <p className="text-sm leading-relaxed tracking-wide">
+                  <div className="text-sm leading-relaxed tracking-wide break-words">
                     {message.content}
-                  </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -154,7 +153,7 @@ Just type your question or what you'd like me to help with!`
           </div>
         </ScrollArea>
 
-        <form onSubmit={handleSubmit} className="flex gap-3 mt-auto pt-4 border-t">
+        <form onSubmit={handleSubmit} className="flex gap-3 mt-4 pt-4 border-t">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
