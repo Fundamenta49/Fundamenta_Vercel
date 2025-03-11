@@ -232,6 +232,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add new resume chat endpoint after the existing /api/resume/parse endpoint
+  app.post("/api/resume/chat", async (req, res) => {
+    try {
+      const { message, currentResume } = req.body;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert resume consultant helping users improve their resumes. 
+            Analyze their requests and the current resume content to provide specific suggestions.
+
+            Return your response in this format:
+            1. A conversational message explaining your suggestions
+            2. If applicable, specific updates to make to the resume
+
+            When suggesting updates, format them as JSON that matches the resume structure:
+            {
+              "summary": "updated summary text",
+              "experience": [
+                {
+                  "company": "company name",
+                  "position": "job title",
+                  "duration": "duration",
+                  "description": "improved bullet points"
+                }
+              ],
+              "education": [
+                {
+                  "school": "school name",
+                  "degree": "degree name",
+                  "year": "graduation year"
+                }
+              ]
+            }`
+          },
+          {
+            role: "user",
+            content: `Current resume:
+            ${JSON.stringify(currentResume, null, 2)}
+
+            User request: ${message}`
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      const aiResponse = JSON.parse(response.choices[0].message.content || "{}");
+
+      res.json({
+        message: aiResponse.message || "I'll help you improve your resume. What would you like to focus on?",
+        updates: aiResponse.updates || null
+      });
+
+    } catch (error) {
+      console.error("Resume chat error:", error);
+      res.status(500).json({
+        error: "Failed to process chat message",
+        message: "I apologize, but I'm having trouble analyzing your resume right now. Please try again."
+      });
+    }
+  });
+
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
@@ -255,7 +319,7 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-:✨ Next Topic
+✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
@@ -869,7 +933,7 @@ Remember to suggest relevant features in the app that could help the user.`;
     try {
       const { profile } = req.body;
 
-      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitness goals: ${profile.goals.join(', ')}. 
+      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level personwith the following fitness goals: ${profile.goals.join(', ')}. 
       Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
       Format the response as a JSON object with the following structure:
       {

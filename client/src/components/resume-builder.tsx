@@ -16,6 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ResumeChat from "./resume-chat";
 
 interface Education {
   school: string;
@@ -406,6 +407,25 @@ export default function ResumeBuilder() {
     });
   };
 
+  const handleResumeUpdate = (updates: {
+    summary?: string;
+    experience?: Experience[];
+    education?: Education[];
+  }) => {
+    if (updates.summary) {
+      setPersonalInfo(prev => ({
+        ...prev,
+        summary: updates.summary
+      }));
+    }
+    if (updates.experience) {
+      setExperience(updates.experience);
+    }
+    if (updates.education) {
+      setEducation(updates.education);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Step 1: Upload Resume */}
@@ -437,6 +457,25 @@ export default function ResumeBuilder() {
               Uploaded: {uploadedResume.name}
             </p>
           )}
+        </CardContent>
+      </Card>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>AI Resume Assistant</CardTitle>
+          <CardDescription>
+            Chat with our AI to get personalized guidance on improving your resume
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ResumeChat
+            onUpdateResume={handleResumeUpdate}
+            currentResume={{
+              summary: personalInfo.summary,
+              experience,
+              education
+            }}
+          />
         </CardContent>
       </Card>
 
