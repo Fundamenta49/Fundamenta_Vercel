@@ -10,7 +10,9 @@ import axios from 'axios';
 import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
-import pdf from 'pdf-parse';
+
+// Import pdf-parse with require to avoid test file loading
+const pdfParse = require('pdf-parse/lib/pdf-parse');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -113,11 +115,11 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-:✨ Next Topic
+✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
-      switch(validatedData.skillArea) {
+      switch (validatedData.skillArea) {
         case "cooking":
           systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm! 
 
@@ -194,7 +196,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", 
+        model: "gpt-4",
         messages: [
           {
             role: "system",
@@ -211,14 +213,14 @@ Remember to suggest relevant features in the app that could help the user.`;
         throw new Error('No response content received from AI');
       }
 
-      res.json({ 
+      res.json({
         response: response.choices[0].message.content,
         success: true
       });
 
     } catch (error) {
       console.error("Chat error:", error);
-      res.status(400).json({ 
+      res.status(400).json({
         error: "Failed to get response. Please try again.",
         success: false
       });
@@ -418,14 +420,14 @@ Remember to suggest relevant features in the app that could help the user.`;
       }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", 
+        model: "gpt-4",
         messages: [
           {
             role: "system",
             content: `You are a career guidance counselor with expertise in the RIASEC model. 
             The user has completed a RIASEC assessment with the following top matches:
             ${riasecResults.join('\n')}
-            
+
             Provide personalized guidance based on these results and the user's questions.
             Focus on practical next steps, education paths, and specific career opportunities.
             Be encouraging but realistic, and always provide actionable advice.`
@@ -487,88 +489,88 @@ Remember to suggest relevant features in the app that could help the user.`;
         }));
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", 
+        model: "gpt-4",
         messages: [
           {
             role: "system",
             content: userQuery.includes("cooking guide") ?
               `You are a professional chef and cooking instructor creating a guide about "${userQuery.replace('cooking guide:', '')}". 
               Speak naturally and conversationally, while maintaining focus on safety and proper technique.
-              
+
               Structure your response like this:
-              
+
               🎯 Essential Safety First!
               Start with the most important safety considerations for this cooking topic.
-              
+
               👩‍🍳 Step-by-Step Guide
               Break down the process into clear, manageable steps. Include specific techniques and tools needed.
-              
+
               ⚠️ Common Mistakes to Avoid
               List potential pitfalls and how to prevent them.
-              
+
               💡 Pro Chef Tips
               Share professional insights that will help improve results.
-              
+
               🧰 Required Tools & Equipment
               List essential items needed, including safety equipment if applicable.
-              
+
               ⏰ Timing Guidelines
               Include any relevant timing information, temperatures, or storage guidelines.
-              
+
               🎬 Video Tutorials
               Here are some helpful video tutorials I found:
               ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
-              
+
               Keep the tone friendly and encouraging while emphasizing safety and proper technique!` :
               userQuery.includes("cleaning schedule") ?
               `You are a professional home organization expert creating a customized cleaning schedule. 
               Create a practical, easy-to-follow cleaning schedule that's encouraging and detailed.
-              
+
               Structure your response like this:
-              
+
               🎯 Your Custom Cleaning Schedule
               First, give a brief, friendly intro about the benefits of having a regular cleaning routine.
-              
+
               ⏰ Daily Tasks (15-20 minutes)
               List quick, essential daily tasks
-              
+
               📅 Weekly Tasks (Break down by areas)
               - Kitchen
               - Bathroom(s)
               - Living Areas
               - Bedrooms
               Include specific tasks and estimated time for each area
-              
+
               🧰 Monthly Deep Clean Tasks
               List tasks that need attention monthly
-              
+
               ✨ Recommended Cleaning Supplies
               List essential supplies needed
-              
+
               💡 Pro Tips
               Share 2-3 practical tips for maintaining the schedule
-              
+
               Keep the tone friendly and encouraging throughout!` :
               `You are a friendly, encouraging life coach creating a guide about "${userQuery}". Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
-              
+
               Structure your advice in these friendly sections:
-              
+
               🎯 Let's Break It Down!
               Write a friendly intro about why this skill matters, then walk through the process conversationally. Include any tools needed and important safety tips with a ⚠️.
-              
+
               💡 Pro Tips!
               Share some helpful tricks and shortcuts you've learned along the way. Think of these as friendly advice rather than formal instructions.
-              
+
               ⏰ Staying on Track 
               Give easy-to-remember guidelines about how often to practice this skill and how to make it a natural part of their routine.
-              
+
               🎬 Video Tutorials
               Here are some helpful video tutorials I found:
               ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
-              
+
               🔗 Resources & Tools
               Share some trusted websites, tools, or communities that can help them learn more.
-              
+
               End with a warm, encouraging note!`
           },
           {
@@ -745,7 +747,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", 
+        model: "gpt-4",
         messages: [
           { role: "system", content: "You are a professional fitness trainer experienced in creating personalized workout plans." },
           { role: "user", content: prompt }
@@ -767,7 +769,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       const { content } = z.object({ content: z.string() }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", 
+        model: "gpt-4",
         messages: [
           {
             role: "system",
@@ -816,7 +818,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", 
+        model: "gpt-4",
         messages: [
           {
             role: "system",
@@ -892,11 +894,11 @@ Remember to suggest relevant features in the app that could help the user.`;
         });
       }
 
-            console.log(`Successfully validated video ${videoId}`);
+      console.log(`Successfully validated video ${videoId}`);
 
       res.json({
         id: video.id,
-        title:video.snippet.title,
+        title: video.snippet.title,
         thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
         error: false
       });
@@ -909,7 +911,7 @@ Remember to suggest relevant features in the app that could help the user.`;
         status: error.response?.status
       });
 
-      res.status(500).json({ 
+      res.status(500).json({
         error: true,
         message: "Failed to validate video",
         details: error.response?.data?.error?.message || error.message
@@ -937,32 +939,33 @@ Remember to suggest relevant features in the app that could help the user.`;
       try {
         if (req.file.mimetype === 'application/pdf') {
           console.log("Processing PDF file...");
-          const pdfBuffer = req.file.buffer;
-          const options = {};
-          extractedText = (await pdf(Buffer.from(pdfBuffer))).text;
-          console.log("PDF text extracted successfully");
+          try {
+            const dataBuffer = Buffer.from(req.file.buffer);
+            const pdfData = await pdfParse(dataBuffer);
+            extractedText = pdfData.text;
+            console.log("PDF parsing successful, text length:", extractedText.length);
+          } catch (pdfError) {
+            console.error("PDF parsing error:", pdfError);
+            throw new Error("Could not parse PDF content. Please ensure the file is not corrupted or password protected.");
+          }
         } else if (req.file.mimetype.includes('word')) {
           console.log("Processing Word document...");
           const result = await mammoth.extractRawText({ buffer: req.file.buffer });
           extractedText = result.value;
-          console.log("Word document text extracted successfully");
+          console.log("Word document parsed successfully, text length:", extractedText.length);
         }
-      } catch (err) {
-        console.error("Document parsing error:", err);
-        throw new Error(`Failed to parse ${req.file.mimetype.includes('pdf') ? 'PDF' : 'Word'} file. Please ensure the file is not corrupted or password protected.`);
-      }
 
-      if (!extractedText || extractedText.trim().length === 0) {
-        throw new Error("No text could be extracted from the document. Please ensure the file contains readable text.");
-      }
+        if (!extractedText || extractedText.trim().length === 0) {
+          throw new Error("No text could be extracted from the document. Please ensure the file contains readable text.");
+        }
 
-      console.log("Analyzing resume content with OpenAI...");
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: `You are a professional resume parser. Extract structured information from the resume text into JSON format with the following structure:
+        console.log("Proceeding with resume analysis...");
+        const response = await openai.chat.completions.create({
+          model: "gpt-4",
+          messages: [
+            {
+              role: "system",
+              content: `You are a professional resume parser. Extract structured information from the resume text into JSON format with the following structure:
             {
               "personalInfo": {
                 "name": string,
@@ -993,28 +996,35 @@ Remember to suggest relevant features in the app that could help the user.`;
             - Extract the most relevant information for each section
             - Keep descriptions concise but informative
             - Ensure the output is valid JSON`
-          },
-          {
-            role: "user",
-            content: extractedText
-          }
-        ],
-        response_format: { type: "json_object" }
-      });
+            },
+            {
+              role: "user",
+              content: extractedText
+            }
+          ],
+          response_format: { type: "json_object" }
+        });
 
-      const parsedData = JSON.parse(response.choices[0].message.content || "{}");
-      console.log("Resume successfully parsed and analyzed");
+        const parsedData = JSON.parse(response.choices[0].message.content || "{}");
+        console.log("Resume successfully parsed and analyzed");
 
-      res.json({
-        success: true,
-        data: parsedData
-      });
+        res.json({
+          success: true,
+          data: parsedData
+        });
 
-    } catch (error: any) {
-      console.error("Resume parsing error:", error);
-      res.status(400).json({
+      } catch (error) {
+        console.error("Resume parsing error:", error);
+        res.status(400).json({
+          error: true,
+          message: error.message || "Failed to process the resume. Please try again with a different file."
+        });
+      }
+    } catch (outerError) {
+      console.error("Outer error handling:", outerError);
+      res.status(500).json({
         error: true,
-        message: error.message || "Failed to process the resume. Please try again with a different file."
+        message: "An unexpected error occurred while processing your request."
       });
     }
   });
@@ -1069,11 +1079,11 @@ Remember to suggest relevant features in the app that could help the user.`;
         });
       }
 
-            console.log(`Successfully validated video ${videoId}`);
+      console.log(`Successfully validated video ${videoId}`);
 
       res.json({
         id: video.id,
-        title:video.snippet.title,
+        title: video.snippet.title,
         thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
         error: false
       });
@@ -1086,7 +1096,7 @@ Remember to suggest relevant features in the app that could help the user.`;
         status: error.response?.status
       });
 
-      res.status(500).json({ 
+      res.status(500).json({
         error: true,
         message: "Failed to validate video",
         details: error.response?.data?.error?.message || error.message
