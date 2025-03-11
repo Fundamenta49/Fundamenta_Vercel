@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer, Maximize2, Minimize2 } from "lucide-react";
+import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer, Maximize2, Minimize2, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
@@ -259,9 +259,14 @@ export default function CookingGuide() {
               href={resource.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
+              className="block p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer group"
             >
-              <h4 className="font-medium text-primary hover:underline">{resource.name}</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium text-primary group-hover:underline flex items-center gap-2">
+                  {resource.name}
+                  <ExternalLink className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </h4>
+              </div>
               <p className="text-sm text-muted-foreground mt-1">{resource.description}</p>
             </a>
           ))}

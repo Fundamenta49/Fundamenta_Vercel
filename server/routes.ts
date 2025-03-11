@@ -10,10 +10,10 @@ import axios from 'axios';
 import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
+import pdf from 'pdf-parse';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Define schemas
 const messageSchema = z.object({
   skillArea: z.enum(["technical", "soft", "search", "life", "cooking", "career", "emergency", "finance", "wellness", "tour", "learning"]),
   userQuery: z.string()
@@ -70,7 +70,6 @@ const interviewAnalysisSchema = z.object({
   industry: z.string(),
 });
 
-// Configure multer for file uploads
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -96,9 +95,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = messageSchema.parse(req.body);
 
       let systemMessage = `You are a friendly and supportive AI assistant.
-      
+
 Format your responses following these strict rules:
-      
+
 - Use only plain text - no special formatting characters
 - Never use asterisks (*) or hashtags (#) in your responses
 - Never use markdown syntax
@@ -106,97 +105,96 @@ Format your responses following these strict rules:
 - Add double line breaks between topics
 - Start new sections with friendly emojis
 - Keep everything in a conversational, friendly tone
-      
+
 Example formatting:
 🌟 Main Topic
 Here's the first point about this topic.
-      
+
 - First item in a list
 - Second item in a list
-      
+
 :✨ Next Topic
 Continue with the next section here.
-      
+
 Remember to suggest relevant features in the app that could help the user.`;
-      // Category-specific system messages
       switch(validatedData.skillArea) {
         case "cooking":
           systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm! 
-          
+
           Share practical cooking tips in a casual, encouraging way. Break down techniques into simple steps and celebrate their cooking journey. 
-          
+
           Use emojis like 🔪 for prep steps, ⏲️ for timing, 🌡️ for temperatures, and ✨ for success tips.
-          
+
           Remember to:
           - Guide users to relevant cooking tutorials in the app
           - Mention our interactive cooking guides when relevant
           - Suggest the cleaning schedule generator for kitchen organization
           - Point users to our kitchen safety resources
-          
+
           Always prioritize kitchen safety while keeping the tone warm and supportive!`;
           break;
         case "career":
           systemMessage += `As a supportive career mentor 💼, offer encouraging but practical advice.
-          
+
           Share insights in a friendly, conversational way. Help users explore opportunities with confidence.
-          
+
           Remember to:
           - Suggest our career assessment tools when relevant
           - Point users to the interview practice section
           - Recommend our resume building resources
           - Guide users to salary insights tools
-          
+
           Use emojis like 🎯 for goals, 💡 for ideas, and ⭐ for achievements.`;
           break;
         case "emergency":
           systemMessage += `Stay calm and clear while providing crucial guidance. 
-          
+
           Use a steady, reassuring tone 💪 while giving precise instructions.
-          
+
           Break down steps clearly with plenty of spacing.
-          
+
           Add encouraging emojis like ✅ for completed steps and 🟢 for positive progress.`;
           break;
         case "finance":
           systemMessage += `As a friendly financial guide 💰, explain concepts in simple, relatable terms.
-          
+
           Use real-life examples and avoid technical jargon. Break down complex topics into digestible pieces.
-          
+
           Include supportive emojis like 📊 for planning, 💡 for tips, and 🎯 for goals.
-          
+
           Be encouraging and non-judgmental about money matters - we're here to learn together!`;
           break;
         case "wellness":
           systemMessage += `As a caring wellness guide 🌱, provide compassionate support for health and wellbeing.
-          
+
           Use a gentle, understanding tone while offering practical advice. Break down wellness concepts into simple, actionable steps.
-          
+
           Include nurturing emojis like 🧘‍♀️ for mindfulness, 💪 for strength, and 🌟 for achievements.
-          
+
           Remember to be supportive and encouraging - wellness is a personal journey!`;
           break;
         case "tour":
           systemMessage += `Be an enthusiastic guide 🎯 showing users around our features!
-          
+
           Keep the tone fun and welcoming. Point out helpful features with excitement and clarity.
-          
+
           Use engaging emojis like ✨ for highlights, 🎉 for features, and 👉 for next steps.
-          
+
           Make users feel welcomed and excited to explore!`;
           break;
         case "learning":
           systemMessage += `As an encouraging learning coach 📚, help users discover and grow! 
-          
+
           Break down complex topics into manageable chunks and celebrate small wins. Use examples and analogies that make learning fun and relatable.
-          
+
           Include emojis like 💡 for insights, ✍️ for practice tips, and 🎯 for goals.
-          
+
           Remember to be patient and supportive - learning is a journey we're on together!`;
           break;
       }
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", // Changed from gpt-4o
+        model: "gpt-4", 
         messages: [
           {
             role: "system",
@@ -273,14 +271,12 @@ Remember to suggest relevant features in the app that could help the user.`;
     } catch (error: any) {
       console.error("Interview analysis error:", error);
 
-      // More specific error messages based on error type
       if (error.name === "ZodError") {
         return res.status(400).json({
           error: "Invalid request format. Please check your input."
         });
       }
 
-      // Handle OpenAI specific errors
       if (error?.error?.type === "invalid_api_key") {
         return res.status(503).json({
           error: "Interview analysis service is currently unavailable. Please try again later."
@@ -410,7 +406,6 @@ Remember to suggest relevant features in the app that could help the user.`;
       });
     }
   });
-  // Add this endpoint after the other chat-related endpoints
   app.post("/api/career-guidance", async (req, res) => {
     try {
       const { message, riasecResults, conversationHistory } = z.object({
@@ -423,7 +418,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", // Changed from gpt-4o
+        model: "gpt-4", 
         messages: [
           {
             role: "system",
@@ -458,7 +453,6 @@ Remember to suggest relevant features in the app that could help the user.`;
         userQuery: z.string()
       }).parse(req.body);
 
-      // First, search for relevant YouTube videos
       const videoResults = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
         params: {
           part: 'snippet',
@@ -469,7 +463,6 @@ Remember to suggest relevant features in the app that could help the user.`;
         }
       });
 
-      // Get video details for the search results
       const videoIds = videoResults.data.items.map((item: any) => item.id.videoId);
       const videoDetails = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
         params: {
@@ -479,7 +472,6 @@ Remember to suggest relevant features in the app that could help the user.`;
         }
       });
 
-      // Filter for public videos only
       const availableVideos = videoDetails.data.items
         .filter((item: any) => item.status.privacyStatus === 'public')
         .map((item: any) => ({
@@ -495,7 +487,7 @@ Remember to suggest relevant features in the app that could help the user.`;
         }));
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", // Changed from gpt-4o
+        model: "gpt-4", 
         messages: [
           {
             role: "system",
@@ -667,8 +659,6 @@ Remember to suggest relevant features in the app that could help the user.`;
     try {
       const { public_token } = req.body;
       const accessToken = await exchangePublicToken(public_token);
-      // In a real app, you would store this access_token securely
-      // and associate it with the user's account
       res.json({ success: true });
     } catch (error) {
       console.error("Error exchanging token:", error);
@@ -678,8 +668,6 @@ Remember to suggest relevant features in the app that could help the user.`;
 
   app.get("/api/plaid/transactions", async (req, res) => {
     try {
-      // In a real app, you would retrieve the access_token from your database
-      // based on the authenticated user's session
       const accessToken = "your_access_token";
       const transactions = await getTransactions(accessToken);
       res.json({ transactions });
@@ -699,7 +687,6 @@ Remember to suggest relevant features in the app that could help the user.`;
       }
 
       if (videoId) {
-        // Validate specific video
         const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
           params: {
             part: 'snippet,status',
@@ -708,7 +695,6 @@ Remember to suggest relevant features in the app that could help the user.`;
           }
         });
 
-        // Check if video exists and is available
         const isValid = response.data.items &&
           response.data.items.length > 0 &&
           response.data.items[0].status.privacyStatus === 'public';
@@ -718,7 +704,6 @@ Remember to suggest relevant features in the app that could help the user.`;
           isValid
         });
       } else if (query) {
-        // Search for videos
         const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
           params: {
             part: 'snippet',
@@ -760,7 +745,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", // Changed from gpt-4o
+        model: "gpt-4", 
         messages: [
           { role: "system", content: "You are a professional fitness trainer experienced in creating personalized workout plans." },
           { role: "user", content: prompt }
@@ -782,7 +767,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       const { content } = z.object({ content: z.string() }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", // Changed from gpt-4o
+        model: "gpt-4", 
         messages: [
           {
             role: "system",
@@ -798,7 +783,6 @@ Remember to suggest relevant features in the app that could help the user.`;
 
       const analysis = JSON.parse(response.choices[0].message.content || "{}");
 
-      // Calculate word frequency
       const words = content.toLowerCase()
         .replace(/[^\w\s]/g, '')
         .split(/\s+/)
@@ -832,7 +816,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       }).parse(req.body);
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4", // Changed from gpt-4o
+        model: "gpt-4", 
         messages: [
           {
             role: "system",
@@ -873,7 +857,6 @@ Remember to suggest relevant features in the app that could help the user.`;
 
       console.log(`Validating YouTube video ID: ${videoId}`);
 
-      // Validate specific video
       const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
       console.log(`Making API request to: ${apiUrl}`);
 
@@ -891,7 +874,6 @@ Remember to suggest relevant features in the app that could help the user.`;
         itemCount: response.data.items?.length
       });
 
-      // Check if video exists and is available
       if (!response.data.items || response.data.items.length === 0) {
         console.log(`No video found for ID: ${videoId}`);
         return res.json({
@@ -902,7 +884,6 @@ Remember to suggest relevant features in the app that could help the user.`;
 
       const video = response.data.items[0];
 
-      // Check if video is available
       if (video.status.privacyStatus !== 'public') {
         console.log(`Video ${videoId} is not public. Status: ${video.status.privacyStatus}`);
         return res.json({
@@ -939,63 +920,56 @@ Remember to suggest relevant features in the app that could help the user.`;
   app.post("/api/resume/parse", upload.single('resume'), async (req, res) => {
     try {
       if (!req.file) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           error: true,
-          message: "Please upload a resume file (PDF or Word document)" 
+          message: "No file uploaded or invalid file type. Please upload a PDF or Word document."
         });
       }
 
-      console.log('Processing uploaded file:', {
+      console.log("Processing uploaded file:", {
         filename: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size
       });
 
-      let textContent = '';
+      let extractedText = '';
 
       try {
-        console.log('Starting text extraction...');
         if (req.file.mimetype === 'application/pdf') {
-          console.log('Processing PDF file...');
-          // Dynamically import pdf-parse only when needed
-          const pdfParse = await import('pdf-parse');
-          const pdfData = await pdfParse.default(req.file.buffer);
-          textContent = pdfData.text;
-          console.log('PDF text extracted successfully');
-        } else {
-          console.log('Processing Word document...');
+          console.log("Processing PDF file...");
+          const pdfBuffer = req.file.buffer;
+          const options = {};
+          extractedText = (await pdf(Buffer.from(pdfBuffer))).text;
+          console.log("PDF text extracted successfully");
+        } else if (req.file.mimetype.includes('word')) {
+          console.log("Processing Word document...");
           const result = await mammoth.extractRawText({ buffer: req.file.buffer });
-          textContent = result.value;
-          console.log('Word document text extracted successfully');
+          extractedText = result.value;
+          console.log("Word document text extracted successfully");
         }
-
-        if (!textContent || textContent.trim().length === 0) {
-          throw new Error('No text content could be extracted from the document');
-        }
-
-        console.log('Text extraction completed successfully');
-      } catch (extractError) {
-        console.error('Text extraction error:', extractError);
-        return res.status(400).json({
-          error: true,
-          message: "Could not extract text from the uploaded file. Please ensure the file is not corrupted or password protected.",
-          details: extractError.message
-        });
+      } catch (err) {
+        console.error("Document parsing error:", err);
+        throw new Error(`Failed to parse ${req.file.mimetype.includes('pdf') ? 'PDF' : 'Word'} file. Please ensure the file is not corrupted or password protected.`);
       }
 
-      try {
-        console.log('Starting OpenAI analysis...');
-        const response = await openai.chat.completions.create({
-          model: "gpt-4",
-          messages: [
+      if (!extractedText || extractedText.trim().length === 0) {
+        throw new Error("No text could be extracted from the document. Please ensure the file contains readable text.");
+      }
+
+      console.log("Analyzing resume content with OpenAI...");
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional resume parser. Extract structured information from the resume text into JSON format with the following structure:
             {
-              role: "system",
-              content: `You are a professional resume parser. Extract structured information from the resume text into JSON format with the following structure:
-            {
-              "name": string,
-              "email": string,
-              "phone": string,
-              "summary": string,
+              "personalInfo": {
+                "name": string,
+                "email": string,
+                "phone": string,
+                "summary": string
+              },
               "experience": [
                 {
                   "company": string,
@@ -1019,34 +993,103 @@ Remember to suggest relevant features in the app that could help the user.`;
             - Extract the most relevant information for each section
             - Keep descriptions concise but informative
             - Ensure the output is valid JSON`
-            },
-            {
-              role: "user",
-              content: textContent
-            }
-          ],
-          response_format: { type: "json_object" }
-        });
+          },
+          {
+            role: "user",
+            content: extractedText
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
 
-        const parsedData = JSON.parse(response.choices[0].message.content);
-        console.log('Resume successfully parsed and analyzed');
-        res.json(parsedData);
+      const parsedData = JSON.parse(response.choices[0].message.content || "{}");
+      console.log("Resume successfully parsed and analyzed");
 
-      } catch (aiError) {
-        console.error('AI processing error:', aiError);
-        return res.status(500).json({
+      res.json({
+        success: true,
+        data: parsedData
+      });
+
+    } catch (error: any) {
+      console.error("Resume parsing error:", error);
+      res.status(400).json({
+        error: true,
+        message: error.message || "Failed to process the resume. Please try again with a different file."
+      });
+    }
+  });
+
+  app.get("/api/youtube/validate", async (req, res) => {
+    try {
+      const videoId = req.query.videoId as string;
+
+      if (!videoId) {
+        return res.status(400).json({ error: true, message: "Video ID is required" });
+      }
+
+      if (!process.env.YOUTUBE_API_KEY) {
+        console.error("YouTube API key not configured");
+        throw new Error("YouTube API key not configured");
+      }
+
+      console.log(`Validating YouTube video ID: ${videoId}`);
+
+      const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
+      console.log(`Making API request to: ${apiUrl}`);
+
+      const response = await axios.get(apiUrl, {
+        params: {
+          part: 'snippet,status',
+          id: videoId,
+          key: process.env.YOUTUBE_API_KEY,
+        }
+      });
+
+      console.log('YouTube API Response:', {
+        status: response.status,
+        hasItems: !!response.data.items,
+        itemCount: response.data.items?.length
+      });
+
+      if (!response.data.items || response.data.items.length === 0) {
+        console.log(`No video found for ID: ${videoId}`);
+        return res.json({
           error: true,
-          message: "Failed to analyze the resume content. Please try again.",
-          details: aiError.message
+          message: "Video not found"
         });
       }
 
+      const video = response.data.items[0];
+
+      if (video.status.privacyStatus !== 'public') {
+        console.log(`Video ${videoId} is not public. Status: ${video.status.privacyStatus}`);
+        return res.json({
+          error: true,
+          message: "Video is not publicly available"
+        });
+      }
+
+            console.log(`Successfully validated video ${videoId}`);
+
+      res.json({
+        id: video.id,
+        title:video.snippet.title,
+        thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
+        error: false
+      });
+
     } catch (error) {
-      console.error("Resume parsing error:", error);
-      res.status(500).json({
+      console.error("YouTube API error:", error);
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+
+      res.status(500).json({ 
         error: true,
-        message: "An unexpected error occurred while processing your resume",
-        details: error.message
+        message: "Failed to validate video",
+        details: error.response?.data?.error?.message || error.message
       });
     }
   });
