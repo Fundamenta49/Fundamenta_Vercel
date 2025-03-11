@@ -10,7 +10,7 @@ import axios from 'axios';
 import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
-import * as pdfjs from 'pdfjs-dist';
+import pdf from 'pdf-parse';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -35,7 +35,70 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Resume parsing route
+  // Test endpoint for PDF parsing
+  app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
+    try {
+      console.log("Starting PDF test parse endpoint");
+
+      if (!req.file) {
+        return res.status(400).json({
+          error: true,
+          message: "No file uploaded or invalid file type. Please upload a PDF file."
+        });
+      }
+
+      console.log("Test PDF upload details:", {
+        filename: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        bufferLength: req.file.buffer.length
+      });
+
+      if (req.file.mimetype !== 'application/pdf') {
+        return res.status(400).json({
+          error: true,
+          message: "Invalid file type. Please upload a PDF file."
+        });
+      }
+
+      try {
+        // Create a fresh buffer from the file
+        const dataBuffer = Buffer.from(req.file.buffer);
+        console.log("Test endpoint: Buffer created successfully, length:", dataBuffer.length);
+
+        // Parse PDF with no options
+        const data = await pdf(dataBuffer);
+        console.log("Test endpoint: PDF parsed successfully, text length:", data.text.length);
+        console.log("Test endpoint: First 100 characters:", data.text.substring(0, 100));
+
+        res.json({
+          success: true,
+          textLength: data.text.length,
+          preview: data.text.substring(0, 100),
+          pageCount: data.numpages,
+          info: data.info
+        });
+
+      } catch (pdfError) {
+        console.error("Test endpoint PDF parsing error details:", {
+          name: pdfError.name,
+          message: pdfError.message,
+          stack: pdfError.stack
+        });
+
+        throw new Error("Could not parse PDF content. Please ensure the file is not corrupted or password protected.");
+      }
+    } catch (error) {
+      console.error("Test endpoint error:", error);
+      res.status(500).json({
+        error: true,
+        message: error instanceof Error ? error.message : "An unexpected error occurred",
+        details: error instanceof Error ? error.stack : undefined
+      });
+    }
+  });
+
+  // Main resume parsing endpoint
   app.post("/api/resume/parse", upload.single('resume'), async (req, res) => {
     try {
       if (!req.file) {
@@ -48,7 +111,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Processing uploaded file:", {
         filename: req.file.originalname,
         mimetype: req.file.mimetype,
-        size: req.file.size
+        size: req.file.size,
+        bufferLength: req.file.buffer.length
       });
 
       let extractedText = '';
@@ -56,32 +120,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         if (req.file.mimetype === 'application/pdf') {
           console.log("Processing PDF file...");
-          const uint8Array = new Uint8Array(req.file.buffer);
-          const loadingTask = pdfjs.getDocument(uint8Array);
-          const pdfDocument = await loadingTask.promise;
+          const dataBuffer = Buffer.from(req.file.buffer);
+          console.log("Buffer created successfully, length:", dataBuffer.length);
 
-          let fullText = '';
-          for (let i = 1; i <= pdfDocument.numPages; i++) {
-            const page = await pdfDocument.getPage(i);
-            const content = await page.getTextContent();
-            const pageText = content.items.map((item: any) => item.str).join(' ');
-            fullText += pageText + '\n';
+          try {
+            // Parse PDF with no options
+            const data = await pdf(dataBuffer);
+            extractedText = data.text;
+            console.log("PDF text extracted successfully, length:", extractedText.length);
+          } catch (pdfError) {
+            console.error("PDF parsing error details:", {
+              name: pdfError.name,
+              message: pdfError.message,
+              stack: pdfError.stack
+            });
+            throw new Error("Could not parse PDF content. Please ensure the file is not corrupted or password protected.");
           }
-
-          extractedText = fullText;
-          console.log("PDF text extracted successfully, length:", extractedText.length);
         } else if (req.file.mimetype.includes('word')) {
           console.log("Processing Word document...");
           const result = await mammoth.extractRawText({ buffer: req.file.buffer });
           extractedText = result.value;
-          console.log("Word document text extracted successfully");
+          console.log("Word document text extracted successfully, length:", extractedText.length);
         }
 
         if (!extractedText || extractedText.trim().length === 0) {
+          console.error("No text extracted from document");
           throw new Error("No text could be extracted from the document. Please ensure the file contains readable text.");
         }
 
-        console.log("Analyzing resume content...");
+        console.log("Starting resume analysis with OpenAI...");
         const response = await openai.chat.completions.create({
           model: "gpt-4",
           messages: [
@@ -127,7 +194,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         const parsedData = JSON.parse(response.choices[0].message.content || "{}");
-        console.log("Resume successfully parsed");
+        console.log("Resume successfully parsed and analyzed");
 
         res.json({
           success: true,
@@ -135,10 +202,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
       } catch (error) {
-        console.error("Resume parsing error:", error);
+        console.error("Resume processing error:", error);
         res.status(400).json({
           error: true,
-          message: error instanceof Error ? error.message : "Failed to process the resume"
+          message: error instanceof Error ? error.message : "Failed to process the resume",
+          details: error instanceof Error ? error.stack : undefined
         });
       }
     } catch (error) {
@@ -244,7 +312,7 @@ Remember to suggest relevant features in the app that could help the user.`;
           break;
         case "learning":
           systemMessage += `As an encouraging learning coach 📚, help users discover and grow! 
-
+          
           Break down complex topics into manageable chunks and celebrate small wins. Use examples and analogies that make learning fun and relatable.
 
           Include emojis like 💡 for insights, ✍️ for practice tips, and 🎯 for goals.
@@ -972,120 +1040,201 @@ Remember to suggest relevant features in the app that could help the user.`;
       res.status(500).json({
         error: true,
         message: "Failed to validate video",
-        details: error.response?.data?.error?.message || error.message      });
+        details: error.response?.data?.error?.message || error.message
+      });
     }
   });
 
-  app.post("/api/resume/parse", upload.single('resume'), async (req, res) => {
+  app.post("/api/generate-workout", async (req, res) => {
     try {
-      if (!req.file) {
-        return res.status(400).json({
-          error: true,
-          message: "No file uploaded or invalid file type. Please upload a PDF or Word document."
-        });
-      }
+      const { profile } = req.body;
 
-      console.log("Processing uploaded file:", {
-        filename: req.file.originalname,
-        mimetype: req.file.mimetype,
-        size: req.file.size
+      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitness goals: ${profile.goals.join(', ')}. 
+      Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
+      Format the response as a JSON object with the following structure:
+      {
+        "exercises": [
+          {
+            "name": string,
+            "sets": number,
+            "reps": number,
+            "description": string,
+            "videoId": string (YouTube video ID)
+          }
+        ],
+        "schedule": string,
+        "tips": string[]
+      }`;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: "You are a professional fitness trainer experienced in creating personalized workout plans." },
+          { role: "user", content: prompt }
+        ],
+        response_format: { type: "json_object" }
       });
 
-      let extractedText = '';
+      const workoutPlan = JSON.parse(response.choices[0].message.content || "{}");
+      res.json(workoutPlan);
 
-      try {
-        if (req.file.mimetype === 'application/pdf') {
-          console.log("Processing PDF file...");
-          const uint8Array = new Uint8Array(req.file.buffer);
-          const loadingTask = pdfjs.getDocument(uint8Array);
-          const pdfDocument = await loadingTask.promise;
+    } catch (error) {
+      console.error('Error generating workout plan:', error);
+      res.status(500).json({ error: 'Failed to generate workout plan' });
+    }
+  });
 
-          let fullText = '';
-          for (let i = 1; i <= pdfDocument.numPages; i++) {
-            const page = await pdfDocument.getPage(i);
-            const content = await page.getTextContent();
-            const pageText = content.items.map((item: any) => item.str).join(' ');
-            fullText += pageText + '\n';
+  app.post("/api/journal/analyze", async (req, res) => {
+    try {
+      const { content } = z.object({ content: z.string() }).parse(req.body);
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: "You are an AI therapist analyzing journal entries. Provide analysis in JSON format including emotional score (0-100), sentiment, key themes, and suggestions for mental well-being."
+          },
+          {
+            role: "user",
+            content
           }
+        ],
+        response_format: { type: "json_object" }
+      });
 
-          extractedText = fullText;
-          console.log("PDF text extracted successfully, length:", extractedText.length);
-        } else if (req.file.mimetype.includes('word')) {
-          console.log("Processing Word document...");
-          const result = await mammoth.extractRawText({ buffer: req.file.buffer });
-          extractedText = result.value;
-          console.log("Word document text extracted successfully");
+      const analysis = JSON.parse(response.choices[0].message.content || "{}");
+
+      const words = content.toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .split(/\s+/)
+        .filter(word => word.length > 3);
+
+      const wordFrequency: Record<string, number> = {};
+      words.forEach(word => {
+        wordFrequency[word] = (wordFrequency[word] || 0) + 1;
+      });
+
+      res.json({
+        emotionalScore: analysis.emotionalScore,
+        sentiment: analysis.sentiment,
+        wordFrequency,
+        suggestions: analysis.suggestions,
+        moodTrend: analysis.moodTrend
+      });
+    } catch (error) {
+      console.error('Error analyzing journal entry:', error);
+      res.status(500).json({ error: 'Failed to analyze journal entry' });
+    }
+  });
+
+  app.post("/api/journal/analyze-trends", async (req, res) => {
+    try {
+      const { entries } = z.object({
+        entries: z.array(z.object({
+          content: z.string(),
+          timestamp: z.string()
+        }))
+      }).parse(req.body);
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: "Analyze the mood trends across multiple journal entries and provide insights and recommendations in JSON format."
+          },
+          {
+            role: "user",
+            content: JSON.stringify(entries)
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      const analysis = JSON.parse(response.choices[0].message.content || "{}");
+
+      res.json({
+        trends: analysis.trends,
+        recommendations: analysis.recommendations
+      });
+    } catch (error) {
+      console.error('Error analyzing mood trends:', error);
+      res.status(500).json({ error: 'Failed to analyze mood trends' });
+    }
+  });
+
+  app.get("/api/youtube/validate", async (req, res) => {
+    try {
+      const videoId = req.query.videoId as string;
+
+      if (!videoId) {
+        return res.status(400).json({ error: true, message: "Video ID is required" });
+      }
+
+      if (!process.env.YOUTUBE_API_KEY) {
+        console.error("YouTube API key not configured");
+        throw new Error("YouTube API key not configured");
+      }
+
+      console.log(`Validating YouTube video ID: ${videoId}`);
+
+      const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
+      console.log(`Making API request to: ${apiUrl}`);
+
+      const response = await axios.get(apiUrl, {
+        params: {
+          part: 'snippet,status',
+          id: videoId,
+          key: process.env.YOUTUBE_API_KEY,
         }
+      });
 
-        if (!extractedText || extractedText.trim().length === 0) {
-          throw new Error("No text could be extracted from the document. Please ensure the file contains readable text.");
-        }
+      console.log('YouTube API Response:', {
+        status: response.status,
+        hasItems: !!response.data.items,
+        itemCount: response.data.items?.length
+      });
 
-        console.log("Analyzing resume content...");
-        const response = await openai.chat.completions.create({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "system",
-              content: `Extract structured information from the resume text into JSON format matching this schema:
-              {
-                "personalInfo": {
-                  "name": string,
-                  "email": string,
-                  "phone": string,
-                  "summary": string
-                },
-                "education": [
-                  {
-                    "school": string,
-                    "degree": string,
-                    "year": string
-                  }
-                ],
-                "experience": [
-                  {
-                    "company": string,
-                    "position": string,
-                    "duration": string,
-                    "description": string
-                  }
-                ]
-              }
-
-              Guidelines:
-              - If a field can't be found, use an empty string
-              - Format dates consistently
-              - Keep descriptions concise
-              - Ensure valid JSON output`
-            },
-            {
-              role: "user",
-              content: extractedText
-            }
-          ],
-          response_format: { type: "json_object" }
-        });
-
-        const parsedData = JSON.parse(response.choices[0].message.content || "{}");
-        console.log("Resume successfully parsed");
-
-        res.json({
-          success: true,
-          data: parsedData
-        });
-
-      } catch (error) {
-        console.error("Resume parsing error:", error);
-        res.status(400).json({
+      if (!response.data.items || response.data.items.length === 0) {
+        console.log(`No video found for ID: ${videoId}`);
+        return res.json({
           error: true,
-          message: error instanceof Error ? error.message : "Failed to process the resume"
+          message: "Video not found"
         });
       }
+
+      const video = response.data.items[0];
+
+      if (video.status.privacyStatus !== 'public') {
+        console.log(`Video ${videoId} is not public. Status: ${video.status.privacyStatus}`);
+        return res.json({
+          error: true,
+          message: "Video is not publicly available"
+        });
+      }
+
+      console.log(`Successfully validated video ${videoId}`);
+
+      res.json({
+        id: video.id,
+        title: video.snippet.title,
+        thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
+        error: false
+      });
+
     } catch (error) {
-      console.error("Unexpected error:", error);
+      console.error("YouTube API error:", error);
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+
       res.status(500).json({
         error: true,
-        message: "An unexpected error occurred while processing your request."
+        message: "Failed to validate video",
+        details: error.response?.data?.error?.message || error.message
       });
     }
   });
