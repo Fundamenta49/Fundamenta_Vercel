@@ -48,7 +48,14 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out. How can I help you today? You can ask me to:\n\n- Review your summary\n- Improve job descriptions\n- Highlight key achievements\n- Tailor your resume for specific roles"
+      content: `👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out.
+
+How can I help you today? You can ask me to:
+
+• Review your summary
+• Improve job descriptions
+• Highlight key achievements
+• Tailor your resume for specific roles`
     }
   ]);
   const [input, setInput] = useState('');
@@ -72,7 +79,6 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
 
       setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
 
-      // If the AI suggests changes, apply them
       if (data.updates) {
         onUpdateResume(data.updates);
         toast({
@@ -128,8 +134,9 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                       ? 'bg-blue-100 dark:bg-blue-900/20 text-foreground'
                       : 'bg-primary text-primary-foreground ml-auto'
                   }`}
+                  style={{ whiteSpace: 'pre-line' }}
                 >
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed tracking-wide">
+                  <p className="text-sm leading-relaxed tracking-wide">
                     {message.content}
                   </p>
                 </div>
