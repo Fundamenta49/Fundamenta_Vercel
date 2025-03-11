@@ -48,7 +48,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out. How can I help you today? You can ask me to: • Review your summary • Improve job descriptions • Highlight key achievements • Tailor your resume for specific roles Just type your question or what you'd like me to help with!"
+      content: "👋 Hi! I'm your personal resume assistant. I can help you optimize your resume and make it stand out. How can I help you today? You can ask me to: • Review your summary • Improve job descriptions • Highlight key achievements • Tailor your resume for specific roles"
     }
   ]);
   const [input, setInput] = useState('');
@@ -109,15 +109,10 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
     <Card className="w-full h-[calc(100vh-4rem)] sm:h-[600px] flex flex-col">
       <CardContent className="p-4 flex-1 flex flex-col">
         <ScrollArea className="flex-1">
-          <div className="space-y-4">
+          <div className="space-y-4 pb-4">
             {messages.map((message, index) => (
-              <div
-                key={index}
-                className="flex w-full"
-              >
-                <div className={`flex items-start w-full ${
-                  message.role === 'assistant' ? 'pr-8' : 'pl-8'
-                }`}>
+              <div key={index} className={`flex ${message.role === "assistant" ? "justify-start" : "justify-end"}`}>
+                <div className="flex items-start w-full">
                   {message.role === 'assistant' && (
                     <div className="flex-shrink-0 mr-2">
                       <Bot className="w-6 h-6 text-primary" />
@@ -126,7 +121,7 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                   <div
                     className={`rounded-lg p-4 ${
                       message.role === 'assistant'
-                        ? 'bg-[#E8F1FE] text-[#1f2937] flex-1'
+                        ? 'bg-[#E8F1FE] text-[#1f2937] max-w-[80%]'
                         : 'bg-primary text-primary-foreground ml-auto max-w-[80%]'
                     }`}
                     style={{
@@ -135,7 +130,12 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                       lineHeight: '1.4'
                     }}
                   >
-                    {message.content}
+                    <div 
+                      className="text-base leading-6" 
+                      style={{ whiteSpace: 'pre-line' }}
+                    >
+                      {message.content}
+                    </div>
                   </div>
                 </div>
               </div>
