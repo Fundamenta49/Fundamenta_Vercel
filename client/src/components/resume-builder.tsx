@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Education {
   school: string;
@@ -37,6 +38,17 @@ interface OptimizationSuggestions {
     improved: string;
   }>;
   structuralChanges: string[];
+}
+
+// Add this new interface for parsed resume data
+interface ParsedResumeData {
+  name: string;
+  email: string;
+  phone: string;
+  summary: string;
+  experience: Experience[];
+  education: Education[];
+  skills: string[];
 }
 
 const styles = StyleSheet.create({
@@ -128,6 +140,12 @@ export default function ResumeBuilder() {
   ]);
   const [suggestions, setSuggestions] = useState<OptimizationSuggestions | null>(null);
 
+  // Add new state for parsed data and optimization history
+  const [parsedData, setParsedData] = useState<ParsedResumeData | null>(null);
+  const [optimizationHistory, setOptimizationHistory] = useState<OptimizationSuggestions[]>([]);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+
+
   const optimizeMutation = useMutation({
     mutationFn: async () => {
       const res = await apiRequest("POST", "/api/resume/optimize", {
@@ -140,6 +158,7 @@ export default function ResumeBuilder() {
     },
     onSuccess: (data) => {
       setSuggestions(data.suggestions);
+      setOptimizationHistory(prev => [...prev, data.suggestions]);
       toast({
         title: "Resume Optimized",
         description: "AI suggestions have been generated for your resume.",
@@ -251,11 +270,11 @@ export default function ResumeBuilder() {
     coverLetterMutation.mutate();
   };
 
+  // Modify handleResumeUpload to automatically optimize
   const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Only accept PDF and Word documents
     if (!file.type.match('application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
       toast({
         variant: "destructive",
@@ -272,6 +291,7 @@ export default function ResumeBuilder() {
     formData.append('resume', file);
 
     try {
+      // Parse resume
       const response = await fetch('/api/resume/parse', {
         method: 'POST',
         body: formData,
@@ -282,8 +302,9 @@ export default function ResumeBuilder() {
       }
 
       const data = await response.json();
+      setParsedData(data);
 
-      // Update the form with parsed data
+      // Update form with parsed data
       setPersonalInfo({
         name: data.name || '',
         email: data.email || '',
@@ -310,8 +331,46 @@ export default function ResumeBuilder() {
 
       toast({
         title: "Resume Parsed Successfully",
-        description: "Your resume has been analyzed and the information has been populated. You can now edit and optimize it for your target position.",
+        description: "Your resume has been analyzed. Starting optimization...",
       });
+
+      // Automatically start optimization if we have a target position
+      if (targetPosition) {
+        setIsOptimizing(true);
+        try {
+          const optimizeResponse = await fetch("/api/resume/optimize", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              personalInfo,
+              education,
+              experience,
+              targetPosition,
+            }),
+          });
+
+          if (!optimizeResponse.ok) {
+            throw new Error('Failed to optimize resume');
+          }
+
+          const optimizeData = await optimizeResponse.json();
+          setSuggestions(optimizeData.suggestions);
+          setOptimizationHistory(prev => [...prev, optimizeData.suggestions]);
+
+          toast({
+            title: "Resume Optimized",
+            description: "AI suggestions have been generated based on your parsed resume.",
+          });
+        } catch (error) {
+          toast({
+            variant: "destructive",
+            title: "Optimization Failed",
+            description: "Failed to optimize resume. Please try again.",
+          });
+        } finally {
+          setIsOptimizing(false);
+        }
+      }
 
     } catch (error) {
       console.error('Error parsing resume:', error);
@@ -323,6 +382,28 @@ export default function ResumeBuilder() {
     } finally {
       setIsParsingResume(false);
     }
+  };
+
+  // Add function to apply all optimization suggestions at once
+  const applyAllSuggestions = () => {
+    if (!suggestions) return;
+
+    setPersonalInfo(prev => ({
+      ...prev,
+      summary: suggestions.enhancedSummary
+    }));
+
+    setExperience(prev =>
+      prev.map((exp, idx) => ({
+        ...exp,
+        description: suggestions.experienceSuggestions[idx]?.improved || exp.description
+      }))
+    );
+
+    toast({
+      title: "AI Suggestions Applied",
+      description: "Your resume has been updated with all optimized content."
+    });
   };
 
   return (
@@ -723,28 +804,15 @@ export default function ResumeBuilder() {
                 ))}
               </ul>
             </div>
+
             <div className="flex justify-end gap-4 mt-6">
               <Button
                 variant="outline"
-                onClick={() => {
-                  setPersonalInfo(prev => ({
-                    ...prev,
-                    summary: suggestions.enhancedSummary
-                  }));
-                  setExperience(prev =>
-                    prev.map((exp, idx) => ({
-                      ...exp,
-                      description: suggestions.experienceSuggestions[idx]?.improved || exp.description
-                    }))
-                  );
-                  toast({
-                    title: "AI Suggestions Applied",
-                    description: "Your resume has been updated with the optimized content."
-                  });
-                }}
+                onClick={applyAllSuggestions}
+                disabled={isOptimizing}
               >
                 <Wand2 className="h-4 w-4 mr-2" />
-                Apply Suggestions
+                Apply All Suggestions
               </Button>
 
               <PDFDownloadLink
@@ -772,6 +840,20 @@ export default function ResumeBuilder() {
                 )}
               </PDFDownloadLink>
             </div>
+
+            {optimizationHistory.length > 1 && (
+              <div className="mt-6">
+                <Label>Optimization History</Label>
+                <ScrollArea className="h-[200px] mt-2">
+                  {optimizationHistory.map((hist, index) => (
+                    <div key={index} className="p-4 border-b">
+                      <p className="text-sm text-muted-foreground">Version {index + 1}</p>
+                      <p className="mt-1">{hist.enhancedSummary.substring(0, 100)}...</p>
+                    </div>
+                  ))}
+                </ScrollArea>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
