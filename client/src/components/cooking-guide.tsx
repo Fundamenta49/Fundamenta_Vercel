@@ -14,6 +14,19 @@ import {
 } from "@/components/ui/dialog";
 import ChatInterface from "@/components/chat-interface";
 
+const COOKING_RESOURCES = [
+  {
+    name: "America's Test Kitchen",
+    url: "https://www.americastestkitchen.com",
+    description: "A great site for reviews on the best tools and recipe ideas."
+  },
+  {
+    name: "Kitchen Confidential",
+    url: "https://www.reddit.com/r/KitchenConfidential",
+    description: "A wonderful community for professional and home cooks alike."
+  }
+];
+
 const COOKING_BASICS = [
   {
     title: "Kitchen Safety Essentials",
@@ -221,6 +234,28 @@ export default function CookingGuide() {
     );
   };
 
+  const renderResources = () => {
+    return (
+      <div className={`space-y-4 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
+        <h3 className="text-lg font-semibold">Helpful Resources</h3>
+        <div className="grid gap-4">
+          {COOKING_RESOURCES.map((resource, index) => (
+            <a
+              key={index}
+              href={resource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+            >
+              <h4 className="font-medium text-primary">{resource.name}</h4>
+              <p className="text-sm text-muted-foreground mt-1">{resource.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={`space-y-6 ${isVideoFocused ? 'overflow-hidden h-screen' : ''}`}>
       <div className={`transition-all duration-300 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
@@ -282,6 +317,21 @@ export default function CookingGuide() {
                 ))}
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ChefHat className="h-5 w-5" />
+              Additional Resources
+            </CardTitle>
+            <CardDescription>
+              Trusted sources for cooking knowledge and community
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {renderResources()}
           </CardContent>
         </Card>
 
