@@ -21,7 +21,7 @@ const COOKING_RESOURCES = [
     description: "A great site for reviews on the best tools and recipe ideas."
   },
   {
-    name: "Kitchen Confidential Community",
+    name: "Reddit Kitchen Confidential",
     url: "https://www.reddit.com/r/KitchenConfidential",
     description: "A wonderful community for professional and home cooks alike."
   },
@@ -259,9 +259,9 @@ export default function CookingGuide() {
               href={resource.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+              className="block p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
             >
-              <h4 className="font-medium text-primary">{resource.name}</h4>
+              <h4 className="font-medium text-primary hover:underline">{resource.name}</h4>
               <p className="text-sm text-muted-foreground mt-1">{resource.description}</p>
             </a>
           ))}
