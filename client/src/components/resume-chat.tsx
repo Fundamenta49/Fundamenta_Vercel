@@ -106,37 +106,36 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
   };
 
   return (
-    <Card className="w-full h-[600px] flex flex-col">
-      <CardContent className="p-6 flex-1 flex flex-col">
+    <Card className="w-full h-[calc(100vh-4rem)] sm:h-[600px] flex flex-col">
+      <CardContent className="p-4 flex-1 flex flex-col">
         <ScrollArea className="flex-1">
-          <div className="space-y-4 pb-4">
+          <div className="space-y-4">
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex ${
-                  message.role === 'assistant' ? 'justify-start' : 'justify-end'
-                }`}
+                className="flex w-full"
               >
-                <div className="flex items-start w-full">
+                <div className={`flex items-start w-full ${
+                  message.role === 'assistant' ? 'pr-8' : 'pl-8'
+                }`}>
                   {message.role === 'assistant' && (
-                    <Bot className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                    <div className="flex-shrink-0 mr-2">
+                      <Bot className="w-6 h-6 text-primary" />
+                    </div>
                   )}
                   <div
-                    className={`flex-1 ${
+                    className={`rounded-lg p-4 ${
                       message.role === 'assistant'
-                        ? 'bg-[#E8F1FE] text-[#1f2937] rounded-lg p-4 ml-2 w-full'
-                        : 'bg-primary text-primary-foreground rounded-lg p-4 max-w-[80%] ml-auto'
+                        ? 'bg-[#E8F1FE] text-[#1f2937] flex-1'
+                        : 'bg-primary text-primary-foreground ml-auto max-w-[80%]'
                     }`}
+                    style={{
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      fontSize: '15px',
+                      lineHeight: '1.4'
+                    }}
                   >
-                    <div 
-                      className="text-base leading-6" 
-                      style={{
-                        whiteSpace: 'pre-line',
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-                      }}
-                    >
-                      {message.content}
-                    </div>
+                    {message.content}
                   </div>
                 </div>
               </div>
