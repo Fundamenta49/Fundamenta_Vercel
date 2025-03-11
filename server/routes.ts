@@ -10,7 +10,7 @@ import axios from 'axios';
 import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
-import pdf from 'pdf-parse';
+import * as pdfjsLib from 'pdfjs-dist';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -63,27 +63,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       try {
         // Create a fresh buffer from the file
-        const dataBuffer = Buffer.from(req.file.buffer);
+        const dataBuffer = new Uint8Array(req.file.buffer);
         console.log("Test endpoint: Buffer created successfully, length:", dataBuffer.length);
 
-        // Parse PDF with no options
-        const data = await pdf(dataBuffer);
-        console.log("Test endpoint: PDF parsed successfully, text length:", data.text.length);
-        console.log("Test endpoint: First 100 characters:", data.text.substring(0, 100));
+        const pdfDoc = await pdfjsLib.getDocument({data: dataBuffer}).promise;
+        let text = '';
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+          const page = await pdfDoc.getPage(i);
+          const textContent = await page.getTextContent();
+          text += textContent.items
+            .map((item: any) => ('str' in item ? item.str : ''))
+            .join(' ');
+        }
+        console.log("Test endpoint: PDF parsed successfully, text length:", text.length);
+        console.log("Test endpoint: First 100 characters:", text.substring(0, 100));
 
         res.json({
           success: true,
-          textLength: data.text.length,
-          preview: data.text.substring(0, 100),
-          pageCount: data.numpages,
-          info: data.info
+          textLength: text.length,
+          preview: text.substring(0, 100),
+          pageCount: pdfDoc.numPages,
+          info: {} //pdfjs-dist doesn't provide the same info
         });
 
       } catch (pdfError) {
         console.error("Test endpoint PDF parsing error details:", {
-          name: pdfError.name,
-          message: pdfError.message,
-          stack: pdfError.stack
+          name: (pdfError as Error).name,
+          message: (pdfError as Error).message,
+          stack: (pdfError as Error).stack
         });
 
         throw new Error("Could not parse PDF content. Please ensure the file is not corrupted or password protected.");
@@ -120,19 +127,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         if (req.file.mimetype === 'application/pdf') {
           console.log("Processing PDF file...");
-          const dataBuffer = Buffer.from(req.file.buffer);
+          const dataBuffer = new Uint8Array(req.file.buffer);
           console.log("Buffer created successfully, length:", dataBuffer.length);
 
           try {
-            // Parse PDF with no options
-            const data = await pdf(dataBuffer);
-            extractedText = data.text;
+            const pdfDoc = await pdfjsLib.getDocument({data: dataBuffer}).promise;
+            let text = '';
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+              const page = await pdfDoc.getPage(i);
+              const textContent = await page.getTextContent();
+              text += textContent.items
+                .map((item: any) => ('str' in item ? item.str : ''))
+                .join(' ');
+            }
+            extractedText = text;
             console.log("PDF text extracted successfully, length:", extractedText.length);
           } catch (pdfError) {
             console.error("PDF parsing error details:", {
-              name: pdfError.name,
-              message: pdfError.message,
-              stack: pdfError.stack
+              name: (pdfError as Error).name,
+              message: (pdfError as Error).message,
+              stack: (pdfError as Error).stack
             });
             throw new Error("Could not parse PDF content. Please ensure the file is not corrupted or password protected.");
           }
@@ -241,7 +255,7 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-✨ Next Topic
+:✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
@@ -917,16 +931,15 @@ Remember to suggest relevant features in the app that could help the user.`;
         .filter(word => word.length > 3);
 
       const wordFrequency: Record<string, number> = {};
-      words.forEach(word => {
+      words.forEach((word: string) => {
         wordFrequency[word] = (wordFrequency[word] || 0) + 1;
       });
 
       res.json({
-        emotionalScore: analysis.emotionalScore,
-        sentiment: analysis.sentiment,
+        analysis,
         wordFrequency,
-        suggestions: analysis.suggestions,
-        moodTrend: analysis.moodTrend
+        content: analysis.content,
+        summary: analysis.summary,
       });
     } catch (error) {
       console.error('Error analyzing journal entry:', error);
@@ -1032,15 +1045,15 @@ Remember to suggest relevant features in the app that could help the user.`;
     } catch (error) {
       console.error("YouTube API error:", error);
       console.error("Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
+        message: (error as Error).message,
+        response: (error as any).response?.data,
+        status: (error as any).response?.status
       });
 
       res.status(500).json({
         error: true,
         message: "Failed to validate video",
-        details: error.response?.data?.error?.message || error.message
+        details: (error as any).response?.data?.error?.message || (error as Error).message
       });
     }
   });
@@ -1111,16 +1124,15 @@ Remember to suggest relevant features in the app that could help the user.`;
         .filter(word => word.length > 3);
 
       const wordFrequency: Record<string, number> = {};
-      words.forEach(word => {
+      words.forEach((word: string) => {
         wordFrequency[word] = (wordFrequency[word] || 0) + 1;
       });
 
       res.json({
-        emotionalScore: analysis.emotionalScore,
-        sentiment: analysis.sentiment,
+        analysis,
         wordFrequency,
-        suggestions: analysis.suggestions,
-        moodTrend: analysis.moodTrend
+        content: analysis.content,
+        summary: analysis.summary,
       });
     } catch (error) {
       console.error('Error analyzing journal entry:', error);
@@ -1226,15 +1238,15 @@ Remember to suggest relevant features in the app that could help the user.`;
     } catch (error) {
       console.error("YouTube API error:", error);
       console.error("Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
+        message: (error as Error).message,
+        response: (error as any).response?.data,
+        status: (error as any).response?.status
       });
 
       res.status(500).json({
         error: true,
         message: "Failed to validate video",
-        details: error.response?.data?.error?.message || error.message
+        details: (error as any).response?.data?.error?.message || (error as Error).message
       });
     }
   });
