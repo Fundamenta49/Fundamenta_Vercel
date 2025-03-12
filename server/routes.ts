@@ -1119,6 +1119,84 @@ Remember to suggest relevant features in the app that could help the user.`;
     }
   });
 
+  app.get('/api/youtube-search', async (req, res) => {
+    const { videoId, query } = req.query;
+
+    try {
+      // Function to directly validate a YouTube video ID
+      if (videoId) {
+        console.log(`Legacy endpoint: Validating YouTube video ID: ${videoId}`);
+        try {
+          const response = await axios.get(
+            `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+            { timeout: 8000 }
+          );
+
+          // Return result in consistent format matching the new endpoint
+          return res.json({
+            error: false,
+            id: videoId,
+            title: response.data.title,
+            author: response.data.author_name,
+            thumbnail: response.data.thumbnail_url
+          });
+        } catch (error) {
+          console.error('Legacy YouTube validation error:', error.message);
+
+          // Return error in consistent format
+          return res.json({
+            error: true,
+            message: 'Video not found or is unavailable'
+          });
+        }
+      }
+      // New YouTube search endpoint using the YouTube Data API v3
+      if (query) {
+        console.log(`Searching YouTube for query: ${query}`);
+        try {
+          const response = await axios.get(
+            `https://www.googleapis.com/youtube/v3/search`,
+            {
+              params: {
+                part: 'snippet',
+                q: query,
+                type: 'video',
+                maxResults: 5, // Adjust as needed
+                key: process.env.YOUTUBE_API_KEY
+              }
+            }
+          );
+
+          const searchResults = response.data.items.map((item: any) => ({
+            id: item.id.videoId,
+            title: item.snippet.title,
+            description: item.snippet.description,
+            thumbnail: item.snippet.thumbnails.medium.url,
+            channelTitle: item.snippet.channelTitle,
+            publishedAt: item.snippet.publishedAt
+          }));
+
+          return res.json({
+            error: false,
+            results: searchResults
+          });
+        } catch (error) {
+          console.error("YouTube search API error:", error);
+          return res.status(500).json({
+            error: true,
+            message: "Failed to search YouTube",
+            details: (error as any).response?.data?.error?.message || (error as Error).message
+          });
+        }
+      }
+
+      res.status(400).json({ error: true, message: "Either videoId or query parameter is required" });
+    } catch (error) {
+      console.error("Unexpected error in YouTube search handler:", error);
+      res.status(500).json({ error: true, message: "An unexpected error occurred" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

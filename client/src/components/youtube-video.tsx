@@ -28,29 +28,66 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
       setIsLoading(true);
       try {
         console.log(`Validating video ID: ${videoId}`);
-        // Try the new endpoint first
-        let response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
-
-        if (!response.ok) {
-          // Fall back to legacy endpoint if the new one fails
-          console.log("Falling back to legacy endpoint");
-          response = await fetch(`/api/youtube-search?videoId=${videoId}`);
-
-          if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
-          }
-        }
-
-        // Safely parse the response JSON
+        
+        // Add some delay to prevent race conditions
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Try each endpoint in sequence with proper error handling
+        let response;
         let data;
+        let succeeded = false;
+        
+        // First attempt: Try the new endpoint
         try {
-          data = await response.json();
-        } catch (err) {
-          console.error("Error parsing JSON response:", err);
-          throw new Error("Invalid response format");
+          response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
+          
+          if (response.ok) {
+            const text = await response.text();
+            
+            // Validate that the response is proper JSON before parsing
+            try {
+              data = JSON.parse(text);
+              succeeded = true;
+              console.log("YouTube validation response (primary):", data);
+            } catch (parseError) {
+              console.error("JSON parse error on primary endpoint:", parseError, "Response text:", text);
+            }
+          }
+        } catch (primaryError) {
+          console.error("Error with primary endpoint:", primaryError);
         }
         
-        console.log("YouTube validation response:", data);
+        // Second attempt: Try legacy endpoint if first attempt failed
+        if (!succeeded) {
+          console.log("Falling back to legacy endpoint");
+          try {
+            response = await fetch(`/api/youtube-search?videoId=${videoId}`);
+            
+            if (response.ok) {
+              const text = await response.text();
+              
+              try {
+                data = JSON.parse(text);
+                succeeded = true;
+                console.log("YouTube validation response (legacy):", data);
+              } catch (parseError) {
+                console.error("JSON parse error on legacy endpoint:", parseError, "Response text:", text);
+                throw new Error("Invalid response format from both endpoints");
+              }
+            } else {
+              throw new Error(`HTTP error: ${response.status}`);
+            }
+          } catch (legacyError) {
+            console.error("Error with legacy endpoint:", legacyError);
+            throw legacyError;
+          }
+        }
+        
+        if (!succeeded || !data) {
+          throw new Error("Failed to get valid response from any endpoint");
+        }
+        
+        console.log("Final YouTube validation data:", data);
 
         // Set state based on response
         setIsValid(!data.error);

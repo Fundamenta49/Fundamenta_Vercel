@@ -94,9 +94,53 @@ router.get('/validate', async (req: Request, res: Response) => {
         error: false
       });
     } catch (error) {
-      console.error('YouTube API error:', error);
-      res.status(500).json({ error: true, message: 'Failed to validate YouTube video' });
-    }
+        console.error('YouTube API error:', error);
+        // Add detailed error logging
+        if (error instanceof Error) {
+          console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+          });
+        }
+
+        // Provide more information in the response
+        res.status(500).json({ 
+          error: true, 
+          message: 'Failed to validate YouTube video',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+});
+
+// Add a fallback route for the legacy endpoint
+router.get('/legacy-validate', async (req: Request, res: Response) => {
+  const { videoId } = req.query;
+
+  if (!videoId || typeof videoId !== 'string') {
+    return res.status(400).json({ error: true, message: 'Missing or invalid videoId parameter' });
+  }
+
+  try {
+    const response = await axios.get(
+      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+      { timeout: 5000 }
+    );
+
+    return res.json({
+      error: false,
+      id: videoId,
+      title: response.data.title,
+      author: response.data.author_name,
+      thumbnail: response.data.thumbnail_url
+    });
+  } catch (error) {
+    console.error('YouTube oembed error:', error);
+    return res.json({
+      error: true,
+      message: 'Video not found or unavailable'
+    });
+  }
 });
 
 export default router;
