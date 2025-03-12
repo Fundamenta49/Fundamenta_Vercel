@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
-import { Alert, AlertDescription } from './ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from "./ui/alert";
+import { Button } from "./ui/button";
+import { AlertTriangle } from "lucide-react";
 
 interface YouTubeVideoProps {
   videoId: string;
@@ -29,23 +29,23 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
         console.log(`Validating video ID: ${videoId}`);
         // Try the new endpoint first
         let response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
-        
+
         if (!response.ok) {
           // Fall back to legacy endpoint if the new one fails
           console.log("Falling back to legacy endpoint");
           response = await fetch(`/api/youtube-search?videoId=${videoId}`);
-          
+
           if (!response.ok) {
             throw new Error(`HTTP error: ${response.status}`);
           }
         }
-        
+
         const data = await response.json();
         console.log("YouTube validation response:", data);
-        
+
         setIsValid(!data.error);
         setVideoData(data);
-        
+
         if (data.error) {
           setError(data.message || "This video is unavailable");
         }
