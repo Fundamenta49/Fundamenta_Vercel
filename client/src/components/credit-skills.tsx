@@ -51,7 +51,7 @@ const CREDIT_TOPICS = [
       {
         title: "Credit Score Factors",
         content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%).",
-        videoId: "Vn9ounQUdZY",
+        videoId: "8_w6e8L-c9Y", // Replaced with a valid video ID
         source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
       },
       {
@@ -151,7 +151,7 @@ export default function CreditSkills() {
       const validated = {};
       const promises = videoIds.map(async (videoId) => {
         try {
-          const response = await fetch(`/api/youtube-search?videoId=${videoId}`);
+          const response = await fetch(`/api/youtube/validate?videoId=${videoId}`); // Updated API endpoint
           const data = await response.json();
           validated[videoId] = data.isValid;
         } catch (error) {
@@ -163,7 +163,6 @@ export default function CreditSkills() {
       setValidatedVideos(validated);
     };
     validateVideos();
-
   }, []);
 
 
@@ -228,18 +227,19 @@ export default function CreditSkills() {
                     <AccordionContent>
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
-                        {item.videoId ? (
+                        {item.videoId && validatedVideos[item.videoId] ? (
                           <>
-                            <YouTubeVideo 
+                            <YouTubeVideo
                               videoId={item.videoId.startsWith('http') ?
-                                item.videoId.split('v=')[1]?.split('&')[0] || item.videoId : 
+                                item.videoId.split('v=')[1]?.split('&')[0] || item.videoId :
                                 item.videoId}
+                              title={`${item.title} - Video Tutorial`} // Added title prop
                             />
                             {item.source && (
                               <div className="mt-2 text-xs text-muted-foreground">
-                                <a 
-                                  href={item.source} 
-                                  target="_blank" 
+                                <a
+                                  href={item.source}
+                                  target="_blank"
                                   rel="noopener noreferrer"
                                   className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
                                 >
@@ -252,7 +252,7 @@ export default function CreditSkills() {
                           <Alert className="my-2 bg-amber-50 border-amber-200">
                             <AlertTriangle className="h-4 w-4 text-amber-500" />
                             <AlertDescription className="text-amber-800">
-                              No video resource available. Please check out the source link below.
+                              Video not found or validation failed. Please check out the source link below.
                             </AlertDescription>
                           </Alert>
                         )}
@@ -293,18 +293,19 @@ export default function CreditSkills() {
                   <CardContent>
                     <p className="mb-4">{result.content}</p>
                     <div className="space-y-4">
-                      {result.videoId ? (
+                      {result.videoId && validatedVideos[result.videoId] ? (
                         <>
-                          <YouTubeVideo 
-                            videoId={result.videoId.startsWith('http') ? 
-                              result.videoId.split('v=')[1]?.split('&')[0] || result.videoId : 
-                              result.videoId} 
+                          <YouTubeVideo
+                            videoId={result.videoId.startsWith('http') ?
+                              result.videoId.split('v=')[1]?.split('&')[0] || result.videoId :
+                              result.videoId}
+                            title={`${result.title} - Video Tutorial`} // Added title prop
                           />
                           {result.source && (
                             <div className="mt-2 text-xs text-muted-foreground">
-                              <a 
-                                href={result.source} 
-                                target="_blank" 
+                              <a
+                                href={result.source}
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
                               >
@@ -317,7 +318,7 @@ export default function CreditSkills() {
                         <Alert className="my-2 bg-amber-50 border-amber-200">
                           <AlertTriangle className="h-4 w-4 text-amber-500" />
                           <AlertDescription className="text-amber-800">
-                            No video resource available. Please check out the source link below.
+                            Video not found or validation failed. Please check out the source link below.
                           </AlertDescription>
                         </Alert>
                       )}

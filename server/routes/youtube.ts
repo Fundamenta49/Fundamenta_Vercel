@@ -48,6 +48,31 @@ router.get('/validate', async (req, res) => {
         isValid: true
       });
     }
+    
+    // Try direct oEmbed check first (doesn't require API key quota)
+    try {
+      const oembedResponse = await axios.get(
+        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+        { timeout: 3000 }
+      );
+      
+      if (oembedResponse.status === 200 && oembedResponse.data) {
+        console.log(`YouTube oEmbed validation successful for ${videoId}`);
+        return res.json({
+          id: videoId,
+          title: oembedResponse.data.title,
+          thumbnail: { 
+            url: oembedResponse.data.thumbnail_url,
+            width: oembedResponse.data.thumbnail_width,
+            height: oembedResponse.data.thumbnail_height
+          },
+          isValid: true
+        });
+      }
+    } catch (oembedError) {
+      // If oEmbed fails, continue to the API method
+      console.log(`oEmbed check failed for ${videoId}, falling back to API: ${oembedError.message}`);
+    }
 
     // Make API request to validate the video
     const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
@@ -61,14 +86,21 @@ router.get('/validate', async (req, res) => {
 
     if (!hasItems) {
       console.log(`No video found for ID: ${videoId}`);
-      return res.status(200).json({ error: true, message: 'Video not found', isValid: false });
+      // Return fallback data to allow client to try displaying the video anyway
+      return res.status(200).json({ 
+        id: videoId,
+        error: true, 
+        message: 'Video not found', 
+        isValid: false,
+        fallback: true
+      });
     }
 
     const videoData = response.data.items[0];
     return res.json({
       id: videoId,
       title: videoData.snippet.title,
-      thumbnail: videoData.snippet.thumbnails.default,
+      thumbnail: videoData.snippet.thumbnails.default || videoData.snippet.thumbnails.medium || videoData.snippet.thumbnails.high,
       isValid: true
     });
   } catch (error) {

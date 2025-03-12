@@ -17,6 +17,12 @@ const creditTopics = [
     videoId: "Vma19B9I36k",
     source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
   },
+  {
+    title: "Financial Literacy",
+    description: "Understanding money management and financial concepts",
+    video: "Rwh9U_IgNQA", 
+    source: "https://www.youtube.com/watch?v=Rwh9U_IgNQA",
+  },
   // Add more credit topics here as needed...
 ];
 
