@@ -8,6 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Loader2, ArrowRight, Mic } from "lucide-react";
 import ChatOnboarding from "./chat-onboarding";
 import { Link } from "wouter";
+import { Bot } from 'lucide-react'; // Added import for Bot icon
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -24,6 +25,9 @@ interface AppSuggestion {
 
 interface ChatInterfaceProps {
   category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking" | "career-resume";
+  showResume?: boolean;
+  onUpdateResume?: (resume: any) => void;
+  currentResume?: any;
 }
 
 const APP_ROUTES = {
@@ -97,7 +101,12 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
   );
 };
 
-export default function ChatInterface({ category }: ChatInterfaceProps) {
+export default function ChatInterface({
+  category,
+  showResume = false,
+  onUpdateResume,
+  currentResume
+}: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(true);
@@ -336,87 +345,110 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-16rem)]">
-      <div className="flex-1 overflow-hidden">
-        <ScrollArea
-          ref={scrollRef}
-          className="h-full"
-        >
-          <div className="space-y-6 p-4">
-            {messages.map((message, i) => (
-              <div
-                key={i}
-                className="mb-6 last:mb-0"
-              >
-                <div className="rounded-lg px-4">
-                  {message.role === "assistant"
-                    ? formatAssistantMessage(message.content, message.suggestions)
-                    : <p className="text-gray-700">{message.content}</p>
-                  }
-                </div>
+    <div className="flex flex-col h-full">
+      {showOnboarding ? (
+        <ChatOnboarding category={category} onComplete={handleOnboardingComplete} />
+      ) : (
+        <>
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea
+              ref={scrollRef}
+              className="h-full"
+            >
+              <div className="space-y-4 p-4">
+                {messages.map((message, i) => (
+                  <div
+                    key={i}
+                    className={`flex ${message.role === "assistant" ? "justify-start" : "justify-end"}`}
+                  >
+                    <div className="inline-flex items-start max-w-[80%] break-words p-3 rounded-lg">
+                      {message.role === 'assistant' && (
+                        <div className="flex-shrink-0 mr-2">
+                          <Bot className="w-6 h-6 text-primary" />
+                        </div>
+                      )}
+                      <div
+                        className={`inline-block text-left p-3 rounded-lg ${
+                          message.role === 'assistant'
+                            ? 'bg-[#E8F1FE] text-[#1f2937]'
+                            : 'bg-primary text-primary-foreground ml-auto'
+                        }`}
+                        style={{
+                          maxWidth: "80%",
+                          display: "inline-block",
+                          wordBreak: "break-word",
+                          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          fontSize: '15px',
+                          lineHeight: '1.4',
+                          whiteSpace: 'pre-line'
+                        }}
+                      >
+                        {message.content}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {chatMutation.isPending && (
+                  <div className="flex items-center gap-2 text-gray-500 pl-4">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Thinking...
+                  </div>
+                )}
               </div>
-            ))}
-            {chatMutation.isPending && (
-              <div className="flex items-center gap-2 text-gray-500 pl-4">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Thinking...
-              </div>
-            )}
+            </ScrollArea>
           </div>
-        </ScrollArea>
-      </div>
 
-      <div className="flex-none border-t bg-white">
-        <form
-          onSubmit={handleSubmit}
-          className="flex gap-2 p-4"
-        >
-          <Textarea
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-              // Auto-adjust height
-              e.target.style.height = 'auto';
-              e.target.style.height = `${e.target.scrollHeight}px`;
-            }}
-            placeholder="Type your message..."
-            className="flex-1 resize-none w-full overflow-hidden p-2"
-            style={{ minHeight: '44px' }}
-            disabled={chatMutation.isPending}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-          />
-          <div className="flex flex-col gap-2 self-end">
-            <Button
-              type="button"
-              variant={isRecording ? "outline" : "secondary"}
-              size="icon"
-              className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
-              onClick={toggleRecording}
-              disabled={chatMutation.isPending}
+          <div className="flex-none border-t bg-white p-4">
+            <form
+              onSubmit={handleSubmit}
+              className="flex gap-2"
             >
-              <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
-            </Button>
-            <Button
-              type="submit"
-              disabled={chatMutation.isPending || !input.trim()}
-            >
-              {chatMutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                'Send'
-              )}
-            </Button>
+              <Textarea
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${e.target.scrollHeight}px`;
+                }}
+                placeholder="Type your message..."
+                className="flex-1 resize-none w-full overflow-hidden p-2 min-h-[44px]"
+                disabled={chatMutation.isPending}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+              />
+              <div className="flex flex-col gap-2 self-end">
+                <Button
+                  type="button"
+                  variant={isRecording ? "outline" : "secondary"}
+                  size="icon"
+                  className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
+                  onClick={toggleRecording}
+                  disabled={chatMutation.isPending}
+                >
+                  <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={chatMutation.isPending || !input.trim()}
+                >
+                  {chatMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Send'
+                  )}
+                </Button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
+        </>
+      )}
     </div>
   );
 }
