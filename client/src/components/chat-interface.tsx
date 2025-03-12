@@ -1,9 +1,12 @@
-import { useState } from "react";
+
+import { useState, useRef, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { SendIcon } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Send, Mic, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import ChatOnboarding from "./chat-onboarding";
 
 interface ChatInterfaceProps {
   category: string;
@@ -21,6 +24,16 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatHistory]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,13 +70,13 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       console.error("Chat error:", error);
       toast({
         title: "Error",
-        description: "Failed to get a response. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to get response",
         variant: "destructive",
       });
-
+      
       setChatHistory(prev => [...prev, { 
         role: "assistant", 
-        content: "I'm sorry, I'm having trouble responding right now. Please try again in a moment." 
+        content: "I'm sorry, but I'm having trouble processing your request right now. Please try again in a moment." 
       }]);
     } finally {
       setIsLoading(false);
@@ -71,52 +84,55 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   };
 
   return (
-    <div className="flex flex-col h-[600px]">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {chatHistory.map((chat, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              chat.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`max-w-[80%] rounded-lg p-3 ${
-                chat.role === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted"
-              }`}
-            >
-              <div className="whitespace-pre-wrap">{chat.content}</div>
-            </div>
-          </div>
-        ))}
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="max-w-[80%] rounded-lg p-3 bg-muted">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse"></div>
-                <div className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse delay-150"></div>
-                <div className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse delay-300"></div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="border-t p-4">
-        <form onSubmit={handleSubmit} className="flex space-x-2">
-          <Input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder={`Ask about ${category}...`}
-            className="flex-1"
-            disabled={isLoading}
-          />
-          <Button type="submit" size="icon" disabled={isLoading || !message.trim()}>
-            <SendIcon className="h-4 w-4" />
-          </Button>
-        </form>
-      </div>
-    </div>
+    <>
+      {showOnboarding ? (
+        <ChatOnboarding category={category} onComplete={() => setShowOnboarding(false)} />
+      ) : (
+        <Card className="border-0 shadow-none relative">
+          <CardContent className="p-0">
+            <ScrollArea className="h-[60vh] p-4 rounded-md">
+              {chatHistory.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`mb-4 ${
+                    msg.role === "user" ? "flex justify-end" : "flex justify-start"
+                  }`}
+                >
+                  <div
+                    className={`p-3 rounded-lg max-w-[80%] ${
+                      msg.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </ScrollArea>
+
+            <form onSubmit={handleSubmit} className="flex gap-3 p-4 border-t">
+              <Input
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={`Ask about ${category}...`}
+                className="flex-1"
+              />
+              <Button
+                type="submit"
+                disabled={isLoading || !message.trim()}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+    </>
   );
 }
