@@ -249,12 +249,8 @@ export default function CreditSkills() {
                             )}
                           </>
                         ) : (
-                          <Alert className="my-2 bg-amber-50 border-amber-200">
-                            <AlertTriangle className="h-4 w-4 text-amber-500" />
-                            <AlertDescription className="text-amber-800">
-                              Video not found or validation failed. Please check out the source link below.
-                            </AlertDescription>
-                          </Alert>
+                          <>
+                          </>
                         )}
                         <Button
                           variant="outline"
@@ -315,12 +311,8 @@ export default function CreditSkills() {
                           )}
                         </>
                       ) : (
-                        <Alert className="my-2 bg-amber-50 border-amber-200">
-                          <AlertTriangle className="h-4 w-4 text-amber-500" />
-                          <AlertDescription className="text-amber-800">
-                            Video not found or validation failed. Please check out the source link below.
-                          </AlertDescription>
-                        </Alert>
+                        <>
+                        </>
                       )}
                       <Button
                         variant="outline"

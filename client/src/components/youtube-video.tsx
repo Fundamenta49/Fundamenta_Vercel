@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Alert, AlertDescription } from "./ui/alert";
-import { Button } from "./ui/button";
-import { AlertTriangle } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { Alert, AlertDescription } from './ui/alert';
+import { AlertTriangle } from 'lucide-react';
+import { Button } from './ui/button';
 
 interface YouTubeVideoProps {
   videoId: string;
@@ -10,14 +10,19 @@ interface YouTubeVideoProps {
 }
 
 export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoProps) {
-  const [isValid, setIsValid] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [videoData, setVideoData] = useState<any>(null);
 
+  // Extract video ID from URL if needed
+  const cleanVideoId = videoId?.includes('youtube.com') || videoId?.includes('youtu.be') 
+    ? videoId.includes('v=')
+      ? videoId.split('v=')[1]?.split('&')[0]
+      : videoId.split('/').pop()
+    : videoId;
+
   useEffect(() => {
-    if (!videoId) {
-      setIsValid(false);
+    if (!cleanVideoId) {
       setIsLoading(false);
       setError("No video ID provided");
       return;
@@ -26,101 +31,32 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
     const validateVideo = async () => {
       setIsLoading(true);
       try {
-        console.log(`Validating video ID: ${videoId}`);
+        console.log(`Validating video ID: ${cleanVideoId}`);
 
-        // Add some delay to prevent race conditions
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Skip validation for common test videos or if we're in development mode
-        // This allows the component to render even if the API is down
-        if (videoId === 'dQw4w9WgXcQ' || videoId === 'example' || process.env.NODE_ENV === 'development') {
-          console.log("Using development fallback for video:", videoId);
-          setIsValid(true);
-          setVideoData({
-            id: videoId,
-            title: "Video Title",
-            thumbnail: { url: 'https://i.ytimg.com/vi/default/default.jpg' }
-          });
-          setIsLoading(false);
-          return;
-        }
-
-        // Step 1: Direct iframe check - this will still load the video if it exists
-        // even if our backend validation fails
-        setIsValid(true);
-
-        // Step 2: Try API validation for better UX (but we'll still show the iframe)
-        let response;
-        let data;
-        let succeeded = false;
-
-        // First attempt: Try the new endpoint
+        // Always try to fetch metadata for better UX, but don't block rendering
         try {
-          response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
-
+          const response = await fetch(`/api/youtube/validate?videoId=${cleanVideoId}`);
           if (response.ok) {
-            const text = await response.text();
-
-            // Validate that the response is proper JSON before parsing
-            try {
-              data = JSON.parse(text);
-              succeeded = true;
-              console.log("YouTube validation response (primary):", data);
-            } catch (parseError) {
-              console.error("JSON parse error on primary endpoint:", parseError, "Response text:", text);
+            const data = await response.json();
+            setVideoData(data);
+            if (data.error) {
+              console.warn(`API reported issue with video ${cleanVideoId}: ${data.message || "Unknown error"}`);
+              setError(data.message || "This video may be unavailable");
             }
           }
-        } catch (primaryError) {
-          console.error("Error with primary endpoint:", primaryError);
-        }
-
-        // Second attempt: Try legacy endpoint if first attempt failed
-        if (!succeeded) {
-          console.log("Falling back to legacy endpoint");
-          try {
-            response = await fetch(`/api/youtube-search?videoId=${videoId}`);
-
-            if (response.ok) {
-              const text = await response.text();
-
-              try {
-                data = JSON.parse(text);
-                succeeded = true;
-                console.log("YouTube validation response (legacy):", data);
-              } catch (parseError) {
-                console.error("JSON parse error on legacy endpoint:", parseError, "Response text:", text);
-              }
-            }
-          } catch (legacyError) {
-            console.error("Error with legacy endpoint:", legacyError);
-          }
-        }
-
-        // If we got a valid response, use it to update state
-        if (succeeded && data) {
-          console.log("Final YouTube validation data:", data);
-
-          // Even if the API says the video is invalid, we'll still try to render it
-          // The YouTube player will show its own error if the video doesn't exist
-          setVideoData(data);
-
-          if (data.error) {
-            console.warn(`API reported issue with video ${videoId}: ${data.message || "Unknown error"}`);
-            // We'll set the warning but still try to display the video
-            setError(data.message || "This video may be unavailable");
-          }
+        } catch (apiError) {
+          console.error("API validation error:", apiError);
+          // Continue anyway - we'll still try to display the video
         }
       } catch (e) {
-        console.error("Error validating YouTube video:", e);
-        setError("Failed to validate video: " + (e instanceof Error ? e.message : "Unknown error"));
-        setIsValid(false);
+        console.error("Error processing video ID:", e);
       } finally {
         setIsLoading(false);
       }
     };
 
     validateVideo();
-  }, [videoId]);
+  }, [cleanVideoId]);
 
   if (isLoading) {
     return (
@@ -130,41 +66,26 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
     );
   }
 
-  if (!isValid) {
-    return (
-      <Alert className="my-2 bg-amber-50 border-amber-200">
-        <AlertTriangle className="h-4 w-4 text-amber-500" />
-        <AlertDescription className="text-amber-800">
-          Video resource currently unavailable. {error && `Reason: ${error}`}
-        </AlertDescription>
-        {videoId && (
-          <div className="mt-2">
-            <Button 
-              variant="link" 
-              className="p-0 h-auto text-amber-800 hover:text-amber-900"
-              onClick={() => window.open(`https://youtube.com/watch?v=${videoId}`, '_blank')}
-            >
-              Try viewing directly on YouTube
-            </Button>
-          </div>
-        )}
-      </Alert>
-    );
-  }
-
+  // Always attempt to display the video, regardless of validation
   return (
-    <div className={`w-full ${className}`}>
-      {title && <h3 className="font-medium mb-2 text-sm">{title}</h3>}
-      <div className="relative aspect-video">
+    <div className={`space-y-2 ${className}`}>
+      <div className="aspect-video w-full">
         <iframe
-          className="absolute inset-0 w-full h-full rounded-md"
-          src={`https://www.youtube.com/embed/${videoId}?rel=0`}
-          title={title || "YouTube video player"}
-          frameBorder="0"
+          src={`https://www.youtube.com/embed/${cleanVideoId}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-        ></iframe>
+          className="w-full h-full rounded-md"
+          title={title || `YouTube Video ${cleanVideoId}`}
+        />
       </div>
+      {error && (
+        <Alert className="mt-2 bg-amber-50 border-amber-200">
+          <AlertTriangle className="h-4 w-4 text-amber-500" />
+          <AlertDescription className="text-amber-800">
+            {error}
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 }
