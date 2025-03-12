@@ -7,15 +7,16 @@ const router = Router();
 // Function to validate YouTube video by ID
 async function validateYouTubeVideo(videoId: string) {
   try {
-    if (!process.env.YOUTUBE_API_KEY) {
-      console.log("YouTube API key not configured, returning mock success");
+    // If we're in development or API key isn't configured, return a successful mock
+    if (process.env.NODE_ENV === 'development' || !process.env.YOUTUBE_API_KEY) {
+      console.log(`YouTube API key not configured or in development mode, returning mock success for ID: ${videoId}`);
       // Return a mock response if no API key is available (for development)
       return { 
         isValid: true,
         error: false,
         id: videoId,
-        title: "Sample Video Title",
-        thumbnail: "https://via.placeholder.com/320x180"
+        title: `Video ${videoId}`,
+        thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
       };
     }
 
