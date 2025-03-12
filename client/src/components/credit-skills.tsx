@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { YouTubeVideo } from "@/components/youtube-video";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   CreditCard,
   Search,
