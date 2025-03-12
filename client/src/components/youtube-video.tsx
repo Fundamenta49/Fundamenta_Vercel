@@ -25,7 +25,7 @@ export function YouTubeVideo({ videoId, title }: YouTubeVideoProps) {
       try {
         const response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
         const data = await response.json();
-        setIsValid(!data.error);
+        setIsValid(data.isValid);
       } catch (e) {
         console.error("Error validating YouTube video:", e);
         setError("Failed to validate video");
