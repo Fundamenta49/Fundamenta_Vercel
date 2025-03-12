@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Send, User, Bot } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import axios from "axios";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/toast";
 
 interface Props {
   skillArea?: "technical" | "soft" | "search" | "life" | "cooking" | "career" | "emergency" | "finance" | "wellness" | "tour" | "learning";

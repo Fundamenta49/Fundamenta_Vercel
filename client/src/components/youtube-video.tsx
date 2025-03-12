@@ -29,7 +29,7 @@ export function YouTubeVideo({ videoId, title, className = '', topic }: YouTubeV
       setError("No video ID provided");
       return;
     }
-    
+
     // If there's a topic and the video fails, we can search for a replacement
     if (topic && !fallbackVideoId) {
       const checkVideo = async () => {
@@ -40,13 +40,13 @@ export function YouTubeVideo({ videoId, title, className = '', topic }: YouTubeV
           setIsLoading(false);
         } catch (err) {
           console.error("Error loading video:", err);
-          
+
           // If loading fails, try to find a replacement video
           try {
             console.log(`Attempting to find replacement video for topic: ${topic}`);
             const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(topic + " guide")}`);
             const data = await response.json();
-            
+
             if (data.items && data.items.length > 0) {
               const newVideoId = data.items[0].id.videoId;
               console.log(`Found replacement video: ${newVideoId}`);
@@ -62,13 +62,16 @@ export function YouTubeVideo({ videoId, title, className = '', topic }: YouTubeV
           }
         }
       };
-      
+
       checkVideo();
     } else {
       setIsLoading(false);
     }
   }, [cleanVideoId, topic, fallbackVideoId]);
 
+  useEffect(() => {
+    const validateVideo = async () => {
+      try {
         // Always try to fetch metadata for better UX, but don't block rendering
         try {
           const response = await fetch(`/api/youtube/validate?videoId=${cleanVideoId}`);
@@ -104,7 +107,7 @@ export function YouTubeVideo({ videoId, title, className = '', topic }: YouTubeV
 
   // Try to display the video - use fallback if available and primary fails
   const videoIdToUse = fallbackVideoId || cleanVideoId;
-  
+
   return (
     <div className={`space-y-2 ${className}`}>
       {isLoading ? (

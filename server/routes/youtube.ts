@@ -29,24 +29,30 @@ router.get('/youtube/search', async (req, res) => {
       params: {
         part: 'snippet',
         q: query,
+        maxResults: 3,
+        key: process.env.YOUTUBE_API_KEY || '',
         type: 'video',
-        maxResults: 5,
-        key: process.env.YOUTUBE_API_KEY
       }
     });
 
-    const searchResults = response.data.items.map((item: any) => ({
-      id: item.id.videoId,
-      title: item.snippet.title,
-      description: item.snippet.description,
-      thumbnail: item.snippet.thumbnails.medium.url,
-      channelTitle: item.snippet.channelTitle,
-      publishedAt: item.snippet.publishedAt
+    if (!response.data.items || !Array.isArray(response.data.items)) {
+      console.error('Invalid response format from YouTube API:', response.data);
+      return res.status(500).json({
+        error: true,
+        message: 'Invalid response from YouTube API'
+      });
+    }
+
+    const videos = response.data.items.map((item: any) => ({
+      id: item.id?.videoId || '',
+      title: item.snippet?.title || 'Untitled Video',
+      description: item.snippet?.description || '',
+      thumbnail: item.snippet?.thumbnails?.medium?.url || '',
     }));
 
     res.json({
       error: false,
-      results: searchResults
+      results: videos
     });
   } catch (error) {
     console.error("YouTube search API error:", error);

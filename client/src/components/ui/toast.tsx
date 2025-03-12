@@ -125,3 +125,7 @@ export {
   ToastClose,
   ToastAction,
 }
+import { Toast, ToastProvider, ToastViewport } from "./toast-primitive"
+import { useToast } from "./use-toast"
+
+export { ToastProvider, ToastViewport, Toast, useToast }
