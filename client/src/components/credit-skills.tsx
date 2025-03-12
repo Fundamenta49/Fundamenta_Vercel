@@ -11,30 +11,6 @@ export default function CreditSkills() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  //Removed unneeded state
-  //const [validatedVideos, setValidatedVideos] = useState({});
-
-  //Removed unneeded useEffect
-  // useEffect(() => {
-  //   const validateVideos = async () => {
-  //     const videoIds = CREDIT_TOPICS.flatMap(topic => topic.items.map(item => item.videoId)).filter(id => id);
-  //     const validated = {};
-  //     const promises = videoIds.map(async (videoId) => {
-  //       try {
-  //         const response = await fetch(`/api/youtube/validate?videoId=${videoId}`); // Updated API endpoint
-  //         const data = await response.json();
-  //         validated[videoId] = data.isValid;
-  //       } catch (error) {
-  //         console.error('Error validating video:', error);
-  //         validated[videoId] = false;
-  //       }
-  //     });
-  //     await Promise.all(promises);
-  //     setValidatedVideos(validated);
-  //   };
-  //   validateVideos();
-  // }, []);
-
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -129,6 +105,35 @@ export default function CreditSkills() {
         ))}
       </div>
 
+      {searchResults.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold mb-4">Search Results</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {searchResults.map((result, index) => (
+              <Card key={index} className="hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <CardTitle>{result.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="mb-4">{result.content}</p>
+                  {result.videoId ? (
+                    <div className="aspect-video w-full">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${result.videoId}`}
+                        title={result.title}
+                        className="w-full h-full rounded-md"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : null}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogTitle>Search Results for "{searchQuery}"</DialogTitle>
@@ -182,7 +187,7 @@ const CREDIT_TOPICS = [
       {
         title: "Credit Score Factors",
         content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%).",
-        videoId: "8_w6e8L-c9Y", // Replaced with a valid video ID
+        videoId: "8_w6e8L-c9Y",
         source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
       },
       {
