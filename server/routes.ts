@@ -232,98 +232,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Add new resume chat endpoint after the existing /api/resume/parse endpoint
-  app.post("/api/resume/chat", async (req, res) => {
-    try {
-      const { message, currentResume } = req.body;
-
-      if (!message || !currentResume) {
-        return res.status(400).json({
-          error: true,
-          message: "Message and current resume are required"
-        });
-      }
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: `You are a friendly and supportive resume consultant helping users improve their resumes. 
-            Use a conversational, encouraging tone while providing specific, actionable suggestions.
-
-            Important guidelines:
-            - Be warm and personable in your responses
-            - Use positive, encouraging language
-            - Break down suggestions into clear, actionable steps
-            - Provide specific examples when possible
-            - Use emojis occasionally to maintain a friendly tone
-            - Always acknowledge the user's concerns or questions
-            - Keep text formatting simple and clean
-
-            Return your response in this JSON format:
-            {
-              "message": "Your conversational response here",
-              "updates": {
-                "summary": "updated summary text if applicable",
-                "experience": [
-                  {
-                    "company": "company name",
-                    "position": "job title",
-                    "duration": "duration",
-                    "description": "improved bullet points"
-                  }
-                ],
-                "education": [
-                  {
-                    "school": "school name",
-                    "degree": "degree name",
-                    "year": "graduation year"
-                  }
-                ]
-              }
-            }
-
-            Only include the "updates" field if you have specific changes to suggest.`
-          },
-          {
-            role: "user",
-            content: `Current resume:
-            ${JSON.stringify(currentResume, null, 2)}
-
-            User request: ${message}`
-          }
-        ]
-      });
-
-      if (!response.choices[0].message?.content) {
-        throw new Error('No response content received from AI');
-      }
-
-      const aiResponse = JSON.parse(response.choices[0].message.content);
-
-      res.json({
-        message: aiResponse.message || "I'll help you improve your resume. What would you like to focus on?",
-        updates: aiResponse.updates || null
-      });
-
-    } catch (error) {
-      console.error("Resume chat error:", error);
-      res.status(500).json({
-        error: true,
-        message: "I apologize, but I'm having trouble analyzing your resume right now. Please try again."
-      });
-    }
-  });
 
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
 
       let systemMessage = `You are a friendly and supportive AI assistant.
-      
+
 Format your responses following these strict rules:
-      
+
 - Use only plain text - no special formatting characters
 - Never use asterisks (*) or hashtags (#) in your responses
 - Never use markdown syntax
@@ -331,17 +248,17 @@ Format your responses following these strict rules:
 - Add double line breaks between topics
 - Start new sections with friendly emojis
 - Keep everything in a conversational, friendly tone
-      
+
 Example formatting:
 🌟 Main Topic
 Here's the first point about this topic.
-      
+
 - First item in a list
 - Second item in a list
-      
-:✨ Next Topic
+
+✨ Next Topic
 Continue with the next section here.
-      
+
 Remember to suggest relevant features in the app that could help the user.`;
       switch (validatedData.skillArea) {
         case "cooking":
@@ -410,11 +327,11 @@ Remember to suggest relevant features in the app that could help the user.`;
           break;
         case "learning":
           systemMessage += `As an encouraging learning coach 📚, help users discover and grow! 
-
+          
           Break down complex topics into manageable chunks and celebrate small wins. Use examples and analogies that make learning fun and relatable.
-
+          
           Include emojis like 💡 for insights, ✍️ for practice tips, and 🎯 for goals.
-
+          
           Remember to be patient and supportive - learning is a journey we're on together!`;
           break;
       }

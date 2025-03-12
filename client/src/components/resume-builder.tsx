@@ -16,7 +16,6 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ResumeChat from "./resume-chat";
 
 interface Education {
   school: string;
@@ -41,7 +40,6 @@ interface OptimizationSuggestions {
   structuralChanges: string[];
 }
 
-// Add this new interface for parsed resume data
 interface ParsedResumeData {
   name: string;
   email: string;
@@ -141,7 +139,6 @@ export default function ResumeBuilder() {
   ]);
   const [suggestions, setSuggestions] = useState<OptimizationSuggestions | null>(null);
 
-  // Add new state for parsed data and optimization history
   const [parsedData, setParsedData] = useState<ParsedResumeData | null>(null);
   const [optimizationHistory, setOptimizationHistory] = useState<OptimizationSuggestions[]>([]);
   const [isOptimizing, setIsOptimizing] = useState(false);
@@ -271,7 +268,6 @@ export default function ResumeBuilder() {
     coverLetterMutation.mutate();
   };
 
-  // Modify handleResumeUpload to automatically optimize
   const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -292,7 +288,6 @@ export default function ResumeBuilder() {
     formData.append('resume', file);
 
     try {
-      // Parse resume
       const response = await fetch('/api/resume/parse', {
         method: 'POST',
         body: formData,
@@ -305,7 +300,6 @@ export default function ResumeBuilder() {
       const data = await response.json();
       setParsedData(data);
 
-      // Update form with parsed data
       setPersonalInfo({
         name: data.name || '',
         email: data.email || '',
@@ -335,7 +329,6 @@ export default function ResumeBuilder() {
         description: "Your resume has been analyzed. Starting optimization...",
       });
 
-      // Automatically start optimization if we have a target position
       if (targetPosition) {
         setIsOptimizing(true);
         try {
@@ -385,7 +378,6 @@ export default function ResumeBuilder() {
     }
   };
 
-  // Add function to apply all optimization suggestions at once
   const applyAllSuggestions = () => {
     if (!suggestions) return;
 
@@ -428,12 +420,11 @@ export default function ResumeBuilder() {
 
   return (
     <div className="space-y-6">
-      {/* Step 1: Upload Resume */}
       <Card>
         <CardHeader>
           <CardTitle>Upload Existing Resume</CardTitle>
           <CardDescription>
-            Start by uploading your current resume and let AI help you optimize it
+            Start by uploading your current resume
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -460,26 +451,6 @@ export default function ResumeBuilder() {
         </CardContent>
       </Card>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>AI Resume Assistant</CardTitle>
-          <CardDescription>
-            Chat with our AI to get personalized guidance on improving your resume
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ResumeChat
-            onUpdateResume={handleResumeUpdate}
-            currentResume={{
-              summary: personalInfo.summary,
-              experience,
-              education
-            }}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Step 2: Optimize for Target Position */}
       <Card>
         <CardHeader>
           <CardTitle>Optimize for Target Position</CardTitle>
@@ -508,7 +479,6 @@ export default function ResumeBuilder() {
         </CardContent>
       </Card>
 
-      {/* Step 3: Cover Letter Generator */}
       <Card>
         <CardHeader>
           <CardTitle>Cover Letter Generator</CardTitle>
@@ -609,7 +579,6 @@ export default function ResumeBuilder() {
         </CardContent>
       </Card>
 
-      {/* Personal Information Form Section */}
       <Card>
         <CardHeader>
           <CardTitle>Personal Information</CardTitle>
@@ -659,7 +628,6 @@ export default function ResumeBuilder() {
         </CardContent>
       </Card>
 
-      {/* Education Section */}
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
@@ -720,7 +688,6 @@ export default function ResumeBuilder() {
         </CardContent>
       </Card>
 
-      {/* Experience Section */}
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
@@ -792,7 +759,6 @@ export default function ResumeBuilder() {
         </CardContent>
       </Card>
 
-      {/* AI Suggestions and PDF Download */}
       {suggestions && (
         <Card>
           <CardHeader>
