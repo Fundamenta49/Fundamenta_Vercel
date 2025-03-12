@@ -155,47 +155,17 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     log(`Routes registered (${Date.now() - startTime}ms)`);
 
     // Start the server first
-    let port = 9000; // Start with a higher port to avoid conflicts
-    let attempts = 0;
-    const maxAttempts = 10; // Increase the number of attempts
-    
-    // Try to start the server, falling back to other ports if needed
-    while (attempts < maxAttempts) {
-      try {
-        await new Promise<void>((resolve, reject) => {
-          const serverInstance = server.listen({
-            port,
-            host: "0.0.0.0",
-            reusePort: true,
-          }, () => {
-            log(`✅ API server started on port ${port} (${Date.now() - startTime}ms)`);
-            resolve();
-          });
-          
-          serverInstance.on('error', (err: any) => {
-            if (err.code === 'EADDRINUSE') {
-              log(`Port ${port} is in use, trying port ${port + 1}`);
-              port++;
-              attempts++;
-              serverInstance.close();
-              reject(err);
-            } else {
-              log(`Server error: ${err.message}`);
-              reject(err);
-            }
-          });
-        });
-        
-        // If we get here, we successfully started the server
-        break;
-      } catch (err) {
-        if (attempts >= maxAttempts) {
-          log(`Failed to find an available port after ${maxAttempts} attempts`);
-          throw err;
-        }
-        // Otherwise continue the loop to try the next port
-      }
-    }
+    const port = 5000;
+    await new Promise<void>((resolve) => {
+      server.listen({
+        port,
+        host: "0.0.0.0",
+        reusePort: true,
+      }, () => {
+        log(`API server started on port ${port} (${Date.now() - startTime}ms)`);
+        resolve();
+      });
+    });
 
     // Setup frontend after server is running
     if (app.get("env") === "development") {

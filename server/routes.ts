@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer, getSalaryInsights } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { searchJobs } from "./jobs";
@@ -11,7 +11,6 @@ import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
 import * as pdfjsLib from 'pdfjs-dist';
-import youtubeRoutes from './routes/youtube';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -36,8 +35,6 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Register YouTube routes
-  app.use('/api', youtubeRoutes);
   // Test endpoint for PDF parsing
   app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
     try {
@@ -66,30 +63,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       try {
         // Create a fresh buffer from the file
-        const dataBuffer = Buffer.from(req.file.buffer);
+        const dataBuffer = new Uint8Array(req.file.buffer);
         console.log("Test endpoint: Buffer created successfully, length:", dataBuffer.length);
 
-        const data = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
-        let fullText = '';
-
-        for (let i = 1; i <= data.numPages; i++) {
-          const page = await data.getPage(i);
-          const content = await page.getTextContent();
-          const pageText = content.items
+        const pdfDoc = await pdfjsLib.getDocument({data: dataBuffer}).promise;
+        let text = '';
+        for (let i = 1; i <= pdfDoc.numPages; i++) {
+          const page = await pdfDoc.getPage(i);
+          const textContent = await page.getTextContent();
+          text += textContent.items
             .map((item: any) => ('str' in item ? item.str : ''))
             .join(' ');
-          fullText += pageText + '\n';
         }
-
-        console.log("Test endpoint: PDF parsed successfully, text length:", fullText.length);
-        console.log("Test endpoint: First 100 characters:", fullText.substring(0, 100));
+        console.log("Test endpoint: PDF parsed successfully, text length:", text.length);
+        console.log("Test endpoint: First 100 characters:", text.substring(0, 100));
 
         res.json({
           success: true,
-          textLength: fullText.length,
-          preview: fullText.substring(0, 100),
-          pageCount: data.numPages,
-          info: await data.getMetadata()
+          textLength: text.length,
+          preview: text.substring(0, 100),
+          pageCount: pdfDoc.numPages,
+          info: {} //pdfjs-dist doesn't provide the same info
         });
 
       } catch (pdfError) {
@@ -137,15 +131,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Buffer created successfully, length:", dataBuffer.length);
 
           try {
-            const pdfDoc = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
+            const pdfDoc = await pdfjsLib.getDocument({data: dataBuffer}).promise;
             let text = '';
             for (let i = 1; i <= pdfDoc.numPages; i++) {
               const page = await pdfDoc.getPage(i);
-              const content = await page.getTextContent();
-              const pageText = content.items
+              const textContent = await page.getTextContent();
+              text += textContent.items
                 .map((item: any) => ('str' in item ? item.str : ''))
                 .join(' ');
-              text += pageText + '\n';
             }
             extractedText = text;
             console.log("PDF text extracted successfully, length:", extractedText.length);
@@ -243,8 +236,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
-      
-      console.log("Chat request received:", validatedData);
 
       let systemMessage = `You are a friendly and supportive AI assistant.
 
@@ -265,7 +256,7 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-✨ Next Topic
+:✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
@@ -336,11 +327,11 @@ Remember to suggest relevant features in the app that could help the user.`;
           break;
         case "learning":
           systemMessage += `As an encouraging learning coach 📚, help users discover and grow! 
-
+          
           Break down complex topics into manageable chunks and celebrate small wins. Use examples and analogies that make learning fun and relatable.
-
+          
           Include emojis like 💡 for insights, ✍️ for practice tips, and 🎯 for goals.
-
+          
           Remember to be patient and supportive - learning is a journey we're on together!`;
           break;
       }
@@ -829,89 +820,78 @@ Remember to suggest relevant features in the app that could help the user.`;
     }
   });
 
-  app.get("/api/youtube/validate", async (req, res) => {
+  app.get("/api/youtube-search", async (req, res) => {
     try {
       const videoId = req.query.videoId as string;
-
-      if (!videoId) {
-        return res.status(400).json({ error: true, message: "Video ID is required" });
-      }
+      const query = req.query.q as string;
 
       if (!process.env.YOUTUBE_API_KEY) {
         console.error("YouTube API key not configured");
         throw new Error("YouTube API key not configured");
       }
 
-      console.log(`Validating YouTube video ID: ${videoId}`);
+      console.log(`Processing YouTube API request - ${videoId ? 'videoId: ' + videoId : 'query: ' + query}`);
 
-      // Check if we have YouTube API key configured
-      if (!process.env.YOUTUBE_API_KEY) {
-        console.log("YouTube API key not configured, returning mock success");
-        // Return a mock response if no API key is available (for development)
-        return res.json({
-          id: videoId,
-          title: "Video title",
-          thumbnail: "https://via.placeholder.com/320x180",
-          error: false
-        });
-      }
+      if (videoId) {
+        try {
+          const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
+            params: {
+              part: 'snippet,status',
+              id: videoId,
+              key: process.env.YOUTUBE_API_KEY,
+            }
+          });
 
-      const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
-      console.log(`Making API request to: ${apiUrl}`);
+          console.log(`YouTube API response for video ${videoId}:`, {
+            items: response.data.items?.length,
+            status: response.data.items?.[0]?.status?.privacyStatus
+          });
 
-      const response = await axios.get(apiUrl, {
-        params: {
-          part: 'snippet,status',
-          id: videoId,
-          key: process.env.YOUTUBE_API_KEY,
+          const isValid = response.data.items &&
+            response.data.items.length > 0 &&
+            response.data.items[0].status.privacyStatus === 'public';
+
+          res.json({
+            items: isValid ? response.data.items : [],
+            isValid
+          });
+        } catch (error: any) {
+          console.error(`YouTube API error for video ${videoId}:`, {
+            status: error.response?.status,
+            message: error.response?.data?.error?.message || error.message
+          });
+          throw error;
         }
-      });
-
-      console.log('YouTube API Response:', {
-        status: response.status,
-        hasItems: !!response.data.items,
-        itemCount: response.data.items?.length
-      });
-
-      if (!response.data.items || response.data.items.length === 0) {
-        console.log(`No video found for ID: ${videoId}`);
-        return res.json({
-          error: true,
-          message: "Video not found"
-        });
+      } else if (query) {
+        try {
+          const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+            params: {
+              part: 'snippet',
+              q: query,
+              type: 'video',
+              maxResults: 3,
+              key: process.env.YOUTUBE_API_KEY,
+            }
+          });
+          res.json(response.data);
+        } catch (error: any) {
+          console.error(`YouTube search API error for query ${query}:`, {
+            status: error.response?.status,
+            message: error.response?.data?.error?.message || error.message
+          });
+          throw error;
+        }
+      } else {
+        res.status(400).json({ error: "Either videoId or search query is required" });
       }
-
-      const video = response.data.items[0];
-
-      if (video.status.privacyStatus !== 'public') {
-        console.log(`Video ${videoId} is not public. Status: ${video.status.privacyStatus}`);
-        return res.json({
-          error: true,
-          message: "Video is not publicly available"
-        });
-      }
-
-      console.log(`Successfully validated video ${videoId}`);
-
-      res.json({
-        id: video.id,
-        title: video.snippet.title,
-        thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
-        error: false
+    } catch (error: any) {
+      console.error("YouTube API error:", {
+        message: error.message,
+        response: error.response?.data
       });
-
-    } catch (error) {
-      console.error("YouTube API error:", error);
-      console.error("Error details:", {
-        message: (error as Error).message,
-        response: (error as any).response?.data,
-        status: (error as any).response?.status
-      });
-
-      res.status(500).json({
-        error: true,
-        message: "Failed to validate video",
-        details: (error as any).response?.data?.error?.message || (error as Error).message
+      res.status(500).json({ 
+        error: "Failed to fetch videos",
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
       });
     }
   });
@@ -1049,18 +1029,6 @@ Remember to suggest relevant features in the app that could help the user.`;
 
       console.log(`Validating YouTube video ID: ${videoId}`);
 
-      // Check if we have YouTube API key configured
-      if (!process.env.YOUTUBE_API_KEY) {
-        console.log("YouTube API key not configured, returning mock success");
-        // Return a mock response if no API key is available (for development)
-        return res.json({
-          id: videoId,
-          title: "Video title",
-          thumbnail: "https://via.placeholder.com/320x180",
-          error: false
-        });
-      }
-
       const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
       console.log(`Making API request to: ${apiUrl}`);
 
@@ -1118,84 +1086,6 @@ Remember to suggest relevant features in the app that could help the user.`;
         message: "Failed to validate video",
         details: (error as any).response?.data?.error?.message || (error as Error).message
       });
-    }
-  });
-
-  app.get('/api/youtube-search', async (req, res) => {
-    const { videoId, query } = req.query;
-
-    try {
-      // Function to directly validate a YouTube video ID
-      if (videoId) {
-        console.log(`Legacy endpoint: Validating YouTube video ID: ${videoId}`);
-        try {
-          const response = await axios.get(
-            `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
-            { timeout: 8000 }
-          );
-
-          // Return result in consistent format matching the new endpoint
-          return res.json({
-            error: false,
-            id: videoId,
-            title: response.data.title,
-            author: response.data.author_name,
-            thumbnail: response.data.thumbnail_url
-          });
-        } catch (error) {
-          console.error('Legacy YouTube validation error:', error.message);
-
-          // Return error in consistent format
-          return res.json({
-            error: true,
-            message: 'Video not found or is unavailable'
-          });
-        }
-      }
-      // New YouTube search endpoint using the YouTube Data API v3
-      if (query) {
-        console.log(`Searching YouTube for query: ${query}`);
-        try {
-          const response = await axios.get(
-            `https://www.googleapis.com/youtube/v3/search`,
-            {
-              params: {
-                part: 'snippet',
-                q: query,
-                type: 'video',
-                maxResults: 5, // Adjust as needed
-                key: process.env.YOUTUBE_API_KEY
-              }
-            }
-          );
-
-          const searchResults = response.data.items.map((item: any) => ({
-            id: item.id.videoId,
-            title: item.snippet.title,
-            description: item.snippet.description,
-            thumbnail: item.snippet.thumbnails.medium.url,
-            channelTitle: item.snippet.channelTitle,
-            publishedAt: item.snippet.publishedAt
-          }));
-
-          return res.json({
-            error: false,
-            results: searchResults
-          });
-        } catch (error) {
-          console.error("YouTube search API error:", error);
-          return res.status(500).json({
-            error: true,
-            message: "Failed to search YouTube",
-            details: (error as any).response?.data?.error?.message || (error as Error).message
-          });
-        }
-      }
-
-      res.status(400).json({ error: true, message: "Either videoId or query parameter is required" });
-    } catch (error) {
-      console.error("Unexpected error in YouTube search handler:", error);
-      res.status(500).json({ error: true, message: "An unexpected error occurred" });
     }
   });
 
