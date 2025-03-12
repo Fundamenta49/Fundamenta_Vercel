@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -19,6 +19,62 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+// Component to handle YouTube video validation and display
+const YouTubeVideo = ({ videoId, title }: { videoId: string; title: string }) => {
+  const [isValid, setIsValid] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const validateVideo = async () => {
+      try {
+        const response = await fetch(`/api/youtube-search?videoId=${videoId}`);
+        const data = await response.json();
+        setIsValid(data.isValid);
+      } catch (error) {
+        console.error('Error validating video:', error);
+        setIsValid(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    validateVideo();
+  }, [videoId]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full aspect-video bg-slate-100 animate-pulse rounded-lg flex items-center justify-center">
+        <span className="text-slate-500">Loading video...</span>
+      </div>
+    );
+  }
+
+  if (!isValid) {
+    return (
+      <Alert className="bg-yellow-50 border-yellow-200">
+        <AlertTriangle className="h-4 w-4 text-yellow-500" />
+        <AlertDescription className="text-yellow-800">
+          This video is currently unavailable. Please check the source link below for more information.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  return (
+    <div className="relative overflow-hidden rounded-lg">
+      <iframe
+        width="560"
+        height="315"
+        src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
+        title={title}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full aspect-video"
+      />
+    </div>
+  );
+};
 
 // Updated with verified working educational content
 const CREDIT_TOPICS = [
@@ -128,7 +184,6 @@ export default function CreditSkills() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [failedVideos, setFailedVideos] = useState<Set<string>>(new Set());
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -145,43 +200,6 @@ export default function CreditSkills() {
 
     setSearchResults(results);
     setIsDialogOpen(true);
-  };
-
-  const handleVideoError = (videoId: string) => {
-    console.error(`Video failed to load: ${videoId}`);
-    setFailedVideos(prev => new Set(prev).add(videoId));
-  };
-
-  const renderVideoContent = (videoId: string, title: string) => {
-    if (failedVideos.has(videoId)) {
-      return (
-        <Alert className="bg-yellow-50 border-yellow-200">
-          <AlertTriangle className="h-4 w-4 text-yellow-500" />
-          <AlertDescription className="text-yellow-800">
-            Video tutorial is currently unavailable. Please check the source link below for more information.
-          </AlertDescription>
-        </Alert>
-      );
-    }
-
-    return (
-      <div className="space-y-4">
-        <div className="relative overflow-hidden rounded-lg">
-          <iframe
-            width="560"
-            height="315"
-            src={`https://www.youtube.com/embed/${videoId}`}
-            title={title}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            onError={() => handleVideoError(videoId)}
-            loading="lazy"
-            className="w-full aspect-video"
-          />
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -228,7 +246,7 @@ export default function CreditSkills() {
                     <AccordionContent>
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
-                        {renderVideoContent(item.videoId, item.title)}
+                        <YouTubeVideo videoId={item.videoId} title={item.title} />
                         <Button
                           variant="outline"
                           className="w-full mt-2"
@@ -266,7 +284,7 @@ export default function CreditSkills() {
                   <CardContent>
                     <p className="mb-4">{result.content}</p>
                     <div className="space-y-4">
-                      {renderVideoContent(result.videoId, result.title)}
+                      <YouTubeVideo videoId={result.videoId} title={result.title} />
                       <Button
                         variant="outline"
                         className="w-full"
