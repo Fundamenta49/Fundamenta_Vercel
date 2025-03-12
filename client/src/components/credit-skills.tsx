@@ -78,6 +78,11 @@ export default function CreditSkills() {
                             <iframe
                               src={`https://www.youtube.com/embed/${item.videoId}`}
                               title={item.title}
+                              onError={(e) => {
+                                console.error("Video loading error:", item.videoId);
+                                e.currentTarget.style.display = "none";
+                                e.currentTarget.parentElement.innerHTML = '<div class="flex items-center justify-center h-full bg-gray-100 rounded-md"><p class="text-gray-500">Video unavailable. <a href="https://www.youtube.com/results?search_query=credit+reports+explained" target="_blank" class="text-blue-500 hover:underline">Search for alternatives</a></p></div>';
+                              }}
                               className="w-full h-full"
                               allowFullScreen
                             ></iframe>
