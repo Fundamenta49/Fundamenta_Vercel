@@ -228,10 +228,10 @@ export default function CreditSkills() {
                     <AccordionContent>
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
-                        {item.videoId && validatedVideos[item.videoId] !== false ? (
+                        {item.videoId ? (
                           <>
                             <YouTubeVideo 
-                              videoId={item.videoId.startsWith('http') ? 
+                              videoId={item.videoId.startsWith('http') ?
                                 item.videoId.split('v=')[1]?.split('&')[0] || item.videoId : 
                                 item.videoId}
                             />
@@ -293,7 +293,7 @@ export default function CreditSkills() {
                   <CardContent>
                     <p className="mb-4">{result.content}</p>
                     <div className="space-y-4">
-                      {result.videoId && validatedVideos[result.videoId] !== false ? (
+                      {result.videoId ? (
                         <>
                           <YouTubeVideo 
                             videoId={result.videoId.startsWith('http') ? 

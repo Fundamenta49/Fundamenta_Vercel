@@ -125,13 +125,15 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
           Video resource currently unavailable. {error && `Reason: ${error}`}
         </AlertDescription>
         {videoId && (
-          <Button 
-            variant="link" 
-            className="p-0 mt-1 h-auto text-amber-800 hover:text-amber-900"
-            onClick={() => window.open(`https://youtube.com/watch?v=${videoId}`, '_blank')}
-          >
-            Try viewing directly on YouTube
-          </Button>
+          <div className="mt-2">
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-amber-800 hover:text-amber-900"
+              onClick={() => window.open(`https://youtube.com/watch?v=${videoId}`, '_blank')}
+            >
+              Try viewing directly on YouTube
+            </Button>
+          </div>
         )}
       </Alert>
     );
