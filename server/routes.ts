@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume } from "./ai";
+import { getChatResponse, getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer, getSalaryInsights } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { searchJobs } from "./jobs";
@@ -243,6 +243,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
       const validatedData = messageSchema.parse(req.body);
+      
+      console.log("Chat request received:", validatedData);
 
       let systemMessage = `You are a friendly and supportive AI assistant.
 
@@ -263,7 +265,7 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-:✨ Next Topic
+✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;

@@ -406,3 +406,143 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     </div>
   );
 }
+import { useState, useRef, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ChatMessage } from "@shared/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+
+interface ChatInterfaceProps {
+  category: string;
+}
+
+export default function ChatInterface({ category }: ChatInterfaceProps) {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      role: "assistant",
+      content: `Hello! I'm your ${category} AI coach. How can I help you today?`,
+      timestamp: new Date().toISOString()
+    }
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!input.trim()) return;
+    
+    // Add user message to chat
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: input,
+      timestamp: new Date().toISOString()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userQuery: input,
+          skillArea: category,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success && data.response) {
+        // Add AI response to chat
+        const assistantMessage: ChatMessage = {
+          role: "assistant",
+          content: data.response,
+          timestamp: new Date().toISOString()
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+      } else {
+        // Handle error
+        const errorMessage: ChatMessage = {
+          role: "assistant",
+          content: "I'm sorry, I couldn't process your request. Please try again.",
+          timestamp: new Date().toISOString()
+        };
+        
+        setMessages(prev => [...prev, errorMessage]);
+      }
+    } catch (error) {
+      console.error("Error communicating with AI:", error);
+      
+      // Add error message
+      const errorMessage: ChatMessage = {
+        role: "assistant",
+        content: "I'm having trouble connecting. Please check your internet connection and try again.",
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-[600px]">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 rounded-md">
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className={`max-w-[80%] rounded-lg p-3 ${
+                message.role === "user"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted"
+              }`}
+            >
+              <div className="whitespace-pre-wrap">{message.content}</div>
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+      
+      <form onSubmit={handleSubmit} className="p-4 border-t">
+        <div className="flex gap-2">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={`Ask your ${category} coach a question...`}
+            disabled={isLoading}
+            className="flex-1"
+          />
+          <Button type="submit" disabled={isLoading || !input.trim()}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Thinking...
+              </>
+            ) : (
+              "Send"
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+}
