@@ -11,6 +11,7 @@ import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
 import * as pdfjsLib from 'pdfjs-dist';
+import youtubeRoutes from './routes/youtube';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -35,6 +36,8 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register YouTube routes
+  app.use('/api', youtubeRoutes);
   // Test endpoint for PDF parsing
   app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
     try {

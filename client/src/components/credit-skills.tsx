@@ -228,12 +228,17 @@ export default function CreditSkills() {
                     <AccordionContent>
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
-                        {item.videoId && validatedVideos[item.videoId] ? (
-                          <YouTubeVideo videoId={item.videoId} title={item.title} />
+                        {item.videoId ? (
+                          <YouTubeVideo 
+                            videoId={item.videoId.startsWith('http') ? 
+                              item.videoId.split('v=')[1]?.split('&')[0] || '' : 
+                              item.videoId} 
+                          />
                         ) : (
                           <Alert className="my-2 bg-amber-50 border-amber-200">
+                            <AlertTriangle className="h-4 w-4 text-amber-500" />
                             <AlertDescription className="text-amber-800">
-                              Video resource currently unavailable. Please check out the source link below.
+                              No video resource available. Please check out the source link below.
                             </AlertDescription>
                           </Alert>
                         )}
@@ -274,12 +279,17 @@ export default function CreditSkills() {
                   <CardContent>
                     <p className="mb-4">{result.content}</p>
                     <div className="space-y-4">
-                      {result.videoId && validatedVideos[result.videoId] ? (
-                        <YouTubeVideo videoId={result.videoId} title={result.title} />
+                      {result.videoId ? (
+                        <YouTubeVideo 
+                          videoId={result.videoId.startsWith('http') ? 
+                            result.videoId.split('v=')[1]?.split('&')[0] || '' : 
+                            result.videoId} 
+                        />
                       ) : (
                         <Alert className="my-2 bg-amber-50 border-amber-200">
+                          <AlertTriangle className="h-4 w-4 text-amber-500" />
                           <AlertDescription className="text-amber-800">
-                            Video resource currently unavailable. Please check out the source link below.
+                            No video resource available. Please check out the source link below.
                           </AlertDescription>
                         </Alert>
                       )}
