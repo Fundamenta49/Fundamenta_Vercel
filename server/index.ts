@@ -155,11 +155,12 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     log(`Routes registered (${Date.now() - startTime}ms)`);
 
     // Start the server first
-    let port = 3000;
+    let port = 9000; // Start with a higher port to avoid conflicts
     let attempts = 0;
+    const maxAttempts = 10; // Increase the number of attempts
     
     // Try to start the server, falling back to other ports if needed
-    while (attempts < 3) {
+    while (attempts < maxAttempts) {
       try {
         await new Promise<void>((resolve, reject) => {
           const serverInstance = server.listen({
@@ -167,7 +168,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
             host: "0.0.0.0",
             reusePort: true,
           }, () => {
-            log(`API server started on port ${port} (${Date.now() - startTime}ms)`);
+            log(`✅ API server started on port ${port} (${Date.now() - startTime}ms)`);
             resolve();
           });
           
@@ -179,6 +180,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
               serverInstance.close();
               reject(err);
             } else {
+              log(`Server error: ${err.message}`);
               reject(err);
             }
           });
@@ -187,7 +189,8 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
         // If we get here, we successfully started the server
         break;
       } catch (err) {
-        if (attempts >= 3) {
+        if (attempts >= maxAttempts) {
+          log(`Failed to find an available port after ${maxAttempts} attempts`);
           throw err;
         }
         // Otherwise continue the loop to try the next port
