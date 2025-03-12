@@ -1,500 +1,70 @@
-import { useState, useRef, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { Loader2, ArrowRight, Mic } from "lucide-react";
-import ChatOnboarding from "./chat-onboarding";
-import { Link } from "wouter";
-
-interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-  category?: string;
-  suggestions?: AppSuggestion[];
-}
-
-interface AppSuggestion {
-  text: string;
-  path: string;
-  description: string;
-}
-
-interface ChatInterfaceProps {
-  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking";
-}
-
-const APP_ROUTES = {
-  cooking: {
-    basics: { path: "/learning?tab=cooking", text: "Cooking Basics Guide" },
-    schedule: { path: "/learning?tab=skills", text: "Cleaning Schedule Generator" },
-    kitchen: { path: "/learning?tab=skills", text: "Kitchen Organization Tips" },
-  },
-  career: {
-    assessment: { path: "/career?tab=assessment", text: "Career Assessment" },
-    interview: { path: "/career?tab=interview", text: "Interview Practice" },
-    resume: { path: "/career?tab=learning", text: "Resume Building" },
-  },
-  finance: {
-    budget: { path: "/finance?tab=budget", text: "Budget Calculator" },
-    planning: { path: "/finance?tab=planning", text: "Financial Planning" },
-    savings: { path: "/finance?tab=savings", text: "Savings Goals" },
-  },
-  wellness: {
-    mood: { path: "/wellness?tab=mood", text: "Mood Tracking" },
-    meditation: { path: "/wellness?tab=meditation", text: "Meditation Guide" },
-    journal: { path: "/wellness?tab=journal", text: "Wellness Journal" },
-  }
-};
-
-const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) => {
-  const sections = content.split(/\n\n+|\n(?=[-•🎯💡⏰🎬🔗✨🌟💪🧘‍♀️📊⭐👉])/g);
-
-  return (
-    <div className="space-y-4">
-      {sections.map((section, idx) => (
-        <div key={idx} className="mb-4 last:mb-0">
-          {section.split('\n').map((line, lineIdx) => (
-            <p key={lineIdx} className="text-gray-700 mb-2">{line}</p>
-          ))}
-        </div>
-      ))}
-
-      {suggestions && suggestions.length > 0 && (
-        <div className="mt-6 space-y-3">
-          <p className="font-medium text-gray-900">📱 Helpful Resources in the App:</p>
-          {suggestions.map((suggestion, idx) => (
-            <Link
-              key={idx}
-              href={suggestion.path}
-              className="block"
-            >
-              <Button
-                variant="outline"
-                className="w-full justify-start text-left hover:bg-gray-50"
-              >
-                <span className="flex items-center gap-2">
-                  <ArrowRight className="h-4 w-4" />
-                  <div>
-                    <p className="font-medium text-gray-900">{suggestion.text}</p>
-                    <p className="text-sm text-gray-500">{suggestion.description}</p>
-                  </div>
-                </span>
-              </Button>
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default function ChatInterface({ category }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [showOnboarding, setShowOnboarding] = useState(true);
-  const [isRecording, setIsRecording] = useState(false);
-  const { toast } = useToast();
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-
-  useEffect(() => {
-    const hasCompletedOnboarding = localStorage.getItem(`chat-onboarding-${category}`);
-    if (hasCompletedOnboarding) {
-      setShowOnboarding(false);
-      const greetings = {
-        emergency: "Hello, I'm here to help you with any emergency situation. What's happening?",
-        finance: "Hi! I'm your financial advisor. I'll adapt my guidance to your financial goals and knowledge level. What would you like to discuss?",
-        career: "Welcome! I'm your career development coach. I'll help guide you based on your experience and aspirations. What brings you here today?",
-        wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
-        learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
-        fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?",
-        cooking: "Hi! 👩‍🍳 I'm your cooking assistant. I'm here to help you develop your culinary skills and confidence in the kitchen. What would you like to cook today?"
-      };
-
-      setMessages([{ role: "assistant", content: greetings[category], category }]);
-    }
-  }, [category]);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const initializeSpeechRecognition = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      toast({
-        variant: "destructive",
-        title: "Speech Recognition Not Available",
-        description: "Your browser doesn't support speech recognition.",
-      });
-      return null;
-    }
-
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = (event) => {
-      const lastResult = event.results[event.results.length - 1];
-      if (lastResult.isFinal) {
-        const transcript = lastResult[0].transcript;
-        setInput(transcript);
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
-      stopRecording();
-      toast({
-        variant: "destructive",
-        title: "Speech Recognition Error",
-        description: "There was an error with speech recognition. Please try again.",
-      });
-    };
-
-    recognition.onend = () => {
-      if (isRecording) {
-        recognition.start();
-      }
-    };
-
-    return recognition;
-  };
-
-  const startRecording = () => {
-    if (!recognitionRef.current) {
-      recognitionRef.current = initializeSpeechRecognition();
-    }
-
-    if (recognitionRef.current) {
-      recognitionRef.current.start();
-      setIsRecording(true);
-      toast({
-        title: "Listening...",
-        description: "Speak clearly into your microphone. Press the mic button again or send to finish.",
-      });
-    }
-  };
-
-  const stopRecording = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
-    }
-  };
-
-  const toggleRecording = () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
-    }
-  };
-
-  const chatMutation = useMutation({
-    mutationFn: async (content: string) => {
-      const response = await apiRequest("POST", "/api/chat", {
-        message: content,
-        category,
-        previousMessages: messages.map(m => ({
-          role: m.role,
-          content: m.content,
-          category: m.category || category
-        }))
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      if (data.success && data.response) {
-        const suggestions = generateSuggestions(data.response, category);
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.response,
-            category,
-            suggestions
-          }
-        ]);
-        setInput("");
-        if (isRecording) {
-          stopRecording();
-        }
-      } else {
-        throw new Error("Invalid response format");
-      }
-    },
-    onError: (error: Error) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to send message. Please try again.",
-      });
-    },
-  });
-
-  const generateSuggestions = (response: string, category: string): AppSuggestion[] => {
-    const suggestions: AppSuggestion[] = [];
-    const routes = APP_ROUTES[category as keyof typeof APP_ROUTES] || {};
-
-    Object.entries(routes).forEach(([key, value]) => {
-      const keywords = {
-        cooking: {
-          basics: ['beginner', 'start', 'learn', 'basic', 'fundamental'],
-          schedule: ['clean', 'organize', 'schedule', 'routine'],
-          kitchen: ['organize', 'setup', 'arrangement', 'tools'],
-        },
-        career: {
-          assessment: ['test', 'evaluate', 'assessment', 'career path'],
-          interview: ['interview', 'practice', 'question', 'answer'],
-          resume: ['resume', 'cv', 'application', 'job'],
-        },
-        finance: {
-          budget: ['budget', 'spending', 'track', 'expenses'],
-          planning: ['plan', 'future', 'goals', 'strategy'],
-          savings: ['save', 'emergency fund', 'investment'],
-        },
-        wellness: {
-          mood: ['mood', 'feeling', 'emotion', 'track'],
-          meditation: ['stress', 'relax', 'calm', 'mindful'],
-          journal: ['journal', 'write', 'reflect', 'diary'],
-        },
-      };
-
-      const categoryKeywords = keywords[category as keyof typeof keywords];
-      if (categoryKeywords && categoryKeywords[key as keyof typeof categoryKeywords]) {
-        const matchingKeywords = categoryKeywords[key as keyof typeof categoryKeywords];
-        if (matchingKeywords.some(keyword => response.toLowerCase().includes(keyword))) {
-          suggestions.push({
-            text: value.text,
-            path: value.path,
-            description: `Explore our ${value.text.toLowerCase()} resources and tools`,
-          });
-        }
-      }
-    });
-
-    return suggestions.slice(0, 3);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || chatMutation.isPending) return;
-
-    setMessages((prev) => [...prev, { role: "user", content: input.trim(), category }]);
-
-    if (isRecording) {
-      stopRecording();
-    }
-
-    chatMutation.mutate(input);
-  };
-
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
-    localStorage.setItem(`chat-onboarding-${category}`, 'true');
-    const greetings = {
-      emergency: "Now that you know how I can help, what's the emergency situation?",
-      finance: "Great! Now that you know how I can help with your finances, what would you like to discuss?",
-      career: "Excellent! I'm ready to help with your career development. What would you like to explore first?",
-      wellness: "Perfect! Now that you know how I can support your wellness journey, what would you like to focus on?",
-      learning: "Wonderful! I'm ready to help you learn. What skills would you like to develop?",
-      fitness: "Awesome! Now that you know how I can help with your fitness goals, what would you like to work on first?",
-      cooking: "Great! Now that you know how I can help in the kitchen, what would you like to learn about?"
-    };
-
-    setMessages([{ role: "assistant", content: greetings[category], category }]);
-  };
-
-  if (showOnboarding) {
-    return <ChatOnboarding category={category} onComplete={handleOnboardingComplete} />;
-  }
-
-  return (
-    <div className="flex flex-col h-[calc(100vh-16rem)]">
-      <div className="flex-1 overflow-hidden">
-        <ScrollArea
-          ref={scrollRef}
-          className="h-full"
-        >
-          <div className="space-y-6 p-4">
-            {messages.map((message, i) => (
-              <div
-                key={i}
-                className="mb-6 last:mb-0"
-              >
-                <div className="rounded-lg px-4">
-                  {message.role === "assistant"
-                    ? formatAssistantMessage(message.content, message.suggestions)
-                    : <p className="text-gray-700">{message.content}</p>
-                  }
-                </div>
-              </div>
-            ))}
-            {chatMutation.isPending && (
-              <div className="flex items-center gap-2 text-gray-500 pl-4">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Thinking...
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-      </div>
-
-      <div className="flex-none border-t bg-white">
-        <form
-          onSubmit={handleSubmit}
-          className="flex gap-2 p-4"
-        >
-          <Textarea
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-              // Auto-adjust height
-              e.target.style.height = 'auto';
-              e.target.style.height = `${e.target.scrollHeight}px`;
-            }}
-            placeholder="Type your message..."
-            className="flex-1 resize-none w-full overflow-hidden p-2"
-            style={{ minHeight: '44px' }}
-            disabled={chatMutation.isPending}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-          />
-          <div className="flex flex-col gap-2 self-end">
-            <Button
-              type="button"
-              variant={isRecording ? "outline" : "secondary"}
-              size="icon"
-              className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
-              onClick={toggleRecording}
-              disabled={chatMutation.isPending}
-            >
-              <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
-            </Button>
-            <Button
-              type="submit"
-              disabled={chatMutation.isPending || !input.trim()}
-            >
-              {chatMutation.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                'Send'
-              )}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-import { useState, useRef, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ChatMessage } from "@shared/types";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { SendIcon } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ChatInterfaceProps {
   category: string;
 }
 
 export default function ChatInterface({ category }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [message, setMessage] = useState("");
+  const [chatHistory, setChatHistory] = useState<Array<{ role: string; content: string }>>([
     {
       role: "assistant",
-      content: `Hello! I'm your ${category} AI coach. How can I help you today?`,
-      timestamp: new Date().toISOString()
+      content: category === "wellness" 
+        ? "👋 Hi there! I'm your Wellness AI Coach. How can I support your health and wellbeing today?"
+        : `👋 Hi there! I'm your AI assistant. How can I help you with ${category} today?`
     }
   ]);
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!input.trim()) return;
-    
+
+    if (!message.trim()) return;
+
     // Add user message to chat
-    const userMessage: ChatMessage = {
-      role: "user",
-      content: input,
-      timestamp: new Date().toISOString()
-    };
-    
-    setMessages(prev => [...prev, userMessage]);
-    setInput("");
+    setChatHistory(prev => [...prev, { role: "user", content: message }]);
+
+    const userMessage = message;
+    setMessage("");
     setIsLoading(true);
-    
+
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
+      const response = await fetch("/api/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userQuery: input,
           skillArea: category,
+          userQuery: userMessage,
         }),
       });
-      
+
       const data = await response.json();
-      
-      if (data.success && data.response) {
-        // Add AI response to chat
-        const assistantMessage: ChatMessage = {
-          role: "assistant",
-          content: data.response,
-          timestamp: new Date().toISOString()
-        };
-        
-        setMessages(prev => [...prev, assistantMessage]);
-      } else {
-        // Handle error
-        const errorMessage: ChatMessage = {
-          role: "assistant",
-          content: "I'm sorry, I couldn't process your request. Please try again.",
-          timestamp: new Date().toISOString()
-        };
-        
-        setMessages(prev => [...prev, errorMessage]);
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to get response");
       }
+
+      setChatHistory(prev => [...prev, { role: "assistant", content: data.response }]);
     } catch (error) {
-      console.error("Error communicating with AI:", error);
-      
-      // Add error message
-      const errorMessage: ChatMessage = {
-        role: "assistant",
-        content: "I'm having trouble connecting. Please check your internet connection and try again.",
-        timestamp: new Date().toISOString()
-      };
-      
-      setMessages(prev => [...prev, errorMessage]);
+      console.error("Chat error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to get a response. Please try again.",
+        variant: "destructive",
+      });
+
+      setChatHistory(prev => [...prev, { 
+        role: "assistant", 
+        content: "I'm sorry, I'm having trouble responding right now. Please try again in a moment." 
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -502,47 +72,51 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
   return (
     <div className="flex flex-col h-[600px]">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 rounded-md">
-        {messages.map((message, index) => (
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {chatHistory.map((chat, index) => (
           <div
             key={index}
-            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex ${
+              chat.role === "user" ? "justify-end" : "justify-start"
+            }`}
           >
             <div
               className={`max-w-[80%] rounded-lg p-3 ${
-                message.role === "user"
+                chat.role === "user"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted"
               }`}
             >
-              <div className="whitespace-pre-wrap">{message.content}</div>
+              <div className="whitespace-pre-wrap">{chat.content}</div>
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="max-w-[80%] rounded-lg p-3 bg-muted">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse"></div>
+                <div className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse delay-150"></div>
+                <div className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse delay-300"></div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      
-      <form onSubmit={handleSubmit} className="p-4 border-t">
-        <div className="flex gap-2">
+      <div className="border-t p-4">
+        <form onSubmit={handleSubmit} className="flex space-x-2">
           <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={`Ask your ${category} coach a question...`}
-            disabled={isLoading}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder={`Ask about ${category}...`}
             className="flex-1"
+            disabled={isLoading}
           />
-          <Button type="submit" disabled={isLoading || !input.trim()}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Thinking...
-              </>
-            ) : (
-              "Send"
-            )}
+          <Button type="submit" size="icon" disabled={isLoading || !message.trim()}>
+            <SendIcon className="h-4 w-4" />
           </Button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
