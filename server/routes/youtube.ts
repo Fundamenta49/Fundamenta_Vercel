@@ -3,6 +3,101 @@ import axios from 'axios';
 
 const router = Router();
 
+// Cache to minimize API calls to YouTube
+const videoCache: { [key: string]: any } = {};
+const searchCache: { [query: string]: any } = {};
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+
+router.get('/youtube-search', async (req, res) => {
+  const query = req.query.q as string;
+  const videoId = req.query.videoId as string;
+
+  if (!process.env.YOUTUBE_API_KEY) {
+    return res.status(500).json({ error: 'YouTube API key not configured' });
+  }
+
+  try {
+    // Video validation endpoint
+    if (videoId) {
+      // Check cache first
+      if (videoCache[videoId] && videoCache[videoId].timestamp > Date.now() - CACHE_DURATION) {
+        return res.json(videoCache[videoId].data);
+      }
+
+      const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+        params: {
+          key: process.env.YOUTUBE_API_KEY,
+          id: videoId,
+          part: 'snippet'
+        }
+      });
+
+      const isValid = response.data.items && response.data.items.length > 0;
+      const result = { isValid, videoDetails: isValid ? response.data.items[0] : null };
+
+      // Cache the result
+      videoCache[videoId] = {
+        timestamp: Date.now(),
+        data: result
+      };
+
+      return res.json(result);
+    }
+
+    // Search query endpoint
+    if (query) {
+      // Check cache first
+      if (searchCache[query] && searchCache[query].timestamp > Date.now() - CACHE_DURATION) {
+        return res.json(searchCache[query].data);
+      }
+
+      const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+        params: {
+          key: process.env.YOUTUBE_API_KEY,
+          q: query,
+          part: 'snippet',
+          maxResults: 3,
+          type: 'video',
+          videoDuration: 'medium', // Filter for medium length videos (4-20 minutes)
+          videoEmbeddable: true    // Only videos that can be embedded
+        }
+      });
+
+      // Cache the result
+      searchCache[query] = {
+        timestamp: Date.now(),
+        data: response.data
+      };
+
+      res.json(response.data);
+    } else {
+      res.status(400).json({ error: 'Missing required parameters' });
+    }
+  } catch (error: any) {
+    console.error('YouTube API error:', error.response?.data || error.message);
+
+    // More specific error handling
+    if (error.response?.status === 403) {
+      return res.status(403).json({ 
+        error: 'YouTube API quota exceeded or API key restricted',
+        message: error.response.data?.error?.message || 'API quota issues'
+      });
+    }
+
+    if (error.response?.status === 404) {
+      return res.status(404).json({ 
+        error: 'Content not found',
+        message: 'The requested video or content was not found'
+      });
+    }
+
+    res.status(500).json({ 
+      error: 'Failed to fetch from YouTube API',
+      message: error.message || 'Unknown error'
+    });
+  }
+});
+
 //This function is not used in the new implementation, but kept for reference.
 async function validateYouTubeVideo(videoId: string) {
   try {
@@ -48,14 +143,14 @@ router.get('/validate', async (req, res) => {
         isValid: true
       });
     }
-    
+
     // Try direct oEmbed check first (doesn't require API key quota)
     try {
       const oembedResponse = await axios.get(
         `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
         { timeout: 3000 }
       );
-      
+
       if (oembedResponse.status === 200 && oembedResponse.data) {
         console.log(`YouTube oEmbed validation successful for ${videoId}`);
         return res.json({

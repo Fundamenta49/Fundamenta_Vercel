@@ -6,11 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { YouTubeVideo } from "./youtube-video"; // Assuming this component exists
+
 
 export default function CreditSkills() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [videoSearchResults, setVideoSearchResults] = useState<{[key: string]: any}>({});
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -28,6 +33,94 @@ export default function CreditSkills() {
     setSearchResults(results);
     setIsDialogOpen(true);
   };
+
+  // Search for videos related to topic if not provided
+  useEffect(() => {
+    const fetchVideos = async () => {
+      const topicsWithoutVideos = CREDIT_TOPICS.flatMap(topic => topic.items).filter(item => !item.videoId);
+      if (topicsWithoutVideos.length === 0) return;
+
+      setIsLoading(true);
+      const results: {[key: string]: any} = {};
+
+      for (const item of topicsWithoutVideos) {
+        try {
+          const query = `${item.title} finance credit guide`;
+          const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(query)}`);
+          const data = await response.json();
+
+          if (data.items && data.items.length > 0) {
+            results[item.title] = data.items[0].id.videoId;
+          }
+        } catch (error) {
+          console.error(`Error fetching video for ${item.title}:`, error);
+        }
+      }
+
+      setVideoSearchResults(results);
+      setIsLoading(false);
+    };
+
+    fetchVideos();
+  }, []);
+
+  const renderItems = (items: any[]) => {
+    return items.map((item, index) => (
+      <AccordionItem key={index} value={`${item.title}`}>
+        <AccordionTrigger>{item.title}</AccordionTrigger>
+        <AccordionContent>
+          <div className="space-y-4">
+            <p className="text-muted-foreground">{item.content}</p>
+            {(item.videoId || videoSearchResults[item.title]) && (
+              <div className="aspect-video w-full mb-4 relative">
+                <iframe
+                  src={`https://www.youtube.com/embed/${item.videoId || videoSearchResults[item.title]}`}
+                  title={item.title}
+                  onError={(e) => {
+                    console.error("Video loading error:", item.videoId || videoSearchResults[item.title]);
+                    e.currentTarget.style.display = "none";
+                    e.currentTarget.dataset.failed = "true";
+                  }}
+                  onLoad={(e) => {
+                    if (e.currentTarget.dataset.failed) {
+                      delete e.currentTarget.dataset.failed;
+                    }
+                    e.currentTarget.style.display = "block";
+                  }}
+                  className="w-full h-full"
+                  allowFullScreen
+                ></iframe>
+                <div className="hidden fallback-message absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
+                  <p className="text-gray-500">
+                    Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
+                  </p>
+                </div>
+              </div>
+            )}
+            {!item.videoId && !videoSearchResults[item.title] && isLoading && (
+              <div className="aspect-video w-full flex items-center justify-center bg-gray-100 rounded-md mb-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <span className="ml-2 text-sm text-gray-500">Searching for relevant videos...</span>
+              </div>
+            )}
+            {item.source && (
+              <div className="text-sm text-muted-foreground">
+                <a
+                  href={item.source}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-primary hover:underline"
+                >
+                  View Source <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            )}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    ));
+  };
+
 
   return (
     <div className="space-y-6">
@@ -67,58 +160,7 @@ export default function CreditSkills() {
             </CardHeader>
             <CardContent>
               <Accordion type="single" collapsible className="w-full">
-                {topic.items.map((item, index) => (
-                  <AccordionItem key={index} value={`${topic.id}-${index}`}>
-                    <AccordionTrigger>{item.title}</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-4">
-                        <p className="text-muted-foreground">{item.content}</p>
-                        {item.videoId && (
-                          <div className="aspect-video w-full mb-4 relative">
-                            <iframe
-                              src={`https://www.youtube.com/embed/${item.videoId}`}
-                              title={item.title}
-                              onError={(e) => {
-                                console.error("Video loading error:", item.videoId);
-                                // Instead of modifying the DOM directly (which can cause React issues)
-                                // Just hide the iframe and show a fallback
-                                e.currentTarget.style.display = "none";
-                                // Add a data attribute to mark this as failed
-                                e.currentTarget.dataset.failed = "true";
-                              }}
-                              onLoad={(e) => {
-                                // Remove any failed status
-                                if (e.currentTarget.dataset.failed) {
-                                  delete e.currentTarget.dataset.failed;
-                                }
-                                e.currentTarget.style.display = "block";
-                              }}
-                              className="w-full h-full"
-                              allowFullScreen
-                            ></iframe>
-                            <div className="hidden fallback-message absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
-                              <p className="text-gray-500">
-                                Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                        {item.source && (
-                          <div className="text-sm text-muted-foreground">
-                            <a
-                              href={item.source}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-primary hover:underline"
-                            >
-                              View Source <ExternalLink className="h-3 w-3" />
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
+                {renderItems(topic.items)}
               </Accordion>
             </CardContent>
           </Card>
