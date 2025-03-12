@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Button } from "./ui/button";
@@ -89,15 +90,15 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
     );
   }
 
-  // YouTube embed with privacy-enhanced mode
   return (
-    <div className={`relative w-full ${className}`}>
-      {title && <h3 className="font-medium mb-2">{title}</h3>}
-      <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-md">
+    <div className={`w-full ${className}`}>
+      {title && <h3 className="font-medium mb-2 text-sm">{title}</h3>}
+      <div className="relative aspect-video">
         <iframe
-          className="absolute top-0 left-0 w-full h-full"
-          src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+          className="absolute inset-0 w-full h-full rounded-md"
+          src={`https://www.youtube.com/embed/${videoId}?rel=0`}
           title={title || "YouTube video player"}
+          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
