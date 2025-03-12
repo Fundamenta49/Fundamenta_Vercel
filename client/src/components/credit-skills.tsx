@@ -36,9 +36,6 @@ export default function CreditSkills() {
 
   // Search for videos related to topic if not provided
   useEffect(() => {
-    // We're now using hardcoded videoIds for all items, so this effect is no longer needed
-    // If we want to add dynamic video search in the future, we can uncomment this
-    /*
     const fetchVideos = async () => {
       const topicsWithoutVideos = CREDIT_TOPICS.flatMap(topic => topic.items).filter(item => !item.videoId);
       if (topicsWithoutVideos.length === 0) return;
@@ -65,7 +62,6 @@ export default function CreditSkills() {
     };
 
     fetchVideos();
-    */
   }, []);
 
   const renderItems = (items: any[]) => {
@@ -75,44 +71,31 @@ export default function CreditSkills() {
         <AccordionContent>
           <div className="space-y-4">
             <p className="text-muted-foreground">{item.content}</p>
-            {item.videoId && (
-              <div className="aspect-video w-full mb-4">
-                <YouTubeVideo
-                  videoId={item.videoId}
+            {(item.videoId || videoSearchResults[item.title]) && (
+              <div className="aspect-video w-full mb-4 relative">
+                <iframe
+                  src={`https://www.youtube.com/embed/${item.videoId || videoSearchResults[item.title]}`}
                   title={item.title}
-                  className="w-full"
-                />
+                  onError={(e) => {
+                    console.error("Video loading error:", item.videoId || videoSearchResults[item.title]);
+                    e.currentTarget.style.display = "none";
+                    e.currentTarget.dataset.failed = "true";
+                  }}
+                  onLoad={(e) => {
+                    if (e.currentTarget.dataset.failed) {
+                      delete e.currentTarget.dataset.failed;
+                    }
+                    e.currentTarget.style.display = "block";
+                  }}
+                  className="w-full h-full"
+                  allowFullScreen
+                ></iframe>
+                <div className="hidden fallback-message absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
+                  <p className="text-gray-500">
+                    Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
+                  </p>
+                </div>
               </div>
-            )}
-            {item.source && (
-              <div className="text-sm text-muted-foreground">
-                <a 
-                  href={item.source} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="underline hover:text-primary"
-                >
-                  Learn more
-                </a>
-              </div>
-            )}
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    ));
-  };
-
-  const renderVideoOrFallback = (item: any) => {
-    return item.videoId ? (
-      <div className="mt-4">
-        <YouTubeVideo videoId={item.videoId} />
-      </div>
-    ) : (
-      <p className="mt-4 text-sm text-muted-foreground">
-        Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
-      </p>
-    );
-  };
             )}
             {!item.videoId && !videoSearchResults[item.title] && isLoading && (
               <div className="aspect-video w-full flex items-center justify-center bg-gray-100 rounded-md mb-4">

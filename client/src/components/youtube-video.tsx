@@ -114,7 +114,7 @@ export function YouTubeVideo({ videoId, title, className = '', topic }: YouTubeV
       ) : (
         <div className="aspect-video w-full">
           <iframe
-            src={`https://www.youtube.com/embed/${videoIdToUse}?rel=0`}
+            src={`https://www.youtube.com/embed/${videoIdToUse}`}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             className="w-full h-full rounded-md"
