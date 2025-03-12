@@ -256,7 +256,7 @@ Here's the first point about this topic.
 - First item in a list
 - Second item in a list
 
-✨ Next Topic
+:✨ Next Topic
 Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
@@ -826,235 +826,72 @@ Remember to suggest relevant features in the app that could help the user.`;
       const query = req.query.q as string;
 
       if (!process.env.YOUTUBE_API_KEY) {
-        throw new Error("YouTube API key not configured");
-      }
-
-      if (videoId) {
-        const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
-          params: {
-            part: 'snippet,status',
-            id: videoId,
-            key: process.env.YOUTUBE_API_KEY,
-          }
-        });
-
-        const isValid = response.data.items &&
-          response.data.items.length > 0 &&
-          response.data.items[0].status.privacyStatus === 'public';
-
-        res.json({
-          items: isValid ? response.data.items : [],
-          isValid
-        });
-      } else if (query) {
-        const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
-          params: {
-            part: 'snippet',
-            q: query,
-            type: 'video',
-            maxResults: 3,
-            key: process.env.YOUTUBE_API_KEY,
-          }
-        });
-        res.json(response.data);
-      } else {
-        res.status(400).json({ error: "Either videoId or search query is required" });
-      }
-    } catch (error) {
-      console.error("YouTube API error:", error);
-      res.status(500).json({ error: "Failed to fetch videos" });
-    }
-  });
-
-  app.post("/api/generate-workout", async (req, res) => {
-    try {
-      const { profile } = req.body;
-
-      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitness goals: ${profile.goals.join(', ')}. 
-      Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
-      Format the response as a JSON object with the following structure:
-      {
-        "exercises": [
-          {
-            "name": string,
-            "sets": number,
-            "reps": number,
-            "description": string,
-            "videoId": string (YouTube video ID)
-          }
-        ],
-        "schedule": string,
-        "tips": string[]
-      }`;
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          { role: "system", content: "You are a professional fitness trainer experienced in creating personalized workout plans." },
-          { role: "user", content: prompt }
-        ],
-        response_format: { type: "json_object" }
-      });
-
-      const workoutPlan = JSON.parse(response.choices[0].message.content || "{}");
-      res.json(workoutPlan);
-
-    } catch (error) {
-      console.error('Error generating workout plan:', error);
-      res.status(500).json({ error: 'Failed to generate workout plan' });
-    }
-  });
-
-  app.post("/api/journal/analyze", async (req, res) => {
-    try {
-      const { content } = z.object({ content: z.string() }).parse(req.body);
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: "You are an AI therapist analyzing journal entries. Provide analysis in JSON format including emotional score (0-100), sentiment, key themes, and suggestions for mental well-being."
-          },
-          {
-            role: "user",
-            content
-          }
-        ],
-        response_format: { type: "json_object" }
-      });
-
-      const analysis = JSON.parse(response.choices[0].message.content || "{}");
-
-      const words = content.toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .split(/\s+/)
-        .filter(word => word.length > 3);
-
-      const wordFrequency: Record<string, number> = {};
-      words.forEach((word: string) => {
-        wordFrequency[word] = (wordFrequency[word] || 0) + 1;
-      });
-
-      res.json({
-        analysis,
-        wordFrequency,
-        content: analysis.content,
-        summary: analysis.summary,
-      });
-    } catch (error) {
-      console.error('Error analyzing journal entry:', error);
-      res.status(500).json({ error: 'Failed to analyze journal entry' });
-    }
-  });
-
-  app.post("/api/journal/analyze-trends", async (req, res) => {
-    try {
-      const { entries } = z.object({
-        entries: z.array(z.object({
-          content: z.string(),
-          timestamp: z.string()
-        }))
-      }).parse(req.body);
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: "Analyze the mood trends across multiple journal entries and provide insights and recommendations in JSON format."
-          },
-          {
-            role: "user",
-            content: JSON.stringify(entries)
-          }
-        ],
-        response_format: { type: "json_object" }
-      });
-
-      const analysis = JSON.parse(response.choices[0].message.content || "{}");
-
-      res.json({
-        trends: analysis.trends,
-        recommendations: analysis.recommendations
-      });
-    } catch (error) {
-      console.error('Error analyzing mood trends:', error);
-      res.status(500).json({ error: 'Failed to analyze mood trends' });
-    }
-  });
-
-  app.get("/api/youtube/validate", async (req, res) => {
-    try {
-      const videoId = req.query.videoId as string;
-
-      if (!videoId) {
-        return res.status(400).json({ error: true, message: "Video ID is required" });
-      }
-
-      if (!process.env.YOUTUBE_API_KEY) {
         console.error("YouTube API key not configured");
         throw new Error("YouTube API key not configured");
       }
 
-      console.log(`Validating YouTube video ID: ${videoId}`);
+      console.log(`Processing YouTube API request - ${videoId ? 'videoId: ' + videoId : 'query: ' + query}`);
 
-      const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
-      console.log(`Making API request to: ${apiUrl}`);
+      if (videoId) {
+        try {
+          const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
+            params: {
+              part: 'snippet,status',
+              id: videoId,
+              key: process.env.YOUTUBE_API_KEY,
+            }
+          });
 
-      const response = await axios.get(apiUrl, {
-        params: {
-          part: 'snippet,status',
-          id: videoId,
-          key: process.env.YOUTUBE_API_KEY,
+          console.log(`YouTube API response for video ${videoId}:`, {
+            items: response.data.items?.length,
+            status: response.data.items?.[0]?.status?.privacyStatus
+          });
+
+          const isValid = response.data.items &&
+            response.data.items.length > 0 &&
+            response.data.items[0].status.privacyStatus === 'public';
+
+          res.json({
+            items: isValid ? response.data.items : [],
+            isValid
+          });
+        } catch (error: any) {
+          console.error(`YouTube API error for video ${videoId}:`, {
+            status: error.response?.status,
+            message: error.response?.data?.error?.message || error.message
+          });
+          throw error;
         }
-      });
-
-      console.log('YouTube API Response:', {
-        status: response.status,
-        hasItems: !!response.data.items,
-        itemCount: response.data.items?.length
-      });
-
-      if (!response.data.items || response.data.items.length === 0) {
-        console.log(`No video found for ID: ${videoId}`);
-        return res.json({
-          error: true,
-          message: "Video not found"
-        });
+      } else if (query) {
+        try {
+          const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+            params: {
+              part: 'snippet',
+              q: query,
+              type: 'video',
+              maxResults: 3,
+              key: process.env.YOUTUBE_API_KEY,
+            }
+          });
+          res.json(response.data);
+        } catch (error: any) {
+          console.error(`YouTube search API error for query ${query}:`, {
+            status: error.response?.status,
+            message: error.response?.data?.error?.message || error.message
+          });
+          throw error;
+        }
+      } else {
+        res.status(400).json({ error: "Either videoId or search query is required" });
       }
-
-      const video = response.data.items[0];
-
-      if (video.status.privacyStatus !== 'public') {
-        console.log(`Video ${videoId} is not public. Status: ${video.status.privacyStatus}`);
-        return res.json({
-          error: true,
-          message: "Video is not publicly available"
-        });
-      }
-
-      console.log(`Successfully validated video ${videoId}`);
-
-      res.json({
-        id: video.id,
-        title: video.snippet.title,
-        thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
-        error: false
+    } catch (error: any) {
+      console.error("YouTube API error:", {
+        message: error.message,
+        response: error.response?.data
       });
-
-    } catch (error) {
-      console.error("YouTube API error:", error);
-      console.error("Error details:", {
-        message: (error as Error).message,
-        response: (error as any).response?.data,
-        status: (error as any).response?.status
-      });
-
-      res.status(500).json({
-        error: true,
-        message: "Failed to validate video",
-        details: (error as any).response?.data?.error?.message || (error as Error).message
+      res.status(500).json({ 
+        error: "Failed to fetch videos",
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
       });
     }
   });

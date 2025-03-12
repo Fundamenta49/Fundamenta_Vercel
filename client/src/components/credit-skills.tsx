@@ -76,7 +76,7 @@ const YouTubeVideo = ({ videoId, title }: { videoId: string; title: string }) =>
   );
 };
 
-// Updated with verified working educational content
+// Updated with verified working video IDs and educational content
 const CREDIT_TOPICS = [
   {
     id: "basics",
@@ -86,19 +86,19 @@ const CREDIT_TOPICS = [
       {
         title: "What is Credit?",
         content: "Credit is your ability to borrow money with the promise to repay it later. Good credit enables you to borrow at better rates and terms.",
-        videoId: "m3RUZRfxPbo",
+        videoId: "p4BXp7Q_vP0",
         source: "https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/"
       },
       {
         title: "Credit Score Factors",
         content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%).",
-        videoId: "HGn4YC4kkC8",
+        videoId: "q3OWJ67oR1k",
         source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
       },
       {
         title: "Credit Reports",
         content: "A credit report is a detailed record of your credit history, including loans, credit cards, and payment history. You're entitled to one free report annually from each bureau.",
-        videoId: "v6P9yYUXcs0",
+        videoId: "7RzfNZEYkqY",
         source: "https://www.annualcreditreport.com/"
       }
     ]
@@ -111,19 +111,19 @@ const CREDIT_TOPICS = [
       {
         title: "Secured Credit Cards",
         content: "A secured card requires a deposit and is an excellent way to start building credit with minimal risk.",
-        videoId: "99G1pBPVwE4",
+        videoId: "B4mC9NnP5bY",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/improving-credit/building-credit/"
       },
       {
         title: "Authorized User",
         content: "Being added as an authorized user on someone's credit card can help build your credit history.",
-        videoId: "N5HjDReY6ZY",
+        videoId: "XGvHPVUfZ_Y",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/building-credit/authorized-user/"
       },
       {
         title: "Credit-Builder Loans",
         content: "These loans are specifically designed to help build credit by reporting payments to credit bureaus.",
-        videoId: "YGzEf8y-8pw",
+        videoId: "rT2DvQzsK0Y",
         source: "https://www.nerdwallet.com/article/loans/personal-loans/credit-builder-loans"
       }
     ]
