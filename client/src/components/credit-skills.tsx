@@ -143,27 +143,29 @@ export default function CreditSkills() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [validatedVideos, setValidatedVideos] = useState({});
+  //Removed unneeded state
+  //const [validatedVideos, setValidatedVideos] = useState({});
 
-  useEffect(() => {
-    const validateVideos = async () => {
-      const videoIds = CREDIT_TOPICS.flatMap(topic => topic.items.map(item => item.videoId)).filter(id => id);
-      const validated = {};
-      const promises = videoIds.map(async (videoId) => {
-        try {
-          const response = await fetch(`/api/youtube/validate?videoId=${videoId}`); // Updated API endpoint
-          const data = await response.json();
-          validated[videoId] = data.isValid;
-        } catch (error) {
-          console.error('Error validating video:', error);
-          validated[videoId] = false;
-        }
-      });
-      await Promise.all(promises);
-      setValidatedVideos(validated);
-    };
-    validateVideos();
-  }, []);
+  //Removed unneeded useEffect
+  // useEffect(() => {
+  //   const validateVideos = async () => {
+  //     const videoIds = CREDIT_TOPICS.flatMap(topic => topic.items.map(item => item.videoId)).filter(id => id);
+  //     const validated = {};
+  //     const promises = videoIds.map(async (videoId) => {
+  //       try {
+  //         const response = await fetch(`/api/youtube/validate?videoId=${videoId}`); // Updated API endpoint
+  //         const data = await response.json();
+  //         validated[videoId] = data.isValid;
+  //       } catch (error) {
+  //         console.error('Error validating video:', error);
+  //         validated[videoId] = false;
+  //       }
+  //     });
+  //     await Promise.all(promises);
+  //     setValidatedVideos(validated);
+  //   };
+  //   validateVideos();
+  // }, []);
 
 
   const handleSearch = () => {
@@ -227,14 +229,17 @@ export default function CreditSkills() {
                     <AccordionContent>
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
-                        {item.videoId && validatedVideos[item.videoId] ? (
+                        {item.videoId && (
                           <>
-                            <YouTubeVideo
-                              videoId={item.videoId.startsWith('http') ?
-                                item.videoId.split('v=')[1]?.split('&')[0] || item.videoId :
-                                item.videoId}
-                              title={`${item.title} - Video Tutorial`} // Added title prop
-                            />
+                            <div className="aspect-video w-full">
+                              <iframe
+                                src={`https://www.youtube.com/embed/${item.videoId}`}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="w-full h-full rounded-md"
+                                title={`${item.title} Video`}
+                              />
+                            </div>
                             {item.source && (
                               <div className="mt-2 text-xs text-muted-foreground">
                                 <a
@@ -289,16 +294,19 @@ export default function CreditSkills() {
                   <CardContent>
                     <p className="mb-4">{result.content}</p>
                     <div className="space-y-4">
-                      {result.videoId && validatedVideos[result.videoId] ? (
+                      {result.videoId ? (
                         <>
-                          <YouTubeVideo
-                            videoId={result.videoId.startsWith('http') ?
-                              result.videoId.split('v=')[1]?.split('&')[0] || result.videoId :
-                              result.videoId}
-                            title={`${result.title} - Video Tutorial`} // Added title prop
-                          />
+                          <div className="aspect-video w-full">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${result.videoId}`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              className="w-full h-full rounded-md"
+                              title={`${result.title} Video`}
+                            />
+                          </div>
                           {result.source && (
-                            <div className="mt-2 text-xs text-muted-foreground">
+                            <div className="mt-2 text-sm">
                               <a
                                 href={result.source}
                                 target="_blank"
