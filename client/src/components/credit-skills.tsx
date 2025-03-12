@@ -101,10 +101,18 @@ export default function CreditSkills() {
       </AccordionItem>
     ));
   };
-                    Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
-                  </p>
-                </div>
-              </div>
+
+  const renderVideoOrFallback = (item: any) => {
+    return item.videoId ? (
+      <div className="mt-4">
+        <YouTubeVideo videoId={item.videoId} />
+      </div>
+    ) : (
+      <p className="mt-4 text-sm text-muted-foreground">
+        Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
+      </p>
+    );
+  };
             )}
             {!item.videoId && !videoSearchResults[item.title] && isLoading && (
               <div className="aspect-video w-full flex items-center justify-center bg-gray-100 rounded-md mb-4">
