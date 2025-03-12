@@ -91,9 +91,7 @@ export default function CreditSkills() {
                   allowFullScreen
                 ></iframe>
                 <div className="hidden fallback-message absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
-                  <p className="text-gray-500">
-                    Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
-                  </p>
+                  {renderVideoFallback(item)}
                 </div>
               </div>
             )}
@@ -121,6 +119,13 @@ export default function CreditSkills() {
     ));
   };
 
+  const renderVideoFallback = (item: any) => {
+    return (
+      <p className="mt-2 text-sm text-gray-500">
+        Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
+      </p>
+    );
+  };
 
   return (
     <div className="space-y-6">

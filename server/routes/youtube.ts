@@ -1,4 +1,3 @@
-
 import express from 'express';
 import axios from 'axios';
 
@@ -8,7 +7,7 @@ const router = express.Router();
 router.get('/youtube/search', async (req, res) => {
   try {
     const query = req.query.query as string;
-    
+
     if (!query) {
       return res.status(400).json({ 
         error: true, 
@@ -25,7 +24,7 @@ router.get('/youtube/search', async (req, res) => {
     }
 
     console.log(`Searching YouTube for: ${query}`);
-    
+
     const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
         part: 'snippet',
