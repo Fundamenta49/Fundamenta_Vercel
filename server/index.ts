@@ -154,38 +154,31 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     const server = await registerRoutes(app);
     log(`Routes registered (${Date.now() - startTime}ms)`);
 
-    // Start the server first using a higher port range that's less likely to be in use
-    let port = 9000;
+    // Start the server first
+    let port = 3000;
     let attempts = 0;
-    const maxAttempts = 5;
     
     // Try to start the server, falling back to other ports if needed
-    while (attempts < maxAttempts) {
+    while (attempts < 3) {
       try {
         await new Promise<void>((resolve, reject) => {
-          log(`Attempting to start server on port ${port}...`);
-          
-          const serverInstance = server.listen(port, "0.0.0.0", () => {
-            log(`✅ API server started on port ${port} (${Date.now() - startTime}ms)`);
+          const serverInstance = server.listen({
+            port,
+            host: "0.0.0.0",
+            reusePort: true,
+          }, () => {
+            log(`API server started on port ${port} (${Date.now() - startTime}ms)`);
             resolve();
           });
           
           serverInstance.on('error', (err: any) => {
             if (err.code === 'EADDRINUSE') {
-              log(`⚠️ Port ${port} is in use, trying port ${port + 1}`);
-              
-              // Close and fully release the port before retrying
-              serverInstance.close(() => {
-                port++;
-                attempts++;
-                if (attempts < maxAttempts) {
-                  resolve(); // Continue to next iteration
-                } else {
-                  reject(new Error(`❌ All retry attempts failed. Server could not start.`));
-                }
-              });
+              log(`Port ${port} is in use, trying port ${port + 1}`);
+              port++;
+              attempts++;
+              serverInstance.close();
+              reject(err);
             } else {
-              log(`🚨 Server error: ${err.message}`);
               reject(err);
             }
           });
@@ -194,8 +187,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
         // If we get here, we successfully started the server
         break;
       } catch (err) {
-        if (attempts >= maxAttempts) {
-          console.error("💥 Server startup failed:", err);
+        if (attempts >= 3) {
           throw err;
         }
         // Otherwise continue the loop to try the next port
