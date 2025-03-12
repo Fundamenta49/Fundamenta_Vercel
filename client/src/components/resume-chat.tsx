@@ -119,16 +119,19 @@ export default function ResumeChat({ onUpdateResume, currentResume }: ResumeChat
                     </div>
                   )}
                   <div
-                    className={`inline-block text-left p-3 ${
+                    className={`${
                       message.role === 'assistant'
-                        ? 'bg-[#E8F1FE] text-[#1f2937] max-w-[80%]'
-                        : 'bg-primary text-primary-foreground ml-auto max-w-[80%]'
-                    }`}
+                        ? 'bg-[#E8F1FE] text-[#1f2937]'
+                        : 'bg-primary text-primary-foreground ml-auto'
+                    } p-3 rounded-lg`}
                     style={{
+                      maxWidth: "80%",
+                      display: "inline-block",
+                      wordBreak: "break-word",
                       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                       fontSize: '15px',
                       lineHeight: '1.4',
-                      whiteSpace: 'pre-line',
+                      whiteSpace: 'pre-line'
                     }}
                   >
                     {message.content}
