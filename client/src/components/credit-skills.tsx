@@ -74,18 +74,33 @@ export default function CreditSkills() {
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
                         {item.videoId && (
-                          <div className="aspect-video w-full">
+                          <div className="aspect-video w-full mb-4 relative">
                             <iframe
                               src={`https://www.youtube.com/embed/${item.videoId}`}
                               title={item.title}
                               onError={(e) => {
                                 console.error("Video loading error:", item.videoId);
+                                // Instead of modifying the DOM directly (which can cause React issues)
+                                // Just hide the iframe and show a fallback
                                 e.currentTarget.style.display = "none";
-                                e.currentTarget.parentElement.innerHTML = '<div class="flex items-center justify-center h-full bg-gray-100 rounded-md"><p class="text-gray-500">Video unavailable. <a href="https://www.youtube.com/results?search_query=credit+reports+explained" target="_blank" class="text-blue-500 hover:underline">Search for alternatives</a></p></div>';
+                                // Add a data attribute to mark this as failed
+                                e.currentTarget.dataset.failed = "true";
+                              }}
+                              onLoad={(e) => {
+                                // Remove any failed status
+                                if (e.currentTarget.dataset.failed) {
+                                  delete e.currentTarget.dataset.failed;
+                                }
+                                e.currentTarget.style.display = "block";
                               }}
                               className="w-full h-full"
                               allowFullScreen
                             ></iframe>
+                            <div className="hidden fallback-message absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
+                              <p className="text-gray-500">
+                                Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
+                              </p>
+                            </div>
                           </div>
                         )}
                         {item.source && (

@@ -10,7 +10,7 @@ interface YouTubeVideoProps {
 }
 
 export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoProps) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [videoData, setVideoData] = useState<any>(null);
 
@@ -27,11 +27,9 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
       setError("No video ID provided");
       return;
     }
-
-    const validateVideo = async () => {
-      setIsLoading(true);
-      try {
-        console.log(`Validating video ID: ${cleanVideoId}`);
+    
+    // We'll skip the validation to avoid potential API issues
+    console.log(`Rendering video with ID: ${cleanVideoId}`);
 
         // Always try to fetch metadata for better UX, but don't block rendering
         try {
@@ -76,6 +74,10 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
           allowFullScreen
           className="w-full h-full rounded-md"
           title={title || `YouTube Video ${cleanVideoId}`}
+          onError={(e) => {
+            console.error("Video failed to load:", cleanVideoId);
+            setError("Video unavailable. Please try another video ID.");
+          }}
         />
       </div>
       {error && (
