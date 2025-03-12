@@ -51,7 +51,7 @@ const CREDIT_TOPICS = [
       {
         title: "Credit Score Factors",
         content: "Your credit score is influenced by payment history (35%), credit utilization (30%), length of credit history (15%), credit mix (10%), and new credit (10%).",
-        videoId: "q3OWJ67oR1k",
+        videoId: "Vn9ounQUdZY",
         source: "https://www.myfico.com/credit-education/whats-in-your-credit-score"
       },
       {
@@ -70,7 +70,7 @@ const CREDIT_TOPICS = [
       {
         title: "Secured Credit Cards",
         content: "A secured card requires a deposit and is an excellent way to start building credit with minimal risk.",
-        videoId: "B4mC9NnP5bY",
+        videoId: "4Htc8ema_y4",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/improving-credit/building-credit/"
       },
       {
@@ -82,7 +82,7 @@ const CREDIT_TOPICS = [
       {
         title: "Credit-Builder Loans",
         content: "These loans are specifically designed to help build credit by reporting payments to credit bureaus.",
-        videoId: "rT2DvQzsK0Y",
+        videoId: "Vhh_GeBPOhs",
         source: "https://www.nerdwallet.com/article/loans/personal-loans/credit-builder-loans"
       }
     ]
