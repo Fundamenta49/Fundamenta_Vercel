@@ -23,7 +23,7 @@ interface AppSuggestion {
 }
 
 interface ChatInterfaceProps {
-  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking";
+  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking" | "career-resume";
 }
 
 const APP_ROUTES = {
@@ -36,6 +36,12 @@ const APP_ROUTES = {
     assessment: { path: "/career?tab=assessment", text: "Career Assessment" },
     interview: { path: "/career?tab=interview", text: "Interview Practice" },
     resume: { path: "/career?tab=learning", text: "Resume Building" },
+  },
+  "career-resume": {
+    assessment: { path: "/career?tab=assessment", text: "Career Assessment" },
+    interview: { path: "/career?tab=interview", text: "Interview Practice" },
+    jobs: { path: "/career?tab=search", text: "Job Search" },
+    salary: { path: "/career?tab=salary", text: "Salary Insights" }
   },
   finance: {
     budget: { path: "/finance?tab=budget", text: "Budget Calculator" },
@@ -111,7 +117,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
         learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
         fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?",
-        cooking: "Hi! 👩‍🍳 I'm your cooking assistant. I'm here to help you develop your culinary skills and confidence in the kitchen. What would you like to cook today?"
+        cooking: "Hi! 👩‍🍳 I'm your cooking assistant. I'm here to help you develop your culinary skills and confidence in the kitchen. What would you like to cook today?",
+        "career-resume": "👋 Hi! I'm your Career & Resume AI Coach. I can help with:\n\n• Career path guidance\n• Resume optimization\n• Job search strategy\n• Interview preparation\n\nWhat would you like to focus on?"
       };
 
       setMessages([{ role: "assistant", content: greetings[category], category }]);
@@ -260,6 +267,12 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           interview: ['interview', 'practice', 'question', 'answer'],
           resume: ['resume', 'cv', 'application', 'job'],
         },
+        "career-resume": {
+          assessment: ['test', 'evaluate', 'assessment', 'career path'],
+          interview: ['interview', 'practice', 'question', 'answer'],
+          jobs: ['job', 'search', 'employment', 'opportunity'],
+          salary: ['salary', 'compensation', 'pay', 'income']
+        },
         finance: {
           budget: ['budget', 'spending', 'track', 'expenses'],
           planning: ['plan', 'future', 'goals', 'strategy'],
@@ -311,7 +324,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       wellness: "Perfect! Now that you know how I can support your wellness journey, what would you like to focus on?",
       learning: "Wonderful! I'm ready to help you learn. What skills would you like to develop?",
       fitness: "Awesome! Now that you know how I can help with your fitness goals, what would you like to work on first?",
-      cooking: "Great! Now that you know how I can help in the kitchen, what would you like to learn about?"
+      cooking: "Great! Now that you know how I can help in the kitchen, what would you like to learn about?",
+      "career-resume": "Great!  Now that we've covered the basics, what specific career or resume topic would you like assistance with?"
     };
 
     setMessages([{ role: "assistant", content: greetings[category], category }]);

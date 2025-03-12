@@ -17,7 +17,6 @@ import SalaryInsights from "@/components/salary-insights";
 import EmploymentRights from "@/components/employment-rights";
 import RiasecTest from "@/components/riasec-test";
 import EmotionalResilienceTracker from "@/components/emotional-resilience-tracker";
-import ResumeBuilder from "@/components/resume-builder";
 import { useState } from "react";
 import { GraduationCap, Search, ExternalLink } from "lucide-react";
 
@@ -116,10 +115,9 @@ export default function Career() {
         <div className="tabs-container">
           <TabsList className="mb-4">
             <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
-            <TabsTrigger value="resume">Resume Builder</TabsTrigger>
+            <TabsTrigger value="coach">Career & Resume AI Coach</TabsTrigger>
             <TabsTrigger value="learning">Learning Paths</TabsTrigger>
             <TabsTrigger value="resilience">EQ & Resilience</TabsTrigger>
-            <TabsTrigger value="chat">Career AI Coach</TabsTrigger>
             <TabsTrigger value="search">Job Search</TabsTrigger>
             <TabsTrigger value="salary">Salary Insights</TabsTrigger>
             <TabsTrigger value="interview">Interview Practice</TabsTrigger>
@@ -131,8 +129,18 @@ export default function Career() {
           <RiasecTest />
         </TabsContent>
 
-        <TabsContent value="resume">
-          <ResumeBuilder />
+        <TabsContent value="coach">
+          <Card>
+            <CardHeader>
+              <CardTitle>Career & Resume AI Coach</CardTitle>
+              <CardDescription>
+                Get professional guidance for your career journey and resume optimization
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChatInterface category="career-resume" />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="learning">
@@ -194,20 +202,6 @@ export default function Career() {
 
         <TabsContent value="resilience">
           <EmotionalResilienceTracker />
-        </TabsContent>
-
-        <TabsContent value="chat">
-          <Card>
-            <CardHeader>
-              <CardTitle>Career AI Coach</CardTitle>
-              <CardDescription>
-                Get professional guidance for your career journey
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChatInterface category="career" />
-            </CardContent>
-          </Card>
         </TabsContent>
 
         <TabsContent value="search">
