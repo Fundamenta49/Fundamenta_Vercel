@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "./ui/alert";
-import { AlertTriangle } from "lucide-react";
 import { Button } from "./ui/button";
+import { AlertTriangle } from "lucide-react";
 
 interface YouTubeVideoProps {
   videoId: string;

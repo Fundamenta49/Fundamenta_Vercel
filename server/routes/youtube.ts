@@ -90,6 +90,7 @@ router.get('/validate', async (req, res) => {
 
   try {
     const result = await validateYouTubeVideo(videoId);
+    console.log("YouTube validation response:", result);
     res.json(result);
   } catch (error) {
     console.error('YouTube validation error:', error);
