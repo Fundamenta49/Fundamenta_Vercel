@@ -348,6 +348,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
                 Thinking...
               </div>
             )}
+            )}
           </div>
         </ScrollArea>
       </div>

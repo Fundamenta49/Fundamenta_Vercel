@@ -63,27 +63,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       try {
         // Create a fresh buffer from the file
-        const dataBuffer = new Uint8Array(req.file.buffer);
+        const dataBuffer = Buffer.from(req.file.buffer);
         console.log("Test endpoint: Buffer created successfully, length:", dataBuffer.length);
 
-        const pdfDoc = await pdfjsLib.getDocument({data: dataBuffer}).promise;
-        let text = '';
-        for (let i = 1; i <= pdfDoc.numPages; i++) {
-          const page = await pdfDoc.getPage(i);
-          const textContent = await page.getTextContent();
-          text += textContent.items
+        const data = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
+        let fullText = '';
+        
+        for (let i = 1; i <= data.numPages; i++) {
+          const page = await data.getPage(i);
+          const content = await page.getTextContent();
+          const pageText = content.items
             .map((item: any) => ('str' in item ? item.str : ''))
             .join(' ');
+          fullText += pageText + '\n';
         }
-        console.log("Test endpoint: PDF parsed successfully, text length:", text.length);
-        console.log("Test endpoint: First 100 characters:", text.substring(0, 100));
+        
+        console.log("Test endpoint: PDF parsed successfully, text length:", fullText.length);
+        console.log("Test endpoint: First 100 characters:", fullText.substring(0, 100));
 
         res.json({
           success: true,
-          textLength: text.length,
-          preview: text.substring(0, 100),
-          pageCount: pdfDoc.numPages,
-          info: {} //pdfjs-dist doesn't provide the same info
+          textLength: fullText.length,
+          preview: fullText.substring(0, 100),
+          pageCount: data.numPages,
+          info: await data.getMetadata()
         });
 
       } catch (pdfError) {
@@ -131,14 +134,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Buffer created successfully, length:", dataBuffer.length);
 
           try {
-            const pdfDoc = await pdfjsLib.getDocument({data: dataBuffer}).promise;
+            const pdfDoc = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
             let text = '';
             for (let i = 1; i <= pdfDoc.numPages; i++) {
               const page = await pdfDoc.getPage(i);
-              const textContent = await page.getTextContent();
-              text += textContent.items
+              const content = await page.getTextContent();
+              const pageText = content.items
                 .map((item: any) => ('str' in item ? item.str : ''))
                 .join(' ');
+              text += pageText + '\n';
             }
             extractedText = text;
             console.log("PDF text extracted successfully, length:", extractedText.length);
