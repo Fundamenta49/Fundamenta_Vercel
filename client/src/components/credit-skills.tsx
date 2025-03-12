@@ -211,19 +211,19 @@ const CREDIT_TOPICS = [
       {
         title: "Secured Credit Cards",
         content: "A secured card requires a deposit and is an excellent way to start building credit with minimal risk.",
-        videoId: "4Htc8ema_y4",
+        videoId: "EOHezlcnfF0",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/improving-credit/building-credit/"
       },
       {
         title: "Authorized User",
         content: "Being added as an authorized user on someone's credit card can help build your credit history.",
-        videoId: "XGvHPVUfZ_Y",
+        videoId: "4Htc8ema_y4",
         source: "https://www.experian.com/blogs/ask-experian/credit-education/building-credit/authorized-user/"
       },
       {
         title: "Credit-Builder Loans",
         content: "These loans are specifically designed to help build credit by reporting payments to credit bureaus.",
-        videoId: "Vhh_GeBPOhs",
+        videoId: "rKLnWyEJ8vM",
         source: "https://www.nerdwallet.com/article/loans/personal-loans/credit-builder-loans"
       }
     ]
