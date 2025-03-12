@@ -155,7 +155,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     log(`Routes registered (${Date.now() - startTime}ms)`);
 
     // Start the server first using a higher port range that's less likely to be in use
-    let port = 8000;
+    let port = 9000;
     let attempts = 0;
     const maxAttempts = 5;
     
