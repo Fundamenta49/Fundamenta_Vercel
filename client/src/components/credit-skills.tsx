@@ -228,12 +228,26 @@ export default function CreditSkills() {
                     <AccordionContent>
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
-                        {item.videoId ? (
-                          <YouTubeVideo 
-                            videoId={item.videoId.startsWith('http') ? 
-                              item.videoId.split('v=')[1]?.split('&')[0] || '' : 
-                              item.videoId} 
-                          />
+                        {item.videoId && validatedVideos[item.videoId] !== false ? (
+                          <>
+                            <YouTubeVideo 
+                              videoId={item.videoId.startsWith('http') ? 
+                                item.videoId.split('v=')[1]?.split('&')[0] || item.videoId : 
+                                item.videoId}
+                            />
+                            {item.source && (
+                              <div className="mt-2 text-xs text-muted-foreground">
+                                <a 
+                                  href={item.source} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
+                                >
+                                  Source <ExternalLink className="h-3 w-3" />
+                                </a>
+                              </div>
+                            )}
+                          </>
                         ) : (
                           <Alert className="my-2 bg-amber-50 border-amber-200">
                             <AlertTriangle className="h-4 w-4 text-amber-500" />
@@ -279,12 +293,26 @@ export default function CreditSkills() {
                   <CardContent>
                     <p className="mb-4">{result.content}</p>
                     <div className="space-y-4">
-                      {result.videoId ? (
-                        <YouTubeVideo 
-                          videoId={result.videoId.startsWith('http') ? 
-                            result.videoId.split('v=')[1]?.split('&')[0] || '' : 
-                            result.videoId} 
-                        />
+                      {result.videoId && validatedVideos[result.videoId] !== false ? (
+                        <>
+                          <YouTubeVideo 
+                            videoId={result.videoId.startsWith('http') ? 
+                              result.videoId.split('v=')[1]?.split('&')[0] || result.videoId : 
+                              result.videoId} 
+                          />
+                          {result.source && (
+                            <div className="mt-2 text-xs text-muted-foreground">
+                              <a 
+                                href={result.source} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
+                              >
+                                Source <ExternalLink className="h-3 w-3" />
+                              </a>
+                            </div>
+                          )}
+                        </>
                       ) : (
                         <Alert className="my-2 bg-amber-50 border-amber-200">
                           <AlertTriangle className="h-4 w-4 text-amber-500" />
