@@ -1,6 +1,6 @@
 
-import { Router } from "express";
-import axios from "axios";
+import { Router } from 'express';
+import axios from 'axios';
 
 const router = Router();
 
@@ -13,6 +13,7 @@ async function validateYouTubeVideo(videoId: string) {
       return { 
         isValid: true,
         error: false,
+        id: videoId,
         title: "Sample Video Title",
         thumbnail: "https://via.placeholder.com/320x180"
       };

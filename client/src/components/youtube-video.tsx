@@ -27,10 +27,17 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
       setIsLoading(true);
       try {
         console.log(`Validating video ID: ${videoId}`);
-        const response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
+        // Try the new endpoint first
+        let response = await fetch(`/api/youtube/validate?videoId=${videoId}`);
         
         if (!response.ok) {
-          throw new Error(`HTTP error: ${response.status}`);
+          // Fall back to legacy endpoint if the new one fails
+          console.log("Falling back to legacy endpoint");
+          response = await fetch(`/api/youtube-search?videoId=${videoId}`);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+          }
         }
         
         const data = await response.json();
