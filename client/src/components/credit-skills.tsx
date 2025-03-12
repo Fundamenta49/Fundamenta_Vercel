@@ -101,7 +101,7 @@ export default function CreditSkills() {
       </AccordionItem>
     ));
   };
-                    Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>
+                    Video unavailable. <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item.title + " credit guide")}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Search for alternatives</a>;
                   </p>
                 </div>
               </div>
