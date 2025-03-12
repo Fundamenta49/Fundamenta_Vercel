@@ -1,80 +1,36 @@
 import { useState, useEffect } from "react";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { DollarSign, CreditCard, AlertTriangle, Wallet, LineChart, Search, ExternalLink } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-// Component to handle YouTube video validation and display
-const YouTubeVideo = ({ videoId, title }: { videoId: string; title: string }) => {
-  const [isValid, setIsValid] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const validateVideo = async () => {
-      try {
-        const response = await fetch(`/api/youtube-search?videoId=${videoId}`);
-        const data = await response.json();
-        setIsValid(data.isValid);
-      } catch (error) {
-        console.error('Error validating video:', error);
-        setIsValid(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    validateVideo();
-  }, [videoId]);
-
-  if (isLoading) {
-    return (
-      <div className="w-full aspect-video bg-slate-100 animate-pulse rounded-lg flex items-center justify-center">
-        <span className="text-slate-500">Loading video...</span>
-      </div>
-    );
-  }
-
-  if (!isValid) {
-    return (
-      <Alert className="bg-yellow-50 border-yellow-200">
-        <AlertTriangle className="h-4 w-4 text-yellow-500" />
-        <AlertDescription className="text-yellow-800">
-          This video is currently unavailable. Please check the source link below for more information.
-        </AlertDescription>
-      </Alert>
-    );
-  }
-
-  return (
-    <div className="relative overflow-hidden rounded-lg">
-      <iframe
-        width="560"
-        height="315"
-        src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
-        title={title}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        className="w-full aspect-video"
-      />
-    </div>
-  );
-};
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { YouTubeVideo } from "@/components/youtube-video";
+import {
+  CreditCard,
+  Search,
+  ExternalLink,
+  Wallet,
+  LineChart,
+  DollarSign,
+  AlertTriangle,
+} from "lucide-react";
 
 // Updated with verified working video IDs and educational content
 const CREDIT_TOPICS = [
@@ -184,6 +140,29 @@ export default function CreditSkills() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [validatedVideos, setValidatedVideos] = useState({});
+
+  useEffect(() => {
+    const validateVideos = async () => {
+      const videoIds = CREDIT_TOPICS.flatMap(topic => topic.items.map(item => item.videoId)).filter(id => id);
+      const validated = {};
+      const promises = videoIds.map(async (videoId) => {
+        try {
+          const response = await fetch(`/api/youtube-search?videoId=${videoId}`);
+          const data = await response.json();
+          validated[videoId] = data.isValid;
+        } catch (error) {
+          console.error('Error validating video:', error);
+          validated[videoId] = false;
+        }
+      });
+      await Promise.all(promises);
+      setValidatedVideos(validated);
+    };
+    validateVideos();
+
+  }, []);
+
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -246,7 +225,15 @@ export default function CreditSkills() {
                     <AccordionContent>
                       <div className="space-y-4">
                         <p className="text-muted-foreground">{item.content}</p>
-                        <YouTubeVideo videoId={item.videoId} title={item.title} />
+                        {item.videoId && validatedVideos[item.videoId] ? (
+                          <YouTubeVideo videoId={item.videoId} title={item.title} />
+                        ) : (
+                          <Alert className="my-2 bg-amber-50 border-amber-200">
+                            <AlertDescription className="text-amber-800">
+                              Video resource currently unavailable. Please check out the source link below.
+                            </AlertDescription>
+                          </Alert>
+                        )}
                         <Button
                           variant="outline"
                           className="w-full mt-2"
@@ -284,7 +271,15 @@ export default function CreditSkills() {
                   <CardContent>
                     <p className="mb-4">{result.content}</p>
                     <div className="space-y-4">
-                      <YouTubeVideo videoId={result.videoId} title={result.title} />
+                      {result.videoId && validatedVideos[result.videoId] ? (
+                        <YouTubeVideo videoId={result.videoId} title={result.title} />
+                      ) : (
+                        <Alert className="my-2 bg-amber-50 border-amber-200">
+                          <AlertDescription className="text-amber-800">
+                            Video resource currently unavailable. Please check out the source link below.
+                          </AlertDescription>
+                        </Alert>
+                      )}
                       <Button
                         variant="outline"
                         className="w-full"

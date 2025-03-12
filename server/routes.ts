@@ -1033,6 +1033,18 @@ Remember to suggest relevant features in the app that could help the user.`;
 
       console.log(`Validating YouTube video ID: ${videoId}`);
 
+      // Check if we have YouTube API key configured
+      if (!process.env.YOUTUBE_API_KEY) {
+        console.log("YouTube API key not configured, returning mock success");
+        // Return a mock response if no API key is available (for development)
+        return res.json({
+          id: videoId,
+          title: "Video title",
+          thumbnail: "https://via.placeholder.com/320x180",
+          error: false
+        });
+      }
+
       const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
       console.log(`Making API request to: ${apiUrl}`);
 
