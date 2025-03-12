@@ -155,17 +155,44 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     log(`Routes registered (${Date.now() - startTime}ms)`);
 
     // Start the server first
-    const port = 5000;
-    await new Promise<void>((resolve) => {
-      server.listen({
-        port,
-        host: "0.0.0.0",
-        reusePort: true,
-      }, () => {
-        log(`API server started on port ${port} (${Date.now() - startTime}ms)`);
-        resolve();
-      });
-    });
+    let port = 5000;
+    let attempts = 0;
+    
+    // Try to start the server, falling back to other ports if needed
+    while (attempts < 3) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const serverInstance = server.listen({
+            port,
+            host: "0.0.0.0",
+            reusePort: true,
+          }, () => {
+            log(`API server started on port ${port} (${Date.now() - startTime}ms)`);
+            resolve();
+          });
+          
+          serverInstance.on('error', (err: any) => {
+            if (err.code === 'EADDRINUSE') {
+              log(`Port ${port} is in use, trying port ${port + 1}`);
+              port++;
+              attempts++;
+              serverInstance.close();
+              reject(err);
+            } else {
+              reject(err);
+            }
+          });
+        });
+        
+        // If we get here, we successfully started the server
+        break;
+      } catch (err) {
+        if (attempts >= 3) {
+          throw err;
+        }
+        // Otherwise continue the loop to try the next port
+      }
+    }
 
     // Setup frontend after server is running
     if (app.get("env") === "development") {
