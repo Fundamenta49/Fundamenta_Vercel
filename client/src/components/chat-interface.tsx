@@ -8,7 +8,6 @@ import { apiRequest } from "@/lib/queryClient";
 import { Loader2, ArrowRight, Mic } from "lucide-react";
 import ChatOnboarding from "./chat-onboarding";
 import { Link } from "wouter";
-import { Bot } from 'lucide-react'; // Added import for Bot icon
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -24,10 +23,7 @@ interface AppSuggestion {
 }
 
 interface ChatInterfaceProps {
-  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking" | "career-resume";
-  showResume?: boolean;
-  onUpdateResume?: (resume: any) => void;
-  currentResume?: any;
+  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking";
 }
 
 const APP_ROUTES = {
@@ -40,12 +36,6 @@ const APP_ROUTES = {
     assessment: { path: "/career?tab=assessment", text: "Career Assessment" },
     interview: { path: "/career?tab=interview", text: "Interview Practice" },
     resume: { path: "/career?tab=learning", text: "Resume Building" },
-  },
-  "career-resume": {
-    assessment: { path: "/career?tab=assessment", text: "Career Assessment" },
-    interview: { path: "/career?tab=interview", text: "Interview Practice" },
-    jobs: { path: "/career?tab=search", text: "Job Search" },
-    salary: { path: "/career?tab=salary", text: "Salary Insights" }
   },
   finance: {
     budget: { path: "/finance?tab=budget", text: "Budget Calculator" },
@@ -101,12 +91,7 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
   );
 };
 
-export default function ChatInterface({
-  category,
-  showResume = false,
-  onUpdateResume,
-  currentResume
-}: ChatInterfaceProps) {
+export default function ChatInterface({ category }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(true);
@@ -126,8 +111,7 @@ export default function ChatInterface({
         wellness: "Hi there! I'm your wellness coach. I'm here to provide personalized support for your well-being journey. How are you feeling today?",
         learning: "Hello! I'm your learning coach. I'll help you develop new skills and knowledge in a way that works best for you. What would you like to learn?",
         fitness: "Welcome to Active You! 💪 I'm your AI Fitness Coach, ready to help you achieve your fitness goals. What would you like to work on today?",
-        cooking: "Hi! 👩‍🍳 I'm your cooking assistant. I'm here to help you develop your culinary skills and confidence in the kitchen. What would you like to cook today?",
-        "career-resume": "👋 Hi! I'm your Career & Resume AI Coach. I can help with:\n\n• Career path guidance\n• Resume optimization\n• Job search strategy\n• Interview preparation\n\nWhat would you like to focus on?"
+        cooking: "Hi! 👩‍🍳 I'm your cooking assistant. I'm here to help you develop your culinary skills and confidence in the kitchen. What would you like to cook today?"
       };
 
       setMessages([{ role: "assistant", content: greetings[category], category }]);
@@ -276,12 +260,6 @@ export default function ChatInterface({
           interview: ['interview', 'practice', 'question', 'answer'],
           resume: ['resume', 'cv', 'application', 'job'],
         },
-        "career-resume": {
-          assessment: ['test', 'evaluate', 'assessment', 'career path'],
-          interview: ['interview', 'practice', 'question', 'answer'],
-          jobs: ['job', 'search', 'employment', 'opportunity'],
-          salary: ['salary', 'compensation', 'pay', 'income']
-        },
         finance: {
           budget: ['budget', 'spending', 'track', 'expenses'],
           planning: ['plan', 'future', 'goals', 'strategy'],
@@ -333,8 +311,7 @@ export default function ChatInterface({
       wellness: "Perfect! Now that you know how I can support your wellness journey, what would you like to focus on?",
       learning: "Wonderful! I'm ready to help you learn. What skills would you like to develop?",
       fitness: "Awesome! Now that you know how I can help with your fitness goals, what would you like to work on first?",
-      cooking: "Great! Now that you know how I can help in the kitchen, what would you like to learn about?",
-      "career-resume": "Great!  Now that we've covered the basics, what specific career or resume topic would you like assistance with?"
+      cooking: "Great! Now that you know how I can help in the kitchen, what would you like to learn about?"
     };
 
     setMessages([{ role: "assistant", content: greetings[category], category }]);
@@ -345,110 +322,87 @@ export default function ChatInterface({
   }
 
   return (
-    <div className="flex flex-col h-full">
-      {showOnboarding ? (
-        <ChatOnboarding category={category} onComplete={handleOnboardingComplete} />
-      ) : (
-        <>
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea
-              ref={scrollRef}
-              className="h-full"
-            >
-              <div className="space-y-4 p-4">
-                {messages.map((message, i) => (
-                  <div
-                    key={i}
-                    className={`flex ${message.role === "assistant" ? "justify-start" : "justify-end"}`}
-                  >
-                    <div className="inline-flex items-start max-w-[80%] break-words p-3 rounded-lg">
-                      {message.role === 'assistant' && (
-                        <div className="flex-shrink-0 mr-2">
-                          <Bot className="w-6 h-6 text-primary" />
-                        </div>
-                      )}
-                      <div
-                        className={`inline-block text-left p-3 rounded-lg ${
-                          message.role === 'assistant'
-                            ? 'bg-[#E8F1FE] text-[#1f2937]'
-                            : 'bg-primary text-primary-foreground ml-auto'
-                        }`}
-                        style={{
-                          maxWidth: "80%",
-                          display: "inline-block",
-                          wordBreak: "break-word",
-                          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                          fontSize: '15px',
-                          lineHeight: '1.4',
-                          whiteSpace: 'pre-line'
-                        }}
-                      >
-                        {message.content}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {chatMutation.isPending && (
-                  <div className="flex items-center gap-2 text-gray-500 pl-4">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Thinking...
-                  </div>
-                )}
-              </div>
-            </ScrollArea>
-          </div>
-
-          <div className="flex-none border-t bg-white p-4">
-            <form
-              onSubmit={handleSubmit}
-              className="flex gap-2"
-            >
-              <Textarea
-                value={input}
-                onChange={(e) => {
-                  setInput(e.target.value);
-                  e.target.style.height = 'auto';
-                  e.target.style.height = `${e.target.scrollHeight}px`;
-                }}
-                placeholder="Type your message..."
-                className="flex-1 resize-none w-full overflow-hidden p-2 min-h-[44px]"
-                disabled={chatMutation.isPending}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
+    <div className="flex flex-col h-[calc(100vh-16rem)]">
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea
+          ref={scrollRef}
+          className="h-full"
+        >
+          <div className="space-y-6 p-4">
+            {messages.map((message, i) => (
+              <div
+                key={i}
+                className="mb-6 last:mb-0"
+              >
+                <div className="rounded-lg px-4">
+                  {message.role === "assistant"
+                    ? formatAssistantMessage(message.content, message.suggestions)
+                    : <p className="text-gray-700">{message.content}</p>
                   }
-                }}
-              />
-              <div className="flex flex-col gap-2 self-end">
-                <Button
-                  type="button"
-                  variant={isRecording ? "outline" : "secondary"}
-                  size="icon"
-                  className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
-                  onClick={toggleRecording}
-                  disabled={chatMutation.isPending}
-                >
-                  <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={chatMutation.isPending || !input.trim()}
-                >
-                  {chatMutation.isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    'Send'
-                  )}
-                </Button>
+                </div>
               </div>
-            </form>
+            ))}
+            {chatMutation.isPending && (
+              <div className="flex items-center gap-2 text-gray-500 pl-4">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Thinking...
+              </div>
+            )}
           </div>
-        </>
-      )}
+        </ScrollArea>
+      </div>
+
+      <div className="flex-none border-t bg-white">
+        <form
+          onSubmit={handleSubmit}
+          className="flex gap-2 p-4"
+        >
+          <Textarea
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              // Auto-adjust height
+              e.target.style.height = 'auto';
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
+            placeholder="Type your message..."
+            className="flex-1 resize-none w-full overflow-hidden p-2"
+            style={{ minHeight: '44px' }}
+            disabled={chatMutation.isPending}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+          />
+          <div className="flex flex-col gap-2 self-end">
+            <Button
+              type="button"
+              variant={isRecording ? "outline" : "secondary"}
+              size="icon"
+              className={`h-10 w-10 transition-colors ${isRecording ? 'bg-primary/20' : ''}`}
+              onClick={toggleRecording}
+              disabled={chatMutation.isPending}
+            >
+              <Mic className={`h-4 w-4 ${isRecording ? 'text-primary animate-pulse' : ''}`} />
+            </Button>
+            <Button
+              type="submit"
+              disabled={chatMutation.isPending || !input.trim()}
+            >
+              {chatMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                'Send'
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

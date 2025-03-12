@@ -17,8 +17,9 @@ import SalaryInsights from "@/components/salary-insights";
 import EmploymentRights from "@/components/employment-rights";
 import RiasecTest from "@/components/riasec-test";
 import EmotionalResilienceTracker from "@/components/emotional-resilience-tracker";
+import ResumeBuilder from "@/components/resume-builder";
 import { useState } from "react";
-import { GraduationCap, Search, ExternalLink, FileText } from "lucide-react";
+import { GraduationCap, Search, ExternalLink } from "lucide-react";
 
 // List of curated learning platforms with their URLs
 const LEARNING_RESOURCES = [
@@ -61,8 +62,6 @@ export default function Career() {
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentTab, setCurrentTab] = useState("assessment");
-  const [showResume, setShowResume] = useState(false);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -113,13 +112,14 @@ export default function Career() {
         </DialogContent>
       </Dialog>
 
-      <Tabs defaultValue="assessment" onValueChange={setCurrentTab}>
+      <Tabs defaultValue="assessment">
         <div className="tabs-container">
-          <TabsList className="mb-4 flex flex-wrap gap-2">
+          <TabsList className="mb-4">
             <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
-            <TabsTrigger value="coach">Career & Resume AI Coach</TabsTrigger>
+            <TabsTrigger value="resume">Resume Builder</TabsTrigger>
             <TabsTrigger value="learning">Learning Paths</TabsTrigger>
             <TabsTrigger value="resilience">EQ & Resilience</TabsTrigger>
+            <TabsTrigger value="chat">Career AI Coach</TabsTrigger>
             <TabsTrigger value="search">Job Search</TabsTrigger>
             <TabsTrigger value="salary">Salary Insights</TabsTrigger>
             <TabsTrigger value="interview">Interview Practice</TabsTrigger>
@@ -131,38 +131,8 @@ export default function Career() {
           <RiasecTest />
         </TabsContent>
 
-        <TabsContent value="coach">
-          <Card className="w-full">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Career & Resume AI Coach</CardTitle>
-                  <CardDescription>
-                    Get professional guidance for your career journey and resume optimization
-                  </CardDescription>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowResume(!showResume)}
-                  className="flex items-center gap-2"
-                >
-                  <FileText className="h-4 w-4" />
-                  {showResume ? 'Show Chat' : 'Show Resume'}
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="w-full h-[calc(100vh-16rem)] sm:h-[600px]">
-                <ChatInterface 
-                  category="career-resume"
-                  showResume={showResume}
-                  onUpdateResume={() => {}}
-                  currentResume={null}
-                />
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="resume">
+          <ResumeBuilder />
         </TabsContent>
 
         <TabsContent value="learning">
@@ -224,6 +194,20 @@ export default function Career() {
 
         <TabsContent value="resilience">
           <EmotionalResilienceTracker />
+        </TabsContent>
+
+        <TabsContent value="chat">
+          <Card>
+            <CardHeader>
+              <CardTitle>Career AI Coach</CardTitle>
+              <CardDescription>
+                Get professional guidance for your career journey
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChatInterface category="career" />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="search">

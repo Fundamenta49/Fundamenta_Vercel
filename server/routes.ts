@@ -34,119 +34,6 @@ const upload = multer({
   }
 });
 
-async function analyzeInterviewAnswer(answer: string, question: string, industry: string) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: "You are an expert interviewer providing feedback on interview responses."
-      },
-      {
-        role: "user",
-        content: `Question: ${question}\nAnswer: ${answer}\nIndustry: ${industry}\n\nProvide constructive feedback.`
-      }
-    ]
-  });
-  return response.choices[0].message?.content || "Unable to analyze response";
-}
-
-async function generateJobQuestions(jobField: string) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: "Generate relevant interview questions for the specified job field."
-      },
-      {
-        role: "user",
-        content: `Generate 5 common interview questions for ${jobField} positions.`
-      }
-    ]
-  });
-  return response.choices[0].message?.content?.split('\n') || [];
-}
-
-async function generateCoverLetter(data: any) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: "Generate a professional cover letter based on the provided information."
-      },
-      {
-        role: "user",
-        content: JSON.stringify(data)
-      }
-    ]
-  });
-  return response.choices[0].message?.content || "";
-}
-
-async function assessCareer(answers: Record<string, string>) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: "Analyze career assessment answers and provide career path recommendations."
-      },
-      {
-        role: "user",
-        content: JSON.stringify(answers)
-      }
-    ]
-  });
-  return JSON.parse(response.choices[0].message?.content || "{}");
-}
-
-async function getSalaryInsights(jobTitle: string, location: string) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: "Provide salary insights and ranges for specific job titles and locations."
-      },
-      {
-        role: "user",
-        content: `Provide salary insights for ${jobTitle} in ${location}`
-      }
-    ]
-  });
-  return {
-    insights: response.choices[0].message?.content || "Unable to get salary insights",
-    ranges: {
-      entry: "Entry level estimation unavailable",
-      mid: "Mid level estimation unavailable",
-      senior: "Senior level estimation unavailable"
-    }
-  };
-}
-
-// Fix the YouTube validation response check
-const isValidYoutubeVideo = async (videoId: string): Promise<boolean> => {
-  try {
-    const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
-      params: {
-        part: 'snippet,status',
-        id: videoId,
-        key: process.env.YOUTUBE_API_KEY
-      }
-    });
-
-    return response.data.items &&
-           response.data.items.length > 0 &&
-           response.data.items[0].status.privacyStatus === 'public';
-  } catch (error) {
-    console.error('Error validating YouTube video:', error);
-    return false;
-  }
-};
-
-
 export async function registerRoutes(app: Express): Promise<Server> {
   // Test endpoint for PDF parsing
   app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
@@ -434,49 +321,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = messageSchema.parse(req.body);
 
       let systemMessage = `You are a friendly and supportive AI assistant.
-
+      
 Format your responses following these strict rules:
-
+      
 - Use only plain text - no special formatting characters
 - Never use asterisks (*) or hashtags (#) in your responses
 - Never use markdown syntax
 - Use simple bullet points with a dash (-) for lists
 - Add double line breaks between topics
 - Start new sections with friendly emojis
-- Keep everything in a conversational, friendly tone`;
-
+- Keep everything in a conversational, friendly tone
+      
+Example formatting:
+🌟 Main Topic
+Here's the first point about this topic.
+      
+- First item in a list
+- Second item in a list
+      
+:✨ Next Topic
+Continue with the next section here.
+      
+Remember to suggest relevant features in the app that could help the user.`;
       switch (validatedData.skillArea) {
-        case "career-resume":
-          systemMessage += `As a Career & Resume AI Coach 💼, I provide comprehensive guidance for both career development and resume optimization.
-
-I can help with:
-- Career path exploration and planning
-- Resume writing and optimization
-- Interview preparation
-- Job search strategies
-- Salary negotiations
-- Professional development
-
-When discussing resumes:
-- Provide specific, actionable feedback
-- Suggest impactful bullet points
-- Help highlight key achievements
-- Guide on tailoring for specific roles
-
-For career guidance:
-- Explore career paths based on interests and skills
-- Discuss industry trends and opportunities
-- Provide interview preparation tips
-- Offer salary negotiation strategies
-
-Remember to:
-- Suggest our career assessment tools when relevant
-- Point users to the interview practice section
-- Guide users to job search resources
-- Reference salary insights tools
-
-Use emojis like 🎯 for goals, 💡 for ideas, and ⭐ for achievements.`;
-          break;
         case "cooking":
           systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm! 
 
@@ -1054,7 +921,9 @@ Use emojis like 🎯 for goals, 💡 for ideas, and ⭐ for achievements.`;
           }
         });
 
-        const isValid = await isValidYoutubeVideo(videoId);
+        const isValid = response.data.items &&
+          response.data.items.length > 0 &&
+          response.data.items[0].status.privacyStatus === 'public';
 
         res.json({
           items: isValid ? response.data.items : [],
@@ -1471,7 +1340,7 @@ Use emojis like 🎯 for goals, 💡 for ideas, and ⭐ for achievements.`;
 }
 
 const messageSchema = z.object({
-  skillArea: z.enum(["technical", "soft", "search", "life", "cooking", "career", "emergency", "finance", "wellness", "tour", "learning", "career-resume"]),
+  skillArea: z.enum(["technical", "soft", "search", "life", "cooking", "career", "emergency", "finance", "wellness", "tour", "learning"]),
   userQuery: z.string()
 });
 
