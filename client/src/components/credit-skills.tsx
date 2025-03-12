@@ -1,41 +1,172 @@
-import { useState, useEffect } from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import React, { useState, useEffect } from "react";
+import { Search, AlertTriangle, CreditCard, Wallet, LineChart, DollarSign, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { YouTubeVideo } from "@/components/youtube-video";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  CreditCard,
-  Search,
-  ExternalLink,
-  Wallet,
-  LineChart,
-  DollarSign,
-  AlertTriangle,
-} from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-// Updated with verified working video IDs and educational content
+export default function CreditSkills() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  //Removed unneeded state
+  //const [validatedVideos, setValidatedVideos] = useState({});
+
+  //Removed unneeded useEffect
+  // useEffect(() => {
+  //   const validateVideos = async () => {
+  //     const videoIds = CREDIT_TOPICS.flatMap(topic => topic.items.map(item => item.videoId)).filter(id => id);
+  //     const validated = {};
+  //     const promises = videoIds.map(async (videoId) => {
+  //       try {
+  //         const response = await fetch(`/api/youtube/validate?videoId=${videoId}`); // Updated API endpoint
+  //         const data = await response.json();
+  //         validated[videoId] = data.isValid;
+  //       } catch (error) {
+  //         console.error('Error validating video:', error);
+  //         validated[videoId] = false;
+  //       }
+  //     });
+  //     await Promise.all(promises);
+  //     setValidatedVideos(validated);
+  //   };
+  //   validateVideos();
+  // }, []);
+
+
+  const handleSearch = () => {
+    if (!searchQuery.trim()) return;
+
+    const results = CREDIT_TOPICS.flatMap(topic =>
+      topic.items.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.content.toLowerCase().includes(searchQuery.toLowerCase())
+      ).map(item => ({
+        ...item,
+        topic: topic.title
+      }))
+    );
+
+    setSearchResults(results);
+    setIsDialogOpen(true);
+  };
+
+  return (
+    <div className="space-y-6">
+      <Alert className="bg-blue-50 border-blue-200">
+        <CreditCard className="h-4 w-4 text-blue-500" />
+        <AlertDescription className="text-blue-800">
+          Understanding and managing your credit is crucial for financial health. Search for specific topics or browse our comprehensive guide.
+        </AlertDescription>
+      </Alert>
+
+      <div className="flex gap-4 mb-6">
+        <Input
+          placeholder="Search for credit-related topics..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1"
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+        />
+        <Button onClick={handleSearch}>
+          <Search className="h-4 w-4 mr-2" />
+          Search
+        </Button>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {CREDIT_TOPICS.map((topic) => (
+          <Card key={topic.id} className="hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {topic.id === "basics" && <Wallet className="h-5 w-5 text-blue-500" />}
+                {topic.id === "building" && <LineChart className="h-5 w-5 text-green-500" />}
+                {topic.id === "maintenance" && <DollarSign className="h-5 w-5 text-purple-500" />}
+                {topic.id === "repair" && <AlertTriangle className="h-5 w-5 text-orange-500" />}
+                {topic.title}
+              </CardTitle>
+              <CardDescription>{topic.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                {topic.items.map((item, index) => (
+                  <AccordionItem key={index} value={`${topic.id}-${index}`}>
+                    <AccordionTrigger>{item.title}</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-4">
+                        <p className="text-muted-foreground">{item.content}</p>
+                        {item.videoId && (
+                          <div className="aspect-video w-full">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${item.videoId}`}
+                              title={item.title}
+                              className="w-full h-full"
+                              allowFullScreen
+                            ></iframe>
+                          </div>
+                        )}
+                        {item.source && (
+                          <div className="text-sm text-muted-foreground">
+                            <a
+                              href={item.source}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-primary hover:underline"
+                            >
+                              View Source <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogTitle>Search Results for "{searchQuery}"</DialogTitle>
+          <div className="space-y-6">
+            {searchResults.length > 0 ? (
+              searchResults.map((result, index) => (
+                <Card key={index} className="hover:shadow-sm transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{result.title}</CardTitle>
+                    <CardDescription>{result.topic}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="mb-4 text-muted-foreground">{result.content}</p>
+                    {result.videoId && (
+                      <div className="aspect-video w-full">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${result.videoId}`}
+                          title={result.title}
+                          className="w-full h-full"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="text-center">
+                <p className="text-muted-foreground">No results found for "{searchQuery}"</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 const CREDIT_TOPICS = [
   {
     id: "basics",
@@ -138,206 +269,3 @@ const CREDIT_TOPICS = [
     ]
   }
 ];
-
-export default function CreditSkills() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  //Removed unneeded state
-  //const [validatedVideos, setValidatedVideos] = useState({});
-
-  //Removed unneeded useEffect
-  // useEffect(() => {
-  //   const validateVideos = async () => {
-  //     const videoIds = CREDIT_TOPICS.flatMap(topic => topic.items.map(item => item.videoId)).filter(id => id);
-  //     const validated = {};
-  //     const promises = videoIds.map(async (videoId) => {
-  //       try {
-  //         const response = await fetch(`/api/youtube/validate?videoId=${videoId}`); // Updated API endpoint
-  //         const data = await response.json();
-  //         validated[videoId] = data.isValid;
-  //       } catch (error) {
-  //         console.error('Error validating video:', error);
-  //         validated[videoId] = false;
-  //       }
-  //     });
-  //     await Promise.all(promises);
-  //     setValidatedVideos(validated);
-  //   };
-  //   validateVideos();
-  // }, []);
-
-
-  const handleSearch = () => {
-    if (!searchQuery.trim()) return;
-
-    const results = CREDIT_TOPICS.flatMap(topic =>
-      topic.items.filter(item =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.content.toLowerCase().includes(searchQuery.toLowerCase())
-      ).map(item => ({
-        ...item,
-        topic: topic.title
-      }))
-    );
-
-    setSearchResults(results);
-    setIsDialogOpen(true);
-  };
-
-  return (
-    <div className="space-y-6">
-      <Alert className="bg-blue-50 border-blue-200">
-        <CreditCard className="h-4 w-4 text-blue-500" />
-        <AlertDescription className="text-blue-800">
-          Understanding and managing your credit is crucial for financial health. Search for specific topics or browse our comprehensive guide.
-        </AlertDescription>
-      </Alert>
-
-      <div className="flex gap-4 mb-6">
-        <Input
-          placeholder="Search for credit-related topics..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1"
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-        />
-        <Button onClick={handleSearch}>
-          <Search className="h-4 w-4 mr-2" />
-          Search
-        </Button>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {CREDIT_TOPICS.map((topic) => (
-          <Card key={topic.id} className="hover:shadow-md transition-shadow">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {topic.id === "basics" && <Wallet className="h-5 w-5 text-blue-500" />}
-                {topic.id === "building" && <LineChart className="h-5 w-5 text-green-500" />}
-                {topic.id === "maintenance" && <DollarSign className="h-5 w-5 text-purple-500" />}
-                {topic.id === "repair" && <AlertTriangle className="h-5 w-5 text-orange-500" />}
-                {topic.title}
-              </CardTitle>
-              <CardDescription>{topic.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Accordion type="single" collapsible className="w-full">
-                {topic.items.map((item, index) => (
-                  <AccordionItem key={index} value={`${topic.id}-${index}`}>
-                    <AccordionTrigger>{item.title}</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-4">
-                        <p className="text-muted-foreground">{item.content}</p>
-                        {item.videoId && (
-                          <>
-                            <div className="aspect-video w-full">
-                              <iframe
-                                src={`https://www.youtube.com/embed/${item.videoId}`}
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                className="w-full h-full rounded-md"
-                                title={`${item.title} Video`}
-                              />
-                            </div>
-                            {item.source && (
-                              <div className="mt-2 text-xs text-muted-foreground">
-                                <a
-                                  href={item.source}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
-                                >
-                                  Source <ExternalLink className="h-3 w-3" />
-                                </a>
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                          </>
-                        )}
-                        <Button
-                          variant="outline"
-                          className="w-full mt-2"
-                          onClick={() => window.open(item.source, '_blank')}
-                        >
-                          Learn More
-                          <ExternalLink className="h-4 w-4 ml-2" />
-                        </Button>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Search Results</DialogTitle>
-            <DialogDescription>
-              Found {searchResults.length} matches for "{searchQuery}"
-            </DialogDescription>
-          </DialogHeader>
-          <ScrollArea className="max-h-[80vh]">
-            <div className="space-y-6">
-              {searchResults.map((result, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{result.title}</CardTitle>
-                    <CardDescription>From: {result.topic}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="mb-4">{result.content}</p>
-                    <div className="space-y-4">
-                      {result.videoId ? (
-                        <>
-                          <div className="aspect-video w-full">
-                            <iframe
-                              src={`https://www.youtube.com/embed/${result.videoId}`}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              className="w-full h-full rounded-md"
-                              title={`${result.title} Video`}
-                            />
-                          </div>
-                          {result.source && (
-                            <div className="mt-2 text-sm">
-                              <a
-                                href={result.source}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-blue-500 hover:text-blue-700"
-                              >
-                                Source <ExternalLink className="h-3 w-3" />
-                              </a>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                        </>
-                      )}
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => window.open(result.source, '_blank')}
-                      >
-                        View Source
-                        <ExternalLink className="h-4 w-4 ml-2" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}

@@ -1,3 +1,4 @@
+
 const creditTopics = [
   {
     title: "What is Credit?",
@@ -20,8 +21,8 @@ const creditTopics = [
   {
     title: "Financial Literacy",
     description: "Understanding money management and financial concepts",
-    video: "Rwh9U_IgNQA", 
-    source: "https://www.youtube.com/watch?v=Rwh9U_IgNQA",
+    videoId: "Rwh9U_IgNQA", 
+    source: "https://www.youtube.com/watch?v=Rwh9U_IgNQA"
   },
   // Add more credit topics here as needed...
 ];
