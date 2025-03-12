@@ -41,18 +41,28 @@ export function YouTubeVideo({ videoId, title, className = '' }: YouTubeVideoPro
           }
         }
 
-        const data = await response.json();
+        // Safely parse the response JSON
+        let data;
+        try {
+          data = await response.json();
+        } catch (err) {
+          console.error("Error parsing JSON response:", err);
+          throw new Error("Invalid response format");
+        }
+        
         console.log("YouTube validation response:", data);
 
+        // Set state based on response
         setIsValid(!data.error);
         setVideoData(data);
 
         if (data.error) {
           setError(data.message || "This video is unavailable");
+          setIsValid(false);
         }
       } catch (e) {
         console.error("Error validating YouTube video:", e);
-        setError("Failed to validate video");
+        setError("Failed to validate video: " + (e instanceof Error ? e.message : "Unknown error"));
         setIsValid(false);
       } finally {
         setIsLoading(false);
