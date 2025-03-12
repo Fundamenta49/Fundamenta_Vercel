@@ -1,3 +1,10 @@
+// Placeholder for "@/components/ui/toast" - Replace with actual implementation
+const useToast = () => ({
+  toast: (params: any) => {
+    console.log("Toast message:", params); // Replace with actual toast functionality
+  }
+});
+
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
