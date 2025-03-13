@@ -323,7 +323,7 @@ export default function EmergencyGuide() {
                 />
               </div>
             </div>
-            <Button 
+            <Button
               onClick={handleLocationSubmit}
               className="w-full"
               disabled={!location.city || !location.state}
@@ -430,7 +430,7 @@ export default function EmergencyGuide() {
       <Card className="border-green-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-green-600" />
+            <Shield className="h-5 w-5 text-green-600" />
             National Emergency Resources
           </CardTitle>
           <CardDescription>
