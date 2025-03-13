@@ -68,6 +68,42 @@ interface EmergencyType {
   preparationSteps: string[];
 }
 
+interface EmergencyAlert {
+  id: string;
+  type: string;
+  severity: 'info' | 'warning' | 'critical';
+  title: string;
+  description: string;
+  area: string;
+  timestamp: string;
+}
+
+interface NearbyResource {
+  id: string;
+  name: string;
+  type: 'shelter' | 'hospital' | 'supplies';
+  address: string;
+  distance: string;
+  status: 'open' | 'closed' | 'limited';
+  contact: string;
+}
+
+interface ChecklistItem {
+  id: string;
+  text: string;
+  category: string;
+  completed: boolean;
+  required: boolean;
+}
+
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
+
 const EMERGENCY_TYPES: EmergencyType[] = [
   {
     id: "severe_storm",
@@ -143,22 +179,6 @@ const EMERGENCY_TYPES: EmergencyType[] = [
   }
 ];
 
-interface ChecklistItem {
-  id: string;
-  text: string;
-  category: string;
-  completed: boolean;
-  required: boolean;
-}
-
-interface QuizQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-}
-
 const EMERGENCY_QUIZ_QUESTIONS: Record<string, QuizQuestion[]> = {
   "severe_storm": [
     {
@@ -189,7 +209,6 @@ const EMERGENCY_QUIZ_QUESTIONS: Record<string, QuizQuestion[]> = {
     }
   ]
 };
-
 
 const stateEmergencyLinks = {
   "Alabama": "https://ema.alabama.gov/",
@@ -261,12 +280,22 @@ export default function EmergencyGuide() {
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [alerts, setAlerts] = useState<EmergencyAlert[]>([]);
+  const [nearbyResources, setNearbyResources] = useState<NearbyResource[]>([]);
+  const [isLoadingResources, setIsLoadingResources] = useState(false);
 
   useEffect(() => {
     if (location.city && selectedEmergencyType) {
       generateChecklist(location, selectedEmergencyType);
     }
   }, [location, selectedEmergencyType]);
+
+  useEffect(() => {
+    if (location.city && location.state) {
+      fetchEmergencyAlerts();
+      fetchNearbyResources();
+    }
+  }, [location]);
 
   const getAIGuidance = async () => {
     if (!selectedEmergencyType || !location.city) return;
@@ -351,6 +380,47 @@ export default function EmergencyGuide() {
   const handleAnswerSubmit = () => {
     if (!currentQuestion || selectedAnswer === null) return;
     setShowExplanation(true);
+  };
+
+  const fetchEmergencyAlerts = async () => {
+    try {
+      const response = await fetch('/api/emergency/alerts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          city: location.city,
+          state: location.state,
+        }),
+      });
+      const data = await response.json();
+      setAlerts(data.alerts);
+    } catch (error) {
+      console.error('Error fetching alerts:', error);
+    }
+  };
+
+  const fetchNearbyResources = async () => {
+    setIsLoadingResources(true);
+    try {
+      const response = await fetch('/api/emergency/resources', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          city: location.city,
+          state: location.state,
+        }),
+      });
+      const data = await response.json();
+      setNearbyResources(data.resources);
+    } catch (error) {
+      console.error('Error fetching resources:', error);
+    } finally {
+      setIsLoadingResources(false);
+    }
   };
 
 
@@ -485,6 +555,99 @@ export default function EmergencyGuide() {
           </CardContent>
         </Card>
       )}
+
+      {alerts.length > 0 && (
+        <Card className="border-red-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              Active Emergency Alerts
+            </CardTitle>
+            <CardDescription>
+              Current alerts and warnings for your area
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {alerts.map((alert) => (
+                <Alert
+                  key={alert.id}
+                  className={`
+                    ${alert.severity === 'critical' ? 'bg-red-50 border-red-200' :
+                      alert.severity === 'warning' ? 'bg-orange-50 border-orange-200' :
+                        'bg-blue-50 border-blue-200'}
+                  `}
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  <div>
+                    <h4 className="font-medium">{alert.title}</h4>
+                    <p className="text-sm mt-1">{alert.description}</p>
+                    <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                      <span>{alert.area}</span>
+                      <span>•</span>
+                      <span>{new Date(alert.timestamp).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </Alert>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card className="border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-blue-600" />
+            Nearby Emergency Resources
+          </CardTitle>
+          <CardDescription>
+            Available emergency services and facilities in your area
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoadingResources ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {nearbyResources.map((resource) => (
+                <div
+                  key={resource.id}
+                  className="p-4 border rounded-lg space-y-2 hover:bg-accent/5"
+                >
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-medium">{resource.name}</h4>
+                    <Badge
+                      variant={
+                        resource.status === 'open' ? 'default' :
+                          resource.status === 'limited' ? 'secondary' : 'destructive'
+                      }
+                    >
+                      {resource.status}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{resource.address}</p>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span>{resource.distance}</span>
+                    <span>•</span>
+                    <span>{resource.type}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full mt-2"
+                    onClick={() => window.open(`https://maps.google.com?q=${encodeURIComponent(resource.address)}`, '_blank')}
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Get Directions
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {selectedEmergencyType && (
         <Card>
