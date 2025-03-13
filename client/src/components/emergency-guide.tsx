@@ -436,14 +436,14 @@ export default function EmergencyGuide() {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl space-y-6 p-4">
+    <div className="container mx-auto max-w-5xl space-y-6 p-4">
       <Card className="border-primary/20">
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
-            Emergency Preparedness Guide
+            <span className="truncate">Emergency Preparedness Guide</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-balance">
             Select the type of emergency to get specific guidance
           </CardDescription>
         </CardHeader>
@@ -453,12 +453,12 @@ export default function EmergencyGuide() {
               <Button
                 key={type.id}
                 variant={selectedEmergencyType === type.id ? "default" : "outline"}
-                className="h-auto p-6 flex flex-col items-center gap-3 transition-all"
+                className="h-auto p-6 flex flex-col items-center gap-3 transition-all w-full"
                 onClick={() => setSelectedEmergencyType(type.id)}
               >
                 {type.icon}
-                <span className="font-semibold text-lg">{type.name}</span>
-                <span className="text-sm text-muted-foreground text-center">
+                <span className="font-semibold text-lg break-words text-center">{type.name}</span>
+                <span className="text-sm text-muted-foreground text-center text-balance">
                   {type.description}
                 </span>
               </Button>
@@ -471,9 +471,9 @@ export default function EmergencyGuide() {
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-primary" />
-            Your Location
+            <span className="truncate">Your Location</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-balance">
             Keep your location updated for relevant emergency information
           </CardDescription>
         </CardHeader>
@@ -512,15 +512,14 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
-      {/* Alerts Section */}
       {alerts.length > 0 && (
         <Card className="border-red-200">
           <CardHeader className="space-y-2">
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-600" />
-              Active Emergency Alerts
+              <span className="truncate">Active Emergency Alerts</span>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-balance">
               Current alerts and warnings for your area
             </CardDescription>
           </CardHeader>
@@ -536,12 +535,12 @@ export default function EmergencyGuide() {
                     transition-colors
                   `}
                 >
-                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTriangle className="h-4 w-4 shrink-0" />
                   <div className="ml-2">
-                    <h4 className="font-medium text-base">{alert.title}</h4>
-                    <p className="text-sm mt-2">{alert.description}</p>
+                    <h4 className="font-medium text-base break-words">{alert.title}</h4>
+                    <p className="text-sm mt-2 break-words">{alert.description}</p>
                     <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                      <span>{alert.area}</span>
+                      <span className="truncate">{alert.area}</span>
                       <span>•</span>
                       <span>{new Date(alert.timestamp).toLocaleString()}</span>
                     </div>
@@ -553,14 +552,13 @@ export default function EmergencyGuide() {
         </Card>
       )}
 
-      {/* Resources Section */}
       <Card className="border-blue-200">
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-blue-600" />
-            Nearby Emergency Resources
+            <span className="truncate">Nearby Emergency Resources</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-balance">
             Available emergency services and facilities in your area
           </CardDescription>
         </CardHeader>
@@ -577,30 +575,30 @@ export default function EmergencyGuide() {
                   className="p-6 border rounded-lg space-y-3 hover:bg-accent/5 transition-colors"
                 >
                   <div className="flex justify-between items-start">
-                    <h4 className="font-medium text-lg">{resource.name}</h4>
+                    <h4 className="font-medium text-lg break-words pr-2">{resource.name}</h4>
                     <Badge
                       variant={
                         resource.status === 'open' ? 'default' :
                           resource.status === 'limited' ? 'secondary' : 'destructive'
                       }
-                      className="ml-2"
+                      className="ml-2 shrink-0"
                     >
                       {resource.status}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{resource.address}</p>
+                  <p className="text-sm text-muted-foreground break-words">{resource.address}</p>
                   <div className="flex items-center gap-4 text-sm">
-                    <span>{resource.distance}</span>
+                    <span className="truncate">{resource.distance}</span>
                     <span>•</span>
-                    <span className="capitalize">{resource.type}</span>
+                    <span className="capitalize truncate">{resource.type}</span>
                   </div>
                   <Button
                     variant="outline"
                     className="w-full"
                     onClick={() => window.open(`https://maps.google.com?q=${encodeURIComponent(resource.address)}`, '_blank')}
                   >
-                    <MapPin className="h-4 w-4 mr-2" />
-                    Get Directions
+                    <MapPin className="h-4 w-4 mr-2 shrink-0" />
+                    <span className="truncate">Get Directions</span>
                   </Button>
                 </div>
               ))}
@@ -609,22 +607,21 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
-      {/* State Resources */}
       {location.state && stateEmergencyLinks[location.state] && (
         <Card className="border-blue-200">
           <CardHeader className="space-y-2">
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-blue-600" />
-              State Emergency Resources
+              <span className="truncate">State Emergency Resources</span>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-balance">
               Official emergency management resources for {location.state}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Alert className="bg-blue-50 border-blue-200">
-              <AlertTriangle className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800 ml-2">
+              <AlertTriangle className="h-4 w-4 text-blue-600 shrink-0" />
+              <AlertDescription className="text-blue-800 ml-2 text-balance">
                 Access official emergency information and resources specific to your state
               </AlertDescription>
             </Alert>
@@ -633,21 +630,20 @@ export default function EmergencyGuide() {
               className="w-full justify-between"
               onClick={() => handleStateResourceClick(location.state)}
             >
-              Visit {location.state} Emergency Management Agency
-              <ExternalLink className="h-4 w-4" />
+              <span className="truncate">Visit {location.state} Emergency Management Agency</span>
+              <ExternalLink className="h-4 w-4 shrink-0 ml-2" />
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* National Resources */}
       <Card className="border-green-200">
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-green-600" />
-            National Emergency Resources
+            <span className="truncate">National Emergency Resources</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-balance">
             Federal emergency management resources and information
           </CardDescription>
         </CardHeader>
@@ -658,24 +654,24 @@ export default function EmergencyGuide() {
               className="w-full justify-between"
               onClick={() => window.open("https://www.ready.gov/", "_blank", "noopener,noreferrer")}
             >
-              Ready.gov - National Preparedness
-              <ExternalLink className="h-4 w-4" />
+              <span className="truncate">Ready.gov - National Preparedness</span>
+              <ExternalLink className="h-4 w-4 shrink-0 ml-2" />
             </Button>
             <Button
               variant="outline"
               className="w-full justify-between"
               onClick={() => window.open("https://www.fema.gov/", "_blank", "noopener,noreferrer")}
             >
-              FEMA - Federal Emergency Management Agency
-              <ExternalLink className="h-4 w-4" />
+              <span className="truncate">FEMA - Federal Emergency Management Agency</span>
+              <ExternalLink className="h-4 w-4 shrink-0 ml-2" />
             </Button>
             <Button
               variant="outline"
               className="w-full justify-between"
               onClick={() => window.open("https://www.redcross.org/get-help/how-to-prepare-for-emergencies.html", "_blank", "noopener,noreferrer")}
             >
-              Red Cross Emergency Preparedness
-              <ExternalLink className="h-4 w-4" />
+              <span className="truncate">Red Cross Emergency Preparedness</span>
+              <ExternalLink className="h-4 w-4 shrink-0 ml-2" />
             </Button>
           </div>
         </CardContent>
@@ -686,11 +682,11 @@ export default function EmergencyGuide() {
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BriefcaseMedical className="h-5 w-5 text-primary" />
-                Emergency Checklist
+                <span className="truncate">Emergency Checklist</span>
               </div>
               <Badge variant="outline">{checklistProgress}% Complete</Badge>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-balance">
               Track your emergency preparedness progress
             </CardDescription>
           </CardHeader>
@@ -741,9 +737,9 @@ export default function EmergencyGuide() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Brain className="h-5 w-5 text-purple-600" />
-              AI Emergency Assistant
+              <span className="truncate">AI Emergency Assistant</span>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-balance">
               Get personalized guidance for your situation
             </CardDescription>
           </CardHeader>
@@ -775,7 +771,7 @@ export default function EmergencyGuide() {
                         <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
                       </div>
                     ) : (
-                      <div className="prose prose-sm max-w-none">
+                      <div className="prose prose-sm max-w-none break-words">
                         {aiResponse}
                       </div>
                     )}
@@ -792,9 +788,9 @@ export default function EmergencyGuide() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <School className="h-5 w-5 text-indigo-600" />
-              Test Your Knowledge
+              <span className="truncate">Test Your Knowledge</span>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-balance">
               Interactive quiz to reinforce emergency preparedness
             </CardDescription>
           </CardHeader>
@@ -806,7 +802,7 @@ export default function EmergencyGuide() {
                 </Button>
               ) : (
                 <div className="space-y-4">
-                  <h3 className="font-medium">{currentQuestion.question}</h3>
+                  <h3 className="font-medium break-words">{currentQuestion.question}</h3>
 
                   <RadioGroup
                     value={selectedAnswer?.toString()}
@@ -833,7 +829,7 @@ export default function EmergencyGuide() {
                       "bg-green-50 border-green-200" :
                       "bg-red-50 border-red-200"
                     }>
-                      <AlertDescription>
+                      <AlertDescription className="break-words">
                         {currentQuestion.explanation}
                       </AlertDescription>
                     </Alert>
