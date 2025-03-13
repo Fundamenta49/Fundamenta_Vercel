@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,199 +9,137 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
-import { AlertTriangle, MapPin, Navigation, Cloud, Shield, BriefcaseMedical, Home, DollarSign, Globe } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  AlertTriangle,
+  MapPin,
+  Shield,
+  BriefcaseMedical,
+  Home,
+  Cloud,
+  Wind,
+  Waves,
+  Zap,
+  Thermometer,
+  ExternalLink
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface Location {
   city: string;
   state: string;
   country: string;
+  latitude?: number;
+  longitude?: number;
 }
 
-interface WeatherAlert {
-  type: string;
-  severity: "low" | "medium" | "high";
-  description: string;
-  instructions: string;
-}
-
-interface Shelter {
+interface EmergencyType {
+  id: string;
   name: string;
-  address: string;
-  type: string;
-  capacity: number;
-  currentStatus: "open" | "full" | "closed";
+  icon: React.ReactNode;
+  description: string;
+  immediateSteps: string[];
+  preparationSteps: string[];
 }
 
-const STORAGE_KEY = 'emergency_location_data';
-
-// Adding more cities to our mock database
-const cityEmergencyData: Record<string, { shelters: Shelter[], alerts: WeatherAlert[] }> = {
-  "cincinnati": {
-    shelters: [
-      {
-        name: "Duke Energy Convention Center",
-        address: "525 Elm St, Cincinnati, OH 45202",
-        type: "Emergency Shelter",
-        capacity: 500,
-        currentStatus: "open"
-      },
-      {
-        name: "University of Cincinnati Fifth Third Arena",
-        address: "2700 O'Varsity Way, Cincinnati, OH 45221",
-        type: "Emergency Shelter",
-        capacity: 400,
-        currentStatus: "open"
-      },
-      {
-        name: "Hamilton County Emergency Operations Center",
-        address: "2000 Radcliff Dr, Cincinnati, OH 45204",
-        type: "Operations Center",
-        capacity: 200,
-        currentStatus: "open"
-      }
+const EMERGENCY_TYPES: EmergencyType[] = [
+  {
+    id: "severe_storm",
+    name: "Severe Storm",
+    icon: <Cloud className="h-5 w-5 text-blue-600" />,
+    description: "Thunderstorms, heavy rain, and dangerous lightning",
+    immediateSteps: [
+      "Stay indoors and away from windows",
+      "Unplug electronic devices",
+      "Listen to weather updates",
+      "Have emergency supplies ready"
     ],
-    alerts: [
-      {
-        type: "River Flood Watch",
-        severity: "medium",
-        description: "Ohio River water levels rising due to recent rainfall",
-        instructions: "Monitor local news and be prepared for possible evacuation in low-lying areas."
-      },
-      {
-        type: "Severe Weather Alert",
-        severity: "high",
-        description: "Potential for severe thunderstorms with high winds",
-        instructions: "Stay indoors and away from windows. Keep emergency supplies ready."
-      }
+    preparationSteps: [
+      "Create an emergency kit",
+      "Clear yard of loose objects",
+      "Check drainage systems",
+      "Have battery-powered devices ready"
     ]
   },
-  "miami": {
-    shelters: [
-      {
-        name: "Miami-Dade County Fair & Exposition",
-        address: "10901 SW 24th St, Miami, FL 33165",
-        type: "Hurricane Shelter",
-        capacity: 800,
-        currentStatus: "open"
-      },
-      {
-        name: "Florida International University Arena",
-        address: "11200 SW 8th St, Miami, FL 33199",
-        type: "Emergency Shelter",
-        capacity: 600,
-        currentStatus: "open"
-      }
+  {
+    id: "hurricane",
+    name: "Hurricane",
+    icon: <Wind className="h-5 w-5 text-blue-600" />,
+    description: "Strong winds, heavy rain, and potential flooding",
+    immediateSteps: [
+      "Follow evacuation orders",
+      "Stay tuned to local news",
+      "Move to higher ground if needed",
+      "Keep emergency supplies accessible"
     ],
-    alerts: [
-      {
-        type: "Hurricane Watch",
-        severity: "high",
-        description: "Tropical storm system approaching Southeast Florida",
-        instructions: "Review evacuation plans and prepare emergency supplies. Monitor local news for updates."
-      }
+    preparationSteps: [
+      "Board up windows",
+      "Stock up on supplies",
+      "Fill vehicles with gas",
+      "Prepare evacuation plan"
     ]
   },
-  "los angeles": {
-    shelters: [
-      {
-        name: "LA Convention Center",
-        address: "1201 S Figueroa St, Los Angeles, CA 90015",
-        type: "Emergency Shelter",
-        capacity: 1000,
-        currentStatus: "open"
-      }
+  {
+    id: "tornado",
+    name: "Tornado",
+    icon: <Waves className="h-5 w-5 text-red-600" />,
+    description: "Violent rotating columns of air",
+    immediateSteps: [
+      "Move to basement or interior room",
+      "Stay away from windows",
+      "Cover yourself with blankets",
+      "Listen for updates"
     ],
-    alerts: [
-      {
-        type: "Heat Advisory",
-        severity: "medium",
-        description: "Excessive heat warning for LA County",
-        instructions: "Stay hydrated and avoid outdoor activities during peak hours."
-      },
-      {
-        type: "Air Quality Alert",
-        severity: "medium",
-        description: "Unhealthy air quality levels in parts of Los Angeles",
-        instructions: "Sensitive groups should limit outdoor exposure."
-      }
+    preparationSteps: [
+      "Identify safe room",
+      "Practice tornado drills",
+      "Prepare emergency kit",
+      "Know warning signs"
     ]
   },
-  "seattle": {
-    shelters: [
-      {
-        name: "Seattle Center Armory",
-        address: "305 Harrison St, Seattle, WA 98109",
-        type: "Emergency Shelter",
-        capacity: 400,
-        currentStatus: "open"
-      }
+  {
+    id: "earthquake",
+    name: "Earthquake",
+    icon: <Zap className="h-5 w-5 text-yellow-600" />,
+    description: "Sudden ground shaking and potential structural damage",
+    immediateSteps: [
+      "Drop, cover, and hold on",
+      "Stay away from glass and windows",
+      "Do not use elevators",
+      "Be prepared for aftershocks"
     ],
-    alerts: [
-      {
-        type: "Winter Storm Warning",
-        severity: "high",
-        description: "Heavy snowfall expected in the Seattle metro area",
-        instructions: "Avoid unnecessary travel. Keep emergency supplies and warm clothing ready."
-      }
-    ]
-  },
-  "phoenix": {
-    shelters: [
-      {
-        name: "Phoenix Convention Center",
-        address: "100 N 3rd St, Phoenix, AZ 85004",
-        type: "Cooling Center",
-        capacity: 1000,
-        currentStatus: "open"
-      }
-    ],
-    alerts: [
-      {
-        type: "Excessive Heat Warning",
-        severity: "high",
-        description: "Dangerous heat conditions with temperatures exceeding 110°F",
-        instructions: "Stay indoors in air-conditioned spaces. Check on elderly neighbors and those without AC."
-      },
-      {
-        type: "Dust Storm Watch",
-        severity: "medium",
-        description: "Potential for dust storms in the greater Phoenix area",
-        instructions: "Be prepared to pull over if driving. Keep windows and doors closed."
-      }
-    ]
-  },
-  "new orleans": {
-    shelters: [
-      {
-        name: "Ernest N. Morial Convention Center",
-        address: "900 Convention Center Blvd, New Orleans, LA 70130",
-        type: "Hurricane Shelter",
-        capacity: 1200,
-        currentStatus: "open"
-      }
-    ],
-    alerts: [
-      {
-        type: "Flash Flood Warning",
-        severity: "high",
-        description: "Heavy rainfall causing street flooding in multiple areas",
-        instructions: "Avoid driving through flooded streets. Move to higher ground if necessary."
-      },
-      {
-        type: "Tornado Watch",
-        severity: "medium",
-        description: "Conditions favorable for tornado development",
-        instructions: "Monitor local weather updates. Be prepared to take shelter immediately."
-      }
+    preparationSteps: [
+      "Secure heavy furniture",
+      "Know safe spots in each room",
+      "Keep emergency supplies ready",
+      "Learn gas/water shutoff"
     ]
   }
-};
+];
 
-// State emergency management links
+interface ChecklistItem {
+  id: string;
+  text: string;
+  category: string;
+  completed: boolean;
+  required: boolean;
+}
+
+// State emergency management links (retained from original)
 const stateEmergencyLinks = {
   "Alabama": "https://ema.alabama.gov/",
   "Alaska": "https://ready.alaska.gov/",
@@ -256,62 +195,106 @@ const stateEmergencyLinks = {
 
 export default function EmergencyGuide() {
   const [location, setLocation] = useState<Location>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-    return {
-      city: "",
-      state: "",
-      country: "",
-    };
+    const stored = localStorage.getItem('emergency_location_data');
+    return stored ? JSON.parse(stored) : { city: "", state: "", country: "" };
   });
 
-  const [isEditing, setIsEditing] = useState(!location.city);
-  const [weatherAlerts, setWeatherAlerts] = useState<WeatherAlert[]>([]);
-  const [nearbyShelters, setNearbyShelters] = useState<Shelter[]>([]);
-
-  const updateEmergencyData = (city: string) => {
-    const normalizedCity = city.trim().toLowerCase(); // Normalize to lowercase for case-insensitive matching
-    const cityData = cityEmergencyData[normalizedCity];
-    if (cityData) {
-      setWeatherAlerts(cityData.alerts);
-      setNearbyShelters(cityData.shelters);
-    } else {
-      setWeatherAlerts([{
-        type: "Location Notice",
-        severity: "low",
-        description: `We don't have specific emergency data for ${city} yet`,
-        instructions: "Please check your local emergency management website for the most up-to-date information."
-      }]);
-      setNearbyShelters([]);
-    }
-  };
+  const [selectedEmergencyType, setSelectedEmergencyType] = useState<string>("");
+  const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
+  const [checklistProgress, setChecklistProgress] = useState(0);
+  const [isLocationLoading, setIsLocationLoading] = useState(false);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
 
   useEffect(() => {
-    if (location.city) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
-        updateEmergencyData(location.city);
-      } catch (error) {
-        console.error("Error saving location to local storage:", error);
-        // Consider adding a user-friendly alert here to inform the user about the storage failure.
-      }
+    if (location.city && selectedEmergencyType) {
+      generateChecklist(location, selectedEmergencyType);
     }
-  }, [location]);
+  }, [location, selectedEmergencyType]);
+
+  const generateChecklist = (location: Location, emergencyType: string) => {
+    const selectedEmergency = EMERGENCY_TYPES.find(e => e.id === emergencyType);
+    if (!selectedEmergency) return;
+
+    const baseChecklist: ChecklistItem[] = [
+      ...selectedEmergency.immediateSteps.map((step, index) => ({
+        id: `immediate-${index}`,
+        text: step,
+        category: "Immediate Actions",
+        completed: false,
+        required: true
+      })),
+      ...selectedEmergency.preparationSteps.map((step, index) => ({
+        id: `prep-${index}`,
+        text: step,
+        category: "Preparation",
+        completed: false,
+        required: true
+      }))
+    ];
+
+    setChecklist(baseChecklist);
+    updateProgress(baseChecklist);
+  };
+
+  const updateProgress = (items: ChecklistItem[]) => {
+    const completed = items.filter(item => item.completed).length;
+    const total = items.length;
+    setChecklistProgress(Math.round((completed / total) * 100));
+  };
+
+  const toggleChecklistItem = (itemId: string) => {
+    const updatedChecklist = checklist.map(item =>
+      item.id === itemId ? { ...item, completed: !item.completed } : item
+    );
+    setChecklist(updatedChecklist);
+    updateProgress(updatedChecklist);
+  };
 
   const handleLocationSubmit = () => {
-    setIsEditing(false);
-    updateEmergencyData(location.city);
+    if (location.city && location.state) {
+      localStorage.setItem('emergency_location_data', JSON.stringify(location));
+      // Here we would typically fetch real weather alerts and emergency data
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Location Information */}
-      <Card className="border-blue-200">
+      {/* Emergency Type Selection */}
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-blue-600" />
+            <Shield className="h-5 w-5 text-primary" />
+            Emergency Preparedness Guide
+          </CardTitle>
+          <CardDescription>
+            Select the type of emergency to get specific guidance
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {EMERGENCY_TYPES.map((type) => (
+              <Button
+                key={type.id}
+                variant={selectedEmergencyType === type.id ? "default" : "outline"}
+                className="h-auto p-4 flex flex-col items-center gap-2"
+                onClick={() => setSelectedEmergencyType(type.id)}
+              >
+                {type.icon}
+                <span className="font-semibold">{type.name}</span>
+                <span className="text-sm text-muted-foreground text-center">
+                  {type.description}
+                </span>
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Location Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-primary" />
             Your Location
           </CardTitle>
           <CardDescription>
@@ -319,64 +302,95 @@ export default function EmergencyGuide() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isEditing ? (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    value={location.city}
-                    onChange={(e) => setLocation({ ...location, city: e.target.value })}
-                    placeholder="Enter your city"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="state">State/Province</Label>
-                  <Input
-                    id="state"
-                    value={location.state}
-                    onChange={(e) => setLocation({ ...location, state: e.target.value })}
-                    placeholder="Enter your state"
-                  />
-                </div>
-              </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
+                <Label htmlFor="city">City</Label>
                 <Input
-                  id="country"
-                  value={location.country}
-                  onChange={(e) => setLocation({ ...location, country: e.target.value })}
-                  placeholder="Enter your country"
+                  id="city"
+                  value={location.city}
+                  onChange={(e) => setLocation({ ...location, city: e.target.value })}
+                  placeholder="Enter your city"
                 />
               </div>
-              <Button onClick={handleLocationSubmit} className="w-full">
-                Save Location
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <p className="text-lg">
-                  {location.city}, {location.state}, {location.country}
-                </p>
-                <Button variant="outline" onClick={() => setIsEditing(true)}>
-                  Update Location
-                </Button>
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  value={location.state}
+                  onChange={(e) => setLocation({ ...location, state: e.target.value })}
+                  placeholder="Enter your state"
+                />
               </div>
-              {(!cityEmergencyData[location.city.toLowerCase()]) && (
-                <Alert className="mt-4 bg-yellow-50 border-yellow-200">
-                  <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                  <AlertDescription className="text-yellow-800">
-                    We're currently expanding our emergency database for {location.city}.
-                    Please refer to your state's emergency management website for the most up-to-date information.
-                  </AlertDescription>
-                </Alert>
-              )}
             </div>
-          )}
+            <Button 
+              onClick={handleLocationSubmit}
+              className="w-full"
+              disabled={!location.city || !location.state}
+            >
+              Update Location
+            </Button>
+          </div>
         </CardContent>
       </Card>
+
+      {/* Emergency Checklist */}
+      {selectedEmergencyType && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BriefcaseMedical className="h-5 w-5 text-primary" />
+                Emergency Checklist
+              </div>
+              <Badge variant="outline">{checklistProgress}% Complete</Badge>
+            </CardTitle>
+            <CardDescription>
+              Track your emergency preparedness progress
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Progress value={checklistProgress} className="w-full" />
+              <Accordion type="single" collapsible className="w-full">
+                {Array.from(new Set(checklist.map(item => item.category))).map((category) => (
+                  <AccordionItem key={category} value={category}>
+                    <AccordionTrigger>{category}</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2">
+                        {checklist
+                          .filter(item => item.category === category)
+                          .map(item => (
+                            <div
+                              key={item.id}
+                              className="flex items-center gap-2 p-2 rounded hover:bg-accent"
+                              onClick={() => toggleChecklistItem(item.id)}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={item.completed}
+                                onChange={() => toggleChecklistItem(item.id)}
+                                className="h-4 w-4"
+                              />
+                              <span className={item.completed ? "line-through text-muted-foreground" : ""}>
+                                {item.text}
+                              </span>
+                              {item.required && (
+                                <Badge variant="outline" className="ml-auto">
+                                  Required
+                                </Badge>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* State Emergency Resources */}
       {location.state && stateEmergencyLinks[location.state] && (
@@ -411,89 +425,8 @@ export default function EmergencyGuide() {
         </Card>
       )}
 
-      {/* Weather & Disaster Alerts */}
-      {location.city && weatherAlerts.length > 0 && (
-        <Card className="border-orange-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Cloud className="h-5 w-5 text-orange-600" />
-              Weather & Disaster Alerts
-            </CardTitle>
-            <CardDescription>
-              Current alerts for {location.city}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {weatherAlerts.map((alert, index) => (
-                <Alert
-                  key={index}
-                  className={`
-                    ${alert.severity === 'high' ? 'bg-red-50 border-red-200' :
-                      alert.severity === 'medium' ? 'bg-orange-50 border-orange-200' :
-                        'bg-yellow-50 border-yellow-200'}
-                  `}
-                >
-                  <AlertTriangle className={`
-                    h-4 w-4
-                    ${alert.severity === 'high' ? 'text-red-600' :
-                      alert.severity === 'medium' ? 'text-orange-600' :
-                        'text-yellow-600'}
-                  `} />
-                  <div className="ml-2">
-                    <h4 className="font-semibold">{alert.type}</h4>
-                    <p className="text-sm mt-1">{alert.description}</p>
-                    <p className="text-sm mt-2 font-medium">Instructions:</p>
-                    <p className="text-sm">{alert.instructions}</p>
-                  </div>
-                </Alert>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
-      {/* Nearby Shelters */}
-      {location.city && nearbyShelters.length > 0 && (
-        <Card className="border-green-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Home className="h-5 w-5 text-green-600" />
-              Emergency Shelters Near {location.city}
-            </CardTitle>
-            <CardDescription>
-              Available emergency shelters in your area
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {nearbyShelters.map((shelter, index) => (
-                <div
-                  key={index}
-                  className="p-4 border rounded-lg space-y-2"
-                >
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-medium">{shelter.name}</h3>
-                    <Badge
-                      variant={
-                        shelter.currentStatus === 'open' ? 'default' :
-                          shelter.currentStatus === 'full' ? 'secondary' : 'destructive'
-                      }
-                    >
-                      {shelter.currentStatus}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{shelter.address}</p>
-                  <p className="text-sm">Type: {shelter.type}</p>
-                  <p className="text-sm">Capacity: {shelter.capacity} people</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* National Emergency Resources */}
+      {/* National Emergency Resources - Retained from original */}
       <Card className="border-green-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
