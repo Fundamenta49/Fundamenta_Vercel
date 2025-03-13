@@ -28,7 +28,10 @@ import {
   Waves,
   Zap,
   Thermometer,
-  ExternalLink
+  ExternalLink,
+  Loader2,
+  Brain,
+  School
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -38,6 +41,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface Location {
   city: string;
@@ -139,7 +151,46 @@ interface ChecklistItem {
   required: boolean;
 }
 
-// State emergency management links (retained from original)
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
+
+const EMERGENCY_QUIZ_QUESTIONS: Record<string, QuizQuestion[]> = {
+  "severe_storm": [
+    {
+      id: "storm-1",
+      question: "What should you do first when a severe storm warning is issued?",
+      options: [
+        "Go outside to check the weather",
+        "Call friends to warn them",
+        "Move to an interior room away from windows",
+        "Start filming the storm"
+      ],
+      correctAnswer: 2,
+      explanation: "During a severe storm, your immediate safety is the priority. Moving away from windows protects you from broken glass and flying debris."
+    },
+  ],
+  "hurricane": [
+    {
+      id: "hurricane-1",
+      question: "Which of these is NOT recommended during hurricane preparation?",
+      options: [
+        "Fill vehicles with fuel",
+        "Open windows to equalize pressure",
+        "Stock up on non-perishable food",
+        "Secure outdoor furniture"
+      ],
+      correctAnswer: 1,
+      explanation: "Opening windows during a hurricane is a myth. It doesn't help equalize pressure and can actually make your home more vulnerable to damage."
+    }
+  ]
+};
+
+
 const stateEmergencyLinks = {
   "Alabama": "https://ema.alabama.gov/",
   "Alaska": "https://ready.alaska.gov/",
@@ -204,12 +255,44 @@ export default function EmergencyGuide() {
   const [checklistProgress, setChecklistProgress] = useState(0);
   const [isLocationLoading, setIsLocationLoading] = useState(false);
   const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [showAIGuidance, setShowAIGuidance] = useState(false);
+  const [aiResponse, setAiResponse] = useState("");
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
 
   useEffect(() => {
     if (location.city && selectedEmergencyType) {
       generateChecklist(location, selectedEmergencyType);
     }
   }, [location, selectedEmergencyType]);
+
+  const getAIGuidance = async () => {
+    if (!selectedEmergencyType || !location.city) return;
+
+    setIsLoadingAI(true);
+    try {
+      const response = await fetch("/api/emergency-guidance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emergencyType: selectedEmergencyType,
+          location: location,
+        }),
+      });
+
+      const data = await response.json();
+      setAiResponse(data.guidance);
+    } catch (error) {
+      console.error("Error getting AI guidance:", error);
+      setAiResponse("I apologize, but I'm having trouble providing guidance right now. Please follow the checklist and official emergency resources.");
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
 
   const generateChecklist = (location: Location, emergencyType: string) => {
     const selectedEmergency = EMERGENCY_TYPES.find(e => e.id === emergencyType);
@@ -253,13 +336,26 @@ export default function EmergencyGuide() {
   const handleLocationSubmit = () => {
     if (location.city && location.state) {
       localStorage.setItem('emergency_location_data', JSON.stringify(location));
-      // Here we would typically fetch real weather alerts and emergency data
     }
   };
 
+  const startQuiz = () => {
+    if (!selectedEmergencyType || !EMERGENCY_QUIZ_QUESTIONS[selectedEmergencyType]?.length) return;
+
+    const questions = EMERGENCY_QUIZ_QUESTIONS[selectedEmergencyType];
+    setCurrentQuestion(questions[0]);
+    setSelectedAnswer(null);
+    setShowExplanation(false);
+  };
+
+  const handleAnswerSubmit = () => {
+    if (!currentQuestion || selectedAnswer === null) return;
+    setShowExplanation(true);
+  };
+
+
   return (
     <div className="space-y-6">
-      {/* Emergency Type Selection */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -290,7 +386,6 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
-      {/* Location Information */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -334,7 +429,6 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
-      {/* Emergency Checklist */}
       {selectedEmergencyType && (
         <Card>
           <CardHeader>
@@ -392,7 +486,115 @@ export default function EmergencyGuide() {
         </Card>
       )}
 
-      {/* State Emergency Resources */}
+      {selectedEmergencyType && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-purple-600" />
+              AI Emergency Assistant
+            </CardTitle>
+            <CardDescription>
+              Get personalized guidance for your situation
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Button
+                onClick={() => {
+                  setShowAIGuidance(true);
+                  getAIGuidance();
+                }}
+                className="w-full"
+                disabled={!location.city || !selectedEmergencyType}
+              >
+                Get AI Guidance
+              </Button>
+
+              <Dialog open={showAIGuidance} onOpenChange={setShowAIGuidance}>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Emergency Guidance</DialogTitle>
+                    <DialogDescription>
+                      AI-powered assistance for {selectedEmergencyType?.replace('_', ' ')}
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="mt-4 space-y-4">
+                    {isLoadingAI ? (
+                      <div className="flex items-center justify-center p-8">
+                        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                      </div>
+                    ) : (
+                      <div className="prose prose-sm max-w-none">
+                        {aiResponse}
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {selectedEmergencyType && EMERGENCY_QUIZ_QUESTIONS[selectedEmergencyType] && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <School className="h-5 w-5 text-indigo-600" />
+              Test Your Knowledge
+            </CardTitle>
+            <CardDescription>
+              Interactive quiz to reinforce emergency preparedness
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {!currentQuestion ? (
+                <Button onClick={startQuiz} className="w-full">
+                  Start Quiz
+                </Button>
+              ) : (
+                <div className="space-y-4">
+                  <h3 className="font-medium">{currentQuestion.question}</h3>
+
+                  <RadioGroup
+                    value={selectedAnswer?.toString()}
+                    onValueChange={(value) => setSelectedAnswer(parseInt(value))}
+                  >
+                    {currentQuestion.options.map((option, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <RadioGroupItem value={index.toString()} id={`option-${index}`} />
+                        <Label htmlFor={`option-${index}`}>{option}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+
+                  <Button
+                    onClick={handleAnswerSubmit}
+                    disabled={selectedAnswer === null}
+                    className="w-full mt-4"
+                  >
+                    Check Answer
+                  </Button>
+
+                  {showExplanation && (
+                    <Alert className={selectedAnswer === currentQuestion.correctAnswer ?
+                      "bg-green-50 border-green-200" :
+                      "bg-red-50 border-red-200"
+                    }>
+                      <AlertDescription>
+                        {currentQuestion.explanation}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {location.state && stateEmergencyLinks[location.state] && (
         <Card className="border-blue-200">
           <CardHeader>
@@ -426,7 +628,6 @@ export default function EmergencyGuide() {
       )}
 
 
-      {/* National Emergency Resources - Retained from original */}
       <Card className="border-green-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
