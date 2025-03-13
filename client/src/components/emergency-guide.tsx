@@ -436,9 +436,9 @@ export default function EmergencyGuide() {
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
+    <div className="container mx-auto max-w-4xl space-y-6 p-4">
+      <Card className="border-primary/20">
+        <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
             Emergency Preparedness Guide
@@ -448,16 +448,16 @@ export default function EmergencyGuide() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {EMERGENCY_TYPES.map((type) => (
               <Button
                 key={type.id}
                 variant={selectedEmergencyType === type.id ? "default" : "outline"}
-                className="h-auto p-4 flex flex-col items-center gap-2"
+                className="h-auto p-6 flex flex-col items-center gap-3 transition-all"
                 onClick={() => setSelectedEmergencyType(type.id)}
               >
                 {type.icon}
-                <span className="font-semibold">{type.name}</span>
+                <span className="font-semibold text-lg">{type.name}</span>
                 <span className="text-sm text-muted-foreground text-center">
                   {type.description}
                 </span>
@@ -467,8 +467,8 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="border-primary/20">
+        <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-primary" />
             Your Location
@@ -478,8 +478,8 @@ export default function EmergencyGuide() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="city">City</Label>
                 <Input
@@ -487,6 +487,7 @@ export default function EmergencyGuide() {
                   value={location.city}
                   onChange={(e) => setLocation({ ...location, city: e.target.value })}
                   placeholder="Enter your city"
+                  className="w-full"
                 />
               </div>
               <div className="space-y-2">
@@ -496,6 +497,7 @@ export default function EmergencyGuide() {
                   value={location.state}
                   onChange={(e) => setLocation({ ...location, state: e.target.value })}
                   placeholder="Enter your state"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -510,6 +512,174 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
+      {/* Alerts Section */}
+      {alerts.length > 0 && (
+        <Card className="border-red-200">
+          <CardHeader className="space-y-2">
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              Active Emergency Alerts
+            </CardTitle>
+            <CardDescription>
+              Current alerts and warnings for your area
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {alerts.map((alert) => (
+                <Alert
+                  key={alert.id}
+                  className={`
+                    ${alert.severity === 'critical' ? 'bg-red-50 border-red-200' :
+                      alert.severity === 'warning' ? 'bg-orange-50 border-orange-200' :
+                        'bg-blue-50 border-blue-200'}
+                    transition-colors
+                  `}
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  <div className="ml-2">
+                    <h4 className="font-medium text-base">{alert.title}</h4>
+                    <p className="text-sm mt-2">{alert.description}</p>
+                    <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                      <span>{alert.area}</span>
+                      <span>•</span>
+                      <span>{new Date(alert.timestamp).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </Alert>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Resources Section */}
+      <Card className="border-blue-200">
+        <CardHeader className="space-y-2">
+          <CardTitle className="flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-blue-600" />
+            Nearby Emergency Resources
+          </CardTitle>
+          <CardDescription>
+            Available emergency services and facilities in your area
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoadingResources ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {nearbyResources.map((resource) => (
+                <div
+                  key={resource.id}
+                  className="p-6 border rounded-lg space-y-3 hover:bg-accent/5 transition-colors"
+                >
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-medium text-lg">{resource.name}</h4>
+                    <Badge
+                      variant={
+                        resource.status === 'open' ? 'default' :
+                          resource.status === 'limited' ? 'secondary' : 'destructive'
+                      }
+                      className="ml-2"
+                    >
+                      {resource.status}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{resource.address}</p>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span>{resource.distance}</span>
+                    <span>•</span>
+                    <span className="capitalize">{resource.type}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => window.open(`https://maps.google.com?q=${encodeURIComponent(resource.address)}`, '_blank')}
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Get Directions
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* State Resources */}
+      {location.state && stateEmergencyLinks[location.state] && (
+        <Card className="border-blue-200">
+          <CardHeader className="space-y-2">
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-blue-600" />
+              State Emergency Resources
+            </CardTitle>
+            <CardDescription>
+              Official emergency management resources for {location.state}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert className="bg-blue-50 border-blue-200">
+              <AlertTriangle className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800 ml-2">
+                Access official emergency information and resources specific to your state
+              </AlertDescription>
+            </Alert>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => handleStateResourceClick(location.state)}
+            >
+              Visit {location.state} Emergency Management Agency
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* National Resources */}
+      <Card className="border-green-200">
+        <CardHeader className="space-y-2">
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-green-600" />
+            National Emergency Resources
+          </CardTitle>
+          <CardDescription>
+            Federal emergency management resources and information
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => window.open("https://www.ready.gov/", "_blank", "noopener,noreferrer")}
+            >
+              Ready.gov - National Preparedness
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => window.open("https://www.fema.gov/", "_blank", "noopener,noreferrer")}
+            >
+              FEMA - Federal Emergency Management Agency
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => window.open("https://www.redcross.org/get-help/how-to-prepare-for-emergencies.html", "_blank", "noopener,noreferrer")}
+            >
+              Red Cross Emergency Preparedness
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
       {selectedEmergencyType && (
         <Card>
           <CardHeader>
@@ -566,100 +736,6 @@ export default function EmergencyGuide() {
           </CardContent>
         </Card>
       )}
-
-      {alerts.length > 0 && (
-        <Card className="border-red-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
-              Active Emergency Alerts
-            </CardTitle>
-            <CardDescription>
-              Current alerts and warnings for your area
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {alerts.map((alert) => (
-                <Alert
-                  key={alert.id}
-                  className={`
-                    ${alert.severity === 'critical' ? 'bg-red-50 border-red-200' :
-                      alert.severity === 'warning' ? 'bg-orange-50 border-orange-200' :
-                        'bg-blue-50 border-blue-200'}
-                  `}
-                >
-                  <AlertTriangle className="h-4 w-4" />
-                  <div>
-                    <h4 className="font-medium">{alert.title}</h4>
-                    <p className="text-sm mt-1">{alert.description}</p>
-                    <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                      <span>{alert.area}</span>
-                      <span>•</span>
-                      <span>{new Date(alert.timestamp).toLocaleString()}</span>
-                    </div>
-                  </div>
-                </Alert>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card className="border-blue-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-blue-600" />
-            Nearby Emergency Resources
-          </CardTitle>
-          <CardDescription>
-            Available emergency services and facilities in your area
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoadingResources ? (
-            <div className="flex items-center justify-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {nearbyResources.map((resource) => (
-                <div
-                  key={resource.id}
-                  className="p-4 border rounded-lg space-y-2 hover:bg-accent/5"
-                >
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-medium">{resource.name}</h4>
-                    <Badge
-                      variant={
-                        resource.status === 'open' ? 'default' :
-                          resource.status === 'limited' ? 'secondary' : 'destructive'
-                      }
-                    >
-                      {resource.status}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{resource.address}</p>
-                  <div className="flex items-center gap-4 text-sm">
-                    <span>{resource.distance}</span>
-                    <span>•</span>
-                    <span>{resource.type}</span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="w-full mt-2"
-                    onClick={() => window.open(`https://maps.google.com?q=${encodeURIComponent(resource.address)}`, '_blank')}
-                  >
-                    <MapPin className="h-4 w-4 mr-2" />
-                    Get Directions
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
       {selectedEmergencyType && (
         <Card>
           <CardHeader>
@@ -768,79 +844,6 @@ export default function EmergencyGuide() {
           </CardContent>
         </Card>
       )}
-
-      {location.state && stateEmergencyLinks[location.state] && (
-        <Card className="border-blue-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-blue-600" />
-              State Emergency Resources
-            </CardTitle>
-            <CardDescription>
-              Official emergency management resources for {location.state}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Alert className="bg-blue-50 border-blue-200">
-                <AlertTriangle className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-blue-800">
-                  Access official emergency information and resources specific to your state
-                </AlertDescription>
-              </Alert>
-              <Button
-                variant="outline"
-                className="w-full justify-between"
-                onClick={() => handleStateResourceClick(location.state)}
-              >
-                Visit {location.state} Emergency Management Agency
-                <ExternalLink className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-
-      <Card className="border-green-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-green-600" />
-            National Emergency Resources
-          </CardTitle>
-          <CardDescription>
-            Federal emergency management resources and information
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.ready.gov/", "_blank")}
-            >
-              Ready.gov - National Preparedness
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.fema.gov/", "_blank")}
-            >
-              FEMA - Federal Emergency Management Agency
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.redcross.org/get-help/how-to-prepare-for-emergencies.html", "_blank")}
-            >
-              Red Cross Emergency Preparedness
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
