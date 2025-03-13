@@ -436,12 +436,12 @@ export default function EmergencyGuide() {
   };
 
   return (
-    <div className="container mx-auto max-w-5xl space-y-6 p-4">
+    <div className="container mx-auto max-w-5xl space-y-6 px-4 py-6">
       <Card className="border-primary/20">
         <CardHeader className="space-y-2">
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" />
-            <span className="truncate">Emergency Preparedness Guide</span>
+          <CardTitle className="flex items-center gap-2 flex-wrap">
+            <Shield className="h-5 w-5 text-primary flex-shrink-0" />
+            <span className="text-wrap">Emergency Preparedness Guide</span>
           </CardTitle>
           <CardDescription className="text-balance">
             Select the type of emergency to get specific guidance
@@ -453,12 +453,12 @@ export default function EmergencyGuide() {
               <Button
                 key={type.id}
                 variant={selectedEmergencyType === type.id ? "default" : "outline"}
-                className="h-auto p-6 flex flex-col items-center gap-3 transition-all w-full"
+                className="h-auto p-4 sm:p-6 flex flex-col items-center gap-3 transition-all w-full"
                 onClick={() => setSelectedEmergencyType(type.id)}
               >
                 {type.icon}
-                <span className="font-semibold text-lg break-words text-center">{type.name}</span>
-                <span className="text-sm text-muted-foreground text-center text-balance">
+                <span className="font-semibold text-base sm:text-lg text-center text-wrap">{type.name}</span>
+                <span className="text-sm text-muted-foreground text-center text-balance px-2">
                   {type.description}
                 </span>
               </Button>
@@ -467,18 +467,19 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
+      {/* Location Section */}
       <Card className="border-primary/20">
         <CardHeader className="space-y-2">
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-primary" />
-            <span className="truncate">Your Location</span>
+          <CardTitle className="flex items-center gap-2 flex-wrap">
+            <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+            <span className="text-wrap">Your Location</span>
           </CardTitle>
           <CardDescription className="text-balance">
             Keep your location updated for relevant emergency information
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="city">City</Label>
@@ -512,6 +513,92 @@ export default function EmergencyGuide() {
         </CardContent>
       </Card>
 
+      {/* Emergency Resources Section */}
+      <Card className="border-blue-200">
+        <CardHeader className="space-y-2">
+          <CardTitle className="flex items-center gap-2 flex-wrap">
+            <MapPin className="h-5 w-5 text-blue-600 flex-shrink-0" />
+            <span className="text-wrap">Nearby Emergency Resources</span>
+          </CardTitle>
+          <CardDescription className="text-balance">
+            Available emergency services and facilities in your area
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoadingResources ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {nearbyResources.map((resource) => (
+                <div
+                  key={resource.id}
+                  className="p-4 sm:p-6 border rounded-lg space-y-3 hover:bg-accent/5 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h4 className="font-medium text-base sm:text-lg text-wrap min-w-0">{resource.name}</h4>
+                    <Badge
+                      variant={
+                        resource.status === 'open' ? 'default' :
+                          resource.status === 'limited' ? 'secondary' : 'destructive'
+                      }
+                      className="flex-shrink-0"
+                    >
+                      {resource.status}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground text-wrap min-w-0">{resource.address}</p>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="truncate">{resource.distance}</span>
+                    <span className="flex-shrink-0">•</span>
+                    <span className="capitalize truncate">{resource.type}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full flex items-center justify-center gap-2"
+                    onClick={() => window.open(`https://maps.google.com?q=${encodeURIComponent(resource.address)}`, '_blank')}
+                  >
+                    <MapPin className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-wrap">Get Directions</span>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* State Emergency Resources Section */}
+      {location.state && stateEmergencyLinks[location.state] && (
+        <Card className="border-blue-200">
+          <CardHeader className="space-y-2">
+            <CardTitle className="flex items-center gap-2 flex-wrap">
+              <Shield className="h-5 w-5 text-blue-600 flex-shrink-0" />
+              <span className="text-wrap">State Emergency Resources</span>
+            </CardTitle>
+            <CardDescription className="text-balance">
+              Official emergency management resources for {location.state}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert className="bg-blue-50 border-blue-200">
+              <AlertTriangle className="h-4 w-4 text-blue-600 flex-shrink-0" />
+              <AlertDescription className="text-blue-800 ml-2 text-balance">
+                Access official emergency information and resources specific to your state
+              </AlertDescription>
+            </Alert>
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-between"
+              onClick={() => handleStateResourceClick(location.state)}
+            >
+              <span className="text-wrap text-left flex-grow pr-2">Visit {location.state} Emergency Management Agency</span>
+              <ExternalLink className="h-4 w-4 flex-shrink-0" />
+            </Button>
+          </CardContent>
+        </Card>
+      )}
       {alerts.length > 0 && (
         <Card className="border-red-200">
           <CardHeader className="space-y-2">
@@ -551,92 +638,6 @@ export default function EmergencyGuide() {
           </CardContent>
         </Card>
       )}
-
-      <Card className="border-blue-200">
-        <CardHeader className="space-y-2">
-          <CardTitle className="flex items-center gap-2 w-full">
-            <MapPin className="h-5 w-5 text-blue-600 flex-shrink-0" />
-            <span className="text-wrap min-w-0 flex-grow">Nearby Emergency Resources</span>
-          </CardTitle>
-          <CardDescription className="text-balance">
-            Available emergency services and facilities in your area
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoadingResources ? (
-            <div className="flex items-center justify-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {nearbyResources.map((resource) => (
-                <div
-                  key={resource.id}
-                  className="p-6 border rounded-lg space-y-3 hover:bg-accent/5 transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="font-medium text-lg text-wrap min-w-0">{resource.name}</h4>
-                    <Badge
-                      variant={
-                        resource.status === 'open' ? 'default' :
-                          resource.status === 'limited' ? 'secondary' : 'destructive'
-                      }
-                      className="flex-shrink-0"
-                    >
-                      {resource.status}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground text-wrap min-w-0">{resource.address}</p>
-                  <div className="flex items-center gap-4 text-sm min-w-0">
-                    <span className="truncate">{resource.distance}</span>
-                    <span className="flex-shrink-0">•</span>
-                    <span className="capitalize truncate">{resource.type}</span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="w-full flex items-center justify-center gap-2"
-                    onClick={() => window.open(`https://maps.google.com?q=${encodeURIComponent(resource.address)}`, '_blank')}
-                  >
-                    <MapPin className="h-4 w-4 flex-shrink-0" />
-                    <span className="truncate">Get Directions</span>
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {location.state && stateEmergencyLinks[location.state] && (
-        <Card className="border-blue-200">
-          <CardHeader className="space-y-2">
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-blue-600" />
-              <span className="truncate">State Emergency Resources</span>
-            </CardTitle>
-            <CardDescription className="text-balance">
-              Official emergency management resources for {location.state}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Alert className="bg-blue-50 border-blue-200">
-              <AlertTriangle className="h-4 w-4 text-blue-600 shrink-0" />
-              <AlertDescription className="text-blue-800 ml-2 text-balance">
-                Access official emergency information and resources specific to your state
-              </AlertDescription>
-            </Alert>
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => handleStateResourceClick(location.state)}
-            >
-              <span className="truncate">Visit {location.state} Emergency Management Agency</span>
-              <ExternalLink className="h-4 w-4 shrink-0 ml-2" />
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
       <Card className="border-green-200">
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-2">
