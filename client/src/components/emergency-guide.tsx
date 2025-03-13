@@ -554,9 +554,9 @@ export default function EmergencyGuide() {
 
       <Card className="border-blue-200">
         <CardHeader className="space-y-2">
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-blue-600" />
-            <span className="truncate">Nearby Emergency Resources</span>
+          <CardTitle className="flex items-center gap-2 w-full">
+            <MapPin className="h-5 w-5 text-blue-600 flex-shrink-0" />
+            <span className="text-wrap min-w-0 flex-grow">Nearby Emergency Resources</span>
           </CardTitle>
           <CardDescription className="text-balance">
             Available emergency services and facilities in your area
@@ -574,30 +574,30 @@ export default function EmergencyGuide() {
                   key={resource.id}
                   className="p-6 border rounded-lg space-y-3 hover:bg-accent/5 transition-colors"
                 >
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-medium text-lg break-words pr-2">{resource.name}</h4>
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="font-medium text-lg text-wrap min-w-0">{resource.name}</h4>
                     <Badge
                       variant={
                         resource.status === 'open' ? 'default' :
                           resource.status === 'limited' ? 'secondary' : 'destructive'
                       }
-                      className="ml-2 shrink-0"
+                      className="flex-shrink-0"
                     >
                       {resource.status}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground break-words">{resource.address}</p>
-                  <div className="flex items-center gap-4 text-sm">
+                  <p className="text-sm text-muted-foreground text-wrap min-w-0">{resource.address}</p>
+                  <div className="flex items-center gap-4 text-sm min-w-0">
                     <span className="truncate">{resource.distance}</span>
-                    <span>•</span>
+                    <span className="flex-shrink-0">•</span>
                     <span className="capitalize truncate">{resource.type}</span>
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full"
+                    className="w-full flex items-center justify-center gap-2"
                     onClick={() => window.open(`https://maps.google.com?q=${encodeURIComponent(resource.address)}`, '_blank')}
                   >
-                    <MapPin className="h-4 w-4 mr-2 shrink-0" />
+                    <MapPin className="h-4 w-4 flex-shrink-0" />
                     <span className="truncate">Get Directions</span>
                   </Button>
                 </div>
