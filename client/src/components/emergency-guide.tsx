@@ -50,6 +50,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Location {
   city: string;
@@ -758,15 +759,15 @@ export default function EmergencyGuide() {
               </Button>
 
               <Dialog open={showAIGuidance} onOpenChange={setShowAIGuidance}>
-                <DialogContent className="max-w-2xl p-4 sm:p-6 md:p-8">
-                  <DialogHeader className="space-y-2">
+                <DialogContent className="max-w-2xl p-0 gap-0 max-h-[90vh]">
+                  <DialogHeader className="p-4 sm:p-6 md:p-8 border-b">
                     <DialogTitle className="text-lg sm:text-xl">Emergency Guidance</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
                       AI-powered assistance for {selectedEmergencyType?.replace('_', ' ')}
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className="mt-4 space-y-4">
+                  <ScrollArea className="p-4 sm:p-6 md:p-8 h-full max-h-[70vh]">
                     {isLoadingAI ? (
                       <div className="flex items-center justify-center p-8">
                         <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
@@ -776,8 +777,8 @@ export default function EmergencyGuide() {
                         {aiResponse.split('\n\n').map((paragraph, index) => (
                           <div key={index} className="mb-4 last:mb-0">
                             {paragraph.split('\n').map((line, lineIdx) => (
-                              <p 
-                                key={lineIdx} 
+                              <p
+                                key={lineIdx}
                                 className="text-gray-700 mb-2 text-sm sm:text-base leading-relaxed"
                               >
                                 {line}
@@ -787,7 +788,7 @@ export default function EmergencyGuide() {
                         ))}
                       </div>
                     )}
-                  </div>
+                  </ScrollArea>
                 </DialogContent>
               </Dialog>
             </div>
