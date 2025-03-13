@@ -11,6 +11,8 @@ import OpenAI from 'openai';
 import multer from "multer";
 import mammoth from "mammoth";
 import * as pdfjsLib from 'pdfjs-dist';
+import { emergencyAlertSchema } from "./schema"; // Assuming schema is exported here
+
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -33,6 +35,58 @@ const upload = multer({
     }
   }
 });
+
+// Mock data for development (this would be replaced with real API calls in production)
+const mockEmergencyAlerts = {
+  "New York": [
+    {
+      id: "1",
+      type: "weather",
+      severity: "warning",
+      title: "Severe Thunderstorm Warning",
+      description: "Strong thunderstorms expected with potential for flash flooding",
+      area: "Greater Metropolitan Area",
+      timestamp: new Date().toISOString()
+    }
+  ],
+  "Los Angeles": [
+    {
+      id: "2",
+      type: "emergency",
+      severity: "critical",
+      title: "Earthquake Alert",
+      description: "Magnitude 4.5 earthquake detected. Expect aftershocks.",
+      area: "Los Angeles County",
+      timestamp: new Date().toISOString()
+    }
+  ]
+};
+
+const mockEmergencyResources = {
+  "New York": [
+    {
+      id: "1",
+      name: "City Emergency Shelter",
+      type: "shelter",
+      address: "123 Safety Street, New York, NY",
+      distance: "0.5 miles",
+      status: "open",
+      contact: "555-0123"
+    }
+  ],
+  "Los Angeles": [
+    {
+      id: "2",
+      name: "County Medical Center",
+      type: "hospital",
+      address: "456 Health Ave, Los Angeles, CA",
+      distance: "1.2 miles",
+      status: "open",
+      contact: "555-0124"
+    }
+  ]
+};
+
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Test endpoint for PDF parsing
@@ -66,7 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const dataBuffer = new Uint8Array(req.file.buffer);
         console.log("Test endpoint: Buffer created successfully, length:", dataBuffer.length);
 
-        const pdfDoc = await pdfjsLib.getDocument({data: dataBuffer}).promise;
+        const pdfDoc = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
         let text = '';
         for (let i = 1; i <= pdfDoc.numPages; i++) {
           const page = await pdfDoc.getPage(i);
@@ -131,7 +185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Buffer created successfully, length:", dataBuffer.length);
 
           try {
-            const pdfDoc = await pdfjsLib.getDocument({data: dataBuffer}).promise;
+            const pdfDoc = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
             let text = '';
             for (let i = 1; i <= pdfDoc.numPages; i++) {
               const page = await pdfDoc.getPage(i);
@@ -889,7 +943,7 @@ Remember to suggest relevant features in the app that could help the user.`;
         message: error.message,
         response: error.response?.data
       });
-      res.status(500).json({ 
+      res.status(500).json({
         error: "Failed to fetch videos",
         details: process.env.NODE_ENV === 'development' ? error.message : undefined
       });
@@ -1089,6 +1143,42 @@ Remember to suggest relevant features in the app that could help the user.`;
     }
   });
 
+  // Emergency Alerts Endpoint
+  app.post("/api/emergency/alerts", async (req, res) => {
+    try {
+      const { city, state } = emergencyAlertSchema.parse(req.body);
+
+      // In production, this would call a real weather/emergency API
+      const alerts = mockEmergencyAlerts[city] || [];
+
+      res.json({ alerts });
+    } catch (error) {
+      console.error("Error fetching emergency alerts:", error);
+      res.status(400).json({
+        error: true,
+        message: "Failed to fetch emergency alerts"
+      });
+    }
+  });
+
+  // Emergency Resources Endpoint
+  app.post("/api/emergency/resources", async (req, res) => {
+    try {
+      const { city, state } = emergencyAlertSchema.parse(req.body);
+
+      // In production, this would call a real emergency services API
+      const resources = mockEmergencyResources[city] || [];
+
+      res.json({ resources });
+    } catch (error) {
+      console.error("Error fetching emergency resources:", error);
+      res.status(400).json({
+        error: true,
+        message: "Failed to fetch emergency resources"
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
@@ -1167,4 +1257,9 @@ const resumeParserSchema = z.object({
     duration: z.string(),
     description: z.string(),
   }))
+});
+
+const emergencyAlertSchema = z.object({
+  city: z.string(),
+  state: z.string(),
 });
