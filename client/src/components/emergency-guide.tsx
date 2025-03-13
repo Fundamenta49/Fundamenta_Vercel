@@ -306,19 +306,19 @@ export default function EmergencyGuide() {
 
     setIsLoadingAI(true);
     try {
-      const response = await fetch("/api/emergency-guidance", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          emergencyType: selectedEmergencyType,
-          location: location,
+          skillArea: "emergency",
+          userQuery: `I need guidance for a ${selectedEmergencyType.replace('_', ' ')} situation in ${location.city}, ${location.state}. What specific steps should I take?`
         }),
       });
 
       const data = await response.json();
-      setAiResponse(data.guidance);
+      setAiResponse(data.response || data.message);
     } catch (error) {
       console.error("Error getting AI guidance:", error);
       setAiResponse("I apologize, but I'm having trouble providing guidance right now. Please follow the checklist and official emergency resources.");
