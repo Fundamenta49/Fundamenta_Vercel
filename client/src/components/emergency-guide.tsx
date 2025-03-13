@@ -735,10 +735,10 @@ export default function EmergencyGuide() {
       )}
       {selectedEmergencyType && (
         <Card>
-          <CardHeader>
+          <CardHeader className="space-y-2">
             <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-purple-600" />
-              <span className="truncate">AI Emergency Assistant</span>
+              <Brain className="h-5 w-5 text-purple-600 flex-shrink-0" />
+              <span className="text-wrap">AI Emergency Assistant</span>
             </CardTitle>
             <CardDescription className="text-balance">
               Get personalized guidance for your situation
@@ -751,17 +751,17 @@ export default function EmergencyGuide() {
                   setShowAIGuidance(true);
                   getAIGuidance();
                 }}
-                className="w-full"
+                className="w-full flex items-center justify-center gap-2"
                 disabled={!location.city || !selectedEmergencyType}
               >
                 Get AI Guidance
               </Button>
 
               <Dialog open={showAIGuidance} onOpenChange={setShowAIGuidance}>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Emergency Guidance</DialogTitle>
-                    <DialogDescription>
+                <DialogContent className="max-w-2xl p-4 sm:p-6 md:p-8">
+                  <DialogHeader className="space-y-2">
+                    <DialogTitle className="text-lg sm:text-xl">Emergency Guidance</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
                       AI-powered assistance for {selectedEmergencyType?.replace('_', ' ')}
                     </DialogDescription>
                   </DialogHeader>
@@ -772,8 +772,19 @@ export default function EmergencyGuide() {
                         <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
                       </div>
                     ) : (
-                      <div className="prose prose-sm max-w-none break-words">
-                        {aiResponse}
+                      <div className="prose prose-sm max-w-none">
+                        {aiResponse.split('\n\n').map((paragraph, index) => (
+                          <div key={index} className="mb-4 last:mb-0">
+                            {paragraph.split('\n').map((line, lineIdx) => (
+                              <p 
+                                key={lineIdx} 
+                                className="text-gray-700 mb-2 text-sm sm:text-base leading-relaxed"
+                              >
+                                {line}
+                              </p>
+                            ))}
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
