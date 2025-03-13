@@ -210,7 +210,11 @@ const EMERGENCY_QUIZ_QUESTIONS: Record<string, QuizQuestion[]> = {
   ]
 };
 
-const stateEmergencyLinks = {
+type StateEmergencyLinks = {
+  [key: string]: string;
+};
+
+const stateEmergencyLinks: StateEmergencyLinks = {
   "Alabama": "https://ema.alabama.gov/",
   "Alaska": "https://ready.alaska.gov/",
   "Arizona": "https://dem.az.gov/",
@@ -423,6 +427,13 @@ export default function EmergencyGuide() {
     }
   };
 
+
+  const handleStateResourceClick = (state: string) => {
+    const url = stateEmergencyLinks[state];
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -780,7 +791,7 @@ export default function EmergencyGuide() {
               <Button
                 variant="outline"
                 className="w-full justify-between"
-                onClick={() => window.open(stateEmergencyLinks[location.state], "_blank")}
+                onClick={() => handleStateResourceClick(location.state)}
               >
                 Visit {location.state} Emergency Management Agency
                 <ExternalLink className="h-4 w-4" />
