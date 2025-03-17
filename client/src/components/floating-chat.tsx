@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -28,7 +34,7 @@ export default function FloatingChat() {
   const x = useMotionValue(window.innerWidth - 380);
   const y = useMotionValue(window.innerHeight - 500);
 
-  // Constrain motion to viewport with some padding
+  // Constrain position to viewport with some padding
   const constrainPosition = (pos: number, size: number, bound: number) => {
     const padding = 20;
     return Math.min(Math.max(pos, padding), bound - size - padding);
