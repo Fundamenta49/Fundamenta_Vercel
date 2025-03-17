@@ -32,9 +32,9 @@ import {
   Loader2,
   Brain,
   School,
-  Fire,
   BellRing,
   Youtube,
+  Flame // Using Flame instead of Fire
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -755,6 +755,170 @@ export default function EmergencyGuide() {
               <ExternalLink className="h-4 w-4 shrink-0 ml-2" />
             </Button>
           </div>
+        </CardContent>
+      </Card>
+      {/* Add this new Card component after the National Emergency Resources card */}
+      <Card className="border-orange-200">
+        <CardHeader className="space-y-2">
+          <CardTitle className="flex items-center gap-2">
+            <Flame className="h-5 w-5 text-orange-600" />
+            <span className="text-wrap">Fire Safety Guide</span>
+          </CardTitle>
+          <CardDescription className="text-balance">
+            Essential information about fire safety, extinguishers, and smoke detectors
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            <AccordionItem value="extinguishers">
+              <AccordionTrigger>Fire Extinguisher Guide</AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {FIRE_SAFETY_CONTENT.extinguishers.types.map((type) => (
+                      <div key={type.class} className="p-4 rounded-lg border bg-white">
+                        <h4 className="font-medium text-base">{type.class}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">{type.description}</p>
+                        <Badge className="mt-2" variant="outline">{type.color}</Badge>
+                        <p className="text-sm mt-2 text-orange-600">{type.usage}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6">
+                    <h4 className="font-medium text-base flex items-center gap-2">
+                      <Youtube className="h-4 w-4 text-red-600" />
+                      Training Videos
+                    </h4>
+                    <div className="mt-2 space-y-4">
+                      {FIRE_SAFETY_CONTENT.extinguishers.videos.map((video) => (
+                        <div key={video.title} className="border rounded-lg overflow-hidden">
+                          <iframe
+                            width="100%"
+                            height="315"
+                            src={video.url}
+                            title={video.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="border-b"
+                          />
+                          <div className="p-4 bg-orange-50">
+                            <h5 className="font-medium">{video.title}</h5>
+                            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                              <span>{video.source}</span>
+                              <span>•</span>
+                              <span>{video.duration}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="smoke-detectors">
+              <AccordionTrigger>Smoke Detector Maintenance</AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <div className="bg-orange-50 rounded-lg p-4">
+                    <h4 className="font-medium text-base flex items-center gap-2">
+                      <BellRing className="h-4 w-4 text-orange-600" />
+                      Maintenance Checklist
+                    </h4>
+                    <ul className="mt-3 space-y-2">
+                      {FIRE_SAFETY_CONTENT.smokeDetectors.maintenance.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm">
+                          <span className="text-orange-600 mt-1">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="mt-6">
+                    <h4 className="font-medium text-base flex items-center gap-2">
+                      <Youtube className="h-4 w-4 text-red-600" />
+                      Tutorial Videos
+                    </h4>
+                    <div className="mt-2 space-y-4">
+                      {FIRE_SAFETY_CONTENT.smokeDetectors.videos.map((video) => (
+                        <div key={video.title} className="border rounded-lg overflow-hidden">
+                          <iframe
+                            width="100%"
+                            height="315"
+                            src={video.url}
+                            title={video.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="border-b"
+                          />
+                          <div className="p-4 bg-orange-50">
+                            <h5 className="font-medium">{video.title}</h5>
+                            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                              <span>{video.source}</span>
+                              <span>•</span>
+                              <span>{video.duration}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="prevention">
+              <AccordionTrigger>Fire Prevention Tips</AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <div className="bg-orange-50 rounded-lg p-4">
+                    <h4 className="font-medium text-base flex items-center gap-2">
+                      <Flame className="h-4 w-4 text-orange-600" />
+                      Prevention Guidelines
+                    </h4>
+                    <ul className="mt-3 space-y-2">
+                      {FIRE_SAFETY_CONTENT.prevention.tips.map((tip, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm">
+                          <span className="text-orange-600 mt-1">•</span>
+                          <span>{tip}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="mt-6">
+                    <h4 className="font-medium text-base flex items-center gap-2">
+                      <Youtube className="h-4 w-4 text-red-600" />
+                      Safety Videos
+                    </h4>
+                    <div className="mt-2 space-y-4">
+                      {FIRE_SAFETY_CONTENT.prevention.videos.map((video) => (
+                        <div key={video.title} className="border rounded-lg overflow-hidden">
+                          <iframe
+                            width="100%"
+                            height="315"
+                            src={video.url}
+                            title={video.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="border-b"
+                          />
+                          <div className="p-4 bg-orange-50">
+                            <h5 className="font-medium">{video.title}</h5>
+                            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                              <span>{video.source}</span>
+                              <span>•</span>
+                              <span>{video.duration}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </CardContent>
       </Card>
       {selectedEmergencyType && (
