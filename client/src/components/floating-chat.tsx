@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, Minimize2, Maximize2, GripHorizontal } from "lucide-react";
+import { MessageCircle, Minimize2, GripHorizontal } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -23,14 +23,15 @@ export default function FloatingChat() {
   const [location] = useLocation();
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  
-  // Position state for dragging
-  const x = useMotionValue(window.innerWidth - 420);
-  const y = useMotionValue(window.innerHeight - 600);
 
-  // Constrain motion to viewport
+  // Position state for dragging
+  const x = useMotionValue(window.innerWidth - 380); // Slightly reduced from 420
+  const y = useMotionValue(window.innerHeight - 500); // Reduced from 600
+
+  // Constrain motion to viewport with some padding
   const constrainPosition = (pos: number, size: number, bound: number) => {
-    return Math.min(Math.max(pos, 0), bound - size);
+    const padding = 20;
+    return Math.min(Math.max(pos, padding), bound - size - padding);
   };
 
   const handleDrag = (event: any, info: any) => {
@@ -52,14 +53,14 @@ export default function FloatingChat() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message,
-          context: location, // Send current route for context
+          context: location,
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to send message');
       }
-      
+
       return response.json();
     },
     onSuccess: (data) => {
@@ -105,40 +106,43 @@ export default function FloatingChat() {
     <motion.div
       drag
       dragMomentum={false}
+      dragElastic={0.1} 
+      dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }} 
       onDrag={handleDrag}
       style={{ x, y }}
       className={cn(
-        "fixed z-50 transition-all duration-200",
-        isMinimized ? "w-12 h-12" : "w-96"
+        "fixed z-50 transition-all duration-200 ease-in-out", 
+        isMinimized ? "w-12 h-12" : "w-80" 
       )}
     >
       {isMinimized ? (
         <Button
           variant="default"
           size="icon"
-          className="w-12 h-12 rounded-full"
+          className="w-12 h-12 rounded-full shadow-lg hover:shadow-xl transition-shadow"
           onClick={() => setIsMinimized(false)}
         >
           <MessageCircle className="h-6 w-6" />
         </Button>
       ) : (
-        <Card className="h-[500px] flex flex-col">
+        <Card className="h-[400px] flex flex-col shadow-lg"> 
           <div className="p-2 border-b flex items-center justify-between bg-primary/5">
-            <div className="flex items-center gap-2">
-              <GripHorizontal className="h-4 w-4 cursor-move" />
-              <span className="font-medium">AI Assistant</span>
+            <div className="flex items-center gap-2 cursor-move"> 
+              <GripHorizontal className="h-4 w-4" />
+              <span className="font-medium text-sm">AI Assistant</span> 
             </div>
             <Button
               variant="ghost"
               size="icon"
+              className="h-8 w-8" 
               onClick={() => setIsMinimized(true)}
             >
               <Minimize2 className="h-4 w-4" />
             </Button>
           </div>
-          
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-4" ref={chatRef}>
+
+          <ScrollArea className="flex-1 p-3"> 
+            <div className="space-y-3" ref={chatRef}> 
               {messages.map((msg, i) => (
                 <div
                   key={i}
@@ -149,7 +153,7 @@ export default function FloatingChat() {
                 >
                   <div
                     className={cn(
-                      "rounded-lg px-3 py-2 max-w-[80%]",
+                      "rounded-lg px-3 py-2 max-w-[85%] text-sm", 
                       msg.role === 'user' 
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted"
@@ -158,12 +162,12 @@ export default function FloatingChat() {
                     {msg.content}
                   </div>
                   <span className="text-xs text-muted-foreground mt-1">
-                    {msg.timestamp.toLocaleTimeString()}
+                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
               ))}
               {chatMutation.isPending && (
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-1 text-muted-foreground">
                   <div className="animate-pulse">●</div>
                   <div className="animate-pulse animation-delay-200">●</div>
                   <div className="animate-pulse animation-delay-400">●</div>
@@ -172,15 +176,19 @@ export default function FloatingChat() {
             </div>
           </ScrollArea>
 
-          <form onSubmit={handleSendMessage} className="p-4 border-t">
+          <form onSubmit={handleSendMessage} className="p-3 border-t"> 
             <div className="flex gap-2">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask me anything..."
-                className="flex-1"
+                className="flex-1 text-sm" 
               />
-              <Button type="submit" disabled={chatMutation.isPending}>
+              <Button 
+                type="submit" 
+                disabled={chatMutation.isPending}
+                size="sm" 
+              >
                 Send
               </Button>
             </div>
