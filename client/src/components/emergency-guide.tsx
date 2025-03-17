@@ -31,7 +31,10 @@ import {
   ExternalLink,
   Loader2,
   Brain,
-  School
+  School,
+  Fire,
+  BellRing,
+  Youtube,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -266,6 +269,82 @@ const stateEmergencyLinks: StateEmergencyLinks = {
   "West Virginia": "https://emd.wv.gov/",
   "Wisconsin": "https://wem.wi.gov/",
   "Wyoming": "https://hls.wyo.gov/"
+};
+
+const FIRE_SAFETY_CONTENT = {
+  extinguishers: {
+    types: [
+      {
+        class: "Class A",
+        description: "For ordinary combustibles like wood, paper, cloth",
+        color: "Green",
+        usage: "Sweep from side to side at base of fire"
+      },
+      {
+        class: "Class B",
+        description: "For flammable liquids",
+        color: "Red",
+        usage: "Sweep from side to side at base of fire"
+      },
+      {
+        class: "Class C",
+        description: "For electrical fires",
+        color: "Blue",
+        usage: "Switch off power first if possible, then use extinguisher"
+      },
+      {
+        class: "Class K",
+        description: "For kitchen fires involving oils",
+        color: "Black",
+        usage: "Never use water, use in sweeping motion"
+      }
+    ],
+    videos: [
+      {
+        title: "How to Use a Fire Extinguisher (PASS Method)",
+        url: "https://www.youtube.com/embed/PQV71INDaqY",
+        source: "Official NFPA",
+        duration: "2:45"
+      }
+    ]
+  },
+  smokeDetectors: {
+    maintenance: [
+      "Test smoke alarms monthly using the test button",
+      "Replace batteries every 6 months (daylight savings time)",
+      "Replace entire unit every 10 years",
+      "Clean with compressed air or vacuum annually",
+      "Keep detailed records of maintenance dates"
+    ],
+    videos: [
+      {
+        title: "Smoke Detector Maintenance and Testing",
+        url: "https://www.youtube.com/embed/4LQ6uhXAzvk",
+        source: "US Fire Administration",
+        duration: "3:15"
+      }
+    ]
+  },
+  prevention: {
+    tips: [
+      "Never leave cooking unattended",
+      "Keep flammable items away from heat sources",
+      "Don't overload electrical outlets",
+      "Maintain proper spacing for portable heaters",
+      "Store flammable liquids properly",
+      "Create and practice a fire escape plan",
+      "Install smoke detectors on every level",
+      "Keep fire extinguishers accessible"
+    ],
+    videos: [
+      {
+        title: "Home Fire Prevention Tips",
+        url: "https://www.youtube.com/embed/9GMv4NsLr9o",
+        source: "US Fire Administration",
+        duration: "4:30"
+      }
+    ]
+  }
 };
 
 export default function EmergencyGuide() {
