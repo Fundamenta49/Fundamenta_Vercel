@@ -9,11 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import BudgetCalculator, { BudgetData } from "@/components/budget-calculator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Home } from "lucide-react";
 import BankLink from "@/components/bank-link";
 import RetirementPlanning from "@/components/retirement-planning";
 import FinancialDashboard from "@/components/financial-dashboard";
 import CreditSkills from "@/components/credit-skills";
+import MortgageCalculator from "@/components/mortgage-calculator";
 import { useState } from "react";
 
 export default function Finance() {
@@ -39,6 +40,7 @@ export default function Finance() {
             <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="credit">Credit Skills</TabsTrigger>
+            <TabsTrigger value="mortgage">Mortgage</TabsTrigger>
             <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
             <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
           </TabsList>
@@ -85,6 +87,23 @@ export default function Finance() {
 
         <TabsContent value="credit">
           <CreditSkills />
+        </TabsContent>
+
+        <TabsContent value="mortgage">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Home className="h-5 w-5" />
+                Fundamenta Mortgage
+              </CardTitle>
+              <CardDescription>
+                Calculate mortgage payments and explore home buying resources
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MortgageCalculator />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="retirement">
