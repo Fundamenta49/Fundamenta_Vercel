@@ -1,17 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, HelpCircle } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-
-// Import all the components we'll show in dialogs
-import Learning from "./learning";
-import Finance from "./finance";
-import Career from "./career";
-import Wellness from "./wellness";
-import Active from "./active";
-import EmergencyGuide from "@/components/emergency-guide";
 
 const features = [
   {
@@ -20,7 +10,6 @@ const features = [
     icon: GraduationCap,
     href: "/learning",
     color: "text-orange-500",
-    component: Learning
   },
   {
     title: "Financial Literacy",
@@ -28,7 +17,6 @@ const features = [
     icon: DollarSign,
     href: "/finance",
     color: "text-green-500",
-    component: Finance
   },
   {
     title: "Career Development",
@@ -36,7 +24,6 @@ const features = [
     icon: Briefcase,
     href: "/career",
     color: "text-blue-500",
-    component: Career
   },
   {
     title: "Wellness & Nutrition",
@@ -44,7 +31,6 @@ const features = [
     icon: Heart,
     href: "/wellness",
     color: "text-purple-500",
-    component: Wellness
   },
   {
     title: "Active You",
@@ -52,7 +38,6 @@ const features = [
     icon: Activity,
     href: "/active",
     color: "text-pink-500",
-    component: Active
   },
   {
     title: "Emergency Guidance",
@@ -60,24 +45,14 @@ const features = [
     icon: AlertCircle,
     href: "/emergency",
     color: "text-red-500",
-    component: EmergencyGuide
   },
 ];
 
 export default function Home() {
-  const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
-
   const restartTour = () => {
     localStorage.removeItem("hasSeenTour");
     window.location.reload();
   };
-
-  const handleCardClick = (feature: typeof features[0]) => {
-    setSelectedFeature(feature.title);
-  };
-
-  const selectedFeatureData = features.find(f => f.title === selectedFeature);
-  const FeatureComponent = selectedFeatureData?.component;
 
   return (
     <div className="px-4 py-8">
@@ -100,43 +75,19 @@ export default function Home() {
 
       <div className="grid md:grid-cols-2 gap-6">
         {features.map((feature) => (
-          <Card
-            key={feature.href}
-            className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200"
-            onClick={() => handleCardClick(feature)}
-          >
-            <CardHeader>
-              <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
-              <CardTitle className="text-[#1C3D5A]">{feature.title}</CardTitle>
+          <Link key={feature.href} href={feature.href}>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200">
+              <CardHeader>
+                <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
+                <CardTitle className="text-[#1C3D5A]">{feature.title}</CardTitle>
+              </CardHeader>
               <CardContent>
                 <p className="text-gray-600">{feature.description}</p>
               </CardContent>
-            </CardHeader>
-          </Card>
+            </Card>
+          </Link>
         ))}
       </div>
-
-      <Dialog open={!!selectedFeature} onOpenChange={() => setSelectedFeature(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh]">
-          <DialogHeader>
-            <div className="flex items-center gap-3">
-              {selectedFeatureData && (
-                <>
-                  <selectedFeatureData.icon 
-                    className={`h-6 w-6 ${selectedFeatureData.color}`} 
-                  />
-                  <DialogTitle className="text-2xl">
-                    {selectedFeatureData.title}
-                  </DialogTitle>
-                </>
-              )}
-            </div>
-          </DialogHeader>
-          <ScrollArea className="max-h-[calc(90vh-8rem)]">
-            {FeatureComponent && <FeatureComponent />}
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
