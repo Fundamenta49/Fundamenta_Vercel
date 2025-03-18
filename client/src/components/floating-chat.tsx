@@ -44,10 +44,23 @@ export default function FloatingChat() {
   const { toast } = useToast();
   const controls = useAnimationControls();
 
-  // Gentle floating animation
+  // Random blinking effect
   useEffect(() => {
     if (isMinimized) {
-      const interval = setInterval(() => {
+      const blinkInterval = setInterval(() => {
+        const shouldBlink = Math.random() > 0.7; // 30% chance to blink
+        if (shouldBlink) {
+          controls.start({
+            scaleY: [1, 0.1, 1],
+            transition: {
+              duration: 0.2,
+            }
+          });
+        }
+      }, 2000);
+
+      // Gentle floating animation
+      const floatInterval = setInterval(() => {
         controls.start({
           y: [0, -3, 0],
           transition: {
@@ -57,7 +70,11 @@ export default function FloatingChat() {
           }
         });
       }, 3000);
-      return () => clearInterval(interval);
+
+      return () => {
+        clearInterval(blinkInterval);
+        clearInterval(floatInterval);
+      };
     }
   }, [isMinimized, controls]);
 
@@ -171,7 +188,7 @@ export default function FloatingChat() {
     <div
       className={cn(
         "fixed top-4 right-4 z-50 transition-all duration-300 ease-in-out",
-        isMinimized ? "w-16 h-24" : "w-80"
+        isMinimized ? "w-16 h-16" : "w-80"
       )}
     >
       {isMinimized ? (
@@ -183,31 +200,25 @@ export default function FloatingChat() {
             variant="default"
             size="icon"
             className={cn(
-              "w-16 h-24 relative overflow-visible",
-              "bg-white",
-              "hover:shadow-lg transition-all duration-300",
-              "border-2 border-navy-600",
-              "flex flex-col items-center justify-center"
+              "w-16 h-16 relative overflow-visible",
+              "bg-navy-600",
+              "hover:bg-navy-700 transition-all duration-300",
+              "rounded-full"
             )}
             onClick={() => setIsMinimized(false)}
           >
-            <div className="w-14 h-14 rounded-full bg-navy-600 relative flex items-center justify-center">
-              <div className="w-10 h-8 bg-navy-100 rounded-[1rem] flex items-center justify-center shadow-inner">
-                <div className="flex gap-3">
-                  <div className="w-2 h-2 rounded-full bg-navy-600" />
-                  <div className="w-2 h-2 rounded-full bg-navy-600" />
-                </div>
-              </div>
+            {/* Glow effects */}
+            <div className="absolute -inset-2 bg-navy-400 rounded-full blur-lg opacity-20 animate-pulse" />
+            <div className="absolute -inset-1 bg-navy-300 rounded-full blur-md opacity-10 animate-pulse delay-75" />
 
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-navy-400" />
+            {/* Face container */}
+            <div className="w-12 h-10 bg-navy-100 rounded-[1rem] flex items-center justify-center shadow-inner relative z-10">
+              <motion.div className="flex gap-4">
+                {/* Eyes with blinking animation controlled by the useEffect above */}
+                <motion.div className="w-2 h-2 rounded-full bg-navy-600" />
+                <motion.div className="w-2 h-2 rounded-full bg-navy-600" />
+              </motion.div>
             </div>
-
-            <div className="w-12 h-8 bg-white border-2 border-navy-600 rounded-lg mt-1 relative">
-              <div className="absolute left-[-6px] top-1/2 w-3 h-3 bg-white border-2 border-navy-600 rounded-full transform -translate-y-1/2" />
-              <div className="absolute right-[-6px] top-1/2 w-3 h-3 bg-white border-2 border-navy-600 rounded-full transform -translate-y-1/2" />
-            </div>
-
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-navy-100 rounded-full blur-sm" />
           </Button>
         </motion.div>
       ) : (
