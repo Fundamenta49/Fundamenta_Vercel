@@ -30,17 +30,21 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Type definitions for section components
-type Section = {
+// Type definitions for components
+interface SectionProps {
+  category?: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
+  defaultTab?: string;
+}
+
+interface Section {
   id: string;
   title: string;
   description: string;
   icon: React.ElementType;
-  component: React.ComponentType<any>;
-  props?: any;
-};
+  component: React.ComponentType<SectionProps>;
+  props?: SectionProps;
+}
 
-// Types
 interface SkillGuidanceResponse {
   guidance: string;
   videos: Array<{
@@ -55,7 +59,6 @@ interface SkillGuidanceResponse {
   }>;
 }
 
-// Utility functions
 const formatVideoDuration = (duration: string) => {
   const match = duration?.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
   if (!match) return "00:00";
@@ -70,34 +73,30 @@ const formatVideoDuration = (duration: string) => {
 const formatContent = (content: string) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
 
-  return content.split('\n').map((line, idx) => {
-    const parts = line.split(urlRegex);
-    return (
-      <p key={idx} className="mb-2 leading-relaxed">
-        {parts.map((part, partIdx) => {
-          if (part.match(urlRegex)) {
-            return (
-              <Button
-                key={partIdx}
-                variant="link"
-                className="px-0 h-auto font-normal text-primary hover:text-primary/80"
-                onClick={() => window.open(part, '_blank')}
-              >
-                <span className="flex items-center gap-1">
-                  {new URL(part).hostname.replace('www.', '')}
-                  <ExternalLink className="h-3 w-3" />
-                </span>
-              </Button>
-            );
-          }
-          return part;
-        })}
-      </p>
-    );
-  });
+  return content.split('\n').map((line, idx) => (
+    <p key={idx} className="mb-2 leading-relaxed">
+      {line.split(urlRegex).map((part, partIdx) => {
+        if (part.match(urlRegex)) {
+          return (
+            <Button
+              key={partIdx}
+              variant="link"
+              className="px-0 h-auto font-normal text-primary hover:text-primary/80"
+              onClick={() => window.open(part, '_blank')}
+            >
+              <span className="flex items-center gap-1">
+                {new URL(part).hostname.replace('www.', '')}
+                <ExternalLink className="h-3 w-3" />
+              </span>
+            </Button>
+          );
+        }
+        return part;
+      })}
+    </p>
+  ));
 };
 
-// Components
 const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) => {
   if (!videos?.length) {
     return (
@@ -141,7 +140,6 @@ const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) =
   );
 };
 
-// Constants
 const LIFE_SKILLS_PROMPTS = [
   {
     title: "Cleaning Schedule Generator",
@@ -173,6 +171,89 @@ const LIFE_SKILLS_PROMPTS = [
   }
 ];
 
+const LifeSkillsComponent = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [guidance, setGuidance] = useState<string | null>(null);
+  const [videos, setVideos] = useState<SkillGuidanceResponse['videos']>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handlePromptClick = async (prompt: typeof LIFE_SKILLS_PROMPTS[0]) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/skill-guidance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skillArea: "life",
+          userQuery: prompt.title,
+        }),
+      });
+
+      const data: SkillGuidanceResponse = await response.json();
+      setGuidance(data.guidance);
+      setVideos(data.videos);
+    } catch (error) {
+      console.error("Error getting guidance:", error);
+      setGuidance("Sorry, we couldn't load the guidance right now. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          placeholder="Search for life skills..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1"
+        />
+        <Button onClick={() => handlePromptClick({ title: searchQuery, description: "" })} variant="outline">
+          <Search className="h-4 w-4 mr-2" />
+          Search
+        </Button>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
+          <Card
+            key={index}
+            className="cursor-pointer bg-white hover:bg-gray-50/50 transition-all duration-200"
+            onClick={() => handlePromptClick(prompt)}
+          >
+            <CardHeader>
+              <CardTitle className="text-lg">{prompt.title}</CardTitle>
+              <CardDescription>{prompt.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
+
+      {isLoading && (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      )}
+
+      {guidance && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Learning Guide</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="prose prose-slate max-w-none">
+              {formatContent(guidance)}
+              {videos && <VideoSection videos={videos} />}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
 const SECTIONS: Section[] = [
   {
     id: 'chat',
@@ -180,95 +261,14 @@ const SECTIONS: Section[] = [
     description: 'Get personalized guidance for your learning journey',
     icon: Brain,
     component: ChatInterface,
-    props: { category: "learning" as const }
+    props: { category: "learning" }
   },
   {
     id: 'skills',
     title: 'Life Skills',
     description: 'Learn practical skills for everyday life',
     icon: Home,
-    component: () => {
-      const [searchQuery, setSearchQuery] = useState("");
-      const [guidance, setGuidance] = useState<string | null>(null);
-      const [videos, setVideos] = useState<SkillGuidanceResponse['videos']>([]);
-      const [isLoading, setIsLoading] = useState(false);
-
-      const handlePromptClick = async (prompt: typeof LIFE_SKILLS_PROMPTS[0]) => {
-        setIsLoading(true);
-        try {
-          const response = await fetch("/api/skill-guidance", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              skillArea: "life",
-              userQuery: prompt.title,
-            }),
-          });
-
-          const data: SkillGuidanceResponse = await response.json();
-          setGuidance(data.guidance);
-          setVideos(data.videos);
-        } catch (error) {
-          console.error("Error getting guidance:", error);
-          setGuidance("Sorry, we couldn't load the guidance right now. Please try again later.");
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      return (
-        <div className="space-y-6">
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Search for life skills..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
-            />
-            <Button onClick={() => handlePromptClick({ title: searchQuery, description: "" })} variant="outline">
-              <Search className="h-4 w-4 mr-2" />
-              Search
-            </Button>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
-              <Card
-                key={index}
-                className="cursor-pointer bg-white hover:bg-gray-50/50 transition-all duration-200"
-                onClick={() => handlePromptClick(prompt)}
-              >
-                <CardHeader>
-                  <CardTitle className="text-lg">{prompt.title}</CardTitle>
-                  <CardDescription>{prompt.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-
-          {isLoading && (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          )}
-
-          {guidance && (
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Learning Guide</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="prose prose-slate max-w-none">
-                  {formatContent(guidance)}
-                  {videos && <VideoSection videos={videos} />}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      );
-    }
+    component: LifeSkillsComponent
   },
   {
     id: 'cooking',
@@ -300,12 +300,26 @@ const SECTIONS: Section[] = [
   }
 ];
 
-// Main component
 export default function Learning() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const handleCardClick = (sectionId: string) => {
     setExpandedSection(expandedSection === sectionId ? null : sectionId);
+  };
+
+  const renderSectionContent = (section: Section) => {
+    if (!expandedSection || expandedSection !== section.id) {
+      return null;
+    }
+
+    const Component = section.component;
+    return (
+      <div className="min-h-[100px]">
+        <ScrollArea className="h-full">
+          <Component {...section.props} />
+        </ScrollArea>
+      </div>
+    );
   };
 
   return (
@@ -340,11 +354,7 @@ export default function Learning() {
               )}
             >
               <CardContent className="p-6">
-                {expandedSection === section.id && (
-                  <ScrollArea className="h-full max-h-[600px]">
-                    <section.component {...section.props} />
-                  </ScrollArea>
-                )}
+                {renderSectionContent(section)}
               </CardContent>
             </div>
           </Card>
