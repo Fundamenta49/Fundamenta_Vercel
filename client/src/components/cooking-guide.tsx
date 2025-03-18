@@ -182,9 +182,14 @@ export default function CookingGuide() {
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              {selectedTopic && COOKING_TOPICS.find(t => t.id === selectedTopic)?.icon && (
-                <COOKING_TOPICS.find(t => t.id === selectedTopic)!.icon className="h-6 w-6 text-primary" />
-              )}
+              {selectedTopic && (() => {
+                  const topic = COOKING_TOPICS.find(t => t.id === selectedTopic);
+                  if (topic?.icon) {
+                    const Icon = topic.icon;
+                    return <Icon className="h-6 w-6 text-primary" />;
+                  }
+                  return null;
+                })()}
               {selectedTopic && COOKING_TOPICS.find(t => t.id === selectedTopic)?.title}
             </DialogTitle>
           </DialogHeader>
