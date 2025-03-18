@@ -252,7 +252,7 @@ export default function FloatingChat() {
                     className={cn(
                       "rounded-lg px-3 py-2 max-w-[85%] text-sm shadow-sm",
                       msg.role === 'user'
-                        ? "bg-navy-500 text-white"
+                        ? "bg-navy-50 text-black border border-navy-200"
                         : "bg-navy-50"
                     )}
                   >
@@ -279,7 +279,7 @@ export default function FloatingChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask me anything..."
-                className="flex-1 text-sm border-navy-100 focus-visible:ring-navy-400"
+                className="flex-1 text-sm border-navy-100 focus-visible:ring-navy-400 placeholder:text-black"
               />
               <Button
                 type="submit"
