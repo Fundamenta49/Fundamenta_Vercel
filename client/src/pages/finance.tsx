@@ -5,11 +5,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Home, DollarSign, Calculator, Brain, CreditCard, PiggyBank, Building } from "lucide-react";
 import ChatInterface from "@/components/chat-interface";
 import BudgetCalculator, { BudgetData } from "@/components/budget-calculator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Home } from "lucide-react";
 import BankLink from "@/components/bank-link";
 import RetirementPlanning from "@/components/retirement-planning";
 import FinancialDashboard from "@/components/financial-dashboard";
@@ -21,7 +20,7 @@ export default function Finance() {
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">Financial Literacy</h1>
 
       <Alert variant="default" className="mb-6 border-amber-500 bg-amber-50">
@@ -33,97 +32,126 @@ export default function Finance() {
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="chat">
-        <div className="tabs-container">
-          <TabsList className="mb-4">
-            <TabsTrigger value="chat">AI Financial Advisor</TabsTrigger>
-            <TabsTrigger value="budget">Budget Calculator</TabsTrigger>
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="credit">Credit Skills</TabsTrigger>
-            <TabsTrigger value="mortgage">Mortgage</TabsTrigger>
-            <TabsTrigger value="retirement">Retirement Planning</TabsTrigger>
-            <TabsTrigger value="bank">Bank Accounts</TabsTrigger>
-          </TabsList>
-        </div>
+      <div className="grid gap-8">
+        {/* AI Financial Advisor */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <Brain className="h-6 w-6 text-primary" />
+              <CardTitle className="text-2xl">Financial AI Advisor</CardTitle>
+            </div>
+            <CardDescription className="text-lg">
+              Get personalized financial advice and guidance
+            </CardDescription>
+            <Alert className="mt-4 border-blue-500 bg-blue-50">
+              <AlertCircle className="h-4 w-4 text-blue-500" />
+              <AlertDescription className="text-blue-800 text-sm">
+                The AI advisor provides general guidance based on publicly available financial information.
+                For specific advice, please consult with a qualified financial professional.
+              </AlertDescription>
+            </Alert>
+          </CardHeader>
+          <CardContent>
+            <ChatInterface category="finance" />
+          </CardContent>
+        </Card>
 
-        <TabsContent value="chat" className="mt-6">
-          <Card className="border-0 shadow-none">
-            <CardHeader>
-              <CardTitle>Financial AI Advisor</CardTitle>
-              <CardDescription>
-                Get personalized financial advice and guidance
-              </CardDescription>
-              <Alert className="mt-4 border-blue-500 bg-blue-50">
-                <AlertCircle className="h-4 w-4 text-blue-500" />
-                <AlertDescription className="text-blue-800 text-sm">
-                  The AI advisor provides general guidance based on publicly available financial information.
-                  For specific advice, please consult with a qualified financial professional.
-                </AlertDescription>
-              </Alert>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ChatInterface category="finance" />
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {/* Budget Calculator */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <Calculator className="h-6 w-6 text-primary" />
+              <CardTitle className="text-2xl">Smart Budget Planner</CardTitle>
+            </div>
+            <CardDescription className="text-lg">
+              Track your income, expenses, and set savings goals
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <BudgetCalculator onBudgetUpdate={setBudgetData} />
+          </CardContent>
+        </Card>
 
-        <TabsContent value="budget">
-          <Card>
-            <CardHeader>
-              <CardTitle>Smart Budget Planner</CardTitle>
-              <CardDescription>
-                Track your income, expenses, and set savings goals
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <BudgetCalculator onBudgetUpdate={setBudgetData} />
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {/* Financial Dashboard */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <DollarSign className="h-6 w-6 text-primary" />
+              <CardTitle className="text-2xl">Financial Dashboard</CardTitle>
+            </div>
+            <CardDescription className="text-lg">
+              Visualize your financial health and track progress
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FinancialDashboard budgetData={budgetData} />
+          </CardContent>
+        </Card>
 
-        <TabsContent value="dashboard">
-          <FinancialDashboard budgetData={budgetData} />
-        </TabsContent>
+        {/* Credit Skills */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <CreditCard className="h-6 w-6 text-primary" />
+              <CardTitle className="text-2xl">Credit Building Skills</CardTitle>
+            </div>
+            <CardDescription className="text-lg">
+              Learn about credit scores and building good credit
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CreditSkills />
+          </CardContent>
+        </Card>
 
-        <TabsContent value="credit">
-          <CreditSkills />
-        </TabsContent>
+        {/* Retirement Planning */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <PiggyBank className="h-6 w-6 text-primary" />
+              <CardTitle className="text-2xl">Retirement Planning</CardTitle>
+            </div>
+            <CardDescription className="text-lg">
+              Plan for your future with retirement calculators and guides
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RetirementPlanning />
+          </CardContent>
+        </Card>
 
-        <TabsContent value="mortgage">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Home className="h-5 w-5" />
-                Fundamenta Mortgage
-              </CardTitle>
-              <CardDescription>
-                Calculate mortgage payments and explore home buying resources
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <MortgageCalculator />
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {/* Mortgage Calculator */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <Building className="h-6 w-6 text-primary" />
+              <CardTitle className="text-2xl">Fundamenta Mortgage</CardTitle>
+            </div>
+            <CardDescription className="text-lg">
+              Calculate mortgage payments and explore home buying resources
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MortgageCalculator />
+          </CardContent>
+        </Card>
 
-        <TabsContent value="retirement">
-          <RetirementPlanning />
-        </TabsContent>
-
-        <TabsContent value="bank">
-          <Card>
-            <CardHeader>
-              <CardTitle>Bank Accounts & Transactions</CardTitle>
-              <CardDescription>
-                Connect your bank accounts to track spending in real-time
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <BankLink />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        {/* Bank Account Management */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <Home className="h-6 w-6 text-primary" />
+              <CardTitle className="text-2xl">Bank Accounts & Transactions</CardTitle>
+            </div>
+            <CardDescription className="text-lg">
+              Connect your bank accounts to track spending in real-time
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <BankLink />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
