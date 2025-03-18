@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -49,12 +49,37 @@ import {
 
 import { cn } from "@/lib/utils";
 
+// Types
+interface SkillGuidanceResponse {
+  guidance: string;
+  videos: Array<{
+    id: string;
+    title: string;
+    thumbnail: {
+      url: string;
+      width: number;
+      height: number;
+    };
+    duration: string;
+  }>;
+}
+
+// Utility functions
+const formatVideoDuration = (duration: string) => {
+  const match = duration?.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+  if (!match) return "00:00";
+
+  const hours = (match[1] ? parseInt(match[1].replace('H', '')) : 0).toString();
+  const minutes = (match[2] ? parseInt(match[2].replace('M', '')) : 0).toString().padStart(2, '0');
+  const seconds = (match[3] ? parseInt(match[3].replace('S', '')) : 0).toString().padStart(2, '0');
+
+  return hours !== '0' ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+};
+
 const formatContent = (content: string) => {
-  // Regular expression to match URLs
   const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   return content.split('\n').map((line, idx) => {
-    // Replace URLs with clickable links
     const parts = line.split(urlRegex);
     return (
       <p key={idx} className="mb-2 leading-relaxed">
@@ -81,52 +106,8 @@ const formatContent = (content: string) => {
   });
 };
 
-const LIFE_SKILLS_PROMPTS = [
-  {
-    title: "Cleaning Schedule Generator",
-    description: "Personalized schedule based on apartment/home size",
-  },
-  {
-    title: "How to Load a Dishwasher",
-    description: "Efficient loading techniques, optimal cleaning results",
-  },
-  {
-    title: "How to Properly Clean a Kitchen",
-    description: "Washing dishes, sanitizing countertops, handling grease",
-  },
-  {
-    title: "How to Clean a Bathroom",
-    description: "Disinfecting toilets, tubs, and sinks",
-  },
-  {
-    title: "Dusting & Vacuuming Techniques",
-    description: "Avoiding allergies and keeping furniture clean",
-  },
-  {
-    title: "How to Clean Windows, Mirrors & Floors",
-    description: "Streak-free techniques",
-  },
-  {
-    title: "Decluttering & Minimalist Living Tips",
-    description: "Staying organized in small spaces",
-  }
-];
-
-const formatVideoDuration = (duration: string) => {
-  // Convert ISO 8601 duration to readable format
-  const match = duration?.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-  if (!match) return "00:00";
-
-  const hours = (match[1] ? parseInt(match[1].replace('H', '')) : 0).toString();
-  const minutes = (match[2] ? parseInt(match[2].replace('M', '')) : 0).toString().padStart(2, '0');
-  const seconds = (match[3] ? parseInt(match[3].replace('S', '')) : 0).toString().padStart(2, '0');
-
-  return hours !== '0' ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
-};
-
+// Components
 const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) => {
-  console.log("Video section received videos:", videos); // Debug log
-
   if (!videos?.length) {
     return (
       <div className="text-center text-muted-foreground py-4">
@@ -169,67 +150,6 @@ const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) =
   );
 };
 
-interface SkillGuidanceResponse {
-  guidance: string;
-  videos: Array<{
-    id: string;
-    title: string;
-    thumbnail: {
-      url: string;
-      width: number;
-      height: number;
-    };
-    duration: string;
-  }>;
-}
-
-// Define sections with their icons and components
-const SECTIONS = [
-  {
-    id: 'chat',
-    title: 'AI Learning Coach',
-    description: 'Get personalized guidance for your learning journey',
-    icon: Brain,
-    component: () => <ChatInterface category="learning" />
-  },
-  {
-    id: 'skills',
-    title: 'Life Skills',
-    description: 'Learn practical skills for everyday life',
-    icon: Home,
-    component: () => <LifeSkillsContent />
-  },
-  {
-    id: 'cooking',
-    title: 'Cooking Basics',
-    description: 'Master essential cooking techniques',
-    icon: ChefHat,
-    component: CookingGuide
-  },
-  {
-    id: 'vehicle',
-    title: 'Vehicle Maintenance',
-    description: 'Learn basic car maintenance and care',
-    icon: Car,
-    component: VehicleGuide
-  },
-  {
-    id: 'handyman',
-    title: 'Home Repairs',
-    description: 'Essential home maintenance skills',
-    icon: Wrench,
-    component: HandymanGuide
-  },
-  {
-    id: 'calendar',
-    title: 'Schedule',
-    description: 'Your learning schedule',
-    icon: Clock,
-    component: LearningCalendar
-  }
-];
-
-// Life Skills content component
 const LifeSkillsContent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
@@ -283,7 +203,6 @@ const LifeSkillsContent = () => {
       setIsLoading(false);
     }
   };
-
 
   return (
     <div className="space-y-6">
@@ -340,15 +259,88 @@ const LifeSkillsContent = () => {
   );
 };
 
+// Constants
+const LIFE_SKILLS_PROMPTS = [
+  {
+    title: "Cleaning Schedule Generator",
+    description: "Personalized schedule based on apartment/home size",
+  },
+  {
+    title: "How to Load a Dishwasher",
+    description: "Efficient loading techniques, optimal cleaning results",
+  },
+  {
+    title: "How to Properly Clean a Kitchen",
+    description: "Washing dishes, sanitizing countertops, handling grease",
+  },
+  {
+    title: "How to Clean a Bathroom",
+    description: "Disinfecting toilets, tubs, and sinks",
+  },
+  {
+    title: "Dusting & Vacuuming Techniques",
+    description: "Avoiding allergies and keeping furniture clean",
+  },
+  {
+    title: "How to Clean Windows, Mirrors & Floors",
+    description: "Streak-free techniques",
+  },
+  {
+    title: "Decluttering & Minimalist Living Tips",
+    description: "Staying organized in small spaces",
+  }
+];
+
+const SECTIONS = [
+  {
+    id: 'chat',
+    title: 'AI Learning Coach',
+    description: 'Get personalized guidance for your learning journey',
+    icon: Brain,
+    component: ChatInterface,
+    category: "learning"
+  },
+  {
+    id: 'skills',
+    title: 'Life Skills',
+    description: 'Learn practical skills for everyday life',
+    icon: Home,
+    component: LifeSkillsContent
+  },
+  {
+    id: 'cooking',
+    title: 'Cooking Basics',
+    description: 'Master essential cooking techniques',
+    icon: ChefHat,
+    component: CookingGuide
+  },
+  {
+    id: 'vehicle',
+    title: 'Vehicle Maintenance',
+    description: 'Learn basic car maintenance and care',
+    icon: Car,
+    component: VehicleGuide
+  },
+  {
+    id: 'handyman',
+    title: 'Home Repairs',
+    description: 'Essential home maintenance skills',
+    icon: Wrench,
+    component: HandymanGuide
+  },
+  {
+    id: 'calendar',
+    title: 'Schedule',
+    description: 'Your learning schedule',
+    icon: Clock,
+    component: LearningCalendar
+  }
+];
+
+// Main component
 export default function Learning() {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
-
-  const handleSectionClick = (sectionId: string) => {
-    setSelectedSection(sectionId);
-  };
-
   const selectedSectionData = SECTIONS.find(section => section.id === selectedSection);
-  const SectionComponent = selectedSectionData?.component;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -363,7 +355,7 @@ export default function Learning() {
               "hover:shadow-md hover:scale-[1.02]",
               "bg-white hover:bg-gray-50/50"
             )}
-            onClick={() => handleSectionClick(section.id)}
+            onClick={() => setSelectedSection(section.id)}
           >
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -387,188 +379,17 @@ export default function Learning() {
                 </>
               )}
             </div>
+            {selectedSectionData && (
+              <DialogDescription>{selectedSectionData.description}</DialogDescription>
+            )}
           </DialogHeader>
           <ScrollArea className="max-h-[70vh]">
-            {SectionComponent && <SectionComponent />}
+            {selectedSectionData && (
+              <selectedSectionData.component category={selectedSectionData.category} />
+            )}
           </ScrollArea>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
-
-const scheduleFormSchema = z.object({
-  spaceType: z.enum(["apartment", "house", "studio"]),
-  roomCount: z.enum(["1-2", "3-4", "5+"]),
-  occupants: z.enum(["1", "2", "3-4", "5+"]),
-  cleaningFrequency: z.enum(["daily", "weekly", "biweekly"]),
-});
-
-type ScheduleFormValues = z.infer<typeof scheduleFormSchema>;
-
-const CleaningScheduleGenerator = () => {
-  const [schedule, setSchedule] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const form = useForm<ScheduleFormValues>({
-    resolver: zodResolver(scheduleFormSchema),
-    defaultValues: {
-      spaceType: "apartment",
-      roomCount: "1-2",
-      occupants: "1",
-      cleaningFrequency: "weekly",
-    },
-  });
-
-  const onSubmit = async (values: ScheduleFormValues) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/skill-guidance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          skillArea: "life",
-          userQuery: `Create a detailed cleaning schedule for a ${values.spaceType} with ${values.roomCount} rooms and ${values.occupants} occupants. The schedule should be ${values.cleaningFrequency}. Include specific tasks for each area, estimated time required, and recommended cleaning supplies.`,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate schedule');
-      }
-
-      const data = await response.json();
-      setSchedule(data.guidance);
-    } catch (error) {
-      console.error("Error generating schedule:", error);
-      setSchedule("Sorry, we couldn't generate your cleaning schedule. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {/* Form fields */}
-          <FormField
-            control={form.control}
-            name="spaceType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Type of Living Space</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select living space type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="apartment">Apartment</SelectItem>
-                    <SelectItem value="house">House</SelectItem>
-                    <SelectItem value="studio">Studio</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="roomCount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Number of Rooms</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select number of rooms" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="1-2">1-2 rooms</SelectItem>
-                    <SelectItem value="3-4">3-4 rooms</SelectItem>
-                    <SelectItem value="5+">5+ rooms</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="occupants"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Number of Occupants</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select number of occupants" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="1">1 person</SelectItem>
-                    <SelectItem value="2">2 people</SelectItem>
-                    <SelectItem value="3-4">3-4 people</SelectItem>
-                    <SelectItem value="5+">5+ people</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="cleaningFrequency"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Preferred Cleaning Frequency</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select cleaning frequency" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="biweekly">Bi-weekly</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating Schedule...
-              </>
-            ) : (
-              'Generate Schedule'
-            )}
-          </Button>
-        </form>
-      </Form>
-
-      {schedule && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Your Personalized Cleaning Schedule</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-slate max-w-none">
-              {formatContent(schedule)}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-};
