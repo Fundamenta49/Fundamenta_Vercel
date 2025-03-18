@@ -36,7 +36,7 @@ interface AppSuggestion {
 }
 
 export default function FloatingChat() {
-  const [isMinimized, setIsMinimized] = useState(true); // Default to minimized
+  const [isMinimized, setIsMinimized] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [location] = useLocation();
@@ -44,7 +44,7 @@ export default function FloatingChat() {
   const { toast } = useToast();
   const controls = useAnimationControls();
 
-  // Quirky animation effect
+  // Gentle floating animation
   useEffect(() => {
     if (isMinimized) {
       const interval = setInterval(() => {
@@ -181,32 +181,31 @@ export default function FloatingChat() {
           animate={controls}
           className="relative"
         >
-          {/* Robot head container */}
+          {/* Robot button */}
           <Button
             variant="default"
             size="icon"
             className={cn(
-              "w-14 h-14 rounded-full relative overflow-hidden",
+              "w-14 h-20 relative overflow-visible", 
               "bg-white border-2 border-blue-100",
               "hover:border-blue-200 transition-all duration-300",
-              "shadow-lg hover:shadow-xl"
+              "shadow-lg hover:shadow-xl rounded-[2rem]" 
             )}
             onClick={() => setIsMinimized(false)}
           >
-            {/* Robot face */}
-            <div className="relative w-full h-full flex items-center justify-center">
+            {/* Robot body */}
+            <div className="relative w-full h-full flex items-center justify-center flex-col">
               {/* Eyes container */}
-              <div className="flex gap-2">
+              <div className="flex gap-3 mb-2">
                 {/* Left eye */}
-                <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
+                <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
                 {/* Right eye */}
-                <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
+                <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
               </div>
 
-              {/* Headphones */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-4 border-t-4 border-blue-400 rounded-t-full" />
-              <div className="absolute top-2 left-0 w-2 h-4 bg-blue-400 rounded-l-full" />
-              <div className="absolute top-2 right-0 w-2 h-4 bg-blue-400 rounded-r-full" />
+              {/* Arms */}
+              <div className="absolute left-[-8px] top-1/2 w-2 h-4 bg-white border-2 border-blue-100 rounded-full transform -translate-y-1/2" />
+              <div className="absolute right-[-8px] top-1/2 w-2 h-4 bg-white border-2 border-blue-100 rounded-full transform -translate-y-1/2" />
             </div>
           </Button>
         </motion.div>
