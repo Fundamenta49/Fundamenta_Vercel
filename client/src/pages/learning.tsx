@@ -6,8 +6,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
@@ -23,19 +38,16 @@ import {
   Home,
   Loader2,
   Clock,
-  Video,
-  Link2,
-  ExternalLink,
-  ChefHat
+  ChefHat,
+  ExternalLink
 } from "lucide-react";
 import { useState } from "react";
-import CookingGuide from "@/components/cooking-guide";
-import { cn } from "@/lib/utils";
-import LearningCalendar from "@/components/learning-calendar";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
+import CookingGuide from "@/components/cooking-guide";
+import { cn } from "@/lib/utils";
+import LearningCalendar from "@/components/learning-calendar";
 
 const formatContent = (content: string) => {
   // Regular expression to match URLs
@@ -560,3 +572,5 @@ const CleaningScheduleGenerator = () => {
     </div>
   );
 };
+
+import ExternalLink from "lucide-react/ExternalLink";
