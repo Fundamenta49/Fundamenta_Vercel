@@ -10,16 +10,38 @@ import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from "mammoth";
 import axios from 'axios';
 
-
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  }
+});
 
 const messageSchema = z.object({
   message: z.string(),
-  skillArea: z.enum(['cooking', 'career', 'emergency', 'finance', 'wellness', 'learning', 'tour']),
-  userQuery: z.string()
+  category: z.enum(['cooking', 'career', 'emergency', 'finance', 'wellness', 'learning', 'tour']),
+  previousMessages: z.array(z.object({
+    role: z.enum(["user", "assistant"]),
+    content: z.string(),
+    timestamp: z.date().optional(),
+    category: z.string().optional()
+  }))
 });
-
-const upload = multer();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
@@ -50,7 +72,7 @@ Continue with the next section here.
 
 Remember to suggest relevant features in the app that could help the user.`;
 
-      switch (validatedData.skillArea) {
+      switch (validatedData.category) {
         case "cooking":
           systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm!`;
           break;
@@ -74,6 +96,12 @@ Remember to suggest relevant features in the app that could help the user.`;
           break;
       }
 
+      // Consider previous messages for context
+      const conversationHistory = validatedData.previousMessages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
       const response = await openai.chat.completions.create({
         model: "gpt-4o", 
         messages: [
@@ -81,9 +109,10 @@ Remember to suggest relevant features in the app that could help the user.`;
             role: "system",
             content: systemMessage
           },
+          ...conversationHistory,
           {
             role: "user",
-            content: validatedData.userQuery
+            content: validatedData.message
           }
         ]
       });
