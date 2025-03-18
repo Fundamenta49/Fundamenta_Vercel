@@ -16,24 +16,7 @@ import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { motion, useAnimationControls } from "framer-motion";
 
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-  actions?: AIAction[];
-  suggestions?: AppSuggestion[];
-}
-
-interface AIAction {
-  type: string;
-  payload: any;
-}
-
-interface AppSuggestion {
-  text: string;
-  path: string;
-  description: string;
-}
+// ... (keep the existing interfaces)
 
 export default function FloatingChat() {
   const [isMinimized, setIsMinimized] = useState(true);
@@ -203,22 +186,43 @@ export default function FloatingChat() {
               "w-16 h-16 relative overflow-visible",
               "bg-navy-600",
               "hover:bg-navy-700 transition-all duration-300",
-              "rounded-full"
+              "rounded-full shadow-lg"
             )}
             onClick={() => setIsMinimized(false)}
           >
-            {/* Glow effects */}
-            <div className="absolute -inset-2 bg-navy-400 rounded-full blur-lg opacity-20 animate-pulse" />
-            <div className="absolute -inset-1 bg-navy-300 rounded-full blur-md opacity-10 animate-pulse delay-75" />
+            {/* Enhanced glow effects */}
+            <div className="absolute -inset-2 bg-navy-400/50 rounded-full blur-xl opacity-30 animate-pulse" />
+            <div className="absolute -inset-1 bg-navy-300/50 rounded-full blur-lg opacity-20 animate-pulse delay-75" />
 
-            {/* Face container */}
-            <div className="w-12 h-10 bg-navy-100 rounded-[1rem] flex items-center justify-center shadow-inner relative z-10">
-              <motion.div className="flex gap-4">
-                {/* Eyes with blinking animation controlled by the useEffect above */}
-                <motion.div className="w-2 h-2 rounded-full bg-navy-600" />
-                <motion.div className="w-2 h-2 rounded-full bg-navy-600" />
+            {/* 3D outer ring */}
+            <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-navy-500 to-navy-700 shadow-inner" />
+
+            {/* Face container with 3D effect */}
+            <div className="absolute inset-2 bg-navy-100 rounded-2xl flex items-center justify-center transform -translate-y-0.5">
+              {/* Inner shadow for depth */}
+              <div className="absolute inset-0 rounded-2xl shadow-inner bg-gradient-to-b from-white/20 to-transparent" />
+
+              {/* Crisp highlights */}
+              <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent rounded-t-2xl" />
+
+              {/* Eyes container */}
+              <motion.div className="flex gap-4 relative z-10">
+                {/* Left eye with 3D effect */}
+                <motion.div className="w-2.5 h-2.5 rounded-full bg-navy-600 shadow-lg relative">
+                  <div className="absolute inset-0.5 rounded-full bg-navy-500" />
+                  <div className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-white/30" />
+                </motion.div>
+
+                {/* Right eye with 3D effect */}
+                <motion.div className="w-2.5 h-2.5 rounded-full bg-navy-600 shadow-lg relative">
+                  <div className="absolute inset-0.5 rounded-full bg-navy-500" />
+                  <div className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-white/30" />
+                </motion.div>
               </motion.div>
             </div>
+
+            {/* Bottom shadow for grounding */}
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-2 bg-navy-950/10 rounded-full blur-md" />
           </Button>
         </motion.div>
       ) : (
