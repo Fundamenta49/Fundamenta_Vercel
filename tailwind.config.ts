@@ -16,6 +16,19 @@ export default {
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        navy: {
+          DEFAULT: "#1E3A8A",
+          50: "#E8F0FF",
+          100: "#C7D9F5",
+          200: "#96B4E7",
+          300: "#6A8FD5",
+          400: "#4771C2",
+          500: "#1E3A8A",
+          600: "#162C6B",
+          700: "#0F1F4D",
+          800: "#08112E",
+          900: "#02040F",
+        },
         wood: {
           DEFAULT: "hsl(var(--wood))",
           foreground: "hsl(var(--foreground))",

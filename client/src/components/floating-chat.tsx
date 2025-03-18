@@ -179,65 +179,48 @@ export default function FloatingChat() {
           animate={controls}
           className="relative"
         >
-          {/* Robot container with oval shape */}
           <Button
             variant="default"
             size="icon"
             className={cn(
-              "w-16 h-24 relative overflow-visible", 
-              "bg-gradient-to-b from-blue-50 to-white",
+              "w-16 h-24 relative overflow-visible",
+              "bg-white",
               "hover:shadow-lg transition-all duration-300",
-              "rounded-[100px]", // More oval shape
-              "border-2 border-blue-100",
-              "before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:rounded-[100px]",
-              "after:content-[''] after:absolute after:inset-0 after:bg-gradient-to-b after:from-white/50 after:to-transparent after:rounded-[100px]"
+              "border-2 border-navy-600",
+              "flex flex-col items-center justify-center"
             )}
             onClick={() => setIsMinimized(false)}
           >
-            {/* Robot body */}
-            <div className="relative w-full h-full flex items-center justify-center flex-col">
-              {/* Head section with 3D effect */}
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-b from-blue-50 to-white shadow-inner" />
-
-              {/* Eyes container */}
-              <div className="flex gap-4 mb-2 mt-4 relative z-10">
-                {/* Left eye */}
-                <div className="relative w-4 h-4">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg" />
-                  <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-white opacity-80" />
-                  <div className="absolute bottom-0.5 left-0.5 w-2 h-2 rounded-full bg-blue-300 opacity-30" />
-                </div>
-                {/* Right eye */}
-                <div className="relative w-4 h-4">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg" />
-                  <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-white opacity-80" />
-                  <div className="absolute bottom-0.5 left-0.5 w-2 h-2 rounded-full bg-blue-300 opacity-30" />
+            <div className="w-14 h-14 rounded-full bg-navy-600 relative flex items-center justify-center">
+              <div className="w-10 h-8 bg-navy-100 rounded-[1rem] flex items-center justify-center shadow-inner">
+                <div className="flex gap-3">
+                  <div className="w-2 h-2 rounded-full bg-navy-600" />
+                  <div className="w-2 h-2 rounded-full bg-navy-600" />
                 </div>
               </div>
 
-              {/* Body highlights */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-10 h-16 rounded-[80px] bg-gradient-to-b from-blue-50/50 to-transparent" />
-
-              {/* Arms with 3D effect */}
-              <div className="absolute left-[-12px] top-1/2 w-3 h-6 bg-gradient-to-r from-white to-blue-50 border-2 border-blue-100 rounded-full transform -translate-y-1/2 shadow-md" />
-              <div className="absolute right-[-12px] top-1/2 w-3 h-6 bg-gradient-to-l from-white to-blue-50 border-2 border-blue-100 rounded-full transform -translate-y-1/2 shadow-md" />
-
-              {/* Bottom shadow */}
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-100/20 rounded-full blur-sm" />
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-navy-400" />
             </div>
+
+            <div className="w-12 h-8 bg-white border-2 border-navy-600 rounded-lg mt-1 relative">
+              <div className="absolute left-[-6px] top-1/2 w-3 h-3 bg-white border-2 border-navy-600 rounded-full transform -translate-y-1/2" />
+              <div className="absolute right-[-6px] top-1/2 w-3 h-3 bg-white border-2 border-navy-600 rounded-full transform -translate-y-1/2" />
+            </div>
+
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-navy-100 rounded-full blur-sm" />
           </Button>
         </motion.div>
       ) : (
-        <Card className="h-[500px] flex flex-col shadow-lg border border-blue-100">
-          <div className="p-2 border-b flex items-center justify-between bg-gradient-to-r from-white to-blue-50">
+        <Card className="h-[500px] flex flex-col shadow-lg border border-navy-100">
+          <div className="p-2 border-b flex items-center justify-between bg-gradient-to-r from-white to-navy-50">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-blue-500" />
-              <span className="font-medium text-sm text-blue-500">AI Assistant</span>
+              <div className="w-4 h-4 rounded-full bg-navy-500" />
+              <span className="font-medium text-sm text-navy-600">AI Assistant</span>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-blue-50"
+              className="h-8 w-8 hover:bg-navy-50"
               onClick={() => setIsMinimized(true)}
             >
               <Minimize2 className="h-4 w-4" />
@@ -258,8 +241,8 @@ export default function FloatingChat() {
                     className={cn(
                       "rounded-lg px-3 py-2 max-w-[85%] text-sm shadow-sm",
                       msg.role === 'user'
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-50"
+                        ? "bg-navy-500 text-white"
+                        : "bg-navy-50"
                     )}
                   >
                     {msg.content}
@@ -271,9 +254,9 @@ export default function FloatingChat() {
               ))}
               {chatMutation.isPending && (
                 <div className="flex items-center gap-1 p-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" />
-                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce [animation-delay:0.2s]" />
-                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce [animation-delay:0.4s]" />
+                  <div className="w-2 h-2 rounded-full bg-navy-500 animate-bounce" />
+                  <div className="w-2 h-2 rounded-full bg-navy-500 animate-bounce [animation-delay:0.2s]" />
+                  <div className="w-2 h-2 rounded-full bg-navy-500 animate-bounce [animation-delay:0.4s]" />
                 </div>
               )}
             </div>
@@ -285,13 +268,13 @@ export default function FloatingChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask me anything..."
-                className="flex-1 text-sm border-blue-100 focus-visible:ring-blue-400"
+                className="flex-1 text-sm border-navy-100 focus-visible:ring-navy-400"
               />
               <Button
                 type="submit"
                 disabled={chatMutation.isPending}
                 size="sm"
-                className="bg-blue-500 hover:bg-blue-600 text-white"
+                className="bg-navy-500 hover:bg-navy-600 text-white"
               >
                 Send
               </Button>
