@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getChatResponse, getEmergencyGuidance, optimizeResume } from "./ai";
+import { orchestrateAIResponse } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { searchJobs } from "./jobs";
@@ -285,6 +285,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
 
 
   app.post("/api/chat", async (req, res) => {

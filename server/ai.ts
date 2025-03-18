@@ -10,12 +10,6 @@ interface ChatContext {
   currentPage: string;
   currentSection?: string;
   availableActions: string[];
-  userData?: any;
-}
-
-interface ResumeData {
-  targetPosition: string;
-  content: string;
 }
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
@@ -25,7 +19,6 @@ const openai = new OpenAI({
   timeout: 30000,
 });
 
-// Update the system prompts to include action capabilities
 const systemPrompts = {
   orchestrator: `You are Fundamenta's AI Assistant, capable of helping users across all app features.
 
@@ -59,7 +52,14 @@ const systemPrompts = {
   1. Always understand the current context before suggesting actions
   2. Provide specific steps for accessing features
   3. Maintain conversation history for context
-  4. Use available app features before suggesting external resources`
+  4. Use available app features before suggesting external resources
+
+  Format your response as a JSON object with:
+  {
+    "response": "Your message to the user",
+    "actions": [{ "type": "action_type", "payload": {} }],
+    "suggestions": [{ "text": "Suggestion text", "path": "/route", "description": "Why this might help" }]
+  }`
 };
 
 export async function orchestrateAIResponse(
@@ -118,12 +118,13 @@ export async function orchestrateAIResponse(
   }
 }
 
-// Helper functions
-function getPreferredStyle(messages: { role: string; content: string }[]): string {
+export function getPreferredStyle(messages: { role: string; content: string }[]): string {
   const userMessages = messages.filter(m => m.role === "user");
+  if (userMessages.length === 0) return "concise";
+
   const avgLength = userMessages.reduce((acc, m) => acc + m.content.length, 0) / userMessages.length;
   const hasQuestions = userMessages.some(m => m.content.includes("?"));
-  const hasTechnicalTerms = userMessages.some(m =>
+  const hasTechnicalTerms = userMessages.some(m => 
     m.content.match(/\b(api|function|code|error|bug|interface|component)\b/i)
   );
 
@@ -133,7 +134,7 @@ function getPreferredStyle(messages: { role: string; content: string }[]): strin
   return "concise";
 }
 
-function getInterests(messages: { role: string; content: string }[]): string {
+export function getInterests(messages: { role: string; content: string }[]): string {
   const content = messages.map(m => m.content.toLowerCase()).join(" ");
 
   if (content.includes("career") || content.includes("job")) return "career development";
@@ -144,7 +145,7 @@ function getInterests(messages: { role: string; content: string }[]): string {
   return "general";
 }
 
-function getLearningStyle(messages: { role: string; content: string }[]): string {
+export function getLearningStyle(messages: { role: string; content: string }[]): string {
   const content = messages.map(m => m.content.toLowerCase()).join(" ");
 
   if (content.includes("show") || content.includes("see")) return "visual";
@@ -153,5 +154,3 @@ function getLearningStyle(messages: { role: string; content: string }[]): string
 
   return "mixed";
 }
-
-export { getPreferredStyle, getInterests, getLearningStyle, orchestrateAIResponse };

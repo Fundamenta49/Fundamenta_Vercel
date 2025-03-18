@@ -3,7 +3,7 @@ import { orchestrateAIResponse } from "../ai";
 
 const router = Router();
 
-router.post("/chat", async (req, res) => {
+router.post("/orchestrator", async (req, res) => {
   try {
     const { message, context = "/", previousMessages = [] } = req.body;
 
@@ -12,15 +12,19 @@ router.post("/chat", async (req, res) => {
     }
 
     const response = await orchestrateAIResponse(message, {
-      currentPage: context,
-      currentSection: 'general',
-      availableActions: []
+      currentPage: context.currentPage || "home",
+      currentSection: context.currentSection || "general",
+      availableActions: context.availableActions || []
     }, previousMessages);
 
-    res.json(response);
+    res.json({ 
+      success: true,
+      ...response
+    });
   } catch (error: any) {
     console.error("Chat API Error:", error);
     res.status(500).json({ 
+      success: false,
       error: "Failed to process chat message",
       details: process.env.NODE_ENV === 'development' ? error?.message : undefined
     });
