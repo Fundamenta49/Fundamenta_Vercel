@@ -6,53 +6,110 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Brain, Flame, Heart, PhoneCall } from "lucide-react";
 import ChatInterface from "@/components/chat-interface";
 import EmergencyGuide from "@/components/emergency-guide";
 import CPRGuide from "@/components/cpr-guide";
 import FireSafety from "@/components/fire-safety";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+
+const SECTIONS = [
+  {
+    id: 'chat',
+    title: 'Emergency AI Assistant',
+    description: 'Get immediate guidance for emergency situations',
+    icon: Brain,
+    component: ChatInterface,
+    props: { category: "emergency" as const },
+    alert: (
+      <Alert className="mt-4 border-red-500 bg-red-50">
+        <AlertCircle className="h-4 w-4 text-red-500" />
+        <AlertDescription className="text-red-800 text-sm">
+          For immediate emergency assistance, always call your local emergency services first.
+          This AI assistant provides general guidance only.
+        </AlertDescription>
+      </Alert>
+    )
+  },
+  {
+    id: 'guides',
+    title: 'Emergency Guides',
+    description: 'Step-by-step guides for various emergency situations',
+    icon: PhoneCall,
+    component: EmergencyGuide
+  },
+  {
+    id: 'fire',
+    title: 'Fire Safety',
+    description: 'Learn about fire prevention and emergency procedures',
+    icon: Flame,
+    component: FireSafety
+  },
+  {
+    id: 'cpr',
+    title: 'CPR Training',
+    description: 'Learn essential CPR and first aid techniques',
+    icon: Heart,
+    component: CPRGuide
+  }
+];
 
 export default function Emergency() {
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const handleCardClick = (sectionId: string) => {
+    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Emergency Assistance</h1>
+    <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-8 text-center">Emergency Assistance</h1>
 
-      <Tabs defaultValue="chat">
-        <div className="tabs-container">
-          <TabsList className="mb-4">
-            <TabsTrigger value="chat">AI Assistant</TabsTrigger>
-            <TabsTrigger value="guides">Emergency Guides</TabsTrigger>
-            <TabsTrigger value="fire">Fire Safety</TabsTrigger>
-            <TabsTrigger value="cpr">CPR Training</TabsTrigger>
-          </TabsList>
-        </div>
+      <Alert variant="destructive" className="mb-6">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).
+        </AlertDescription>
+      </Alert>
 
-        <TabsContent value="chat">
-          <Card>
+      <div className="grid gap-6">
+        {SECTIONS.map((section) => (
+          <Card 
+            key={section.id}
+            className={cn(
+              "transition-all duration-300 ease-in-out cursor-pointer",
+              "hover:shadow-md",
+              expandedSection === section.id ? "shadow-lg" : "shadow-sm"
+            )}
+            onClick={() => handleCardClick(section.id)}
+          >
             <CardHeader>
-              <CardTitle>Emergency AI Assistant</CardTitle>
-              <CardDescription>
-                Get immediate guidance for emergency situations
+              <div className="flex items-center gap-3">
+                <section.icon className="h-6 w-6 text-primary" />
+                <CardTitle className="text-2xl">{section.title}</CardTitle>
+              </div>
+              <CardDescription className="text-lg">
+                {section.description}
               </CardDescription>
+              {section.alert}
             </CardHeader>
-            <CardContent>
-              <ChatInterface category="emergency" />
-            </CardContent>
+            <div
+              className={cn(
+                "transition-all duration-300 ease-in-out",
+                "overflow-hidden",
+                expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+              )}
+            >
+              <CardContent className="p-6">
+                {expandedSection === section.id && (
+                  <section.component {...section.props} />
+                )}
+              </CardContent>
+            </div>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="guides">
-          <EmergencyGuide />
-        </TabsContent>
-
-        <TabsContent value="fire">
-          <FireSafety />
-        </TabsContent>
-
-        <TabsContent value="cpr">
-          <CPRGuide />
-        </TabsContent>
-      </Tabs>
+        ))}
+      </div>
     </div>
   );
 }
