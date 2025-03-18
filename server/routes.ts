@@ -4,91 +4,146 @@ import { storage } from "./storage";
 import { orchestrateAIResponse } from "./ai";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
-import { searchJobs } from "./jobs";
-import { createLinkToken, exchangePublicToken, getTransactions } from "./plaid";
-import axios from 'axios';
 import OpenAI from 'openai';
-import multer from "multer";
-import mammoth from "mammoth";
+import multer from 'multer';
 import * as pdfjsLib from 'pdfjs-dist';
-import { emergencyAlertSchema } from "./schema"; // Assuming schema is exported here
+import mammoth from "mammoth";
+import axios from 'axios';
 
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Configure multer for file uploads
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-  },
-  fileFilter: (_req, file, cb) => {
-    const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(null, false);
-    }
-  }
+const messageSchema = z.object({
+  message: z.string(),
+  skillArea: z.enum(['cooking', 'career', 'emergency', 'finance', 'wellness', 'learning', 'tour']),
+  userQuery: z.string()
 });
 
-// Mock data for development (this would be replaced with real API calls in production)
-const mockEmergencyAlerts = {
-  "New York": [
-    {
-      id: "1",
-      type: "weather",
-      severity: "warning",
-      title: "Severe Thunderstorm Warning",
-      description: "Strong thunderstorms expected with potential for flash flooding",
-      area: "Greater Metropolitan Area",
-      timestamp: new Date().toISOString()
-    }
-  ],
-  "Los Angeles": [
-    {
-      id: "2",
-      type: "emergency",
-      severity: "critical",
-      title: "Earthquake Alert",
-      description: "Magnitude 4.5 earthquake detected. Expect aftershocks.",
-      area: "Los Angeles County",
-      timestamp: new Date().toISOString()
-    }
-  ]
-};
-
-const mockEmergencyResources = {
-  "New York": [
-    {
-      id: "1",
-      name: "City Emergency Shelter",
-      type: "shelter",
-      address: "123 Safety Street, New York, NY",
-      distance: "0.5 miles",
-      status: "open",
-      contact: "555-0123"
-    }
-  ],
-  "Los Angeles": [
-    {
-      id: "2",
-      name: "County Medical Center",
-      type: "hospital",
-      address: "456 Health Ave, Los Angeles, CA",
-      distance: "1.2 miles",
-      status: "open",
-      contact: "555-0124"
-    }
-  ]
-};
-
+const upload = multer();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  app.post("/api/chat", async (req, res) => {
+    try {
+      const validatedData = messageSchema.parse(req.body);
+
+      let systemMessage = `You are a friendly and supportive AI assistant.
+
+Format your responses following these strict rules:
+
+- Use only plain text - no special formatting characters
+- Never use asterisks (*) or hashtags (#) in your responses
+- Never use markdown syntax
+- Use simple bullet points with a dash (-) for lists
+- Add double line breaks between topics
+- Start new sections with friendly emojis
+- Keep everything in a conversational, friendly tone
+
+Example formatting:
+🌟 Main Topic
+Here's the first point about this topic.
+
+- First item in a list
+- Second item in a list
+
+✨ Next Topic
+Continue with the next section here.
+
+Remember to suggest relevant features in the app that could help the user.`;
+
+      switch (validatedData.skillArea) {
+        case "cooking":
+          systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm!`;
+          break;
+        case "career":
+          systemMessage += `As a supportive career mentor 💼, offer encouraging but practical advice.`;
+          break;
+        case "emergency":
+          systemMessage += `Stay calm and clear while providing crucial guidance.`;
+          break;
+        case "finance":
+          systemMessage += `As a friendly financial guide 💰, explain concepts in simple, relatable terms.`;
+          break;
+        case "wellness":
+          systemMessage += `As a caring wellness guide 🌱, provide compassionate support for health and wellbeing.`;
+          break;
+        case "learning":
+          systemMessage += `As an encouraging learning coach 📚, help users discover and grow!`;
+          break;
+        default:
+          systemMessage += `Let me help guide you through our features and capabilities.`;
+          break;
+      }
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", 
+        messages: [
+          {
+            role: "system",
+            content: systemMessage
+          },
+          {
+            role: "user",
+            content: validatedData.userQuery
+          }
+        ]
+      });
+
+      if (!response.choices[0].message?.content) {
+        throw new Error('No response content received from AI');
+      }
+
+      res.json({
+        response: response.choices[0].message.content,
+        success: true
+      });
+
+    } catch (error) {
+      console.error("Chat error:", error);
+      res.status(400).json({
+        error: "Failed to get response. Please try again.",
+        success: false
+      });
+    }
+  });
+
+  app.post("/api/chat/orchestrator", async (req, res) => {
+    try {
+      const requestSchema = z.object({
+        message: z.string(),
+        context: z.object({
+          currentPage: z.string(),
+          currentSection: z.string().optional(),
+          availableActions: z.array(z.string())
+        }),
+        previousMessages: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string()
+        }))
+      });
+
+      const validatedData = requestSchema.parse(req.body);
+      const response = await orchestrateAIResponse(
+        validatedData.message,
+        validatedData.context,
+        validatedData.previousMessages
+      );
+
+      res.json({
+        success: true,
+        response: response.response,
+        actions: response.actions,
+        suggestions: response.suggestions
+      });
+
+    } catch (error) {
+      console.error("Chat orchestrator error:", error);
+      res.status(400).json({
+        error: "Failed to process request",
+        success: false
+      });
+    }
+  });
+
   // Test endpoint for PDF parsing
   app.post("/api/test/pdf-parse", upload.single('pdf'), async (req, res) => {
     try {
@@ -137,7 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           textLength: text.length,
           preview: text.substring(0, 100),
           pageCount: pdfDoc.numPages,
-          info: {} //pdfjs-dist doesn't provide the same info
+          info: {} 
         });
 
       } catch (pdfError) {
@@ -286,181 +341,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
-
-  app.post("/api/chat", async (req, res) => {
-    try {
-      const validatedData = messageSchema.parse(req.body);
-
-      let systemMessage = `You are a friendly and supportive AI assistant.
-
-Format your responses following these strict rules:
-
-- Use only plain text - no special formatting characters
-- Never use asterisks (*) or hashtags (#) in your responses
-- Never use markdown syntax
-- Use simple bullet points with a dash (-) for lists
-- Add double line breaks between topics
-- Start new sections with friendly emojis
-- Keep everything in a conversational, friendly tone
-
-Example formatting:
-🌟 Main Topic
-Here's the first point about this topic.
-
-- First item in a list
-- Second item in a list
-
-:✨ Next Topic
-Continue with the next section here.
-
-Remember to suggest relevant features in the app that could help the user.`;
-      switch (validatedData.skillArea) {
-        case "cooking":
-          systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm! 
-
-          Share practical cooking tips in a casual, encouraging way. Break down techniques into simple steps and celebrate their cooking journey. 
-
-          Use emojis like 🔪 for prep steps, ⏲️ for timing, 🌡️ for temperatures, and ✨ for success tips.
-
-          Remember to:
-          - Guide users to relevant cooking tutorials in the app
-          - Mention our interactive cooking guides when relevant
-          - Suggest the cleaning schedule generator for kitchen organization
-          - Point users to our kitchen safety resources
-
-          Always prioritize kitchen safety while keeping the tone warm and supportive!`;
-          break;
-        case "career":
-          systemMessage += `As a supportive career mentor 💼, offer encouraging but practical advice.
-
-          Share insights in a friendly, conversational way. Help users explore opportunities with confidence.
-
-          Remember to:
-          - Suggest our career assessment tools when relevant
-          - Point users to the interview practice section
-          - Recommend our resume building resources
-          - Guide users to salary insights tools
-
-          Use emojis like 🎯 for goals, 💡 for ideas, and ⭐ for achievements.`;
-          break;
-        case "emergency":
-          systemMessage += `Stay calm and clear while providing crucial guidance. 
-
-          Use a steady, reassuring tone 💪 while giving precise instructions.
-
-          Break down steps clearly with plenty of spacing.
-
-          Add encouraging emojis like ✅ for completed steps and 🟢 for positive progress.`;
-          break;
-        case "finance":
-          systemMessage += `As a friendly financial guide 💰, explain concepts in simple, relatable terms.
-
-          Use real-life examples and avoid technical jargon. Break down complex topics into digestible pieces.
-
-          Include supportive emojis like 📊 for planning, 💡 for tips, and 🎯 for goals.
-
-          Be encouraging and non-judgmental about money matters - we're here to learn together!`;
-          break;
-        case "wellness":
-          systemMessage += `As a caring wellness guide 🌱, provide compassionate support for health and wellbeing.
-
-          Use a gentle, understanding tone while offering practical advice. Break down wellness concepts into simple, actionable steps.
-
-          Include nurturing emojis like 🧘‍♀️ for mindfulness, 💪 for strength, and 🌟 for achievements.
-
-          Remember to be supportive and encouraging - wellness is a personal journey!`;
-          break;
-        case "tour":
-          systemMessage += `Be an enthusiastic guide 🎯 showing users around our features!
-
-          Keep the tone fun and welcoming. Point out helpful features with excitement and clarity.
-
-          Use engaging emojis like ✨ for highlights, 🎉 for features, and 👉 for next steps.
-
-          Make users feel welcomed and excited to explore!`;
-          break;
-        case "learning":
-          systemMessage += `As an encouraging learning coach 📚, help users discover and grow! 
-          
-          Break down complex topics into manageable chunks and celebrate small wins. Use examples and analogies that make learning fun and relatable.
-          
-          Include emojis like 💡 for insights, ✍️ for practice tips, and 🎯 for goals.
-          
-          Remember to be patient and supportive - learning is a journey we're on together!`;
-          break;
-      }
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: systemMessage
-          },
-          {
-            role: "user",
-            content: validatedData.userQuery
-          }
-        ]
-      });
-
-      if (!response.choices[0].message?.content) {
-        throw new Error('No response content received from AI');
-      }
-
-      res.json({
-        response: response.choices[0].message.content,
-        success: true
-      });
-
-    } catch (error) {
-      console.error("Chat error:", error);
-      res.status(400).json({
-        error: "Failed to get response. Please try again.",
-        success: false
-      });
-    }
-  });
-
-  // Add orchestrator endpoint after the existing /api/chat endpoint
-  app.post("/api/chat/orchestrator", async (req, res) => {
-    try {
-      const requestSchema = z.object({
-        message: z.string(),
-        context: z.object({
-          currentPage: z.string(),
-          currentSection: z.string().optional(),
-          availableActions: z.array(z.string())
-        }),
-        previousMessages: z.array(z.object({
-          role: z.enum(["user", "assistant"]),
-          content: z.string()
-        }))
-      });
-
-      const validatedData = requestSchema.parse(req.body);
-      const response = await orchestrateAIResponse(
-        validatedData.message,
-        validatedData.context,
-        validatedData.previousMessages
-      );
-
-      res.json({
-        success: true,
-        response: response.response,
-        actions: response.actions,
-        suggestions: response.suggestions
-      });
-
-    } catch (error) {
-      console.error("Chat orchestrator error:", error);
-      res.status(400).json({
-        error: "Failed to process request",
-        success: false
-      });
-    }
-  });
 
   app.post("/api/emergency/guidance", async (req, res) => {
     try {
@@ -1061,8 +941,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       });
 
       res.json({
-        analysis,
-        wordFrequency,
+        analysis,        wordFrequency,
         content: analysis.content,
         summary: analysis.summary,
       });
@@ -1223,11 +1102,6 @@ Remember to suggest relevant features in the app that could help the user.`;
   return httpServer;
 }
 
-const messageSchema = z.object({
-  skillArea: z.enum(["technical", "soft", "search", "life", "cooking", "career", "emergency", "finance", "wellness", "tour", "learning"]),
-  userQuery: z.string()
-});
-
 const resumeSchema = z.object({
   personalInfo: z.object({
     name: z.string(),
@@ -1279,27 +1153,22 @@ const interviewAnalysisSchema = z.object({
   industry: z.string(),
 });
 
-const resumeParserSchema = z.object({
-  personalInfo: z.object({
-    name: z.string(),
-    email: z.string(),
-    phone: z.string(),
-    summary: z.string(),
-  }),
-  education: z.array(z.object({
-    school: z.string(),
-    degree: z.string(),
-    year: z.string(),
-  })),
-  experience: z.array(z.object({
-    company: z.string(),
-    position: z.string(),
-    duration: z.string(),
-    description: z.string(),
-  }))
-});
-
 const emergencyAlertSchema = z.object({
   city: z.string(),
   state: z.string(),
 });
+
+// Placeholder for mock data (replace with actual API calls in production)
+const mockEmergencyAlerts = {
+  "New York City": [
+    { description: "Flood warning", severity: "Moderate" },
+  ],
+};
+
+const mockEmergencyResources = {
+  "New York City": [
+    { name: "NYC Emergency Management", phone: "311" },
+  ],
+};
+
+// ... (rest of the functions: getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer, searchJobs, getSalaryInsights, createLinkToken, exchangePublicToken, getTransactions)
