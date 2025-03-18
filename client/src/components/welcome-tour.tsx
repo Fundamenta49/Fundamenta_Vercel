@@ -290,7 +290,7 @@ export default function WelcomeTour() {
                       value={userQuestion}
                       onChange={(e) => setUserQuestion(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleAskQuestion()}
-                      className="text-xs h-8"
+                      className="text-xs h-8 text-black placeholder:text-navy-300"
                       disabled={isLoading}
                     />
                     <Button

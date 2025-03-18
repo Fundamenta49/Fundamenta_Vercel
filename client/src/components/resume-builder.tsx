@@ -592,6 +592,7 @@ export default function ResumeBuilder() {
               onChange={(e) =>
                 setPersonalInfo({ ...personalInfo, name: e.target.value })
               }
+              className="text-black placeholder:text-navy-300"
             />
           </div>
           <div className="space-y-2">
@@ -603,6 +604,7 @@ export default function ResumeBuilder() {
               onChange={(e) =>
                 setPersonalInfo({ ...personalInfo, email: e.target.value })
               }
+              className="text-black placeholder:text-navy-300"
             />
           </div>
           <div className="space-y-2">
@@ -613,6 +615,7 @@ export default function ResumeBuilder() {
               onChange={(e) =>
                 setPersonalInfo({ ...personalInfo, phone: e.target.value })
               }
+              className="text-black placeholder:text-navy-300"
             />
           </div>
           <div className="space-y-2">
@@ -623,6 +626,7 @@ export default function ResumeBuilder() {
               onChange={(e) =>
                 setPersonalInfo({ ...personalInfo, summary: e.target.value })
               }
+              className="text-black placeholder:text-navy-300"
             />
           </div>
         </CardContent>

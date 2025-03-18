@@ -279,7 +279,7 @@ export default function FloatingChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask me anything..."
-                className="flex-1 text-sm border-navy-100 focus-visible:ring-navy-400 placeholder:text-black text-black"
+                className="flex-1 text-sm border-navy-100 focus-visible:ring-navy-400 placeholder:text-navy-300 text-black"
               />
               <Button
                 type="submit"

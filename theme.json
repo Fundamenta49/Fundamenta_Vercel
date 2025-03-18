@@ -11,12 +11,19 @@
     "primary": {
       "default": "#4D9EAF",
       "light": "#E5F4F7",
-      "dark": "#3A7A8A"
+      "dark": "#3A7A8A",
+      "foreground": "#1A1A1A"
     },
     "secondary": {
       "default": "#6B7280",
       "light": "#F3F4F6",
-      "dark": "#374151"
+      "dark": "#374151",
+      "foreground": "#1A1A1A"
+    },
+    "text": {
+      "primary": "#1A1A1A",
+      "secondary": "#4A5568",
+      "muted": "#718096"
     }
   },
   "effects": {

@@ -30,11 +30,23 @@
   }
 
   body {
-    @apply bg-texture font-serif text-wood;
+    @apply bg-texture font-serif text-navy-600;
     min-height: 100vh;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+  }
+
+  /* Add a new class for input text color */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  textarea {
+    @apply text-black placeholder:text-navy-300;
   }
 
   main {

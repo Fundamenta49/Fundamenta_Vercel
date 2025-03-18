@@ -367,7 +367,7 @@ export default function LegalRightsGuide() {
                 placeholder="Ask about domestic violence laws in your state..."
                 value={legalQuestion}
                 onChange={(e) => setLegalQuestion(e.target.value)}
-                className="border-wood/20"
+                className="border-wood/20 text-black placeholder:text-navy-300"
               />
               <Button
                 className="w-full"
