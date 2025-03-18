@@ -30,6 +30,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Type definitions for section components
+type Section = {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  component: React.ComponentType<any>;
+  props?: any;
+};
+
 // Types
 interface SkillGuidanceResponse {
   guidance: string;
@@ -163,7 +173,7 @@ const LIFE_SKILLS_PROMPTS = [
   }
 ];
 
-const SECTIONS = [
+const SECTIONS: Section[] = [
   {
     id: 'chat',
     title: 'AI Learning Coach',
@@ -304,7 +314,7 @@ export default function Learning() {
 
       <div className="grid gap-6">
         {SECTIONS.map((section) => (
-          <Card 
+          <Card
             key={section.id}
             className={cn(
               "transition-all duration-300 ease-in-out cursor-pointer",
@@ -331,7 +341,9 @@ export default function Learning() {
             >
               <CardContent className="p-6">
                 {expandedSection === section.id && (
-                  <section.component {...section.props} />
+                  <ScrollArea className="h-full max-h-[600px]">
+                    <section.component {...section.props} />
+                  </ScrollArea>
                 )}
               </CardContent>
             </div>
