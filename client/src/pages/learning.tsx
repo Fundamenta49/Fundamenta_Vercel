@@ -62,19 +62,15 @@ const LifeSkillsComponent = () => {
   return (
     <div className="space-y-4">
       <form onSubmit={handleSearch}>
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex gap-3">
           <Input
             type="text"
             placeholder="Search for life skills..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-10 text-base"
+            className="flex-1"
           />
-          <Button 
-            type="submit" 
-            variant="outline"
-            className="h-10 text-base sm:w-auto flex items-center justify-center"
-          >
+          <Button type="submit" variant="outline">
             <Search className="h-4 w-4 mr-2" />
             Search
           </Button>
@@ -148,60 +144,51 @@ export default function Learning() {
   };
 
   return (
-    <div className="w-screen min-h-screen bg-background flex flex-col">
-      <div className="flex-1 flex flex-col items-center p-4 sm:p-6">
-        <div className="w-full max-w-7xl">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-            Learning & Development
-          </h1>
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+        Learning & Development
+      </h1>
 
-          <div className="grid gap-4">
-            {SECTIONS.map((section) => {
-              const isExpanded = expandedSection === section.id;
-              const Component = section.component;
+      <div className="grid gap-4">
+        {SECTIONS.map((section) => (
+          <Card 
+            key={section.id} 
+            className={cn(
+              "overflow-hidden transition-shadow duration-200",
+              expandedSection === section.id ? "shadow-md" : "shadow-sm hover:shadow"
+            )}
+          >
+            <CardHeader 
+              className="cursor-pointer hover:bg-accent/5 transition-colors"
+              onClick={() => handleToggle(section.id)}
+            >
+              <div className="flex items-center gap-3">
+                <section.icon className="h-5 w-5 text-primary" />
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="text-lg sm:text-xl">
+                    {section.title}
+                  </CardTitle>
+                  <CardDescription>
+                    {section.description}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
 
-              return (
-                <Card 
-                  key={section.id} 
-                  className={cn(
-                    "overflow-hidden transition-shadow duration-200",
-                    isExpanded ? "shadow-md" : "shadow-sm hover:shadow"
-                  )}
-                >
-                  <CardHeader 
-                    className="cursor-pointer hover:bg-accent/5 transition-colors"
-                    onClick={() => handleToggle(section.id)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <section.icon className="h-5 w-5 text-primary" />
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="text-lg sm:text-xl">
-                          {section.title}
-                        </CardTitle>
-                        <CardDescription>
-                          {section.description}
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  <div
-                    className={cn(
-                      "transition-all duration-200 ease-in-out overflow-hidden",
-                      isExpanded ? "max-h-[80vh]" : "max-h-0"
-                    )}
-                  >
-                    <CardContent className="p-4">
-                      <div className="overflow-y-auto">
-                        {isExpanded && <Component {...section.props} />}
-                      </div>
-                    </CardContent>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
+            <div
+              className={cn(
+                "transition-all duration-200 ease-in-out overflow-hidden",
+                expandedSection === section.id ? "max-h-[80vh]" : "max-h-0"
+              )}
+            >
+              <CardContent className="p-4">
+                <div className="overflow-y-auto">
+                  {expandedSection === section.id && <section.component {...section.props} />}
+                </div>
+              </CardContent>
+            </div>
+          </Card>
+        ))}
       </div>
     </div>
   );
