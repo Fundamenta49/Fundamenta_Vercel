@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
+import { motion, useAnimationControls, useMotionValue } from "framer-motion";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -35,12 +36,32 @@ interface AppSuggestion {
 }
 
 export default function FloatingChat() {
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true); // Default to minimized
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [location] = useLocation();
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const controls = useAnimationControls();
+  const floatY = useMotionValue(0);
+
+  // Quirky animation effect
+  useEffect(() => {
+    if (isMinimized) {
+      const interval = setInterval(() => {
+        const randomMovement = Math.random() * 2 - 1; // Random value between -1 and 1
+        controls.start({
+          rotate: [0, randomMovement * 5, 0],
+          transition: {
+            duration: 2,
+            ease: "easeInOut"
+          }
+        });
+        floatY.set(Math.sin(Date.now() / 1000) * 5);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isMinimized, controls]);
 
   // Get current page context
   const getCurrentContext = () => {
@@ -164,14 +185,37 @@ export default function FloatingChat() {
       )}
     >
       {isMinimized ? (
-        <Button
-          variant="default"
-          size="icon"
-          className="w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg"
-          onClick={() => setIsMinimized(false)}
+        <motion.div
+          animate={controls}
+          style={{ y: floatY }}
+          className="relative"
         >
-          <MessageCircle className="h-6 w-6 text-white" />
-        </Button>
+          <div className="absolute inset-0 rounded-full bg-blue-500 blur-lg opacity-50 animate-pulse" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 opacity-30 animate-pulse delay-75" />
+          <Button
+            variant="default"
+            size="icon"
+            className={cn(
+              "w-12 h-12 rounded-full relative overflow-hidden",
+              "bg-gradient-to-r from-blue-500 to-purple-600",
+              "hover:from-blue-600 hover:to-purple-700",
+              "transition-all duration-300"
+            )}
+            onClick={() => setIsMinimized(false)}
+          >
+            {/* Echo-inspired inner circle */}
+            <div className="absolute inset-2 rounded-full bg-gradient-to-r from-blue-300 to-purple-400 opacity-75 animate-pulse" />
+
+            {/* Central glowing orb */}
+            <div className="relative z-10 w-6 h-6 rounded-full bg-white/90 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-blue-200 animate-pulse" />
+              <MessageCircle className="h-4 w-4 text-blue-600 relative z-10" />
+            </div>
+
+            {/* Animated ring */}
+            <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-[spin_3s_linear_infinite]" />
+          </Button>
+        </motion.div>
       ) : (
         <Card className="h-[500px] flex flex-col shadow-lg border border-blue-100">
           <div className="p-2 border-b flex items-center justify-between bg-gradient-to-r from-white to-blue-50">
