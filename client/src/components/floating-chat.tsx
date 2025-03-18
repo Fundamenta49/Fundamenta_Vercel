@@ -8,13 +8,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, Minimize2 } from "lucide-react";
+import { Minimize2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
-import { motion, useAnimationControls, useMotionValue } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -43,21 +43,19 @@ export default function FloatingChat() {
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const controls = useAnimationControls();
-  const floatY = useMotionValue(0);
 
   // Quirky animation effect
   useEffect(() => {
     if (isMinimized) {
       const interval = setInterval(() => {
-        const randomMovement = Math.random() * 2 - 1; // Random value between -1 and 1
         controls.start({
-          rotate: [0, randomMovement * 5, 0],
+          y: [0, -3, 0],
           transition: {
             duration: 2,
-            ease: "easeInOut"
+            ease: "easeInOut",
+            repeat: Infinity
           }
         });
-        floatY.set(Math.sin(Date.now() / 1000) * 5);
       }, 3000);
       return () => clearInterval(interval);
     }
@@ -87,21 +85,17 @@ export default function FloatingChat() {
   const handleAIAction = async (action: AIAction) => {
     switch (action.type) {
       case 'resume':
-        // Update resume content
         await apiRequest('POST', '/api/resume/update', action.payload);
         toast({ title: "Resume updated", description: "Your resume has been updated with the suggested changes." });
         break;
       case 'recipe':
-        // Generate new recipe
         await apiRequest('POST', '/api/recipes/generate', action.payload);
         toast({ title: "Recipe generated", description: "Your new recipe has been created and saved." });
         break;
       case 'budget':
-        // Update budget
         await apiRequest('POST', '/api/budget/update', action.payload);
         toast({ title: "Budget updated", description: "Your budget has been updated with the new information." });
         break;
-      // Add more action handlers as needed
     }
   };
 
@@ -125,7 +119,6 @@ export default function FloatingChat() {
     },
     onSuccess: async (data) => {
       if (data.success) {
-        // Handle any actions from the AI response
         if (data.actions && data.actions.length > 0) {
           for (const action of data.actions) {
             await handleAIAction(action);
@@ -169,7 +162,6 @@ export default function FloatingChat() {
     chatMutation.mutate(input);
   };
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     const chatContent = chatRef.current;
     if (chatContent) {
@@ -181,39 +173,41 @@ export default function FloatingChat() {
     <div
       className={cn(
         "fixed top-4 right-4 z-50 transition-all duration-300 ease-in-out",
-        isMinimized ? "w-12 h-12" : "w-80"
+        isMinimized ? "w-14 h-14" : "w-80"
       )}
     >
       {isMinimized ? (
         <motion.div
           animate={controls}
-          style={{ y: floatY }}
           className="relative"
         >
-          <div className="absolute inset-0 rounded-full bg-blue-500 blur-lg opacity-50 animate-pulse" />
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 opacity-30 animate-pulse delay-75" />
+          {/* Robot head container */}
           <Button
             variant="default"
             size="icon"
             className={cn(
-              "w-12 h-12 rounded-full relative overflow-hidden",
-              "bg-gradient-to-r from-blue-500 to-purple-600",
-              "hover:from-blue-600 hover:to-purple-700",
-              "transition-all duration-300"
+              "w-14 h-14 rounded-full relative overflow-hidden",
+              "bg-white border-2 border-blue-100",
+              "hover:border-blue-200 transition-all duration-300",
+              "shadow-lg hover:shadow-xl"
             )}
             onClick={() => setIsMinimized(false)}
           >
-            {/* Echo-inspired inner circle */}
-            <div className="absolute inset-2 rounded-full bg-gradient-to-r from-blue-300 to-purple-400 opacity-75 animate-pulse" />
+            {/* Robot face */}
+            <div className="relative w-full h-full flex items-center justify-center">
+              {/* Eyes container */}
+              <div className="flex gap-2">
+                {/* Left eye */}
+                <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
+                {/* Right eye */}
+                <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
+              </div>
 
-            {/* Central glowing orb */}
-            <div className="relative z-10 w-6 h-6 rounded-full bg-white/90 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-blue-200 animate-pulse" />
-              <MessageCircle className="h-4 w-4 text-blue-600 relative z-10" />
+              {/* Headphones */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-4 border-t-4 border-blue-400 rounded-t-full" />
+              <div className="absolute top-2 left-0 w-2 h-4 bg-blue-400 rounded-l-full" />
+              <div className="absolute top-2 right-0 w-2 h-4 bg-blue-400 rounded-r-full" />
             </div>
-
-            {/* Animated ring */}
-            <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-[spin_3s_linear_infinite]" />
           </Button>
         </motion.div>
       ) : (
