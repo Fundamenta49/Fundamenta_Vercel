@@ -5,7 +5,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,45 +18,76 @@ import RiasecTest from "@/components/riasec-test";
 import EmotionalResilienceTracker from "@/components/emotional-resilience-tracker";
 import ResumeBuilder from "@/components/resume-builder";
 import { useState } from "react";
-import { GraduationCap, Search, ExternalLink } from "lucide-react";
+import { GraduationCap, Search, Book, Brain, FileText, Briefcase, DollarSign, MessageSquare, Scale } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-// List of curated learning platforms with their URLs
-const LEARNING_RESOURCES = [
+interface SkillGuidanceResponse {
+  guidance: string;
+}
+
+// Define sections with their icons and components
+const SECTIONS = [
   {
-    name: "Interactive Learning Platforms",
-    links: [
-      { title: "Codecademy", url: "https://www.codecademy.com" },
-      { title: "freeCodeCamp", url: "https://www.freecodecamp.org" },
-      { title: "Coursera", url: "https://www.coursera.org" }
-    ]
+    id: 'assessment',
+    title: 'Career Assessment',
+    description: 'Discover your career interests and strengths',
+    icon: GraduationCap,
+    component: RiasecTest
   },
   {
-    name: "Video Tutorials",
-    links: [
-      { title: "Khan Academy", url: "https://www.khanacademy.org" },
-      { title: "LinkedIn Learning", url: "https://www.linkedin.com/learning" },
-      { title: "Udemy", url: "https://www.udemy.com" }
-    ]
+    id: 'resume',
+    title: 'Resume Builder',
+    description: 'Create and manage your professional resume',
+    icon: FileText,
+    component: ResumeBuilder
   },
   {
-    name: "Practice Exercises",
-    links: [
-      { title: "LeetCode", url: "https://leetcode.com" },
-      { title: "HackerRank", url: "https://www.hackerrank.com" },
-      { title: "Exercism", url: "https://exercism.org" }
-    ]
+    id: 'chat',
+    title: 'Career AI Coach',
+    description: 'Get professional guidance for your career journey',
+    icon: Brain,
+    component: ChatInterface,
+    props: { category: "career" }
   },
   {
-    name: "Community Forums",
-    links: [
-      { title: "Stack Overflow", url: "https://stackoverflow.com" },
-      { title: "GitHub Discussions", url: "https://github.com/discussions" },
-      { title: "Dev.to", url: "https://dev.to" }
-    ]
+    id: 'search',
+    title: 'Job Search',
+    description: 'Find your next career opportunity',
+    icon: Briefcase,
+    component: JobSearch
+  },
+  {
+    id: 'salary',
+    title: 'Salary Insights',
+    description: 'Research and compare salary information',
+    icon: DollarSign,
+    component: SalaryInsights
+  },
+  {
+    id: 'interview',
+    title: 'Interview Practice',
+    description: 'Prepare for job interviews with AI feedback',
+    icon: MessageSquare,
+    component: InterviewPractice
+  },
+  {
+    id: 'resilience',
+    title: 'EQ & Resilience',
+    description: 'Build emotional intelligence and career resilience',
+    icon: Brain,
+    component: EmotionalResilienceTracker
+  },
+  {
+    id: 'rights',
+    title: 'Employment Rights',
+    description: 'Learn about your workplace rights and protections',
+    icon: Scale,
+    component: EmploymentRights
   }
 ];
 
 export default function Career() {
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,9 +118,13 @@ export default function Career() {
     }
   };
 
+  const handleCardClick = (sectionId: string) => {
+    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Career Development</h1>
+    <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center">Career Development</h1>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl">
@@ -112,124 +146,42 @@ export default function Career() {
         </DialogContent>
       </Dialog>
 
-      <Tabs defaultValue="assessment">
-        <div className="tabs-container">
-          <TabsList className="mb-4">
-            <TabsTrigger value="assessment">Career Assessment</TabsTrigger>
-            <TabsTrigger value="resume">Resume Builder</TabsTrigger>
-            <TabsTrigger value="learning">Learning Paths</TabsTrigger>
-            <TabsTrigger value="resilience">EQ & Resilience</TabsTrigger>
-            <TabsTrigger value="chat">Career AI Coach</TabsTrigger>
-            <TabsTrigger value="search">Job Search</TabsTrigger>
-            <TabsTrigger value="salary">Salary Insights</TabsTrigger>
-            <TabsTrigger value="interview">Interview Practice</TabsTrigger>
-            <TabsTrigger value="rights">Employment Rights</TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value="assessment">
-          <RiasecTest />
-        </TabsContent>
-
-        <TabsContent value="resume">
-          <ResumeBuilder />
-        </TabsContent>
-
-        <TabsContent value="learning">
-          <Card>
+      <div className="grid gap-6">
+        {SECTIONS.map((section) => (
+          <Card 
+            key={section.id}
+            className={cn(
+              "transition-all duration-300 ease-in-out cursor-pointer",
+              "hover:shadow-md",
+              expandedSection === section.id ? "shadow-lg" : "shadow-sm"
+            )}
+            onClick={() => handleCardClick(section.id)}
+          >
             <CardHeader>
-              <CardTitle>Learning Paths</CardTitle>
-              <CardDescription>
-                Search for skills you want to learn and get personalized guidance
+              <div className="flex items-center gap-3">
+                <section.icon className="h-6 w-6 text-primary" />
+                <CardTitle className="text-2xl">{section.title}</CardTitle>
+              </div>
+              <CardDescription className="text-lg">
+                {section.description}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="mb-6">
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    placeholder="Search for any skill you want to learn..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                    className="flex-1"
-                  />
-                  <Button onClick={handleSearch} variant="outline">
-                    <Search className="h-4 w-4 mr-2" />
-                    Search
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid gap-6 md:grid-cols-2">
-                {LEARNING_RESOURCES.map((resource, idx) => (
-                  <Card key={idx}>
-                    <CardHeader>
-                      <CardTitle className="text-lg">{resource.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2">
-                        {resource.links.map((link, linkIdx) => (
-                          <li key={linkIdx}>
-                            <Button
-                              variant="link"
-                              className="p-0 h-auto font-normal text-primary hover:text-primary/80"
-                              onClick={() => window.open(link.url, '_blank')}
-                            >
-                              <span className="flex items-center gap-1">
-                                {link.title}
-                                <ExternalLink className="h-3 w-3" />
-                              </span>
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
+            <div
+              className={cn(
+                "transition-all duration-300 ease-in-out",
+                "overflow-hidden",
+                expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+              )}
+            >
+              <CardContent className="p-6">
+                {expandedSection === section.id && (
+                  <section.component {...section.props} />
+                )}
+              </CardContent>
+            </div>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="resilience">
-          <EmotionalResilienceTracker />
-        </TabsContent>
-
-        <TabsContent value="chat">
-          <Card>
-            <CardHeader>
-              <CardTitle>Career AI Coach</CardTitle>
-              <CardDescription>
-                Get professional guidance for your career journey
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChatInterface category="career" />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="search">
-          <JobSearch />
-        </TabsContent>
-
-        <TabsContent value="salary">
-          <SalaryInsights />
-        </TabsContent>
-
-        <TabsContent value="interview">
-          <InterviewPractice />
-        </TabsContent>
-
-        <TabsContent value="rights">
-          <EmploymentRights />
-        </TabsContent>
-      </Tabs>
+        ))}
+      </div>
     </div>
   );
-}
-
-interface SkillGuidanceResponse {
-  guidance: string;
 }
