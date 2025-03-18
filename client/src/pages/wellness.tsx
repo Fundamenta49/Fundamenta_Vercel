@@ -5,75 +5,118 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle } from "lucide-react";
 import ChatInterface from "@/components/chat-interface";
 import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 import RiskAssessment from "@/components/risk-assessment";
 import JournalEntry from "@/components/journal-entry";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+const SECTIONS = [
+  {
+    id: 'chat',
+    title: 'Wellness AI Coach',
+    description: 'Get guidance for mental health, well-being, and nutrition',
+    icon: Brain,
+    component: ChatInterface,
+    props: { category: "wellness" }
+  },
+  {
+    id: 'braintap',
+    title: 'BrainTap',
+    description: 'Check in with yourself and discover personalized mental wellness resources',
+    icon: Heart,
+    component: RiskAssessment,
+    props: { category: "wellness" }
+  },
+  {
+    id: 'journal',
+    title: 'Wellness Journal',
+    description: 'Track your thoughts, feelings, and personal growth',
+    icon: Book,
+    component: JournalEntry
+  },
+  {
+    id: 'nutrition',
+    title: 'Nutrition Guide',
+    description: 'Learn about healthy eating and meal planning',
+    icon: Apple,
+    component: NutritionGuide
+  },
+  {
+    id: 'tracker',
+    title: 'Food Tracker',
+    description: 'Monitor your daily nutrition and eating habits',
+    icon: Calendar,
+    component: NutritionTracker
+  },
+  {
+    id: 'shopping',
+    title: 'Shopping Buddy',
+    description: 'Get help with grocery planning and healthy food choices',
+    icon: ShoppingBag,
+    component: ShoppingBuddy
+  }
+];
 
 export default function Wellness() {
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const handleCardClick = (sectionId: string) => {
+    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">Wellness & Nutrition</h1>
 
-      <Tabs defaultValue="chat">
-        <div className="tabs-container">
-          <TabsList className="mb-4">
-            <TabsTrigger value="chat">AI Wellness Coach</TabsTrigger>
-            <TabsTrigger value="braintap">BrainTap</TabsTrigger>
-            <TabsTrigger value="journal">Journal</TabsTrigger>
-            <TabsTrigger value="nutrition">Nutrition Guide</TabsTrigger>
-            <TabsTrigger value="tracker">Food Tracker</TabsTrigger>
-            <TabsTrigger value="shopping">Shopping Buddy</TabsTrigger>
-          </TabsList>
-        </div>
+      <Alert variant="default" className="mb-6 border-blue-500 bg-blue-50">
+        <AlertCircle className="h-4 w-4 text-blue-500" />
+        <AlertDescription className="text-blue-800">
+          Remember to consult with healthcare professionals for medical advice. Our AI provides general wellness guidance only.
+        </AlertDescription>
+      </Alert>
 
-        <TabsContent value="chat" className="mt-6">
-          <Card className="border-0 shadow-none">
+      <div className="grid gap-6">
+        {SECTIONS.map((section) => (
+          <Card 
+            key={section.id}
+            className={cn(
+              "transition-all duration-300 ease-in-out cursor-pointer",
+              "hover:shadow-md",
+              expandedSection === section.id ? "shadow-lg" : "shadow-sm"
+            )}
+            onClick={() => handleCardClick(section.id)}
+          >
             <CardHeader>
-              <CardTitle>Wellness AI Coach</CardTitle>
-              <CardDescription>
-                Get guidance for mental health, well-being, and nutrition
+              <div className="flex items-center gap-3">
+                <section.icon className="h-6 w-6 text-primary" />
+                <CardTitle className="text-2xl">{section.title}</CardTitle>
+              </div>
+              <CardDescription className="text-lg">
+                {section.description}
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <ChatInterface category="wellness" />
-            </CardContent>
+            <div
+              className={cn(
+                "transition-all duration-300 ease-in-out",
+                "overflow-hidden",
+                expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+              )}
+            >
+              <CardContent className="p-6">
+                {expandedSection === section.id && (
+                  <section.component {...section.props} />
+                )}
+              </CardContent>
+            </div>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="braintap">
-          <Card>
-            <CardHeader>
-              <CardTitle>BrainTap</CardTitle>
-              <CardDescription>
-                Check in with yourself and discover personalized mental wellness resources
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RiskAssessment category="wellness" />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="journal">
-          <JournalEntry />
-        </TabsContent>
-
-        <TabsContent value="nutrition">
-          <NutritionGuide />
-        </TabsContent>
-
-        <TabsContent value="tracker">
-          <NutritionTracker />
-        </TabsContent>
-
-        <TabsContent value="shopping">
-          <ShoppingBuddy />
-        </TabsContent>
-      </Tabs>
+        ))}
+      </div>
     </div>
   );
 }
