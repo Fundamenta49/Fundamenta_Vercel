@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
 import {
   Card,
   CardContent,
@@ -11,29 +10,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
 import CookingGuide from "@/components/cooking-guide";
 import LearningCalendar from "@/components/learning-calendar";
-
 import {
   Brain,
   Car,
@@ -45,7 +28,6 @@ import {
   Search,
   Wrench,
 } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 // Types
@@ -149,115 +131,6 @@ const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) =
   );
 };
 
-const LifeSkillsContent = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [guidance, setGuidance] = useState<string | null>(null);
-  const [videos, setVideos] = useState<SkillGuidanceResponse['videos']>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/skill-guidance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          skillArea: "life",
-          userQuery: searchQuery,
-        }),
-      });
-
-      const data: SkillGuidanceResponse = await response.json();
-      setGuidance(data.guidance);
-      setVideos(data.videos);
-    } catch (error) {
-      console.error("Error searching skills:", error);
-      setGuidance("Sorry, we couldn't process your search right now. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePromptClick = async (prompt: typeof LIFE_SKILLS_PROMPTS[0]) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/skill-guidance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          skillArea: "life",
-          userQuery: prompt.title,
-        }),
-      });
-
-      const data: SkillGuidanceResponse = await response.json();
-      setGuidance(data.guidance);
-      setVideos(data.videos);
-    } catch (error) {
-      console.error("Error getting guidance:", error);
-      setGuidance("Sorry, we couldn't load the guidance right now. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Search for life skills..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          className="flex-1 px-3 py-2 border rounded-md"
-        />
-        <Button onClick={handleSearch} variant="outline">
-          <Search className="h-4 w-4 mr-2" />
-          Search
-        </Button>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
-          <Card
-            key={index}
-            className="cursor-pointer bg-white hover:bg-gray-50/50 transition-all duration-200"
-            onClick={() => handlePromptClick(prompt)}
-          >
-            <CardHeader>
-              <CardTitle className="text-lg">{prompt.title}</CardTitle>
-              <CardDescription>{prompt.description}</CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-
-      {isLoading && (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      )}
-
-      {guidance && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Learning Guide</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-slate max-w-none">
-              {formatContent(guidance)}
-              {videos && <VideoSection videos={videos} />}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-};
-
 // Constants
 const LIFE_SKILLS_PROMPTS = [
   {
@@ -297,14 +170,95 @@ const SECTIONS = [
     description: 'Get personalized guidance for your learning journey',
     icon: Brain,
     component: ChatInterface,
-    category: "learning"
+    props: { category: "learning" as const }
   },
   {
     id: 'skills',
     title: 'Life Skills',
     description: 'Learn practical skills for everyday life',
     icon: Home,
-    component: LifeSkillsContent
+    component: () => {
+      const [searchQuery, setSearchQuery] = useState("");
+      const [guidance, setGuidance] = useState<string | null>(null);
+      const [videos, setVideos] = useState<SkillGuidanceResponse['videos']>([]);
+      const [isLoading, setIsLoading] = useState(false);
+
+      const handlePromptClick = async (prompt: typeof LIFE_SKILLS_PROMPTS[0]) => {
+        setIsLoading(true);
+        try {
+          const response = await fetch("/api/skill-guidance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              skillArea: "life",
+              userQuery: prompt.title,
+            }),
+          });
+
+          const data: SkillGuidanceResponse = await response.json();
+          setGuidance(data.guidance);
+          setVideos(data.videos);
+        } catch (error) {
+          console.error("Error getting guidance:", error);
+          setGuidance("Sorry, we couldn't load the guidance right now. Please try again later.");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      return (
+        <div className="space-y-6">
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              placeholder="Search for life skills..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1"
+            />
+            <Button onClick={() => handlePromptClick({ title: searchQuery, description: "" })} variant="outline">
+              <Search className="h-4 w-4 mr-2" />
+              Search
+            </Button>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
+              <Card
+                key={index}
+                className="cursor-pointer bg-white hover:bg-gray-50/50 transition-all duration-200"
+                onClick={() => handlePromptClick(prompt)}
+              >
+                <CardHeader>
+                  <CardTitle className="text-lg">{prompt.title}</CardTitle>
+                  <CardDescription>{prompt.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+
+          {isLoading && (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          )}
+
+          {guidance && (
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Learning Guide</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="prose prose-slate max-w-none">
+                  {formatContent(guidance)}
+                  {videos && <VideoSection videos={videos} />}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      );
+    }
   },
   {
     id: 'cooking',
@@ -338,25 +292,49 @@ const SECTIONS = [
 
 // Main component
 export default function Learning() {
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const handleCardClick = (sectionId: string) => {
+    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-8 text-center">Learning & Development</h1>
 
-      <div className="grid gap-8">
+      <div className="grid gap-6">
         {SECTIONS.map((section) => (
-          <Card key={section.id} className="overflow-hidden">
+          <Card 
+            key={section.id}
+            className={cn(
+              "transition-all duration-300 ease-in-out cursor-pointer",
+              "hover:shadow-md",
+              expandedSection === section.id ? "shadow-lg" : "shadow-sm"
+            )}
+            onClick={() => handleCardClick(section.id)}
+          >
             <CardHeader>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3">
                 <section.icon className="h-6 w-6 text-primary" />
                 <CardTitle className="text-2xl">{section.title}</CardTitle>
               </div>
-              <CardDescription className="text-lg">{section.description}</CardDescription>
+              <CardDescription className="text-lg">
+                {section.description}
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-full max-h-[600px]">
-                <section.component category={section.category} />
-              </ScrollArea>
-            </CardContent>
+            <div
+              className={cn(
+                "transition-all duration-300 ease-in-out",
+                "overflow-hidden",
+                expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+              )}
+            >
+              <CardContent className="p-6">
+                {expandedSection === section.id && (
+                  <section.component {...section.props} />
+                )}
+              </CardContent>
+            </div>
           </Card>
         ))}
       </div>
