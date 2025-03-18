@@ -6,26 +6,77 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import ChatInterface from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
+import { Brain, Dumbbell, Bird as YogaIcon, Timer, User } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const SECTIONS = [
+  {
+    id: 'chat',
+    title: 'AI Fitness Coach',
+    description: 'Get personalized workout guidance and fitness tips',
+    icon: Brain,
+    component: ChatInterface,
+    props: { category: "fitness" as const }
+  },
+  {
+    id: 'activeyou',
+    title: 'ActiveYou Profile',
+    description: 'Manage your fitness profile and track your progress',
+    icon: User,
+    component: ProfileManager,
+    props: { onUpdate: undefined as unknown as (profile: ProfileType) => void }
+  },
+  {
+    id: 'meditation',
+    title: 'Meditation',
+    description: 'Find peace and balance with guided meditation sessions',
+    icon: Brain,
+    component: ActiveYou,
+    props: { defaultTab: "meditation" as const }
+  },
+  {
+    id: 'weightlifting',
+    title: 'Weight Lifting',
+    description: 'Build strength with personalized workout plans',
+    icon: Dumbbell,
+    component: ActiveYou,
+    props: { defaultTab: "weightlifting" as const }
+  },
+  {
+    id: 'yoga',
+    title: 'Yoga',
+    description: 'Improve flexibility and mindfulness through yoga',
+    icon: YogaIcon,
+    component: ActiveYou,
+    props: { defaultTab: "yoga" as const }
+  },
+  {
+    id: 'running',
+    title: 'Running',
+    description: 'Track your runs and improve your endurance',
+    icon: Timer,
+    component: ActiveYou,
+    props: { defaultTab: "running" as const }
+  }
+];
 
 export default function Active() {
   const { toast } = useToast();
   const [hasProfile, setHasProfile] = useState<boolean>(false);
   const [skipProfile, setSkipProfile] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("chat");
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const handleProfileComplete = (profile: ProfileType) => {
-    console.log("Profile completion handler called with:", profile);
     try {
       localStorage.setItem('fitnessProfile', JSON.stringify(profile));
       setHasProfile(true);
-      setActiveTab("chat");
+      setExpandedSection("chat");
 
       toast({
         title: "Success!",
@@ -49,7 +100,6 @@ export default function Active() {
       try {
         const parsedProfile = JSON.parse(savedProfile);
         if (parsedProfile) {
-          console.log("Found existing profile:", parsedProfile);
           setHasProfile(true);
         }
       } catch (error) {
@@ -58,6 +108,10 @@ export default function Active() {
       }
     }
   }, []);
+
+  const handleCardClick = (sectionId: string) => {
+    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+  };
 
   if (!hasProfile && !skipProfile) {
     return (
@@ -89,52 +143,51 @@ export default function Active() {
 
   return (
     <div className="px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-center text-[#1C3D5A]">Active You</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-[#1C3D5A]">Active You</h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="chat">AI Fitness Coach</TabsTrigger>
-          <TabsTrigger value="activeyou">ActiveYou</TabsTrigger>
-          <TabsTrigger value="meditation">Meditation</TabsTrigger>
-          <TabsTrigger value="weightlifting">Weight Lifting</TabsTrigger>
-          <TabsTrigger value="yoga">Yoga</TabsTrigger>
-          <TabsTrigger value="running">Running</TabsTrigger>
-        </TabsList>
+      <div className="grid gap-6">
+        {SECTIONS.map((section) => {
+          // Update props for Profile Manager
+          if (section.id === 'activeyou') {
+            section.props = { onUpdate: handleProfileComplete };
+          }
 
-        <TabsContent value="chat">
-          <Card className="border-0 shadow-none">
-            <CardHeader>
-              <CardTitle className="text-[#1C3D5A]">Fitness AI Coach</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Get personalized workout guidance and fitness tips
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ChatInterface category="fitness" />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="activeyou">
-          <ProfileManager onUpdate={handleProfileComplete} />
-        </TabsContent>
-
-        <TabsContent value="meditation">
-          <ActiveYou defaultTab="meditation" />
-        </TabsContent>
-
-        <TabsContent value="weightlifting">
-          <ActiveYou defaultTab="weightlifting" />
-        </TabsContent>
-
-        <TabsContent value="yoga">
-          <ActiveYou defaultTab="yoga" />
-        </TabsContent>
-
-        <TabsContent value="running">
-          <ActiveYou defaultTab="running" />
-        </TabsContent>
-      </Tabs>
+          return (
+            <Card 
+              key={section.id}
+              className={cn(
+                "transition-all duration-300 ease-in-out cursor-pointer",
+                "hover:shadow-md",
+                expandedSection === section.id ? "shadow-lg" : "shadow-sm"
+              )}
+              onClick={() => handleCardClick(section.id)}
+            >
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <section.icon className="h-6 w-6 text-primary" />
+                  <CardTitle className="text-2xl">{section.title}</CardTitle>
+                </div>
+                <CardDescription className="text-lg">
+                  {section.description}
+                </CardDescription>
+              </CardHeader>
+              <div
+                className={cn(
+                  "transition-all duration-300 ease-in-out",
+                  "overflow-hidden",
+                  expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+                )}
+              >
+                <CardContent className="p-6">
+                  {expandedSection === section.id && (
+                    <section.component {...section.props} />
+                  )}
+                </CardContent>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }
