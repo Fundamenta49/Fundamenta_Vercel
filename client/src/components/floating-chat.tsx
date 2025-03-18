@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -14,7 +13,7 @@ import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { motion, useMotionValue } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -29,27 +28,6 @@ export default function FloatingChat() {
   const [location] = useLocation();
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-
-  // Set initial position to the right side of the screen
-  const x = useMotionValue(window.innerWidth - 320); // Width of chat minus padding
-  const y = useMotionValue(window.innerHeight - 500); // Height from bottom
-
-  // Constrain position to viewport with padding
-  const constrainPosition = (pos: number, size: number, bound: number) => {
-    const padding = 20;
-    return Math.min(Math.max(pos, padding), bound - size - padding);
-  };
-
-  const handleDrag = (event: any, info: any) => {
-    const chatElement = chatRef.current;
-    if (!chatElement) return;
-
-    const newX = constrainPosition(x.get() + info.delta.x, chatElement.offsetWidth, window.innerWidth);
-    const newY = constrainPosition(y.get() + info.delta.y, chatElement.offsetHeight, window.innerHeight);
-
-    x.set(newX);
-    y.set(newY);
-  };
 
   // Chat mutation for sending messages
   const chatMutation = useMutation({
@@ -109,37 +87,25 @@ export default function FloatingChat() {
   }, [messages]);
 
   return (
-    <motion.div
-      drag
-      dragMomentum={false}
-      dragElastic={0.1}
-      dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
-      onDrag={handleDrag}
-      style={{ x, y }}
+    <div 
       className={cn(
-        "fixed z-50 transition-all duration-300 ease-in-out",
-        isMinimized ? "w-14 h-14" : "w-80"
+        "fixed top-4 right-4 z-50 transition-all duration-300 ease-in-out",
+        isMinimized ? "w-12 h-12" : "w-80"
       )}
-      initial={{ scale: 1, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
     >
       {isMinimized ? (
         <Button
           variant="default"
           size="icon"
-          className={cn(
-            "w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300",
-            "bg-blue-500 relative overflow-hidden group"
-          )}
+          className="w-12 h-12 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg"
           onClick={() => setIsMinimized(false)}
         >
           <MessageCircle className="h-6 w-6 text-white" />
         </Button>
       ) : (
-        <Card className="h-[500px] flex flex-col shadow-lg overflow-hidden border border-blue-100">
+        <Card className="h-[500px] flex flex-col shadow-lg border border-blue-100">
           <div className="p-2 border-b flex items-center justify-between bg-gradient-to-r from-white to-blue-50">
-            <div className="flex items-center gap-2 cursor-move">
+            <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded-full bg-blue-500" />
               <span className="font-medium text-sm text-blue-500">AI Assistant</span>
             </div>
@@ -156,11 +122,8 @@ export default function FloatingChat() {
           <ScrollArea className="flex-1 p-3">
             <div className="space-y-3" ref={chatRef}>
               {messages.map((msg, i) => (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 20 }}
                   className={cn(
                     "flex flex-col",
                     msg.role === 'user' ? "items-end" : "items-start"
@@ -179,7 +142,7 @@ export default function FloatingChat() {
                   <span className="text-xs text-muted-foreground mt-1">
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
-                </motion.div>
+                </div>
               ))}
               {chatMutation.isPending && (
                 <div className="flex items-center gap-1 p-2">
@@ -211,6 +174,6 @@ export default function FloatingChat() {
           </form>
         </Card>
       )}
-    </motion.div>
+    </div>
   );
 }
