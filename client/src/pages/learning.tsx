@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -339,57 +338,28 @@ const SECTIONS = [
 
 // Main component
 export default function Learning() {
-  const [selectedSection, setSelectedSection] = useState<string | null>(null);
-  const selectedSectionData = SECTIONS.find(section => section.id === selectedSection);
-
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Learning & Development</h1>
+    <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-8 text-center">Learning & Development</h1>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8">
         {SECTIONS.map((section) => (
-          <Card
-            key={section.id}
-            className={cn(
-              "cursor-pointer transition-all duration-200",
-              "hover:shadow-md hover:scale-[1.02]",
-              "bg-white hover:bg-gray-50/50"
-            )}
-            onClick={() => setSelectedSection(section.id)}
-          >
+          <Card key={section.id} className="overflow-hidden">
             <CardHeader>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mb-4">
                 <section.icon className="h-6 w-6 text-primary" />
-                <CardTitle className="text-xl">{section.title}</CardTitle>
+                <CardTitle className="text-2xl">{section.title}</CardTitle>
               </div>
-              <CardDescription>{section.description}</CardDescription>
+              <CardDescription className="text-lg">{section.description}</CardDescription>
             </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-full max-h-[600px]">
+                <section.component category={section.category} />
+              </ScrollArea>
+            </CardContent>
           </Card>
         ))}
       </div>
-
-      <Dialog open={!!selectedSection} onOpenChange={() => setSelectedSection(null)}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <div className="flex items-center gap-3">
-              {selectedSectionData && (
-                <>
-                  <selectedSectionData.icon className="h-6 w-6 text-primary" />
-                  <DialogTitle className="text-2xl">{selectedSectionData.title}</DialogTitle>
-                </>
-              )}
-            </div>
-            {selectedSectionData && (
-              <DialogDescription>{selectedSectionData.description}</DialogDescription>
-            )}
-          </DialogHeader>
-          <ScrollArea className="max-h-[70vh]">
-            {selectedSectionData && (
-              <selectedSectionData.component category={selectedSectionData.category} />
-            )}
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
