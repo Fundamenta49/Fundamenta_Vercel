@@ -1,18 +1,76 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer, Maximize2, Minimize2, ExternalLink } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import ChatInterface from "@/components/chat-interface";
+import { cn } from "@/lib/utils";
+
+// Define cooking topics with their icons and descriptions
+const COOKING_TOPICS = [
+  {
+    id: 'safety',
+    title: "Kitchen Safety Essentials",
+    description: "Learn fundamental kitchen safety practices",
+    icon: ThermometerSun,
+    topics: [
+      "Fire safety in the kitchen",
+      "Proper knife handling",
+      "Food temperature safety",
+      "Emergency procedures"
+    ]
+  },
+  {
+    id: 'tools',
+    title: "Kitchen Tools & Equipment",
+    description: "How to use common kitchen tools safely",
+    icon: Utensils,
+    topics: [
+      "Safe microwave usage",
+      "Can opener techniques",
+      "Proper pan handling",
+      "Kitchen appliance safety"
+    ]
+  },
+  {
+    id: 'sanitation',
+    title: "Kitchen Sanitation",
+    description: "Keep your cooking space clean and safe",
+    icon: Trash2,
+    topics: [
+      "Proper hand washing",
+      "Surface sanitization",
+      "Food storage safety",
+      "Cross-contamination prevention"
+    ]
+  },
+  {
+    id: 'methods',
+    title: "Basic Cooking Methods",
+    description: "Learn essential cooking techniques",
+    icon: ChefHat,
+    topics: [
+      "Boiling and simmering",
+      "Safe pan frying",
+      "Oven safety",
+      "Microwave cooking"
+    ]
+  },
+  {
+    id: 'timing',
+    title: "Cooking Times & Temperatures",
+    description: "Essential guidelines for safe cooking",
+    icon: Timer,
+    topics: [
+      "Safe internal temperatures",
+      "Cooking time guidelines",
+      "Defrosting safety",
+      "Food storage temperatures"
+    ]
+  }
+];
 
 const COOKING_RESOURCES = [
   {
@@ -37,74 +95,29 @@ const COOKING_RESOURCES = [
   }
 ];
 
-const COOKING_BASICS = [
-  {
-    title: "Kitchen Safety Essentials",
-    description: "Learn fundamental kitchen safety practices",
-    icon: ThermometerSun,
-    topics: [
-      "Fire safety in the kitchen",
-      "Proper knife handling",
-      "Food temperature safety",
-      "Emergency procedures"
-    ]
-  },
-  {
-    title: "Kitchen Tools & Equipment",
-    description: "How to use common kitchen tools safely",
-    icon: Utensils,
-    topics: [
-      "Safe microwave usage",
-      "Can opener techniques",
-      "Proper pan handling",
-      "Kitchen appliance safety"
-    ]
-  },
-  {
-    title: "Kitchen Sanitation",
-    description: "Keep your cooking space clean and safe",
-    icon: Trash2,
-    topics: [
-      "Proper hand washing",
-      "Surface sanitization",
-      "Food storage safety",
-      "Cross-contamination prevention"
-    ]
-  },
-  {
-    title: "Basic Cooking Methods",
-    description: "Learn essential cooking techniques",
-    icon: ChefHat,
-    topics: [
-      "Boiling and simmering",
-      "Safe pan frying",
-      "Oven safety",
-      "Microwave cooking"
-    ]
-  },
-  {
-    title: "Cooking Times & Temperatures",
-    description: "Essential guidelines for safe cooking",
-    icon: Timer,
-    topics: [
-      "Safe internal temperatures",
-      "Cooking time guidelines",
-      "Defrosting safety",
-      "Food storage temperatures"
-    ]
-  }
-];
+interface SkillGuidanceResponse {
+  guidance: string;
+  videos: Array<{
+    id: string;
+    title: string;
+    thumbnail: {
+      url: string;
+      width: number;
+      height: number;
+    };
+    duration: string;
+  }>;
+}
 
 export default function CookingGuide() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [guidance, setGuidance] = useState<string | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [videos, setVideos] = useState<any[]>([]);
+  const [guidance, setGuidance] = useState<string | null>(null);
+  const [videos, setVideos] = useState<SkillGuidanceResponse['videos']>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isVideoFocused, setIsVideoFocused] = useState(false);
 
-  const fetchGuidance = async (topic: string) => {
+  const handleTopicClick = async (topic: typeof COOKING_TOPICS[0]) => {
+    setSelectedTopic(topic.id);
     setIsLoading(true);
     setError(null);
     setGuidance(null);
@@ -115,7 +128,7 @@ export default function CookingGuide() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           skillArea: "cooking",
-          userQuery: topic,
+          userQuery: `${topic.title}: ${topic.topics.join(", ")}`,
         }),
       });
 
@@ -124,14 +137,8 @@ export default function CookingGuide() {
       }
 
       const data = await response.json();
-
-      if (!data.guidance) {
-        throw new Error("No guidance content received");
-      }
-
       setGuidance(data.guidance);
       setVideos(data.videos || []);
-      setIsDialogOpen(true);
     } catch (error) {
       console.error("Error fetching guidance:", error);
       setError("Failed to load cooking guidance. Please try again.");
@@ -140,247 +147,135 @@ export default function CookingGuide() {
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-    await fetchGuidance(searchQuery);
-  };
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {COOKING_TOPICS.map((topic) => (
+          <Card
+            key={topic.id}
+            className={cn(
+              "cursor-pointer transition-all duration-200",
+              "hover:shadow-md hover:scale-[1.02]",
+              "bg-white hover:bg-gray-50/50"
+            )}
+            onClick={() => handleTopicClick(topic)}
+          >
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <topic.icon className="h-6 w-6 text-primary" />
+                <CardTitle className="text-lg">{topic.title}</CardTitle>
+              </div>
+              <CardDescription>{topic.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="list-disc list-inside text-sm text-gray-500">
+                {topic.topics.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-  const renderGuidanceContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex items-center justify-center h-40">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-        </div>
-      );
-    }
-
-    if (error) {
-      return (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      );
-    }
-
-    if (!guidance) return null;
-
-    return (
-      <div className="relative">
-        {videos.length > 0 && (
-          <div className={`
-            transition-all duration-300 ease-in-out
-            ${isVideoFocused ?
-              'fixed inset-0 z-50 bg-background/95 p-6 flex flex-col items-center justify-center' :
-              'relative w-full'
-            }
-          `}>
-            <div className="flex justify-between items-center w-full max-w-4xl mb-4">
-              <h3 className={`text-lg font-semibold ${isVideoFocused ? 'text-white' : ''}`}>
-                Tutorial Videos
-              </h3>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsVideoFocused(!isVideoFocused)}
-              >
-                {isVideoFocused ? (
-                  <><Minimize2 className="h-4 w-4 mr-2" /> Exit Focus Mode</>
-                ) : (
-                  <><Maximize2 className="h-4 w-4 mr-2" /> Enter Focus Mode</>
+      <Dialog open={!!selectedTopic} onOpenChange={(open) => !open && setSelectedTopic(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {selectedTopic && COOKING_TOPICS.find(t => t.id === selectedTopic)?.icon && (
+                <COOKING_TOPICS.find(t => t.id === selectedTopic)!.icon className="h-6 w-6 text-primary" />
+              )}
+              {selectedTopic && COOKING_TOPICS.find(t => t.id === selectedTopic)?.title}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[70vh]">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-40">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : error ? (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : (
+              <div className="space-y-6">
+                {guidance && (
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="prose prose-slate max-w-none">
+                        {guidance.split('\n\n').map((section, idx) => (
+                          <p key={idx} className="mb-4">{section}</p>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 )}
-              </Button>
-            </div>
 
-            <div className={`
-              grid gap-6 w-full
-              ${isVideoFocused ? 'max-w-4xl' : ''}
-            `}>
-              {videos.map((video) => (
-                <div key={video.id} className="space-y-2">
-                  <div className="relative aspect-video">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`}
-                      title={video.title}
-                      className="absolute inset-0 w-full h-full rounded-lg"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                  <p className={`text-sm font-medium ${isVideoFocused ? 'text-white' : ''}`}>
-                    {video.title}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className={`
-          space-y-6 transition-all duration-300
-          ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}
-        `}>
-          <div className="prose prose-gray max-w-none space-y-4">
-            {guidance.split('\n\n').map((section, idx) => {
-              if (section.startsWith('🎯') || section.startsWith('👩‍🍳') ||
-                section.startsWith('⚠️') || section.startsWith('💡') ||
-                section.startsWith('🧰') || section.startsWith('⏰')) {
-                const [title, ...content] = section.split('\n');
-                return (
-                  <div key={idx} className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2">{title}</h3>
-                    <div className="space-y-2">
-                      {content.map((line, lineIdx) => (
-                        <p key={lineIdx} className="text-gray-700">{line}</p>
+                {videos && videos.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Tutorial Videos</h3>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {videos.map((video) => (
+                        <Card key={video.id} className="overflow-hidden">
+                          <div className="relative aspect-video">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`}
+                              title={video.title}
+                              className="absolute inset-0 w-full h-full rounded-lg"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          </div>
+                          <CardContent className="p-4">
+                            <p className="text-sm font-medium">{video.title}</p>
+                          </CardContent>
+                        </Card>
                       ))}
                     </div>
                   </div>
-                );
-              }
-              return <p key={idx} className="text-gray-700">{section}</p>;
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  };
+                )}
 
-  const renderResources = () => {
-    return (
-      <div className={`space-y-4 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
-        <div className="prose prose-gray mb-4">
-          <p className="text-muted-foreground">
-            You can never have too many tips when it comes to safety, right? Check out these trusted platforms that provide comprehensive guides to maintaining a safe and healthy kitchen environment.
-          </p>
-        </div>
-        <div className="grid gap-4">
-          {COOKING_RESOURCES.map((resource, index) => (
-            <a
-              key={index}
-              href={resource.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium text-primary group-hover:underline flex items-center gap-2">
-                  {resource.name}
-                  <ExternalLink className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </h4>
+                {/* Additional Resources */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Additional Resources</h3>
+                  <div className="grid gap-4">
+                    {COOKING_RESOURCES.map((resource, index) => (
+                      <a
+                        key={index}
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium text-primary group-hover:underline flex items-center gap-2">
+                            {resource.name}
+                            <ExternalLink className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </h4>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">{resource.description}</p>
+                      </a>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">{resource.description}</p>
-            </a>
-          ))}
-        </div>
-      </div>
-    );
-  };
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
-  return (
-    <div className={`space-y-6 ${isVideoFocused ? 'overflow-hidden h-screen' : ''}`}>
-      <div className={`transition-all duration-300 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ChefHat className="h-5 w-5" />
-              Cooking Basics Guide
-            </CardTitle>
-            <CardDescription>
-              Learn essential cooking skills and kitchen safety
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  placeholder="Search cooking skills..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  className="flex-1"
-                />
-                <Button
-                  onClick={handleSearch}
-                  variant="outline"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Searching..." : "Search for guidance"}
-                </Button>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {COOKING_BASICS.map((topic, index) => (
-                  <Card
-                    key={index}
-                    className="cursor-pointer hover:shadow-sm transition-all"
-                    onClick={() => {
-                      setSearchQuery(topic.title);
-                      fetchGuidance(topic.title);
-                    }}
-                  >
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        {topic.icon && <topic.icon className="h-5 w-5" />}
-                        {topic.title}
-                      </CardTitle>
-                      <CardDescription>{topic.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="list-disc list-inside text-sm text-gray-500">
-                        {topic.topics.map((item, idx) => (
-                          <li key={idx}>{item}</li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ChefHat className="h-5 w-5" />
-              Additional Resources
-            </CardTitle>
-            <CardDescription>
-              Trusted sources for cooking knowledge and community
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {renderResources()}
-          </CardContent>
-        </Card>
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{searchQuery}</DialogTitle>
-              <DialogDescription>
-                Step-by-step guide and helpful resources
-              </DialogDescription>
-            </DialogHeader>
-            <ScrollArea className="pr-4">
-              {renderGuidanceContent()}
-            </ScrollArea>
-          </DialogContent>
-        </Dialog>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>AI Cooking Assistant</CardTitle>
-            <CardDescription>
-              Get personalized help with cooking questions
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <ChatInterface category="cooking" />
-          </CardContent>
-        </Card>
-      </div>
-      {renderGuidanceContent()}
+      {/* AI Chat Interface */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Cooking AI Assistant</CardTitle>
+          <CardDescription>
+            Get personalized help with cooking questions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          <ChatInterface category="cooking" />
+        </CardContent>
+      </Card>
     </div>
   );
 }
