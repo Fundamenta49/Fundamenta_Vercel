@@ -2,7 +2,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import multer from "multer";
-import * as pdfjsLib from 'pdfjs-dist';
 
 const startTime = Date.now();
 log("Starting server...");
@@ -14,22 +13,6 @@ log(`Platform: ${process.platform}`);
 // Initialize Express
 const app = express();
 log(`Express initialized (${Date.now() - startTime}ms)`);
-
-// Configure multer for file uploads
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-  },
-  fileFilter: (_req, file, cb) => {
-    if (file.mimetype === 'application/pdf') {
-      cb(null, true);
-    } else {
-      cb(null, false);
-    }
-  }
-});
-log(`Multer configured (${Date.now() - startTime}ms)`);
 
 // Basic middleware setup
 app.use(express.json());
@@ -48,8 +31,6 @@ app.use((req, res, next) => {
   next();
 });
 
-log(`Middleware setup complete (${Date.now() - startTime}ms)`);
-
 // Health check endpoint
 app.get("/api/health", (_req, res) => {
   const health = {
@@ -63,7 +44,6 @@ app.get("/api/health", (_req, res) => {
   log(`Health check requested, responding with: ${JSON.stringify(health)}`);
   res.json(health);
 });
-
 
 // Staged server initialization
 (async () => {
