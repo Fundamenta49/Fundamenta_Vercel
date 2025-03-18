@@ -60,17 +60,21 @@ const LifeSkillsComponent = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <form onSubmit={handleSearch}>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Input
             type="text"
             placeholder="Search for life skills..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1"
+            className="h-10 text-base"
           />
-          <Button type="submit" variant="outline">
+          <Button 
+            type="submit" 
+            variant="outline"
+            className="h-10 text-base sm:w-auto flex items-center justify-center"
+          >
             <Search className="h-4 w-4 mr-2" />
             Search
           </Button>
@@ -78,12 +82,12 @@ const LifeSkillsComponent = () => {
       </form>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex items-center justify-center py-4">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : guidance ? (
-        <div className="prose prose-slate max-w-none">
-          <p>{guidance}</p>
+        <div className="prose prose-slate max-w-none bg-accent/5 p-4 rounded-lg">
+          <p className="text-base leading-relaxed">{guidance}</p>
         </div>
       ) : null}
     </div>
@@ -144,43 +148,56 @@ export default function Learning() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8 text-center">Learning & Development</h1>
+    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+        Learning & Development
+      </h1>
 
-      <div className="grid gap-6">
-        {SECTIONS.map((section) => (
-          <Card 
-            key={section.id} 
-            className={cn(
-              "overflow-hidden transition-all duration-300 ease-in-out",
-              expandedSection === section.id ? "shadow-lg" : "shadow-sm hover:shadow-md"
-            )}
-          >
-            <CardHeader 
-              className="cursor-pointer hover:bg-accent/10 transition-colors"
-              onClick={() => handleToggle(section.id)}
-            >
-              <div className="flex items-center gap-3">
-                <section.icon className="h-6 w-6 text-primary" />
-                <CardTitle className="text-2xl">{section.title}</CardTitle>
-              </div>
-              <CardDescription className="text-lg">
-                {section.description}
-              </CardDescription>
-            </CardHeader>
+      <div className="grid gap-4">
+        {SECTIONS.map((section) => {
+          const isExpanded = expandedSection === section.id;
+          const Component = section.component;
 
-            <div
+          return (
+            <Card 
+              key={section.id} 
               className={cn(
-                "transition-all duration-300 ease-in-out",
-                expandedSection === section.id ? "block" : "hidden"
+                "overflow-hidden transition-shadow duration-200",
+                isExpanded ? "shadow-md" : "shadow-sm hover:shadow"
               )}
             >
-              <CardContent className="p-6">
-                <section.component {...section.props} />
-              </CardContent>
-            </div>
-          </Card>
-        ))}
+              <CardHeader 
+                className="cursor-pointer hover:bg-accent/5 transition-colors"
+                onClick={() => handleToggle(section.id)}
+              >
+                <div className="flex items-center gap-3">
+                  <section.icon className="h-5 w-5 text-primary" />
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-lg sm:text-xl">
+                      {section.title}
+                    </CardTitle>
+                    <CardDescription>
+                      {section.description}
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <div
+                className={cn(
+                  "transition-all duration-200 ease-in-out overflow-hidden",
+                  isExpanded ? "max-h-[80vh]" : "max-h-0"
+                )}
+              >
+                <CardContent className="p-4">
+                  <div className="overflow-y-auto">
+                    {isExpanded && <Component {...section.props} />}
+                  </div>
+                </CardContent>
+              </div>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
