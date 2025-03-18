@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { motion, useAnimationControls } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -43,6 +42,21 @@ export default function FloatingChat() {
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const controls = useAnimationControls();
+  const isMobile = useIsMobile();
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  // Detect keyboard visibility on mobile
+  useEffect(() => {
+    if (isMobile) {
+      const detectKeyboard = () => {
+        const isKeyboardVisible = window.visualViewport!.height < window.innerHeight;
+        setKeyboardVisible(isKeyboardVisible);
+      };
+
+      window.visualViewport?.addEventListener('resize', detectKeyboard);
+      return () => window.visualViewport?.removeEventListener('resize', detectKeyboard);
+    }
+  }, [isMobile]);
 
   // Random blinking effect
   useEffect(() => {
@@ -187,8 +201,14 @@ export default function FloatingChat() {
   return (
     <div
       className={cn(
-        "fixed top-4 right-4 z-50 transition-all duration-300 ease-in-out",
-        isMinimized ? "w-12 h-12" : "w-80"
+        "fixed z-50 transition-all duration-300 ease-in-out",
+        isMinimized
+          ? "top-4 right-4 w-12 h-12"
+          : isMobile
+            ? keyboardVisible
+              ? "bottom-0 left-0 right-0 w-full h-[40vh]"
+              : "bottom-0 left-0 right-0 w-full max-h-[75vh]"
+            : "top-4 right-4 w-80",
       )}
     >
       {isMinimized ? (
@@ -222,7 +242,10 @@ export default function FloatingChat() {
           </Button>
         </motion.div>
       ) : (
-        <Card className="h-[500px] flex flex-col shadow-lg border border-navy-100">
+        <Card className={cn(
+          "flex flex-col shadow-lg border border-navy-100",
+          isMobile ? "h-full rounded-t-lg rounded-b-none" : "h-[500px]"
+        )}>
           <div className="p-2 border-b flex items-center justify-between bg-gradient-to-r from-white to-navy-50">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded-full bg-navy-500" />
@@ -238,7 +261,7 @@ export default function FloatingChat() {
             </Button>
           </div>
 
-          <ScrollArea className="flex-1 p-3">
+          <ScrollArea className="flex-1 p-3" style={{ height: keyboardVisible ? '30vh' : 'auto' }}>
             <div className="space-y-3" ref={chatRef}>
               {messages.map((msg, i) => (
                 <div
@@ -273,13 +296,23 @@ export default function FloatingChat() {
             </div>
           </ScrollArea>
 
-          <form onSubmit={handleSendMessage} className="p-3 border-t bg-white">
+          <form onSubmit={handleSendMessage} className={cn(
+            "p-3 border-t bg-white",
+            keyboardVisible && "sticky bottom-0"
+          )}>
             <div className="flex gap-2">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask me anything..."
                 className="flex-1 text-sm border-navy-100 focus-visible:ring-navy-400 placeholder:text-navy-300 text-black"
+                onFocus={() => {
+                  if (chatRef.current) {
+                    setTimeout(() => {
+                      chatRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }, 100);
+                  }
+                }}
               />
               <Button
                 type="submit"
