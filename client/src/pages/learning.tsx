@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   Card,
   CardContent,
@@ -11,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatInterface from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
@@ -22,162 +18,32 @@ import {
   Car,
   ChefHat,
   Clock,
-  ExternalLink,
   Home,
-  Loader2,
   Search,
   Wrench,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Type definitions for components
 interface SectionProps {
   category?: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
-  defaultTab?: string;
 }
 
-interface Section {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ElementType;
-  component: React.ComponentType<SectionProps>;
-  props?: SectionProps;
-}
-
-interface SkillGuidanceResponse {
-  guidance: string;
-  videos: Array<{
-    id: string;
-    title: string;
-    thumbnail: {
-      url: string;
-      width: number;
-      height: number;
-    };
-    duration: string;
-  }>;
-}
-
-const formatVideoDuration = (duration: string) => {
-  const match = duration?.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-  if (!match) return "00:00";
-
-  const hours = (match[1] ? parseInt(match[1].replace('H', '')) : 0).toString();
-  const minutes = (match[2] ? parseInt(match[2].replace('M', '')) : 0).toString().padStart(2, '0');
-  const seconds = (match[3] ? parseInt(match[3].replace('S', '')) : 0).toString().padStart(2, '0');
-
-  return hours !== '0' ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+// Simple test component with clear logging
+const TestComponent = ({ title }: { title: string }) => {
+  console.log(`TestComponent mounted: ${title}`);
+  return <div className="p-4 bg-accent/20 rounded-lg">Test content for {title}</div>;
 };
-
-const formatContent = (content: string) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-
-  return content.split('\n').map((line, idx) => (
-    <p key={idx} className="mb-2 leading-relaxed">
-      {line.split(urlRegex).map((part, partIdx) => {
-        if (part.match(urlRegex)) {
-          return (
-            <Button
-              key={partIdx}
-              variant="link"
-              className="px-0 h-auto font-normal text-primary hover:text-primary/80"
-              onClick={() => window.open(part, '_blank')}
-            >
-              <span className="flex items-center gap-1">
-                {new URL(part).hostname.replace('www.', '')}
-                <ExternalLink className="h-3 w-3" />
-              </span>
-            </Button>
-          );
-        }
-        return part;
-      })}
-    </p>
-  ));
-};
-
-const VideoSection = ({ videos }: { videos: SkillGuidanceResponse['videos'] }) => {
-  if (!videos?.length) {
-    return (
-      <div className="text-center text-muted-foreground py-4">
-        No video tutorials available at the moment.
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {videos.map((video) => (
-        <Card key={video.id} className="overflow-hidden">
-          <div className="relative aspect-video">
-            <img
-              src={video.thumbnail.url}
-              alt={video.title}
-              width={video.thumbnail.width}
-              height={video.thumbnail.height}
-              className="object-cover w-full"
-            />
-            <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 text-xs rounded">
-              {formatVideoDuration(video.duration)}
-            </div>
-          </div>
-          <CardContent className="p-4">
-            <Button
-              variant="link"
-              className="p-0 h-auto font-medium text-primary hover:text-primary/80 text-left"
-              onClick={() => window.open(`https://youtube.com/watch?v=${video.id}`, '_blank')}
-            >
-              <span className="flex items-center gap-1">
-                {video.title}
-                <ExternalLink className="h-3 w-3" />
-              </span>
-            </Button>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-};
-
-const LIFE_SKILLS_PROMPTS = [
-  {
-    title: "Cleaning Schedule Generator",
-    description: "Personalized schedule based on apartment/home size",
-  },
-  {
-    title: "How to Load a Dishwasher",
-    description: "Efficient loading techniques, optimal cleaning results",
-  },
-  {
-    title: "How to Properly Clean a Kitchen",
-    description: "Washing dishes, sanitizing countertops, handling grease",
-  },
-  {
-    title: "How to Clean a Bathroom",
-    description: "Disinfecting toilets, tubs, and sinks",
-  },
-  {
-    title: "Dusting & Vacuuming Techniques",
-    description: "Avoiding allergies and keeping furniture clean",
-  },
-  {
-    title: "How to Clean Windows, Mirrors & Floors",
-    description: "Streak-free techniques",
-  },
-  {
-    title: "Decluttering & Minimalist Living Tips",
-    description: "Staying organized in small spaces",
-  }
-];
 
 const LifeSkillsComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
-  const [videos, setVideos] = useState<SkillGuidanceResponse['videos']>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlePromptClick = async (prompt: typeof LIFE_SKILLS_PROMPTS[0]) => {
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
     setIsLoading(true);
     try {
       const response = await fetch("/api/skill-guidance", {
@@ -185,16 +51,15 @@ const LifeSkillsComponent = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           skillArea: "life",
-          userQuery: prompt.title,
+          userQuery: searchQuery,
         }),
       });
 
-      const data: SkillGuidanceResponse = await response.json();
+      const data = await response.json();
       setGuidance(data.guidance);
-      setVideos(data.videos);
     } catch (error) {
-      console.error("Error getting guidance:", error);
-      setGuidance("Sorry, we couldn't load the guidance right now. Please try again later.");
+      console.error("Error searching:", error);
+      setGuidance("Sorry, we couldn't process your search right now. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -202,66 +67,43 @@ const LifeSkillsComponent = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
-        <Input
-          type="text"
-          placeholder="Search for life skills..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1"
-        />
-        <Button onClick={() => handlePromptClick({ title: searchQuery, description: "" })} variant="outline">
-          <Search className="h-4 w-4 mr-2" />
-          Search
-        </Button>
-      </div>
+      <form onSubmit={handleSearch}>
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            placeholder="Search for life skills..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1"
+          />
+          <Button type="submit" variant="outline">
+            <Search className="h-4 w-4 mr-2" />
+            Search
+          </Button>
+        </div>
+      </form>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {LIFE_SKILLS_PROMPTS.map((prompt, index) => (
-          <Card
-            key={index}
-            className="cursor-pointer bg-white hover:bg-gray-50/50 transition-all duration-200"
-            onClick={() => handlePromptClick(prompt)}
-          >
-            <CardHeader>
-              <CardTitle className="text-lg">{prompt.title}</CardTitle>
-              <CardDescription>{prompt.description}</CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-
-      {isLoading && (
+      {isLoading ? (
         <div className="flex items-center justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      )}
-
-      {guidance && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Learning Guide</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-slate max-w-none">
-              {formatContent(guidance)}
-              {videos && <VideoSection videos={videos} />}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      ) : guidance ? (
+        <div className="prose prose-slate max-w-none">
+          <p>{guidance}</p>
+        </div>
+      ) : null}
     </div>
   );
 };
 
-const SECTIONS: Section[] = [
+const SECTIONS = [
   {
     id: 'chat',
     title: 'AI Learning Coach',
     description: 'Get personalized guidance for your learning journey',
     icon: Brain,
     component: ChatInterface,
-    props: { category: "learning" }
+    props: { category: "learning" as const }
   },
   {
     id: 'skills',
@@ -302,63 +144,69 @@ const SECTIONS: Section[] = [
 
 export default function Learning() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [useTestComponent, setUseTestComponent] = useState(true); // For testing
 
-  const handleCardClick = (sectionId: string) => {
-    setExpandedSection(expandedSection === sectionId ? null : sectionId);
-  };
+  console.log("Current expanded section:", expandedSection);
 
-  const renderSectionContent = (section: Section) => {
-    if (!expandedSection || expandedSection !== section.id) {
-      return null;
-    }
-
-    const Component = section.component;
-    return (
-      <div className="min-h-[100px]">
-        <ScrollArea className="h-full">
-          <Component {...section.props} />
-        </ScrollArea>
-      </div>
-    );
+  const handleToggle = (sectionId: string) => {
+    console.log("Toggle clicked:", sectionId);
+    setExpandedSection(current => current === sectionId ? null : sectionId);
   };
 
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-8 text-center">Learning & Development</h1>
 
+      {/* Testing controls */}
+      <div className="mb-4">
+        <Button 
+          variant="outline" 
+          onClick={() => setUseTestComponent(prev => !prev)}
+          className="mb-4"
+        >
+          Toggle Test Mode: {useTestComponent ? 'On' : 'Off'}
+        </Button>
+      </div>
+
       <div className="grid gap-6">
-        {SECTIONS.map((section) => (
-          <Card
-            key={section.id}
-            className={cn(
-              "transition-all duration-300 ease-in-out cursor-pointer",
-              "hover:shadow-md",
-              expandedSection === section.id ? "shadow-lg" : "shadow-sm"
-            )}
-            onClick={() => handleCardClick(section.id)}
-          >
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <section.icon className="h-6 w-6 text-primary" />
-                <CardTitle className="text-2xl">{section.title}</CardTitle>
+        {SECTIONS.map((section) => {
+          const isExpanded = expandedSection === section.id;
+          const Component = useTestComponent ? TestComponent : section.component;
+
+          return (
+            <Card key={section.id} className="overflow-hidden">
+              <CardHeader 
+                className="cursor-pointer hover:bg-accent/10 transition-colors"
+                onClick={() => handleToggle(section.id)}
+              >
+                <div className="flex items-center gap-3">
+                  <section.icon className="h-6 w-6 text-primary" />
+                  <CardTitle className="text-2xl">{section.title}</CardTitle>
+                </div>
+                <CardDescription className="text-lg">
+                  {section.description}
+                </CardDescription>
+              </CardHeader>
+
+              <div
+                className={cn(
+                  "transition-all duration-300",
+                  isExpanded ? "block" : "hidden"
+                )}
+              >
+                <CardContent className="p-6">
+                  {isExpanded && (
+                    useTestComponent ? (
+                      <TestComponent title={section.title} />
+                    ) : (
+                      <Component {...section.props} />
+                    )
+                  )}
+                </CardContent>
               </div>
-              <CardDescription className="text-lg">
-                {section.description}
-              </CardDescription>
-            </CardHeader>
-            <div
-              className={cn(
-                "transition-all duration-300 ease-in-out",
-                "overflow-hidden",
-                expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-              )}
-            >
-              <CardContent className="p-6">
-                {renderSectionContent(section)}
-              </CardContent>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
