@@ -80,7 +80,6 @@ export default function FloatingChat() {
     };
   };
 
-  // Handle AI Actions
   const handleAIAction = async (action: AIAction) => {
     switch (action.type) {
       case 'resume':
@@ -186,32 +185,45 @@ export default function FloatingChat() {
             size="icon"
             className={cn(
               "w-16 h-24 relative overflow-visible", 
-              "bg-white",
+              "bg-gradient-to-b from-blue-50 to-white",
               "hover:shadow-lg transition-all duration-300",
               "rounded-[100px]", // More oval shape
-              "border-2 border-blue-100"
+              "border-2 border-blue-100",
+              "before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:rounded-[100px]",
+              "after:content-[''] after:absolute after:inset-0 after:bg-gradient-to-b after:from-white/50 after:to-transparent after:rounded-[100px]"
             )}
             onClick={() => setIsMinimized(false)}
           >
             {/* Robot body */}
             <div className="relative w-full h-full flex items-center justify-center flex-col">
+              {/* Head section with 3D effect */}
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-b from-blue-50 to-white shadow-inner" />
+
               {/* Eyes container */}
-              <div className="flex gap-4 mb-2 mt-4">
+              <div className="flex gap-4 mb-2 mt-4 relative z-10">
                 {/* Left eye */}
                 <div className="relative w-4 h-4">
-                  <div className="absolute inset-0 rounded-full bg-blue-500" />
-                  <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-white" />
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg" />
+                  <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-white opacity-80" />
+                  <div className="absolute bottom-0.5 left-0.5 w-2 h-2 rounded-full bg-blue-300 opacity-30" />
                 </div>
                 {/* Right eye */}
                 <div className="relative w-4 h-4">
-                  <div className="absolute inset-0 rounded-full bg-blue-500" />
-                  <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-white" />
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg" />
+                  <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-white opacity-80" />
+                  <div className="absolute bottom-0.5 left-0.5 w-2 h-2 rounded-full bg-blue-300 opacity-30" />
                 </div>
               </div>
 
-              {/* Arms */}
-              <div className="absolute left-[-12px] top-1/2 w-3 h-6 bg-white border-2 border-blue-100 rounded-full transform -translate-y-1/2" />
-              <div className="absolute right-[-12px] top-1/2 w-3 h-6 bg-white border-2 border-blue-100 rounded-full transform -translate-y-1/2" />
+              {/* Body highlights */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-10 h-16 rounded-[80px] bg-gradient-to-b from-blue-50/50 to-transparent" />
+
+              {/* Arms with 3D effect */}
+              <div className="absolute left-[-12px] top-1/2 w-3 h-6 bg-gradient-to-r from-white to-blue-50 border-2 border-blue-100 rounded-full transform -translate-y-1/2 shadow-md" />
+              <div className="absolute right-[-12px] top-1/2 w-3 h-6 bg-gradient-to-l from-white to-blue-50 border-2 border-blue-100 rounded-full transform -translate-y-1/2 shadow-md" />
+
+              {/* Bottom shadow */}
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-100/20 rounded-full blur-sm" />
             </div>
           </Button>
         </motion.div>
