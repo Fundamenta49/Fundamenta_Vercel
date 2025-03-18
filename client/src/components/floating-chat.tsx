@@ -8,17 +8,30 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, Minimize2, Sparkles } from "lucide-react";
+import { MessageCircle, Minimize2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { apiRequest } from "@/lib/queryClient";
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  actions?: AIAction[];
+  suggestions?: AppSuggestion[];
+}
+
+interface AIAction {
+  type: string;
+  payload: any;
+}
+
+interface AppSuggestion {
+  text: string;
+  path: string;
+  description: string;
 }
 
 export default function FloatingChat() {
@@ -29,16 +42,58 @@ export default function FloatingChat() {
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  // Chat mutation for sending messages
+  // Get current page context
+  const getCurrentContext = () => {
+    const page = location.split('/')[1] || 'home';
+    const section = new URLSearchParams(location.split('?')[1]).get('tab');
+
+    // Define available actions based on current page
+    const availableActions = {
+      career: ['resume', 'interview', 'job-search'],
+      finance: ['budget', 'investments', 'planning'],
+      wellness: ['meditation', 'exercise', 'nutrition'],
+      learning: ['recipes', 'skills', 'courses'],
+    };
+
+    return {
+      currentPage: page,
+      currentSection: section,
+      availableActions: availableActions[page as keyof typeof availableActions] || ['general'],
+    };
+  };
+
+  // Handle AI Actions
+  const handleAIAction = async (action: AIAction) => {
+    switch (action.type) {
+      case 'resume':
+        // Update resume content
+        await apiRequest('POST', '/api/resume/update', action.payload);
+        toast({ title: "Resume updated", description: "Your resume has been updated with the suggested changes." });
+        break;
+      case 'recipe':
+        // Generate new recipe
+        await apiRequest('POST', '/api/recipes/generate', action.payload);
+        toast({ title: "Recipe generated", description: "Your new recipe has been created and saved." });
+        break;
+      case 'budget':
+        // Update budget
+        await apiRequest('POST', '/api/budget/update', action.payload);
+        toast({ title: "Budget updated", description: "Your budget has been updated with the new information." });
+        break;
+      // Add more action handlers as needed
+    }
+  };
+
   const chatMutation = useMutation({
-    mutationFn: async (message: string) => {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message,
-          context: location,
-        }),
+    mutationFn: async (content: string) => {
+      const context = getCurrentContext();
+      const response = await apiRequest("POST", "/api/chat/orchestrator", {
+        message: content,
+        context,
+        previousMessages: messages.map(m => ({
+          role: m.role,
+          content: m.content
+        }))
       });
 
       if (!response.ok) {
@@ -47,28 +102,43 @@ export default function FloatingChat() {
 
       return response.json();
     },
-    onSuccess: (data) => {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: data.message,
-        timestamp: new Date()
-      }]);
+    onSuccess: async (data) => {
+      if (data.success) {
+        // Handle any actions from the AI response
+        if (data.actions && data.actions.length > 0) {
+          for (const action of data.actions) {
+            await handleAIAction(action);
+          }
+        }
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: data.response,
+            timestamp: new Date(),
+            actions: data.actions,
+            suggestions: data.suggestions
+          }
+        ]);
+        setInput("");
+      }
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast({
+        variant: "destructive",
         title: "Error",
-        description: "Failed to send message. Please try again.",
-        variant: "destructive"
+        description: error.message || "Failed to send message. Please try again.",
       });
-    }
+    },
   });
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage = {
-      role: 'user' as const,
+    const userMessage: Message = {
+      role: 'user',
       content: input,
       timestamp: new Date()
     };
@@ -87,7 +157,7 @@ export default function FloatingChat() {
   }, [messages]);
 
   return (
-    <div 
+    <div
       className={cn(
         "fixed top-4 right-4 z-50 transition-all duration-300 ease-in-out",
         isMinimized ? "w-12 h-12" : "w-80"

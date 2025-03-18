@@ -422,6 +422,45 @@ Remember to suggest relevant features in the app that could help the user.`;
     }
   });
 
+  // Add orchestrator endpoint after the existing /api/chat endpoint
+  app.post("/api/chat/orchestrator", async (req, res) => {
+    try {
+      const requestSchema = z.object({
+        message: z.string(),
+        context: z.object({
+          currentPage: z.string(),
+          currentSection: z.string().optional(),
+          availableActions: z.array(z.string())
+        }),
+        previousMessages: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string()
+        }))
+      });
+
+      const validatedData = requestSchema.parse(req.body);
+      const response = await orchestrateAIResponse(
+        validatedData.message,
+        validatedData.context,
+        validatedData.previousMessages
+      );
+
+      res.json({
+        success: true,
+        response: response.response,
+        actions: response.actions,
+        suggestions: response.suggestions
+      });
+
+    } catch (error) {
+      console.error("Chat orchestrator error:", error);
+      res.status(400).json({
+        error: "Failed to process request",
+        success: false
+      });
+    }
+  });
+
   app.post("/api/emergency/guidance", async (req, res) => {
     try {
       const { situation } = z.object({ situation: z.string() }).parse(req.body);

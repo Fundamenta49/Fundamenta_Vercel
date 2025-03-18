@@ -1,5 +1,18 @@
 import OpenAI from "openai";
 
+// Add new action types
+interface AIAction {
+  type: 'resume' | 'recipe' | 'budget' | 'career' | 'wellness' | 'general';
+  payload: any;
+}
+
+interface ChatContext {
+  currentPage: string;
+  currentSection?: string;
+  availableActions: string[];
+  userData?: any;
+}
+
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY,
@@ -7,6 +20,7 @@ const openai = new OpenAI({
   timeout: 30000,
 });
 
+// Update the system prompts to include action capabilities
 const systemPrompts = {
   finance: `You are a financial advisor helping with budgeting, savings, and financial literacy through our app's features. 
 
@@ -109,8 +123,101 @@ const systemPrompts = {
   - Be patient and supportive
   - Show genuine enthusiasm
   - Make users feel comfortable asking questions`,
+  orchestrator: `You are Fundamenta's AI Assistant, capable of helping users across all app features.
 
+  Available Actions:
+  1. Resume Management:
+     - Edit and improve resumes
+     - Generate cover letters
+     - Provide interview tips
+
+  2. Recipe Generation:
+     - Create personalized recipes
+     - Suggest meal plans
+     - Provide cooking tips
+
+  3. Financial Management:
+     - Update budgets
+     - Analyze spending patterns
+     - Provide financial advice
+
+  4. Career Development:
+     - Career path suggestions
+     - Skill development plans
+     - Job search strategies
+
+  5. Wellness Support:
+     - Mental health resources
+     - Exercise recommendations
+     - Meditation guidance
+
+  Important Guidelines:
+  1. Always understand the current context before suggesting actions
+  2. Provide specific steps for accessing features
+  3. Maintain conversation history for context
+  4. Use available app features before suggesting external resources`,
 };
+
+export async function orchestrateAIResponse(
+  message: string,
+  context: ChatContext,
+  previousMessages: Array<{ role: string; content: string }> = []
+): Promise<{
+  response: string;
+  actions?: AIAction[];
+  suggestions?: Array<{
+    text: string;
+    path: string;
+    description: string;
+  }>;
+}> {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error("OpenAI API key not configured");
+    }
+
+    const systemContent = `${systemPrompts.orchestrator}
+
+    Current Context:
+    - Page: ${context.currentPage}
+    - Section: ${context.currentSection || 'None'}
+    - Available Actions: ${context.availableActions.join(', ')}
+
+    Previous Messages:
+    ${previousMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
+
+    Respond with:
+    1. Natural conversational response
+    2. Any specific actions to take (if needed)
+    3. Relevant app feature suggestions`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: systemContent
+        },
+        ...previousMessages,
+        { role: "user", content: message }
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content);
+
+    return {
+      response: result.response,
+      actions: result.actions,
+      suggestions: result.suggestions
+    };
+  } catch (error: any) {
+    console.error("OpenAI API Error:", error);
+    throw new Error("Failed to process request: " + error.message);
+  }
+}
 
 export async function getChatResponse(
   prompt: string,
@@ -803,8 +910,7 @@ export async function getSalaryInsights(jobTitle: string, location: string): Pro
         status: error.response.status,
         statusText: error.response.statusText,
         data: error.response.data
-      });
-    }
+      });    }
     throw new Error("Failed to get salary insights: " + (error.message || 'Unknown error'));
   }
 }
