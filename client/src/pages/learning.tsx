@@ -29,12 +29,6 @@ interface SectionProps {
   category?: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
 }
 
-// Simple test component with clear logging
-const TestComponent = ({ title }: { title: string }) => {
-  console.log(`TestComponent mounted: ${title}`);
-  return <div className="p-4 bg-accent/20 rounded-lg">Test content for {title}</div>;
-};
-
 const LifeSkillsComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
@@ -144,12 +138,8 @@ const SECTIONS = [
 
 export default function Learning() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const [useTestComponent, setUseTestComponent] = useState(true); // For testing
-
-  console.log("Current expanded section:", expandedSection);
 
   const handleToggle = (sectionId: string) => {
-    console.log("Toggle clicked:", sectionId);
     setExpandedSection(current => current === sectionId ? null : sectionId);
   };
 
@@ -157,56 +147,40 @@ export default function Learning() {
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-8 text-center">Learning & Development</h1>
 
-      {/* Testing controls */}
-      <div className="mb-4">
-        <Button 
-          variant="outline" 
-          onClick={() => setUseTestComponent(prev => !prev)}
-          className="mb-4"
-        >
-          Toggle Test Mode: {useTestComponent ? 'On' : 'Off'}
-        </Button>
-      </div>
-
       <div className="grid gap-6">
-        {SECTIONS.map((section) => {
-          const isExpanded = expandedSection === section.id;
-          const Component = useTestComponent ? TestComponent : section.component;
-
-          return (
-            <Card key={section.id} className="overflow-hidden">
-              <CardHeader 
-                className="cursor-pointer hover:bg-accent/10 transition-colors"
-                onClick={() => handleToggle(section.id)}
-              >
-                <div className="flex items-center gap-3">
-                  <section.icon className="h-6 w-6 text-primary" />
-                  <CardTitle className="text-2xl">{section.title}</CardTitle>
-                </div>
-                <CardDescription className="text-lg">
-                  {section.description}
-                </CardDescription>
-              </CardHeader>
-
-              <div
-                className={cn(
-                  "transition-all duration-300",
-                  isExpanded ? "block" : "hidden"
-                )}
-              >
-                <CardContent className="p-6">
-                  {isExpanded && (
-                    useTestComponent ? (
-                      <TestComponent title={section.title} />
-                    ) : (
-                      <Component {...section.props} />
-                    )
-                  )}
-                </CardContent>
+        {SECTIONS.map((section) => (
+          <Card 
+            key={section.id} 
+            className={cn(
+              "overflow-hidden transition-all duration-300 ease-in-out",
+              expandedSection === section.id ? "shadow-lg" : "shadow-sm hover:shadow-md"
+            )}
+          >
+            <CardHeader 
+              className="cursor-pointer hover:bg-accent/10 transition-colors"
+              onClick={() => handleToggle(section.id)}
+            >
+              <div className="flex items-center gap-3">
+                <section.icon className="h-6 w-6 text-primary" />
+                <CardTitle className="text-2xl">{section.title}</CardTitle>
               </div>
-            </Card>
-          );
-        })}
+              <CardDescription className="text-lg">
+                {section.description}
+              </CardDescription>
+            </CardHeader>
+
+            <div
+              className={cn(
+                "transition-all duration-300 ease-in-out",
+                expandedSection === section.id ? "block" : "hidden"
+              )}
+            >
+              <CardContent className="p-6">
+                <section.component {...section.props} />
+              </CardContent>
+            </div>
+          </Card>
+        ))}
       </div>
     </div>
   );
