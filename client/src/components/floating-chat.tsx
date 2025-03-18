@@ -62,7 +62,7 @@ export default function FloatingChat() {
       // Gentle floating animation
       const floatInterval = setInterval(() => {
         controls.start({
-          y: [0, -3, 0],
+          y: [0, -2, 0],
           transition: {
             duration: 2,
             ease: "easeInOut",
@@ -188,7 +188,7 @@ export default function FloatingChat() {
     <div
       className={cn(
         "fixed top-4 right-4 z-50 transition-all duration-300 ease-in-out",
-        isMinimized ? "w-16 h-16" : "w-80"
+        isMinimized ? "w-12 h-12" : "w-80"
       )}
     >
       {isMinimized ? (
@@ -200,7 +200,7 @@ export default function FloatingChat() {
             variant="default"
             size="icon"
             className={cn(
-              "w-16 h-16 relative overflow-visible",
+              "w-12 h-12 relative overflow-visible",
               "bg-navy-600",
               "hover:bg-navy-700 transition-all duration-300",
               "rounded-full"
@@ -212,11 +212,11 @@ export default function FloatingChat() {
             <div className="absolute -inset-1 bg-navy-300 rounded-full blur-md opacity-10 animate-pulse delay-75" />
 
             {/* Face container */}
-            <div className="w-12 h-10 bg-navy-100 rounded-[1rem] flex items-center justify-center shadow-inner relative z-10">
-              <motion.div className="flex gap-4">
+            <div className="w-8 h-7 bg-navy-100 rounded-[0.75rem] flex items-center justify-center shadow-inner relative z-10">
+              <motion.div className="flex gap-3">
                 {/* Eyes with blinking animation controlled by the useEffect above */}
-                <motion.div className="w-2 h-2 rounded-full bg-navy-600" />
-                <motion.div className="w-2 h-2 rounded-full bg-navy-600" />
+                <motion.div className="w-1.5 h-1.5 rounded-full bg-navy-600" />
+                <motion.div className="w-1.5 h-1.5 rounded-full bg-navy-600" />
               </motion.div>
             </div>
           </Button>
