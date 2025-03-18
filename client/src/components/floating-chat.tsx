@@ -95,7 +95,8 @@ export default function FloatingChat() {
   // Get current page context
   const getCurrentContext = () => {
     const page = location.split('/')[1] || 'home';
-    const section = new URLSearchParams(location.split('?')[1]).get('tab');
+    const params = new URLSearchParams(location.split('?')[1] || '');
+    const section = params.get('tab') || 'general';
 
     const availableActions = {
       career: ['resume', 'interview', 'job-search'],
