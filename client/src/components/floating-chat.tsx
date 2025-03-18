@@ -66,7 +66,6 @@ export default function FloatingChat() {
     const page = location.split('/')[1] || 'home';
     const section = new URLSearchParams(location.split('?')[1]).get('tab');
 
-    // Define available actions based on current page
     const availableActions = {
       career: ['resume', 'interview', 'job-search'],
       finance: ['budget', 'investments', 'planning'],
@@ -173,7 +172,7 @@ export default function FloatingChat() {
     <div
       className={cn(
         "fixed top-4 right-4 z-50 transition-all duration-300 ease-in-out",
-        isMinimized ? "w-14 h-14" : "w-80"
+        isMinimized ? "w-16 h-24" : "w-80"
       )}
     >
       {isMinimized ? (
@@ -181,31 +180,38 @@ export default function FloatingChat() {
           animate={controls}
           className="relative"
         >
-          {/* Robot button */}
+          {/* Robot container with oval shape */}
           <Button
             variant="default"
             size="icon"
             className={cn(
-              "w-14 h-20 relative overflow-visible", 
-              "bg-white border-2 border-blue-100",
-              "hover:border-blue-200 transition-all duration-300",
-              "shadow-lg hover:shadow-xl rounded-[2rem]" 
+              "w-16 h-24 relative overflow-visible", 
+              "bg-white",
+              "hover:shadow-lg transition-all duration-300",
+              "rounded-[100px]", // More oval shape
+              "border-2 border-blue-100"
             )}
             onClick={() => setIsMinimized(false)}
           >
             {/* Robot body */}
             <div className="relative w-full h-full flex items-center justify-center flex-col">
               {/* Eyes container */}
-              <div className="flex gap-3 mb-2">
+              <div className="flex gap-4 mb-2 mt-4">
                 {/* Left eye */}
-                <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+                <div className="relative w-4 h-4">
+                  <div className="absolute inset-0 rounded-full bg-blue-500" />
+                  <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-white" />
+                </div>
                 {/* Right eye */}
-                <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+                <div className="relative w-4 h-4">
+                  <div className="absolute inset-0 rounded-full bg-blue-500" />
+                  <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-white" />
+                </div>
               </div>
 
               {/* Arms */}
-              <div className="absolute left-[-8px] top-1/2 w-2 h-4 bg-white border-2 border-blue-100 rounded-full transform -translate-y-1/2" />
-              <div className="absolute right-[-8px] top-1/2 w-2 h-4 bg-white border-2 border-blue-100 rounded-full transform -translate-y-1/2" />
+              <div className="absolute left-[-12px] top-1/2 w-3 h-6 bg-white border-2 border-blue-100 rounded-full transform -translate-y-1/2" />
+              <div className="absolute right-[-12px] top-1/2 w-3 h-6 bg-white border-2 border-blue-100 rounded-full transform -translate-y-1/2" />
             </div>
           </Button>
         </motion.div>
