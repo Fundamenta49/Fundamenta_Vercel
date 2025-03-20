@@ -46,53 +46,62 @@ const messageSchema = z.object({
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
-      const validatedData = messageSchema.parse(req.body);
+      const requestSchema = z.object({
+        message: z.string(),
+        category: z.enum(['cooking', 'career', 'emergency', 'finance', 'wellness', 'learning', 'tour']),
+        previousMessages: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string(),
+          timestamp: z.date().optional(),
+          category: z.string().optional()
+        })),
+        context: z.object({
+          currentPage: z.string(),
+          currentSection: z.string().optional(),
+          availableActions: z.array(z.string())
+        }).optional()
+      });
 
-      let systemMessage = `You are a friendly and supportive AI assistant.
+      const validatedData = requestSchema.parse(req.body);
 
-Format your responses following these strict rules:
+      let systemMessage = `You are Fundi, a friendly and supportive AI assistant.
+        Format your responses following these strict rules:
+        - Use only plain text - no special formatting characters
+        - Never use asterisks (*) or hashtags (#) in your responses
+        - Never use markdown syntax
+        - Use simple bullet points with a dash (-) for lists
+        - Add double line breaks between topics
+        - Start new sections with friendly emojis
+        - Keep everything in a conversational, friendly tone
 
-- Use only plain text - no special formatting characters
-- Never use asterisks (*) or hashtags (#) in your responses
-- Never use markdown syntax
-- Use simple bullet points with a dash (-) for lists
-- Add double line breaks between topics
-- Start new sections with friendly emojis
-- Keep everything in a conversational, friendly tone
+        You can perform the following actions:
+        - Navigate to different sections of the app
+        - Fill in forms with user information
+        - Show relevant guides and tutorials
+        - Trigger specific features based on user requests`;
 
-Example formatting:
-🌟 Main Topic
-Here's the first point about this topic.
-
-- First item in a list
-- Second item in a list
-
-✨ Next Topic
-Continue with the next section here.
-
-Remember to suggest relevant features in the app that could help the user.`;
-
+      // Add category-specific context
       switch (validatedData.category) {
         case "cooking":
-          systemMessage += `As a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm!`;
+          systemMessage += `\nAs a friendly cooking mentor 👩‍🍳, help users develop their kitchen skills with enthusiasm!`;
           break;
         case "career":
-          systemMessage += `As a supportive career mentor 💼, offer encouraging but practical advice.`;
+          systemMessage += `\nAs a supportive career mentor 💼, offer encouraging but practical advice.`;
           break;
         case "emergency":
-          systemMessage += `Stay calm and clear while providing crucial guidance.`;
+          systemMessage += `\nStay calm and clear while providing crucial guidance.`;
           break;
         case "finance":
-          systemMessage += `As a friendly financial guide 💰, explain concepts in simple, relatable terms.`;
+          systemMessage += `\nAs a friendly financial guide 💰, explain concepts in simple, relatable terms.`;
           break;
         case "wellness":
-          systemMessage += `As a caring wellness guide 🌱, provide compassionate support for health and wellbeing.`;
+          systemMessage += `\nAs a caring wellness guide 🌱, provide compassionate support for health and wellbeing.`;
           break;
         case "learning":
-          systemMessage += `As an encouraging learning coach 📚, help users discover and grow!`;
+          systemMessage += `\nAs an encouraging learning coach 📚, help users discover and grow!`;
           break;
         default:
-          systemMessage += `Let me help guide you through our features and capabilities.`;
+          systemMessage += `\nLet me help guide you through our features and capabilities.`;
           break;
       }
 
@@ -102,8 +111,16 @@ Remember to suggest relevant features in the app that could help the user.`;
         content: msg.content
       }));
 
+      // Add context information for better orchestration
+      if (validatedData.context) {
+        systemMessage += `\n\nCurrent Context:
+        - Page: ${validatedData.context.currentPage}
+        - Section: ${validatedData.context.currentSection || 'None'}
+        - Available Actions: ${validatedData.context.availableActions.join(', ')}`;
+      }
+
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", 
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
@@ -114,22 +131,27 @@ Remember to suggest relevant features in the app that could help the user.`;
             role: "user",
             content: validatedData.message
           }
-        ]
+        ],
+        response_format: { type: "json_object" }
       });
 
       if (!response.choices[0].message?.content) {
         throw new Error('No response content received from AI');
       }
 
+      const responseData = JSON.parse(response.choices[0].message.content);
+
       res.json({
-        response: response.choices[0].message.content,
-        success: true
+        success: true,
+        response: responseData.response,
+        actions: responseData.actions,
+        suggestions: responseData.suggestions
       });
 
     } catch (error) {
       console.error("Chat error:", error);
       res.status(400).json({
-        error: "Failed to get response. Please try again.",
+        error: error instanceof Error ? error.message : "Failed to get response. Please try again.",
         success: false
       });
     }
@@ -221,7 +243,7 @@ Remember to suggest relevant features in the app that could help the user.`;
           textLength: text.length,
           preview: text.substring(0, 100),
           pageCount: pdfDoc.numPages,
-          info: {} 
+          info: {}
         });
 
       } catch (pdfError) {
@@ -903,7 +925,7 @@ Remember to suggest relevant features in the app that could help the user.`;
     try {
       const { profile } = req.body;
 
-      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitness goals: ${profile.goals.join(', ')}. 
+      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitnessgoals: ${profile.goals.join(', ')}. 
       Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
       Format the response as a JSON object with the following structure:
       {
@@ -970,7 +992,7 @@ Remember to suggest relevant features in the app that could help the user.`;
       });
 
       res.json({
-        analysis,        wordFrequency,
+        analysis, wordFrequency,
         content: analysis.content,
         summary: analysis.summary,
       });
