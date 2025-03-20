@@ -50,18 +50,18 @@ export const handleAIAction = (action: {
               (element as HTMLElement).click();
             }
 
-          // Dispatch navigation complete event
-          window.dispatchEvent(new CustomEvent('ai-navigation-complete', {
-            detail: {
-              route: action.payload.route,
-              section: action.payload.section,
-              focusContent: action.payload.focusContent,
-              autoFocus: true
-            }
-          }));
+            // Dispatch navigation complete event
+            window.dispatchEvent(new CustomEvent('ai-navigation-complete', {
+              detail: {
+                route: action.payload.route,
+                section: action.payload.section,
+                focusContent: action.payload.focusContent,
+                autoFocus: true
+              }
+            }));
+          }, 300); // Allow time for route change to complete
         }
-      }, 300); // Allow time for route change to complete
-    }
+      }
     break;
 
     case 'show_guide':
