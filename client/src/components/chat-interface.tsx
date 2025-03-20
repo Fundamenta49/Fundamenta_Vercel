@@ -15,6 +15,7 @@ import {
   Loader2, Brain, GraduationCap, MessageSquare, ArrowRight,
   Mic, Bot, Heart, ChefHat, Briefcase, DumbbellIcon
 } from "lucide-react";
+import FundiAvatar from "./fundi-avatar";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -204,13 +205,18 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
 
   return (
     <div className="space-y-4">
-      {sections.map((section, idx) => (
-        <div key={idx} className="mb-4 last:mb-0">
-          {section.split('\n').map((line, lineIdx) => (
-            <p key={lineIdx} className="text-gray-700 mb-2">{line}</p>
+      <div className="flex items-start gap-3 mb-4">
+        <FundiAvatar speaking={false} size="md" />
+        <div className="flex-1">
+          {sections.map((section, idx) => (
+            <div key={idx} className="mb-4 last:mb-0">
+              {section.split('\n').map((line, lineIdx) => (
+                <p key={lineIdx} className="text-gray-700 mb-2">{line}</p>
+              ))}
+            </div>
           ))}
         </div>
-      ))}
+      </div>
 
       {suggestions && suggestions.length > 0 && (
         <div className="mt-6 space-y-3">
