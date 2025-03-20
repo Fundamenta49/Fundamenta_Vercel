@@ -317,6 +317,23 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
   const chatMutation = useMutation({
     mutationFn: async (message: string) => {
+      // Add debug log
+      console.log("Sending chat request:", {
+        message,
+        category,
+        previousMessages: messages.map(m => ({
+          role: m.role,
+          content: m.content,
+          timestamp: m.timestamp,
+          category: m.category || category
+        })),
+        context: {
+          currentPage: window.location.pathname,
+          currentSection: selectedTopic || undefined,
+          availableActions: CHAT_TOPICS[category]?.map(t => t.id) || []
+        }
+      });
+
       const response = await apiRequest("POST", "/api/chat", {
         message,
         category,
@@ -334,7 +351,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to send message');
       }
 
       return response.json();
@@ -361,6 +379,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       }
     },
     onError: (error: Error) => {
+      console.error("Chat error:", error);
       toast({
         variant: "destructive",
         title: "Error",

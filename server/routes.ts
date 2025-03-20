@@ -34,35 +34,25 @@ const upload = multer({
 
 const messageSchema = z.object({
   message: z.string(),
-  category: z.enum(['cooking', 'career', 'emergency', 'finance', 'wellness', 'learning', 'tour']),
+  category: z.enum(['cooking', 'career', 'emergency', 'finance', 'wellness', 'learning', 'tour', 'fitness']),
   previousMessages: z.array(z.object({
     role: z.enum(["user", "assistant"]),
     content: z.string(),
     timestamp: z.date().optional(),
     category: z.string().optional()
-  }))
+  })),
+  context: z.object({
+    currentPage: z.string(),
+    currentSection: z.string().optional(),
+    availableActions: z.array(z.string())
+  }).optional()
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
-      const requestSchema = z.object({
-        message: z.string(),
-        category: z.enum(['cooking', 'career', 'emergency', 'finance', 'wellness', 'learning', 'tour']),
-        previousMessages: z.array(z.object({
-          role: z.enum(["user", "assistant"]),
-          content: z.string(),
-          timestamp: z.date().optional(),
-          category: z.string().optional()
-        })),
-        context: z.object({
-          currentPage: z.string(),
-          currentSection: z.string().optional(),
-          availableActions: z.array(z.string())
-        }).optional()
-      });
-
-      const validatedData = requestSchema.parse(req.body);
+      console.log("Incoming chat request:", req.body); // Debug log
+      const validatedData = messageSchema.parse(req.body);
 
       let systemMessage = `You are Fundi, a friendly and supportive AI assistant.
         Format your responses following these strict rules:
@@ -99,6 +89,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           break;
         case "learning":
           systemMessage += `\nAs an encouraging learning coach 📚, help users discover and grow!`;
+          break;
+        case "fitness":
+          systemMessage += `\nAs your dedicated fitness coach 💪, I'll help you achieve your exercise goals!`;
           break;
         default:
           systemMessage += `\nLet me help guide you through our features and capabilities.`;
@@ -149,9 +142,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
     } catch (error) {
-      console.error("Chat error:", error);
+      console.error("Chat error details:", {
+        name: error.name,
+        message: error.message,
+        errors: error.errors, // Zod validation errors
+        stack: error.stack
+      });
+
       res.status(400).json({
         error: error instanceof Error ? error.message : "Failed to get response. Please try again.",
+        details: process.env.NODE_ENV === 'development' ? error?.errors || error?.message : undefined,
         success: false
       });
     }
