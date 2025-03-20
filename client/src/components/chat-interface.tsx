@@ -37,6 +37,7 @@ interface AIAction {
     formData?: Record<string, any>;
     guideSection?: string;
     feature?: string;
+    section?: string; // Added section parameter
     [key: string]: any;
   };
 }
@@ -286,6 +287,16 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
       case 'navigate':
         if (action.payload.route) {
           setLocation(action.payload.route);
+          // Auto-select the relevant topic if provided
+          if (action.payload.section) {
+            setSelectedTopic(action.payload.section);
+            // Trigger dialog to open automatically
+            setTimeout(() => {
+              if (action.payload.section) {
+                setSelectedTopic(action.payload.section);
+              }
+            }, 100); // Small delay to ensure route change completes
+          }
         }
         break;
       case 'fill_form':
@@ -295,9 +306,15 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         break;
       case 'show_guide':
         if (action.payload.guideSection) {
+          // First navigate to the correct route if provided
+          if (action.payload.route) {
+            setLocation(action.payload.route);
+          }
+          // Then trigger the guide section to open
           window.dispatchEvent(new CustomEvent('show-guide-section', {
             detail: {
-              section: action.payload.guideSection
+              section: action.payload.guideSection,
+              autoFocus: true // New parameter to indicate automatic focus
             }
           }));
         }
@@ -307,7 +324,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           window.dispatchEvent(new CustomEvent('trigger-feature', {
             detail: {
               feature: action.payload.feature,
-              params: action.payload
+              params: action.payload,
+              autoOpen: true // New parameter to automatically open the feature
             }
           }));
         }
