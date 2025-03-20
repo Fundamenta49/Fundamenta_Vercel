@@ -59,7 +59,7 @@ export default function LearningCalendar() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4"> {/* Added padding */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -84,21 +84,21 @@ export default function LearningCalendar() {
         <CardContent>
           <div className="grid gap-8 md:grid-cols-2">
             {/* Calendar Section */}
-            <div>
+            <div className="p-4"> {/* Added padding */}
               <Calendar
                 mode="single"
                 selected={date}
                 onSelect={setDate}
-                className="rounded-md border shadow-sm"
+                className="rounded-md border shadow-sm bg-white" {/* Added bg-white */}
                 disabled={(date) => date < new Date()}
                 initialFocus
               />
             </div>
 
             {/* Reminders Section */}
-            <div>
+            <div className="p-4"> {/* Added padding */}
               <h3 className="font-medium mb-4">Upcoming Reminders</h3>
-              <div className="space-y-3">
+              <div className="grid gap-3"> {/* Changed to grid for better spacing */}
                 {notificationPrefs
                   .filter(pref => pref.enabled)
                   .map(pref => (
