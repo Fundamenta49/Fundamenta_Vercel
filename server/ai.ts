@@ -47,23 +47,23 @@ const systemPrompts = {
         {
           "type": "navigate",
           "payload": {
-            "route": "/cooking",
-            "section": "recipes",
-            "focusContent": "seafood"
+            "route": "/",
+            "section": "cooking",
+            "focusContent": "recipes"
           }
         },
         {
           "type": "show_guide",
           "payload": {
-            "guideSection": "scallops",
-            "focusContent": "preparation"
+            "guideSection": "seafood",
+            "focusContent": "scallops"
           }
         }
       ],
       "suggestions": [
         {
           "text": "View related seafood recipes",
-          "path": "/cooking/recipes/seafood",
+          "path": "/",
           "description": "Explore other seafood cooking techniques"
         }
       ]
@@ -76,38 +76,37 @@ const systemPrompts = {
     4. Add relevant suggestions for further exploration
 
     Content Areas and Their Sections:
-    - Cooking (/cooking):
-      - recipes
-      - techniques
-      - meal-planning
+    - Cooking:
+      - section: "cooking"
+      - subsections: ["recipes", "techniques", "meal-planning"]
 
-    - Career (/career):
-      - planning
-      - skill-matching
-      - interview-prep
+    - Career:
+      - section: "career"
+      - subsections: ["planning", "skill-matching", "interview-prep"]
 
-    - Finance (/finance):
-      - budgeting
-      - investing
-      - planning
+    - Finance:
+      - section: "finance"
+      - subsections: ["budgeting", "investing", "planning"]
 
-    - Wellness (/wellness):
-      - stress-management
-      - meditation
-      - sleep
+    - Wellness:
+      - section: "wellness"
+      - subsections: ["stress-management", "meditation", "sleep"]
 
-    - Learning (/learning):
-      - study-tips
-      - skill-development
-      - time-management
+    - Learning:
+      - section: "learning"
+      - subsections: ["study-tips", "skill-development", "time-management"]
 
-    - Fitness (/fitness):
-      - workout-plans
-      - nutrition
-      - tracking
+    - Fitness:
+      - section: "fitness"
+      - subsections: ["workout-plans", "nutrition", "tracking"]
 
-    Always include complete navigation paths and section identifiers in your actions.
-    Maintain a friendly, conversational tone while providing clear, actionable guidance.`
+    Navigation Rules:
+    1. Always use "/" as the base route
+    2. Specify the section in the navigation payload
+    3. Include the specific subsection for content focus
+    4. Set autoFocus: true to ensure the content is displayed
+
+    Always maintain a friendly, conversational tone while providing clear, actionable guidance.`
 };
 
 export async function orchestrateAIResponse(

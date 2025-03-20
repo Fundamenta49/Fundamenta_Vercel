@@ -38,36 +38,39 @@ export const handleAIAction = (action: {
 
   switch (action.type) {
     case 'navigate':
-      if (action.payload.route) {
-        navigate(action.payload.route);
+      if (action.payload.route || action.payload.section) {
+        // Update the store state first
         if (action.payload.section) {
-          setTimeout(() => {
-            store.setSelectedTopic(action.payload.section);
-            store.setFocusContent(action.payload.focusContent || null);
-            const element = document.querySelector(`[data-section="${action.payload.section}"]`);
-            if (element) {
-              element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              (element as HTMLElement).click();
-            }
-
-            // Dispatch navigation complete event
-            window.dispatchEvent(new CustomEvent('ai-navigation-complete', {
-              detail: {
-                route: action.payload.route,
-                section: action.payload.section,
-                focusContent: action.payload.focusContent,
-                autoFocus: true
-              }
-            }));
-          }, 300); // Allow time for route change to complete
+          store.setSelectedTopic(action.payload.section);
         }
+        if (action.payload.focusContent) {
+          store.setFocusContent(action.payload.focusContent);
+        }
+
+        // Navigate to the route (if different from current)
+        if (action.payload.route && action.payload.route !== '/') {
+          navigate(action.payload.route);
+        }
+
+        // Notify components about the navigation
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('ai-navigation-complete', {
+            detail: {
+              section: action.payload.section,
+              focusContent: action.payload.focusContent,
+              autoFocus: true
+            }
+          }));
+        }, 100);
       }
-    break;
+      break;
 
     case 'show_guide':
       if (action.payload.guideSection) {
         store.setActiveGuideSection(action.payload.guideSection);
-        store.setFocusContent(action.payload.focusContent || null);
+        if (action.payload.focusContent) {
+          store.setFocusContent(action.payload.focusContent);
+        }
 
         window.dispatchEvent(new CustomEvent('show-guide-section', {
           detail: {
