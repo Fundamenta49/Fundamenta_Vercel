@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
+import { useAIEvents, useAIEventStore, handleAIAction } from "@/lib/ai-event-system";
 import ChatOnboarding from "./chat-onboarding";
 import {
   Loader2, Brain, GraduationCap, MessageSquare, ArrowRight,
@@ -38,8 +39,8 @@ interface AIAction {
     guideSection?: string;
     feature?: string;
     section?: string;
-    focusContent?: string; // Added for show_guide
-    formId?: string; //Added for fill_form
+    focusContent?: string;
+    formId?: string;
     [key: string]: any;
   };
 }
@@ -240,79 +241,19 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
   );
 };
 
-const handleAIAction = (action: AIAction) => {
-  switch (action.type) {
-    case 'navigate':
-      if (action.payload.route) {
-        setLocation(action.payload.route);
-        // Auto-select the relevant topic if provided
-        if (action.payload.section) {
-          setSelectedTopic(action.payload.section);
-          // Trigger dialog to open automatically
-          setTimeout(() => {
-            // Dispatch an event to notify the target component to open specific content
-            window.dispatchEvent(new CustomEvent('ai-navigation-complete', {
-              detail: {
-                route: action.payload.route,
-                section: action.payload.section,
-                autoFocus: true
-              }
-            }));
-          }, 300); // Allow time for navigation to complete
-        }
-      }
-      break;
-    case 'fill_form':
-      window.dispatchEvent(new CustomEvent('ai-form-fill', {
-        detail: {
-          formId: action.payload.formId,
-          formData: action.payload.formData,
-          autoFocus: true
-        }
-      }));
-      break;
-    case 'show_guide':
-      if (action.payload.guideSection) {
-        // First navigate to the correct route if provided
-        if (action.payload.route) {
-          setLocation(action.payload.route);
-        }
-        // Then trigger the guide section to open with specific content focus
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('show-guide-section', {
-            detail: {
-              section: action.payload.guideSection,
-              focusContent: action.payload.focusContent,
-              autoFocus: true
-            }
-          }));
-        }, 300);
-      }
-      break;
-    case 'trigger_feature':
-      if (action.payload.feature) {
-        window.dispatchEvent(new CustomEvent('trigger-feature', {
-          detail: {
-            feature: action.payload.feature,
-            params: action.payload,
-            autoOpen: true
-          }
-        }));
-      }
-      break;
-  }
-};
-
 export default function ChatInterface({ category }: ChatInterfaceProps) {
   const [location, setLocation] = useLocation();
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const { toast } = useToast();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
-  const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  // Get AI event state
+  const store = useAIEventStore();
+  const { selectedTopic, focusContent } = useAIEvents();
 
   useEffect(() => {
     const hasCompletedOnboarding = localStorage.getItem(`chat-onboarding-${category}`);
@@ -333,6 +274,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
   }, [category]);
 
   useEffect(() => {
+    // Auto-scroll chat
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -347,10 +289,8 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     chatMutation.mutate(input);
   };
 
-
   const chatMutation = useMutation({
     mutationFn: async (message: string) => {
-      // Add debug log
       console.log("Sending chat request:", {
         message,
         category,
@@ -405,7 +345,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
         // Handle any AI actions
         if (data.actions) {
-          data.actions.forEach(handleAIAction);
+          data.actions.forEach(action => handleAIAction(action, setLocation));
         }
       } else {
         throw new Error("Invalid response format");
@@ -443,6 +383,15 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
   const topics = CHAT_TOPICS[category] || [];
 
+  const handleTopicSelect = (topicId: string) => {
+    store.setSelectedTopic(topicId);
+  };
+
+  const handleDialogClose = () => {
+    store.setSelectedTopic(null);
+    store.setFocusContent(null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-xs text-muted-foreground mb-2">
@@ -457,7 +406,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
               "hover:shadow-md hover:scale-[1.02]",
               "bg-white hover:bg-gray-50/50"
             )}
-            onClick={() => setSelectedTopic(topic.id)}
+            onClick={() => handleTopicSelect(topic.id)}
           >
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -470,7 +419,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
         ))}
       </div>
 
-      <Dialog open={!!selectedTopic} onOpenChange={(open) => !open && setSelectedTopic(null)}>
+      <Dialog open={!!selectedTopic} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
