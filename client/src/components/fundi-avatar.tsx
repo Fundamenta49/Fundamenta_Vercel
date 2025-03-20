@@ -7,53 +7,65 @@ interface FundiAvatarProps {
 
 export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvatarProps) {
   const sizes = {
-    sm: "w-8 h-10",
-    md: "w-12 h-14",
-    lg: "w-16 h-20"
+    sm: "w-10 h-12",
+    md: "w-16 h-20",
+    lg: "w-24 h-28"
+  };
+
+  const eyeSizes = {
+    sm: "w-2.5 h-2.5",
+    md: "w-4 h-4",
+    lg: "w-6 h-6"
   };
 
   return (
     <div className={`relative ${sizes[size]}`}>
-      {/* Main robot head - white egg shape with gradient */}
+      {/* Main body - smooth, pure white oval */}
       <motion.div
-        className="absolute inset-0 rounded-[60%] bg-gradient-to-b from-white to-gray-50 shadow-lg"
-        initial={{ scale: 0.9 }}
+        className="absolute inset-0 bg-white rounded-[70%] shadow-lg"
+        style={{
+          background: "linear-gradient(180deg, #FFFFFF 0%, #F8F9FA 100%)",
+          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+        }}
+        initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Eyes container - positioned for egg shape */}
-        <div className="absolute top-1/3 left-0 right-0 flex justify-center space-x-3">
+        {/* Eyes container - positioned higher in the face */}
+        <div className="absolute top-[40%] left-0 right-0 flex justify-center space-x-4">
           {/* Left eye */}
           <motion.div
-            className="w-3 h-3 rounded-full bg-blue-400"
+            className={`${eyeSizes[size]} rounded-full bg-blue-400`}
+            style={{
+              background: "linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%)",
+              boxShadow: "0 0 20px 5px rgba(96, 165, 250, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.5)"
+            }}
             animate={{
-              scale: speaking ? [1, 1.2, 1] : 1,
-              opacity: [0.8, 1, 0.8]
+              scale: speaking ? [1, 1.1, 1] : 1,
+              opacity: [0.9, 1, 0.9]
             }}
             transition={{
-              duration: 1.5,
+              duration: 2,
               repeat: Infinity,
               ease: "easeInOut"
-            }}
-            style={{
-              boxShadow: "0 0 15px #60A5FA"
             }}
           />
           {/* Right eye */}
           <motion.div
-            className="w-3 h-3 rounded-full bg-blue-400"
+            className={`${eyeSizes[size]} rounded-full bg-blue-400`}
+            style={{
+              background: "linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%)",
+              boxShadow: "0 0 20px 5px rgba(96, 165, 250, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.5)"
+            }}
             animate={{
-              scale: speaking ? [1, 1.2, 1] : 1,
-              opacity: [0.8, 1, 0.8]
+              scale: speaking ? [1, 1.1, 1] : 1,
+              opacity: [0.9, 1, 0.9]
             }}
             transition={{
-              duration: 1.5,
+              duration: 2,
               repeat: Infinity,
               ease: "easeInOut",
-              delay: 0.2
-            }}
-            style={{
-              boxShadow: "0 0 15px #60A5FA"
+              delay: 0.3
             }}
           />
         </div>
