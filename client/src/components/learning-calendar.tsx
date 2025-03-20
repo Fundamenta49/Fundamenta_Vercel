@@ -89,7 +89,7 @@ export default function LearningCalendar() {
                 mode="single"
                 selected={date}
                 onSelect={setDate}
-                className="rounded-md border shadow-sm bg-white" {/* Added bg-white */}
+                className="rounded-md border shadow-sm bg-white" 
                 disabled={(date) => date < new Date()}
                 initialFocus
               />
