@@ -37,7 +37,9 @@ interface AIAction {
     formData?: Record<string, any>;
     guideSection?: string;
     feature?: string;
-    section?: string; // Added section parameter
+    section?: string;
+    focusContent?: string; // Added for show_guide
+    formId?: string; //Added for fill_form
     [key: string]: any;
   };
 }
@@ -238,6 +240,69 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
   );
 };
 
+const handleAIAction = (action: AIAction) => {
+  switch (action.type) {
+    case 'navigate':
+      if (action.payload.route) {
+        setLocation(action.payload.route);
+        // Auto-select the relevant topic if provided
+        if (action.payload.section) {
+          setSelectedTopic(action.payload.section);
+          // Trigger dialog to open automatically
+          setTimeout(() => {
+            // Dispatch an event to notify the target component to open specific content
+            window.dispatchEvent(new CustomEvent('ai-navigation-complete', {
+              detail: {
+                route: action.payload.route,
+                section: action.payload.section,
+                autoFocus: true
+              }
+            }));
+          }, 300); // Allow time for navigation to complete
+        }
+      }
+      break;
+    case 'fill_form':
+      window.dispatchEvent(new CustomEvent('ai-form-fill', {
+        detail: {
+          formId: action.payload.formId,
+          formData: action.payload.formData,
+          autoFocus: true
+        }
+      }));
+      break;
+    case 'show_guide':
+      if (action.payload.guideSection) {
+        // First navigate to the correct route if provided
+        if (action.payload.route) {
+          setLocation(action.payload.route);
+        }
+        // Then trigger the guide section to open with specific content focus
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('show-guide-section', {
+            detail: {
+              section: action.payload.guideSection,
+              focusContent: action.payload.focusContent,
+              autoFocus: true
+            }
+          }));
+        }, 300);
+      }
+      break;
+    case 'trigger_feature':
+      if (action.payload.feature) {
+        window.dispatchEvent(new CustomEvent('trigger-feature', {
+          detail: {
+            feature: action.payload.feature,
+            params: action.payload,
+            autoOpen: true
+          }
+        }));
+      }
+      break;
+  }
+};
+
 export default function ChatInterface({ category }: ChatInterfaceProps) {
   const [location, setLocation] = useLocation();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
@@ -282,56 +347,6 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     chatMutation.mutate(input);
   };
 
-  const handleAIAction = (action: AIAction) => {
-    switch (action.type) {
-      case 'navigate':
-        if (action.payload.route) {
-          setLocation(action.payload.route);
-          // Auto-select the relevant topic if provided
-          if (action.payload.section) {
-            setSelectedTopic(action.payload.section);
-            // Trigger dialog to open automatically
-            setTimeout(() => {
-              if (action.payload.section) {
-                setSelectedTopic(action.payload.section);
-              }
-            }, 100); // Small delay to ensure route change completes
-          }
-        }
-        break;
-      case 'fill_form':
-        window.dispatchEvent(new CustomEvent('ai-form-fill', {
-          detail: action.payload.formData
-        }));
-        break;
-      case 'show_guide':
-        if (action.payload.guideSection) {
-          // First navigate to the correct route if provided
-          if (action.payload.route) {
-            setLocation(action.payload.route);
-          }
-          // Then trigger the guide section to open
-          window.dispatchEvent(new CustomEvent('show-guide-section', {
-            detail: {
-              section: action.payload.guideSection,
-              autoFocus: true // New parameter to indicate automatic focus
-            }
-          }));
-        }
-        break;
-      case 'trigger_feature':
-        if (action.payload.feature) {
-          window.dispatchEvent(new CustomEvent('trigger-feature', {
-            detail: {
-              feature: action.payload.feature,
-              params: action.payload,
-              autoOpen: true // New parameter to automatically open the feature
-            }
-          }));
-        }
-        break;
-    }
-  };
 
   const chatMutation = useMutation({
     mutationFn: async (message: string) => {
