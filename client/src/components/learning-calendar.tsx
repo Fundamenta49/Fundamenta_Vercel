@@ -129,17 +129,19 @@ export default function LearningCalendar() {
                 {notificationPrefs
                   .filter(pref => pref.enabled)
                   .map(pref => (
-                    <div key={pref.feature} className="flex items-center justify-between py-2 border-b">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div key={pref.feature} className="flex items-center py-2 border-b">
+                      <div className="flex items-center gap-3 flex-1 min-w-0 pr-4">
                         {pref.urgency === "urgent" ? 
                           <BellRing className="h-4 w-4 shrink-0 text-red-500" /> : 
                           <Bell className="h-4 w-4 shrink-0 text-muted-foreground" />
                         }
-                        <span className="truncate">{pref.feature}</span>
+                        <span className="truncate block">{pref.feature}</span>
                       </div>
-                      <span className="text-sm text-muted-foreground ml-4 shrink-0">
-                        {pref.frequency}
-                      </span>
+                      <div className="w-20 text-right">
+                        <span className="text-sm text-muted-foreground">
+                          {pref.frequency}
+                        </span>
+                      </div>
                     </div>
                   ))}
               </div>
