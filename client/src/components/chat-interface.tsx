@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -238,7 +238,7 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
 };
 
 export default function ChatInterface({ category }: ChatInterfaceProps) {
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -285,11 +285,10 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     switch (action.type) {
       case 'navigate':
         if (action.payload.route) {
-          navigate(action.payload.route);
+          setLocation(action.payload.route);
         }
         break;
       case 'fill_form':
-        // Dispatch form fill event that other components can listen to
         window.dispatchEvent(new CustomEvent('ai-form-fill', {
           detail: action.payload.formData
         }));
