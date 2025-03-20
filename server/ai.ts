@@ -121,10 +121,17 @@ export async function orchestrateAIResponse(
     - Page: ${context.currentPage}
     - Section: ${context.currentSection || 'None'}
     - Available Actions: ${context.availableActions.join(', ')}
-    - User Intent: ${context.userIntent || 'Unknown'}`;
+    - User Intent: ${context.userIntent || 'Unknown'}
+    
+    Return your response in JSON format with the following structure:
+    {
+      "response": string,
+      "actions": Array<{type: string, payload: object}>,
+      "suggestions": Array<{text: string, path: string, description: string}>
+    }`;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4",
       messages: [
         {
           role: "system",
