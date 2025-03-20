@@ -1,15 +1,23 @@
 import OpenAI from "openai";
 
-// Interfaces
+// Enhanced interfaces
 interface AIAction {
-  type: 'resume' | 'recipe' | 'budget' | 'career' | 'wellness' | 'general';
-  payload: any;
+  type: 'navigate' | 'fill_form' | 'show_guide' | 'trigger_feature' | 'general';
+  payload: {
+    route?: string;
+    formData?: Record<string, any>;
+    guideSection?: string;
+    feature?: string;
+    [key: string]: any;
+  };
 }
 
 interface ChatContext {
   currentPage: string;
   currentSection?: string;
   availableActions: string[];
+  userIntent?: string;
+  previousInteractions?: string[];
 }
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
@@ -20,46 +28,73 @@ const openai = new OpenAI({
 });
 
 const systemPrompts = {
-  orchestrator: `You are Fundamenta's AI Assistant, capable of helping users across all app features.
+  orchestrator: `You are Fundi, Fundamenta's AI Assistant, capable of helping users across all app features.
+  Your role is to understand user intent and guide them to the right features while helping them complete tasks.
 
-  Available Actions:
-  1. Resume Management:
-     - Edit and improve resumes
-     - Generate cover letters
-     - Provide interview tips
+  Core Capabilities:
+  1. Navigation & Interface Control:
+     - Direct users to specific features
+     - Activate appropriate sections
+     - Fill forms and input fields
+     - Trigger functionality based on user intent
 
-  2. Recipe Generation:
-     - Create personalized recipes
-     - Suggest meal plans
-     - Provide cooking tips
+  2. Content Areas:
+     - Vehicle maintenance guides
+     - Cooking tutorials
+     - Career development
+     - Financial management
+     - Emergency assistance
+     - Wellness support
+     - Learning resources
 
-  3. Financial Management:
-     - Update budgets
-     - Analyze spending patterns
-     - Provide financial advice
+  Action Framework:
+  1. For navigation requests:
+     - Identify target section
+     - Generate navigation action
+     - Provide context-aware response
 
-  4. Career Development:
-     - Career path suggestions
-     - Skill development plans
-     - Job search strategies
+  2. For guide requests:
+     - Determine relevant guide section
+     - Prepare guide content
+     - Trigger appropriate visual aids
 
-  5. Wellness Support:
-     - Mental health resources
-     - Exercise recommendations
-     - Meditation guidance
+  3. For form filling:
+     - Extract relevant information
+     - Validate data format
+     - Generate form fill actions
 
-  Important Guidelines:
-  1. Always understand the current context before suggesting actions
-  2. Provide specific steps for accessing features
-  3. Maintain conversation history for context
-  4. Use available app features before suggesting external resources
-
-  Format your response as a JSON object with:
+  Response Format:
   {
-    "response": "Your message to the user",
-    "actions": [{ "type": "action_type", "payload": {} }],
-    "suggestions": [{ "text": "Suggestion text", "path": "/route", "description": "Why this might help" }]
-  }`
+    "response": "Your friendly message to the user",
+    "actions": [
+      {
+        "type": "navigate" | "fill_form" | "show_guide" | "trigger_feature",
+        "payload": {
+          // Action-specific data
+        }
+      }
+    ],
+    "suggestions": [
+      {
+        "text": "Suggestion text",
+        "path": "/route",
+        "description": "Why this might help"
+      }
+    ]
+  }
+
+  Example Interactions:
+  1. "Show me how to change oil":
+     - Navigate to vehicle guide
+     - Display oil change section
+     - Offer related maintenance tips
+
+  2. "Help me create a budget":
+     - Open financial calculator
+     - Guide through input fields
+     - Suggest relevant tools
+
+  Always maintain a helpful, friendly tone and proactively suggest related features.`
 };
 
 export async function orchestrateAIResponse(
@@ -85,7 +120,8 @@ export async function orchestrateAIResponse(
     Current Context:
     - Page: ${context.currentPage}
     - Section: ${context.currentSection || 'None'}
-    - Available Actions: ${context.availableActions.join(', ')}`;
+    - Available Actions: ${context.availableActions.join(', ')}
+    - User Intent: ${context.userIntent || 'Unknown'}`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -107,10 +143,18 @@ export async function orchestrateAIResponse(
 
     const jsonResponse = JSON.parse(response.choices[0].message.content || "{}");
 
+    // Ensure consistent response format
     return {
       response: jsonResponse.response || "I apologize, I couldn't process that request.",
-      actions: jsonResponse.actions,
-      suggestions: jsonResponse.suggestions
+      actions: jsonResponse.actions?.map((action: any) => ({
+        type: action.type,
+        payload: action.payload
+      })),
+      suggestions: jsonResponse.suggestions?.map((suggestion: any) => ({
+        text: suggestion.text,
+        path: suggestion.path,
+        description: suggestion.description
+      }))
     };
   } catch (error: any) {
     console.error("OpenAI API Error:", error);
@@ -134,23 +178,35 @@ export function getPreferredStyle(messages: { role: string; content: string }[])
   return "concise";
 }
 
-export function getInterests(messages: { role: string; content: string }[]): string {
+export function getInterests(messages: { role: string; content: string }[]): string[] {
   const content = messages.map(m => m.content.toLowerCase()).join(" ");
+  const interests = [];
 
-  if (content.includes("career") || content.includes("job")) return "career development";
-  if (content.includes("learn") || content.includes("study")) return "education";
-  if (content.includes("health") || content.includes("exercise")) return "wellness";
-  if (content.includes("money") || content.includes("budget")) return "finance";
+  if (content.includes("car") || content.includes("vehicle")) interests.push("vehicle");
+  if (content.includes("cook") || content.includes("recipe")) interests.push("cooking");
+  if (content.includes("job") || content.includes("career")) interests.push("career");
+  if (content.includes("money") || content.includes("budget")) interests.push("finance");
+  if (content.includes("learn") || content.includes("study")) interests.push("education");
+  if (content.includes("health") || content.includes("exercise")) interests.push("wellness");
 
-  return "general";
+  return interests;
 }
 
-export function getLearningStyle(messages: { role: string; content: string }[]): string {
-  const content = messages.map(m => m.content.toLowerCase()).join(" ");
+export function analyzeUserIntent(message: string): string {
+  const lowerMessage = message.toLowerCase();
 
-  if (content.includes("show") || content.includes("see")) return "visual";
-  if (content.includes("explain") || content.includes("tell")) return "auditory";
-  if (content.includes("try") || content.includes("practice")) return "kinesthetic";
+  if (lowerMessage.includes("show me") || lowerMessage.includes("how to")) {
+    return "guide_request";
+  }
+  if (lowerMessage.includes("create") || lowerMessage.includes("make")) {
+    return "creation_request";
+  }
+  if (lowerMessage.includes("help") || lowerMessage.includes("assist")) {
+    return "assistance_request";
+  }
+  if (lowerMessage.includes("what") || lowerMessage.includes("why") || lowerMessage.includes("how")) {
+    return "information_request";
+  }
 
-  return "mixed";
+  return "general_request";
 }

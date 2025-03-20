@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -7,21 +8,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import {
-  Loader2,
-  Brain,
-  GraduationCap,
-  MessageSquare,
-  ArrowRight,
-  Mic,
-  Bot,
-  Heart,
-  ChefHat,
-  Briefcase,
-  DumbbellIcon
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 import ChatOnboarding from "./chat-onboarding";
+import {
+  Loader2, Brain, GraduationCap, MessageSquare, ArrowRight,
+  Mic, Bot, Heart, ChefHat, Briefcase, DumbbellIcon
+} from "lucide-react";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -29,6 +21,7 @@ interface ChatMessage {
   timestamp: Date;
   category?: string;
   suggestions?: AppSuggestion[];
+  actions?: AIAction[];
 }
 
 interface AppSuggestion {
@@ -37,15 +30,19 @@ interface AppSuggestion {
   description: string;
 }
 
-interface ChatInterfaceProps {
-  category: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
+interface AIAction {
+  type: 'navigate' | 'fill_form' | 'show_guide' | 'trigger_feature';
+  payload: {
+    route?: string;
+    formData?: Record<string, any>;
+    guideSection?: string;
+    feature?: string;
+    [key: string]: any;
+  };
 }
 
-interface ChatTopic {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
+interface ChatInterfaceProps {
+  category: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
 }
 
 const CHAT_TOPICS: Record<string, ChatTopic[]> = {
@@ -191,6 +188,13 @@ const CHAT_TOPICS: Record<string, ChatTopic[]> = {
   ]
 };
 
+interface ChatTopic {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
 const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) => {
   const sections = content.split(/\n\n+|\n(?=[-•🎯💡⏰🎬🔗✨🌟💪🧘‍♀️📊⭐👉])/g);
 
@@ -234,7 +238,7 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
 };
 
 export default function ChatInterface({ category }: ChatInterfaceProps) {
-  console.log("ChatInterface mounted with category:", category); // Debug log
+  const navigate = useNavigate();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -277,6 +281,41 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     chatMutation.mutate(input);
   };
 
+  const handleAIAction = (action: AIAction) => {
+    switch (action.type) {
+      case 'navigate':
+        if (action.payload.route) {
+          navigate(action.payload.route);
+        }
+        break;
+      case 'fill_form':
+        // Dispatch form fill event that other components can listen to
+        window.dispatchEvent(new CustomEvent('ai-form-fill', {
+          detail: action.payload.formData
+        }));
+        break;
+      case 'show_guide':
+        if (action.payload.guideSection) {
+          window.dispatchEvent(new CustomEvent('show-guide-section', {
+            detail: {
+              section: action.payload.guideSection
+            }
+          }));
+        }
+        break;
+      case 'trigger_feature':
+        if (action.payload.feature) {
+          window.dispatchEvent(new CustomEvent('trigger-feature', {
+            detail: {
+              feature: action.payload.feature,
+              params: action.payload
+            }
+          }));
+        }
+        break;
+    }
+  };
+
   const chatMutation = useMutation({
     mutationFn: async (message: string) => {
       const response = await apiRequest("POST", "/api/chat", {
@@ -287,7 +326,12 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
           content: m.content,
           timestamp: m.timestamp,
           category: m.category || category
-        }))
+        })),
+        context: {
+          currentPage: window.location.pathname,
+          currentSection: selectedTopic || undefined,
+          availableActions: CHAT_TOPICS[category]?.map(t => t.id) || []
+        }
       });
 
       if (!response.ok) {
@@ -298,16 +342,21 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
     },
     onSuccess: (data) => {
       if (data.success && data.response) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.response,
-            timestamp: new Date(),
-            category,
-            suggestions: data.suggestions
-          }
-        ]);
+        const newMessage: ChatMessage = {
+          role: "assistant",
+          content: data.response,
+          timestamp: new Date(),
+          category,
+          suggestions: data.suggestions,
+          actions: data.actions
+        };
+
+        setMessages(prev => [...prev, newMessage]);
+
+        // Handle any AI actions
+        if (data.actions) {
+          data.actions.forEach(handleAIAction);
+        }
       } else {
         throw new Error("Invalid response format");
       }
