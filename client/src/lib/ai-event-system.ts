@@ -41,8 +41,14 @@ export const handleAIAction = (action: {
       if (action.payload.route) {
         navigate(action.payload.route);
         if (action.payload.section) {
-          store.setSelectedTopic(action.payload.section);
-          store.setFocusContent(action.payload.focusContent || null);
+          setTimeout(() => {
+            store.setSelectedTopic(action.payload.section);
+            store.setFocusContent(action.payload.focusContent || null);
+            const element = document.querySelector(`[data-section="${action.payload.section}"]`);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              (element as HTMLElement).click();
+            }
 
           // Dispatch navigation complete event
           window.dispatchEvent(new CustomEvent('ai-navigation-complete', {
@@ -54,8 +60,9 @@ export const handleAIAction = (action: {
             }
           }));
         }
-      }
-      break;
+      }, 300); // Allow time for route change to complete
+    }
+    break;
 
     case 'show_guide':
       if (action.payload.guideSection) {

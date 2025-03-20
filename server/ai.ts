@@ -139,7 +139,18 @@ export async function orchestrateAIResponse(
     Return your response in JSON format with the following structure:
     {
       "response": string,
-      "actions": Array<{type: string, payload: object}>,
+      "actions": Array<{
+        type: 'navigate' | 'show_guide' | 'fill_form' | 'trigger_feature',
+        payload: {
+          route?: string,
+          section?: string,
+          focusContent?: string,
+          guideSection?: string,
+          formData?: object,
+          feature?: string,
+          autoFocus?: boolean
+        }
+      }>,
       "suggestions": Array<{text: string, path: string, description: string}>
     }`;
 
