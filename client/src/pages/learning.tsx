@@ -25,10 +25,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface SectionProps {
-  category?: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
-}
-
 const LifeSkillsComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
@@ -104,35 +100,40 @@ const SECTIONS = [
     title: 'Life Skills',
     description: 'Learn practical skills for everyday life',
     icon: Home,
-    component: LifeSkillsComponent
+    component: LifeSkillsComponent,
+    props: {}
   },
   {
     id: 'cooking',
     title: 'Cooking Basics',
     description: 'Master essential cooking techniques',
     icon: ChefHat,
-    component: CookingGuide
+    component: CookingGuide,
+    props: { category: "cooking" as const }
   },
   {
     id: 'vehicle',
     title: 'Vehicle Maintenance',
     description: 'Learn basic car maintenance and care',
     icon: Car,
-    component: VehicleGuide
+    component: VehicleGuide,
+    props: {}
   },
   {
     id: 'handyman',
     title: 'Home Repairs',
     description: 'Essential home maintenance skills',
     icon: Wrench,
-    component: HandymanGuide
+    component: HandymanGuide,
+    props: {}
   },
   {
     id: 'calendar',
     title: 'Schedule',
     description: 'Your learning schedule',
     icon: Clock,
-    component: LearningCalendar
+    component: LearningCalendar,
+    props: {}
   }
 ];
 
@@ -140,6 +141,7 @@ export default function Learning() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const handleToggle = (sectionId: string) => {
+    console.log("Toggling section:", sectionId); // Debug log
     setExpandedSection(current => current === sectionId ? null : sectionId);
   };
 
@@ -150,45 +152,55 @@ export default function Learning() {
       </h1>
 
       <div className="grid gap-4">
-        {SECTIONS.map((section) => (
-          <Card 
-            key={section.id} 
-            className={cn(
-              "overflow-hidden transition-shadow duration-200",
-              expandedSection === section.id ? "shadow-md" : "shadow-sm hover:shadow"
-            )}
-          >
-            <CardHeader 
-              className="cursor-pointer hover:bg-accent/5 transition-colors"
-              onClick={() => handleToggle(section.id)}
-            >
-              <div className="flex items-center gap-3">
-                <section.icon className="h-5 w-5 text-primary" />
-                <div className="flex-1 min-w-0">
-                  <CardTitle className="text-lg sm:text-xl">
-                    {section.title}
-                  </CardTitle>
-                  <CardDescription>
-                    {section.description}
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
+        {SECTIONS.map((section) => {
+          const isExpanded = expandedSection === section.id;
+          const Component = section.component;
+          console.log("Rendering section:", section.id, "expanded:", isExpanded); // Debug log
 
-            <div
+          return (
+            <Card 
+              key={section.id} 
               className={cn(
-                "transition-all duration-200 ease-in-out overflow-hidden",
-                expandedSection === section.id ? "max-h-[80vh]" : "max-h-0"
+                "transition-all duration-200",
+                isExpanded ? "shadow-lg" : "shadow hover:shadow-md"
               )}
             >
-              <CardContent className="p-4">
-                <div className="overflow-y-auto">
-                  {expandedSection === section.id && <section.component {...section.props} />}
+              <CardHeader 
+                className="cursor-pointer hover:bg-accent/5 transition-colors"
+                onClick={() => handleToggle(section.id)}
+              >
+                <div className="flex items-center gap-3">
+                  <section.icon className="h-5 w-5 text-primary" />
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-lg sm:text-xl">
+                      {section.title}
+                    </CardTitle>
+                    <CardDescription>
+                      {section.description}
+                    </CardDescription>
+                  </div>
                 </div>
-              </CardContent>
-            </div>
-          </Card>
-        ))}
+              </CardHeader>
+
+              <div
+                className={cn(
+                  "transition-all duration-300 ease-in-out",
+                  isExpanded 
+                    ? "max-h-[800px] opacity-100" 
+                    : "max-h-0 opacity-0 pointer-events-none"
+                )}
+              >
+                <CardContent className="p-6 border-t">
+                  {isExpanded && (
+                    <div className="overflow-y-auto max-h-[700px]">
+                      <Component {...section.props} />
+                    </div>
+                  )}
+                </CardContent>
+              </div>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

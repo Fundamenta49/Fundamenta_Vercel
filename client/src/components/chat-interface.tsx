@@ -38,7 +38,7 @@ interface AppSuggestion {
 }
 
 interface ChatInterfaceProps {
-  category: "emergency" | "finance" | "career" | "wellness" | "learning" | "fitness" | "cooking";
+  category: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
 }
 
 interface ChatTopic {
@@ -234,6 +234,7 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
 };
 
 export default function ChatInterface({ category }: ChatInterfaceProps) {
+  console.log("ChatInterface mounted with category:", category); // Debug log
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -344,6 +345,9 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
   return (
     <div className="space-y-6">
+      <div className="text-xs text-muted-foreground mb-2">
+        Active category: {category}
+      </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {topics.map((topic) => (
           <Card
