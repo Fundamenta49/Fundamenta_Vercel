@@ -13,7 +13,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Bell, Calendar as CalendarIcon, BellRing, Clock8, CalendarDays, Settings } from "lucide-react";
-import { format } from "date-fns";
 
 interface NotificationPreference {
   feature: string;
@@ -115,29 +114,38 @@ export default function LearningCalendar() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-6 md:grid-cols-2">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="rounded-md border"
-              disabled={(date) => date < new Date()}
-              initialFocus
-            />
+            <div className="w-full">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className="rounded-md border"
+                disabled={(date) => date < new Date()}
+                initialFocus
+              />
+            </div>
 
             <div className="space-y-4">
-                <h3 className="font-medium">Upcoming Reminders</h3>
+              <h3 className="font-medium mb-4">Upcoming Reminders</h3>
+              <div className="space-y-2">
                 {notificationPrefs
                   .filter(pref => pref.enabled)
                   .map(pref => (
-                    <div key={pref.feature} className="flex items-center py-2 border-b">
-                      <div className="flex items-center gap-3 flex-1 min-w-0 pr-4">
-                        {pref.urgency === "urgent" ? 
-                          <BellRing className="h-4 w-4 shrink-0 text-red-500" /> : 
-                          <Bell className="h-4 w-4 shrink-0 text-muted-foreground" />
-                        }
-                        <span className="truncate block">{pref.feature}</span>
+                    <div key={pref.feature} className="flex items-center justify-between py-3 border-b last:border-0">
+                      <div className="flex items-center space-x-3 min-w-0 flex-1">
+                        <div className="shrink-0">
+                          {pref.urgency === "urgent" ? 
+                            <BellRing className="h-4 w-4 text-red-500" /> : 
+                            <Bell className="h-4 w-4 text-muted-foreground" />
+                          }
+                        </div>
+                        <div className="truncate">
+                          <span className="block truncate text-sm font-medium">
+                            {pref.feature}
+                          </span>
+                        </div>
                       </div>
-                      <div className="w-20 text-right">
+                      <div className="ml-4 shrink-0 w-24 text-right">
                         <span className="text-sm text-muted-foreground">
                           {pref.frequency}
                         </span>
@@ -145,6 +153,7 @@ export default function LearningCalendar() {
                     </div>
                   ))}
               </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -166,13 +175,18 @@ export default function LearningCalendar() {
                   <Switch
                     id={`${pref.feature}-toggle`}
                     checked={pref.enabled}
-                    onCheckedChange={() => handleNotificationToggle(pref.feature)}
+                    onCheckedChange={(checked) => {
+                      setNotificationPrefs(prefs =>
+                        prefs.map(p =>
+                          p.feature === pref.feature ? { ...p, enabled: checked } : p
+                        )
+                      );
+                    }}
                   />
                   <Label htmlFor={`${pref.feature}-toggle`}>{pref.feature}</Label>
                 </div>
               ))}
             </div>
-
             <div className="space-y-4">
               <h4 className="font-medium leading-none">Smart Scheduling</h4>
               <div className="flex items-center space-x-4">
@@ -186,7 +200,6 @@ export default function LearningCalendar() {
                 <Label htmlFor="work-schedule">Work Schedule Integration</Label>
               </div>
             </div>
-
             <div className="space-y-4">
               <h4 className="font-medium leading-none">Calendar Integration</h4>
               <div className="space-y-2">
