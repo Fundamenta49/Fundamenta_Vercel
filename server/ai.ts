@@ -131,7 +131,7 @@ export async function orchestrateAIResponse(
     }`;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4-turbo-preview",
       messages: [
         {
           role: "system",
