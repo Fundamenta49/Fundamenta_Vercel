@@ -269,6 +269,8 @@ export default function ResumeBuilder() {
   };
 
   const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     const file = event.target.files?.[0];
     if (!file) return;
 
