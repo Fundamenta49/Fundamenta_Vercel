@@ -49,24 +49,38 @@ const FileUpload: React.FC<{
 }> = ({ onUpload, setUploadMessage }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const text = reader.result as string;
-        onUpload(text);
-        setUploadMessage(`✅ Uploaded and parsed: ${file.name}`);
-      };
-      reader.onerror = () => {
-        setUploadMessage("❌ Error reading file");
-      };
-      reader.readAsText(file);
+      const formData = new FormData();
+      formData.append('resume', file);
+      setUploadMessage("⏳ Processing resume...");
+
+      const response = await fetch('/api/resume/parse', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to parse resume');
+      }
+
+      const data = await response.json();
+      if (data.success && data.data) {
+        form.setValue("name", data.data.personalInfo.name || '');
+        form.setValue("email", data.data.personalInfo.email || '');
+        form.setValue("phone", data.data.personalInfo.phone || '');
+        form.setValue("resumeText", data.data.personalInfo.summary || '');
+        setUploadMessage(`✅ Successfully parsed: ${file.name}`);
+      } else {
+        throw new Error(data.message || 'Failed to parse resume');
+      }
     } catch (error) {
-      console.error("File upload error:", error);
-      setUploadMessage("❌ Error uploading file");
+      console.error("Resume upload error:", error);
+      setUploadMessage(`❌ Error: ${error instanceof Error ? error.message : 'Failed to upload resume'}`);
     }
   };
 
