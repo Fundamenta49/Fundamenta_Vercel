@@ -57,41 +57,50 @@ const ResumeBuilder: React.FC = () => {
   });
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault(); // Prevent form submission
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const text = reader.result as string;
-      form.setValue("resumeText", text);
-      setUploadMessage(`✅ Uploaded and parsed: ${file.name}`);
-    };
-    reader.readAsText(file);
+    try {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = reader.result as string;
+        form.setValue("resumeText", text);
+        setUploadMessage(`✅ Uploaded and parsed: ${file.name}`);
+      };
+      reader.onerror = () => {
+        setUploadMessage("❌ Error reading file");
+      };
+      reader.readAsText(file);
+    } catch (error) {
+      console.error("File upload error:", error);
+      setUploadMessage("❌ Error uploading file");
+    }
   };
 
   return (
     <div className="p-6 bg-white shadow-md rounded-lg max-w-3xl mx-auto text-gray-900">
       <h2 className="text-2xl font-bold mb-4 text-blue-700">Resume Builder (AI Enhanced)</h2>
 
+      <div className="flex justify-between items-center mb-4">
+        <Label className="text-sm font-semibold">Upload Existing Resume</Label>
+        <div className="flex items-center gap-2">
+          <label htmlFor="resumeUpload" className="flex items-center cursor-pointer px-3 py-2 bg-blue-100 rounded-md text-sm text-blue-800 hover:bg-blue-200">
+            <UploadCloud className="w-4 h-4 mr-2" /> Choose File
+          </label>
+          <input 
+            id="resumeUpload" 
+            type="file" 
+            accept=".txt,.doc,.docx,.pdf" 
+            onChange={handleFileUpload} 
+            className="hidden" 
+          />
+        </div>
+      </div>
+      {uploadMessage && <p className="text-green-600 text-sm mb-4">{uploadMessage}</p>}
+
       <Form {...form}>
         <form className="space-y-4">
-          <div className="flex justify-between items-center mb-4">
-            <Label className="text-sm font-semibold">Upload Existing Resume</Label>
-            <div className="flex items-center gap-2">
-              <label htmlFor="resumeUpload" className="flex items-center cursor-pointer px-3 py-2 bg-blue-100 rounded-md text-sm text-blue-800 hover:bg-blue-200">
-                <UploadCloud className="w-4 h-4 mr-2" /> Choose File
-              </label>
-              <input 
-                id="resumeUpload" 
-                type="file" 
-                accept=".txt,.doc,.docx,.pdf" 
-                onChange={handleFileUpload} 
-                className="hidden" 
-              />
-            </div>
-          </div>
-          {uploadMessage && <p className="text-green-600 text-sm mb-4">{uploadMessage}</p>}
-
           <FormField
             control={form.control}
             name="name"
