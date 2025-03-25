@@ -290,10 +290,15 @@ export default function ResumeBuilder() {
     formData.append('resume', file);
 
     try {
-      const response = await fetch('/api/resume/parse', {
-        method: 'POST',
-        body: formData,
-      });
+      const handleUpload = async () => {
+        const response = await fetch('/api/resume/parse', {
+          method: 'POST',
+          body: formData,
+        });
+        return response;
+      };
+      
+      const response = await handleUpload();
 
       if (!response.ok) {
         throw new Error('Failed to parse resume');
