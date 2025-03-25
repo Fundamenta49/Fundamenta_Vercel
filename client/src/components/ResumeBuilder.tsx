@@ -43,29 +43,21 @@ const ResumePDF: React.FC<ResumeFormData> = ({ name, email, phone, resumeText })
   </Document>
 );
 
-const ResumeBuilder: React.FC = () => {
-  const [uploadMessage, setUploadMessage] = useState("");
-
-  const form = useForm<ResumeFormData>({
-    resolver: zodResolver(resumeSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      resumeText: ""
-    }
-  });
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault(); // Prevent form submission
-    const file = e.target.files?.[0];
+const FileUpload: React.FC<{
+  onUpload: (text: string) => void;
+  setUploadMessage: (message: string) => void;
+}> = ({ onUpload, setUploadMessage }) => {
+  const handleFileUpload = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) return;
 
     try {
       const reader = new FileReader();
       reader.onload = () => {
         const text = reader.result as string;
-        form.setValue("resumeText", text);
+        onUpload(text);
         setUploadMessage(`✅ Uploaded and parsed: ${file.name}`);
       };
       reader.onerror = () => {
@@ -79,28 +71,54 @@ const ResumeBuilder: React.FC = () => {
   };
 
   return (
+    <div className="flex justify-between items-center mb-4">
+      <Label className="text-sm font-semibold">Upload Existing Resume</Label>
+      <div className="flex items-center gap-2">
+        <label 
+          htmlFor="resumeUpload" 
+          className="flex items-center cursor-pointer px-3 py-2 bg-blue-100 rounded-md text-sm text-blue-800 hover:bg-blue-200"
+          onClick={(e) => e.preventDefault()}
+        >
+          <UploadCloud className="w-4 h-4 mr-2" /> Choose File
+        </label>
+        <input 
+          id="resumeUpload" 
+          type="file" 
+          accept=".txt,.doc,.docx,.pdf" 
+          onChange={(e) => handleFileUpload(e as unknown as React.MouseEvent<HTMLInputElement>)} 
+          onClick={(e) => e.stopPropagation()}
+          className="hidden" 
+        />
+      </div>
+    </div>
+  );
+};
+
+const ResumeBuilder: React.FC = () => {
+  const [uploadMessage, setUploadMessage] = useState("");
+
+  const form = useForm<ResumeFormData>({
+    resolver: zodResolver(resumeSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      resumeText: ""
+    }
+  });
+
+  return (
     <div className="p-6 bg-white shadow-md rounded-lg max-w-3xl mx-auto text-gray-900">
       <h2 className="text-2xl font-bold mb-4 text-blue-700">Resume Builder (AI Enhanced)</h2>
 
-      <div className="flex justify-between items-center mb-4">
-        <Label className="text-sm font-semibold">Upload Existing Resume</Label>
-        <div className="flex items-center gap-2">
-          <label htmlFor="resumeUpload" className="flex items-center cursor-pointer px-3 py-2 bg-blue-100 rounded-md text-sm text-blue-800 hover:bg-blue-200">
-            <UploadCloud className="w-4 h-4 mr-2" /> Choose File
-          </label>
-          <input 
-            id="resumeUpload" 
-            type="file" 
-            accept=".txt,.doc,.docx,.pdf" 
-            onChange={handleFileUpload} 
-            className="hidden" 
-          />
-        </div>
-      </div>
+      <FileUpload 
+        onUpload={(text) => form.setValue("resumeText", text)} 
+        setUploadMessage={setUploadMessage}
+      />
       {uploadMessage && <p className="text-green-600 text-sm mb-4">{uploadMessage}</p>}
 
       <Form {...form}>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           <FormField
             control={form.control}
             name="name"
