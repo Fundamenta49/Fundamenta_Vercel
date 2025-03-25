@@ -268,15 +268,12 @@ export default function ResumeBuilder() {
     coverLetterMutation.mutate();
   };
 
-  const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    event.stopPropagation();
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
     
-    // Get file from event and reset the input
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-
+    const file = files[0];
     if (!file.type.match('application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
       toast({
         variant: "destructive",
@@ -437,7 +434,7 @@ export default function ResumeBuilder() {
             <Input
               type="file"
               accept=".pdf,.doc,.docx"
-              onChange={handleResumeUpload}
+              onChange={handleFileSelect}
               disabled={isParsingResume}
               className="flex-1"
             />
