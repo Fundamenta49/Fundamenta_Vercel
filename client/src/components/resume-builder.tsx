@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,6 +47,8 @@ const FileUpload: React.FC<{
   onUpload: (text: string) => void;
   setUploadMessage: (message: string) => void;
 }> = ({ onUpload, setUploadMessage }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -68,31 +70,24 @@ const FileUpload: React.FC<{
     }
   };
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   return (
-    <div className="flex justify-between items-center mb-4" onClick={handleClick}>
-      <Label className="text-sm font-semibold">Upload Existing Resume</Label>
-      <div className="flex items-center gap-2">
-        <label 
-          htmlFor="resumeUpload" 
-          className="flex items-center cursor-pointer px-3 py-2 bg-blue-100 rounded-md text-sm text-blue-800 hover:bg-blue-200"
-          onClick={handleClick}
-        >
-          <UploadCloud className="w-4 h-4 mr-2" /> Choose File
-        </label>
-        <input 
-          id="resumeUpload" 
-          type="file" 
-          accept=".txt,.doc,.docx,.pdf" 
-          onChange={handleFileUpload}
-          onClick={handleClick}
-          className="hidden" 
-        />
-      </div>
+    <div className="mb-4">
+      <Button 
+        variant="outline" 
+        className="w-full"
+        onClick={() => fileInputRef.current?.click()}
+        type="button"
+      >
+        <UploadCloud className="w-4 h-4 mr-2" />
+        Choose File
+      </Button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".txt,.doc,.docx,.pdf"
+        onChange={handleFileUpload}
+        className="hidden"
+      />
     </div>
   );
 };
