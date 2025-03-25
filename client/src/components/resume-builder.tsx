@@ -270,7 +270,11 @@ export default function ResumeBuilder() {
 
   const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
+    event.stopPropagation();
+    
+    // Get file from event and reset the input
     const file = event.target.files?.[0];
+    event.target.value = '';
     if (!file) return;
 
     if (!file.type.match('application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
