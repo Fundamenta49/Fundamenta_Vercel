@@ -49,9 +49,14 @@ export default function Navigation() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // We'll show only feature navigation items across all pages
+  const isHomePage = location === "/" || location === "/home";
+  
+  // On home page, show only default items (Why Fundamenta, Partner, Privacy, Invite)
+  // On other pages, show feature items (Life Skills, Financial Literacy, etc.)
   // Filter out the current page from navigation items
-  const displayedNavItems = [...featureNavItems].filter(item => item.href !== location);
+  const displayedNavItems = isHomePage
+    ? [...defaultNavItems.filter(item => item.href !== "/")] 
+    : [...featureNavItems].filter(item => item.href !== location);
 
   useEffect(() => {
     document.documentElement.style.setProperty(
