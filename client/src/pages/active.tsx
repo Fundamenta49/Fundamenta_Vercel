@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -17,6 +17,7 @@ import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitn
 import ProfileManager from "@/components/profile-manager";
 import { Brain, Dumbbell, Bird as YogaIcon, Timer, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 
 // Define a type for our sections to improve TypeScript support
 type SectionType = {
@@ -154,57 +155,41 @@ export default function Active() {
     );
   }
 
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
   return (
-    <div className="px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center text-[#1C3D5A]">Active You</h1>
+    <div className="w-full h-full mx-auto p-0">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center pt-2">
+        Active You
+      </h1>
 
-      <div className="grid gap-6">
-        {SECTIONS.map((section) => {
-          // Update props for Profile Manager
-          if (section.id === 'activeyou') {
-            section.props = { onUpdate: handleProfileComplete };
-          }
-
-          return (
-            <Card 
-              key={section.id}
-              className={cn(
-                "transition-all duration-300 ease-in-out overflow-hidden",
-                "hover:shadow-md bg-white w-full max-w-full",
-                expandedSection === section.id ? "shadow-lg" : "shadow-sm"
-              )}
-            >
-              {/* Only make the header clickable */}
-              <div 
-                onClick={() => handleCardClick(section.id)}
-                className="cursor-pointer"
-              >
-                <CardHeader className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <section.icon className="h-6 w-6 text-primary" />
-                    <CardTitle className="text-2xl">{section.title}</CardTitle>
-                  </div>
-                  <CardDescription className="text-lg">
-                    {section.description}
-                  </CardDescription>
-                </CardHeader>
-              </div>
-              <div
-                className={cn(
-                  "transition-all duration-300 ease-in-out",
-                  "overflow-hidden w-full",
-                  expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-                )}
-              >
-                <CardContent className="p-6">
-                  {expandedSection === section.id && (
-                    <section.component {...section.props} />
-                  )}
-                </CardContent>
-              </div>
-            </Card>
-          );
-        })}
+      {/* Book-style card carousel */}
+      <div ref={carouselRef} className="book-carousel">
+        <BookCarousel>
+          {SECTIONS.map((section) => {
+            // Update props for Profile Manager
+            if (section.id === 'activeyou') {
+              section.props = { onUpdate: handleProfileComplete };
+            }
+            
+            const isExpanded = expandedSection === section.id;
+            
+            return (
+              <BookPage key={section.id} id={section.id}>
+                <BookCard
+                  id={section.id}
+                  title={section.title}
+                  description={section.description}
+                  icon={section.icon}
+                  isExpanded={isExpanded}
+                  onToggle={handleCardClick}
+                >
+                  <section.component {...section.props} />
+                </BookCard>
+              </BookPage>
+            );
+          })}
+        </BookCarousel>
       </div>
     </div>
   );
