@@ -119,7 +119,7 @@ export default function Finance() {
 
   return (
     <div className="w-full h-full mx-auto p-0">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center pt-2">
+      <h1 className="text-2xl font-bold tracking-tight text-center mb-6">
         Financial Literacy
       </h1>
 
