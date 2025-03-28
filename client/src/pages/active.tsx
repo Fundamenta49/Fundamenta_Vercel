@@ -156,25 +156,30 @@ export default function Active() {
             <Card 
               key={section.id}
               className={cn(
-                "transition-all duration-300 ease-in-out cursor-pointer",
-                "hover:shadow-md",
+                "transition-all duration-300 ease-in-out overflow-hidden",
+                "hover:shadow-md bg-white w-full max-w-full",
                 expandedSection === section.id ? "shadow-lg" : "shadow-sm"
               )}
-              onClick={() => handleCardClick(section.id)}
             >
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <section.icon className="h-6 w-6 text-primary" />
-                  <CardTitle className="text-2xl">{section.title}</CardTitle>
-                </div>
-                <CardDescription className="text-lg">
-                  {section.description}
-                </CardDescription>
-              </CardHeader>
+              {/* Only make the header clickable */}
+              <div 
+                onClick={() => handleCardClick(section.id)}
+                className="cursor-pointer"
+              >
+                <CardHeader className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <section.icon className="h-6 w-6 text-primary" />
+                    <CardTitle className="text-2xl">{section.title}</CardTitle>
+                  </div>
+                  <CardDescription className="text-lg">
+                    {section.description}
+                  </CardDescription>
+                </CardHeader>
+              </div>
               <div
                 className={cn(
                   "transition-all duration-300 ease-in-out",
-                  "overflow-hidden",
+                  "overflow-hidden w-full",
                   expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
                 )}
               >
