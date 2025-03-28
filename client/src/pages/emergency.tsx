@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -16,6 +16,7 @@ import EmergencyGuide from "@/components/emergency-guide";
 import CPRGuide from "@/components/cpr-guide";
 import FireSafety from "@/components/fire-safety";
 import { cn } from "@/lib/utils";
+import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 
 // Define a type for our sections to improve TypeScript support
 type SectionType = {
@@ -71,63 +72,52 @@ const SECTIONS: SectionType[] = [
 
 export default function Emergency() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const handleCardClick = (sectionId: string) => {
     setExpandedSection(expandedSection === sectionId ? null : sectionId);
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8 text-center">Emergency Assistance</h1>
+    <div className="w-full h-full mx-auto p-0">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center pt-2">
+        Emergency Assistance
+      </h1>
 
-      <Alert variant="destructive" className="mb-6">
+      <Alert variant="destructive" className="mx-4 sm:mx-6 mb-4">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
           In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).
         </AlertDescription>
       </Alert>
 
-      <div className="grid gap-6">
-        {SECTIONS.map((section) => (
-          <Card 
-            key={section.id}
-            className={cn(
-              "transition-all duration-300 ease-in-out overflow-hidden",
-              "hover:shadow-md bg-white w-full max-w-full",
-              expandedSection === section.id ? "shadow-lg" : "shadow-sm"
-            )}
-          >
-            {/* Only make the header clickable */}
-            <div 
-              onClick={() => handleCardClick(section.id)}
-              className="cursor-pointer"
-            >
-              <CardHeader className="px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <section.icon className="h-6 w-6 text-primary" />
-                  <CardTitle className="text-2xl">{section.title}</CardTitle>
-                </div>
-                <CardDescription className="text-lg">
-                  {section.description}
-                </CardDescription>
-                {section.alert}
-              </CardHeader>
-            </div>
-            <div
-              className={cn(
-                "transition-all duration-300 ease-in-out",
-                "overflow-hidden w-full",
-                expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-              )}
-            >
-              <CardContent className="p-6">
-                {expandedSection === section.id && (
-                  <section.component {...(section.props || {})} />
-                )}
-              </CardContent>
-            </div>
-          </Card>
-        ))}
+      {/* Book-style card carousel */}
+      <div ref={carouselRef} className="book-carousel">
+        <BookCarousel>
+          {SECTIONS.map((section) => {
+            const isExpanded = expandedSection === section.id;
+            
+            return (
+              <BookPage key={section.id} id={section.id}>
+                <BookCard
+                  id={section.id}
+                  title={section.title}
+                  description={section.description}
+                  icon={section.icon as any}
+                  isExpanded={isExpanded}
+                  onToggle={handleCardClick}
+                >
+                  <div className="w-full">
+                    {section.alert && (
+                      <div className="mb-4">{section.alert}</div>
+                    )}
+                    <section.component {...(section.props || {})} />
+                  </div>
+                </BookCard>
+              </BookPage>
+            );
+          })}
+        </BookCarousel>
       </div>
     </div>
   );

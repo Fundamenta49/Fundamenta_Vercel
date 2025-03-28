@@ -16,8 +16,9 @@ import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 import RiskAssessment from "@/components/risk-assessment";
 import JournalEntry from "@/components/journal-entry";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 
 type SectionType = {
   id: string;
@@ -77,62 +78,49 @@ const SECTIONS: SectionType[] = [
 
 export default function Wellness() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const handleCardClick = (sectionId: string) => {
     setExpandedSection(expandedSection === sectionId ? null : sectionId);
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Wellness & Nutrition</h1>
+    <div className="w-full h-full mx-auto p-0">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center pt-2">
+        Wellness & Nutrition
+      </h1>
 
-      <Alert variant="default" className="mb-6 border-blue-500 bg-blue-50">
+      <Alert variant="default" className="mx-4 sm:mx-6 mb-4 border-blue-500 bg-blue-50">
         <AlertCircle className="h-4 w-4 text-blue-500" />
         <AlertDescription className="text-blue-800">
           Remember to consult with healthcare professionals for medical advice. Our AI provides general wellness guidance only.
         </AlertDescription>
       </Alert>
 
-      <div className="grid gap-6">
-        {SECTIONS.map((section) => (
-          <Card 
-            key={section.id}
-            className={cn(
-              "transition-all duration-300 ease-in-out overflow-hidden",
-              "hover:shadow-md bg-white w-full max-w-full",
-              expandedSection === section.id ? "shadow-lg" : "shadow-sm"
-            )}
-          >
-            {/* Only make the header clickable */}
-            <div 
-              onClick={() => handleCardClick(section.id)}
-              className="cursor-pointer"
-            >
-              <CardHeader className="px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <section.icon className="h-6 w-6 text-primary" />
-                  <CardTitle className="text-2xl">{section.title}</CardTitle>
-                </div>
-                <CardDescription className="text-lg">
-                  {section.description}
-                </CardDescription>
-              </CardHeader>
-            </div>
-            <div
-              className={cn(
-                "transition-all duration-300 ease-in-out",
-                "overflow-hidden w-full",
-                expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-              )}
-            >
-              <CardContent className="p-6">
-                {expandedSection === section.id && (
-                  <section.component {...(section.props || {})} />
-                )}
-              </CardContent>
-            </div>
-          </Card>
-        ))}
+      {/* Book-style card carousel */}
+      <div ref={carouselRef} className="book-carousel">
+        <BookCarousel>
+          {SECTIONS.map((section) => {
+            const isExpanded = expandedSection === section.id;
+            
+            return (
+              <BookPage key={section.id} id={section.id}>
+                <BookCard
+                  id={section.id}
+                  title={section.title}
+                  description={section.description}
+                  icon={section.icon as any}
+                  isExpanded={isExpanded}
+                  onToggle={handleCardClick}
+                >
+                  <div className="w-full">
+                    <section.component {...(section.props || {})} />
+                  </div>
+                </BookCard>
+              </BookPage>
+            );
+          })}
+        </BookCarousel>
       </div>
     </div>
   );
