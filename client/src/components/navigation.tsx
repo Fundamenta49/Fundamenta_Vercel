@@ -53,7 +53,7 @@ export default function Navigation() {
   // On homepage, only show default nav items, otherwise show all navigation options
   const navItems = isHomePage 
     ? defaultNavItems.filter(item => item.href !== "/") 
-    : [...defaultNavItems.filter(item => item.href !== "/"), ...featureNavItems].filter(item => item.href !== location);
+    : [...featureNavItems, ...defaultNavItems.filter(item => item.href !== "/")].filter(item => item.href !== location);
 
   useEffect(() => {
     document.documentElement.style.setProperty(

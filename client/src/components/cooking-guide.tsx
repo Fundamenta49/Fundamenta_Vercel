@@ -154,25 +154,31 @@ export default function CookingGuide() {
           <Card
             key={topic.id}
             className={cn(
-              "cursor-pointer transition-all duration-200",
-              "hover:shadow-md hover:scale-[1.02]",
-              "bg-white hover:bg-gray-50/50"
+              "w-full transition-all duration-200",
+              "shadow hover:shadow-md",
+              "border-2 border-primary/10"
             )}
-            onClick={() => handleTopicClick(topic)}
           >
-            <CardHeader>
+            <CardHeader 
+              className="cursor-pointer hover:bg-accent/5 transition-colors"
+              onClick={() => handleTopicClick(topic)}
+            >
               <div className="flex items-center gap-3">
-                <topic.icon className="h-6 w-6 text-primary" />
-                <CardTitle className="text-lg">{topic.title}</CardTitle>
+                <topic.icon className="h-5 w-5 text-primary" />
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="text-lg">{topic.title}</CardTitle>
+                  <CardDescription>{topic.description}</CardDescription>
+                </div>
               </div>
-              <CardDescription>{topic.description}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <ul className="list-disc list-inside text-sm text-gray-500">
-                {topic.topics.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
+            <CardContent className="border-t p-3 sm:p-6">
+              <div className="overflow-y-auto max-h-[200px]">
+                <ul className="list-disc list-inside text-sm space-y-1">
+                  {topic.topics.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -270,15 +276,22 @@ export default function CookingGuide() {
       </Dialog>
 
       {/* AI Chat Interface */}
-      <Card>
+      <Card className="w-full shadow border-2 border-primary/10">
         <CardHeader>
-          <CardTitle>Cooking AI Assistant</CardTitle>
-          <CardDescription>
-            Get personalized help with cooking questions
-          </CardDescription>
+          <div className="flex items-center gap-3">
+            <ChefHat className="h-5 w-5 text-primary" />
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg">Cooking AI Assistant</CardTitle>
+              <CardDescription>
+                Get personalized help with cooking questions
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className="p-0">
-          <ChatInterface category="cooking" />
+        <CardContent className="border-t p-3 sm:p-6">
+          <div className="overflow-y-auto max-h-[60vh] w-full">
+            <ChatInterface category="cooking" />
+          </div>
         </CardContent>
       </Card>
     </div>

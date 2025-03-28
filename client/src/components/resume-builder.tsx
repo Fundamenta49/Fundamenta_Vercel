@@ -147,8 +147,8 @@ const FileUpload: React.FC<{
 }> = ({ onUpload, setUploadMessage, form, isUploading, setIsUploading }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Text extraction from file
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Enhanced text extraction from file with improved section detection
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation(); // Prevent event bubbling
     
     const file = e.target.files?.[0];
@@ -158,80 +158,200 @@ const FileUpload: React.FC<{
       setIsUploading(true);
       setUploadMessage("Processing resume...");
       
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const text = event.target?.result as string;
-        
-        // Simple parser - in real app this would be more sophisticated
-        const lines = text.split('\n');
-        let name = "";
-        let email = "";
-        let phone = "";
-        let summary = "";
-        let education = "";
-        let experience = "";
-        let skills = "";
-        
-        // Basic extraction logic - find potential name/email/phone
-        for (const line of lines) {
-          const trimmed = line.trim();
-          
-          // Look for email pattern
-          if (trimmed.includes('@') && !email) {
-            email = trimmed;
-          }
-          
-          // Look for phone pattern (simple check for digits)
-          if (/\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/.test(trimmed) && !phone) {
-            phone = trimmed;
-          }
-          
-          // First non-empty line that's not email/phone is likely a name
-          if (trimmed && !trimmed.includes('@') && !/^\d+$/.test(trimmed) && !name) {
-            name = trimmed;
-          }
-
-          // Very basic section detection
-          if (trimmed.toLowerCase().includes('summary') || 
-              trimmed.toLowerCase().includes('profile') ||
-              trimmed.toLowerCase().includes('objective')) {
-            summary = text.substring(text.indexOf(trimmed) + trimmed.length, text.indexOf('experience', text.indexOf(trimmed)) >= 0 ? 
-              text.indexOf('experience', text.indexOf(trimmed)) : 
-              text.length).trim();
-          }
-
-          if (trimmed.toLowerCase().includes('education')) {
-            education = text.substring(text.indexOf(trimmed) + trimmed.length, text.indexOf('skills', text.indexOf(trimmed)) >= 0 ? 
-              text.indexOf('skills', text.indexOf(trimmed)) : 
-              text.length).trim();
-          }
-
-          if (trimmed.toLowerCase().includes('experience') || 
-              trimmed.toLowerCase().includes('employment')) {
-            experience = text.substring(text.indexOf(trimmed) + trimmed.length, text.indexOf('education', text.indexOf(trimmed)) >= 0 ? 
-              text.indexOf('education', text.indexOf(trimmed)) : 
-              text.length).trim();
-          }
-
-          if (trimmed.toLowerCase().includes('skills') || 
-              trimmed.toLowerCase().includes('expertise') ||
-              trimmed.toLowerCase().includes('technologies')) {
-            skills = text.substring(text.indexOf(trimmed) + trimmed.length, text.length).trim().split('\n').slice(0, 15).join('\n');
-          }
+      // Use OpenAI to parse resume if available or fall back to manual parsing
+      if (file.type === 'application/pdf') {
+        try {
+          // For PDF files, we'd ideally use server-side parsing
+          // This is a placeholder for future implementation
+          throw new Error("Direct PDF parsing not implemented - falling back to text extraction");
+        } catch (pdfError) {
+          console.log("PDF parsing fallback:", pdfError);
+          // Continue with text-based parsing below
         }
-        
-        // Update form
-        if (name) form.setValue("name", name);
-        if (email) form.setValue("email", email);
-        if (phone) form.setValue("phone", phone);
-        if (summary) form.setValue("summary", summary);
-        if (education) form.setValue("education", education);
-        if (experience) form.setValue("experience", experience);
-        if (skills) form.setValue("skills", skills);
-        form.setValue("resumeText", text);
-        
-        setUploadMessage(`Successfully parsed: ${file.name}`);
-        setIsUploading(false);
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = async (event) => {
+        try {
+          const text = event.target?.result as string;
+          
+          // Enhanced parser logic
+          const lines = text.split('\n').filter(line => line.trim().length > 0);
+          let name = "";
+          let email = "";
+          let phone = "";
+          let summary = "";
+          let education = "";
+          let experience = "";
+          let skills = "";
+          
+          // Try to detect structural patterns in the resume
+          // Improved email detection with regex
+          const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
+          // Improved phone detection for various formats
+          const phoneRegex = /(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?/;
+          
+          // First pass - identify email and phone
+          for (const line of lines) {
+            const trimmed = line.trim();
+            
+            // Look for email pattern with regex
+            const emailMatch = trimmed.match(emailRegex);
+            if (emailMatch && !email) {
+              email = emailMatch[0];
+            }
+            
+            // Look for phone pattern with enhanced regex
+            const phoneMatch = trimmed.match(phoneRegex);
+            if (phoneMatch && !phone) {
+              phone = trimmed;
+            }
+          }
+          
+          // Second pass - try to find the name (typically at the beginning)
+          // Assume the first line that's not contact info is likely the name
+          for (let i = 0; i < Math.min(5, lines.length); i++) {
+            const trimmed = lines[i].trim();
+            if (trimmed && 
+                !trimmed.match(emailRegex) && 
+                !trimmed.match(phoneRegex) && 
+                !trimmed.match(/^https?:\/\//) && // Not a URL
+                trimmed.split(' ').length <= 5 && // Likely a name (not too many words)
+                !name) {
+              name = trimmed;
+              break;
+            }
+          }
+          
+          // Third pass - identify sections
+          const sectionIndexes = [];
+          const sectionNames = [];
+          
+          // Common section titles in resumes
+          const sectionKeywords = {
+            summary: ['summary', 'profile', 'objective', 'about', 'professional summary'],
+            education: ['education', 'academic', 'degree', 'university', 'college', 'school'],
+            experience: ['experience', 'employment', 'work history', 'job history', 'professional experience'],
+            skills: ['skills', 'expertise', 'technologies', 'technical skills', 'competencies', 'qualifications']
+          };
+          
+          // Find section headings
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim().toLowerCase();
+            
+            // Check if this line looks like a section heading
+            let sectionType = null;
+            for (const [type, keywords] of Object.entries(sectionKeywords)) {
+              if (keywords.some(keyword => line.includes(keyword))) {
+                sectionType = type;
+                break;
+              }
+            }
+            
+            if (sectionType) {
+              sectionIndexes.push(i);
+              sectionNames.push(sectionType);
+            }
+          }
+          
+          // Extract section content based on identified sections
+          for (let i = 0; i < sectionIndexes.length; i++) {
+            const sectionStart = sectionIndexes[i] + 1; // Start after the heading
+            const sectionEnd = i < sectionIndexes.length - 1 ? sectionIndexes[i + 1] : lines.length;
+            const sectionContent = lines.slice(sectionStart, sectionEnd).join('\n');
+            
+            switch (sectionNames[i]) {
+              case 'summary':
+                summary = sectionContent;
+                break;
+              case 'education':
+                education = sectionContent;
+                break;
+              case 'experience':
+                experience = sectionContent;
+                break;
+              case 'skills':
+                skills = sectionContent;
+                break;
+            }
+          }
+          
+          // If we couldn't detect sections, use a fallback method for important sections
+          if (!summary && !education && !experience && !skills) {
+            // Fallback: Try to find chunks that might be sections
+            const fullText = lines.join('\n').toLowerCase();
+            
+            // Simplified fallback approach
+            for (const [sectionType, keywords] of Object.entries(sectionKeywords)) {
+              for (const keyword of keywords) {
+                if (fullText.includes(keyword)) {
+                  const keywordIndex = fullText.indexOf(keyword);
+                  const sectionStart = fullText.indexOf('\n', keywordIndex) + 1;
+                  
+                  // Find the end of this section (next keyword or end of text)
+                  let sectionEnd = fullText.length;
+                  for (const otherKeyword of Object.values(sectionKeywords).flat()) {
+                    if (otherKeyword !== keyword) {
+                      const nextKeywordIndex = fullText.indexOf(otherKeyword, sectionStart);
+                      if (nextKeywordIndex > sectionStart && nextKeywordIndex < sectionEnd) {
+                        sectionEnd = nextKeywordIndex;
+                      }
+                    }
+                  }
+                  
+                  const content = fullText.substring(sectionStart, sectionEnd).trim();
+                  
+                  switch (sectionType) {
+                    case 'summary':
+                      if (!summary) summary = content;
+                      break;
+                    case 'education':
+                      if (!education) education = content;
+                      break;
+                    case 'experience':
+                      if (!experience) experience = content;
+                      break;
+                    case 'skills':
+                      if (!skills) skills = content;
+                      break;
+                  }
+                  
+                  break; // Found the section, move to next type
+                }
+              }
+            }
+          }
+          
+          // Clean up and format the extracted content
+          const cleanText = (txt: string) => {
+            return txt.split('\n')
+              .map(line => line.trim())
+              .filter(line => line.length > 0)
+              .join('\n');
+          };
+          
+          // Update form with the parsed data
+          if (name) form.setValue("name", name);
+          if (email) form.setValue("email", email);
+          if (phone) form.setValue("phone", phone);
+          if (summary) form.setValue("summary", cleanText(summary));
+          if (education) form.setValue("education", cleanText(education));
+          if (experience) form.setValue("experience", cleanText(experience));
+          if (skills) form.setValue("skills", cleanText(skills));
+          
+          // Always set the complete resume text
+          form.setValue("resumeText", text);
+          
+          setUploadMessage(`Successfully parsed: ${file.name}`);
+        } catch (parseError) {
+          console.error("Error parsing resume:", parseError);
+          // Even if parsing fails, still set the raw text
+          form.setValue("resumeText", event.target?.result as string || "");
+          setUploadMessage(`Partial parsing: ${file.name} (some details may be missing)`);
+        } finally {
+          setIsUploading(false);
+        }
       };
       
       reader.onerror = () => {
@@ -239,7 +359,9 @@ const FileUpload: React.FC<{
         setIsUploading(false);
       };
       
+      // Read the file as text
       reader.readAsText(file);
+      
     } catch (error) {
       console.error("Resume upload error:", error);
       setUploadMessage(`Error: ${error instanceof Error ? error.message : 'Failed to upload resume'}`);

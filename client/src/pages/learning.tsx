@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import ChatInterface from "@/components/chat-interface";
+import ChatInterface, { LEARNING_CATEGORY, COOKING_CATEGORY } from "@/components/chat-interface";
 import VehicleGuide from "@/components/vehicle-guide";
 import HandymanGuide from "@/components/handyman-guide";
 import CookingGuide from "@/components/cooking-guide";
 import LearningCalendar from "@/components/learning-calendar";
+
 import {
   Brain,
   Car,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Complete implementation of Life Skills component with search functionality
 const LifeSkillsComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
@@ -86,14 +88,37 @@ const LifeSkillsComponent = () => {
   );
 };
 
-const SECTIONS = [
+// Define base section properties
+type BaseSectionProps = {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+// Define chat section type
+type ChatSectionType = BaseSectionProps & {
+  component: typeof ChatInterface;
+  props: { category: typeof LEARNING_CATEGORY | typeof COOKING_CATEGORY };
+};
+
+// Define non-chat section type
+type GenericSectionType = BaseSectionProps & {
+  component: React.ComponentType<any>;
+  props: Record<string, any>;
+};
+
+// Union type for all section types
+type SectionType = ChatSectionType | GenericSectionType;
+
+const SECTIONS: SectionType[] = [
   {
     id: 'chat',
     title: 'AI Learning Coach',
     description: 'Get personalized guidance for your learning journey',
     icon: Brain,
     component: ChatInterface,
-    props: { category: "learning" as const }
+    props: { category: LEARNING_CATEGORY }
   },
   {
     id: 'skills',
@@ -109,7 +134,7 @@ const SECTIONS = [
     description: 'Master essential cooking techniques',
     icon: ChefHat,
     component: CookingGuide,
-    props: { category: "cooking" as const }
+    props: { category: COOKING_CATEGORY }
   },
   {
     id: 'vehicle',
@@ -146,22 +171,30 @@ export default function Learning() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+    <div className="w-full mx-auto px-2 sm:px-4 md:px-6">
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
         Learning & Development
       </h1>
 
-      <div className="grid gap-4">
+      <div className="flex flex-col w-full gap-4">
         {SECTIONS.map((section) => {
           const isExpanded = expandedSection === section.id;
           const Component = section.component;
           console.log("Rendering section:", section.id, "expanded:", isExpanded); // Debug log
 
+          // Render the appropriate component based on section type
+          const renderContent = () => {
+            if (!isExpanded) return null;
+            
+            // Use the component from the section definition
+            return <Component {...section.props} />;
+          };
+
           return (
             <Card 
               key={section.id} 
               className={cn(
-                "transition-all duration-200",
+                "transition-all duration-200 w-full",
                 isExpanded ? "shadow-lg" : "shadow hover:shadow-md"
               )}
             >
@@ -184,16 +217,16 @@ export default function Learning() {
 
               <div
                 className={cn(
-                  "transition-all duration-300 ease-in-out",
+                  "transition-all duration-300 ease-in-out w-full",
                   isExpanded 
-                    ? "max-h-[800px] opacity-100" 
+                    ? "max-h-[80vh] opacity-100" 
                     : "max-h-0 opacity-0 pointer-events-none"
                 )}
               >
-                <CardContent className="p-6 border-t">
+                <CardContent className="p-3 sm:p-6 border-t">
                   {isExpanded && (
-                    <div className="overflow-y-auto max-h-[700px]">
-                      <Component {...section.props} />
+                    <div className="overflow-y-auto max-h-[70vh] w-full">
+                      {renderContent()}
                     </div>
                   )}
                 </CardContent>
