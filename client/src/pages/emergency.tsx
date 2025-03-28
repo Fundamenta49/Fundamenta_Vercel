@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -6,8 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Brain, Flame, Heart, PhoneCall } from "lucide-react";
+import { Brain, Flame, Heart, PhoneCall, X } from "lucide-react";
 import ChatInterface, { 
   ChatInterfaceComponent, 
   EMERGENCY_CATEGORY
@@ -17,6 +16,8 @@ import CPRGuide from "@/components/cpr-guide";
 import FireSafety from "@/components/fire-safety";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 // Define a type for our sections to improve TypeScript support
 type SectionType = {
@@ -26,7 +27,6 @@ type SectionType = {
   icon: React.ComponentType<{ className?: string }>;
   component: React.ComponentType<any>;
   props?: Record<string, any>;
-  alert?: React.ReactNode;
 };
 
 const SECTIONS: SectionType[] = [
@@ -36,16 +36,7 @@ const SECTIONS: SectionType[] = [
     description: 'Get immediate guidance for emergency situations',
     icon: Brain,
     component: ChatInterface as ChatInterfaceComponent,
-    props: { category: EMERGENCY_CATEGORY },
-    alert: (
-      <Alert className="mt-4 border-red-500 bg-red-50">
-        <AlertCircle className="h-4 w-4 text-red-500" />
-        <AlertDescription className="text-red-800 text-sm">
-          For immediate emergency assistance, always call your local emergency services first.
-          This AI assistant provides general guidance only.
-        </AlertDescription>
-      </Alert>
-    )
+    props: { category: EMERGENCY_CATEGORY }
   },
   {
     id: 'guides',
@@ -72,10 +63,57 @@ const SECTIONS: SectionType[] = [
 
 export default function Emergency() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Show disclaimer as a dismissable toast
+    if (showDisclaimer) {
+      toast({
+        title: "Emergency Disclaimer",
+        description: "In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).",
+        variant: "destructive",
+        duration: 15000, // 15 seconds
+        action: (
+          <Button variant="outline" size="sm" onClick={() => setShowDisclaimer(false)}>
+            <X className="h-4 w-4" />
+          </Button>
+        ),
+      });
+    }
+  }, [showDisclaimer, toast]);
 
   const handleCardClick = (sectionId: string) => {
-    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+    const newExpandedState = expandedSection === sectionId ? null : sectionId;
+    setExpandedSection(newExpandedState);
+    
+    // Show section-specific disclaimer toast when opening a card
+    if (newExpandedState) {
+      if (newExpandedState === 'chat') {
+        toast({
+          title: "AI Assistant Disclaimer",
+          description: "For immediate emergency assistance, always call your local emergency services first. This AI assistant provides general guidance only.",
+          duration: 10000,
+          action: (
+            <Button variant="outline" size="sm" onClick={() => {}}>
+              <X className="h-4 w-4" />
+            </Button>
+          ),
+        });
+      } else if (newExpandedState === 'cpr') {
+        toast({
+          title: "CPR Training Disclaimer",
+          description: "This guide is not a substitute for professional CPR training. Please seek certified training for proper CPR techniques.",
+          duration: 10000,
+          action: (
+            <Button variant="outline" size="sm" onClick={() => {}}>
+              <X className="h-4 w-4" />
+            </Button>
+          ),
+        });
+      }
+    }
   };
 
   return (
@@ -83,13 +121,6 @@ export default function Emergency() {
       <h1 className="text-2xl font-bold tracking-tight text-center mb-6">
         Emergency Assistance
       </h1>
-
-      <Alert variant="destructive" className="mx-4 sm:mx-6 mb-4">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).
-        </AlertDescription>
-      </Alert>
 
       {/* Book-style card carousel */}
       <div ref={carouselRef} className="book-carousel">
@@ -108,9 +139,6 @@ export default function Emergency() {
                   onToggle={handleCardClick}
                 >
                   <div className="w-full">
-                    {section.alert && (
-                      <div className="mb-4">{section.alert}</div>
-                    )}
                     <section.component {...(section.props || {})} />
                   </div>
                 </BookCard>
