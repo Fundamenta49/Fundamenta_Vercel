@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     fontSize: 24, 
     marginBottom: 5, 
     fontWeight: 'bold', 
-    color: '#5858FF' 
+    color: '#d1365a' // Changed from blue to rose primary color
   },
   contactRow: {
     flexDirection: 'row',
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 15,
     marginBottom: 5,
-    color: '#5858FF',
+    color: '#d1365a', // Changed from blue to rose primary color
     textTransform: 'uppercase',
   },
   sectionContent: {
@@ -318,8 +318,8 @@ export default function ResumeBuilder() {
   const hasContent = form.watch("resumeText") !== "";
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <Card className="shadow-sm border-rose-50 bg-white">
+    <div className="w-full max-w-4xl mx-auto overflow-hidden">
+      <Card className="shadow-sm bg-white w-full max-w-full overflow-hidden">
         <CardHeader className="px-3 py-3 sm:px-6 sm:py-4">
           <CardTitle className="text-lg sm:text-xl font-semibold flex items-center gap-2">
             <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />

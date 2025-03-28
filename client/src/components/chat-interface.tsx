@@ -32,22 +32,15 @@ interface AppSuggestion {
   description: string;
 }
 
+// Define AIAction type to match the handleAIAction function in ai-event-system.ts
 interface AIAction {
-  type: 'navigate' | 'fill_form' | 'show_guide' | 'trigger_feature';
-  payload: {
-    route?: string;
-    formData?: Record<string, any>;
-    guideSection?: string;
-    feature?: string;
-    section?: string;
-    focusContent?: string;
-    formId?: string;
-    [key: string]: any;
-  };
+  type: 'navigate' | 'fill_form' | 'show_guide' | 'trigger_feature' | 'general';
+  payload: Record<string, any>;
 }
 
 interface ChatInterfaceProps {
   category: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
+  children?: React.ReactNode; // Make the children prop optional
 }
 
 const CHAT_TOPICS: Record<string, ChatTopic[]> = {
@@ -247,7 +240,7 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
   );
 };
 
-export default function ChatInterface({ category }: ChatInterfaceProps) {
+export default function ChatInterface({ category, children }: ChatInterfaceProps) {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -351,7 +344,7 @@ export default function ChatInterface({ category }: ChatInterfaceProps) {
 
         // Handle any AI actions
         if (data.actions) {
-          data.actions.forEach(action => handleAIAction(action, setLocation));
+          data.actions.forEach((action: AIAction) => handleAIAction(action, setLocation));
         }
       } else {
         throw new Error("Invalid response format");

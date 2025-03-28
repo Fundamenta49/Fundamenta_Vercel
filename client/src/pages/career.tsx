@@ -17,7 +17,7 @@ import EmploymentRights from "@/components/employment-rights";
 import RiasecTest from "@/components/riasec-test";
 import EmotionalResilienceTracker from "@/components/emotional-resilience-tracker";
 import ResumeBuilder from "@/components/resume-builder";
-import { useState } from "react";
+import React, { useState } from "react";
 import { GraduationCap, Search, Book, Brain, FileText, Briefcase, DollarSign, MessageSquare, Scale } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -123,8 +123,8 @@ export default function Career() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Career Development</h1>
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">Career Development</h1>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl border-rose-50 bg-white">
@@ -146,38 +146,49 @@ export default function Career() {
         </DialogContent>
       </Dialog>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4 sm:gap-6">
         {SECTIONS.map((section) => (
           <Card 
             key={section.id}
             className={cn(
-              "transition-all duration-300 ease-in-out cursor-pointer border-rose-50",
-              "hover:shadow-md bg-white",
+              "transition-all duration-300 ease-in-out cursor-pointer overflow-hidden",
+              "hover:shadow-md bg-white w-full max-w-full",
               expandedSection === section.id ? "shadow-lg" : "shadow-sm"
             )}
             onClick={() => handleCardClick(section.id)}
           >
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <section.icon className="h-6 w-6 text-primary" />
-                <CardTitle className="text-2xl">{section.title}</CardTitle>
+            <CardHeader className="px-3 sm:px-6 py-3 sm:py-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <section.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                <CardTitle className="text-xl sm:text-2xl">{section.title}</CardTitle>
               </div>
-              <CardDescription className="text-lg">
+              <CardDescription className="text-base sm:text-lg">
                 {section.description}
               </CardDescription>
             </CardHeader>
             <div
               className={cn(
                 "transition-all duration-300 ease-in-out",
-                "overflow-hidden",
+                "overflow-hidden w-full",
                 expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
               )}
             >
-              <CardContent className="p-6">
+              <CardContent className="p-3 sm:p-6 w-full">
                 {expandedSection === section.id && (
-                  section.id === 'chat' ? 
-                    <ChatInterface category="career" /> :
-                    <section.component {...(section.props || {})} />
+                  <div className="w-full">
+                    {(() => {
+                      if (section.id === 'chat') {
+                        // Use the component's required "category" prop
+                        return <ChatInterface category="career" />;
+                      } else if (section.props) {
+                        // For components with props, properly cast and pass their props
+                        return <section.component {...section.props as any} />;
+                      } else {
+                        // For components without props
+                        return <section.component />;
+                      }
+                    })()}
+                  </div>
                 )}
               </CardContent>
             </div>
