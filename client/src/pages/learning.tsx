@@ -277,11 +277,24 @@ const SECTIONS: SectionType[] = [
 ];
 
 export default function Learning() {
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('chat');
 
-  const handleToggle = (sectionId: string) => {
-    console.log("Toggling section:", sectionId); // Debug log
-    setExpandedSection(current => current === sectionId ? null : sectionId);
+  // Function to render the appropriate component based on section type
+  const renderContent = (sectionId: string) => {
+    if (sectionId === 'chat') {
+      return <ChatInterface category={LEARNING_CATEGORY} />;
+    } else if (sectionId === 'cooking') {
+      return <ChatInterface category={COOKING_CATEGORY} />;
+    } else if (sectionId === 'skills') {
+      return <LifeSkillsComponent />;
+    } else if (sectionId === 'vehicle') {
+      return <VehicleGuide />;
+    } else if (sectionId === 'handyman') {
+      return <HandymanGuide />;
+    } else if (sectionId === 'calendar') {
+      return <LearningCalendar />;
+    }
+    return null;
   };
 
   return (
@@ -290,76 +303,42 @@ export default function Learning() {
         Learning & Development
       </h1>
 
-      <div className="flex flex-col w-full gap-4">
-        {SECTIONS.map((section) => {
-          const isExpanded = expandedSection === section.id;
-          const Component = section.component;
-          console.log("Rendering section:", section.id, "expanded:", isExpanded); // Debug log
-
-          // Render the appropriate component based on section type
-          const renderContent = () => {
-            if (!isExpanded) return null;
-            
-            if (section.id === 'chat') {
-              return <ChatInterface category={LEARNING_CATEGORY} />;
-            } else if (section.id === 'cooking') {
-              return <ChatInterface category={COOKING_CATEGORY} />;
-            } else if (section.id === 'skills') {
-              return <LifeSkillsComponent />;
-            } else if (section.id === 'vehicle') {
-              return <VehicleGuide />;
-            } else if (section.id === 'handyman') {
-              return <HandymanGuide />;
-            } else if (section.id === 'calendar') {
-              return <LearningCalendar />;
-            }
-            return null;
-          };
-
-          return (
-            <Card 
-              key={section.id} 
-              className={cn(
-                "transition-all duration-200 w-full",
-                isExpanded ? "shadow-lg" : "shadow hover:shadow-md"
-              )}
-            >
-              <CardHeader 
-                className="cursor-pointer hover:bg-accent/5 transition-colors"
-                onClick={() => handleToggle(section.id)}
-              >
-                <div className="flex items-center gap-3">
-                  <section.icon className="h-5 w-5 text-primary" />
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-lg sm:text-xl">
-                      {section.title}
-                    </CardTitle>
-                    <CardDescription>
-                      {section.description}
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <div
-                className={cn(
-                  "transition-all duration-300 ease-in-out w-full",
-                  isExpanded 
-                    ? "max-h-[80vh] opacity-100" 
-                    : "max-h-0 opacity-0 pointer-events-none"
-                )}
-              >
-                <CardContent className="p-3 sm:p-6 border-t">
-                  {isExpanded && (
-                    <div className="overflow-y-auto max-h-[70vh] w-full">
-                      {renderContent()}
-                    </div>
+      {/* Horizontal Tab Navigation */}
+      <div className="w-full overflow-auto pb-2 no-scrollbar">
+        <div className="inline-flex mx-auto border-2 border-rose-100 rounded-md bg-white" style={{width: "80%"}}>
+          <div className="flex space-x-1 p-1 w-full">
+            {SECTIONS.map((section) => {
+              const Icon = section.icon;
+              return (
+                <button
+                  key={section.id}
+                  className={cn(
+                    "flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-2 text-sm font-medium flex-1 min-w-[120px]",
+                    "transition-all duration-200 ease-in-out",
+                    activeSection === section.id
+                      ? "bg-rose-50 text-primary shadow-sm"
+                      : "text-muted-foreground hover:bg-muted/20"
                   )}
-                </CardContent>
-              </div>
-            </Card>
-          );
-        })}
+                  onClick={() => setActiveSection(section.id)}
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  {section.title}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="mt-6">
+        <Card className="shadow-lg border-2 border-rose-100 bg-white">
+          <CardContent className="p-4 sm:p-6">
+            <div className="overflow-y-auto max-h-[70vh]">
+              {renderContent(activeSection)}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
