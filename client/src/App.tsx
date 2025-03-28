@@ -2,7 +2,7 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import Navigation from "@/components/navigation";
+import Layout from "@/components/layout";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
@@ -16,36 +16,27 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import WelcomeTour from "@/components/welcome-tour";
-import FloatingChat from "@/components/floating-chat";
 
 function Router() {
   return (
-    <div className="min-h-screen flex overflow-hidden">
-      <Navigation />
-      <main className="flex-1 relative z-0 overflow-y-auto md:ml-[240px]">
-        <div className="p-4 sm:p-6 md:p-8">
-          <div>
-            <Switch>
-              <Route path="/" component={Home} />
-              <Route path="/why-fundamenta" component={WhyFundamenta} />
-              <Route path="/partner" component={Partner} />
-              <Route path="/privacy" component={Privacy} />
-              <Route path="/invite" component={Invite} />
-              <Route path="/emergency" component={Emergency} />
-              <Route path="/finance" component={Finance} />
-              <Route path="/career" component={Career} />
-              <Route path="/wellness" component={Wellness} />
-              <Route path="/active" component={Active} />
-              <Route path="/learning" component={Learning} />
-              <Route component={NotFound} />
-            </Switch>
-          </div>
-        </div>
-      </main>
-      <FloatingChat />
+    <Layout>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/why-fundamenta" component={WhyFundamenta} />
+        <Route path="/partner" component={Partner} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/invite" component={Invite} />
+        <Route path="/emergency" component={Emergency} />
+        <Route path="/finance" component={Finance} />
+        <Route path="/career" component={Career} />
+        <Route path="/wellness" component={Wellness} />
+        <Route path="/active" component={Active} />
+        <Route path="/learning" component={Learning} />
+        <Route component={NotFound} />
+      </Switch>
       <WelcomeTour />
       <Toaster />
-    </div>
+    </Layout>
   );
 }
 

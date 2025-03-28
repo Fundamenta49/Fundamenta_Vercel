@@ -1,66 +1,100 @@
-```typescript
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useToast } from '@/hooks/use-toast';
-import { useMoodTheme } from '@/hooks/use-mood-theme';
-import { moodColors, moodDescriptions, moodEmojis, type MoodType } from '@/lib/mood-colors';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { 
+  Smile, 
+  Meh, 
+  Frown,
+  XCircle,
+  Trophy
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const moods = [
+  { 
+    value: "great", 
+    label: "Great", 
+    icon: Trophy, 
+    color: "text-green-500",
+    bgColor: "bg-green-50"
+  },
+  { 
+    value: "good", 
+    label: "Good", 
+    icon: Smile, 
+    color: "text-blue-500",
+    bgColor: "bg-blue-50"
+  },
+  { 
+    value: "okay", 
+    label: "Okay", 
+    icon: Meh, 
+    color: "text-orange-500",
+    bgColor: "bg-orange-50"
+  },
+  { 
+    value: "bad", 
+    label: "Bad", 
+    icon: Frown, 
+    color: "text-red-500",
+    bgColor: "bg-red-50"
+  },
+  { 
+    value: "not-now", 
+    label: "Not now", 
+    icon: XCircle, 
+    color: "text-slate-500",
+    bgColor: "bg-slate-50"
+  },
+];
 
 export function MoodSelector() {
-  const { currentMood, setCurrentMood } = useMoodTheme();
-  const { toast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleMoodChange = (mood: MoodType) => {
-    setCurrentMood(mood);
-    setIsOpen(false);
-    toast({
-      title: `Theme updated to ${mood}`,
-      description: moodDescriptions[mood],
-      duration: 2000,
-    });
-  };
+  const [selectedMood, setSelectedMood] = useState<(typeof moods)[0] | null>(null);
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          className="relative group h-8 w-8 rounded-full"
-          style={{ backgroundColor: moodColors[currentMood].primary }}
+          size="sm" 
+          className={cn(
+            "gap-2 rounded-full hover:bg-muted text-sm px-3",
+            selectedMood?.bgColor
+          )}
         >
-          <motion.span
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            className="text-lg"
-          >
-            {moodEmojis[currentMood]}
-          </motion.span>
+          {selectedMood ? (
+            <>
+              <selectedMood.icon className={cn("h-4 w-4", selectedMood.color)} />
+              <span>{selectedMood.label}</span>
+            </>
+          ) : (
+            <>
+              <Meh className="h-4 w-4 text-muted-foreground" />
+              <span className="text-muted-foreground">Mood</span>
+            </>
+          )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        {Object.entries(moodColors).map(([mood, colors]) => (
+      <DropdownMenuContent align="end" className="w-40">
+        <div className="text-xs font-medium text-muted-foreground py-1 px-2">
+          How are you feeling?
+        </div>
+        {moods.map((mood) => (
           <DropdownMenuItem
-            key={mood}
-            onClick={() => handleMoodChange(mood as MoodType)}
-            className="flex items-center gap-2 cursor-pointer"
+            key={mood.value}
+            onClick={() => setSelectedMood(mood)}
+            className="gap-2 cursor-pointer"
           >
-            <div 
-              className="w-4 h-4 rounded-full"
-              style={{ backgroundColor: colors.primary }}
-            />
-            <span className="capitalize">{mood}</span>
-            <span className="ml-auto">{moodEmojis[mood as MoodType]}</span>
+            <mood.icon className={cn("h-4 w-4", mood.color)} />
+            <span>{mood.label}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-```

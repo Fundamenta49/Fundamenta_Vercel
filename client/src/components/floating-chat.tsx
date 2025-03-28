@@ -6,7 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Minimize2 } from "lucide-react";
+import { Minimize2, SendHorizonal, Sparkle, Circle } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { motion, useAnimationControls } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import FundiAvatar from "./fundi-avatar";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -44,6 +45,7 @@ export default function FloatingChat() {
   const controls = useAnimationControls();
   const isMobile = useIsMobile();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [isAiSpeaking, setIsAiSpeaking] = useState(false);
 
   // Detect keyboard visibility on mobile
   useEffect(() => {
@@ -58,37 +60,18 @@ export default function FloatingChat() {
     }
   }, [isMobile]);
 
-  // Random blinking effect
+  // Animation for Fundi avatar
   useEffect(() => {
     if (isMinimized) {
-      const blinkInterval = setInterval(() => {
-        const shouldBlink = Math.random() > 0.7; // 30% chance to blink
-        if (shouldBlink) {
-          controls.start({
-            scaleY: [1, 0.1, 1],
-            transition: {
-              duration: 0.2,
-            }
-          });
-        }
-      }, 2000);
-
       // Gentle floating animation
-      const floatInterval = setInterval(() => {
-        controls.start({
-          y: [0, -2, 0],
-          transition: {
-            duration: 2,
-            ease: "easeInOut",
-            repeat: Infinity
-          }
-        });
-      }, 3000);
-
-      return () => {
-        clearInterval(blinkInterval);
-        clearInterval(floatInterval);
-      };
+      controls.start({
+        y: [0, -3, 0],
+        transition: {
+          duration: 3,
+          ease: "easeInOut",
+          repeat: Infinity
+        }
+      });
     }
   }, [isMinimized, controls]);
 
@@ -131,6 +114,7 @@ export default function FloatingChat() {
 
   const chatMutation = useMutation({
     mutationFn: async (content: string) => {
+      setIsAiSpeaking(true);
       const context = getCurrentContext();
       const response = await apiRequest("POST", "/api/chat/orchestrator", {
         message: content,
@@ -166,9 +150,15 @@ export default function FloatingChat() {
           }
         ]);
         setInput("");
+        
+        // Show the AI speaking for a brief moment then stop
+        setTimeout(() => {
+          setIsAiSpeaking(false);
+        }, 1500);
       }
     },
     onError: (error: Error) => {
+      setIsAiSpeaking(false);
       toast({
         variant: "destructive",
         title: "Error",
@@ -204,12 +194,12 @@ export default function FloatingChat() {
       className={cn(
         "fixed z-50 transition-all duration-300 ease-in-out",
         isMinimized
-          ? "top-4 right-4 w-12 h-12"
+          ? "bottom-4 right-4 w-14 h-14"
           : isMobile
             ? keyboardVisible
               ? "bottom-0 left-0 right-0 w-full h-[40vh]"
               : "bottom-0 left-0 right-0 w-full max-h-[75vh]"
-            : "top-4 right-4 w-80",
+            : "bottom-4 right-4 w-96 h-[500px]",
       )}
     >
       {isMinimized ? (
@@ -221,49 +211,64 @@ export default function FloatingChat() {
             variant="default"
             size="icon"
             className={cn(
-              "w-12 h-12 relative overflow-visible",
-              "bg-navy-600",
-              "hover:bg-navy-700 transition-all duration-300",
-              "rounded-full"
+              "w-14 h-14 relative overflow-visible",
+              "bg-primary hover:bg-primary/90 transition-all duration-300",
+              "rounded-full shadow-lg"
             )}
             onClick={() => setIsMinimized(false)}
           >
-            {/* Glow effects */}
-            <div className="absolute -inset-2 bg-navy-400 rounded-full blur-lg opacity-20 animate-pulse" />
-            <div className="absolute -inset-1 bg-navy-300 rounded-full blur-md opacity-10 animate-pulse delay-75" />
-
-            {/* Face container */}
-            <div className="w-8 h-7 bg-navy-100 rounded-[0.75rem] flex items-center justify-center shadow-inner relative z-10">
-              <motion.div className="flex gap-3">
-                {/* Eyes with blinking animation controlled by the useEffect above */}
-                <motion.div className="w-1.5 h-1.5 rounded-full bg-navy-600" />
-                <motion.div className="w-1.5 h-1.5 rounded-full bg-navy-600" />
-              </motion.div>
+            {/* Subtle glow effect */}
+            <div className="absolute -inset-3 bg-primary/20 rounded-full blur-xl opacity-50 animate-pulse" />
+            
+            {/* Fundi Avatar */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <FundiAvatar size="sm" speaking={false} />
             </div>
           </Button>
         </motion.div>
       ) : (
         <Card className={cn(
-          "flex flex-col shadow-lg border border-navy-100",
-          isMobile ? "h-full rounded-t-lg rounded-b-none" : "h-[500px]"
+          "flex flex-col shadow-lg border-0",
+          "overflow-hidden",
+          isMobile ? "h-full rounded-t-xl rounded-b-none" : "h-full rounded-xl"
         )}>
-          <div className="p-2 border-b flex items-center justify-between bg-gradient-to-r from-white to-navy-50">
+          <div className="p-3 border-b flex items-center justify-between bg-background">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-navy-500" />
-              <span className="font-medium text-sm text-navy-600">AI Assistant</span>
+              <div className="relative h-8 w-8">
+                <FundiAvatar size="sm" speaking={isAiSpeaking} />
+              </div>
+              <div>
+                <div className="font-medium text-sm text-foreground">Fundi</div>
+                <div className="text-xs text-muted-foreground flex items-center">
+                  <Circle className="h-1.5 w-1.5 fill-green-500 text-green-500 mr-1" />
+                  {isAiSpeaking ? "Thinking..." : "Online"}
+                </div>
+              </div>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-navy-50"
+              className="h-8 w-8 rounded-full hover:bg-primary/10 text-text-muted"
               onClick={() => setIsMinimized(true)}
             >
               <Minimize2 className="h-4 w-4" />
             </Button>
           </div>
 
-          <ScrollArea className="flex-1 p-3" style={{ height: keyboardVisible ? '30vh' : 'auto' }}>
-            <div className="space-y-3" ref={chatRef}>
+          <ScrollArea className="flex-1 px-4 py-3" style={{ height: keyboardVisible ? '30vh' : 'auto' }}>
+            <div className="space-y-4" ref={chatRef}>
+              {messages.length === 0 && (
+                <div className="text-center py-8">
+                  <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-3">
+                    <Sparkle className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="text-base font-medium text-foreground mb-1">How can I help you today?</h4>
+                  <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                    Ask me about finances, careers, wellness, or emergency guidance.
+                  </p>
+                </div>
+              )}
+              
               {messages.map((msg, i) => (
                 <div
                   key={i}
@@ -274,39 +279,44 @@ export default function FloatingChat() {
                 >
                   <div
                     className={cn(
-                      "rounded-lg px-3 py-2 max-w-[85%] text-sm shadow-sm",
+                      "rounded-lg px-4 py-2.5 max-w-[85%] text-sm",
                       msg.role === 'user'
-                        ? "bg-navy-50 text-black border border-navy-200"
-                        : "bg-navy-50"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted border border-border"
                     )}
                   >
                     {msg.content}
                   </div>
-                  <span className="text-xs text-muted-foreground mt-1">
+                  <span className="text-xs text-muted-foreground mt-1.5 px-1">
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
               ))}
+              
               {chatMutation.isPending && (
-                <div className="flex items-center gap-1 p-2">
-                  <div className="w-2 h-2 rounded-full bg-navy-500 animate-bounce" />
-                  <div className="w-2 h-2 rounded-full bg-navy-500 animate-bounce [animation-delay:0.2s]" />
-                  <div className="w-2 h-2 rounded-full bg-navy-500 animate-bounce [animation-delay:0.4s]" />
+                <div className="flex items-start">
+                  <div className="rounded-lg px-4 py-2.5 max-w-[85%] text-sm bg-muted border border-border flex items-center">
+                    <div className="flex items-center gap-1 h-6">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDuration: "1s" }} />
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDuration: "1s", animationDelay: "0.2s" }} />
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDuration: "1s", animationDelay: "0.4s" }} />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           </ScrollArea>
 
           <form onSubmit={handleSendMessage} className={cn(
-            "p-3 border-t bg-white",
+            "p-4 border-t bg-background",
             keyboardVisible && "sticky bottom-0"
           )}>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center relative">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask me anything..."
-                className="flex-1 text-sm border-navy-100 focus-visible:ring-navy-400 placeholder:text-navy-300 text-black"
+                placeholder="Message Fundi..."
+                className="flex-1 pr-10 border-muted rounded-full bg-muted/40 focus-visible:ring-primary/20"
                 onFocus={() => {
                   if (chatRef.current) {
                     setTimeout(() => {
@@ -317,11 +327,11 @@ export default function FloatingChat() {
               />
               <Button
                 type="submit"
-                disabled={chatMutation.isPending}
-                size="sm"
-                className="bg-navy-500 hover:bg-navy-600 text-white"
+                disabled={chatMutation.isPending || !input.trim()}
+                size="icon"
+                className="absolute right-1 bg-transparent hover:bg-transparent text-primary hover:text-primary/80"
               >
-                Send
+                <SendHorizonal className="h-5 w-5" />
               </Button>
             </div>
           </form>

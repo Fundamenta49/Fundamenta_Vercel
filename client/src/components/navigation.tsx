@@ -14,6 +14,8 @@ import {
   Activity,
   GraduationCap,
   AlertCircle,
+  Home,
+  Sparkles
 } from "lucide-react";
 import {
   Sheet,
@@ -25,7 +27,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 
 const defaultNavItems = [
-  { href: "/why-fundamenta", label: "Why Fundamenta", icon: HeartHandshake },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/why-fundamenta", label: "Why Fundamenta", icon: Sparkles },
   { href: "/partner", label: "Partner With Us", icon: HandshakeIcon },
   { href: "/privacy", label: "Privacy Hub", icon: Shield },
   { href: "/invite", label: "Invite Friends", icon: Users },
@@ -46,8 +49,8 @@ export default function Navigation() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const isHomePage = location === "/";
-  const navItems = isHomePage ? defaultNavItems : featureNavItems.filter(item => item.href !== location);
+  const isHomePage = location === "/" || location === "/home";
+  const navItems = isHomePage ? defaultNavItems.filter(item => item.href !== "/") : featureNavItems.filter(item => item.href !== location);
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -62,6 +65,14 @@ export default function Navigation() {
     setIsOpen(false);
   };
 
+  // Modern styling with our new theme colors
+  const navBgColor = "bg-primary-light";
+  const navTextColor = "text-primary-dark";
+  const activeItemBg = "bg-primary";
+  const activeItemText = "text-white";
+  const hoverBg = "hover:bg-primary/10";
+  const logoText = "text-primary-dark";
+
   if (isMobile) {
     return (
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -73,28 +84,28 @@ export default function Navigation() {
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="bg-[#1C3D5A]">
-          <button 
-            onClick={() => handleNavigation("/")}
-            className="flex items-center gap-2 px-4 py-2 mb-8 w-full text-left text-white"
-          >
-            <HeartHandshake className="h-6 w-6" />
-            <span className="text-2xl font-bold">Fundamenta</span>
-          </button>
-          <div className="flex flex-col gap-4">
-            {navItems.map(({ href, label, icon: Icon }) => (
+        <SheetContent side="left" className={`${navBgColor} border-r-0`}>
+          <div className="flex items-center gap-2 px-2 py-6 mb-6 w-full">
+            <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center">
+              <Sparkles className="h-5 w-5 text-white" />
+            </div>
+            <span className={`text-xl font-bold ${logoText}`}>Fundamenta</span>
+          </div>
+          
+          <div className="flex flex-col gap-1">
+            {defaultNavItems.concat(featureNavItems).map(({ href, label, icon: Icon }) => (
               <button
                 key={href}
                 onClick={() => handleNavigation(href)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
                   location === href
-                    ? "bg-[#1C3D5A]"
-                    : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
+                    ? `${activeItemBg} ${activeItemText}`
+                    : `${navTextColor} ${hoverBg}`
                 )}
               >
-                <Icon className="h-5 w-5" />
-                <span>{label}</span>
+                <Icon className={cn("h-5 w-5", location === href ? "text-white" : "text-primary")} />
+                <span className="font-medium">{label}</span>
               </button>
             ))}
           </div>
@@ -105,23 +116,29 @@ export default function Navigation() {
 
   return (
     <nav className={cn(
-      "fixed left-0 top-0 h-screen bg-[#1C3D5A] p-4 transition-all duration-300 z-50",
-      isMinimized ? "w-20" : "w-64"
+      "fixed left-0 top-0 h-screen border-r border-slate-100 p-4 transition-all duration-300 z-50",
+      navBgColor,
+      isMinimized ? "w-16" : "w-64"
     )}>
-      <div className="relative">
+      <div className="relative mb-8">
         <button 
           onClick={() => handleNavigation("/")}
-          className="flex items-center gap-2 px-4 py-2 mb-8 w-full text-left text-white hover:bg-[#A3C6C4] hover:text-[#1C3D5A] rounded-lg"
+          className={cn(
+            "flex items-center gap-3 px-2 py-4 w-full text-left rounded-md",
+            logoText
+          )}
         >
-          <HeartHandshake className="h-6 w-6" />
-          {!isMinimized && <span className="text-2xl font-bold">Fundamenta</span>}
+          <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center">
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          {!isMinimized && <span className="text-lg font-bold">Fundamenta</span>}
         </button>
 
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsMinimized(!isMinimized)}
-          className="absolute top-2 -right-2 text-white hover:text-[#A3C6C4]"
+          className="absolute top-3 -right-2 text-primary/70 hover:text-primary bg-transparent"
         >
           {isMinimized ? (
             <ChevronRight className="h-4 w-4" />
@@ -131,20 +148,21 @@ export default function Navigation() {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-4">
-        {navItems.map(({ href, label, icon: Icon }) => (
+      <div className="flex flex-col gap-1 mt-2">
+        {defaultNavItems.concat(featureNavItems).filter(item => item.href !== "/").map(({ href, label, icon: Icon }) => (
           <button
             key={href}
             onClick={() => handleNavigation(href)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full text-left text-white",
+              "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
               location === href
-                ? "bg-[#1C3D5A]"
-                : "hover:bg-[#A3C6C4] hover:text-[#1C3D5A]"
+                ? `${activeItemBg} ${activeItemText}`
+                : `${navTextColor} ${hoverBg}`
             )}
+            title={isMinimized ? label : undefined}
           >
-            <Icon className="h-5 w-5" />
-            {!isMinimized && <span>{label}</span>}
+            <Icon className={cn("h-5 w-5", location === href ? "text-white" : "text-primary")} />
+            {!isMinimized && <span className="font-medium">{label}</span>}
           </button>
         ))}
       </div>
