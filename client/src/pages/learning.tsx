@@ -329,39 +329,19 @@ export default function Learning() {
   };
 
   return (
-    <div className="w-full mx-auto px-0 sm:px-2">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">
+    <div className="w-full h-full mx-auto p-0">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center pt-2">
         Learning & Development
       </h1>
 
-      {/* Navigation buttons */}
-      <div className="flex justify-between mb-4 px-4">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="border-2 border-rose-100"
-          onClick={() => handleScroll('left')}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="border-2 border-rose-100"
-          onClick={() => handleScroll('right')}
-        >
-          <ArrowRight className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {/* Horizontal card carousel - full width cards */}
+      {/* Horizontal card carousel - book-like full width cards */}
       <div 
         ref={carouselRef}
         className="flex w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar"
         style={{ 
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
-          height: 'calc(100vh - 10rem)' /* Adjust for the heading and navigation buttons */
+          height: 'calc(100vh - 4rem)' /* Maximize screen height */
         }}
       >
         {SECTIONS.map((section) => {
@@ -371,54 +351,54 @@ export default function Learning() {
           return (
             <div 
               key={section.id}
-              className="snap-center flex-shrink-0 w-full px-3"
+              className="snap-center flex-shrink-0 w-full px-2"
             >
-              <Card className="h-full border-2 border-rose-100 shadow-md bg-white flex flex-col">
-                <CardHeader 
-                  className="bg-rose-50 border-b border-rose-100 py-4 cursor-pointer"
-                  onClick={() => toggleSection(section.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className="h-6 w-6 text-primary" />
-                    <div className="flex-1">
-                      <CardTitle className="text-xl">{section.title}</CardTitle>
-                      <CardDescription className="text-base">{section.description}</CardDescription>
+              <Card 
+                className={cn(
+                  "h-full border-2 border-rose-100 shadow-md bg-white flex flex-col",
+                  isExpanded ? "opacity-100" : "opacity-100"
+                )}
+                onClick={() => !isExpanded && toggleSection(section.id)}
+              >
+                {!isExpanded ? (
+                  // Book cover design - only shows when collapsed
+                  <div className="h-full flex flex-col cursor-pointer py-4">
+                    {/* Top section with icon */}
+                    <div className="flex-1 flex items-center justify-center flex-col text-center px-6 py-8">
+                      <div className="w-24 h-24 rounded-full bg-rose-50 flex items-center justify-center mb-6">
+                        <Icon className="h-12 w-12 text-primary" />
+                      </div>
+                      <CardTitle className="text-3xl mb-3">{section.title}</CardTitle>
+                      <CardDescription className="text-xl">{section.description}</CardDescription>
                     </div>
-                    {isExpanded ? (
-                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                    )}
+                    
+                    {/* Bottom hint to open */}
+                    <div className="text-center pb-6 text-muted-foreground">
+                      <p className="text-sm">Tap to open</p>
+                      <ChevronDown className="h-5 w-5 mx-auto mt-1" />
+                    </div>
                   </div>
-                </CardHeader>
-                
-                {/* Expandable content area */}
-                <div
-                  className={cn(
-                    "transition-all duration-300 ease-in-out",
-                    isExpanded 
-                      ? "max-h-[70vh] opacity-100" 
-                      : "max-h-0 opacity-0 pointer-events-none overflow-hidden"
-                  )}
-                >
-                  <CardContent className="flex-1 overflow-y-auto p-4">
-                    {renderContent(section.id)}
-                  </CardContent>
-                </div>
-                
-                {/* Show this if section is not expanded */}
-                {!isExpanded && (
-                  <CardContent className="flex-1 flex items-center justify-center p-6">
-                    <Button 
-                      variant="outline" 
-                      size="lg" 
-                      className="border-2 border-rose-100 py-6 px-8"
-                      onClick={() => toggleSection(section.id)}
+                ) : (
+                  // Content view - shows when expanded
+                  <>
+                    <CardHeader 
+                      className="bg-rose-50 border-b border-rose-100 py-3 cursor-pointer flex flex-row items-center"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSection(section.id);
+                      }}
                     >
-                      <span className="text-lg">Open {section.title}</span>
-                      <ChevronDown className="ml-2 h-5 w-5" />
-                    </Button>
-                  </CardContent>
+                      <div className="flex items-center gap-3">
+                        <Icon className="h-6 w-6 text-primary" />
+                        <CardTitle className="text-xl">{section.title}</CardTitle>
+                      </div>
+                      <ChevronUp className="h-5 w-5 text-muted-foreground ml-auto" />
+                    </CardHeader>
+                    
+                    <CardContent className="flex-1 overflow-y-auto p-4">
+                      {renderContent(section.id)}
+                    </CardContent>
+                  </>
                 )}
               </Card>
             </div>
