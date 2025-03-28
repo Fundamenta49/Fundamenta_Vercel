@@ -249,8 +249,8 @@ const FileUpload: React.FC<{
 
   return (
     <div>
-      <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg border-muted hover:border-primary/50 transition-colors">
-        <div className="mb-4 bg-primary/10 p-3 rounded-full">
+      <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg border-stone-200 hover:border-primary/40 transition-colors bg-stone-50/50">
+        <div className="mb-4 bg-primary/5 p-3 rounded-full">
           <FileText className="h-6 w-6 text-primary" />
         </div>
         <h3 className="text-lg font-medium mb-2">Upload your resume</h3>
@@ -319,7 +319,7 @@ export default function ResumeBuilder() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Card className="shadow-sm">
+      <Card className="shadow-sm border-gray-100 bg-white/80">
         <CardHeader>
           <CardTitle className="text-xl font-semibold flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
@@ -350,8 +350,8 @@ export default function ResumeBuilder() {
                 <div className={cn(
                   "flex items-center gap-2 mt-4 p-3 rounded-md text-sm",
                   uploadMessage.includes('Successfully') 
-                    ? "bg-green-50 text-green-700" 
-                    : "bg-red-50 text-red-700"
+                    ? "bg-green-50/70 text-green-600 border border-green-100" 
+                    : "bg-red-50/70 text-red-600 border border-red-100"
                 )}>
                   {uploadMessage.includes('Successfully') ? (
                     <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
@@ -378,17 +378,17 @@ export default function ResumeBuilder() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <div className="text-sm font-medium">Name</div>
-                      <div className="text-sm border border-gray-200 bg-white p-2 rounded">{form.watch("name") || "Not detected"}</div>
+                      <div className="text-sm border border-gray-100 bg-white p-2 rounded shadow-sm">{form.watch("name") || "Not detected"}</div>
                     </div>
                     
                     <div className="space-y-2">
                       <div className="text-sm font-medium">Email</div>
-                      <div className="text-sm border border-gray-200 bg-white p-2 rounded">{form.watch("email") || "Not detected"}</div>
+                      <div className="text-sm border border-gray-100 bg-white p-2 rounded shadow-sm">{form.watch("email") || "Not detected"}</div>
                     </div>
                     
                     <div className="space-y-2">
                       <div className="text-sm font-medium">Phone</div>
-                      <div className="text-sm border border-gray-200 bg-white p-2 rounded">{form.watch("phone") || "Not detected"}</div>
+                      <div className="text-sm border border-gray-100 bg-white p-2 rounded shadow-sm">{form.watch("phone") || "Not detected"}</div>
                     </div>
                   </div>
                 </div>
@@ -543,7 +543,7 @@ export default function ResumeBuilder() {
           </Tabs>
         </CardContent>
         
-        <CardFooter className="flex justify-end border-t p-6">
+        <CardFooter className="flex justify-end border-t border-gray-100 p-6">
           {hasContent && (
             <PDFDownloadLink
               document={

@@ -6,7 +6,7 @@
   "colors": {
     "background": "#FFFFFF",
     "foreground": "#141414",
-    "muted": "#F8F9FC",
+    "muted": "#FAFBFD",
     "accent": "#FF3B77",
     "primary": {
       "default": "#5858FF",
@@ -21,21 +21,21 @@
       "foreground": "#FFFFFF"
     },
     "text": {
-      "primary": "#191C2C",
-      "secondary": "#414663",
-      "muted": "#767C9F"
+      "primary": "#202236",
+      "secondary": "#505777",
+      "muted": "#8A90B3"
     }
   },
   "effects": {
     "shadows": {
-      "sm": "0 2px 6px rgba(0, 0, 0, 0.02)",
-      "md": "0 4px 10px rgba(0, 0, 0, 0.04)",
-      "lg": "0 8px 24px rgba(0, 0, 0, 0.06)"
+      "sm": "0 2px 6px rgba(0, 0, 0, 0.01)",
+      "md": "0 4px 10px rgba(0, 0, 0, 0.02)",
+      "lg": "0 8px 24px rgba(0, 0, 0, 0.03)"
     },
     "gradients": {
-      "primary": "linear-gradient(135deg, #6E6AFF 0%, #5050FF 100%)",
-      "accent": "linear-gradient(135deg, #FF5B8F 0%, #FF2B6D 100%)",
-      "modern": "linear-gradient(180deg, #FFFFFF 0%, #F8F9FC 100%)",
+      "primary": "linear-gradient(135deg, #7A77FF 0%, #5858FF 100%)",
+      "accent": "linear-gradient(135deg, #FF6E9D 0%, #FF3B77 100%)",
+      "modern": "linear-gradient(180deg, #FFFFFF 0%, #FAFBFD 100%)",
       "card": "none"
     }
   }
