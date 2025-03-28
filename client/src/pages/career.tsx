@@ -151,21 +151,26 @@ export default function Career() {
           <Card 
             key={section.id}
             className={cn(
-              "transition-all duration-300 ease-in-out cursor-pointer overflow-hidden",
+              "transition-all duration-300 ease-in-out overflow-hidden",
               "hover:shadow-md bg-white w-full max-w-full",
               expandedSection === section.id ? "shadow-lg" : "shadow-sm"
             )}
-            onClick={() => handleCardClick(section.id)}
           >
-            <CardHeader className="px-3 sm:px-6 py-3 sm:py-4">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <section.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                <CardTitle className="text-xl sm:text-2xl">{section.title}</CardTitle>
-              </div>
-              <CardDescription className="text-base sm:text-lg">
-                {section.description}
-              </CardDescription>
-            </CardHeader>
+            {/* Only make the header clickable */}
+            <div 
+              onClick={() => handleCardClick(section.id)}
+              className="cursor-pointer"
+            >
+              <CardHeader className="px-3 sm:px-6 py-3 sm:py-4">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <section.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  <CardTitle className="text-xl sm:text-2xl">{section.title}</CardTitle>
+                </div>
+                <CardDescription className="text-base sm:text-lg">
+                  {section.description}
+                </CardDescription>
+              </CardHeader>
+            </div>
             <div
               className={cn(
                 "transition-all duration-300 ease-in-out",
@@ -175,7 +180,13 @@ export default function Career() {
             >
               <CardContent className="p-3 sm:p-6 w-full">
                 {expandedSection === section.id && (
-                  <div className="w-full">
+                  <div 
+                    className="w-full" 
+                    onClick={(e) => {
+                      // Stop the event from bubbling up to parent elements
+                      e.stopPropagation();
+                    }}
+                  >
                     {(() => {
                       if (section.id === 'chat') {
                         // Use the component's required "category" prop

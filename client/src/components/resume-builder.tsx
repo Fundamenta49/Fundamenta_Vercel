@@ -370,7 +370,10 @@ export default function ResumeBuilder() {
                       variant="outline" 
                       size="sm"
                       className="bg-white border-primary/30 text-primary hover:bg-primary/5"
-                      onClick={() => setActiveTab("manual")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveTab("manual");
+                      }}
                     >
                       Edit Details
                     </Button>
