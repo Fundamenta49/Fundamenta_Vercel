@@ -26,7 +26,9 @@ import {
   Wallet,
   MessageSquare,
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -280,13 +282,15 @@ const SECTIONS: SectionType[] = [
 
 export default function Learning() {
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
   // Handle horizontal scrolling
   const handleScroll = (direction: 'left' | 'right') => {
     if (!carouselRef.current) return;
     
-    const cardWidth = carouselRef.current.offsetWidth * 0.7; // 70% of container width
+    // Use 100% of width for each card
+    const cardWidth = carouselRef.current.offsetWidth; 
     const newPosition = direction === 'left' 
       ? Math.max(scrollPosition - cardWidth, 0)
       : Math.min(scrollPosition + cardWidth, carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
@@ -297,6 +301,13 @@ export default function Learning() {
     });
     
     setScrollPosition(newPosition);
+    // Also collapse any expanded section when switching cards
+    setExpandedSection(null);
+  };
+
+  // Toggle a section's expanded state
+  const toggleSection = (sectionId: string) => {
+    setExpandedSection(current => current === sectionId ? null : sectionId);
   };
 
   // Function to render the appropriate component based on section type
@@ -318,13 +329,13 @@ export default function Learning() {
   };
 
   return (
-    <div className="w-full mx-auto px-2 sm:px-4 md:px-6">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+    <div className="w-full mx-auto px-0 sm:px-2">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">
         Learning & Development
       </h1>
 
       {/* Navigation buttons */}
-      <div className="flex justify-between mb-4">
+      <div className="flex justify-between mb-4 px-4">
         <Button 
           variant="outline" 
           size="sm" 
@@ -343,37 +354,72 @@ export default function Learning() {
         </Button>
       </div>
 
-      {/* Horizontal card carousel */}
+      {/* Horizontal card carousel - full width cards */}
       <div 
         ref={carouselRef}
-        className="flex w-full overflow-x-auto pb-4 pt-2 snap-x snap-mandatory hide-scrollbar"
+        className="flex w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar"
         style={{ 
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
-          height: 'calc(100vh - 11rem)' /* Adjust for the heading and navigation buttons */
+          height: 'calc(100vh - 10rem)' /* Adjust for the heading and navigation buttons */
         }}
       >
         {SECTIONS.map((section) => {
           const Icon = section.icon;
+          const isExpanded = expandedSection === section.id;
+          
           return (
             <div 
               key={section.id}
-              className="snap-center flex-shrink-0 px-2"
-              style={{ width: '75%' }}
+              className="snap-center flex-shrink-0 w-full px-3"
             >
               <Card className="h-full border-2 border-rose-100 shadow-md bg-white flex flex-col">
-                <CardHeader className="bg-rose-50 border-b border-rose-100 py-3">
+                <CardHeader 
+                  className="bg-rose-50 border-b border-rose-100 py-4 cursor-pointer"
+                  onClick={() => toggleSection(section.id)}
+                >
                   <div className="flex items-center gap-3">
-                    <Icon className="h-5 w-5 text-primary" />
-                    <div>
-                      <CardTitle className="text-lg">{section.title}</CardTitle>
-                      <CardDescription>{section.description}</CardDescription>
+                    <Icon className="h-6 w-6 text-primary" />
+                    <div className="flex-1">
+                      <CardTitle className="text-xl">{section.title}</CardTitle>
+                      <CardDescription className="text-base">{section.description}</CardDescription>
                     </div>
+                    {isExpanded ? (
+                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                    )}
                   </div>
                 </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto p-4">
-                  {renderContent(section.id)}
-                </CardContent>
+                
+                {/* Expandable content area */}
+                <div
+                  className={cn(
+                    "transition-all duration-300 ease-in-out",
+                    isExpanded 
+                      ? "max-h-[70vh] opacity-100" 
+                      : "max-h-0 opacity-0 pointer-events-none overflow-hidden"
+                  )}
+                >
+                  <CardContent className="flex-1 overflow-y-auto p-4">
+                    {renderContent(section.id)}
+                  </CardContent>
+                </div>
+                
+                {/* Show this if section is not expanded */}
+                {!isExpanded && (
+                  <CardContent className="flex-1 flex items-center justify-center p-6">
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      className="border-2 border-rose-100 py-6 px-8"
+                      onClick={() => toggleSection(section.id)}
+                    >
+                      <span className="text-lg">Open {section.title}</span>
+                      <ChevronDown className="ml-2 h-5 w-5" />
+                    </Button>
+                  </CardContent>
+                )}
               </Card>
             </div>
           );
