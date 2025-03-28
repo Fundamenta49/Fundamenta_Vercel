@@ -91,39 +91,39 @@ export default function JobSearch() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Job Search</CardTitle>
-          <CardDescription>
+        <CardHeader className="px-3 py-3 sm:px-6 sm:py-4">
+          <CardTitle className="text-lg sm:text-xl">Job Search</CardTitle>
+          <CardDescription className="text-sm sm:text-base">
             Search across multiple job boards to find your next opportunity
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-3 py-2 sm:px-6 sm:py-4">
           <div className="space-y-2">
-            <Label htmlFor="searchQuery">Job Title or Keywords</Label>
+            <Label htmlFor="searchQuery" className="text-sm sm:text-base">Job Title or Keywords</Label>
             <Input
               id="searchQuery"
               placeholder="e.g. Software Engineer, Marketing Manager"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-wood/20"
+              className="border-wood/20 text-sm sm:text-base"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
+            <Label htmlFor="location" className="text-sm sm:text-base">Location</Label>
             <Input
               id="location"
               placeholder="e.g. New York, Remote"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="border-wood/20"
+              className="border-wood/20 text-sm sm:text-base"
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Job Boards</Label>
-            <div className="flex gap-4">
-              <div className="flex items-center space-x-2">
+            <Label className="text-sm sm:text-base">Job Boards</Label>
+            <div className="flex flex-wrap gap-2 sm:gap-4">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <Checkbox
                   id="indeed"
                   checked={selectedSources.indeed}
@@ -131,9 +131,9 @@ export default function JobSearch() {
                     setSelectedSources({ ...selectedSources, indeed: !!checked })
                   }
                 />
-                <Label htmlFor="indeed">Indeed</Label>
+                <Label htmlFor="indeed" className="text-sm sm:text-base">Indeed</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <Checkbox
                   id="linkedin"
                   checked={selectedSources.linkedin}
@@ -141,9 +141,9 @@ export default function JobSearch() {
                     setSelectedSources({ ...selectedSources, linkedin: !!checked })
                   }
                 />
-                <Label htmlFor="linkedin">LinkedIn</Label>
+                <Label htmlFor="linkedin" className="text-sm sm:text-base">LinkedIn</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <Checkbox
                   id="ziprecruiter"
                   checked={selectedSources.ziprecruiter}
@@ -154,7 +154,7 @@ export default function JobSearch() {
                     })
                   }
                 />
-                <Label htmlFor="ziprecruiter">ZipRecruiter</Label>
+                <Label htmlFor="ziprecruiter" className="text-sm sm:text-base">ZipRecruiter</Label>
               </div>
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function JobSearch() {
           <Button
             onClick={handleSearch}
             disabled={searchMutation.isPending}
-            className="w-full bg-white border-2 border-primary text-primary hover:bg-primary/5"
+            className="w-full bg-white border-2 border-primary text-primary hover:bg-primary/5 text-sm sm:text-base py-2 h-auto"
           >
             {searchMutation.isPending ? (
               <>
@@ -178,44 +178,44 @@ export default function JobSearch() {
 
       {jobListings.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle>Search Results</CardTitle>
-            <CardDescription>
+          <CardHeader className="px-3 py-3 sm:px-6 sm:py-4">
+            <CardTitle className="text-lg sm:text-xl">Search Results</CardTitle>
+            <CardDescription className="text-sm sm:text-base">
               Found {jobListings.length} matching positions
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 px-3 py-2 sm:px-6 sm:py-4">
             {jobListings.map((job) => (
               <div
                 key={job.id}
-                className="p-4 border border-primary/20 bg-white rounded-lg hover:bg-primary/5 transition-colors"
+                className="p-3 sm:p-4 border border-primary/20 bg-white rounded-lg hover:bg-primary/5 transition-colors"
               >
-                <div className="flex justify-between items-start mb-2">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
                   <div>
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                      <Briefcase className="h-4 w-4" />
-                      {job.title}
+                    <h3 className="text-base sm:text-lg font-semibold flex items-center gap-1 sm:gap-2">
+                      <Briefcase className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <span className="line-clamp-2">{job.title}</span>
                     </h3>
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Building2 className="h-4 w-4" />
+                    <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1 sm:gap-2">
+                      <Building2 className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                       {job.company}
                     </p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
+                    <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1 sm:gap-2">
+                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                       {job.location}
                     </p>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-white border-primary/30 text-primary hover:bg-primary/5"
+                    className="bg-white border-primary/30 text-primary hover:bg-primary/5 text-xs sm:text-sm py-1 h-auto self-start"
                     onClick={() => window.open(job.url, "_blank")}
                   >
                     View Job
                   </Button>
                 </div>
-                <p className="text-sm line-clamp-3">{job.description}</p>
-                <div className="mt-2 flex justify-between items-center text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm line-clamp-2 sm:line-clamp-3">{job.description}</p>
+                <div className="mt-2 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-1 text-xs sm:text-sm text-muted-foreground">
                   <span>Source: {job.source}</span>
                   <span>Posted: {job.postedDate}</span>
                 </div>
