@@ -47,7 +47,7 @@ const SECTIONS = [
     description: 'Get professional guidance for your career journey',
     icon: Brain,
     component: ChatInterface,
-    props: { category: "career" }
+    props: { category: "career" as "career" }
   },
   {
     id: 'search',
@@ -175,7 +175,9 @@ export default function Career() {
             >
               <CardContent className="p-6">
                 {expandedSection === section.id && (
-                  <section.component {...section.props} />
+                  section.id === 'chat' ? 
+                    <ChatInterface category="career" /> :
+                    <section.component {...(section.props || {})} />
                 )}
               </CardContent>
             </div>

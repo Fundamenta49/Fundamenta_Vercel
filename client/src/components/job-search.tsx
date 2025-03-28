@@ -162,7 +162,7 @@ export default function JobSearch() {
           <Button
             onClick={handleSearch}
             disabled={searchMutation.isPending}
-            className="w-full"
+            className="w-full bg-white border-2 border-primary text-primary hover:bg-primary/5"
           >
             {searchMutation.isPending ? (
               <>
@@ -188,7 +188,7 @@ export default function JobSearch() {
             {jobListings.map((job) => (
               <div
                 key={job.id}
-                className="p-4 border rounded-lg hover:bg-accent transition-colors"
+                className="p-4 border border-primary/20 bg-white rounded-lg hover:bg-primary/5 transition-colors"
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -208,6 +208,7 @@ export default function JobSearch() {
                   <Button
                     variant="outline"
                     size="sm"
+                    className="bg-white border-primary/30 text-primary hover:bg-primary/5"
                     onClick={() => window.open(job.url, "_blank")}
                   >
                     View Job

@@ -259,7 +259,7 @@ const FileUpload: React.FC<{
         </p>
         <Button 
           variant="outline" 
-          className="relative overflow-hidden"
+          className="relative overflow-hidden bg-white border-primary/30 text-primary hover:bg-primary/5"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -368,7 +368,8 @@ export default function ResumeBuilder() {
                     <h3 className="font-medium">Review & Edit</h3>
                     <Button 
                       variant="outline" 
-                      size="sm" 
+                      size="sm"
+                      className="bg-white border-primary/30 text-primary hover:bg-primary/5"
                       onClick={() => setActiveTab("manual")}
                     >
                       Edit Details
@@ -565,7 +566,7 @@ export default function ResumeBuilder() {
                 <Button 
                   type="button"
                   size="lg"
-                  className="w-full md:w-auto" 
+                  className="w-full md:w-auto bg-white border-primary text-primary hover:bg-primary/5" 
                   disabled={loading || !form.formState.isValid || isUploading}
                 >
                   {loading ? (
