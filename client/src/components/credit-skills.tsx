@@ -239,27 +239,35 @@ export default function CreditSkills() {
               <CardDescription>{topic.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Accordion type="single" collapsible className="w-full">
-                {topic.items.map((item, index) => (
-                  <AccordionItem key={index} value={`${topic.id}-${index}`}>
-                    <AccordionTrigger>{item.title}</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-4">
-                        <p className="text-muted-foreground">{item.content}</p>
-                        <YouTubeVideo videoId={item.videoId} title={item.title} />
-                        <Button
-                          variant="outline"
-                          className="w-full mt-2"
-                          onClick={() => window.open(item.source, '_blank')}
-                        >
-                          Learn More
-                          <ExternalLink className="h-4 w-4 ml-2" />
-                        </Button>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+              {/* Add onClick to prevent event bubbling to parent card */}
+              <div onClick={(e) => e.stopPropagation()}>
+                <Accordion type="single" collapsible className="w-full">
+                  {topic.items.map((item, index) => (
+                    <AccordionItem key={index} value={`${topic.id}-${index}`}>
+                      <AccordionTrigger onClick={(e) => e.stopPropagation()}>
+                        {item.title}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-4">
+                          <p className="text-muted-foreground">{item.content}</p>
+                          <YouTubeVideo videoId={item.videoId} title={item.title} />
+                          <Button
+                            variant="outline"
+                            className="w-full mt-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(item.source, '_blank');
+                            }}
+                          >
+                            Learn More
+                            <ExternalLink className="h-4 w-4 ml-2" />
+                          </Button>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
             </CardContent>
           </Card>
         ))}
