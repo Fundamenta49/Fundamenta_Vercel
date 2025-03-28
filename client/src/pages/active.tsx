@@ -8,21 +8,34 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import ChatInterface from "@/components/chat-interface";
+import ChatInterface, { 
+  ChatInterfaceComponent,
+  FITNESS_CATEGORY
+} from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
 import { Brain, Dumbbell, Bird as YogaIcon, Timer, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const SECTIONS = [
+// Define a type for our sections to improve TypeScript support
+type SectionType = {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  component: React.ComponentType<any>;
+  props?: Record<string, any>;
+};
+
+const SECTIONS: SectionType[] = [
   {
     id: 'chat',
     title: 'AI Fitness Coach',
     description: 'Get personalized workout guidance and fitness tips',
     icon: Brain,
-    component: ChatInterface,
-    props: { category: "fitness" as const }
+    component: ChatInterface as ChatInterfaceComponent,
+    props: { category: FITNESS_CATEGORY }
   },
   {
     id: 'activeyou',

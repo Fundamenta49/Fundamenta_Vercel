@@ -8,20 +8,34 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Brain, Flame, Heart, PhoneCall } from "lucide-react";
-import ChatInterface from "@/components/chat-interface";
+import ChatInterface, { 
+  ChatInterfaceComponent, 
+  EMERGENCY_CATEGORY
+} from "@/components/chat-interface";
 import EmergencyGuide from "@/components/emergency-guide";
 import CPRGuide from "@/components/cpr-guide";
 import FireSafety from "@/components/fire-safety";
 import { cn } from "@/lib/utils";
 
-const SECTIONS = [
+// Define a type for our sections to improve TypeScript support
+type SectionType = {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  component: React.ComponentType<any>;
+  props?: Record<string, any>;
+  alert?: React.ReactNode;
+};
+
+const SECTIONS: SectionType[] = [
   {
     id: 'chat',
     title: 'Emergency AI Assistant',
     description: 'Get immediate guidance for emergency situations',
     icon: Brain,
-    component: ChatInterface,
-    props: { category: "emergency" as const },
+    component: ChatInterface as ChatInterfaceComponent,
+    props: { category: EMERGENCY_CATEGORY },
     alert: (
       <Alert className="mt-4 border-red-500 bg-red-50">
         <AlertCircle className="h-4 w-4 text-red-500" />
@@ -108,7 +122,7 @@ export default function Emergency() {
             >
               <CardContent className="p-6">
                 {expandedSection === section.id && (
-                  <section.component {...section.props} />
+                  <section.component {...(section.props || {})} />
                 )}
               </CardContent>
             </div>

@@ -38,10 +38,32 @@ interface AIAction {
   payload: Record<string, any>;
 }
 
+// Define category constants for proper type safety
+export const LEARNING_CATEGORY = "learning" as const;
+export const COOKING_CATEGORY = "cooking" as const;
+export const EMERGENCY_CATEGORY = "emergency" as const;
+export const FINANCE_CATEGORY = "finance" as const;
+export const CAREER_CATEGORY = "career" as const;
+export const WELLNESS_CATEGORY = "wellness" as const;
+export const FITNESS_CATEGORY = "fitness" as const;
+
+// Valid categories type
+export type ChatCategory = 
+  | typeof LEARNING_CATEGORY
+  | typeof COOKING_CATEGORY
+  | typeof EMERGENCY_CATEGORY
+  | typeof FINANCE_CATEGORY
+  | typeof CAREER_CATEGORY
+  | typeof WELLNESS_CATEGORY
+  | typeof FITNESS_CATEGORY;
+
 interface ChatInterfaceProps {
-  category: "learning" | "cooking" | "emergency" | "finance" | "career" | "wellness" | "fitness";
+  category: ChatCategory;
   children?: React.ReactNode; // Make the children prop optional
 }
+
+// This type is needed when pages pass the component to a child without knowing its specific props
+export type ChatInterfaceComponent = React.ComponentType<ChatInterfaceProps>;
 
 const CHAT_TOPICS: Record<string, ChatTopic[]> = {
   learning: [

@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Home, DollarSign, Calculator, Brain, CreditCard, PiggyBank, Building } from "lucide-react";
-import ChatInterface from "@/components/chat-interface";
+import ChatInterface, { ChatInterfaceComponent } from "@/components/chat-interface";
 import BudgetCalculator, { BudgetData } from "@/components/budget-calculator";
 import BankLink from "@/components/bank-link";
 import RetirementPlanning from "@/components/retirement-planning";
@@ -16,6 +16,9 @@ import CreditSkills from "@/components/credit-skills";
 import MortgageCalculator from "@/components/mortgage-calculator";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+
+// Define finance as a const to ensure proper type inference
+const FINANCE_CATEGORY = "finance" as const;
 
 // Type definitions for section components
 type ComponentWithBudgetUpdate = {
@@ -26,13 +29,17 @@ type ComponentWithBudgetData = {
   budgetData: BudgetData | null;
 };
 
+type ChatInterfaceProps = {
+  category: typeof FINANCE_CATEGORY;
+};
+
 type Section = {
   id: string;
   title: string;
   description: string;
   icon: React.ElementType;
   component: React.ComponentType<any>;
-  props?: ComponentWithBudgetUpdate | ComponentWithBudgetData;
+  props?: ComponentWithBudgetUpdate | ComponentWithBudgetData | ChatInterfaceProps;
   alert?: React.ReactNode;
 };
 
@@ -42,8 +49,8 @@ const SECTIONS: Section[] = [
     title: 'Financial AI Advisor',
     description: 'Get personalized financial advice and guidance',
     icon: Brain,
-    component: ChatInterface,
-    props: { category: "finance" },
+    component: ChatInterface as ChatInterfaceComponent,
+    props: { category: FINANCE_CATEGORY },
     alert: (
       <Alert className="mt-4 border-blue-500 bg-blue-50">
         <AlertCircle className="h-4 w-4 text-blue-500" />
@@ -164,7 +171,7 @@ export default function Finance() {
               >
                 <CardContent className="p-6">
                   {expandedSection === section.id && (
-                    <section.component {...section.props} />
+                    <section.component {...(section.props || {})} />
                   )}
                 </CardContent>
               </div>

@@ -7,7 +7,10 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle } from "lucide-react";
-import ChatInterface from "@/components/chat-interface";
+import ChatInterface, { 
+  ChatInterfaceComponent, 
+  WELLNESS_CATEGORY 
+} from "@/components/chat-interface";
 import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
@@ -16,14 +19,23 @@ import JournalEntry from "@/components/journal-entry";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const SECTIONS = [
+type SectionType = {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  component: React.ComponentType<any>;
+  props?: Record<string, any>;
+};
+
+const SECTIONS: SectionType[] = [
   {
     id: 'chat',
     title: 'Wellness AI Coach',
     description: 'Get guidance for mental health, well-being, and nutrition',
     icon: Brain,
-    component: ChatInterface,
-    props: { category: "wellness" }
+    component: ChatInterface as ChatInterfaceComponent,
+    props: { category: WELLNESS_CATEGORY }
   },
   {
     id: 'braintap',
@@ -31,7 +43,7 @@ const SECTIONS = [
     description: 'Check in with yourself and discover personalized mental wellness resources',
     icon: Heart,
     component: RiskAssessment,
-    props: { category: "wellness" }
+    props: { category: WELLNESS_CATEGORY }
   },
   {
     id: 'journal',
@@ -115,7 +127,7 @@ export default function Wellness() {
             >
               <CardContent className="p-6">
                 {expandedSection === section.id && (
-                  <section.component {...section.props} />
+                  <section.component {...(section.props || {})} />
                 )}
               </CardContent>
             </div>
