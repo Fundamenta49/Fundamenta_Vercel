@@ -127,7 +127,7 @@ export default function Career() {
       <h1 className="text-3xl font-bold mb-6 text-center">Career Development</h1>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl border-rose-50 bg-white">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
               <GraduationCap className="h-6 w-6 text-primary" />
