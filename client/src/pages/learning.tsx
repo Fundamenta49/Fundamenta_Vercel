@@ -22,15 +22,30 @@ import {
   Home,
   Search,
   Wrench,
-  Loader2
+  Loader2,
+  Wallet,
+  MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Complete implementation of Life Skills component with search functionality
+type LifeSkillsTabId = "search" | "financial" | "cooking" | "home" | "time" | "communication";
+
+// Complete implementation of Life Skills component with horizontal tabs and search functionality
 const LifeSkillsComponent = () => {
+  const [activeTab, setActiveTab] = useState<LifeSkillsTabId>("search");
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Tab definitions
+  const tabs: Array<{id: LifeSkillsTabId, label: string, icon: React.ComponentType<{className?: string}>}> = [
+    { id: "search", label: "Search Skills", icon: Search },
+    { id: "financial", label: "Financial", icon: Wallet },
+    { id: "cooking", label: "Cooking", icon: ChefHat },
+    { id: "home", label: "Home Care", icon: Home },
+    { id: "time", label: "Time Management", icon: Clock },
+    { id: "communication", label: "Communication", icon: MessageSquare }
+  ];
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,33 +72,132 @@ const LifeSkillsComponent = () => {
     }
   };
 
-  return (
-    <div className="space-y-4">
-      <form onSubmit={handleSearch}>
-        <div className="flex gap-3">
-          <Input
-            type="text"
-            placeholder="Search for life skills..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1"
-          />
-          <Button type="submit" variant="outline">
-            <Search className="h-4 w-4 mr-2" />
-            Search
-          </Button>
-        </div>
-      </form>
+  // Tab content components
+  const tabContent: Record<LifeSkillsTabId, React.ReactNode> = {
+    search: (
+      <div className="space-y-4 pt-4">
+        <form onSubmit={handleSearch}>
+          <div className="flex gap-3">
+            <Input
+              type="text"
+              placeholder="Search for life skills..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1"
+            />
+            <Button type="submit" variant="outline">
+              <Search className="h-4 w-4 mr-2" />
+              Search
+            </Button>
+          </div>
+        </form>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-4">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        {isLoading ? (
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : guidance ? (
+          <div className="prose prose-slate max-w-none bg-white p-4 rounded-lg border-2 border-rose-100">
+            <p className="text-base leading-relaxed">{guidance}</p>
+          </div>
+        ) : null}
+      </div>
+    ),
+    financial: (
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Financial Literacy Basics</h3>
+        <ul className="space-y-2">
+          <li>Creating and maintaining a budget</li>
+          <li>Understanding credit scores and debt management</li>
+          <li>Saving strategies for emergencies and goals</li>
+          <li>Basic investment concepts</li>
+          <li>Tax planning fundamentals</li>
+        </ul>
+      </div>
+    ),
+    cooking: (
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Essential Cooking Skills</h3>
+        <ul className="space-y-2">
+          <li>Basic knife techniques and kitchen safety</li>
+          <li>Understanding cooking methods (roasting, sautéing, boiling)</li>
+          <li>Meal planning and grocery shopping</li>
+          <li>Reading and following recipes</li>
+          <li>Food storage and leftovers management</li>
+        </ul>
+      </div>
+    ),
+    home: (
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Home Maintenance Skills</h3>
+        <ul className="space-y-2">
+          <li>Basic plumbing and fixing leaks</li>
+          <li>Electrical safety and changing fixtures</li>
+          <li>Wall repairs and painting techniques</li>
+          <li>Cleaning routines and organization</li>
+          <li>Seasonal home maintenance</li>
+        </ul>
+      </div>
+    ),
+    time: (
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Time Management Strategies</h3>
+        <ul className="space-y-2">
+          <li>Setting priorities and goals</li>
+          <li>Creating effective to-do lists</li>
+          <li>Avoiding procrastination</li>
+          <li>Time blocking techniques</li>
+          <li>Work-life balance strategies</li>
+        </ul>
+      </div>
+    ),
+    communication: (
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Communication Skills</h3>
+        <ul className="space-y-2">
+          <li>Active listening techniques</li>
+          <li>Clear and concise speaking</li>
+          <li>Managing difficult conversations</li>
+          <li>Professional email writing</li>
+          <li>Non-verbal communication awareness</li>
+        </ul>
+      </div>
+    ),
+  };
+
+  return (
+    <div className="w-full">
+      {/* Horizontal Tab Bar - scrollable on mobile */}
+      <div className="w-full overflow-auto pb-1 no-scrollbar">
+        <div className="inline-flex mx-auto border-2 border-rose-100 rounded-md bg-white" style={{width: "80%"}}>
+          <div className="flex space-x-1 p-1 w-full">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  className={cn(
+                    "flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-2 text-sm font-medium flex-1 min-w-[120px]",
+                    "transition-all duration-200 ease-in-out",
+                    activeTab === tab.id
+                      ? "bg-rose-50 text-primary shadow-sm"
+                      : "text-muted-foreground hover:bg-muted/20"
+                  )}
+                  onClick={() => setActiveTab(tab.id as LifeSkillsTabId)}
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      ) : guidance ? (
-        <div className="prose prose-slate max-w-none bg-accent/5 p-4 rounded-lg">
-          <p className="text-base leading-relaxed">{guidance}</p>
-        </div>
-      ) : null}
+      </div>
+
+      {/* Tab Content */}
+      <div className="mt-4 px-2">
+        {tabContent[activeTab as keyof typeof tabContent]}
+      </div>
     </div>
   );
 };
@@ -186,8 +300,20 @@ export default function Learning() {
           const renderContent = () => {
             if (!isExpanded) return null;
             
-            // Use the component from the section definition
-            return <Component {...section.props} />;
+            if (section.id === 'chat') {
+              return <ChatInterface category={LEARNING_CATEGORY} />;
+            } else if (section.id === 'cooking') {
+              return <ChatInterface category={COOKING_CATEGORY} />;
+            } else if (section.id === 'skills') {
+              return <LifeSkillsComponent />;
+            } else if (section.id === 'vehicle') {
+              return <VehicleGuide />;
+            } else if (section.id === 'handyman') {
+              return <HandymanGuide />;
+            } else if (section.id === 'calendar') {
+              return <LearningCalendar />;
+            }
+            return null;
           };
 
           return (
