@@ -71,10 +71,10 @@ export default function Navigation() {
   // Modern styling with our new theme colors
   const navBgColor = "bg-white";
   const navTextColor = "text-gray-700";
-  const activeItemBg = "bg-primary";
-  const activeItemText = "text-white";
-  const hoverBg = "hover:bg-primary/10";
-  const logoText = "text-primary-dark";
+  const activeItemBg = "bg-rose-100";
+  const activeItemText = "text-rose-700";
+  const hoverBg = "hover:bg-rose-50";
+  const logoText = "text-gray-800";
 
   if (isMobile) {
     return (
@@ -82,14 +82,14 @@ export default function Navigation() {
         <SheetTrigger asChild>
           <Button
             variant="outline"
-            className="fixed top-4 left-4 z-50 bg-white border-primary/30 text-primary hover:bg-primary/5"
+            className="fixed top-4 left-4 z-50 bg-white border-rose-300 text-gray-700 hover:bg-rose-50"
           >
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className={`${navBgColor} border-r border-primary/20 shadow-md`}>
+        <SheetContent side="left" className={`${navBgColor} border-r border-rose-300 shadow-md`}>
           <div className="flex items-center gap-2 px-2 py-6 mb-6 w-full">
-            <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center">
+            <div className="h-8 w-8 bg-rose-500 rounded-md flex items-center justify-center">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
             <span className={`text-xl font-bold ${logoText}`}>Fundamenta</span>
@@ -108,7 +108,7 @@ export default function Navigation() {
                     : `${navTextColor} ${hoverBg}`
                 )}
               >
-                <Icon className={cn("h-5 w-5", location === href ? "text-white" : "text-primary")} />
+                <Icon className={cn("h-5 w-5", location === href ? "text-rose-700" : "text-gray-600")} />
                 <span className="font-medium">{label}</span>
               </button>
             ))}
@@ -120,7 +120,7 @@ export default function Navigation() {
 
   return (
     <nav className={cn(
-      "fixed left-0 top-0 h-screen border-r border-primary/20 p-4 transition-all duration-300 z-50 shadow-lg",
+      "fixed left-0 top-0 h-screen border-r border-rose-300 p-4 transition-all duration-300 z-50 shadow-lg",
       navBgColor,
       isMinimized ? "w-16" : "w-64"
     )}>
@@ -132,7 +132,7 @@ export default function Navigation() {
             logoText
           )}
         >
-          <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center">
+          <div className="h-8 w-8 bg-rose-500 rounded-md flex items-center justify-center">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           {!isMinimized && <span className="text-lg font-bold">Fundamenta</span>}
@@ -142,7 +142,7 @@ export default function Navigation() {
           variant="outline"
           size="icon"
           onClick={() => setIsMinimized(!isMinimized)}
-          className="absolute top-3 -right-2 text-primary hover:text-primary hover:bg-primary/5 bg-white border border-primary/30"
+          className="absolute top-3 -right-2 text-gray-700 hover:text-gray-800 hover:bg-rose-50 bg-white border border-rose-300"
         >
           {isMinimized ? (
             <ChevronRight className="h-4 w-4" />
@@ -166,7 +166,7 @@ export default function Navigation() {
             )}
             title={isMinimized ? label : undefined}
           >
-            <Icon className={cn("h-5 w-5", location === href ? "text-white" : "text-primary")} />
+            <Icon className={cn("h-5 w-5", location === href ? "text-rose-700" : "text-gray-600")} />
             {!isMinimized && <span className="font-medium">{label}</span>}
           </button>
         ))}
