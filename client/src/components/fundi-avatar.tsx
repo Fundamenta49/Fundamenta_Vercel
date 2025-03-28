@@ -6,32 +6,33 @@ interface FundiAvatarProps {
 }
 
 export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvatarProps) {
+  // Use larger avatar to replace the previous dark circle
   const sizes = {
-    sm: "w-12 h-12",
-    md: "w-20 h-20",
-    lg: "w-28 h-28"
+    sm: "w-10 h-10",
+    md: "w-14 h-14",
+    lg: "w-20 h-20"
   };
 
   return (
-    <div className={`${sizes[size]}`}>
+    <div className={`${sizes[size]} rounded-full bg-transparent`}>
       <motion.div
         className="w-full h-full"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* SVG Robot based on the provided image */}
+        {/* SVG Robot with no background */}
         <svg 
           viewBox="0 0 100 100" 
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full"
         >
-          {/* Shadow effect only */}
+          {/* Shadow effect */}
           <motion.ellipse 
             cx="50" 
             cy="90" 
             rx="25" 
-            ry="7" 
+            ry="5" 
             fill="rgba(0,0,0,0.1)" 
             animate={{ 
               rx: speaking ? [25, 27, 25] : 25 

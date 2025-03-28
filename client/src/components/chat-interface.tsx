@@ -222,7 +222,7 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
     <div className="space-y-4">
       <div className="flex items-start gap-4 mb-4">
         <div className="flex-shrink-0">
-          <FundiAvatar speaking={false} size="md" />
+          <FundiAvatar speaking={false} size="lg" />
         </div>
         <div className="flex-1">
           {sections.map((section, idx) => (
