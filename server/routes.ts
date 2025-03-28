@@ -9,6 +9,7 @@ import multer from 'multer';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from "mammoth";
 import axios from 'axios';
+import resumeRoutes from './routes/resume';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -1148,6 +1149,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // Use the modular resume routes
+  app.use('/api/resume-analysis', resumeRoutes);
 
   const httpServer = createServer(app);
   return httpServer;

@@ -12,7 +12,10 @@ import {
   Loader2,
   User,
   Mail,
-  Phone
+  Phone,
+  ThumbsUp,
+  ThumbsDown,
+  Lightbulb
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +23,9 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { analyzeResume, type ResumeAnalysis } from "@/lib/resume-analysis";
 
 // Form validation schema
 const resumeSchema = z.object({
@@ -422,6 +427,9 @@ export default function ResumeBuilder() {
   const [uploadMessage, setUploadMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState("upload");
+  const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const form = useForm<ResumeFormData>({
     resolver: zodResolver(resumeSchema),
@@ -438,6 +446,37 @@ export default function ResumeBuilder() {
   });
 
   const hasContent = form.watch("resumeText") !== "";
+  
+  const handleAIAnalysis = async () => {
+    try {
+      setIsAnalyzing(true);
+      setAnalysisError(null);
+      
+      const resumeText = form.getValues("resumeText");
+      if (!resumeText) {
+        setAnalysisError("Please upload or enter resume content first");
+        return;
+      }
+      
+      const result = await analyzeResume(resumeText);
+      setAnalysis(result);
+      
+      // Update form with AI analysis results
+      if (result.name) form.setValue("name", result.name);
+      if (result.email) form.setValue("email", result.email);
+      if (result.phone) form.setValue("phone", result.phone);
+      if (result.summary) form.setValue("summary", result.summary);
+      if (result.education) form.setValue("education", result.education);
+      if (result.experience) form.setValue("experience", result.experience);
+      if (result.skills) form.setValue("skills", result.skills);
+      
+    } catch (error) {
+      console.error("AI analysis error:", error);
+      setAnalysisError(error instanceof Error ? error.message : "Failed to analyze resume");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto overflow-hidden">
@@ -488,18 +527,47 @@ export default function ResumeBuilder() {
                 <div className="mt-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-medium">Review & Edit</h3>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="bg-white border-primary/30 text-primary hover:bg-primary/5"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveTab("manual");
-                      }}
-                    >
-                      Edit Details
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="bg-white border-primary/30 text-primary hover:bg-primary/5"
+                        onClick={handleAIAnalysis}
+                        disabled={isAnalyzing}
+                      >
+                        {isAnalyzing ? (
+                          <>
+                            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <Lightbulb className="mr-1 h-3 w-3" />
+                            AI Analysis
+                          </>
+                        )}
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="bg-white border-primary/30 text-primary hover:bg-primary/5"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveTab("manual");
+                        }}
+                      >
+                        Edit Details
+                      </Button>
+                    </div>
                   </div>
+                  
+                  {analysisError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Error</AlertTitle>
+                      <AlertDescription>{analysisError}</AlertDescription>
+                    </Alert>
+                  )}
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -517,6 +585,50 @@ export default function ResumeBuilder() {
                       <div className="text-sm border border-rose-50 bg-white p-2 rounded shadow-sm">{form.watch("phone") || "Not detected"}</div>
                     </div>
                   </div>
+                  
+                  {analysis && (
+                    <div className="mt-6 border border-primary/20 rounded-md p-4 bg-primary/5">
+                      <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+                        <Lightbulb className="h-4 w-4 text-primary" />
+                        AI Resume Analysis
+                      </h3>
+                      
+                      <div className="space-y-4 text-sm">
+                        <div>
+                          <h4 className="font-medium flex items-center gap-1 text-green-600 mb-1">
+                            <ThumbsUp className="h-3 w-3" /> Strengths
+                          </h4>
+                          <ul className="list-disc list-inside space-y-1 pl-1">
+                            {analysis.analysis.strengths.map((strength, i) => (
+                              <li key={`strength-${i}`} className="text-gray-700">{strength}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium flex items-center gap-1 text-amber-600 mb-1">
+                            <ThumbsDown className="h-3 w-3" /> Areas for Improvement
+                          </h4>
+                          <ul className="list-disc list-inside space-y-1 pl-1">
+                            {analysis.analysis.weaknesses.map((weakness, i) => (
+                              <li key={`weakness-${i}`} className="text-gray-700">{weakness}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium flex items-center gap-1 text-primary mb-1">
+                            <Lightbulb className="h-3 w-3" /> Suggestions
+                          </h4>
+                          <ul className="list-disc list-inside space-y-1 pl-1">
+                            {analysis.analysis.suggestions.map((suggestion, i) => (
+                              <li key={`suggestion-${i}`} className="text-gray-700">{suggestion}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </TabsContent>
