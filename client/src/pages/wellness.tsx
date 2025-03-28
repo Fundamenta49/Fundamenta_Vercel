@@ -112,6 +112,7 @@ export default function Wellness() {
                   icon={section.icon as any}
                   isExpanded={isExpanded}
                   onToggle={handleCardClick}
+                  color="text-purple-500" // Wellness section color from the home page
                 >
                   <div className="w-full">
                     <section.component {...(section.props || {})} />

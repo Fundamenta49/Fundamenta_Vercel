@@ -350,6 +350,7 @@ export default function Learning() {
                   icon={section.icon}
                   isExpanded={isExpanded}
                   onToggle={toggleSection}
+                  color="text-rose-500" // Learning section color from the home page
                 >
                   {renderContent(section.id)}
                 </BookCard>

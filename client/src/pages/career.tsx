@@ -179,6 +179,7 @@ export default function Career() {
                   icon={section.icon}
                   isExpanded={isExpanded}
                   onToggle={handleCardClick}
+                  color="text-blue-500" // Career section color from the home page
                 >
                   {(() => {
                     if (section.id === 'chat') {

@@ -480,7 +480,7 @@ export default function ResumeBuilder() {
 
   return (
     <div className="w-full max-w-4xl mx-auto overflow-hidden">
-      <Card className="shadow-sm bg-white w-full max-w-full overflow-hidden">
+      <Card className="shadow-sm bg-white w-full max-w-full overflow-hidden border-t-4 border-t-rose-500">
         {/* Removed redundant header that was showing up twice */}
         <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
           <Tabs defaultValue="upload" value={activeTab} onValueChange={setActiveTab}>

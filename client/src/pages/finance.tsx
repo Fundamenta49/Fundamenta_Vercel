@@ -154,6 +154,7 @@ export default function Finance() {
                   icon={section.icon as any}
                   isExpanded={isExpanded}
                   onToggle={handleCardClick}
+                  color="text-green-500" // Finance section color from the home page
                 >
                   <div className="w-full">
                     {section.alert && (

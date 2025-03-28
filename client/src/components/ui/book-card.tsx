@@ -12,6 +12,7 @@ export interface BookCardProps {
   isExpanded: boolean;
   onToggle: (id: string) => void;
   children: ReactNode;
+  color?: string; // Color class for the card elements, e.g. "text-red-500"
 }
 
 export function BookCard({
@@ -21,14 +22,16 @@ export function BookCard({
   icon: Icon,
   isExpanded,
   onToggle,
-  children
+  children,
+  color = "text-primary" // Default color if none provided
 }: BookCardProps) {
   const isMobile = useIsMobile();
   
   return (
     <Card 
       className={cn(
-        "border-2 border-rose-100 shadow-md bg-white flex flex-col",
+        "border-2 shadow-md bg-white flex flex-col",
+        color.replace("text-", "border-").replace("-500", "-100"),
         isMobile ? "h-full" : isExpanded ? "h-[calc(80vh-6rem)]" : "h-[400px]"
       )}
       onClick={() => !isExpanded && onToggle(id)}
@@ -38,8 +41,9 @@ export function BookCard({
         <div className="h-full flex flex-col cursor-pointer py-4">
           {/* Top section with icon */}
           <div className="flex-1 flex items-center justify-center flex-col text-center px-6 py-8">
-            <div className="w-24 h-24 rounded-full bg-rose-50 flex items-center justify-center mb-6">
-              <Icon className="h-12 w-12 text-primary" />
+            <div className={cn("w-24 h-24 rounded-full flex items-center justify-center mb-6", 
+                               color.replace("text-", "bg-").replace("-500", "-50"))}>
+              <Icon className={cn("h-12 w-12", color)} />
             </div>
             <CardTitle className="text-3xl mb-3">{title}</CardTitle>
             <CardDescription className="text-xl">{description}</CardDescription>
@@ -55,14 +59,18 @@ export function BookCard({
         // Content view - shows when expanded
         <>
           <CardHeader 
-            className="bg-rose-50 border-b border-rose-100 py-3 cursor-pointer flex flex-row items-center"
+            className={cn(
+              "border-b py-3 cursor-pointer flex flex-row items-center",
+              color.replace("text-", "bg-").replace("-500", "-50"),
+              color.replace("text-", "border-").replace("-500", "-100")
+            )}
             onClick={(e) => {
               e.stopPropagation();
               onToggle(id);
             }}
           >
             <div className="flex items-center gap-3">
-              <Icon className="h-6 w-6 text-primary" />
+              <Icon className={cn("h-6 w-6", color)} />
               <CardTitle className="text-xl">{title}</CardTitle>
             </div>
             <ChevronUp className="h-5 w-5 text-muted-foreground ml-auto" />

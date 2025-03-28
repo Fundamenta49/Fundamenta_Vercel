@@ -137,6 +137,7 @@ export default function Emergency() {
                   icon={section.icon as any}
                   isExpanded={isExpanded}
                   onToggle={handleCardClick}
+                  color="text-red-500" // Emergency section color from the home page
                 >
                   <div className="w-full">
                     <section.component {...(section.props || {})} />

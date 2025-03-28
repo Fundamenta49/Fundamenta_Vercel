@@ -182,6 +182,7 @@ export default function Active() {
                   icon={section.icon}
                   isExpanded={isExpanded}
                   onToggle={handleCardClick}
+                  color="text-pink-500" // Active section color from the home page
                 >
                   <section.component {...section.props} />
                 </BookCard>
