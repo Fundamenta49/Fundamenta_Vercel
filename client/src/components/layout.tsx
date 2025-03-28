@@ -18,15 +18,18 @@ export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const isMobile = useIsMobile();
   const isHomePage = location === "/" || location === "/home";
+  
+  // Only show navigation on the home page
+  const showNavigation = isHomePage;
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      {showNavigation && <Navigation />}
       
       <main className={cn(
         "transition-all duration-300 bg-background min-h-screen",
-        isMobile ? "ml-0 p-4 pt-16" : "ml-64 p-6", 
-        document.body.classList.contains("sidebar-minimized") && !isMobile ? "ml-16" : ""
+        showNavigation && !isMobile ? "ml-64 p-6" : "ml-0 p-4 pt-16", 
+        document.body.classList.contains("sidebar-minimized") && showNavigation && !isMobile ? "ml-16" : ""
       )}>
         {/* All headers are now handled directly in each page component */}
         
