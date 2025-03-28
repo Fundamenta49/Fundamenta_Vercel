@@ -36,7 +36,7 @@ export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvat
         {/* Top accent stripe */}
         <motion.div 
           className="absolute top-0 left-0 right-0 h-[15%]"
-          style={{ backgroundColor: "#5858FF" }}
+          style={{ backgroundColor: "#FF3B77" }}
         />
         
         {/* Subtle circuit pattern */}
