@@ -31,6 +31,7 @@ import {
   ChevronUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 
 type LifeSkillsTabId = "search" | "financial" | "cooking" | "home" | "time" | "communication";
 
@@ -334,76 +335,28 @@ export default function Learning() {
         Learning & Development
       </h1>
 
-      {/* Horizontal card carousel - book-like full width cards */}
-      <div 
-        ref={carouselRef}
-        className="flex w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar"
-        style={{ 
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          height: 'calc(100vh - 4rem)' /* Maximize screen height */
-        }}
-      >
-        {SECTIONS.map((section) => {
-          const Icon = section.icon;
-          const isExpanded = expandedSection === section.id;
-          
-          return (
-            <div 
-              key={section.id}
-              className="snap-center flex-shrink-0 w-full px-2"
-            >
-              <Card 
-                className={cn(
-                  "h-full border-2 border-rose-100 shadow-md bg-white flex flex-col",
-                  isExpanded ? "opacity-100" : "opacity-100"
-                )}
-                onClick={() => !isExpanded && toggleSection(section.id)}
-              >
-                {!isExpanded ? (
-                  // Book cover design - only shows when collapsed
-                  <div className="h-full flex flex-col cursor-pointer py-4">
-                    {/* Top section with icon */}
-                    <div className="flex-1 flex items-center justify-center flex-col text-center px-6 py-8">
-                      <div className="w-24 h-24 rounded-full bg-rose-50 flex items-center justify-center mb-6">
-                        <Icon className="h-12 w-12 text-primary" />
-                      </div>
-                      <CardTitle className="text-3xl mb-3">{section.title}</CardTitle>
-                      <CardDescription className="text-xl">{section.description}</CardDescription>
-                    </div>
-                    
-                    {/* Bottom hint to open */}
-                    <div className="text-center pb-6 text-muted-foreground">
-                      <p className="text-sm">Tap to open</p>
-                      <ChevronDown className="h-5 w-5 mx-auto mt-1" />
-                    </div>
-                  </div>
-                ) : (
-                  // Content view - shows when expanded
-                  <>
-                    <CardHeader 
-                      className="bg-rose-50 border-b border-rose-100 py-3 cursor-pointer flex flex-row items-center"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleSection(section.id);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon className="h-6 w-6 text-primary" />
-                        <CardTitle className="text-xl">{section.title}</CardTitle>
-                      </div>
-                      <ChevronUp className="h-5 w-5 text-muted-foreground ml-auto" />
-                    </CardHeader>
-                    
-                    <CardContent className="flex-1 overflow-y-auto p-4">
-                      {renderContent(section.id)}
-                    </CardContent>
-                  </>
-                )}
-              </Card>
-            </div>
-          );
-        })}
+      {/* Horizontal card carousel using our new components */}
+      <div ref={carouselRef} className="book-carousel">
+        <BookCarousel>
+          {SECTIONS.map((section) => {
+            const isExpanded = expandedSection === section.id;
+            
+            return (
+              <BookPage key={section.id} id={section.id}>
+                <BookCard
+                  id={section.id}
+                  title={section.title}
+                  description={section.description}
+                  icon={section.icon}
+                  isExpanded={isExpanded}
+                  onToggle={toggleSection}
+                >
+                  {renderContent(section.id)}
+                </BookCard>
+              </BookPage>
+            );
+          })}
+        </BookCarousel>
       </div>
     </div>
   );
