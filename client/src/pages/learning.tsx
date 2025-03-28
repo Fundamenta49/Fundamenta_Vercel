@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -24,7 +24,9 @@ import {
   Wrench,
   Loader2,
   Wallet,
-  MessageSquare
+  MessageSquare,
+  ArrowLeft,
+  ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -277,7 +279,25 @@ const SECTIONS: SectionType[] = [
 ];
 
 export default function Learning() {
-  const [activeSection, setActiveSection] = useState<string>('chat');
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // Handle horizontal scrolling
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (!carouselRef.current) return;
+    
+    const cardWidth = carouselRef.current.offsetWidth * 0.7; // 70% of container width
+    const newPosition = direction === 'left' 
+      ? Math.max(scrollPosition - cardWidth, 0)
+      : Math.min(scrollPosition + cardWidth, carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
+    
+    carouselRef.current.scrollTo({
+      left: newPosition,
+      behavior: 'smooth'
+    });
+    
+    setScrollPosition(newPosition);
+  };
 
   // Function to render the appropriate component based on section type
   const renderContent = (sectionId: string) => {
@@ -303,42 +323,61 @@ export default function Learning() {
         Learning & Development
       </h1>
 
-      {/* Horizontal Tab Navigation */}
-      <div className="w-full overflow-auto pb-2 no-scrollbar">
-        <div className="inline-flex mx-auto border-2 border-rose-100 rounded-md bg-white" style={{width: "80%"}}>
-          <div className="flex space-x-1 p-1 w-full">
-            {SECTIONS.map((section) => {
-              const Icon = section.icon;
-              return (
-                <button
-                  key={section.id}
-                  className={cn(
-                    "flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-2 text-sm font-medium flex-1 min-w-[120px]",
-                    "transition-all duration-200 ease-in-out",
-                    activeSection === section.id
-                      ? "bg-rose-50 text-primary shadow-sm"
-                      : "text-muted-foreground hover:bg-muted/20"
-                  )}
-                  onClick={() => setActiveSection(section.id)}
-                >
-                  <Icon className="h-4 w-4 mr-2" />
-                  {section.title}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      {/* Navigation buttons */}
+      <div className="flex justify-between mb-4">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="border-2 border-rose-100"
+          onClick={() => handleScroll('left')}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="border-2 border-rose-100"
+          onClick={() => handleScroll('right')}
+        >
+          <ArrowRight className="h-4 w-4" />
+        </Button>
       </div>
 
-      {/* Content Area */}
-      <div className="mt-6">
-        <Card className="shadow-lg border-2 border-rose-100 bg-white">
-          <CardContent className="p-4 sm:p-6">
-            <div className="overflow-y-auto max-h-[70vh]">
-              {renderContent(activeSection)}
+      {/* Horizontal card carousel */}
+      <div 
+        ref={carouselRef}
+        className="flex w-full overflow-x-auto pb-4 pt-2 snap-x snap-mandatory hide-scrollbar"
+        style={{ 
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          height: 'calc(100vh - 11rem)' /* Adjust for the heading and navigation buttons */
+        }}
+      >
+        {SECTIONS.map((section) => {
+          const Icon = section.icon;
+          return (
+            <div 
+              key={section.id}
+              className="snap-center flex-shrink-0 px-2"
+              style={{ width: '75%' }}
+            >
+              <Card className="h-full border-2 border-rose-100 shadow-md bg-white flex flex-col">
+                <CardHeader className="bg-rose-50 border-b border-rose-100 py-3">
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-5 w-5 text-primary" />
+                    <div>
+                      <CardTitle className="text-lg">{section.title}</CardTitle>
+                      <CardDescription>{section.description}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1 overflow-y-auto p-4">
+                  {renderContent(section.id)}
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
+          );
+        })}
       </div>
     </div>
   );
