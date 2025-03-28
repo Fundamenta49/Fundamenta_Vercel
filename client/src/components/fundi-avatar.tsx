@@ -7,29 +7,29 @@ interface FundiAvatarProps {
 
 export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvatarProps) {
   const sizes = {
-    sm: "w-10 h-10",
-    md: "w-16 h-16",
-    lg: "w-24 h-24"
+    sm: "w-12 h-12",
+    md: "w-20 h-20",
+    lg: "w-28 h-28"
   };
 
   return (
-    <div className={`relative ${sizes[size]}`}>
+    <div className={`${sizes[size]}`}>
       <motion.div
-        className="absolute inset-0 flex items-center justify-center"
+        className="w-full h-full"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
         {/* SVG Robot based on the provided image */}
         <svg 
-          viewBox="0 0 100 110" 
+          viewBox="0 0 100 100" 
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-md"
+          className="w-full h-full"
         >
-          {/* Shadow effect */}
+          {/* Shadow effect only */}
           <motion.ellipse 
             cx="50" 
-            cy="100" 
+            cy="90" 
             rx="25" 
             ry="7" 
             fill="rgba(0,0,0,0.1)" 
