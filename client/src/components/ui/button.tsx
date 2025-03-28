@@ -9,16 +9,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95",
+        default: "bg-white border-2 border-primary text-primary hover:bg-primary/5 active:scale-95",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:scale-95",
+          "bg-white border-2 border-destructive text-destructive hover:bg-destructive/5 active:scale-95",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground active:scale-95",
+          "border border-input bg-white hover:bg-accent/5 hover:text-accent-foreground active:scale-95",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95",
-        ghost: "hover:bg-accent hover:text-accent-foreground active:scale-95",
+          "bg-white border-2 border-secondary/30 text-secondary-dark hover:bg-secondary/5 active:scale-95",
+        ghost: "text-primary hover:bg-primary/5 active:scale-95",
         link: "text-primary underline-offset-4 hover:underline active:scale-95",
-        wood: "btn-wood hover:scale-105 active:scale-95", // Wood variant with interactive effects
+        wood: "bg-white border-2 border-primary/30 text-primary hover:scale-105 active:scale-95", // Wood variant with interactive effects
       },
       size: {
         default: "h-10 px-4 py-2",

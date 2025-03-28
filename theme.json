@@ -15,9 +15,9 @@
       "foreground": "#FFFFFF"
     },
     "secondary": {
-      "default": "#333333",
+      "default": "#666666",
       "light": "#F9F9F9",
-      "dark": "#222222",
+      "dark": "#333333",
       "foreground": "#FFFFFF"
     },
     "text": {
