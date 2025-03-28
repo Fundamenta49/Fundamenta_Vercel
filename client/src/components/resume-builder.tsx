@@ -481,16 +481,7 @@ export default function ResumeBuilder() {
   return (
     <div className="w-full max-w-4xl mx-auto overflow-hidden">
       <Card className="shadow-sm bg-white w-full max-w-full overflow-hidden">
-        <CardHeader className="px-3 py-3 sm:px-6 sm:py-4">
-          <CardTitle className="text-lg sm:text-xl font-semibold flex items-center gap-2">
-            <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-            Resume Builder
-          </CardTitle>
-          <CardDescription className="text-sm sm:text-base">
-            Create a professional resume in minutes - upload an existing resume or build one from scratch
-          </CardDescription>
-        </CardHeader>
-        
+        {/* Removed redundant header that was showing up twice */}
         <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
           <Tabs defaultValue="upload" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-2 mb-4 sm:mb-6 text-xs sm:text-sm">
