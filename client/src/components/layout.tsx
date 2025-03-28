@@ -39,26 +39,6 @@ export default function Layout({ children }: LayoutProps) {
                  location === "/emergency" ? "Emergency Guidance" :
                  location === "/learning" ? "Life Skills" : ""}
               </h1>
-              
-              <div className="flex items-center gap-3">
-                <MoodSelector />
-                <Separator orientation="vertical" className="h-8" />
-                
-                <Button variant="ghost" size="icon" className="text-text-muted hover:text-text-primary hover:bg-muted">
-                  <Bell className="h-5 w-5" />
-                </Button>
-                
-                <Button variant="ghost" size="icon" className="text-text-muted hover:text-text-primary hover:bg-muted">
-                  <Settings className="h-5 w-5" />
-                </Button>
-                
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    <User className="h-5 w-5" />
-                  </AvatarFallback>
-                </Avatar>
-              </div>
             </div>
 
             <div className="mt-2 text-text-secondary text-sm">
