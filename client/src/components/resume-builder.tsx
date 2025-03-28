@@ -249,8 +249,8 @@ const FileUpload: React.FC<{
 
   return (
     <div>
-      <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg border-stone-200 hover:border-primary/40 transition-colors bg-stone-50/50">
-        <div className="mb-4 bg-primary/5 p-3 rounded-full">
+      <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg border-rose-100 hover:border-primary/40 transition-colors bg-white">
+        <div className="mb-4 bg-rose-50 p-3 rounded-full">
           <FileText className="h-6 w-6 text-primary" />
         </div>
         <h3 className="text-lg font-medium mb-2">Upload your resume</h3>
@@ -319,7 +319,7 @@ export default function ResumeBuilder() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Card className="shadow-sm border-gray-100 bg-white/80">
+      <Card className="shadow-sm border-rose-50 bg-white">
         <CardHeader>
           <CardTitle className="text-xl font-semibold flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
@@ -378,17 +378,17 @@ export default function ResumeBuilder() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <div className="text-sm font-medium">Name</div>
-                      <div className="text-sm border border-gray-100 bg-white p-2 rounded shadow-sm">{form.watch("name") || "Not detected"}</div>
+                      <div className="text-sm border border-rose-50 bg-white p-2 rounded shadow-sm">{form.watch("name") || "Not detected"}</div>
                     </div>
                     
                     <div className="space-y-2">
                       <div className="text-sm font-medium">Email</div>
-                      <div className="text-sm border border-gray-100 bg-white p-2 rounded shadow-sm">{form.watch("email") || "Not detected"}</div>
+                      <div className="text-sm border border-rose-50 bg-white p-2 rounded shadow-sm">{form.watch("email") || "Not detected"}</div>
                     </div>
                     
                     <div className="space-y-2">
                       <div className="text-sm font-medium">Phone</div>
-                      <div className="text-sm border border-gray-100 bg-white p-2 rounded shadow-sm">{form.watch("phone") || "Not detected"}</div>
+                      <div className="text-sm border border-rose-50 bg-white p-2 rounded shadow-sm">{form.watch("phone") || "Not detected"}</div>
                     </div>
                   </div>
                 </div>
@@ -543,7 +543,7 @@ export default function ResumeBuilder() {
           </Tabs>
         </CardContent>
         
-        <CardFooter className="flex justify-end border-t border-gray-100 p-6">
+        <CardFooter className="flex justify-end border-t border-rose-50 p-6">
           {hasContent && (
             <PDFDownloadLink
               document={

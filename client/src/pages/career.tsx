@@ -151,8 +151,8 @@ export default function Career() {
           <Card 
             key={section.id}
             className={cn(
-              "transition-all duration-300 ease-in-out cursor-pointer",
-              "hover:shadow-md",
+              "transition-all duration-300 ease-in-out cursor-pointer border-rose-50",
+              "hover:shadow-md bg-white",
               expandedSection === section.id ? "shadow-lg" : "shadow-sm"
             )}
             onClick={() => handleCardClick(section.id)}
