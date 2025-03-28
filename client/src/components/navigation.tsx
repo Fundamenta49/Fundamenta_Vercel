@@ -50,7 +50,10 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   const isHomePage = location === "/" || location === "/home";
-  const navItems = isHomePage ? defaultNavItems.filter(item => item.href !== "/") : featureNavItems.filter(item => item.href !== location);
+  // On homepage, only show default nav items, otherwise show all navigation options
+  const navItems = isHomePage 
+    ? defaultNavItems.filter(item => item.href !== "/") 
+    : [...defaultNavItems.filter(item => item.href !== "/"), ...featureNavItems].filter(item => item.href !== location);
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -93,7 +96,8 @@ export default function Navigation() {
           </div>
           
           <div className="flex flex-col gap-1">
-            {defaultNavItems.concat(featureNavItems).map(({ href, label, icon: Icon }) => (
+            {/* Use the same navItems logic for mobile as desktop */}
+            {navItems.map(({ href, label, icon: Icon }) => (
               <button
                 key={href}
                 onClick={() => handleNavigation(href)}
@@ -149,7 +153,8 @@ export default function Navigation() {
       </div>
 
       <div className="flex flex-col gap-1 mt-2">
-        {defaultNavItems.concat(featureNavItems).filter(item => item.href !== "/").map(({ href, label, icon: Icon }) => (
+        {/* Use the same navItems logic for desktop navigation */}
+        {navItems.map(({ href, label, icon: Icon }) => (
           <button
             key={href}
             onClick={() => handleNavigation(href)}
