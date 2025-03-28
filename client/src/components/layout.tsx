@@ -30,7 +30,10 @@ export default function Layout({ children }: LayoutProps) {
       )}>
         {!isHomePage && (
           <header className="mb-8">
-            <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className={cn(
+                "flex items-center gap-4 w-full",
+                location === "/career" ? "justify-center" : "justify-between flex-wrap" // Center title only for career page
+              )}>
               <h1 className="text-2xl font-bold tracking-tight text-text-primary">
                 {location === "/career" ? "Career Development" : 
                  location === "/finance" ? "Financial Literacy" : 
