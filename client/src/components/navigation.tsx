@@ -50,10 +50,13 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   const isHomePage = location === "/" || location === "/home";
-  // On homepage, only show default nav items, otherwise show all navigation options
-  const navItems = isHomePage 
-    ? defaultNavItems.filter(item => item.href !== "/") 
-    : [...featureNavItems, ...defaultNavItems.filter(item => item.href !== "/")].filter(item => item.href !== location);
+  
+  // Only show default items (Why Fundamenta, Partner, Privacy, Invite) on the home page
+  // Always show feature items (Life Skills, Financial Literacy, etc.) on all pages
+  // Filter out the current page from feature items
+  const displayedNavItems = isHomePage
+    ? [...defaultNavItems.filter(item => item.href !== "/"), ...featureNavItems].filter(item => item.href !== location)
+    : [...featureNavItems].filter(item => item.href !== location);
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -96,8 +99,8 @@ export default function Navigation() {
           </div>
           
           <div className="flex flex-col gap-1">
-            {/* Use the same navItems logic for mobile as desktop */}
-            {navItems.map(({ href, label, icon: Icon }) => (
+            {/* Display navigation items based on current page */}
+            {displayedNavItems.map(({ href, label, icon: Icon }) => (
               <button
                 key={href}
                 onClick={() => handleNavigation(href)}
@@ -153,8 +156,8 @@ export default function Navigation() {
       </div>
 
       <div className="flex flex-col gap-1 mt-2">
-        {/* Use the same navItems logic for desktop navigation */}
-        {navItems.map(({ href, label, icon: Icon }) => (
+        {/* Display navigation items based on current page */}
+        {displayedNavItems.map(({ href, label, icon: Icon }) => (
           <button
             key={href}
             onClick={() => handleNavigation(href)}
