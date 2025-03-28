@@ -137,7 +137,9 @@ export default function Career() {
 
   return (
     <div className="w-full h-full mx-auto p-0">
-      {/* Removed redundant header that was appearing at the top of the page */}
+      <h1 className="text-2xl sm:text-3xl font-bold text-center py-4">
+        Career Development
+      </h1>
       
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl border-rose-50 bg-white">
