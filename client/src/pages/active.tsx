@@ -85,6 +85,7 @@ export default function Active() {
   const [hasProfile, setHasProfile] = useState<boolean>(false);
   const [skipProfile, setSkipProfile] = useState<boolean>(false);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const handleProfileComplete = (profile: ProfileType) => {
     try {
@@ -154,8 +155,6 @@ export default function Active() {
       </div>
     );
   }
-
-  const carouselRef = useRef<HTMLDivElement>(null);
   
   return (
     <div className="w-full h-full mx-auto p-0">
