@@ -28,15 +28,11 @@ export default function Layout({ children }: LayoutProps) {
         isMobile ? "ml-0 p-4 pt-16" : "ml-64 p-6", 
         document.body.classList.contains("sidebar-minimized") && !isMobile ? "ml-16" : ""
       )}>
-        {!isHomePage && (
+        {!isHomePage && location !== "/career" && (
           <header className="mb-8">
-            <div className={cn(
-                "flex items-center gap-4 w-full",
-                location === "/career" ? "justify-center" : "justify-between flex-wrap" // Center title only for career page
-              )}>
+            <div className="flex items-center justify-between flex-wrap gap-4 w-full">
               <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-                {location === "/career" ? "Career Development" : 
-                 location === "/finance" ? "Financial Literacy" : 
+                {location === "/finance" ? "Financial Literacy" : 
                  location === "/wellness" ? "Wellness & Nutrition" :
                  location === "/active" ? "Active You" :
                  location === "/emergency" ? "Emergency Guidance" :
@@ -45,8 +41,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
 
             <div className="mt-2 text-text-secondary text-sm">
-              {location === "/career" ? "" : // Removed subtitle for Career page
-               location === "/finance" ? "Learn to manage your money effectively" : 
+              {location === "/finance" ? "Learn to manage your money effectively" : 
                location === "/wellness" ? "Tools and guidance for your wellbeing" :
                location === "/active" ? "Stay fit and healthy with personalized plans" :
                location === "/emergency" ? "Critical information when you need it most" :

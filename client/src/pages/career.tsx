@@ -137,7 +137,9 @@ export default function Career() {
 
   return (
     <div className="w-full h-full mx-auto p-0">
-      {/* Using layout header for consistency */}
+      <h1 className="text-2xl font-bold tracking-tight text-center mb-6">
+        Career Development
+      </h1>
       
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl border-rose-50 bg-white">
