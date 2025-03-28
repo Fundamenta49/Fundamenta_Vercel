@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface BookCardProps {
   id: string;
@@ -22,10 +23,13 @@ export function BookCard({
   onToggle,
   children
 }: BookCardProps) {
+  const isMobile = useIsMobile();
+  
   return (
     <Card 
       className={cn(
-        "h-full border-2 border-rose-100 shadow-md bg-white flex flex-col"
+        "border-2 border-rose-100 shadow-md bg-white flex flex-col",
+        isMobile ? "h-full" : isExpanded ? "h-[calc(80vh-6rem)]" : "h-[400px]"
       )}
       onClick={() => !isExpanded && onToggle(id)}
     >
@@ -78,7 +82,11 @@ export interface BookCarouselProps {
 }
 
 export function BookCarousel({ children }: BookCarouselProps) {
-  return (
+  // Using useIsMobile hook to handle responsive layout
+  const isMobile = useIsMobile();
+  
+  return isMobile ? (
+    // Mobile layout: horizontal carousel
     <div 
       className="flex w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar"
       style={{ 
@@ -87,6 +95,11 @@ export function BookCarousel({ children }: BookCarouselProps) {
         height: 'calc(100vh - 4rem)' /* Maximize screen height */
       }}
     >
+      {children}
+    </div>
+  ) : (
+    // Desktop layout: grid
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12 pt-2 max-w-[1400px] mx-auto">
       {children}
     </div>
   );
@@ -98,12 +111,18 @@ export interface BookPageProps {
 }
 
 export function BookPage({ id, children }: BookPageProps) {
-  return (
+  const isMobile = useIsMobile();
+  
+  return isMobile ? (
+    // Mobile layout: full-width snap page
     <div 
       key={id}
       className="snap-center flex-shrink-0 w-full px-2"
     >
       {children}
     </div>
+  ) : (
+    // Desktop layout: no special container needed, just render the children
+    <>{children}</>
   );
 }
