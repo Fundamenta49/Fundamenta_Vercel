@@ -124,7 +124,7 @@ export default function RiasecTest() {
         <CardContent>
           <div className="space-y-6">
             {results.map((result, index) => (
-              <div key={index} className="bg-muted rounded-lg p-4">
+              <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
                 <h3 className="font-semibold mb-2">#{index + 1}</h3>
                 <p>{result}</p>
               </div>

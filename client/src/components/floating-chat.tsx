@@ -282,7 +282,7 @@ export default function FloatingChat() {
                       "rounded-lg px-4 py-2.5 max-w-[85%] text-sm",
                       msg.role === 'user'
                         ? "bg-primary text-primary-foreground"
-                        : "bg-muted border border-border"
+                        : "bg-white border border-gray-200"
                     )}
                   >
                     {msg.content}
@@ -295,7 +295,7 @@ export default function FloatingChat() {
               
               {chatMutation.isPending && (
                 <div className="flex items-start">
-                  <div className="rounded-lg px-4 py-2.5 max-w-[85%] text-sm bg-muted border border-border flex items-center">
+                  <div className="rounded-lg px-4 py-2.5 max-w-[85%] text-sm bg-white border border-gray-200 flex items-center">
                     <div className="flex items-center gap-1 h-6">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDuration: "1s" }} />
                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDuration: "1s", animationDelay: "0.2s" }} />
@@ -316,7 +316,7 @@ export default function FloatingChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Message Fundi..."
-                className="flex-1 pr-10 border-muted rounded-full bg-muted/40 focus-visible:ring-primary/20"
+                className="flex-1 pr-10 border-gray-200 rounded-full bg-white focus-visible:ring-primary/20"
                 onFocus={() => {
                   if (chatRef.current) {
                     setTimeout(() => {

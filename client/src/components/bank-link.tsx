@@ -122,7 +122,7 @@ export default function BankLink() {
               {transactions.map((transaction, index) => (
                 <div
                   key={index}
-                  className="flex justify-between items-center p-3 bg-muted rounded-lg"
+                  className="flex justify-between items-center p-3 bg-stone-50/80 border border-gray-200 rounded-lg"
                 >
                   <div>
                     <p className="font-medium">{transaction.description}</p>

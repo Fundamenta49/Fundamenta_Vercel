@@ -244,7 +244,7 @@ export default function JournalEntry() {
               </SelectContent>
             </Select>
 
-            <div className="bg-muted p-4 rounded-lg">
+            <div className="bg-white border border-gray-200 p-4 rounded-lg">
               <p className="text-sm font-medium mb-2">Today's Prompt:</p>
               <p className="text-muted-foreground">{currentPrompt}</p>
               <Button
@@ -296,7 +296,7 @@ export default function JournalEntry() {
           />
 
           {selectedCategory === "future" && (
-            <div className="space-y-2 bg-muted p-4 rounded-lg">
+            <div className="space-y-2 bg-white border border-gray-200 p-4 rounded-lg">
               <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
                 <Mail className="h-4 w-4" />
                 Send to Future Self

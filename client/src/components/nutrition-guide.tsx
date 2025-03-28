@@ -612,7 +612,7 @@ export default function NutritionGuide() {
                       <h4 className="font-medium mb-2">Helpful Resources:</h4>
                       <div className="grid gap-2">
                         {rec.resources.map((resource, i) => (
-                          <div key={i} className="p-2 rounded-lg bg-muted">
+                          <div key={i} className="p-2 rounded-lg bg-stone-50/80 border border-gray-200">
                             <h5 className="font-medium text-sm">{resource.title}</h5>
                             <p className="text-sm text-muted-foreground">{resource.description}</p>
                           </div>
