@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import ChatInterface, { ChatInterfaceComponent } from "@/components/chat-interface";
 import InterviewPractice from "@/components/interview-practice";
 import JobSearch from "@/components/job-search";
@@ -17,9 +17,10 @@ import EmploymentRights from "@/components/employment-rights";
 import RiasecTest from "@/components/riasec-test";
 import EmotionalResilienceTracker from "@/components/emotional-resilience-tracker";
 import ResumeBuilder from "@/components/resume-builder";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { GraduationCap, Search, Book, Brain, FileText, Briefcase, DollarSign, MessageSquare, Scale } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 
 interface SkillGuidanceResponse {
   guidance: string;
@@ -103,6 +104,7 @@ export default function Career() {
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -134,8 +136,10 @@ export default function Career() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">Career Development</h1>
+    <div className="w-full h-full mx-auto p-0">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center pt-2">
+        Career Development
+      </h1>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl border-rose-50 bg-white">
@@ -144,6 +148,9 @@ export default function Career() {
               <GraduationCap className="h-6 w-6 text-primary" />
               Learning Path
             </DialogTitle>
+            <DialogDescription>
+              Career guidance based on your search query
+            </DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[60vh] pr-4">
             {isLoading ? (
@@ -157,65 +164,39 @@ export default function Career() {
         </DialogContent>
       </Dialog>
 
-      <div className="grid gap-4 sm:gap-6">
-        {SECTIONS.map((section) => (
-          <Card 
-            key={section.id}
-            className={cn(
-              "transition-all duration-300 ease-in-out overflow-hidden",
-              "hover:shadow-md bg-white w-full max-w-full",
-              expandedSection === section.id ? "shadow-lg" : "shadow-sm"
-            )}
-          >
-            {/* Only make the header clickable */}
-            <div 
-              onClick={() => handleCardClick(section.id)}
-              className="cursor-pointer"
-            >
-              <CardHeader className="px-3 sm:px-6 py-3 sm:py-4">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <section.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                  <CardTitle className="text-xl sm:text-2xl">{section.title}</CardTitle>
-                </div>
-                <CardDescription className="text-base sm:text-lg">
-                  {section.description}
-                </CardDescription>
-              </CardHeader>
-            </div>
-            <div
-              className={cn(
-                "transition-all duration-300 ease-in-out",
-                "overflow-hidden w-full",
-                expandedSection === section.id ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-              )}
-            >
-              <CardContent className="p-3 sm:p-6 w-full">
-                {expandedSection === section.id && (
-                  <div 
-                    className="w-full" 
-                    onClick={(e) => {
-                      // Stop the event from bubbling up to parent elements
-                      e.stopPropagation();
-                    }}
-                  >
-                    {(() => {
-                      if (section.id === 'chat') {
-                        // Use the component's required "category" prop
-                        return <ChatInterface category={CAREER_CATEGORY} />;
-                      } else if (section.props) {
-                        // For components with props, properly cast and pass their props
-                        return <section.component {...section.props as any} />;
-                      } else {
-                        // For components without props
-                        return <section.component />;
-                      }
-                    })()}
-                  </div>
-                )}
-              </CardContent>
-            </div>
-          </Card>
-        ))}
+      {/* Book-style card carousel */}
+      <div ref={carouselRef} className="book-carousel">
+        <BookCarousel>
+          {SECTIONS.map((section) => {
+            const isExpanded = expandedSection === section.id;
+            
+            return (
+              <BookPage key={section.id} id={section.id}>
+                <BookCard
+                  id={section.id}
+                  title={section.title}
+                  description={section.description}
+                  icon={section.icon}
+                  isExpanded={isExpanded}
+                  onToggle={handleCardClick}
+                >
+                  {(() => {
+                    if (section.id === 'chat') {
+                      // Use the component's required "category" prop
+                      return <ChatInterface category={CAREER_CATEGORY} />;
+                    } else if (section.props) {
+                      // For components with props, properly cast and pass their props
+                      return <section.component {...section.props as any} />;
+                    } else {
+                      // For components without props
+                      return <section.component />;
+                    }
+                  })()}
+                </BookCard>
+              </BookPage>
+            );
+          })}
+        </BookCarousel>
       </div>
     </div>
   );
