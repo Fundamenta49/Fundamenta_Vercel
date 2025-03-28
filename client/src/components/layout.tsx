@@ -42,7 +42,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
 
             <div className="mt-2 text-text-secondary text-sm">
-              {location === "/career" ? "Explore opportunities and build your professional skills" : 
+              {location === "/career" ? "" : // Removed subtitle for Career page
                location === "/finance" ? "Learn to manage your money effectively" : 
                location === "/wellness" ? "Tools and guidance for your wellbeing" :
                location === "/active" ? "Stay fit and healthy with personalized plans" :
