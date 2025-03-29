@@ -97,33 +97,7 @@ export default function Learning() {
     }
   ];
   
-  const ACADEMICS: Course[] = [
-    {
-      id: 'economics',
-      title: 'Economics',
-      description: 'Learn about markets, supply and demand, and economic policies',
-      icon: Icons.Calculator,
-      path: '/learning/courses/economics',
-      level: 'beginner',
-      popular: true
-    },
-    {
-      id: 'mathematics',
-      title: 'Mathematics',
-      description: 'From algebra to calculus and practical applications',
-      icon: Icons.Calculator,
-      path: '/learning/courses/mathematics',
-      level: 'intermediate'
-    },
-    {
-      id: 'literature',
-      title: 'Literature',
-      description: 'Explore classic and contemporary works',
-      icon: Icons.BookOpen,
-      path: '/learning/courses/literature',
-      level: 'beginner'
-    }
-  ];
+  const ACADEMICS: Course[] = [];
   
   const PROFESSIONAL: Course[] = [
     {
@@ -336,30 +310,7 @@ export default function Learning() {
           </div>
         </div>
         
-        {/* Academic Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-blue-50 text-blue-800 rounded-md border-l-4 border-blue-500">
-            Academic
-          </h2>
-          <div className="book-carousel">
-            <BookCarousel>
-              {ACADEMICS.map((course) => (
-                <BookPage key={course.id} id={course.id}>
-                  <BookCard
-                    id={course.id}
-                    title={course.title}
-                    description={course.description}
-                    icon={course.icon}
-                    isExpanded={expandedCourse === course.id}
-                    onToggle={handleCardClick}
-                    color="text-blue-500"
-                    children={renderCourseContent(course.id)}
-                  />
-                </BookPage>
-              ))}
-            </BookCarousel>
-          </div>
-        </div>
+        {/* Academic Section - Hidden as requested */}
         
         {/* Professional Section */}
         <div className="mb-8">
