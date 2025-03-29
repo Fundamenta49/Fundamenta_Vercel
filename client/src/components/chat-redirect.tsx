@@ -5,15 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Brain, ArrowRight, Sparkle } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Import the same types from chat-interface.tsx for compatibility
-export const LEARNING_CATEGORY = "learning" as const;
-export const COOKING_CATEGORY = "cooking" as const;
-export const EMERGENCY_CATEGORY = "emergency" as const;
-export const FINANCE_CATEGORY = "finance" as const;
-export const CAREER_CATEGORY = "career" as const;
-export const WELLNESS_CATEGORY = "wellness" as const;
-export const FITNESS_CATEGORY = "fitness" as const;
+import { 
+  LEARNING_CATEGORY,
+  COOKING_CATEGORY,
+  EMERGENCY_CATEGORY,
+  FINANCE_CATEGORY,
+  CAREER_CATEGORY,
+  WELLNESS_CATEGORY,
+  FITNESS_CATEGORY
+} from "@/components/chat-interface";
 
 export type ChatCategory = 
   | typeof LEARNING_CATEGORY

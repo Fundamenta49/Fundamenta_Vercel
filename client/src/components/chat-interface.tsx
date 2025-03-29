@@ -11,6 +11,16 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { toast } from '@/hooks/use-toast';
 
+// Category constants 
+export const EMERGENCY_CATEGORY = 'emergency';
+export const FINANCE_CATEGORY = 'finance';
+export const CAREER_CATEGORY = 'career';
+export const WELLNESS_CATEGORY = 'wellness';
+export const LEARNING_CATEGORY = 'learning';
+export const COOKING_CATEGORY = 'cooking';
+export const FITNESS_CATEGORY = 'fitness';
+export const GENERAL_CATEGORY = 'general';
+
 // Category colors for different advisor types
 const categoryColors: Record<string, string> = {
   finance: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300',

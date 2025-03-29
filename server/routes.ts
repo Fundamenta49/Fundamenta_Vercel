@@ -452,7 +452,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/interview/analyze", async (req, res) => {
     try {
-      // Using imported interviewAnalysisSchema
       const data = interviewAnalysisSchema.parse(req.body);
       const { answer, question, industry } = data;
 
@@ -538,7 +537,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/cover-letter/generate", async (req, res) => {
     try {
-      // Using imported coverLetterSchema
       const data = coverLetterSchema.parse(req.body);
       
       const letterContent = await generateCoverLetter(data);
@@ -680,7 +678,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Include resume routes
-  resumeRoutes(app);
+  app.use('/api/resume', resumeRoutes);
 
   // Return an HTTP server
   return createServer(app);
