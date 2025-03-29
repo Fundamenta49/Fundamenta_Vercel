@@ -184,10 +184,11 @@ export default function FloatingChat() {
     onSuccess: (response: any) => {
       setIsAiSpeaking(false);
       
-      if (response && response.message) {
+      // The API returns 'response' field, not 'message'
+      if (response && (response.response || response.message)) {
         const aiMessage: Message = {
           role: 'assistant',
-          content: response.message,
+          content: response.response || response.message, // Handle both formats
           timestamp: new Date(),
           actions: response.actions || [],
           suggestions: response.suggestions || []
