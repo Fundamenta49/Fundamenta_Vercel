@@ -64,6 +64,90 @@ export default function DecisionMakingCourse() {
       ],
       correctAnswer: 2,
       explanation: "A decision matrix helps you objectively compare different options by evaluating them against multiple criteria that you can weight according to importance."
+    },
+    {
+      id: 4,
+      question: "What is the 'sunk cost fallacy' in decision-making?",
+      options: [
+        "A strategy to recover previous investments",
+        "The tendency to continue an endeavor due to previously invested resources",
+        "A method for calculating future return on investment",
+        "The practice of cutting losses immediately at the first sign of trouble"
+      ],
+      correctAnswer: 1,
+      explanation: "The sunk cost fallacy is the tendency to continue an endeavor due to previously invested resources (time, money, effort) that cannot be recovered, rather than based on the actual future value of the decision."
+    },
+    {
+      id: 5,
+      question: "Which of the following is NOT a step in the rational decision-making process?",
+      options: [
+        "Identifying the problem or opportunity",
+        "Consulting with a spiritual advisor",
+        "Gathering relevant information",
+        "Evaluating alternatives"
+      ],
+      correctAnswer: 1,
+      explanation: "While personal or spiritual guidance may be valuable to some individuals, consulting with a spiritual advisor is not a formal step in the rational decision-making process, which focuses on objective analysis and evaluation."
+    },
+    {
+      id: 6,
+      question: "What is 'bounded rationality' in decision-making?",
+      options: [
+        "Making decisions within strict time limits",
+        "The idea that rationality is limited by available information, cognitive limitations, and time constraints",
+        "Using only mathematical models to make decisions",
+        "Setting clear boundaries before making any decision"
+      ],
+      correctAnswer: 1,
+      explanation: "Bounded rationality, a concept introduced by Herbert Simon, recognizes that human decision-making is limited by the information we have, our cognitive capabilities, and the finite time available to make decisions."
+    },
+    {
+      id: 7,
+      question: "What is the primary purpose of a SWOT analysis in decision-making?",
+      options: [
+        "To predict the exact outcome of a decision",
+        "To identify Strengths, Weaknesses, Opportunities, and Threats relevant to a decision",
+        "To assign tasks to team members based on their skills",
+        "To calculate the financial costs of different options"
+      ],
+      correctAnswer: 1,
+      explanation: "SWOT analysis is a structured planning method used to identify and evaluate the Strengths, Weaknesses, Opportunities, and Threats involved in a project or business decision, providing a comprehensive view of internal and external factors."
+    },
+    {
+      id: 8,
+      question: "Which of the following best describes 'satisficing' in decision-making?",
+      options: [
+        "Finding the absolute best possible solution regardless of time or resources",
+        "Accepting the first available option that meets minimum requirements",
+        "Making decisions based solely on emotional satisfaction",
+        "Consulting with all stakeholders before finalizing a decision"
+      ],
+      correctAnswer: 1,
+      explanation: "Satisficing, a term coined by Herbert Simon, is a decision-making strategy where individuals accept a satisfactory solution that meets their basic criteria rather than searching for an optimal solution. It acknowledges the practical limitations of time and cognitive resources."
+    },
+    {
+      id: 9,
+      question: "What is a 'decision tree' primarily used for?",
+      options: [
+        "Organizing corporate hierarchy",
+        "Mapping out possible decisions and their potential consequences",
+        "Categorizing different personality types in a team",
+        "Creating project timelines"
+      ],
+      correctAnswer: 1,
+      explanation: "A decision tree is a graphical representation of possible solutions to a decision based on certain conditions. It maps out different possible consequences and event outcomes, allowing decision-makers to compare various courses of action and their potential results."
+    },
+    {
+      id: 10,
+      question: "What is 'groupthink' in the context of decision-making?",
+      options: [
+        "A technique for gathering collective wisdom from large groups",
+        "The practice of voting on decisions in teams",
+        "A psychological phenomenon where desire for harmony leads to irrational decision-making",
+        "A formal method for reaching consensus in meetings"
+      ],
+      correctAnswer: 2,
+      explanation: "Groupthink is a psychological phenomenon that occurs within groups where the desire for harmony or conformity results in irrational or dysfunctional decision-making. People may withhold dissenting views to avoid conflict, leading to decisions that aren't fully vetted."
     }
   ];
 

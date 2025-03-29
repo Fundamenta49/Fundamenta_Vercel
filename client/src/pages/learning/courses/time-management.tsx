@@ -64,6 +64,90 @@ export default function TimeManagementCourse() {
       ],
       correctAnswer: 0,
       explanation: "Time blocking is a productivity method where you divide your day into blocks of time, each dedicated to accomplishing a specific task or group of tasks."
+    },
+    {
+      id: 4,
+      question: "What is the Pomodoro Technique?",
+      options: [
+        "Working in short, focused sprints with breaks in between",
+        "Completing the hardest tasks at the beginning of the day",
+        "Organizing tasks by color coding",
+        "Delegating tasks to team members based on their strengths"
+      ],
+      correctAnswer: 0,
+      explanation: "The Pomodoro Technique involves working in focused intervals (typically 25 minutes) followed by short breaks (5 minutes), with longer breaks after completing several work intervals."
+    },
+    {
+      id: 5,
+      question: "Which strategy helps combat procrastination?",
+      options: [
+        "Multitasking to complete more in less time",
+        "Setting unrealistic deadlines to push yourself",
+        "Breaking large tasks into smaller, manageable steps",
+        "Waiting for the perfect moment to begin"
+      ],
+      correctAnswer: 2,
+      explanation: "Breaking large, overwhelming tasks into smaller steps makes them feel more manageable and reduces the psychological resistance that leads to procrastination."
+    },
+    {
+      id: 6,
+      question: "What does the acronym 'SMART' refer to in goal setting?",
+      options: [
+        "Simple, Meaningful, Actionable, Realistic, Timely",
+        "Specific, Measurable, Achievable, Relevant, Time-bound",
+        "Strategic, Motivational, Accurate, Resourceful, Tactical",
+        "Scheduled, Monitored, Assigned, Reviewed, Tracked"
+      ],
+      correctAnswer: 1,
+      explanation: "SMART goals are Specific (clearly defined), Measurable (quantifiable), Achievable (realistic), Relevant (aligned with broader objectives), and Time-bound (with deadlines)."
+    },
+    {
+      id: 7,
+      question: "Which of these is NOT an effective strategy for managing digital distractions?",
+      options: [
+        "Using website blockers during focused work time",
+        "Having multiple tabs and applications open for quick task switching",
+        "Setting specific times to check email and social media",
+        "Putting your phone on 'Do Not Disturb' mode"
+      ],
+      correctAnswer: 1,
+      explanation: "Having multiple tabs and applications open encourages multitasking and increases the likelihood of distraction. The other options help minimize digital interruptions."
+    },
+    {
+      id: 8,
+      question: "What is 'time batching'?",
+      options: [
+        "Scheduling all meetings on one day of the week",
+        "Grouping similar tasks together to complete them more efficiently",
+        "Setting time limits for how long you'll work on any given task",
+        "Adding buffer time between tasks to prevent overrun"
+      ],
+      correctAnswer: 1,
+      explanation: "Time batching involves grouping similar tasks together (like responding to all emails, making all phone calls) to reduce the mental switching costs associated with changing between different types of work."
+    },
+    {
+      id: 9,
+      question: "What is the '2-minute rule' in time management?",
+      options: [
+        "Take a 2-minute break after completing each task",
+        "Spend 2 minutes planning before starting any task",
+        "If a task takes less than 2 minutes, do it immediately",
+        "Set a 2-minute timer when feeling stuck on a task"
+      ],
+      correctAnswer: 2,
+      explanation: "The 2-minute rule, popularized by David Allen in 'Getting Things Done,' states that if a task will take less than 2 minutes to complete, you should do it immediately rather than scheduling it for later."
+    },
+    {
+      id: 10,
+      question: "Which of the following best describes 'deep work'?",
+      options: [
+        "Working late into the night when distractions are minimal",
+        "Collaborative brainstorming in intensive team meetings",
+        "Professional activity performed in a state of distraction-free concentration",
+        "Completing many simple tasks in rapid succession"
+      ],
+      correctAnswer: 2,
+      explanation: "Deep work, a term coined by Cal Newport, refers to professional activities performed in a state of distraction-free concentration that push your cognitive capabilities to their limit, creating new value and improving your skills."
     }
   ];
 

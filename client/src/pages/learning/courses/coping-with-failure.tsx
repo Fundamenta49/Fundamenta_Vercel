@@ -64,6 +64,90 @@ export default function CopingWithFailureCourse() {
       ],
       correctAnswer: 2,
       explanation: "Post-traumatic growth refers to positive psychological changes that can occur as a result of struggling with highly challenging life circumstances, including failures and setbacks."
+    },
+    {
+      id: 4,
+      question: "Which of the following statements best describes resilience?",
+      options: [
+        "Never experiencing failure or setbacks",
+        "The ability to bounce back from difficulties and adapt to change",
+        "The ability to avoid challenging situations",
+        "Being emotionally unaffected by failure"
+      ],
+      correctAnswer: 1,
+      explanation: "Resilience is the capacity to recover quickly from difficulties and adapt to change. It's not about avoiding challenges or being emotionally unaffected, but rather about how effectively you respond to and grow from adversity."
+    },
+    {
+      id: 5,
+      question: "What is 'toxic positivity' in the context of coping with failure?",
+      options: [
+        "Using positive affirmations to overcome negative thoughts",
+        "The practice of maintaining a positive attitude in all situations",
+        "Dismissing negative emotions and insisting on positive thinking only",
+        "Being optimistic about future attempts after failure"
+      ],
+      correctAnswer: 2,
+      explanation: "Toxic positivity is the excessive and ineffective overgeneralization of a happy, optimistic state that minimizes and denies any genuine human emotions that are not strictly positive. It involves dismissing negative emotions rather than acknowledging and processing them."
+    },
+    {
+      id: 6,
+      question: "According to research, which of the following is most strongly associated with successful recovery from failure?",
+      options: [
+        "Having never failed before",
+        "Having a strong social support network",
+        "Being naturally talented",
+        "Being younger when failure occurs"
+      ],
+      correctAnswer: 1,
+      explanation: "Research consistently shows that having a strong social support network—people who can provide emotional support, practical help, and perspective—is strongly associated with successful recovery from failure and increased resilience."
+    },
+    {
+      id: 7,
+      question: "What is 'attributional retraining' in the context of dealing with failure?",
+      options: [
+        "Learning to blame others for your failures",
+        "Changing how you explain the causes of your successes and failures",
+        "Attributing all failures to bad luck",
+        "Training yourself to forget about past failures"
+      ],
+      correctAnswer: 1,
+      explanation: "Attributional retraining is a cognitive technique that involves changing how you explain the causes of events in your life. It helps people shift from unhelpful explanatory styles (like seeing failure as permanent and pervasive) to more constructive ones (viewing failure as temporary and specific)."
+    },
+    {
+      id: 8,
+      question: "Which of the following is an example of a productive 'failure analysis'?",
+      options: [
+        "Concluding that you're simply not good enough",
+        "Finding someone else to blame for the failure",
+        "Identifying specific factors that contributed to the outcome and potential improvements",
+        "Deciding to never attempt that type of task again"
+      ],
+      correctAnswer: 2,
+      explanation: "Productive failure analysis involves objectively identifying the specific factors that contributed to a failure and determining what can be improved in future attempts. It's focused on learning and adaptation rather than blame or avoidance."
+    },
+    {
+      id: 9,
+      question: "What is the concept of 'failing forward'?",
+      options: [
+        "Moving physically forward after failure to change your environment",
+        "Blaming yourself for failures and moving on",
+        "Using failures as stepping stones to success through learning and adaptation",
+        "Quickly moving on to the next project without analyzing what went wrong"
+      ],
+      correctAnswer: 2,
+      explanation: "Failing forward is the concept of using failures as stepping stones toward success by extracting valuable lessons from each setback, adapting your approach, and continuing to move toward your goals with new insights."
+    },
+    {
+      id: 10,
+      question: "Which psychological trait is characterized by the ability to stay committed to goals despite setbacks and view challenges as opportunities rather than threats?",
+      options: [
+        "Grit",
+        "Narcissism",
+        "Perfectionism",
+        "Neuroticism"
+      ],
+      correctAnswer: 0,
+      explanation: "Grit, a concept popularized by psychologist Angela Duckworth, is the combination of passion and perseverance for long-term goals, especially in the face of obstacles and failures. It involves staying committed to goals despite setbacks and viewing challenges as opportunities."
     }
   ];
 
