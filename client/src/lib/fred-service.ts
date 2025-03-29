@@ -5,7 +5,8 @@
  * specifically focused on mortgage rates and housing market indicators.
  */
 
-const FRED_API_KEY = import.meta.env.FRED_API_KEY || import.meta.env.VITE_FRED_API_KEY;
+// Access the FRED API key from environment variables with proper Vite formatting
+const FRED_API_KEY = import.meta.env.VITE_FRED_API_KEY || '';
 const FRED_BASE_URL = 'https://api.stlouisfed.org/fred/series/observations';
 
 export interface FredDataPoint {
@@ -94,6 +95,12 @@ export async function fetchFredData(
       formattedStartDate = date.toISOString().split('T')[0];
     }
     
+    // Check if API key is available
+    if (!FRED_API_KEY) {
+      console.warn("FRED API key is not available. Check environment variables.");
+      return [];
+    }
+    
     // Prepare API parameters
     const params: FredApiParams = {
       series_id: seriesId,
@@ -110,11 +117,22 @@ export async function fetchFredData(
     const response = await fetch(apiUrl);
     
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`FRED API Error: ${errorData.error_message || response.statusText}`);
+      // Handle non-JSON responses for error cases
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const errorData = await response.json();
+        throw new Error(`FRED API Error: ${errorData.error_message || response.statusText}`);
+      } else {
+        throw new Error(`FRED API Error: ${response.statusText}`);
+      }
     }
     
     const data = await response.json();
+    if (!data.observations) {
+      console.warn("FRED API response missing 'observations' field:", data);
+      return [];
+    }
+    
     return data.observations as FredDataPoint[];
   } catch (error) {
     console.error('Error fetching FRED data:', error);

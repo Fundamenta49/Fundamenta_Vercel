@@ -49,6 +49,22 @@ const DEFAULT_MORTGAGE_RATES: MortgageRateData = {
  */
 export async function getMortgageRates(): Promise<MortgageRateData> {
   try {
+    // Check if FRED API key is available
+    if (!import.meta.env.VITE_FRED_API_KEY) {
+      console.warn('FRED API key is not available. Using default values as fallback.');
+      return {
+        ...DEFAULT_MORTGAGE_RATES,
+        thirtyYearFixed: {
+          ...DEFAULT_MORTGAGE_RATES.thirtyYearFixed,
+          source: 'Default (API key not configured)'
+        },
+        fifteenYearFixed: {
+          ...DEFAULT_MORTGAGE_RATES.fifteenYearFixed,
+          source: 'Default (API key not configured)'
+        }
+      };
+    }
+    
     // Try FRED API first
     const fredRates = await fetchCurrentMortgageRates();
     
@@ -68,6 +84,34 @@ export async function getMortgageRates(): Promise<MortgageRateData> {
       };
     }
     
+    // FRED returned but with incomplete data
+    if (fredRates.thirtyYear?.value || fredRates.fifteenYear?.value) {
+      // We have partial data, use what we have and fallback for the rest
+      const partialResults: MortgageRateData = {
+        thirtyYearFixed: DEFAULT_MORTGAGE_RATES.thirtyYearFixed,
+        fifteenYearFixed: DEFAULT_MORTGAGE_RATES.fifteenYearFixed
+      };
+      
+      if (fredRates.thirtyYear?.value) {
+        partialResults.thirtyYearFixed = {
+          rate: parseFloat(fredRates.thirtyYear.value),
+          timestamp: fredRates.thirtyYear.date,
+          source: 'Federal Reserve Economic Data (FRED)'
+        };
+      }
+      
+      if (fredRates.fifteenYear?.value) {
+        partialResults.fifteenYearFixed = {
+          rate: parseFloat(fredRates.fifteenYear.value),
+          timestamp: fredRates.fifteenYear.date,
+          source: 'Federal Reserve Economic Data (FRED)'
+        };
+      }
+      
+      console.log('Using partial FRED data with fallbacks for missing values');
+      return partialResults;
+    }
+    
     // FRED failed, we could try another API source here
     // For example:
     // const otherApiRates = await fetchRatesFromOtherApi();
@@ -75,11 +119,31 @@ export async function getMortgageRates(): Promise<MortgageRateData> {
     
     // If all else fails, use default values
     console.log('Using default mortgage rates as fallback');
-    return DEFAULT_MORTGAGE_RATES;
+    return {
+      ...DEFAULT_MORTGAGE_RATES,
+      thirtyYearFixed: {
+        ...DEFAULT_MORTGAGE_RATES.thirtyYearFixed,
+        source: 'Default (FRED API unavailable)'
+      },
+      fifteenYearFixed: {
+        ...DEFAULT_MORTGAGE_RATES.fifteenYearFixed,
+        source: 'Default (FRED API unavailable)'
+      }
+    };
     
   } catch (error) {
     console.error('Error fetching mortgage rates:', error);
-    return DEFAULT_MORTGAGE_RATES;
+    return {
+      ...DEFAULT_MORTGAGE_RATES,
+      thirtyYearFixed: {
+        ...DEFAULT_MORTGAGE_RATES.thirtyYearFixed,
+        source: 'Default (API error occurred)'
+      },
+      fifteenYearFixed: {
+        ...DEFAULT_MORTGAGE_RATES.fifteenYearFixed,
+        source: 'Default (API error occurred)'
+      }
+    };
   }
 }
 
