@@ -221,14 +221,13 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
   return (
     <div className="space-y-4">
       <div className="flex items-start gap-4 mb-4">
-        {/* Completely redesigned SVG implementation */}
-        <div className="w-[64px] h-[64px] flex-shrink-0 overflow-visible flex items-center justify-center">
+        {/* FUNDAMENTAL CHANGE: White circle with robot inside */}
+        <div className="w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: 'white', border: '1px solid #e0e0e0' }}>
           <svg 
-            width="64" 
-            height="64" 
+            width="42" 
+            height="42" 
             viewBox="0 0 100 100" 
             xmlns="http://www.w3.org/2000/svg"
-            style={{ background: 'transparent' }}
           >
             {/* Robot body */}
             <g>
