@@ -5,44 +5,59 @@ import { Button } from '@/components/ui/button';
 import FloatingChat from '@/components/floating-chat';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import QuizComponent from '@/components/quiz-component';
-import ResourceLinks from '@/components/resource-links';
+import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
+import ResourceLinks, { Resource } from '@/components/resource-links';
 
 export default function CookingBasicsCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
 
   // Resources specific to cooking basics
-  const resources = [
+  const resources: Resource[] = [
     {
+      id: "1",
       title: "Cooking Techniques 101",
       url: "https://www.seriouseats.com/cooking-techniques-how-tos",
       description: "Essential cooking methods every home cook should know",
-      type: "guide"
+      type: "article",
+      level: "beginner",
+      free: true
     },
     {
+      id: "2",
       title: "Beginner Cooking Videos",
       url: "https://www.youtube.com/c/foodwishes",
       description: "Step-by-step visual guides for cooking basics",
-      type: "video"
+      type: "video",
+      level: "beginner",
+      free: true
     },
     {
+      id: "3",
       title: "Ingredient Substitutions Guide",
       url: "https://www.allrecipes.com/article/common-ingredient-substitutions/",
       description: "What to use when you're missing ingredients",
-      type: "reference"
+      type: "book",
+      level: "beginner",
+      free: true
     },
     {
+      id: "4",
       title: "r/Cooking",
       url: "https://www.reddit.com/r/cooking/",
       description: "Community forum for cooking questions and inspiration",
-      type: "community"
+      type: "practice",
+      level: "intermediate",
+      free: true
     },
     {
+      id: "5",
       title: "Recipe Calculator",
       url: "https://www.myfooddiary.com/resources/recipe_calculator.asp",
       description: "Calculate nutritional information for your recipes",
-      type: "tool"
+      type: "tool",
+      level: "beginner",
+      free: true
     }
   ];
 
@@ -165,9 +180,70 @@ export default function CookingBasicsCourse() {
               <QuizComponent 
                 subject="Cooking Basics"
                 difficulty="beginner"
-                numberOfQuestions={5}
-                onComplete={(results) => {
-                  console.log('Quiz results:', results);
+                questions={[
+                  {
+                    id: 1,
+                    question: "What cooking method involves quickly cooking food in a small amount of oil over high heat?",
+                    options: [
+                      "Boiling", 
+                      "Sautéing", 
+                      "Steaming", 
+                      "Braising"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "Sautéing involves cooking food quickly in a small amount of oil over relatively high heat, usually in a pan or skillet. It's perfect for cooking vegetables, thin cuts of meat, and creating flavor bases for dishes."
+                  },
+                  {
+                    id: 2,
+                    question: "Which knife is considered the most essential for general kitchen tasks?",
+                    options: [
+                      "Paring knife", 
+                      "Bread knife", 
+                      "Chef's knife", 
+                      "Boning knife"
+                    ],
+                    correctAnswer: 2,
+                    explanation: "The chef's knife (also called a cook's knife) is the most versatile and essential knife in the kitchen. Its curved blade allows for a rocking motion that makes chopping, dicing, and mincing efficient."
+                  },
+                  {
+                    id: 3,
+                    question: "What is the purpose of 'mise en place' in cooking?",
+                    options: [
+                      "A French plating technique", 
+                      "Preparing and organizing ingredients before cooking", 
+                      "Cleaning as you cook", 
+                      "Pairing wine with food"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "Mise en place is a French culinary phrase meaning 'everything in its place.' It refers to organizing and preparing all ingredients before you start cooking, which makes the cooking process more efficient and less stressful."
+                  },
+                  {
+                    id: 4,
+                    question: "What is the minimum safe internal temperature for cooking chicken?",
+                    options: [
+                      "145°F (63°C)", 
+                      "160°F (71°C)", 
+                      "165°F (74°C)", 
+                      "180°F (82°C)"
+                    ],
+                    correctAnswer: 2,
+                    explanation: "Chicken must reach an internal temperature of 165°F (74°C) to be considered safe to eat. This temperature kills harmful bacteria like Salmonella. Always use a food thermometer to check."
+                  },
+                  {
+                    id: 5,
+                    question: "Which of these is NOT a mother sauce in classical French cuisine?",
+                    options: [
+                      "Béchamel", 
+                      "Velouté", 
+                      "Mayonnaise", 
+                      "Espagnole"
+                    ],
+                    correctAnswer: 2,
+                    explanation: "The five mother sauces in classical French cuisine are Béchamel, Velouté, Espagnole, Hollandaise, and Tomato. Mayonnaise is considered a cold emulsion sauce, not a mother sauce."
+                  }
+                ]}
+                onComplete={(score, total) => {
+                  console.log(`Quiz results: ${score}/${total}`);
                 }}
               />
             </CardContent>
@@ -178,9 +254,8 @@ export default function CookingBasicsCourse() {
       {activeTab === 'resources' && (
         <div className="mb-6">
           <ResourceLinks 
+            subject="Cooking Basics"
             resources={resources}
-            title="Cooking Resources"
-            description="Helpful guides, videos, and communities for learning more about cooking"
           />
         </div>
       )}

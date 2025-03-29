@@ -5,44 +5,59 @@ import { Button } from '@/components/ui/button';
 import FloatingChat from '@/components/floating-chat';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import QuizComponent from '@/components/quiz-component';
-import ResourceLinks from '@/components/resource-links';
+import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
+import ResourceLinks, { Resource } from '@/components/resource-links';
 
 export default function HealthWellnessCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
 
   // Resources specific to health and wellness
-  const resources = [
+  const resources: Resource[] = [
     {
+      id: "1",
       title: "Physical Activity Guidelines",
       url: "https://health.gov/our-work/nutrition-physical-activity/physical-activity-guidelines",
       description: "Official physical activity recommendations for Americans",
-      type: "guide"
+      type: "article",
+      level: "beginner",
+      free: true
     },
     {
+      id: "2",
       title: "Meditation for Beginners",
       url: "https://www.youtube.com/c/Headspace",
       description: "Simple guided meditation videos for stress reduction",
-      type: "video"
+      type: "video",
+      level: "beginner",
+      free: true
     },
     {
+      id: "3",
       title: "MyPlate Food Guide",
       url: "https://www.myplate.gov/",
       description: "Nutrition guidance and meal planning resources",
-      type: "reference"
+      type: "book",
+      level: "beginner",
+      free: true
     },
     {
+      id: "4",
       title: "r/Fitness",
       url: "https://www.reddit.com/r/Fitness/",
       description: "Community forum for fitness advice and motivation",
-      type: "community"
+      type: "practice",
+      level: "intermediate",
+      free: true
     },
     {
+      id: "5",
       title: "Sleep Calculator",
       url: "https://sleepcalculator.com/",
       description: "Calculate optimal bedtimes based on sleep cycles",
-      type: "tool"
+      type: "tool",
+      level: "beginner",
+      free: true
     }
   ];
 
@@ -165,9 +180,70 @@ export default function HealthWellnessCourse() {
               <QuizComponent 
                 subject="Health and Wellness"
                 difficulty="beginner"
-                numberOfQuestions={5}
-                onComplete={(results) => {
-                  console.log('Quiz results:', results);
+                questions={[
+                  {
+                    id: 1,
+                    question: "How much moderate-intensity physical activity is recommended weekly for adults?",
+                    options: [
+                      "30 minutes once a week", 
+                      "At least 150 minutes per week", 
+                      "10 minutes per day", 
+                      "Only when feeling stressed"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "The CDC and WHO recommend at least 150 minutes of moderate-intensity physical activity per week (about 30 minutes, 5 days a week), plus muscle-strengthening activities on 2 or more days per week."
+                  },
+                  {
+                    id: 2,
+                    question: "Which of these is NOT a main food group according to USDA's MyPlate guidelines?",
+                    options: [
+                      "Fruits", 
+                      "Vegetables", 
+                      "Proteins", 
+                      "Sugars"
+                    ],
+                    correctAnswer: 3,
+                    explanation: "The five main food groups in the USDA's MyPlate guidelines are Fruits, Vegetables, Proteins, Grains, and Dairy. Sugars and added fats are not considered a food group but are recommended to be limited."
+                  },
+                  {
+                    id: 3,
+                    question: "What is an effective technique for stress management?",
+                    options: [
+                      "Consuming caffeine to stay alert", 
+                      "Practicing regular mindfulness meditation", 
+                      "Avoiding all challenging situations", 
+                      "Working longer hours"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "Regular mindfulness meditation has been shown to reduce stress, anxiety, and depression while improving focus and emotional regulation. Even short daily sessions (5-10 minutes) can provide benefits."
+                  },
+                  {
+                    id: 4,
+                    question: "How many hours of sleep are generally recommended for adults?",
+                    options: [
+                      "4-5 hours", 
+                      "5-6 hours", 
+                      "7-9 hours", 
+                      "10-12 hours"
+                    ],
+                    correctAnswer: 2,
+                    explanation: "The National Sleep Foundation recommends that adults get 7-9 hours of quality sleep per night. Consistent sleep schedules, a comfortable environment, and limiting screen time before bed all contribute to better sleep."
+                  },
+                  {
+                    id: 5,
+                    question: "Which is generally considered a healthy way to approach nutrition?",
+                    options: [
+                      "Completely eliminating all carbohydrates", 
+                      "Eating only one large meal daily", 
+                      "Following strict detox diets monthly", 
+                      "Eating a balanced diet with a variety of whole foods"
+                    ],
+                    correctAnswer: 3,
+                    explanation: "A balanced diet containing a variety of whole foods provides the necessary nutrients for optimal health. Most nutritionists recommend emphasizing fruits, vegetables, whole grains, lean proteins, and healthy fats while limiting processed foods, added sugars and excessive salt."
+                  }
+                ]}
+                onComplete={(score, total) => {
+                  console.log(`Quiz results: ${score}/${total}`);
                 }}
               />
             </CardContent>
@@ -178,9 +254,8 @@ export default function HealthWellnessCourse() {
       {activeTab === 'resources' && (
         <div className="mb-6">
           <ResourceLinks 
+            subject="Health & Wellness"
             resources={resources}
-            title="Health & Wellness Resources"
-            description="Helpful guides, videos, and tools for improving your physical and mental wellbeing"
           />
         </div>
       )}

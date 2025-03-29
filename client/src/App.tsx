@@ -16,6 +16,10 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
 import EconomicsCourse from "@/pages/learning/courses/economics";
+import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
+import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
+import CookingBasicsCourse from "@/pages/learning/courses/cooking-basics";
+import HealthWellnessCourse from "@/pages/learning/courses/health-wellness";
 import WelcomeTour from "@/components/welcome-tour";
 
 function Router() {
@@ -33,6 +37,10 @@ function Router() {
         <Route path="/wellness" component={Wellness} />
         <Route path="/active" component={Active} />
         <Route path="/learning" component={Learning} />
+        <Route path="/learning/courses/vehicle-maintenance" component={VehicleMaintenanceCourse} />
+        <Route path="/learning/courses/home-maintenance" component={HomeMaintenanceCourse} />
+        <Route path="/learning/courses/cooking-basics" component={CookingBasicsCourse} />
+        <Route path="/learning/courses/health-wellness" component={HealthWellnessCourse} />
         <Route path="/learning/courses/economics" component={EconomicsCourse} />
         <Route component={NotFound} />
       </Switch>
