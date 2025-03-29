@@ -313,7 +313,7 @@ export default function ChatInterface({
         <div className="flex w-full items-center gap-2">
           <Textarea
             id="chat-input"
-            className="min-h-10 max-h-32 resize-none py-2"
+            className="min-h-10 max-h-32 resize-none py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
