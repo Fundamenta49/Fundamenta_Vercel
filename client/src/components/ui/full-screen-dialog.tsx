@@ -20,7 +20,7 @@ const FullScreenDialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-40 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -68,7 +68,7 @@ const FullScreenDialogContent = React.forwardRef<
             left: 0,
             right: 0,
             bottom: 0,
-            zIndex: 50,
+            zIndex: 45,
             width: '100%',
             height: '100%',
             overflow: 'auto',

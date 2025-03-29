@@ -304,12 +304,12 @@ export default function FloatingChat() {
       className={cn(
         "fixed z-50 transition-all duration-300 ease-in-out",
         isMinimized
-          ? "bottom-4 right-4 w-14 h-14"
+          ? "top-4 right-4 w-14 h-14"
           : isMobile
             ? keyboardVisible
-              ? "bottom-0 left-0 right-0 w-full h-[40vh]"
-              : "bottom-0 left-0 right-0 w-full max-h-[75vh]"
-            : "bottom-4 right-4 w-96 h-[500px]",
+              ? "top-0 left-0 right-0 w-full h-[40vh]"
+              : "top-0 left-0 right-0 w-full max-h-[75vh]"
+            : "top-4 right-4 w-96 h-[500px]",
       )}
     >
       {isMinimized ? (
@@ -398,7 +398,7 @@ export default function FloatingChat() {
         <Card className={cn(
           "flex flex-col shadow-lg border-0",
           "overflow-hidden",
-          isMobile ? "h-full rounded-t-xl rounded-b-none" : "h-full rounded-xl"
+          isMobile ? "h-full rounded-b-xl rounded-t-none" : "h-full rounded-xl"
         )}>
           <div className="p-3 border-b flex items-center justify-between bg-background">
             <div className="flex items-center gap-2">
