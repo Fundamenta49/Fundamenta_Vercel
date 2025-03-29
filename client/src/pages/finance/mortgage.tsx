@@ -14,10 +14,13 @@ import {
   BookOpen,
   BarChart4,
   Info,
+  DollarSign,
+  FileText
 } from 'lucide-react';
 import MortgageCalculator from '@/components/mortgage-calculator';
 import MortgageMarketTrends from '@/components/mortgage-market-trends';
 import MortgageEducation from '@/components/mortgage-education';
+import ClosingCostCalculator from '@/components/closing-cost-calculator';
 import { 
   Dialog, 
   DialogContent, 
@@ -67,6 +70,7 @@ const MortgagePage: React.FC = () => {
                 </p>
                 <ul className="list-disc pl-5 space-y-1">
                   <li>Calculate monthly mortgage payments and total costs</li>
+                  <li>Understand closing costs, PMI, property taxes, and insurance expenses</li>
                   <li>View current mortgage rates and historical trends</li>
                   <li>Monitor housing market indicators</li>
                   <li>Learn about mortgage types, the approval process, and more</li>
@@ -81,11 +85,16 @@ const MortgagePage: React.FC = () => {
       </div>
 
       <Tabs defaultValue="calculator" className="space-y-4">
-        <TabsList className="grid grid-cols-3 w-full max-w-2xl mx-auto">
+        <TabsList className="grid grid-cols-4 w-full max-w-3xl mx-auto">
           <TabsTrigger value="calculator" className="flex items-center gap-2">
             <CalculatorIcon className="h-4 w-4" />
             <span className="hidden sm:inline">Mortgage Calculator</span>
             <span className="sm:hidden">Calculator</span>
+          </TabsTrigger>
+          <TabsTrigger value="costs" className="flex items-center gap-2">
+            <DollarSign className="h-4 w-4" />
+            <span className="hidden sm:inline">Closing Costs</span>
+            <span className="sm:hidden">Costs</span>
           </TabsTrigger>
           <TabsTrigger value="trends" className="flex items-center gap-2">
             <BarChart4 className="h-4 w-4" />
@@ -109,6 +118,23 @@ const MortgagePage: React.FC = () => {
             </CardHeader>
             <CardContent>
               <MortgageCalculator />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="costs" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                Closing Cost & Total Ownership Calculator
+              </CardTitle>
+              <CardDescription>
+                Understand all costs associated with buying a home, from down payment to insurance, taxes, and more
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ClosingCostCalculator />
             </CardContent>
           </Card>
         </TabsContent>
