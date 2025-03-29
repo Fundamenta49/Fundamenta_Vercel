@@ -3,7 +3,7 @@ import { ArrowLeft, BookOpen, ExternalLink, GraduationCap, BookIcon } from "luci
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatInterface from "@/components/chat-interface";
 import { LEARNING_CATEGORY } from "@/components/chat-interface";
 
@@ -127,149 +127,170 @@ export default function EconomicsCourse() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="mb-4">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="books">Recommended Books</TabsTrigger>
-                <TabsTrigger value="courses">Online Courses</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="overview" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Introduction to Economics</CardTitle>
-                    <CardDescription>Understanding the basics of economic theory</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p>
-                      Economics is the social science that studies how people interact with value, in particular, the production, 
-                      distribution, and consumption of goods and services. It helps us understand how societies allocate scarce 
-                      resources to satisfy unlimited wants and needs.
-                    </p>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-lg flex items-center gap-2">
-                            <BookOpen className="h-5 w-5 text-orange-500" />
-                            Microeconomics
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm">
-                            The study of how individual households and firms make decisions and how they interact in markets.
-                          </p>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-lg flex items-center gap-2">
-                            <BookOpen className="h-5 w-5 text-orange-500" />
-                            Macroeconomics
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm">
-                            The study of the economy as a whole, including topics like inflation, unemployment, and economic growth.
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                    
-                    <h3 className="text-lg font-semibold mt-6">Why Study Economics?</h3>
-                    <ul className="list-disc pl-6 space-y-2">
-                      <li>Make better personal financial decisions</li>
-                      <li>Understand government policies and their impacts</li>
-                      <li>Analyze business strategies and market trends</li>
-                      <li>Develop critical thinking and analytical skills</li>
-                      <li>Prepare for careers in business, finance, government, and more</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="books" className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {recommendedBooks.map((book, index) => (
-                    <Card key={index} className="flex flex-col h-full overflow-hidden">
+            <div className="space-y-8">
+              {/* Overview Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Introduction to Economics</CardTitle>
+                  <CardDescription>Understanding the basics of economic theory</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p>
+                    Economics is the social science that studies how people interact with value, in particular, the production, 
+                    distribution, and consumption of goods and services. It helps us understand how societies allocate scarce 
+                    resources to satisfy unlimited wants and needs.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                    <Card>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-lg line-clamp-2 h-14">{book.title}</CardTitle>
-                        <CardDescription>{book.author}</CardDescription>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-orange-500" />
+                          Microeconomics
+                        </CardTitle>
                       </CardHeader>
-                      <CardContent className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            book.level === "beginner" ? "bg-green-100 text-green-800" :
-                            book.level === "intermediate" ? "bg-yellow-100 text-yellow-800" :
-                            "bg-red-100 text-red-800"
-                          }`}>
-                            {book.level.charAt(0).toUpperCase() + book.level.slice(1)}
-                          </span>
-                        </div>
-                        <p className="text-sm line-clamp-4">{book.description}</p>
+                      <CardContent>
+                        <p className="text-sm">
+                          The study of how individual households and firms make decisions and how they interact in markets.
+                        </p>
                       </CardContent>
-                      <div className="p-4 mt-auto">
-                        <Button 
-                          variant="outline" 
-                          className="w-full"
-                          onClick={() => window.open(book.link, "_blank")}
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Find Book
-                        </Button>
-                      </div>
                     </Card>
-                  ))}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="courses" className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {onlineCourses.map((course, index) => (
-                    <Card key={index} className="flex flex-col h-full">
+                    
+                    <Card>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">{course.title}</CardTitle>
-                        <CardDescription className="flex items-center gap-1">
-                          <GraduationCap className="h-4 w-4" />
-                          {course.provider}
-                        </CardDescription>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-orange-500" />
+                          Macroeconomics
+                        </CardTitle>
                       </CardHeader>
-                      <CardContent className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            course.level === "beginner" ? "bg-green-100 text-green-800" :
-                            course.level === "intermediate" ? "bg-yellow-100 text-yellow-800" :
-                            "bg-red-100 text-red-800"
-                          }`}>
-                            {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                          </span>
-                          <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
-                            {course.duration}
-                          </span>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            course.free ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                          }`}>
-                            {course.free ? "Free" : "Paid"}
-                          </span>
-                        </div>
-                        <p className="text-sm mb-4">{course.description}</p>
+                      <CardContent>
+                        <p className="text-sm">
+                          The study of the economy as a whole, including topics like inflation, unemployment, and economic growth.
+                        </p>
                       </CardContent>
-                      <div className="p-4 mt-auto">
-                        <Button 
-                          variant="outline" 
-                          className="w-full"
-                          onClick={() => window.open(course.link, "_blank")}
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Go to Course
-                        </Button>
-                      </div>
                     </Card>
-                  ))}
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold mt-6">Why Study Economics?</h3>
+                  <ul className="list-disc pl-6 space-y-2">
+                    <li>Make better personal financial decisions</li>
+                    <li>Understand government policies and their impacts</li>
+                    <li>Analyze business strategies and market trends</li>
+                    <li>Develop critical thinking and analytical skills</li>
+                    <li>Prepare for careers in business, finance, government, and more</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              
+              {/* Recommended Books Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex-1 border-t border-muted"></div>
+                  <h2 className="text-xl font-semibold flex items-center">
+                    <span className="bg-orange-100 text-orange-800 p-1 rounded-md mr-2">
+                      <BookOpen className="h-5 w-5" />
+                    </span>
+                    Recommended Books
+                  </h2>
+                  <div className="flex-1 border-t border-muted"></div>
                 </div>
-              </TabsContent>
-            </Tabs>
+                
+                <ScrollArea className="max-h-[800px]">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {recommendedBooks.map((book, index) => (
+                      <Card key={index} className="flex flex-col h-full overflow-hidden">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-lg line-clamp-2 h-14">{book.title}</CardTitle>
+                          <CardDescription>{book.author}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              book.level === "beginner" ? "bg-green-100 text-green-800" :
+                              book.level === "intermediate" ? "bg-yellow-100 text-yellow-800" :
+                              "bg-red-100 text-red-800"
+                            }`}>
+                              {book.level.charAt(0).toUpperCase() + book.level.slice(1)}
+                            </span>
+                          </div>
+                          <p className="text-sm line-clamp-4">{book.description}</p>
+                        </CardContent>
+                        <div className="p-4 mt-auto">
+                          <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={() => window.open(book.link, "_blank")}
+                          >
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Find Book
+                          </Button>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+              
+              {/* Online Courses Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex-1 border-t border-muted"></div>
+                  <h2 className="text-xl font-semibold flex items-center">
+                    <span className="bg-orange-100 text-orange-800 p-1 rounded-md mr-2">
+                      <GraduationCap className="h-5 w-5" />
+                    </span>
+                    Online Courses
+                  </h2>
+                  <div className="flex-1 border-t border-muted"></div>
+                </div>
+                
+                <ScrollArea className="max-h-[800px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {onlineCourses.map((course, index) => (
+                      <Card key={index} className="flex flex-col h-full">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-lg">{course.title}</CardTitle>
+                          <CardDescription className="flex items-center gap-1">
+                            <GraduationCap className="h-4 w-4" />
+                            {course.provider}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              course.level === "beginner" ? "bg-green-100 text-green-800" :
+                              course.level === "intermediate" ? "bg-yellow-100 text-yellow-800" :
+                              "bg-red-100 text-red-800"
+                            }`}>
+                              {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
+                            </span>
+                            <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                              {course.duration}
+                            </span>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              course.free ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                            }`}>
+                              {course.free ? "Free" : "Paid"}
+                            </span>
+                          </div>
+                          <p className="text-sm mb-4">{course.description}</p>
+                        </CardContent>
+                        <div className="p-4 mt-auto">
+                          <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={() => window.open(course.link, "_blank")}
+                          >
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Go to Course
+                          </Button>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
           </div>
           
           <div className="flex flex-col gap-4">
