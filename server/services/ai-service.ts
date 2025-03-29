@@ -164,13 +164,29 @@ export class AIService {
     previousMessages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = []
   ): Promise<AIProcessingResult> {
     try {
+      let emotionAnalysis, detectedCategory;
+      
       // 1. Use HuggingFace to analyze message for emotion and content category
-      const [emotionAnalysis, detectedCategory] = await Promise.all([
-        analyzeUserEmotion(message),
-        category ? Promise.resolve(category) : getContentCategory(message)
-      ]);
+      // Handle each analysis separately for better error handling
+      try {
+        emotionAnalysis = await analyzeUserEmotion(message);
+      } catch (error) {
+        console.warn("Emotion analysis failed, using defaults:", error);
+        emotionAnalysis = {
+          primaryEmotion: 'neutral',
+          emotionScore: 0.5,
+          emotions: [{ emotion: 'neutral', score: 0.5 }]
+        };
+      }
+      
+      try {
+        detectedCategory = category ? category : await getContentCategory(message);
+      } catch (error) {
+        console.warn("Category detection failed, using defaults:", error);
+        detectedCategory = category || 'general';
+      }
 
-      // 2. Determine the appropriate AI advisor role based on category
+      // 2. Determine the appropriate AI advisor role based on category  
       const advisorRole = this.mapCategoryToAdvisorRole(category || detectedCategory);
 
       // 3. Get the specialized system prompt for this advisor
@@ -202,10 +218,21 @@ export class AIService {
       };
     } catch (error) {
       console.error("AI Processing Error:", error);
-      if (error instanceof Error) {
-        throw new Error("Failed to process message: " + error.message);
-      }
-      throw new Error("Failed to process message: Unknown error");
+      
+      // Instead of throwing an error, return a fallback response
+      return {
+        response: "I'm having trouble processing your request right now. Let me try to help with a simpler response. What specific information or assistance do you need?",
+        category: category || 'general',
+        sentiment: 'neutral',
+        confidence: 0.5,
+        actions: [],
+        suggestions: [],
+        followUpQuestions: [
+          "Could you rephrase your question?",
+          "Would you like me to explain something specific?",
+          "Can I help with a different topic?"
+        ]
+      };
     }
   }
 
@@ -455,10 +482,17 @@ export class AIService {
       };
     } catch (error) {
       console.error("OpenAI API Error:", error);
-      if (error instanceof Error) {
-        throw new Error("Failed to generate response: " + error.message);
-      }
-      throw new Error("Failed to generate response: Unknown error");
+      
+      // Instead of throwing errors, provide a fallback response
+      return {
+        response: "I apologize, but I'm having trouble processing your request at the moment. Could you please try again with a simpler question?",
+        actions: [],
+        suggestions: [],
+        followUpQuestions: [
+          "Could you rephrase your question?", 
+          "Can I help with something else?"
+        ]
+      };
     }
   }
 
@@ -514,10 +548,19 @@ export class AIService {
       };
     } catch (error) {
       console.error("Resume Analysis Error:", error);
-      if (error instanceof Error) {
-        throw new Error("Failed to analyze resume: " + error.message);
-      }
-      throw new Error("Failed to analyze resume: Unknown error");
+      
+      // Return a simplified fallback response
+      return {
+        summary: "I was unable to fully analyze the resume at this time.",
+        skills: ["Unable to extract skills at this time"],
+        experience: ["Could not process experience details"],
+        education: ["Education information could not be analyzed"],
+        suggestions: [
+          "Consider checking the resume format and trying again",
+          "Make sure the resume text is clear and well-structured",
+          "Try uploading a different file format if available"
+        ]
+      };
     }
   }
 
@@ -570,10 +613,19 @@ export class AIService {
       };
     } catch (error) {
       console.error("Journal Analysis Error:", error);
-      if (error instanceof Error) {
-        throw new Error("Failed to analyze journal entry: " + error.message);
-      }
-      throw new Error("Failed to analyze journal entry: Unknown error");
+      
+      // Return a simplified fallback response
+      return {
+        emotions: [{ label: "neutral", score: 0.5 }],
+        topics: ["Unable to analyze topics at this time"],
+        themes: ["Journal analysis unavailable"],
+        insights: ["Try again with a simpler entry"],
+        wordCloud: [
+          { text: "journal", value: 5 },
+          { text: "entry", value: 5 },
+          { text: "analysis", value: 5 }
+        ]
+      };
     }
   }
 }

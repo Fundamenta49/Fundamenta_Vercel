@@ -170,14 +170,14 @@ export default function FloatingChat() {
       const path = location.startsWith("/") ? location.substring(1) : location;
       const category = path || "home";
       
-      const response = await apiRequest({
-        url: "/api/chat/orchestrator",
-        method: "POST",
-        data: { 
+      const response = await apiRequest(
+        "POST",
+        "/api/chat/orchestrator",
+        { 
           message,
           category
         }
-      });
+      );
       
       return response;
     },

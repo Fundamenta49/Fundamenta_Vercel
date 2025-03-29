@@ -53,6 +53,12 @@ class HuggingFaceAPI {
    * @returns Promise with the model's response
    */
   async query<T>(model: string, inputs: any, options: any = {}): Promise<T> {
+    // Check for API key first and warn if missing
+    if (!this.apiKey || this.apiKey.trim() === '') {
+      console.error(`HuggingFace API key is missing or empty. Cannot make request to model: ${model}`);
+      throw new Error('HuggingFace API key is required. Please set the HUGGINGFACE_API_KEY environment variable.');
+    }
+    
     try {
       const response = await axios({
         url: `${this.baseURL}/${model}`,
@@ -71,15 +77,41 @@ class HuggingFaceAPI {
       return response.data;
     } catch (error) {
       console.error(`HuggingFace API Error (${model}):`, error);
+      
+      // Enhanced error logging with request details for better debugging
+      const requestDetails = {
+        model,
+        inputType: typeof inputs === 'string' ? 'string' : (Array.isArray(inputs) ? 'array' : 'object'),
+        inputLength: typeof inputs === 'string' ? inputs.length : 
+                    (Array.isArray(inputs) ? inputs.length : Object.keys(inputs).length),
+        options: options
+      };
+      console.error('Request details:', requestDetails);
+      
+      // Provide specific error messages based on error type
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          throw new Error(`HuggingFace API error (${error.response.status}): ${error.response.data.error || 'Unknown error'}`);
+          const statusCode = error.response.status;
+          const errorMessage = error.response.data.error || 'Unknown error';
+          
+          if (statusCode === 401 || statusCode === 403) {
+            console.error('Authentication failed. Check your API key.');
+          } else if (statusCode === 429) {
+            console.error('Rate limit exceeded. Try again later.');
+          } else if (statusCode >= 500) {
+            console.error('HuggingFace service error. The model might be unavailable.');
+          }
+          
+          throw new Error(`HuggingFace API error (${statusCode}): ${errorMessage}`);
         } else if (error.request) {
+          console.error('No response received. Check your network connection.');
           throw new Error(`HuggingFace API request failed: No response received`);
         } else {
+          console.error('Request setup failed:', error.message);
           throw new Error(`HuggingFace API request setup failed: ${error.message}`);
         }
       }
+      
       throw new Error(`HuggingFace API unknown error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

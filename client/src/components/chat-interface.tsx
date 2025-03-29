@@ -328,7 +328,7 @@ export default function ChatInterface({
                   className={`
                     max-w-[80%] rounded-lg px-3 py-2 
                     ${msg.role === 'user' 
-                      ? 'bg-primary text-primary-foreground' 
+                      ? 'bg-blue-100 text-blue-900 dark:bg-blue-700 dark:text-blue-50' 
                       : 'bg-muted'
                     }
                   `}
