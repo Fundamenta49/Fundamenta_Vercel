@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Home, DollarSign, Calculator, Brain, CreditCard, PiggyBank, Building } from "lucide-react";
+import ChatInterface, { ChatInterfaceComponent } from "@/components/chat-interface";
 import BudgetCalculator, { BudgetData } from "@/components/budget-calculator";
 import BankLink from "@/components/bank-link";
 import RetirementPlanning from "@/components/retirement-planning";
@@ -17,7 +18,8 @@ import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 
-// No longer needed since we've removed the Finance AI Advisor
+// Define finance as a const to ensure proper type inference
+const FINANCE_CATEGORY = "finance" as const;
 
 // Type definitions for section components
 type ComponentWithBudgetUpdate = {
@@ -28,17 +30,38 @@ type ComponentWithBudgetData = {
   budgetData: BudgetData | null;
 };
 
+type ChatInterfaceProps = {
+  category: typeof FINANCE_CATEGORY;
+};
+
 type Section = {
   id: string;
   title: string;
   description: string;
   icon: React.ElementType;
   component: React.ComponentType<any>;
-  props?: ComponentWithBudgetUpdate | ComponentWithBudgetData;
+  props?: ComponentWithBudgetUpdate | ComponentWithBudgetData | ChatInterfaceProps;
   alert?: React.ReactNode;
 };
 
 const SECTIONS: Section[] = [
+  {
+    id: 'advisor',
+    title: 'Financial AI Advisor',
+    description: 'Get personalized financial advice and guidance',
+    icon: Brain,
+    component: ChatInterface as ChatInterfaceComponent,
+    props: { category: FINANCE_CATEGORY },
+    alert: (
+      <Alert className="mt-4 border-blue-500 bg-blue-50">
+        <AlertCircle className="h-4 w-4 text-blue-500" />
+        <AlertDescription className="text-blue-800 text-sm">
+          The AI advisor provides general guidance based on publicly available financial information.
+          For specific advice, please consult with a qualified financial professional.
+        </AlertDescription>
+      </Alert>
+    )
+  },
   {
     id: 'budget',
     title: 'Smart Budget Planner',
@@ -137,7 +160,15 @@ export default function Finance() {
                     {section.alert && (
                       <div className="mb-4">{section.alert}</div>
                     )}
-                    <section.component {...(section.props || {})} />
+                    {(() => {
+                      if (section.id === 'advisor') {
+                        // Use the component's required "category" prop
+                        return <ChatInterface category={FINANCE_CATEGORY} />;
+                      } else {
+                        // For regular components
+                        return <section.component {...(section.props || {})} />;
+                      }
+                    })()}
                   </div>
                 </BookCard>
               </BookPage>

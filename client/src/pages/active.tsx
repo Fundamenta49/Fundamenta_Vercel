@@ -6,26 +6,53 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import ChatInterface, { 
+  ChatInterfaceComponent, 
+  FITNESS_CATEGORY 
+} from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
-import { Brain, Dumbbell, Bird as YogaIcon, Timer, User } from "lucide-react";
+import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 
 // Define a type for our sections to improve TypeScript support
+type ChatInterfaceProps = {
+  category: typeof FITNESS_CATEGORY;
+};
+
 type SectionType = {
   id: string;
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   component: React.ComponentType<any>;
-  props?: Record<string, any>;
+  props?: Record<string, any> | ChatInterfaceProps;
+  alert?: React.ReactNode;
 };
 
 const SECTIONS: SectionType[] = [
+  {
+    id: 'coach',
+    title: 'Fitness AI Coach',
+    description: 'Get personalized workout plans and fitness advice',
+    icon: Brain,
+    component: ChatInterface as ChatInterfaceComponent,
+    props: { category: FITNESS_CATEGORY },
+    alert: (
+      <Alert className="mt-4 border-pink-500 bg-pink-50">
+        <AlertCircle className="h-4 w-4 text-pink-500" />
+        <AlertDescription className="text-pink-800 text-sm">
+          The AI coach provides general fitness guidance. Always consult with a healthcare 
+          professional before starting a new fitness program.
+        </AlertDescription>
+      </Alert>
+    )
+  },
   {
     id: 'activeyou',
     title: 'ActiveYou Profile',
@@ -172,7 +199,18 @@ export default function Active() {
                   onToggle={handleCardClick}
                   color="text-pink-500" // Active section color from the home page
                 >
-                  <section.component {...section.props} />
+                  {section.alert && (
+                    <div className="mb-4">{section.alert}</div>
+                  )}
+                  {(() => {
+                    if (section.id === 'coach') {
+                      // Use the component's required "category" prop
+                      return <ChatInterface category={FITNESS_CATEGORY} />;
+                    } else {
+                      // For regular components
+                      return <section.component {...section.props} />;
+                    }
+                  })()}
                 </BookCard>
               </BookPage>
             );

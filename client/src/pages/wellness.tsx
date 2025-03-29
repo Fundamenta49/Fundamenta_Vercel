@@ -7,6 +7,10 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle } from "lucide-react";
+import ChatInterface, { 
+  ChatInterfaceComponent, 
+  WELLNESS_CATEGORY 
+} from "@/components/chat-interface";
 import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
@@ -16,16 +20,38 @@ import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 
+type ChatInterfaceProps = {
+  category: typeof WELLNESS_CATEGORY;
+};
+
 type SectionType = {
   id: string;
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   component: React.ComponentType<any>;
-  props?: Record<string, any>;
+  props?: Record<string, any> | ChatInterfaceProps;
+  alert?: React.ReactNode;
 };
 
 const SECTIONS: SectionType[] = [
+  {
+    id: 'coach',
+    title: 'Wellness AI Coach',
+    description: 'Get personalized guidance on nutrition, mental health, and wellness',
+    icon: Brain,
+    component: ChatInterface as ChatInterfaceComponent,
+    props: { category: WELLNESS_CATEGORY },
+    alert: (
+      <Alert className="mt-4 border-purple-500 bg-purple-50">
+        <AlertCircle className="h-4 w-4 text-purple-500" />
+        <AlertDescription className="text-purple-800 text-sm">
+          The AI coach provides general wellness guidance based on public health information.
+          Always consult healthcare professionals for medical advice.
+        </AlertDescription>
+      </Alert>
+    )
+  },
   {
     id: 'braintap',
     title: 'BrainTap',
@@ -102,7 +128,18 @@ export default function Wellness() {
                   color="text-purple-500" // Wellness section color from the home page
                 >
                   <div className="w-full">
-                    <section.component {...(section.props || {})} />
+                    {section.alert && (
+                      <div className="mb-4">{section.alert}</div>
+                    )}
+                    {(() => {
+                      if (section.id === 'coach') {
+                        // Use the component's required "category" prop
+                        return <ChatInterface category={WELLNESS_CATEGORY} />;
+                      } else {
+                        // For regular components
+                        return <section.component {...(section.props || {})} />;
+                      }
+                    })()}
                   </div>
                 </BookCard>
               </BookPage>
