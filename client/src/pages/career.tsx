@@ -2,7 +2,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { FullScreenDialog } from "@/components/ui/full-screen-dialog";
+import { 
+  FullScreenDialog, 
+  FullScreenDialogContent, 
+  FullScreenDialogHeader, 
+  FullScreenDialogTitle, 
+  FullScreenDialogDescription, 
+  FullScreenDialogBody 
+} from "@/components/ui/full-screen-dialog";
 import CareerCoachPopOut from "@/components/career-coach-pop-out";
 import CareerAssessmentPopOut from "@/components/career-assessment-pop-out";
 import ResumeBuilderPopOut from "@/components/resume-builder-pop-out";
@@ -90,6 +97,7 @@ const SECTIONS: SectionType[] = [
 
 export default function Career() {
   const [activeDialog, setActiveDialog] = useState<string | null>(null);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -163,26 +171,55 @@ export default function Career() {
             if (!open) setActiveDialog(null);
           }}
         >
-          <section.component />
+          <FullScreenDialogContent>
+            <section.component />
+          </FullScreenDialogContent>
         </FullScreenDialog>
       ))}
 
       {/* Book-style card carousel */}
       <div ref={carouselRef} className="book-carousel">
         <BookCarousel>
-          {SECTIONS.map((section) => (
-            <BookPage key={section.id} id={section.id}>
-              <BookCard
-                id={section.id}
-                title={section.title}
-                description={section.description}
-                icon={section.icon}
-                isExpanded={false}
-                onToggle={handleCardClick}
-                color="text-blue-500" // Career section color from the home page
-              />
-            </BookPage>
-          ))}
+          {SECTIONS.map((section) => {
+            const isExpanded = expandedSection === section.id;
+            
+            return (
+              <BookPage key={section.id} id={section.id}>
+                <BookCard
+                  id={section.id}
+                  title={section.title}
+                  description={section.description}
+                  icon={section.icon}
+                  isExpanded={isExpanded}
+                  onToggle={(sectionId) => {
+                    if (isExpanded) {
+                      setExpandedSection(null);
+                    } else {
+                      setExpandedSection(sectionId);
+                    }
+                  }}
+                  color="text-blue-500" // Career section color from the home page
+                >
+                  {isExpanded && (
+                    <div className="flex flex-col gap-4">
+                      <p className="text-sm text-muted-foreground">
+                        {section.description}
+                      </p>
+                      <Button 
+                        className="w-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveDialog(section.id);
+                        }}
+                      >
+                        Open {section.title}
+                      </Button>
+                    </div>
+                  )}
+                </BookCard>
+              </BookPage>
+            );
+          })}
         </BookCarousel>
       </div>
     </div>
