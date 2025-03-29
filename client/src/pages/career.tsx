@@ -19,6 +19,7 @@ import InterviewPracticePopOut from "@/components/interview-practice-pop-out";
 import EmotionalResiliencePopOut from "@/components/emotional-resilience-pop-out";
 import EmploymentRightsPopOut from "@/components/employment-rights-pop-out";
 import React, { useState, useRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { GraduationCap, Search, Book, Brain, FileText, Briefcase, DollarSign, MessageSquare, Scale } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
@@ -103,6 +104,7 @@ export default function Career() {
   const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -230,6 +232,21 @@ export default function Career() {
                     </div>
                   )}
                 </BookCard>
+                
+                {/* Mobile quick-access button */}
+                {isMobile && !isExpanded && (
+                  <div className="mt-4">
+                    <Button 
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveDialog(section.id);
+                      }}
+                    >
+                      Open {section.title}
+                    </Button>
+                  </div>
+                )}
               </BookPage>
             );
           })}
