@@ -59,9 +59,8 @@ export default function Learning() {
   // Course expansion states
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
   
-  // Define courses
-  const COURSES: Course[] = [
-    // Life Skills
+  // Group courses by categories
+  const LIFE_SKILLS: Course[] = [
     {
       id: 'vehicle-maintenance',
       title: 'Vehicle Maintenance',
@@ -96,8 +95,10 @@ export default function Learning() {
       path: '/learning/courses/health-wellness',
       level: 'beginner',
       new: true
-    },
-    // Academics
+    }
+  ];
+  
+  const ACADEMICS: Course[] = [
     {
       id: 'economics',
       title: 'Economics',
@@ -122,8 +123,10 @@ export default function Learning() {
       icon: Icons.BookOpen,
       path: '/learning/courses/literature',
       level: 'beginner'
-    },
-    // Professional
+    }
+  ];
+  
+  const PROFESSIONAL: Course[] = [
     {
       id: 'programming',
       title: 'Programming',
@@ -149,8 +152,10 @@ export default function Learning() {
       path: '/learning/courses/marketing',
       level: 'intermediate',
       new: true
-    },
-    // Languages
+    }
+  ];
+  
+  const LANGUAGES: Course[] = [
     {
       id: 'spanish',
       title: 'Spanish',
@@ -175,8 +180,10 @@ export default function Learning() {
       icon: Icons.Languages,
       path: '/learning/courses/french',
       level: 'beginner'
-    },
-    // Creative
+    }
+  ];
+  
+  const CREATIVE: Course[] = [
     {
       id: 'photography',
       title: 'Photography',
@@ -202,6 +209,15 @@ export default function Learning() {
       level: 'beginner',
       new: true
     }
+  ];
+  
+  // Combine all courses, with life skills first as requested
+  const COURSES: Course[] = [
+    ...LIFE_SKILLS,
+    ...ACADEMICS,
+    ...PROFESSIONAL,
+    ...LANGUAGES,
+    ...CREATIVE
   ];
 
   const handleCardClick = (courseId: string) => {
@@ -302,24 +318,132 @@ export default function Learning() {
         </Button>
       </div>
 
-      {/* Book-style card carousel */}
-      <div ref={carouselRef} className="book-carousel">
-        <BookCarousel>
-          {COURSES.map((course) => (
-            <BookPage key={course.id} id={course.id}>
-              <BookCard
-                id={course.id}
-                title={course.title}
-                description={course.description}
-                icon={course.icon}
-                isExpanded={expandedCourse === course.id}
-                onToggle={handleCardClick}
-                color="text-orange-500" // Learning section color from the home page
-                children={renderCourseContent(course.id)}
-              />
-            </BookPage>
-          ))}
-        </BookCarousel>
+      {/* Categories with book-style cards */}
+      <div className="px-4 sm:px-6">
+        {/* Life Skills Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-orange-50 text-orange-800 rounded-md border-l-4 border-orange-500">
+            Life Skills
+          </h2>
+          <div ref={carouselRef} className="book-carousel">
+            <BookCarousel>
+              {LIFE_SKILLS.map((course) => (
+                <BookPage key={course.id} id={course.id}>
+                  <BookCard
+                    id={course.id}
+                    title={course.title}
+                    description={course.description}
+                    icon={course.icon}
+                    isExpanded={expandedCourse === course.id}
+                    onToggle={handleCardClick}
+                    color="text-orange-500" // Learning section color
+                    children={renderCourseContent(course.id)}
+                  />
+                </BookPage>
+              ))}
+            </BookCarousel>
+          </div>
+        </div>
+        
+        {/* Academic Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-blue-50 text-blue-800 rounded-md border-l-4 border-blue-500">
+            Academic
+          </h2>
+          <div className="book-carousel">
+            <BookCarousel>
+              {ACADEMICS.map((course) => (
+                <BookPage key={course.id} id={course.id}>
+                  <BookCard
+                    id={course.id}
+                    title={course.title}
+                    description={course.description}
+                    icon={course.icon}
+                    isExpanded={expandedCourse === course.id}
+                    onToggle={handleCardClick}
+                    color="text-blue-500"
+                    children={renderCourseContent(course.id)}
+                  />
+                </BookPage>
+              ))}
+            </BookCarousel>
+          </div>
+        </div>
+        
+        {/* Professional Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-green-50 text-green-800 rounded-md border-l-4 border-green-500">
+            Professional
+          </h2>
+          <div className="book-carousel">
+            <BookCarousel>
+              {PROFESSIONAL.map((course) => (
+                <BookPage key={course.id} id={course.id}>
+                  <BookCard
+                    id={course.id}
+                    title={course.title}
+                    description={course.description}
+                    icon={course.icon}
+                    isExpanded={expandedCourse === course.id}
+                    onToggle={handleCardClick}
+                    color="text-green-500"
+                    children={renderCourseContent(course.id)}
+                  />
+                </BookPage>
+              ))}
+            </BookCarousel>
+          </div>
+        </div>
+        
+        {/* Languages Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-purple-50 text-purple-800 rounded-md border-l-4 border-purple-500">
+            Languages
+          </h2>
+          <div className="book-carousel">
+            <BookCarousel>
+              {LANGUAGES.map((course) => (
+                <BookPage key={course.id} id={course.id}>
+                  <BookCard
+                    id={course.id}
+                    title={course.title}
+                    description={course.description}
+                    icon={course.icon}
+                    isExpanded={expandedCourse === course.id}
+                    onToggle={handleCardClick}
+                    color="text-purple-500"
+                    children={renderCourseContent(course.id)}
+                  />
+                </BookPage>
+              ))}
+            </BookCarousel>
+          </div>
+        </div>
+        
+        {/* Creative Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-pink-50 text-pink-800 rounded-md border-l-4 border-pink-500">
+            Creative
+          </h2>
+          <div className="book-carousel">
+            <BookCarousel>
+              {CREATIVE.map((course) => (
+                <BookPage key={course.id} id={course.id}>
+                  <BookCard
+                    id={course.id}
+                    title={course.title}
+                    description={course.description}
+                    icon={course.icon}
+                    isExpanded={expandedCourse === course.id}
+                    onToggle={handleCardClick}
+                    color="text-pink-500"
+                    children={renderCourseContent(course.id)}
+                  />
+                </BookPage>
+              ))}
+            </BookCarousel>
+          </div>
+        </div>
       </div>
 
       {/* Always show either the pop-out chat or the floating chat */}

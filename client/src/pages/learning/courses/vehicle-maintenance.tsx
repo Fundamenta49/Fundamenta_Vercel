@@ -80,28 +80,41 @@ export default function VehicleMaintenanceCourse() {
         </h1>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <Button
-          variant={activeTab === 'learn' ? 'default' : 'outline'}
-          className={activeTab === 'learn' ? 'bg-orange-500 hover:bg-orange-600' : ''}
-          onClick={() => setActiveTab('learn')}
-        >
-          Learn
-        </Button>
-        <Button
-          variant={activeTab === 'practice' ? 'default' : 'outline'}
-          className={activeTab === 'practice' ? 'bg-orange-500 hover:bg-orange-600' : ''}
-          onClick={() => setActiveTab('practice')}
-        >
-          Test Your Knowledge
-        </Button>
-        <Button
-          variant={activeTab === 'resources' ? 'default' : 'outline'}
-          className={activeTab === 'resources' ? 'bg-orange-500 hover:bg-orange-600' : ''}
-          onClick={() => setActiveTab('resources')}
-        >
-          Resources
-        </Button>
+      <div className="mb-6">
+        <div className="bg-gray-100 p-1 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div 
+              className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
+                activeTab === 'learn' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-700 hover:bg-gray-200'
+              }`}
+              onClick={() => setActiveTab('learn')}
+            >
+              <span className="text-sm font-medium">Learn</span>
+            </div>
+            <div 
+              className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
+                activeTab === 'practice' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-700 hover:bg-gray-200'
+              }`}
+              onClick={() => setActiveTab('practice')}
+            >
+              <span className="text-sm font-medium">Practice</span>
+            </div>
+            <div 
+              className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
+                activeTab === 'resources' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-700 hover:bg-gray-200'
+              }`}
+              onClick={() => setActiveTab('resources')}
+            >
+              <span className="text-sm font-medium">Resources</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {activeTab === 'learn' && (
