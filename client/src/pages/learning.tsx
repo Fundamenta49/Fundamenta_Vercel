@@ -12,7 +12,14 @@ import {
   Car,
   Wrench,
   Utensils,
-  Heart
+  Heart,
+  Brain,
+  Users,
+  HelpCircle,
+  Clock,
+  Lightbulb,
+  MessageSquare,
+  Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LearningCoachPopOut from '@/components/learning-coach-pop-out';
@@ -49,6 +56,13 @@ const Icons = {
   Wrench: Wrench as React.ComponentType<{ className?: string }>,
   Utensils: Utensils as React.ComponentType<{ className?: string }>,
   Heart: Heart as React.ComponentType<{ className?: string }>,
+  Brain: Brain as React.ComponentType<{ className?: string }>,
+  Users: Users as React.ComponentType<{ className?: string }>,
+  HelpCircle: HelpCircle as React.ComponentType<{ className?: string }>,
+  Clock: Clock as React.ComponentType<{ className?: string }>,
+  Lightbulb: Lightbulb as React.ComponentType<{ className?: string }>,
+  MessageSquare: MessageSquare as React.ComponentType<{ className?: string }>,
+  Star: Star as React.ComponentType<{ className?: string }>,
 };
 
 export default function Learning() {
@@ -94,6 +108,64 @@ export default function Learning() {
       icon: Icons.PenTool,
       path: '/learning/courses/public-speaking',
       level: 'beginner'
+    },
+    {
+      id: 'critical-thinking',
+      title: 'Critical Thinking',
+      description: 'Develop analytical skills to evaluate information and solve complex problems',
+      icon: Icons.Brain,
+      path: '/learning/courses/critical-thinking',
+      level: 'intermediate'
+    },
+    {
+      id: 'conflict-resolution',
+      title: 'Conflict Resolution',
+      description: 'Learn strategies to effectively navigate and resolve interpersonal conflicts',
+      icon: Icons.Users,
+      path: '/learning/courses/conflict-resolution',
+      level: 'intermediate'
+    },
+    {
+      id: 'decision-making',
+      title: 'Decision Making',
+      description: 'Master frameworks for making better decisions in both personal and professional settings',
+      icon: Icons.HelpCircle,
+      path: '/learning/courses/decision-making',
+      level: 'intermediate'
+    },
+    {
+      id: 'time-management',
+      title: 'Time Management',
+      description: 'Learn techniques to prioritize tasks and increase productivity',
+      icon: Icons.Clock,
+      path: '/learning/courses/time-management',
+      level: 'beginner',
+      popular: true
+    },
+    {
+      id: 'coping-with-failure',
+      title: 'Coping With Failure',
+      description: 'Develop resilience and learn to transform setbacks into opportunities for growth',
+      icon: Icons.Lightbulb,
+      path: '/learning/courses/coping-with-failure',
+      level: 'intermediate'
+    },
+    {
+      id: 'conversation-skills',
+      title: 'Conversation Skills',
+      description: 'Improve your ability to engage in meaningful and effective conversations',
+      icon: Icons.MessageSquare,
+      path: '/learning/courses/conversation-skills',
+      level: 'beginner'
+    },
+    {
+      id: 'forming-positive-habits',
+      title: 'Forming Positive Habits',
+      description: 'Learn science-based approaches to building lasting positive habits',
+      icon: Icons.Star,
+      path: '/learning/courses/forming-positive-habits',
+      level: 'beginner',
+      new: true
     }
   ];
   
