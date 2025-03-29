@@ -58,12 +58,12 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           onClick={() => setIsExpanded(true)}
           style={{ backgroundColor: categoryColors[category] }}
         >
-          {/* Fundi robot avatar */}
-          <div className="relative">
+          {/* Fundi robot avatar - centered properly */}
+          <div className="flex items-center justify-center w-full h-full">
             <FundiAvatar size="sm" speaking={isAnimating} />
             {/* Animation dot to indicate Fundi is available */}
-            <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-white animate-ping opacity-75"></span>
-            <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-white"></span>
+            <span className="absolute top-1 right-1 h-3 w-3 rounded-full bg-white animate-ping opacity-75"></span>
+            <span className="absolute top-1 right-1 h-3 w-3 rounded-full bg-white"></span>
           </div>
         </Button>
       )}

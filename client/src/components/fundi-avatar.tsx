@@ -89,15 +89,13 @@ export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvat
             <motion.circle 
               cx="50" 
               cy="55" 
-              r="5" 
+              r={5} 
               fill="#38bdf8"
               initial={{ opacity: 0.6 }}
               animate={speaking ? {
-                opacity: [0.6, 1, 0.6],
-                r: [5, 5.5, 5]
+                opacity: [0.6, 1, 0.6]
               } : {
-                opacity: 0.6,
-                r: 5
+                opacity: 0.6
               }}
               transition={{
                 duration: 1,
@@ -113,14 +111,12 @@ export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvat
             <motion.ellipse 
               cx="42" 
               cy="35" 
-              rx="3" 
-              ry="2.5" 
+              rx={3} 
+              ry={2.5} 
               fill="#38bdf8"
               initial={{ opacity: 0.8 }}
               animate={speaking ? {
-                opacity: [0.7, 1, 0.7],
-                rx: [3, 3.5, 3],
-                ry: [2.5, 3, 2.5]
+                opacity: [0.7, 1, 0.7]
               } : {
                 opacity: 0.8
               }}
@@ -135,14 +131,12 @@ export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvat
             <motion.ellipse 
               cx="58" 
               cy="35" 
-              rx="3" 
-              ry="2.5" 
+              rx={3} 
+              ry={2.5} 
               fill="#38bdf8"
               initial={{ opacity: 0.8 }}
               animate={speaking ? {
-                opacity: [0.7, 1, 0.7],
-                rx: [3, 3.5, 3],
-                ry: [2.5, 3, 2.5]
+                opacity: [0.7, 1, 0.7]
               } : {
                 opacity: 0.8
               }}
