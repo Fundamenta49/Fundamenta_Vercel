@@ -21,7 +21,7 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
-  category?: string;
+  category?: ChatCategory;
   suggestions?: AppSuggestion[];
   actions?: AIAction[];
 }
@@ -215,19 +215,38 @@ interface ChatTopic {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) => {
+const formatAssistantMessage = (content: string, category: ChatCategory = 'career', suggestions?: AppSuggestion[]) => {
   const sections = content.split(/\n\n+|\n(?=[-•🎯💡⏰🎬🔗✨🌟💪🧘‍♀️📊⭐👉])/g);
 
   return (
     <div className="space-y-4">
       <div className="flex items-start gap-4 mb-4">
-        {/* FUNDAMENTAL CHANGE: White circle with robot inside */}
-        <div className="w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: 'white', border: '1px solid #e0e0e0' }}>
+        {/* FUNDAMENTAL CHANGE: Glowing effect with robot inside, similar to Fundi */}
+        <div className="w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center relative">
+          {/* Glowing effect div - dynamically styled based on category */}
+          <div className="absolute inset-0 rounded-full opacity-80 animate-pulse" 
+               style={{ 
+                 background: category === 'finance' ? 'radial-gradient(circle, rgba(34, 197, 94, 0.8) 0%, rgba(34, 197, 94, 0.3) 40%, rgba(34, 197, 94, 0) 80%)' :
+                           category === 'wellness' ? 'radial-gradient(circle, rgba(168, 85, 247, 0.8) 0%, rgba(168, 85, 247, 0.3) 40%, rgba(168, 85, 247, 0) 80%)' :
+                           category === 'fitness' ? 'radial-gradient(circle, rgba(236, 72, 153, 0.8) 0%, rgba(236, 72, 153, 0.3) 40%, rgba(236, 72, 153, 0) 80%)' :
+                           category === 'career' ? 'radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, rgba(59, 130, 246, 0.3) 40%, rgba(59, 130, 246, 0) 80%)' :
+                           category === 'emergency' ? 'radial-gradient(circle, rgba(239, 68, 68, 0.8) 0%, rgba(239, 68, 68, 0.3) 40%, rgba(239, 68, 68, 0) 80%)' :
+                           category === 'learning' ? 'radial-gradient(circle, rgba(249, 115, 22, 0.8) 0%, rgba(249, 115, 22, 0.3) 40%, rgba(249, 115, 22, 0) 80%)' :
+                           'radial-gradient(circle, rgba(56, 189, 248, 0.8) 0%, rgba(56, 189, 248, 0.3) 40%, rgba(56, 189, 248, 0) 80%)',
+                 filter: 'blur(5px)'
+               }}>
+          </div>
+          
+          {/* White circle background */}
+          <div className="absolute inset-0 rounded-full bg-white border border-[#e0e0e0] z-10"></div>
+          
+          {/* Robot image */}
           <svg 
             width="42" 
             height="42" 
             viewBox="0 0 100 100" 
             xmlns="http://www.w3.org/2000/svg"
+            className="z-20 relative"
           >
             {/* Robot body */}
             <g>
@@ -260,8 +279,20 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
                 strokeWidth="1"
               />
               
-              {/* Center chest light */}
-              <circle cx="50" cy="55" r="5" fill="#38bdf8" opacity="0.7" />
+              {/* Center chest light - matches the category color */}
+              <circle 
+                cx="50" cy="55" r="5" 
+                fill={
+                  category === 'finance' ? '#22c55e' :
+                  category === 'wellness' ? '#a855f7' :
+                  category === 'fitness' ? '#ec4899' :
+                  category === 'career' ? '#3b82f6' :
+                  category === 'emergency' ? '#ef4444' :
+                  category === 'learning' ? '#f97316' :
+                  '#38bdf8'
+                } 
+                opacity="0.7" 
+              />
               
               {/* Left arm */}
               <path 
@@ -528,7 +559,7 @@ export default function ChatInterface({ category, children }: ChatInterfaceProps
                     <div key={i} className="mb-6 last:mb-0">
                       <div className="rounded-lg px-4">
                         {message.role === "assistant" ? (
-                          formatAssistantMessage(message.content, message.suggestions)
+                          formatAssistantMessage(message.content, message.category as ChatCategory, message.suggestions)
                         ) : (
                           <p className="text-gray-700">{message.content}</p>
                         )}
