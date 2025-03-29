@@ -43,7 +43,7 @@ const advisorInfo: Record<string, { name: string; image: string }> = {
   emergency: { name: 'Emergency Assistant', image: '/advisors/emergency-advisor.png' },
   cooking: { name: 'Cooking Expert', image: '/advisors/cooking-advisor.png' },
   fitness: { name: 'Fitness Coach', image: '/advisors/fitness-advisor.png' },
-  general: { name: 'Fundi', image: '/mascot/fundi-avatar.png' },
+  general: { name: 'AI Assistant', image: '/mascot/fundi-avatar.png' },
   error: { name: 'Assistant', image: '/mascot/fundi-avatar.png' },
 };
 
@@ -190,6 +190,9 @@ export default function ChatInterface({
     }, 0);
   };
 
+  // Determine if showing a specialized advisor or general AI assistant
+  const isSpecialist = (currentCategory || category) !== 'general';
+
   return (
     <Card className={`flex flex-col border shadow-md ${className}`} style={{ height: expanded ? '70vh' : '400px' }}>
       <CardHeader className="px-4 py-2 border-b">
@@ -204,19 +207,23 @@ export default function ChatInterface({
                 {advisorInfo[currentCategory || category].name.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <CardTitle className="text-base font-medium">
-              {advisorInfo[currentCategory || category].name}
-            </CardTitle>
-            {/* Only show category badge if not in general mode */}
-            {(currentCategory || category) !== 'general' && (
-              <Badge 
-                variant="outline" 
-                className={`text-xs ${categoryColors[currentCategory || category]}`}
-              >
-                {currentCategory || category}
-              </Badge>
+            
+            {/* Only show name and badge for specialized advisors */}
+            {isSpecialist && (
+              <>
+                <CardTitle className="text-base font-medium">
+                  {advisorInfo[currentCategory || category].name}
+                </CardTitle>
+                <Badge 
+                  variant="outline" 
+                  className={`text-xs ${categoryColors[currentCategory || category]}`}
+                >
+                  {currentCategory || category}
+                </Badge>
+              </>
             )}
           </div>
+          
           {onToggleExpand && (
             <Button 
               variant="ghost" 
@@ -264,14 +271,17 @@ export default function ChatInterface({
                           {advisorInfo[msg.category || category].name.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-xs font-medium">
-                        {advisorInfo[msg.category || category].name}
-                      </span>
-                      {/* Only show category badge in message if not general */}
+                      
+                      {/* Only show name for specialized advisors, not for general AI */}
                       {(msg.category || category) !== 'general' && (
-                        <span className="text-[10px] bg-opacity-50 px-1.5 rounded">
-                          {msg.category || category}
-                        </span>
+                        <>
+                          <span className="text-xs font-medium">
+                            {advisorInfo[msg.category || category].name}
+                          </span>
+                          <span className="text-[10px] bg-opacity-50 px-1.5 rounded">
+                            {msg.category || category}
+                          </span>
+                        </>
                       )}
                     </div>
                   )}
