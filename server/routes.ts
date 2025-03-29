@@ -11,7 +11,7 @@ import mammoth from "mammoth";
 import axios from 'axios';
 import resumeRoutes from './routes/resume';
 import learningRoutes from './routes/learning';
-import youtubeRoutes from './routes/youtube';
+import youtubeRoutes, { youtubeSearchHandler } from './routes/youtube';
 import nhtsaRoutes from './routes/nhtsa';
 import chatRoutes from './routes/chat';
 import { 
@@ -689,6 +689,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Include YouTube API routes
   app.use('/api/youtube', youtubeRoutes);
+  
+  // General YouTube search endpoint for multiple components
+  app.get('/api/youtube-search', youtubeSearchHandler);
   
   // Include NHTSA API routes
   app.use('/api/nhtsa', nhtsaRoutes);

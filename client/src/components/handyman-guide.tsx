@@ -183,14 +183,23 @@ export default function HandymanGuide() {
   const fetchYouTubeVideos = async (searchTerm: string) => {
     setIsLoadingVideos(true);
     try {
-      const query = `${searchTerm} home repair DIY guide tutorial`;
-      const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(searchTerm)}&category=home-repair`);
       const data = await response.json();
-      setVideos(data.items.map((item: any) => ({
-        id: item.id.videoId,
-        title: item.snippet.title,
-        thumbnail: item.snippet.thumbnails.medium.url
-      })));
+      
+      if (data.error) {
+        console.error('YouTube API error:', data.error);
+        return;
+      }
+      
+      if (data.items && Array.isArray(data.items)) {
+        setVideos(data.items.map((item: any) => ({
+          id: item.id.videoId,
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails.medium.url
+        })));
+      } else {
+        console.error('Invalid YouTube API response structure:', data);
+      }
     } catch (error) {
       console.error('Error fetching videos:', error);
     } finally {

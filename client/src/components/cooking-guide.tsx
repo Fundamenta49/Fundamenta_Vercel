@@ -123,7 +123,8 @@ export default function CookingGuide() {
     setGuidance(null);
 
     try {
-      const response = await fetch("/api/skill-guidance", {
+      // First, fetch cooking guidance
+      const guidanceResponse = await fetch("/api/skill-guidance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -132,13 +133,41 @@ export default function CookingGuide() {
         }),
       });
 
-      if (!response.ok) {
+      if (!guidanceResponse.ok) {
         throw new Error("Failed to fetch guidance");
       }
 
-      const data = await response.json();
-      setGuidance(data.guidance);
-      setVideos(data.videos || []);
+      const guidanceData = await guidanceResponse.json();
+      setGuidance(guidanceData.guidance);
+      
+      // Then, fetch YouTube videos
+      try {
+        const videoResponse = await fetch(
+          `/api/youtube-search?q=${encodeURIComponent(topic.title)}&category=cooking`
+        );
+        
+        if (!videoResponse.ok) {
+          throw new Error("Failed to fetch videos");
+        }
+        
+        const videoData = await videoResponse.json();
+        
+        if (videoData.items && Array.isArray(videoData.items)) {
+          setVideos(videoData.items.map((item: any) => ({
+            id: item.id.videoId,
+            title: item.snippet.title,
+            thumbnail: {
+              url: item.snippet.thumbnails.medium.url,
+              width: item.snippet.thumbnails.medium.width,
+              height: item.snippet.thumbnails.medium.height
+            },
+            duration: "Video"
+          })));
+        }
+      } catch (videoError) {
+        console.error("Error fetching cooking videos:", videoError);
+        // Don't fail the whole operation if videos can't be loaded
+      }
     } catch (error) {
       console.error("Error fetching guidance:", error);
       setError("Failed to load cooking guidance. Please try again.");
