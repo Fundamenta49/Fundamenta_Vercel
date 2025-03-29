@@ -52,7 +52,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
         </div>
       ) : (
         <Button
-          className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out ${
+          className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 h-16 w-16 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out ${
             isAnimating ? 'scale-110' : 'scale-100'
           }`}
           onClick={() => setIsExpanded(true)}
