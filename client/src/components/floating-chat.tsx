@@ -32,7 +32,8 @@ interface AppSuggestion {
 }
 
 export default function FloatingChat() {
-  const [isMinimized, setIsMinimized] = useState(true);
+  // Start visible (not minimized) for testing purposes
+  const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [location, setLocation] = useLocation();
@@ -231,10 +232,10 @@ export default function FloatingChat() {
             className="w-14 h-14 relative cursor-pointer"
             onClick={() => setIsMinimized(false)}
           >
-            {/* Dynamic theme-based glow effect */}
+            {/* Enhanced dynamic theme-based glow effect */}
             <div 
-              className="absolute -inset-3 rounded-full blur-xl opacity-60 animate-pulse"
-              style={{ backgroundColor: `${getCurrentThemeColor}40` }} /* 40 is for 25% opacity in hex */
+              className="absolute -inset-4 rounded-full blur-xl opacity-80 animate-pulse"
+              style={{ backgroundColor: `${getCurrentThemeColor}` }}
             />
             
             {/* Robot SVG directly */}
@@ -418,9 +419,44 @@ export default function FloatingChat() {
                     <Sparkle className="h-5 w-5 text-primary" />
                   </div>
                   <h4 className="text-base font-medium text-foreground mb-1">How can I help you today?</h4>
-                  <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                  <p className="text-sm text-muted-foreground max-w-[250px] mx-auto mb-4">
                     Ask me about finances, careers, wellness, or emergency guidance.
                   </p>
+                  {/* Navigation buttons to test theme colors */}
+                  <div className="grid grid-cols-2 gap-2 text-xs max-w-[250px] mx-auto">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="bg-green-500 text-white hover:bg-green-600"
+                      onClick={() => setLocation("/finance")}
+                    >
+                      Finance
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="bg-blue-500 text-white hover:bg-blue-600"
+                      onClick={() => setLocation("/career")}
+                    >
+                      Career
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="bg-purple-500 text-white hover:bg-purple-600"
+                      onClick={() => setLocation("/wellness")}
+                    >
+                      Wellness
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="bg-orange-500 text-white hover:bg-orange-600"
+                      onClick={() => setLocation("/learning")}
+                    >
+                      Learning
+                    </Button>
+                  </div>
                 </div>
               )}
               
