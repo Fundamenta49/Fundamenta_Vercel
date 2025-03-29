@@ -28,6 +28,16 @@ export default function SimpleButtonFundi({
   // Get the color based on category
   const color = categoryColors[category] || categoryColors.general;
   
+  // Define sizes for different components
+  const sizes = {
+    sm: { iconSize: 16, padding: 2 },
+    md: { iconSize: 20, padding: 3 },
+    lg: { iconSize: 24, padding: 4 }
+  };
+  
+  // Get size configuration
+  const sizeConfig = sizes[size];
+  
   // Define animation class
   const animationClass = speaking ? 'animate-pulse' : '';
 
@@ -38,15 +48,19 @@ export default function SimpleButtonFundi({
     )}>
       <div 
         className={`w-full h-full absolute inset-0 rounded-full shadow-lg ${animationClass}`}
-        style={{ background: color, boxShadow: `0 0 15px ${color}` }}
+        style={{ 
+          background: color, 
+          boxShadow: `0 0 8px ${color}, 0 0 16px ${color}`,
+          filter: speaking ? 'brightness(1.2)' : 'brightness(1)'
+        }}
       />
       
       {/* Robot icon - simple white icon to indicate this is the AI assistant */}
       <div className="relative z-10 text-white">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
-          width="24" 
-          height="24" 
+          width={sizeConfig.iconSize} 
+          height={sizeConfig.iconSize} 
           viewBox="0 0 24 24" 
           fill="none" 
           stroke="currentColor" 
@@ -54,6 +68,7 @@ export default function SimpleButtonFundi({
           strokeLinecap="round" 
           strokeLinejoin="round" 
           className="lucide lucide-bot"
+          style={{ padding: sizeConfig.padding }}
         >
           <path d="M12 8V4H8" />
           <rect width="16" height="12" x="4" y="8" rx="2" />

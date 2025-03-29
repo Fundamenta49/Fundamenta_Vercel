@@ -18,6 +18,20 @@ export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const isMobile = useIsMobile();
   const isHomePage = location === "/" || location === "/home";
+  
+  // Determine current category based on the URL path
+  const getCurrentCategory = () => {
+    if (location.includes('/finance')) return 'finance';
+    if (location.includes('/career')) return 'career';
+    if (location.includes('/wellness')) return 'wellness';
+    if (location.includes('/learning')) return 'learning';
+    if (location.includes('/emergency')) return 'emergency';
+    if (location.includes('/cooking')) return 'cooking';
+    if (location.includes('/fitness')) return 'fitness';
+    return 'general';
+  };
+  
+  const currentCategory = getCurrentCategory();
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,7 +52,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </main>
       
-      <FloatingChat />
+      <FloatingChat category={currentCategory} />
     </div>
   );
 }
