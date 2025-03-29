@@ -256,55 +256,55 @@ export default function JournalPopOut() {
   };
 
   return (
-    <div className="space-y-4">
-      {/* Journal Browse Card */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Book className="h-5 w-5 text-purple-500" />
-              <CardTitle>Wellness Journal</CardTitle>
+    <div className="w-full max-w-screen-xl mx-auto">
+      <FullScreenDialogHeader>
+        <div className="flex items-center justify-between">
+          <FullScreenDialogTitle className="flex items-center gap-2">
+            <Book className="h-6 w-6 text-purple-500" />
+            Wellness Journal
+          </FullScreenDialogTitle>
+          <Button onClick={openNewEntry} className="bg-purple-600 hover:bg-purple-700">
+            <Plus className="h-4 w-4 mr-2" />
+            New Entry
+          </Button>
+        </div>
+        <FullScreenDialogDescription>
+          Track your thoughts, feelings, and personal growth journey
+        </FullScreenDialogDescription>
+      </FullScreenDialogHeader>
+      
+      <FullScreenDialogBody>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {entries.length > 0 ? (
+            entries.map((entry) => (
+              <Card key={entry.id} className="cursor-pointer hover:shadow-md transition-shadow border border-purple-100" onClick={() => openEntryView(entry.id)}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base truncate">{entry.title}</CardTitle>
+                  <CardDescription className="text-xs">
+                    {format(new Date(entry.timestamp), "PP")}
+                    {entry.mood && <span className="ml-2">• Feeling {entry.mood}</span>}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-sm line-clamp-3 text-muted-foreground">
+                    {entry.content}
+                  </p>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center py-16 text-center text-muted-foreground">
+              <Book className="h-16 w-16 mb-6 opacity-20" />
+              <p className="text-lg mb-2">Your journal is empty</p>
+              <p className="text-sm mb-6 max-w-md">Start writing to track your wellness journey and gain insights into your emotional patterns</p>
+              <Button onClick={openNewEntry} className="bg-purple-600 hover:bg-purple-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Entry
+              </Button>
             </div>
-            <Button onClick={openNewEntry} className="bg-purple-600 hover:bg-purple-700">
-              <Plus className="h-4 w-4 mr-2" />
-              New Entry
-            </Button>
-          </div>
-          <CardDescription>
-            Track your thoughts, feelings, and personal growth
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {entries.length > 0 ? (
-              entries.slice(0, 6).map((entry) => (
-                <Card key={entry.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => openEntryView(entry.id)}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base truncate">{entry.title}</CardTitle>
-                    <CardDescription className="text-xs">
-                      {format(new Date(entry.timestamp), "PP")}
-                      {entry.mood && <span className="ml-2">• Feeling {entry.mood}</span>}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <p className="text-sm line-clamp-2 text-muted-foreground">
-                      {entry.content}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <div className="col-span-full flex flex-col items-center py-8 text-center text-muted-foreground">
-                <Book className="h-12 w-12 mb-4 opacity-20" />
-                <p>Your journal is empty. Start writing to track your wellness journey.</p>
-                <Button variant="outline" size="sm" onClick={openNewEntry} className="mt-4">
-                  Create Your First Entry
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+          )}
+        </div>
+      </FullScreenDialogBody>
 
       {/* New Entry Dialog */}
       <FullScreenDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>

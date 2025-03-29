@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle } from "lucide-react";
+import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus } from "lucide-react";
 import ChatInterface, { 
   ChatInterfaceComponent, 
   WELLNESS_CATEGORY 
@@ -19,6 +19,12 @@ import JournalPopOut from "@/components/journal-pop-out";
 import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
+import { Button } from "@/components/ui/button";
+import {
+  FullScreenDialog,
+  FullScreenDialogContent,
+  FullScreenDialogTrigger,
+} from "@/components/ui/full-screen-dialog";
 
 type ChatInterfaceProps = {
   category: typeof WELLNESS_CATEGORY;
@@ -92,9 +98,33 @@ const SECTIONS: SectionType[] = [
 export default function Wellness() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [isJournalOpen, setIsJournalOpen] = useState(false);
+  const [isRiskOpen, setIsRiskOpen] = useState(false);
+  const [isNutritionOpen, setIsNutritionOpen] = useState(false);
+  const [isTrackerOpen, setIsTrackerOpen] = useState(false);
+  const [isShoppingOpen, setIsShoppingOpen] = useState(false);
 
   const handleCardClick = (sectionId: string) => {
-    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+    // For the regular sections (like AI coach), we'll use the existing card expansion
+    if (sectionId === 'coach') {
+      setExpandedSection(expandedSection === sectionId ? null : sectionId);
+    } 
+    // For sections that should pop out, open the appropriate dialog
+    else if (sectionId === 'journal') {
+      setIsJournalOpen(true);
+    }
+    else if (sectionId === 'braintap') {
+      setIsRiskOpen(true);
+    }
+    else if (sectionId === 'nutrition') {
+      setIsNutritionOpen(true);
+    }
+    else if (sectionId === 'tracker') {
+      setIsTrackerOpen(true);
+    }
+    else if (sectionId === 'shopping') {
+      setIsShoppingOpen(true);
+    }
   };
 
   return (
@@ -110,11 +140,43 @@ export default function Wellness() {
         </AlertDescription>
       </Alert>
 
+      {/* Full-screen dialogs */}
+      <FullScreenDialog open={isJournalOpen} onOpenChange={setIsJournalOpen}>
+        <FullScreenDialogContent themeColor="#a855f7">
+          <JournalPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isRiskOpen} onOpenChange={setIsRiskOpen}>
+        <FullScreenDialogContent themeColor="#a855f7">
+          <RiskAssessment />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isNutritionOpen} onOpenChange={setIsNutritionOpen}>
+        <FullScreenDialogContent themeColor="#a855f7">
+          <NutritionGuide />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isTrackerOpen} onOpenChange={setIsTrackerOpen}>
+        <FullScreenDialogContent themeColor="#a855f7">
+          <NutritionTracker />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isShoppingOpen} onOpenChange={setIsShoppingOpen}>
+        <FullScreenDialogContent themeColor="#a855f7">
+          <ShoppingBuddy />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
       {/* Book-style card carousel */}
       <div ref={carouselRef} className="book-carousel">
         <BookCarousel>
           {SECTIONS.map((section) => {
-            const isExpanded = expandedSection === section.id;
+            // Only expand the AI coach section using the card expanding functionality
+            const isExpanded = section.id === 'coach' && expandedSection === section.id;
             
             return (
               <BookPage key={section.id} id={section.id}>
@@ -127,20 +189,14 @@ export default function Wellness() {
                   onToggle={handleCardClick}
                   color="text-purple-500" // Wellness section color from the home page
                 >
-                  <div className="w-full">
-                    {section.alert && (
-                      <div className="mb-4">{section.alert}</div>
-                    )}
-                    {(() => {
-                      if (section.id === 'coach') {
-                        // Use the component's required "category" prop
-                        return <ChatInterface category={WELLNESS_CATEGORY} />;
-                      } else {
-                        // For regular components
-                        return <section.component {...(section.props || {})} />;
-                      }
-                    })()}
-                  </div>
+                  {section.id === 'coach' && isExpanded && (
+                    <div className="w-full">
+                      {section.alert && (
+                        <div className="mb-4">{section.alert}</div>
+                      )}
+                      <ChatInterface category={WELLNESS_CATEGORY} />
+                    </div>
+                  )}
                 </BookCard>
               </BookPage>
             );
