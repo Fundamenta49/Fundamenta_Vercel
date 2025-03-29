@@ -15,7 +15,7 @@ import { Brain, Heart, Sparkles, Phone, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Props {
-  category: string;
+  category?: string;
 }
 
 interface Question {
@@ -239,6 +239,13 @@ export default function RiskAssessment({ category }: Props) {
     const recommendedResources = evaluateWellness(answers);
     setResources(recommendedResources);
     setShowResults(true);
+  };
+  
+  const handleRestart = () => {
+    setCurrentQuestion(0);
+    setAnswers({});
+    setShowResults(false);
+    setResources([]);
   };
 
   const handleResourceClick = (resource: Resource) => {

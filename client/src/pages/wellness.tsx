@@ -16,6 +16,10 @@ import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 import RiskAssessment from "@/components/risk-assessment";
 import JournalPopOut from "@/components/journal-pop-out";
+import RiskAssessmentPopOut from "@/components/risk-assessment-pop-out";
+import NutritionGuidePopOut from "@/components/nutrition-guide-pop-out";
+import NutritionTrackerPopOut from "@/components/nutrition-tracker-pop-out";
+import ShoppingBuddyPopOut from "@/components/shopping-buddy-pop-out";
 import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
@@ -149,25 +153,25 @@ export default function Wellness() {
 
       <FullScreenDialog open={isRiskOpen} onOpenChange={setIsRiskOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
-          <RiskAssessment />
+          <RiskAssessmentPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
       <FullScreenDialog open={isNutritionOpen} onOpenChange={setIsNutritionOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
-          <NutritionGuide />
+          <NutritionGuidePopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
       <FullScreenDialog open={isTrackerOpen} onOpenChange={setIsTrackerOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
-          <NutritionTracker />
+          <NutritionTrackerPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
       <FullScreenDialog open={isShoppingOpen} onOpenChange={setIsShoppingOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
-          <ShoppingBuddy />
+          <ShoppingBuddyPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
