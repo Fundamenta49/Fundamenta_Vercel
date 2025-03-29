@@ -68,6 +68,41 @@ export default function FloatingChat() {
     }
   }, [isMobile]);
 
+  // Listen for open-fundi-chat events from redirects
+  useEffect(() => {
+    const handleOpenFundiEvent = (event: CustomEvent) => {
+      setIsMinimized(false);
+      
+      // If there's a context/category in the event, we can use it
+      if (event.detail && event.detail.category) {
+        // Set first message based on category if needed
+        const categoryGreetings: Record<string, string> = {
+          career: "I can help with your career questions. What would you like assistance with?",
+          finance: "I can help with your financial questions. What would you like to know?",
+          wellness: "I'm here to assist with wellness and health topics. How can I help?",
+          learning: "Ready to help with your learning journey. What would you like to learn?",
+          emergency: "I'm here to help with your emergency needs. What's the situation?",
+          fitness: "Let's work on your fitness goals together. What would you like to focus on?",
+        };
+        
+        // Add a contextual greeting if no messages exist yet
+        if (messages.length === 0) {
+          setMessages([{
+            role: 'assistant',
+            content: categoryGreetings[event.detail.category] || "How can I help you today?",
+            timestamp: new Date()
+          }]);
+        }
+      }
+    };
+    
+    window.addEventListener('open-fundi-chat', handleOpenFundiEvent as EventListener);
+    
+    return () => {
+      window.removeEventListener('open-fundi-chat', handleOpenFundiEvent as EventListener);
+    };
+  }, [messages, setMessages]);
+
   // Animation for Fundi avatar
   useEffect(() => {
     if (isMinimized) {

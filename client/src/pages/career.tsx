@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import ChatInterface, { ChatInterfaceComponent } from "@/components/chat-interface";
 import InterviewPractice from "@/components/interview-practice";
 import JobSearch from "@/components/job-search";
 import SalaryInsights from "@/components/salary-insights";
@@ -26,8 +25,7 @@ interface SkillGuidanceResponse {
   guidance: string;
 }
 
-// Define career as a const to ensure proper type inference
-const CAREER_CATEGORY = "career" as const;
+// No longer needed - removed ChatInterface reference
 
 // Define sections with their icons and components
 type SectionType = {
@@ -52,14 +50,6 @@ const SECTIONS: SectionType[] = [
     description: 'Create and manage your professional resume',
     icon: FileText,
     component: ResumeBuilder
-  },
-  {
-    id: 'chat',
-    title: 'Career AI Coach',
-    description: 'Get professional guidance for your career journey',
-    icon: Brain,
-    component: ChatInterface,
-    props: { category: CAREER_CATEGORY }
   },
   {
     id: 'search',
@@ -182,10 +172,7 @@ export default function Career() {
                   color="text-blue-500" // Career section color from the home page
                 >
                   {(() => {
-                    if (section.id === 'chat') {
-                      // Use the component's required "category" prop
-                      return <ChatInterface category={CAREER_CATEGORY} />;
-                    } else if (section.props) {
+                    if (section.props) {
                       // For components with props, properly cast and pass their props
                       return <section.component {...section.props as any} />;
                     } else {

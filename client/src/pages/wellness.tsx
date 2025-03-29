@@ -7,10 +7,6 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle } from "lucide-react";
-import ChatInterface, { 
-  ChatInterfaceComponent, 
-  WELLNESS_CATEGORY 
-} from "@/components/chat-interface";
 import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
@@ -31,20 +27,11 @@ type SectionType = {
 
 const SECTIONS: SectionType[] = [
   {
-    id: 'chat',
-    title: 'Wellness AI Coach',
-    description: 'Get guidance for mental health, well-being, and nutrition',
-    icon: Brain,
-    component: ChatInterface as ChatInterfaceComponent,
-    props: { category: WELLNESS_CATEGORY }
-  },
-  {
     id: 'braintap',
     title: 'BrainTap',
     description: 'Check in with yourself and discover personalized mental wellness resources',
     icon: Heart,
-    component: RiskAssessment,
-    props: { category: WELLNESS_CATEGORY }
+    component: RiskAssessment
   },
   {
     id: 'journal',

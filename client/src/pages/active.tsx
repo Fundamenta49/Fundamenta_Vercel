@@ -8,10 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import ChatInterface, { 
-  ChatInterfaceComponent,
-  FITNESS_CATEGORY
-} from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
@@ -30,14 +26,6 @@ type SectionType = {
 };
 
 const SECTIONS: SectionType[] = [
-  {
-    id: 'chat',
-    title: 'AI Fitness Coach',
-    description: 'Get personalized workout guidance and fitness tips',
-    icon: Brain,
-    component: ChatInterface as ChatInterfaceComponent,
-    props: { category: FITNESS_CATEGORY }
-  },
   {
     id: 'activeyou',
     title: 'ActiveYou Profile',
