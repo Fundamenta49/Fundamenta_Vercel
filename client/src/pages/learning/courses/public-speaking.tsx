@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Mic, BookOpenIcon, Users, PresentationIcon, Megaphone } from 'lucide-react';
+import { ArrowLeft, Mic, BookOpenIcon, Users, PresentationIcon, Megaphone, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import SimpleResourceLinks from '@/components/simple-resource-links';
@@ -8,8 +8,18 @@ import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import FloatingChat from '@/components/floating-chat';
 import LearningCoachPopOut from '@/components/learning-coach-pop-out';
 import QuizComponent from '@/components/quiz-component';
-import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import { cn } from "@/lib/utils";
+import {
+  FullScreenDialog,
+  FullScreenDialogTrigger,
+  FullScreenDialogContent,
+  FullScreenDialogHeader,
+  FullScreenDialogTitle,
+  FullScreenDialogDescription,
+  FullScreenDialogBody,
+  FullScreenDialogFooter,
+  FullScreenDialogClose,
+} from "@/components/ui/full-screen-dialog";
 
 export default function PublicSpeakingCourse() {
   const [, navigate] = useLocation();
@@ -241,13 +251,10 @@ export default function PublicSpeakingCourse() {
     }
   ];
 
-  // Handle card clicks
+  // This function is no longer needed with the FullScreenDialog approach
+  // but keeping the state for potential future use
   const handleCardClick = (id: string) => {
-    if (expandedCard === id) {
-      setExpandedCard(null);
-    } else {
-      setExpandedCard(id);
-    }
+    setExpandedCard(id);
   };
 
   return (
@@ -324,21 +331,51 @@ export default function PublicSpeakingCourse() {
             </CardContent>
           </Card>
           
-          {/* Course modules as cards */}
+          {/* Course modules as cards with dialogs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {COURSE_MODULES.map((module) => (
-              <BookCard
-                key={module.id}
-                id={module.id}
-                title={module.title}
-                description={module.description}
-                icon={module.icon}
-                isExpanded={expandedCard === module.id}
-                onToggle={handleCardClick}
-                color="text-orange-500"
-                children={module.content}
-              />
-            ))}
+            {COURSE_MODULES.map((module) => {
+              const Icon = module.icon;
+              return (
+                <FullScreenDialog key={module.id}>
+                  <FullScreenDialogTrigger asChild>
+                    <Card className="border-2 border-orange-100 shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow">
+                      <CardContent className="pt-6">
+                        <div className="flex flex-col items-center text-center">
+                          <div className="w-20 h-20 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+                            <Icon className="h-10 w-10 text-orange-500" />
+                          </div>
+                          <CardTitle className="mb-2">{module.title}</CardTitle>
+                          <CardDescription>{module.description}</CardDescription>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </FullScreenDialogTrigger>
+                  <FullScreenDialogContent themeColor="#f97316">
+                    <FullScreenDialogHeader>
+                      <div className="flex items-center mb-2">
+                        <Icon className="w-6 h-6 mr-2 text-orange-500" />
+                        <FullScreenDialogTitle>{module.title}</FullScreenDialogTitle>
+                      </div>
+                      <FullScreenDialogDescription>{module.description}</FullScreenDialogDescription>
+                    </FullScreenDialogHeader>
+                    <FullScreenDialogBody>
+                      {module.content}
+                    </FullScreenDialogBody>
+                    <FullScreenDialogFooter>
+                      <Button 
+                        variant="outline" 
+                        className="mr-auto"
+                      >
+                        Mark as Complete
+                      </Button>
+                      <FullScreenDialogClose asChild>
+                        <Button>Close</Button>
+                      </FullScreenDialogClose>
+                    </FullScreenDialogFooter>
+                  </FullScreenDialogContent>
+                </FullScreenDialog>
+              );
+            })}
           </div>
         </div>
       )}
