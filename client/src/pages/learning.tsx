@@ -173,10 +173,10 @@ export default function Learning() {
         <div 
           className={`absolute inset-0 rounded-lg shadow-lg p-6 flex flex-col items-center justify-center text-center transform ${
             isFlipped ? 'rotate-y-180 opacity-0' : 'rotate-y-0 opacity-100'
-          } transition-all duration-500 ${course.color}`}
+          } transition-all duration-500 bg-orange-500`}
           style={{ backfaceVisibility: 'hidden' }}
         >
-          <div className="p-3 bg-white bg-opacity-20 rounded-full mb-4">
+          <div className="p-3 bg-white bg-opacity-20 rounded-full mb-4 text-white">
             {course.icon}
           </div>
           <h3 className="text-xl font-bold text-white mb-2">{course.title}</h3>
@@ -204,7 +204,7 @@ export default function Learning() {
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="flex-1">
-            <h3 className="text-lg font-bold mb-2">{course.title}</h3>
+            <h3 className="text-lg font-bold mb-2 text-orange-500">{course.title}</h3>
             <p className="text-sm text-gray-600 mb-3">{course.description}</p>
             
             <div className="mt-2 mb-3">
@@ -219,8 +219,8 @@ export default function Learning() {
           </div>
           
           <Button 
-            variant="outline"
-            className="w-full mt-auto"
+            variant="default"
+            className="w-full mt-auto bg-orange-500 hover:bg-orange-600 text-white"
             onClick={(e) => {
               e.stopPropagation();
               navigate(course.path);
@@ -278,9 +278,11 @@ export default function Learning() {
         </div>
 
         {/* Book cover grid layout for all courses */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4">
           {allCourses.map(course => (
-            <CourseCard key={course.id} course={course} />
+            <div className="px-2 py-2 md:px-0 md:py-0" key={course.id}>
+              <CourseCard course={course} />
+            </div>
           ))}
         </div>
       </div>
