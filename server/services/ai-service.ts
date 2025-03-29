@@ -284,11 +284,78 @@ export class AIService {
       });
 
       const jsonResponse = JSON.parse(oaiResponse.choices[0].message.content || "{}");
+      
+      // Check for navigation intents in the message
+      let actions = jsonResponse.actions || [];
+      
+      // Process for navigation commands like "show me financial section" or "take me to career"
+      const navigationPatterns = [
+        /show me (?:the )?(\w+)(?:\s+section)?/i,
+        /take me to (?:the )?(\w+)(?:\s+section)?/i,
+        /go to (?:the )?(\w+)(?:\s+section)?/i,
+        /navigate to (?:the )?(\w+)(?:\s+section)?/i,
+        /open (?:the )?(\w+)(?:\s+section)?/i,
+      ];
+      
+      const sectionKeywords: Record<string, string[]> = {
+        'finance': ['finance', 'financial', 'money', 'budget', 'invest'],
+        'career': ['career', 'job', 'resume', 'interview', 'profession'],
+        'wellness': ['wellness', 'health', 'mental', 'meditation', 'mindfulness'],
+        'emergency': ['emergency', 'urgent', 'crisis', 'help', 'disaster'],
+        'learning': ['learning', 'learn', 'education', 'study', 'course'],
+        'active': ['active', 'fitness', 'exercise', 'workout', 'gym'],
+      };
+      
+      let shouldNavigate = false;
+      let navigationTarget = '';
+      
+      // First check for explicit navigation patterns
+      for (const pattern of navigationPatterns) {
+        const match = message.toLowerCase().match(pattern);
+        if (match && match[1]) {
+          const requestedSection = match[1].toLowerCase();
+          
+          // Direct match to a section
+          if (Object.keys(sectionKeywords).includes(requestedSection)) {
+            navigationTarget = requestedSection;
+            shouldNavigate = true;
+            break;
+          }
+          
+          // Check if the requested term is in the keywords for a section
+          for (const [section, keywords] of Object.entries(sectionKeywords)) {
+            if (keywords.includes(requestedSection)) {
+              navigationTarget = section;
+              shouldNavigate = true;
+              break;
+            }
+          }
+          
+          if (shouldNavigate) break;
+        }
+      }
+      
+      // Add navigation action if needed and not already present
+      if (shouldNavigate && navigationTarget && !actions.some((a: any) => 
+        a.type === 'navigate' && a.payload?.route === `/${navigationTarget}`
+      )) {
+        actions.push({
+          type: 'navigate',
+          payload: {
+            route: `/${navigationTarget}`
+          }
+        });
+        
+        // Update response to acknowledge navigation if not already mentioned
+        if (!jsonResponse.response.toLowerCase().includes(navigationTarget)) {
+          jsonResponse.response = `I'll take you to the ${navigationTarget} section. ${jsonResponse.response}`;
+        }
+      }
 
       // Ensure consistent response format
       return {
         response: jsonResponse.response || "I apologize, I couldn't process that request.",
-        actions: jsonResponse.actions?.map((action: any) => ({
+        actions: actions.map((action: any) => ({
           type: action.type,
           payload: action.payload
         })),

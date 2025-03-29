@@ -140,24 +140,55 @@ export default function FloatingChat() {
   };
 
   const handleAIAction = async (action: AIAction) => {
-    switch (action.type) {
-      case 'navigate':
-        if (action.payload.route) {
-          setLocation(action.payload.route);
-        }
-        break;
-      case 'resume':
-        await apiRequest('POST', '/api/resume/update', action.payload);
-        toast({ title: "Resume updated", description: "Your resume has been updated with the suggested changes." });
-        break;
-      case 'recipe':
-        await apiRequest('POST', '/api/recipes/generate', action.payload);
-        toast({ title: "Recipe generated", description: "Your new recipe has been created and saved." });
-        break;
-      case 'budget':
-        await apiRequest('POST', '/api/budget/update', action.payload);
-        toast({ title: "Budget updated", description: "Your budget has been updated with the new information." });
-        break;
+    try {
+      console.log("Processing AI action:", action);
+      switch (action.type) {
+        case 'navigate':
+          if (action.payload.route) {
+            console.log("Navigating to:", action.payload.route);
+            // Add a small delay to ensure the user sees the AI response before navigation
+            setTimeout(() => {
+              setLocation(action.payload.route);
+              toast({ 
+                title: "Navigation", 
+                description: `Taking you to ${action.payload.route.replace('/', '')}`, 
+                duration: 3000 
+              });
+            }, 500);
+          }
+          break;
+        case 'resume':
+          await apiRequest('POST', '/api/resume/update', action.payload);
+          toast({ title: "Resume updated", description: "Your resume has been updated with the suggested changes." });
+          break;
+        case 'recipe':
+          await apiRequest('POST', '/api/recipes/generate', action.payload);
+          toast({ title: "Recipe generated", description: "Your new recipe has been created and saved." });
+          break;
+        case 'budget':
+          await apiRequest('POST', '/api/budget/update', action.payload);
+          toast({ title: "Budget updated", description: "Your budget has been updated with the new information." });
+          break;
+        case 'fill_form':
+          toast({ title: "Form helper", description: "I'll help you fill out this form.", duration: 3000 });
+          break;
+        case 'show_guide':
+          toast({ title: "Guide", description: "Opening the requested guide for you.", duration: 3000 });
+          break;
+        case 'trigger_feature':
+          toast({ title: "Feature activated", description: `Activating ${action.payload.feature || 'requested feature'}`, duration: 3000 });
+          break;
+        default:
+          console.log("Unknown action type:", action.type);
+      }
+    } catch (error) {
+      console.error("Error handling AI action:", error);
+      toast({ 
+        title: "Action failed", 
+        description: "I couldn't complete that action. Please try again.", 
+        variant: "destructive",
+        duration: 5000
+      });
     }
   };
 
