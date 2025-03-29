@@ -3,13 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Minimize2, SendHorizonal, Sparkle, Circle } from "lucide-react";
+import { Minimize2, SendHorizonal, Sparkle, Circle, GripHorizontal } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
-import { motion, useAnimationControls } from "framer-motion";
+import { motion, useAnimationControls, useDragControls, PanInfo } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Message {
@@ -299,8 +299,65 @@ export default function FloatingChat() {
     return pageColors[currentPage as keyof typeof pageColors] || pageColors.home;
   }, [location, pageColors]);
 
+  // For Framer Motion dragging
+  const fundiRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const dragControls = useDragControls();
+  
+  // Function to start drag when handle is used
+  const startDrag = (e: React.PointerEvent) => {
+    if (isMobile || isMinimized) return; // Don't allow dragging on mobile or when minimized
+    dragControls.start(e);
+  };
+  
+  // Calculate drag constraints to keep within viewport
+  const [dragConstraints, setDragConstraints] = useState({
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0
+  });
+  
+  // Update constraints when window is resized
+  useEffect(() => {
+    const updateConstraints = () => {
+      if (fundiRef.current) {
+        const windowHeight = window.innerHeight;
+        const windowWidth = window.innerWidth;
+        const elementHeight = fundiRef.current.offsetHeight;
+        const elementWidth = fundiRef.current.offsetWidth;
+        
+        setDragConstraints({
+          top: 0,
+          left: 0,
+          right: windowWidth - elementWidth,
+          bottom: windowHeight - elementHeight
+        });
+      }
+    };
+    
+    // Set initial constraints
+    updateConstraints();
+    
+    // Update constraints when window resizes
+    window.addEventListener('resize', updateConstraints);
+    return () => window.removeEventListener('resize', updateConstraints);
+  }, [isMinimized]);
+
   return (
-    <div
+    <motion.div
+      ref={fundiRef}
+      drag={!isMobile && !isMinimized}
+      dragControls={dragControls}
+      dragConstraints={dragConstraints}
+      dragMomentum={false}
+      dragElastic={0}
+      whileDrag={{ scale: 1.01 }}
+      animate={position}
+      onDragEnd={(event, info) => {
+        // Update position state when dragging ends
+        setPosition({ x: info.point.x, y: info.point.y });
+      }}
       className={cn(
         "fixed z-50 transition-all duration-300 ease-in-out",
         isMinimized
@@ -400,8 +457,11 @@ export default function FloatingChat() {
           "overflow-hidden",
           isMobile ? "h-full rounded-b-xl rounded-t-none" : "h-full rounded-xl"
         )}>
-          <div className="p-3 border-b flex items-center justify-between bg-background">
+          <div className="p-3 border-b flex items-center justify-between bg-background cursor-move" data-draggable="true">
             <div className="flex items-center gap-2">
+              <div onPointerDown={startDrag}>
+                <GripHorizontal className="h-4 w-4 text-muted-foreground mr-1 cursor-grab" />
+              </div>
               {/* SVG directly with no container */}
               <svg 
                 width="32" 
@@ -622,6 +682,6 @@ export default function FloatingChat() {
           </form>
         </Card>
       )}
-    </div>
+    </motion.div>
   );
 }
