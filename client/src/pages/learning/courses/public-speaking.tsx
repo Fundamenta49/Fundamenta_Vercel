@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { BookOpenIcon, ChevronLeftIcon, ClockIcon } from 'lucide-react';
+import { BookOpenIcon, ChevronLeftIcon, MicIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SimpleResourceLinks from '@/components/simple-resource-links';
 import { useToast } from '@/hooks/use-toast';
@@ -8,40 +8,40 @@ import LearningCoachPopOut from '@/components/learning-coach-pop-out';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import FloatingChat from '@/components/floating-chat';
 
-export default function TimeManagementCourse() {
+export default function PublicSpeakingCourse() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [showChat, setShowChat] = useState(false);
 
   // Course materials
   const MODULE_ONE = [
-    { title: 'Time Management Fundamentals', length: '5 min', completed: false },
-    { title: 'Prioritization Techniques', length: '8 min', completed: false },
-    { title: 'The Pomodoro Method', length: '6 min', completed: false },
+    { title: 'Overcoming Speaking Anxiety', length: '8 min', completed: false },
+    { title: 'Vocal Techniques', length: '10 min', completed: false },
+    { title: 'Body Language Essentials', length: '7 min', completed: false },
   ];
 
   const MODULE_TWO = [
-    { title: 'Digital Organization Tools', length: '10 min', completed: false },
-    { title: 'Eliminating Time Wasters', length: '7 min', completed: false },
-    { title: 'Creating Effective Routines', length: '12 min', completed: false },
+    { title: 'Organizing Your Speech', length: '9 min', completed: false },
+    { title: 'Engaging Your Audience', length: '12 min', completed: false },
+    { title: 'Visual Aids and Technology', length: '8 min', completed: false },
   ];
 
   // Course resources
   const RESOURCES = [
     {
-      title: 'Time Management Matrix',
-      url: 'https://www.mindtools.com/pages/article/newHTE_91.htm',
-      description: 'Stephen Covey\'s time management quadrants'
+      title: 'TED Talk Guide',
+      url: 'https://www.ted.com/participate/organize-a-local-tedx-event/tedx-organizer-guide/speakers-program/prepare-your-speaker',
+      description: 'Tips from the experts at TED'
     },
     {
-      title: 'Productivity Apps Guide',
-      url: 'https://todoist.com/productivity-methods',
-      description: 'Overview of popular productivity methods and apps'
+      title: 'Toastmasters Resources',
+      url: 'https://www.toastmasters.org/resources',
+      description: 'Free public speaking resources and guides'
     },
     {
-      title: 'Pomodoro Timer',
-      url: 'https://pomofocus.io/',
-      description: 'Free online Pomodoro technique timer'
+      title: 'Speech Structure Template',
+      url: 'https://sixminutes.dlugan.com/speech-preparation-3-outline-examples/',
+      description: 'Templates for organizing effective speeches'
     },
   ];
 
@@ -58,7 +58,7 @@ export default function TimeManagementCourse() {
           Back
         </Button>
         <h1 className="text-2xl font-bold tracking-tight">
-          Time Management
+          Public Speaking
         </h1>
       </div>
 
@@ -66,18 +66,18 @@ export default function TimeManagementCourse() {
         <div className="md:col-span-5 space-y-6">
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
             <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <ClockIcon className="mr-2 h-5 w-5 text-orange-500" />
+              <MicIcon className="mr-2 h-5 w-5 text-orange-500" />
               Course Overview
             </h2>
             <p className="text-gray-700 mb-4">
-              Effective time management is the process of organizing and planning how to divide your time between specific activities to work smarter, not harder. This course teaches you how to prioritize tasks, eliminate time-wasting activities, and create systems that help you accomplish more in less time. You'll learn practical techniques that can be applied immediately to reduce stress and increase productivity.
+              Public speaking is one of the most valuable skills you can develop for both personal and professional success. This course helps you build confidence, craft compelling messages, and deliver presentations that engage and inspire audiences. Whether you're preparing for a work presentation, a school speech, or simply want to express yourself more effectively, these techniques will help you communicate with impact.
             </p>
             <div className="mt-6">
               <Button 
                 onClick={() => {
                   toast({
-                    title: "Time Management Quiz",
-                    description: "Test your knowledge of productivity techniques",
+                    title: "Public Speaking Quiz",
+                    description: "Test your knowledge of presentation techniques",
                   })
                 }}
                 className="bg-orange-500 hover:bg-orange-600"
@@ -88,7 +88,7 @@ export default function TimeManagementCourse() {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
-            <h2 className="text-xl font-semibold mb-4">Module 1: Productivity Foundations</h2>
+            <h2 className="text-xl font-semibold mb-4">Module 1: Speaking Foundations</h2>
             <div className="space-y-3">
               {MODULE_ONE.map((lesson, index) => (
                 <div 
@@ -113,7 +113,7 @@ export default function TimeManagementCourse() {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
-            <h2 className="text-xl font-semibold mb-4">Module 2: Advanced Time Management</h2>
+            <h2 className="text-xl font-semibold mb-4">Module 2: Advanced Presentation Skills</h2>
             <div className="space-y-3">
               {MODULE_TWO.map((lesson, index) => (
                 <div 
@@ -147,7 +147,7 @@ export default function TimeManagementCourse() {
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
             <h2 className="text-lg font-semibold mb-4">Learning Coach</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Need help creating a personalized time management system? Chat with our learning coach for customized guidance.
+              Preparing for an important speech? Chat with our learning coach for personalized feedback on your presentation.
             </p>
             <Button 
               onClick={() => setShowChat(true)}

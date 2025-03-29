@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { BookOpenIcon, ChevronLeftIcon, UsersIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ResourceLinks from '@/components/resource-links';
+import SimpleResourceLinks from '@/components/simple-resource-links';
 import { useToast } from '@/hooks/use-toast';
 import LearningCoachPopOut from '@/components/learning-coach-pop-out';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
@@ -141,7 +141,7 @@ export default function ConflictResolutionCourse() {
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
             <h2 className="text-lg font-semibold mb-4">Resources</h2>
-            <ResourceLinks resources={RESOURCES} />
+            <SimpleResourceLinks resources={RESOURCES} />
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
