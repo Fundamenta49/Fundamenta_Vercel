@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
-import { motion, useAnimationControls, useDragControls, PanInfo } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Message {
@@ -44,320 +44,234 @@ export default function FloatingChat() {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
   
+  // For dragging functionality
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const chatContainer = useRef<HTMLDivElement>(null);
+  
   // Theme colors for each section
   const pageColors = {
     home: "#3b82f6", // Default blue
     learning: "#f97316", // Orange
     finance: "#22c55e", // Green
-    career: "#3b82f6", // Blue
     wellness: "#a855f7", // Purple
+    career: "#3b82f6", // Blue
     active: "#ec4899", // Pink
     emergency: "#ef4444", // Red
   };
-
-  // Detect keyboard visibility on mobile
-  useEffect(() => {
-    if (isMobile) {
-      const detectKeyboard = () => {
-        const isKeyboardVisible = window.visualViewport!.height < window.innerHeight;
-        setKeyboardVisible(isKeyboardVisible);
-      };
-
-      window.visualViewport?.addEventListener('resize', detectKeyboard);
-      return () => window.visualViewport?.removeEventListener('resize', detectKeyboard);
-    }
-  }, [isMobile]);
-
-  // Listen for open-fundi-chat events from redirects
+  
+  // Function to handle drag start
+  const handleDragStart = (e: React.MouseEvent) => {
+    if (isMobile || isMinimized) return;
+    
+    setIsDragging(true);
+    
+    const startX = e.clientX - position.x;
+    const startY = e.clientY - position.y;
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      
+      // Get the width and height of the element
+      let width = 384;
+      let height = 500;
+      
+      if (chatContainer.current) {
+        width = chatContainer.current.offsetWidth;
+        height = chatContainer.current.offsetHeight;
+      }
+      
+      // Calculate new position with constraints
+      const newX = Math.max(0, Math.min(windowWidth - width, e.clientX - startX));
+      const newY = Math.max(0, Math.min(windowHeight - height, e.clientY - startY));
+      
+      setPosition({ x: newX, y: newY });
+    };
+    
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+  
+  // For custom events from AI
   useEffect(() => {
     const handleOpenFundiEvent = (event: CustomEvent) => {
-      setIsMinimized(false);
-      
-      // If there's a context/category in the event, we can use it
-      if (event.detail && event.detail.category) {
-        // Set first message based on category if needed
-        const categoryGreetings: Record<string, string> = {
-          career: "I can help with your career questions. What would you like assistance with?",
-          finance: "I can help with your financial questions. What would you like to know?",
-          wellness: "I'm here to assist with wellness and health topics. How can I help?",
-          learning: "Ready to help with your learning journey. What would you like to learn?",
-          emergency: "I'm here to help with your emergency needs. What's the situation?",
-          fitness: "Let's work on your fitness goals together. What would you like to focus on?",
-        };
-        
-        // Add a contextual greeting if no messages exist yet
-        if (messages.length === 0) {
-          setMessages([{
-            role: 'assistant',
-            content: categoryGreetings[event.detail.category] || "How can I help you today?",
-            timestamp: new Date()
-          }]);
-        }
+      if (isMinimized) {
+        setIsMinimized(false);
       }
+      setTimeout(() => {
+        if (chatRef.current) {
+          chatRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+      }, 100);
     };
     
-    window.addEventListener('open-fundi-chat', handleOpenFundiEvent as EventListener);
+    window.addEventListener('openFundi' as any, handleOpenFundiEvent);
     
     return () => {
-      window.removeEventListener('open-fundi-chat', handleOpenFundiEvent as EventListener);
+      window.removeEventListener('openFundi' as any, handleOpenFundiEvent);
     };
-  }, [messages, setMessages]);
-
-  // Animation for Fundi avatar
+  }, [isMinimized]);
+  
+  // Handle keyboard visibility detection
   useEffect(() => {
-    if (isMinimized) {
-      // Gentle floating animation
-      controls.start({
-        y: [0, -3, 0],
-        transition: {
-          duration: 3,
-          ease: "easeInOut",
-          repeat: Infinity
-        }
-      });
-    }
-  }, [isMinimized, controls]);
-
-  // Get current page context
-  const getCurrentContext = () => {
-    const location = window.location.pathname;
-    const page = location.split('/')[1] || 'home';
-    const params = new URLSearchParams(window.location.search);
-    const section = params.get('tab') || 'general';
-
-    const availableActions = {
-      career: ['resume', 'interview', 'job-search'],
-      finance: ['budget', 'investments', 'planning'],
-      wellness: ['meditation', 'exercise', 'nutrition'],
-      learning: ['recipes', 'skills', 'courses'],
+    const originalHeight = window.innerHeight;
+    
+    const checkKeyboard = () => {
+      // If window is more than 25% smaller, keyboard is likely visible
+      const isKeyboardVisible = window.innerHeight < originalHeight * 0.75;
+      setKeyboardVisible(isKeyboardVisible);
     };
-
-    return {
-      currentPage: page,
-      currentSection: section,
-      availableActions: availableActions[page as keyof typeof availableActions] || ['general'],
+    
+    window.addEventListener('resize', checkKeyboard);
+    
+    return () => {
+      window.removeEventListener('resize', checkKeyboard);
     };
-  };
-
-  const handleAIAction = async (action: AIAction) => {
-    try {
-      console.log("Processing AI action:", action);
-      switch (action.type) {
-        case 'navigate':
-          if (action.payload.route) {
-            console.log("Navigating to:", action.payload.route, "Section:", action.payload.section);
-            
-            // Store section to open in sessionStorage if specified
-            if (action.payload.section) {
-              sessionStorage.setItem('openSection', action.payload.section);
-            }
-            
-            // Add a small delay to ensure the user sees the AI response before navigation
-            setTimeout(() => {
-              // Navigate to the specified route
-              setLocation(action.payload.route);
-              
-              // Show toast with appropriate message
-              let toastDesc = `Taking you to ${action.payload.route.replace('/', '')}`;
-              if (action.payload.section) {
-                toastDesc += ` and opening the ${action.payload.section} feature`;
-              }
-              
-              toast({ 
-                title: "Navigation", 
-                description: toastDesc, 
-                duration: 3000 
-              });
-              
-              // Dispatch a custom event to notify pages about section to open
-              if (action.payload.section) {
-                document.dispatchEvent(new CustomEvent('ai:open-section', {
-                  detail: {
-                    route: action.payload.route,
-                    section: action.payload.section
-                  }
-                }));
-              }
-            }, 500);
-          }
-          break;
-        case 'resume':
-          await apiRequest('POST', '/api/resume/update', action.payload);
-          toast({ title: "Resume updated", description: "Your resume has been updated with the suggested changes." });
-          break;
-        case 'recipe':
-          await apiRequest('POST', '/api/recipes/generate', action.payload);
-          toast({ title: "Recipe generated", description: "Your new recipe has been created and saved." });
-          break;
-        case 'budget':
-          await apiRequest('POST', '/api/budget/update', action.payload);
-          toast({ title: "Budget updated", description: "Your budget has been updated with the new information." });
-          break;
-        case 'fill_form':
-          toast({ title: "Form helper", description: "I'll help you fill out this form.", duration: 3000 });
-          break;
-        case 'show_guide':
-          toast({ title: "Guide", description: "Opening the requested guide for you.", duration: 3000 });
-          break;
-        case 'trigger_feature':
-          toast({ title: "Feature activated", description: `Activating ${action.payload.feature || 'requested feature'}`, duration: 3000 });
-          break;
-        default:
-          console.log("Unknown action type:", action.type);
-      }
-    } catch (error) {
-      console.error("Error handling AI action:", error);
-      toast({ 
-        title: "Action failed", 
-        description: "I couldn't complete that action. Please try again.", 
-        variant: "destructive",
-        duration: 5000
-      });
-    }
-  };
-
+  }, []);
+  
+  // Main AI interaction function
   const chatMutation = useMutation({
-    mutationFn: async (content: string) => {
-      setIsAiSpeaking(true);
-      const context = getCurrentContext();
-      const response = await apiRequest("POST", "/api/chat/orchestrator", {
-        message: content,
-        context,
-        previousMessages: messages.map(m => ({
-          role: m.role,
-          content: m.content
-        }))
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
-
-      return response.json();
-    },
-    onSuccess: async (data) => {
-      if (data.success) {
-        if (data.actions && data.actions.length > 0) {
-          for (const action of data.actions) {
-            await handleAIAction(action);
-          }
+    mutationFn: async (message: string) => {
+      const path = location.startsWith("/") ? location.substring(1) : location;
+      const category = path || "home";
+      
+      const response = await apiRequest({
+        url: "/api/chat/orchestrator",
+        method: "POST",
+        data: { 
+          message,
+          category
         }
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.response,
-            timestamp: new Date(),
-            actions: data.actions,
-            suggestions: data.suggestions
-          }
-        ]);
-        setInput("");
+      });
+      
+      return response;
+    },
+    onSuccess: (response) => {
+      setIsAiSpeaking(false);
+      
+      if (response.message) {
+        const aiMessage: Message = {
+          role: 'assistant',
+          content: response.message,
+          timestamp: new Date(),
+          actions: response.actions || [],
+          suggestions: response.suggestions || []
+        };
         
-        // Show the AI speaking for a brief moment then stop
+        setMessages(prev => [...prev, aiMessage]);
+        
+        // Process any actions returned from the AI
+        if (response.actions && response.actions.length > 0) {
+          response.actions.forEach(action => {
+            handleAIAction(action);
+          });
+        }
+        
         setTimeout(() => {
-          setIsAiSpeaking(false);
-        }, 1500);
+          if (chatRef.current) {
+            chatRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          }
+        }, 100);
       }
     },
     onError: (error: Error) => {
       setIsAiSpeaking(false);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "Failed to send message. Please try again.",
+        title: "Communication Error",
+        description: "There was a problem connecting to the AI. Please try again.",
+        variant: "destructive"
       });
-    },
+    }
   });
-
-  const handleSendMessage = async (e: React.FormEvent) => {
+  
+  const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
-
+    
+    if (!input.trim() || chatMutation.isPending) return;
+    
     const userMessage: Message = {
       role: 'user',
       content: input,
       timestamp: new Date()
     };
-
+    
     setMessages(prev => [...prev, userMessage]);
-    setInput("");
+    setInput('');
+    setIsAiSpeaking(true);
+    
     chatMutation.mutate(input);
+    
+    setTimeout(() => {
+      if (chatRef.current) {
+        chatRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+    }, 100);
   };
-
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
-  }, [messages]);
   
-  // Get the current page theme color
+  // Function to handle AI actions
+  const handleAIAction = async (action: AIAction) => {
+    console.log("Processing AI action:", action);
+    
+    switch (action.type) {
+      case "navigate":
+        if (action.payload.route) {
+          console.log("Navigating to:", action.payload.route, "Section:", action.payload.section);
+          const section = action.payload.section ? `/${action.payload.section}` : '';
+          setLocation(`/${action.payload.route}${section}`);
+          
+          // Dispatch a custom event if a section was specified
+          if (action.payload.section) {
+            const event = new CustomEvent('sectionSelected', { 
+              detail: { section: action.payload.section } 
+            });
+            window.dispatchEvent(event);
+          }
+        }
+        break;
+      
+      case "openFeature":
+        if (action.payload.feature) {
+          // Dispatch a custom event to open a specific feature
+          const event = new CustomEvent('openFeature', { 
+            detail: { feature: action.payload.feature } 
+          });
+          window.dispatchEvent(event);
+        }
+        break;
+      
+      default:
+        console.log("Unknown action type:", action.type);
+    }
+  };
+  
+  // For animated welcome effect
+  useEffect(() => {
+    if (!isMinimized) {
+      controls.start({
+        y: [0, -10, 0],
+        transition: { duration: 1, ease: "easeInOut" }
+      });
+    }
+  }, [isMinimized, controls]);
+  
+  // Get current theme color based on location
   const getCurrentThemeColor = useMemo(() => {
-    // Extract the current page from location (e.g., /finance -> finance)
     const currentPage = location.split('/')[1] || 'home';
     return pageColors[currentPage as keyof typeof pageColors] || pageColors.home;
   }, [location, pageColors]);
 
-  // For Framer Motion dragging
-  const fundiRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const dragControls = useDragControls();
-  
-  // Function to start drag when handle is used
-  const startDrag = (e: React.PointerEvent) => {
-    if (isMobile || isMinimized) return; // Don't allow dragging on mobile or when minimized
-    dragControls.start(e);
-  };
-  
-  // Calculate drag constraints to keep within viewport
-  const [dragConstraints, setDragConstraints] = useState({
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0
-  });
-  
-  // Update constraints when window is resized
-  useEffect(() => {
-    const updateConstraints = () => {
-      if (fundiRef.current) {
-        const windowHeight = window.innerHeight;
-        const windowWidth = window.innerWidth;
-        const elementHeight = fundiRef.current.offsetHeight;
-        const elementWidth = fundiRef.current.offsetWidth;
-        
-        setDragConstraints({
-          top: 0,
-          left: 0,
-          right: windowWidth - elementWidth,
-          bottom: windowHeight - elementHeight
-        });
-      }
-    };
-    
-    // Set initial constraints
-    updateConstraints();
-    
-    // Update constraints when window resizes
-    window.addEventListener('resize', updateConstraints);
-    return () => window.removeEventListener('resize', updateConstraints);
-  }, [isMinimized]);
-
   return (
-    <motion.div
-      ref={fundiRef}
-      drag={!isMobile && !isMinimized}
-      dragControls={dragControls}
-      dragConstraints={dragConstraints}
-      dragMomentum={false}
-      dragElastic={0}
-      whileDrag={{ scale: 1.01 }}
-      animate={position}
-      onDragEnd={(event, info) => {
-        // Update position state when dragging ends
-        setPosition({ x: info.point.x, y: info.point.y });
-      }}
+    <div 
+      ref={chatContainer}
       className={cn(
         "fixed z-[1000] transition-all duration-300 ease-in-out",
         isMinimized
@@ -366,8 +280,13 @@ export default function FloatingChat() {
             ? keyboardVisible
               ? "top-0 left-0 right-0 w-full h-[40vh]"
               : "top-0 left-0 right-0 w-full max-h-[75vh]"
-            : "top-4 right-4 w-96 h-[500px]",
+            : "w-96 h-[500px]"
       )}
+      style={{
+        top: !isMinimized && !isMobile ? position.y : undefined,
+        left: !isMinimized && !isMobile ? position.x : undefined,
+        right: isMinimized || isMobile ? undefined : position.x === 0 ? '16px' : undefined
+      }}
     >
       {isMinimized ? (
         <motion.div
@@ -457,10 +376,13 @@ export default function FloatingChat() {
           "overflow-hidden",
           isMobile ? "h-full rounded-b-xl rounded-t-none" : "h-full rounded-xl"
         )}>
-          <div className="p-3 border-b flex items-center justify-between bg-background cursor-move" data-draggable="true">
+          <div className="p-3 border-b flex items-center justify-between bg-background" data-draggable="true">
             <div className="flex items-center gap-2">
-              <div onPointerDown={startDrag}>
-                <GripHorizontal className="h-4 w-4 text-muted-foreground mr-1 cursor-grab" />
+              <div 
+                className="cursor-grab active:cursor-grabbing" 
+                onMouseDown={handleDragStart}
+              >
+                <GripHorizontal className="h-4 w-4 text-muted-foreground mr-1" />
               </div>
               {/* SVG directly with no container */}
               <svg 
@@ -622,7 +544,7 @@ export default function FloatingChat() {
                     className={cn(
                       "rounded-lg px-4 py-2.5 max-w-[85%] text-sm",
                       msg.role === 'user'
-                        ? `bg-[${getCurrentThemeColor}] text-white`
+                        ? "bg-primary text-white"
                         : "bg-white border border-gray-200"
                     )}
                     style={{
@@ -682,6 +604,6 @@ export default function FloatingChat() {
           </form>
         </Card>
       )}
-    </motion.div>
+    </div>
   );
 }
