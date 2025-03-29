@@ -20,6 +20,13 @@ import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenan
 import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
 import CookingBasicsCourse from "@/pages/learning/courses/cooking-basics";
 import HealthWellnessCourse from "@/pages/learning/courses/health-wellness";
+import CriticalThinkingCourse from "@/pages/learning/courses/critical-thinking";
+import ConflictResolutionCourse from "@/pages/learning/courses/conflict-resolution";
+import DecisionMakingCourse from "@/pages/learning/courses/decision-making";
+import TimeManagementCourse from "@/pages/learning/courses/time-management";
+import CopingWithFailureCourse from "@/pages/learning/courses/coping-with-failure";
+import ConversationSkillsCourse from "@/pages/learning/courses/conversation-skills";
+import FormingPositiveHabitsCourse from "@/pages/learning/courses/forming-positive-habits";
 import WelcomeTour from "@/components/welcome-tour";
 
 function Router() {
@@ -42,6 +49,13 @@ function Router() {
         <Route path="/learning/courses/cooking-basics" component={CookingBasicsCourse} />
         <Route path="/learning/courses/health-wellness" component={HealthWellnessCourse} />
         <Route path="/learning/courses/economics" component={EconomicsCourse} />
+        <Route path="/learning/courses/critical-thinking" component={CriticalThinkingCourse} />
+        <Route path="/learning/courses/conflict-resolution" component={ConflictResolutionCourse} />
+        <Route path="/learning/courses/decision-making" component={DecisionMakingCourse} />
+        <Route path="/learning/courses/time-management" component={TimeManagementCourse} />
+        <Route path="/learning/courses/coping-with-failure" component={CopingWithFailureCourse} />
+        <Route path="/learning/courses/conversation-skills" component={ConversationSkillsCourse} />
+        <Route path="/learning/courses/forming-positive-habits" component={FormingPositiveHabitsCourse} />
         <Route component={NotFound} />
       </Switch>
       <WelcomeTour />

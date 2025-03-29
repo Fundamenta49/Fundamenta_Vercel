@@ -16,7 +16,7 @@ export interface Resource {
 }
 
 interface ResourceLinksProps {
-  subject: string;
+  subject?: string;
   resources?: Resource[];
   maxHeight?: string;
   className?: string;
