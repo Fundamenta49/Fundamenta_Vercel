@@ -186,191 +186,196 @@ const MortgageCalculator: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="border-primary">
-        <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
-          <CardTitle className="flex items-center gap-2">
-            <CalculatorIcon className="h-5 w-5" />
-            Mortgage Calculator
-          </CardTitle>
-          <CardDescription className="text-primary-foreground/90">
-            Calculate monthly payments and see detailed costs
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="pt-6 grid gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              {/* Home Price Input */}
-              <div className="space-y-2">
-                <Label htmlFor="homePrice" className="flex items-center gap-2">
-                  <HomeIcon className="h-4 w-4" /> Home Price
-                </Label>
-                <Input
-                  id="homePrice"
-                  type="text"
-                  value={formatCurrency(homePrice)}
-                  onChange={(e) => handleHomePriceChange(e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-              
-              {/* Down Payment Input */}
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="downPayment" className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" /> Down Payment
-                  </Label>
-                  <span className="text-sm text-muted-foreground">{downPaymentPercent}%</span>
-                </div>
-                <Input
-                  id="downPayment"
-                  type="text"
-                  value={formatCurrency(downPayment)}
-                  onChange={(e) => handleDownPaymentChange(e.target.value)}
-                  className="font-mono"
-                />
-                <Slider
-                  value={[downPaymentPercent]}
-                  min={5}
-                  max={50}
-                  step={1}
-                  onValueChange={handleDownPaymentPercentChange}
-                  className="my-2"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>5%</span>
-                  <span>20%</span>
-                  <span>50%</span>
-                </div>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          {/* Home Price Input */}
+          <div className="space-y-2">
+            <Label htmlFor="homePrice" className="flex items-center gap-2">
+              <HomeIcon className="h-4 w-4 text-green-500" /> Home Price
+            </Label>
+            <Input
+              id="homePrice"
+              type="text"
+              value={formatCurrency(homePrice)}
+              onChange={(e) => handleHomePriceChange(e.target.value)}
+              className="font-mono"
+            />
+          </div>
+          
+          {/* Down Payment Input */}
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label htmlFor="downPayment" className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-green-500" /> Down Payment
+              </Label>
+              <span className="text-sm text-muted-foreground">{downPaymentPercent}%</span>
             </div>
-            
-            <div className="space-y-4">
-              {/* Interest Rate Input */}
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="interestRate" className="flex items-center gap-2">
-                    <Percent className="h-4 w-4" /> Interest Rate
-                  </Label>
-                  <span className="text-sm text-muted-foreground">{interestRate.toFixed(2)}%</span>
-                </div>
-                <Slider
-                  id="interestRate"
-                  value={[interestRate]}
-                  min={1}
-                  max={12}
-                  step={0.125}
-                  onValueChange={handleInterestRateChange}
-                />
-                <div className="text-xs text-muted-foreground">
-                  {currentRates.thirtyYear && (
-                    <span>Current 30-yr rate: {formatFredValue(currentRates.thirtyYear, FredDataSeries.MORTGAGE_30YR)}</span>
-                  )}
-                  {currentRates.fifteenYear && (
-                    <span className="ml-3">15-yr: {formatFredValue(currentRates.fifteenYear, FredDataSeries.MORTGAGE_15YR)}</span>
-                  )}
-                </div>
-              </div>
-              
-              {/* Loan Term Selector */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" /> Loan Term
-                </Label>
-                <div className="flex gap-2">
-                  <Button
-                    variant={loanTerm === 30 ? "default" : "outline"}
-                    onClick={() => handleLoanTermChange(30)}
-                    className="flex-1"
-                  >
-                    30 Years
-                  </Button>
-                  <Button
-                    variant={loanTerm === 15 ? "default" : "outline"}
-                    onClick={() => handleLoanTermChange(15)}
-                    className="flex-1"
-                  >
-                    15 Years
-                  </Button>
-                </div>
-                <div className="flex justify-end">
-                  <Button 
-                    variant="link" 
-                    size="sm" 
-                    onClick={() => useMarketRate(loanTerm)}
-                    className="text-xs h-auto p-0"
-                  >
-                    Use current market rate
-                  </Button>
-                </div>
-              </div>
+            <Input
+              id="downPayment"
+              type="text"
+              value={formatCurrency(downPayment)}
+              onChange={(e) => handleDownPaymentChange(e.target.value)}
+              className="font-mono"
+            />
+            <Slider
+              value={[downPaymentPercent]}
+              min={5}
+              max={50}
+              step={1}
+              onValueChange={handleDownPaymentPercentChange}
+              className="my-2"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>5%</span>
+              <span>20%</span>
+              <span>50%</span>
             </div>
           </div>
-        </CardContent>
+        </div>
         
-        {mortgageResult && (
-          <CardFooter className="flex flex-col border-t p-6 pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-              <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
-                <span className="text-sm text-muted-foreground">Monthly Payment</span>
-                <span className="text-2xl font-bold">
-                  {formatCurrencyPrecise(mortgageResult.monthlyPayment)}
-                </span>
-              </div>
-              <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
-                <span className="text-sm text-muted-foreground">Loan Amount</span>
-                <span className="text-2xl font-bold">
-                  {formatCurrency(mortgageResult.totalPrincipal)}
-                </span>
-              </div>
-              <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
-                <span className="text-sm text-muted-foreground">Total Interest</span>
-                <span className="text-2xl font-bold text-primary">
-                  {formatCurrency(mortgageResult.totalInterest)}
-                </span>
-              </div>
+        <div className="space-y-4">
+          {/* Interest Rate Input */}
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label htmlFor="interestRate" className="flex items-center gap-2">
+                <Percent className="h-4 w-4 text-green-500" /> Interest Rate
+              </Label>
+              <span className="text-sm text-muted-foreground">{interestRate.toFixed(2)}%</span>
             </div>
+            <Slider
+              id="interestRate"
+              value={[interestRate]}
+              min={1}
+              max={12}
+              step={0.125}
+              onValueChange={handleInterestRateChange}
+            />
+            <div className="text-xs text-muted-foreground">
+              {currentRates.thirtyYear && (
+                <span>Current 30-yr rate: {formatFredValue(currentRates.thirtyYear, FredDataSeries.MORTGAGE_30YR)}</span>
+              )}
+              {currentRates.fifteenYear && (
+                <span className="ml-3">15-yr: {formatFredValue(currentRates.fifteenYear, FredDataSeries.MORTGAGE_15YR)}</span>
+              )}
+            </div>
+          </div>
+          
+          {/* Loan Term Selector */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-green-500" /> Loan Term
+            </Label>
+            <div className="flex gap-2">
+              <Button
+                variant={loanTerm === 30 ? "default" : "outline"}
+                onClick={() => handleLoanTermChange(30)}
+                className="flex-1"
+              >
+                30 Years
+              </Button>
+              <Button
+                variant={loanTerm === 15 ? "default" : "outline"}
+                onClick={() => handleLoanTermChange(15)}
+                className="flex-1"
+              >
+                15 Years
+              </Button>
+            </div>
+            <div className="flex justify-end">
+              <Button 
+                variant="link" 
+                size="sm" 
+                onClick={() => useMarketRate(loanTerm)}
+                className="text-xs h-auto p-0 text-green-600"
+              >
+                Use current market rate
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {mortgageResult && (
+        <div className="mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+            <Card className="border-2 border-green-100 shadow-md bg-white">
+              <CardContent className="pt-6 pb-6 flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-2">
+                  <PiggyBankIcon className="h-5 w-5 text-green-500" />
+                </div>
+                <h3 className="text-sm font-medium text-muted-foreground">Monthly Payment</h3>
+                <p className="text-2xl font-bold mt-1">
+                  {formatCurrencyPrecise(mortgageResult.monthlyPayment)}
+                </p>
+              </CardContent>
+            </Card>
             
+            <Card className="border-2 border-green-100 shadow-md bg-white">
+              <CardContent className="pt-6 pb-6 flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-2">
+                  <HomeIcon className="h-5 w-5 text-green-500" />
+                </div>
+                <h3 className="text-sm font-medium text-muted-foreground">Loan Amount</h3>
+                <p className="text-2xl font-bold mt-1">
+                  {formatCurrency(mortgageResult.totalPrincipal)}
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-2 border-green-100 shadow-md bg-white">
+              <CardContent className="pt-6 pb-6 flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-2">
+                  <DollarSign className="h-5 w-5 text-green-500" />
+                </div>
+                <h3 className="text-sm font-medium text-muted-foreground">Total Interest</h3>
+                <p className="text-2xl font-bold mt-1 text-green-600">
+                  {formatCurrency(mortgageResult.totalInterest)}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="mt-6 flex justify-center">
             <Button 
               variant="outline" 
-              className="mt-4 w-full md:w-auto" 
+              className="border-green-200 hover:bg-green-50 hover:text-green-700"
               onClick={() => setShowAmortization(!showAmortization)}
             >
               {showAmortization ? "Hide" : "Show"} Amortization Schedule
             </Button>
-            
-            {showAmortization && (
-              <div className="w-full mt-4 overflow-auto">
-                <Table>
-                  <TableCaption>
-                    Amortization schedule showing first payment and annual payments thereafter
-                  </TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Period</TableHead>
-                      <TableHead>Payment</TableHead>
-                      <TableHead>Principal</TableHead>
-                      <TableHead>Interest</TableHead>
-                      <TableHead>Remaining Balance</TableHead>
+          </div>
+          
+          {showAmortization && (
+            <div className="w-full mt-6 overflow-auto border rounded-lg">
+              <Table>
+                <TableCaption>
+                  Amortization schedule showing first payment and annual payments thereafter
+                </TableCaption>
+                <TableHeader>
+                  <TableRow className="bg-green-50">
+                    <TableHead>Period</TableHead>
+                    <TableHead>Payment</TableHead>
+                    <TableHead>Principal</TableHead>
+                    <TableHead>Interest</TableHead>
+                    <TableHead>Remaining Balance</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mortgageResult.amortizationSchedule.map((row) => (
+                    <TableRow key={row.month}>
+                      <TableCell>{row.month === 1 ? "First Payment" : `Year ${Math.floor(row.month / 12)}`}</TableCell>
+                      <TableCell>{formatCurrencyPrecise(row.payment)}</TableCell>
+                      <TableCell>{formatCurrencyPrecise(row.principal)}</TableCell>
+                      <TableCell>{formatCurrencyPrecise(row.interest)}</TableCell>
+                      <TableCell>{formatCurrencyPrecise(row.remainingBalance)}</TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mortgageResult.amortizationSchedule.map((row) => (
-                      <TableRow key={row.month}>
-                        <TableCell>{row.month === 1 ? "First Payment" : `Year ${Math.floor(row.month / 12)}`}</TableCell>
-                        <TableCell>{formatCurrencyPrecise(row.payment)}</TableCell>
-                        <TableCell>{formatCurrencyPrecise(row.principal)}</TableCell>
-                        <TableCell>{formatCurrencyPrecise(row.interest)}</TableCell>
-                        <TableCell>{formatCurrencyPrecise(row.remainingBalance)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardFooter>
-        )}
-      </Card>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

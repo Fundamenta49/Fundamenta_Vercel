@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -8,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   CalculatorIcon,
   HomeIcon,
@@ -15,12 +15,13 @@ import {
   BarChart4,
   Info,
   DollarSign,
-  FileText
+  FileText,
+  AlertCircle
 } from 'lucide-react';
 import MortgageCalculator from '@/components/mortgage-calculator';
 import MortgageMarketTrends from '@/components/mortgage-market-trends';
 import MortgageEducation from '@/components/mortgage-education';
-import ClosingCostCalculator from '@/components/closing-cost-calculator';
+import { ClosingCostCalculator } from '@/components/closing-cost-calculator-new';
 import { 
   Dialog, 
   DialogContent, 
@@ -29,16 +30,61 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from '@/components/ui/dialog';
+import {
+  FullScreenDialog,
+  FullScreenDialogContent,
+  FullScreenDialogHeader,
+  FullScreenDialogTitle,
+  FullScreenDialogDescription,
+  FullScreenDialogBody,
+  FullScreenDialogTrigger
+} from "@/components/ui/full-screen-dialog";
 
 const MortgagePage: React.FC = () => {
+  // State for info dialog and fullscreen dialogs
   const [isAboutDialogOpen, setIsAboutDialogOpen] = useState(false);
+  const [activeDialog, setActiveDialog] = useState<string | null>(null);
+
+  // Calculate the appropriate theme color for Finance section
+  const themeColor = "#22c55e"; // Finance green color
+
+  const mortgageTools = [
+    {
+      id: "calculator",
+      title: "Mortgage Calculator",
+      description: "Calculate monthly payments, total interest, and view amortization schedules",
+      icon: CalculatorIcon,
+      component: MortgageCalculator
+    },
+    {
+      id: "costs",
+      title: "Closing Costs Calculator",
+      description: "Understand all costs associated with buying a home including taxes and insurance",
+      icon: DollarSign,
+      component: ClosingCostCalculator
+    },
+    {
+      id: "trends",
+      title: "Market Trends",
+      description: "Real-time mortgage rates and housing market data from the Federal Reserve",
+      icon: BarChart4,
+      component: MortgageMarketTrends
+    },
+    {
+      id: "education",
+      title: "Mortgage Education",
+      description: "Essential guides and resources for understanding the mortgage process",
+      icon: BookOpen,
+      component: MortgageEducation
+    }
+  ];
 
   return (
     <div className="container py-8 space-y-6 max-w-7xl">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <HomeIcon className="h-8 w-8 text-primary" />
+            <HomeIcon className="h-8 w-8 text-green-500" />
             Mortgage Center
           </h1>
           <p className="text-muted-foreground">
@@ -84,89 +130,48 @@ const MortgagePage: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="calculator" className="space-y-4">
-        <TabsList className="grid grid-cols-4 w-full max-w-3xl mx-auto">
-          <TabsTrigger value="calculator" className="flex items-center gap-2">
-            <CalculatorIcon className="h-4 w-4" />
-            <span className="hidden sm:inline">Mortgage Calculator</span>
-            <span className="sm:hidden">Calculator</span>
-          </TabsTrigger>
-          <TabsTrigger value="costs" className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" />
-            <span className="hidden sm:inline">Closing Costs</span>
-            <span className="sm:hidden">Costs</span>
-          </TabsTrigger>
-          <TabsTrigger value="trends" className="flex items-center gap-2">
-            <BarChart4 className="h-4 w-4" />
-            <span className="hidden sm:inline">Market Trends</span>
-            <span className="sm:hidden">Trends</span>
-          </TabsTrigger>
-          <TabsTrigger value="education" className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">Education Center</span>
-            <span className="sm:hidden">Education</span>
-          </TabsTrigger>
-        </TabsList>
+      <Alert variant="default" className="mx-0 sm:mx-0 mb-4 border-green-500 bg-green-50">
+        <AlertCircle className="h-4 w-4 text-green-500" />
+        <AlertDescription className="text-green-800">
+          Click on any card below to access the full interactive experience. All mortgage data is updated daily with the latest market information.
+        </AlertDescription>
+      </Alert>
 
-        <TabsContent value="calculator" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Mortgage Calculator</CardTitle>
-              <CardDescription>
-                Calculate monthly payments, total interest, and view amortization schedules based on current rates
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <MortgageCalculator />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="costs" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                Closing Cost & Total Ownership Calculator
-              </CardTitle>
-              <CardDescription>
-                Understand all costs associated with buying a home, from down payment to insurance, taxes, and more
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ClosingCostCalculator />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="trends" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Market Trends & Indicators</CardTitle>
-              <CardDescription>
-                Real-time mortgage rates and housing market data from the Federal Reserve
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <MortgageMarketTrends />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="education" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Mortgage Education Center</CardTitle>
-              <CardDescription>
-                Essential guides and resources for understanding the mortgage process
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <MortgageEducation />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {/* Card grid layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        {mortgageTools.map((tool) => {
+          const Icon = tool.icon;
+          return (
+            <FullScreenDialog key={tool.id}>
+              <FullScreenDialogTrigger asChild>
+                <Card className="border-2 border-green-100 shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-4">
+                        <Icon className="h-10 w-10 text-green-500" />
+                      </div>
+                      <CardTitle className="mb-2">{tool.title}</CardTitle>
+                      <CardDescription>{tool.description}</CardDescription>
+                    </div>
+                  </CardContent>
+                </Card>
+              </FullScreenDialogTrigger>
+              <FullScreenDialogContent themeColor={themeColor}>
+                <FullScreenDialogHeader>
+                  <div className="flex items-center mb-2">
+                    <Icon className="h-6 w-6 mr-2 text-green-500" />
+                    <FullScreenDialogTitle>{tool.title}</FullScreenDialogTitle>
+                  </div>
+                  <FullScreenDialogDescription>{tool.description}</FullScreenDialogDescription>
+                </FullScreenDialogHeader>
+                <FullScreenDialogBody>
+                  <tool.component />
+                </FullScreenDialogBody>
+              </FullScreenDialogContent>
+            </FullScreenDialog>
+          );
+        })}
+      </div>
     </div>
   );
 };
