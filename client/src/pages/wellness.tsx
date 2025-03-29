@@ -195,9 +195,8 @@ export default function Wellness() {
                   isExpanded={false}
                   onToggle={handleCardClick}
                   color="text-purple-500" // Wellness section color from the home page
-                >
-                  {/* No content - using full-screen dialogs instead */}
-                </BookCard>
+                  children={null}
+                />
               </BookPage>
             );
           })}
