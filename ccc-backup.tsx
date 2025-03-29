@@ -42,7 +42,6 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FredDataSeries, formatFredValue } from '@/lib/fred-service';
 import { getMortgageRates, formatRate } from '@/lib/mortgage-data-service';
-import { formatCurrency, formatCurrencyPrecise, formatPercent } from '@/lib/format-utils';
 
 // Interfaces
 interface ClosingCosts {
@@ -114,7 +113,34 @@ const DEFAULT_CLOSING_COST_PERCENT = 3; // % of home value
 const DEFAULT_HOME_MAINTENANCE = 1; // % of home value per year
 const DEFAULT_UTILITIES = 300; // monthly
 
-// Formatting utils are now imported from '@/lib/format-utils'
+// Helper function to format currency
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+// Helper function to format currency with cents
+export const formatCurrencyPrecise = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+};
+
+// Helper function to format percentage
+export const formatPercent = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'percent',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount / 100);
+};
 
 const ClosingCostCalculator: React.FC = () => {
   // Current FRED mortgage rates

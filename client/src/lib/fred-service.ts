@@ -5,7 +5,7 @@
  * specifically focused on mortgage rates and housing market indicators.
  */
 
-const FRED_API_KEY = import.meta.env.VITE_FRED_API_KEY || '008844297f410dfc9e6ae59b50373ce';
+const FRED_API_KEY = import.meta.env.FRED_API_KEY || import.meta.env.VITE_FRED_API_KEY;
 const FRED_BASE_URL = 'https://api.stlouisfed.org/fred/series/observations';
 
 export interface FredDataPoint {
