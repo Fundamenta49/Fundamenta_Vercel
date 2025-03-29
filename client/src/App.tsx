@@ -11,6 +11,7 @@ import Privacy from "@/pages/privacy";
 import Invite from "@/pages/invite";
 import Emergency from "@/pages/emergency";
 import Finance from "@/pages/finance";
+import MortgagePage from "@/pages/finance/mortgage";
 import Career from "@/pages/career";
 import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
@@ -41,6 +42,7 @@ function Router() {
         <Route path="/invite" component={Invite} />
         <Route path="/emergency" component={Emergency} />
         <Route path="/finance" component={Finance} />
+        <Route path="/finance/mortgage" component={MortgagePage} />
         <Route path="/career" component={Career} />
         <Route path="/wellness" component={Wellness} />
         <Route path="/active" component={Active} />

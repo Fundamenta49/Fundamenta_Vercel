@@ -3,6 +3,7 @@ import { AlertCircle, Home, DollarSign, Calculator, Brain, CreditCard, PiggyBank
 import { FINANCE_CATEGORY } from "@/components/chat-interface";
 import { BudgetData } from "@/components/budget-calculator";
 import { useState, useRef, useEffect } from "react";
+import { useLocation } from "wouter";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import {
   FullScreenDialog,
@@ -74,6 +75,7 @@ const SECTIONS: SectionType[] = [
 export default function Finance() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
+  const [, setLocation] = useLocation();
   
   // Dialog states
   const [isAdvisorOpen, setIsAdvisorOpen] = useState(false);
@@ -102,7 +104,8 @@ export default function Finance() {
       setIsRetirementOpen(true);
     }
     else if (sectionId === 'mortgage') {
-      setIsMortgageOpen(true);
+      // Navigate to the dedicated mortgage page instead of opening a dialog
+      setLocation('/finance/mortgage');
     }
     else if (sectionId === 'bank') {
       setIsBankOpen(true);
