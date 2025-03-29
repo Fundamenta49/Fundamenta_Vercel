@@ -10,6 +10,26 @@ import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from "mammoth";
 import axios from 'axios';
 import resumeRoutes from './routes/resume';
+import { 
+  getEmergencyGuidance,
+  optimizeResume,
+  analyzeInterviewAnswer,
+  generateJobQuestions,
+  generateCoverLetter,
+  assessCareer,
+  searchJobs,
+  getSalaryInsights,
+  createLinkToken,
+  exchangePublicToken,
+  getTransactions,
+} from './services/api-functions';
+
+// Import schemas from api-functions
+import { 
+  resumeSchema,
+  interviewAnalysisSchema,
+  coverLetterSchema 
+} from './services/api-functions';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -142,12 +162,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         suggestions: responseData.suggestions
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Chat error details:", {
-        name: error.name,
-        message: error.message,
-        errors: error.errors, // Zod validation errors
-        stack: error.stack
+        name: error?.name,
+        message: error?.message,
+        errors: error?.errors, // Zod validation errors
+        stack: error?.stack
       });
 
       res.status(400).json({
@@ -167,8 +187,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           currentSection: z.string().optional(),
           availableActions: z.array(z.string())
         }),
+        category: z.string().optional(),
         previousMessages: z.array(z.object({
-          role: z.enum(["user", "assistant"]),
+          role: z.enum(["user", "assistant", "system"]),
           content: z.string()
         }))
       });
@@ -177,6 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await orchestrateAIResponse(
         validatedData.message,
         validatedData.context,
+        validatedData.category,
         validatedData.previousMessages
       );
 
@@ -184,10 +206,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         response: response.response,
         actions: response.actions,
-        suggestions: response.suggestions
+        suggestions: response.suggestions,
+        category: response.category,
+        sentiment: response.sentiment,
+        confidence: response.confidence,
+        followUpQuestions: response.followUpQuestions
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Chat orchestrator error:", error);
       res.status(400).json({
         error: "Failed to process request",
@@ -256,7 +282,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         throw new Error("Could not parse PDF content. Please ensure the file is not corrupted or password protected.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Test endpoint error:", error);
       res.status(500).json({
         error: true,
@@ -325,7 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         console.log("Starting resume analysis with OpenAI...");
         const response = await openai.chat.completions.create({
-          model: "gpt-4",
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
           messages: [
             {
               role: "system",
@@ -376,7 +402,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           data: parsedData
         });
 
-      } catch (error) {
+      } catch (error: any) {
         console.error("Resume processing error:", error);
         res.status(400).json({
           error: true,
@@ -384,7 +410,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           details: error instanceof Error ? error.stack : undefined
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Unexpected error:", error);
       res.status(500).json({
         error: true,
@@ -393,13 +419,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
   app.post("/api/emergency/guidance", async (req, res) => {
     try {
       const { situation } = z.object({ situation: z.string() }).parse(req.body);
       const guidance = await getEmergencyGuidance(situation);
       res.json({ guidance });
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: "Invalid request" });
     }
   });
@@ -409,7 +434,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const resumeData = resumeSchema.parse(req.body);
       const optimizedResume = await optimizeResume(resumeData);
       res.json({ suggestions: JSON.parse(optimizedResume) });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Resume optimization error:", error);
       res.status(400).json({ error: "Failed to optimize resume" });
     }
@@ -420,14 +445,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userData = insertUserSchema.parse(req.body);
       const user = await storage.createUser(userData);
       res.json(user);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: "Invalid user data" });
     }
   });
 
   app.post("/api/interview/analyze", async (req, res) => {
     try {
-      const { answer, question, industry } = interviewAnalysisSchema.parse(req.body);
+      // Using imported interviewAnalysisSchema
+      const data = interviewAnalysisSchema.parse(req.body);
+      const { answer, question, industry } = data;
 
       if (!answer.trim() || !question.trim() || !industry.trim()) {
         return res.status(400).json({
@@ -458,7 +485,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      if (error.message.includes('rate limit exceeded')) {
+      if (error.message?.includes('rate limit exceeded')) {
         return res.status(429).json({
           error: "Too many requests. Please wait a moment and try again."
         });
@@ -497,23 +524,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      if (error.message.includes('rate limit exceeded')) {
+      if (error.message?.includes('rate limit exceeded')) {
         return res.status(429).json({
           error: "Too many requests. Please wait a moment and try again."
         });
       }
 
       res.status(500).json({
-        error: "Failed to generate questions. Please try again later."
+        error: "Failed to generate interview questions. Please try again later."
       });
     }
   });
 
-  app.post("/api/resume/cover-letter", async (req, res) => {
+  app.post("/api/cover-letter/generate", async (req, res) => {
     try {
+      // Using imported coverLetterSchema
       const data = coverLetterSchema.parse(req.body);
-      const coverLetter = await generateCoverLetter(data);
-      res.json({ coverLetter });
+      
+      const letterContent = await generateCoverLetter(data);
+      res.json({ content: letterContent });
     } catch (error: any) {
       console.error("Cover letter generation error:", error);
 
@@ -529,12 +558,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      if (error.message.includes('rate limit exceeded')) {
-        return res.status(429).json({
-          error: "Too many requests. Please wait a moment and try again."
-        });
-      }
-
       res.status(500).json({
         error: "Failed to generate cover letter. Please try again later."
       });
@@ -543,12 +566,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/career/assess", async (req, res) => {
     try {
-      const { answers } = z.object({
-        answers: z.record(z.string(), z.string())
-      }).parse(req.body);
-
-      const results = await assessCareer(answers);
-      res.json(results);
+      const schema = z.record(z.string(), z.string());
+      const answers = schema.parse(req.body);
+      
+      const assessment = await assessCareer(answers);
+      res.json(assessment);
     } catch (error: any) {
       console.error("Career assessment error:", error);
 
@@ -558,239 +580,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      if (error?.error?.type === "invalid_api_key") {
-        return res.status(503).json({
-          error: "Career assessment service is currently unavailable. Please try again later."
-        });
-      }
-
-      if (error.message.includes('rate limit exceeded')) {
-        return res.status(429).json({
-          error: "Too many requests. Please wait a moment and try again."
-        });
-      }
-
       res.status(500).json({
-        error: "Failed to analyze career assessment. Please try again later."
-      });
-    }
-  });
-  app.post("/api/career-guidance", async (req, res) => {
-    try {
-      const { message, riasecResults, conversationHistory } = z.object({
-        message: z.string(),
-        riasecResults: z.array(z.string()),
-        conversationHistory: z.array(z.object({
-          role: z.enum(["user", "assistant"]),
-          content: z.string()
-        }))
-      }).parse(req.body);
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: `You are a career guidance counselor with expertise in the RIASEC model. 
-            The user has completed a RIASEC assessment with the following top matches:
-            ${riasecResults.join('\n')}
-
-            Provide personalized guidance based on these results and the user's questions.
-            Focus on practical next steps, education paths, and specific career opportunities.
-            Be encouraging but realistic, and always provide actionable advice.`
-          },
-          ...conversationHistory,
-          { role: "user", content: message }
-        ]
-      });
-
-      res.json({
-        response: response.choices[0].message.content || "I apologize, but I'm having trouble providing guidance right now. Please try again."
-      });
-    } catch (error) {
-      console.error("Career guidance error:", error);
-      res.status(500).json({
-        error: "Failed to get career guidance. Please try again later."
-      });
-    }
-  });
-
-  app.post("/api/skill-guidance", async (req, res) => {
-    try {
-      const { skillArea, userQuery } = z.object({
-        skillArea: z.enum(["technical", "soft", "search", "life", "cooking"]),
-        userQuery: z.string()
-      }).parse(req.body);
-
-      const videoResults = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
-        params: {
-          part: 'snippet',
-          q: `how to ${userQuery} tutorial guide`,
-          type: 'video',
-          maxResults: 3,
-          key: process.env.YOUTUBE_API_KEY,
-        }
-      });
-
-      const videoIds = videoResults.data.items.map((item: any) => item.id.videoId);
-      const videoDetails = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
-        params: {
-          part: 'snippet,contentDetails,status',
-          id: videoIds.join(','),
-          key: process.env.YOUTUBE_API_KEY
-        }
-      });
-
-      const availableVideos = videoDetails.data.items
-        .filter((item: any) => item.status.privacyStatus === 'public')
-        .map((item: any) => ({
-          id: item.id,
-          title: item.snippet.title,
-          thumbnail: {
-            url: item.snippet.thumbnails.medium.url,
-            width: item.snippet.thumbnails.medium.width,
-            height: item.snippet.thumbnails.medium.height
-          },
-          duration: item.contentDetails.duration,
-          description: item.snippet.description
-        }));
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: userQuery.includes("cooking guide") ?
-              `You are a professional chef and cooking instructor creating a guide about "${userQuery.replace('cooking guide:', '')}". 
-              Speak naturally and conversationally, while maintaining focus on safety and proper technique.
-
-              Structure your response like this:
-
-              🎯 Essential Safety First!
-              Start with the most important safety considerations for this cooking topic.
-
-              👩‍🍳 Step-by-Step Guide
-              Break down the process into clear, manageable steps. Include specific techniques and tools needed.
-
-              ⚠️ Common Mistakes to Avoid
-              List potential pitfalls and how to prevent them.
-
-              💡 Pro Chef Tips
-              Share professional insights that will help improve results.
-
-              🧰 Required Tools & Equipment
-              List essential items needed, including safety equipment if applicable.
-
-              ⏰ Timing Guidelines
-              Include any relevant timing information, temperatures, or storage guidelines.
-
-              🎬 Video Tutorials
-              Here are some helpful video tutorials I found:
-              ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
-
-              Keep the tone friendly and encouraging while emphasizing safety and proper technique!` :
-              userQuery.includes("cleaning schedule") ?
-              `You are a professional home organization expert creating a customized cleaning schedule. 
-              Create a practical, easy-to-follow cleaning schedule that's encouraging and detailed.
-
-              Structure your response like this:
-
-              🎯 Your Custom Cleaning Schedule
-              First, give a brief, friendly intro about the benefits of having a regular cleaning routine.
-
-              ⏰ Daily Tasks (15-20 minutes)
-              List quick, essential daily tasks
-
-              📅 Weekly Tasks (Break down by areas)
-              - Kitchen
-              - Bathroom(s)
-              - Living Areas
-              - Bedrooms
-              Include specific tasks and estimated time for each area
-
-              🧰 Monthly Deep Clean Tasks
-              List tasks that need attention monthly
-
-              ✨ Recommended Cleaning Supplies
-              List essential supplies needed
-
-              💡 Pro Tips
-              Share 2-3 practical tips for maintaining the schedule
-
-              Keep the tone friendly and encouraging throughout!` :
-              `You are a friendly, encouraging life coach creating a guide about "${userQuery}". Speak naturally and conversationally, as if you're chatting with a friend. Keep your tone warm and supportive.
-
-              Structure your advice in these friendly sections:
-
-              🎯 Let's Break It Down!
-              Write a friendly intro about why this skill matters, then walk through the process conversationally. Include any tools needed and important safety tips with a ⚠️.
-
-              💡 Pro Tips!
-              Share some helpful tricks and shortcuts you've learned along the way. Think of these as friendly advice rather than formal instructions.
-
-              ⏰ Staying on Track 
-              Give easy-to-remember guidelines about how often to practice this skill and how to make it a natural part of their routine.
-
-              🎬 Video Tutorials
-              Here are some helpful video tutorials I found:
-              ${availableVideos.map(video => `[${video.id}] - ${video.title}`).join('\n')}
-
-              🔗 Resources & Tools
-              Share some trusted websites, tools, or communities that can help them learn more.
-
-              End with a warm, encouraging note!`
-          },
-          {
-            role: "user",
-            content: `Please provide a ${userQuery.includes("cleaning schedule") ? "customized cleaning schedule" : userQuery.includes("cooking guide") ? "guide" : "friendly guide"} about ${userQuery}`
-          }
-        ]
-      });
-
-      res.json({
-        guidance: response.choices[0].message.content,
-        videos: availableVideos
-      });
-    } catch (error) {
-      console.error("Skill guidance error:", error);
-      res.status(500).json({
-        error: "Failed to get skill guidance. Please try again later."
+        error: "Failed to assess career options. Please try again later."
       });
     }
   });
 
   app.post("/api/jobs/search", async (req, res) => {
     try {
-      const { query, location, sources } = z.object({
+      const { query, location } = z.object({
         query: z.string(),
-        location: z.string(),
-        sources: z.array(z.string()),
+        location: z.string()
       }).parse(req.body);
-
-      const jobs = await searchJobs({ query, location, sources });
+      
+      const jobs = await searchJobs(query, location);
       res.json({ jobs });
     } catch (error: any) {
       console.error("Job search error:", error);
 
       if (error.name === "ZodError") {
         return res.status(400).json({
-          error: "Invalid request format. Please check your input."
+          error: "Invalid request format. Please provide query and location."
         });
       }
 
       res.status(500).json({
-        error: "Failed to search jobs. Please try again later."
+        error: "Failed to search for jobs. Please try again later."
       });
     }
   });
 
-  app.post("/api/career/salary-insights", async (req, res) => {
+  app.post("/api/salary/insights", async (req, res) => {
     try {
       const { jobTitle, location } = z.object({
         jobTitle: z.string(),
-        location: z.string(),
+        location: z.string()
       }).parse(req.body);
-
+      
       const insights = await getSalaryInsights(jobTitle, location);
       res.json(insights);
     } catch (error: any) {
@@ -798,13 +624,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (error.name === "ZodError") {
         return res.status(400).json({
-          error: "Invalid request format. Please check your input."
-        });
-      }
-
-      if (error?.error?.type === "invalid_api_key") {
-        return res.status(503).json({
-          error: "Salary insights service is currently unavailable. Please try again later."
+          error: "Invalid request format. Please provide jobTitle and location."
         });
       }
 
@@ -814,416 +634,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/plaid/create_link_token", async (req, res) => {
+  // Financial APIs (Plaid integration)
+  app.post("/api/finance/create-link-token", async (req, res) => {
     try {
-      const linkToken = await createLinkToken();
-      res.json({ link_token: linkToken });
-    } catch (error) {
-      console.error("Error creating link token:", error);
-      res.status(500).json({ error: "Failed to create link token" });
+      const token = await createLinkToken();
+      res.json({ link_token: token });
+    } catch (error: any) {
+      console.error("Plaid link token error:", error);
+      res.status(500).json({
+        error: "Failed to create link token. Please try again later."
+      });
     }
   });
 
-  app.post("/api/plaid/exchange_token", async (req, res) => {
+  app.post("/api/finance/exchange-token", async (req, res) => {
     try {
-      const { public_token } = req.body;
-      const accessToken = await exchangePublicToken(public_token);
-      res.json({ success: true });
-    } catch (error) {
-      console.error("Error exchanging token:", error);
-      res.status(500).json({ error: "Failed to exchange token" });
+      const { publicToken } = z.object({
+        publicToken: z.string()
+      }).parse(req.body);
+      
+      const accessToken = await exchangePublicToken(publicToken);
+      res.json({ access_token: accessToken });
+    } catch (error: any) {
+      console.error("Plaid token exchange error:", error);
+      res.status(500).json({
+        error: "Failed to exchange token. Please try again later."
+      });
     }
   });
 
-  app.get("/api/plaid/transactions", async (req, res) => {
+  app.post("/api/finance/transactions", async (req, res) => {
     try {
-      const accessToken = "your_access_token";
+      const { accessToken } = z.object({
+        accessToken: z.string()
+      }).parse(req.body);
+      
       const transactions = await getTransactions(accessToken);
       res.json({ transactions });
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-      res.status(500).json({ error: "Failed to fetch transactions" });
-    }
-  });
-
-  app.get("/api/youtube-search", async (req, res) => {
-    try {
-      const videoId = req.query.videoId as string;
-      const query = req.query.q as string;
-
-      if (!process.env.YOUTUBE_API_KEY) {
-        console.error("YouTube API key not configured");
-        throw new Error("YouTube API key not configured");
-      }
-
-      console.log(`Processing YouTube API request - ${videoId ? 'videoId: ' + videoId : 'query: ' + query}`);
-
-      if (videoId) {
-        try {
-          const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
-            params: {
-              part: 'snippet,status',
-              id: videoId,
-              key: process.env.YOUTUBE_API_KEY,
-            }
-          });
-
-          console.log(`YouTube API response for video ${videoId}:`, {
-            items: response.data.items?.length,
-            status: response.data.items?.[0]?.status?.privacyStatus
-          });
-
-          const isValid = response.data.items &&
-            response.data.items.length > 0 &&
-            response.data.items[0].status.privacyStatus === 'public';
-
-          res.json({
-            items: isValid ? response.data.items : [],
-            isValid
-          });
-        } catch (error: any) {
-          console.error(`YouTube API error for video ${videoId}:`, {
-            status: error.response?.status,
-            message: error.response?.data?.error?.message || error.message
-          });
-          throw error;
-        }
-      } else if (query) {
-        try {
-          const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
-            params: {
-              part: 'snippet',
-              q: query,
-              type: 'video',
-              maxResults: 3,
-              key: process.env.YOUTUBE_API_KEY,
-            }
-          });
-          res.json(response.data);
-        } catch (error: any) {
-          console.error(`YouTube search API error for query ${query}:`, {
-            status: error.response?.status,
-            message: error.response?.data?.error?.message || error.message
-          });
-          throw error;
-        }
-      } else {
-        res.status(400).json({ error: "Either videoId or search query is required" });
-      }
     } catch (error: any) {
-      console.error("YouTube API error:", {
-        message: error.message,
-        response: error.response?.data
-      });
+      console.error("Plaid transactions error:", error);
       res.status(500).json({
-        error: "Failed to fetch videos",
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        error: "Failed to fetch transactions. Please try again later."
       });
     }
   });
 
-  app.post("/api/generate-workout", async (req, res) => {
-    try {
-      const { profile } = req.body;
+  // Include resume routes
+  resumeRoutes(app);
 
-      const prompt = `Create a personalized workout plan for a ${profile.fitnessLevel} level person with the following fitnessgoals: ${profile.goals.join(', ')}. 
-      Include specific exercises with sets and reps, recommended YouTube tutorial video IDs, and helpful tips.
-      Format the response as a JSON object with the following structure:
-      {
-        "exercises": [
-          {
-            "name": string,
-            "sets": number,
-            "reps": number,
-            "description": string,
-            "videoId": string (YouTube video ID)
-          }
-        ],
-        "schedule": string,
-        "tips": string[]
-      }`;
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          { role: "system", content: "You are a professional fitness trainer experienced in creating personalized workout plans." },
-          { role: "user", content: prompt }
-        ],
-        response_format: { type: "json_object" }
-      });
-
-      const workoutPlan = JSON.parse(response.choices[0].message.content || "{}");
-      res.json(workoutPlan);
-
-    } catch (error) {
-      console.error('Error generating workout plan:', error);
-      res.status(500).json({ error: 'Failed to generate workout plan' });
-    }
-  });
-
-  app.post("/api/journal/analyze", async (req, res) => {
-    try {
-      const { content } = z.object({ content: z.string() }).parse(req.body);
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: "You are an AI therapist analyzing journal entries. Provide analysis in JSON format including emotional score (0-100), sentiment, key themes, and suggestions for mental well-being."
-          },
-          {
-            role: "user",
-            content
-          }
-        ],
-        response_format: { type: "json_object" }
-      });
-
-      const analysis = JSON.parse(response.choices[0].message.content || "{}");
-
-      const words = content.toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .split(/\s+/)
-        .filter(word => word.length > 3);
-
-      const wordFrequency: Record<string, number> = {};
-      words.forEach((word: string) => {
-        wordFrequency[word] = (wordFrequency[word] || 0) + 1;
-      });
-
-      res.json({
-        analysis, wordFrequency,
-        content: analysis.content,
-        summary: analysis.summary,
-      });
-    } catch (error) {
-      console.error('Error analyzing journal entry:', error);
-      res.status(500).json({ error: 'Failed to analyze journal entry' });
-    }
-  });
-
-  app.post("/api/journal/analyze-trends", async (req, res) => {
-    try {
-      const { entries } = z.object({
-        entries: z.array(z.object({
-          content: z.string(),
-          timestamp: z.string()
-        }))
-      }).parse(req.body);
-
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: "Analyze the mood trends across multiple journal entries and provide insights and recommendations in JSON format."
-          },
-          {
-            role: "user",
-            content: JSON.stringify(entries)
-          }
-        ],
-        response_format: { type: "json_object" }
-      });
-
-      const analysis = JSON.parse(response.choices[0].message.content || "{}");
-
-      res.json({
-        trends: analysis.trends,
-        recommendations: analysis.recommendations
-      });
-    } catch (error) {
-      console.error('Error analyzing mood trends:', error);
-      res.status(500).json({ error: 'Failed to analyze mood trends' });
-    }
-  });
-
-  app.get("/api/youtube/validate", async (req, res) => {
-    try {
-      const videoId = req.query.videoId as string;
-
-      if (!videoId) {
-        return res.status(400).json({ error: true, message: "Video ID is required" });
-      }
-
-      if (!process.env.YOUTUBE_API_KEY) {
-        console.error("YouTube API key not configured");
-        throw new Error("YouTube API key not configured");
-      }
-
-      console.log(`Validating YouTube video ID: ${videoId}`);
-
-      const apiUrl = `https://www.googleapis.com/youtube/v3/videos`;
-      console.log(`Making API request to: ${apiUrl}`);
-
-      const response = await axios.get(apiUrl, {
-        params: {
-          part: 'snippet,status',
-          id: videoId,
-          key: process.env.YOUTUBE_API_KEY,
-        }
-      });
-
-      console.log('YouTube API Response:', {
-        status: response.status,
-        hasItems: !!response.data.items,
-        itemCount: response.data.items?.length
-      });
-
-      if (!response.data.items || response.data.items.length === 0) {
-        console.log(`No video found for ID: ${videoId}`);
-        return res.json({
-          error: true,
-          message: "Video not found"
-        });
-      }
-
-      const video = response.data.items[0];
-
-      if (video.status.privacyStatus !== 'public') {
-        console.log(`Video ${videoId} is not public. Status: ${video.status.privacyStatus}`);
-        return res.json({
-          error: true,
-          message: "Video is not publicly available"
-        });
-      }
-
-      console.log(`Successfully validated video ${videoId}`);
-
-      res.json({
-        id: video.id,
-        title: video.snippet.title,
-        thumbnail: video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url,
-        error: false
-      });
-
-    } catch (error) {
-      console.error("YouTube API error:", error);
-      console.error("Error details:", {
-        message: (error as Error).message,
-        response: (error as any).response?.data,
-        status: (error as any).response?.status
-      });
-
-      res.status(500).json({
-        error: true,
-        message: "Failed to validate video",
-        details: (error as any).response?.data?.error?.message || (error as Error).message
-      });
-    }
-  });
-
-  // Emergency Alerts Endpoint
-  app.post("/api/emergency/alerts", async (req, res) => {
-    try {
-      const { city, state } = emergencyAlertSchema.parse(req.body);
-
-      // In production, this would call a real weather/emergency API
-      const alerts = mockEmergencyAlerts[city] || [];
-
-      res.json({ alerts });
-    } catch (error) {
-      console.error("Error fetching emergency alerts:", error);
-      res.status(400).json({
-        error: true,
-        message: "Failed to fetch emergency alerts"
-      });
-    }
-  });
-
-  // Emergency Resources Endpoint
-  app.post("/api/emergency/resources", async (req, res) => {
-    try {
-      const { city, state } = emergencyAlertSchema.parse(req.body);
-
-      // In production, this would call a real emergency services API
-      const resources = mockEmergencyResources[city] || [];
-
-      res.json({ resources });
-    } catch (error) {
-      console.error("Error fetching emergency resources:", error);
-      res.status(400).json({
-        error: true,
-        message: "Failed to fetch emergency resources"
-      });
-    }
-  });
-
-  // Use the modular resume routes
-  app.use('/api/resume-analysis', resumeRoutes);
-
-  const httpServer = createServer(app);
-  return httpServer;
+  // Return an HTTP server
+  return createServer(app);
 }
-
-const resumeSchema = z.object({
-  personalInfo: z.object({
-    name: z.string(),
-    email: z.string(),
-    phone: z.string(),
-    summary: z.string(),
-  }),
-  education: z.array(z.object({
-    school: z.string(),
-    degree: z.string(),
-    year: z.string(),
-  })),
-  experience: z.array(z.object({
-    company: z.string(),
-    position: z.string(),
-    duration: z.string(),
-    description: z.string(),
-  })),
-  targetPosition: z.string(),
-});
-
-const coverLetterSchema = z.object({
-  personalInfo: z.object({
-    name: z.string(),
-    email: z.string(),
-    phone: z.string(),
-    summary: z.string(),
-  }),
-  education: z.array(z.object({
-    school: z.string(),
-    degree: z.string(),
-    year: z.string(),
-  })),
-  experience: z.array(z.object({
-    company: z.string(),
-    position: z.string(),
-    duration: z.string(),
-    description: z.string(),
-  })),
-  targetPosition: z.string(),
-  company: z.string().optional(),
-  keyExperience: z.array(z.string()),
-  additionalNotes: z.string().optional(),
-});
-
-const interviewAnalysisSchema = z.object({
-  answer: z.string(),
-  question: z.string(),
-  industry: z.string(),
-});
-
-const emergencyAlertSchema = z.object({
-  city: z.string(),
-  state: z.string(),
-});
-
-// Placeholder for mock data (replace with actual API calls in production)
-const mockEmergencyAlerts = {
-  "New York City": [
-    { description: "Flood warning", severity: "Moderate" },
-  ],
-};
-
-const mockEmergencyResources = {
-  "New York City": [
-    { name: "NYC Emergency Management", phone: "311" },
-  ],
-};
-
-// ... (rest of the functions: getEmergencyGuidance, optimizeResume, analyzeInterviewAnswer, generateJobQuestions, generateCoverLetter, assessCareer, searchJobs, getSalaryInsights, createLinkToken, exchangePublicToken, getTransactions)

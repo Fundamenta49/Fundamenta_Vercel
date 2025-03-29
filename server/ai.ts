@@ -1,242 +1,160 @@
-import OpenAI from "openai";
+import { 
+  aiService, 
+  AIContext, 
+  AIProcessingResult 
+} from './services/ai-service';
 
-// Enhanced interfaces
-interface AIAction {
-  type: 'navigate' | 'fill_form' | 'show_guide' | 'trigger_feature' | 'general';
-  payload: {
-    route?: string;
-    formData?: Record<string, any>;
-    guideSection?: string;
-    feature?: string;
-    section?: string; // Added section field for navigation
-    focusContent?: string; // Added focusContent for show_guide
-    formId?: string; // Added formId for fill_form
-    autoFocus?: boolean; // Added autoFocus for fill_form
-    [key: string]: any;
-  };
-}
+import { 
+  textClassifier, 
+  entityRecognizer 
+} from './huggingface';
 
-interface ChatContext {
-  currentPage: string;
-  currentSection?: string;
-  availableActions: string[];
-  userIntent?: string;
-  previousInteractions?: string[];
-}
-
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  maxRetries: 3,
-  timeout: 30000,
-});
-
-const systemPrompts = {
-  orchestrator: `You are Fundi, Fundamenta's AI Assistant, capable of helping users across all app features.
-    Your role is to understand user intent and guide them to the right features while helping them complete tasks.
-
-    When responding to cooking-related queries:
-    1. First navigate to the cooking section
-    2. Specify the exact subsection (recipes, techniques, meal-planning)
-    3. Include relevant content focus
-
-    Example for cooking scallops:
-    {
-      "response": "I'll help you learn how to cook scallops! Let's go to our cooking section where you'll find detailed instructions.",
-      "actions": [
-        {
-          "type": "navigate",
-          "payload": {
-            "route": "/",
-            "section": "cooking",
-            "focusContent": "recipes"
-          }
-        },
-        {
-          "type": "show_guide",
-          "payload": {
-            "guideSection": "seafood",
-            "focusContent": "scallops"
-          }
-        }
-      ],
-      "suggestions": [
-        {
-          "text": "View related seafood recipes",
-          "path": "/",
-          "description": "Explore other seafood cooking techniques"
-        }
-      ]
-    }
-
-    Always follow this pattern for all sections:
-    1. Navigation action must come first
-    2. Include specific section and subsection information
-    3. Provide focused content guidance
-    4. Add relevant suggestions for further exploration
-
-    Content Areas and Their Sections:
-    - Cooking:
-      - section: "cooking"
-      - subsections: ["recipes", "techniques", "meal-planning"]
-
-    - Career:
-      - section: "career"
-      - subsections: ["planning", "skill-matching", "interview-prep"]
-
-    - Finance:
-      - section: "finance"
-      - subsections: ["budgeting", "investing", "planning"]
-
-    - Wellness:
-      - section: "wellness"
-      - subsections: ["stress-management", "meditation", "sleep"]
-
-    - Learning:
-      - section: "learning"
-      - subsections: ["study-tips", "skill-development", "time-management"]
-
-    - Fitness:
-      - section: "fitness"
-      - subsections: ["workout-plans", "nutrition", "tracking"]
-
-    Navigation Rules:
-    1. Always use "/" as the base route
-    2. Specify the section in the navigation payload
-    3. Include the specific subsection for content focus
-    4. Set autoFocus: true to ensure the content is displayed
-
-    Always maintain a friendly, conversational tone while providing clear, actionable guidance.`
-};
-
+/**
+ * Main function for orchestrating AI responses across the application.
+ * This is a wrapper around the AI service that provides a consistent interface
+ * for the chat API endpoints.
+ */
 export async function orchestrateAIResponse(
   message: string,
-  context: ChatContext,
+  context: AIContext,
+  category?: string,
   previousMessages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = []
-): Promise<{
-  response: string;
-  actions?: AIAction[];
-  suggestions?: Array<{
-    text: string;
-    path: string;
-    description: string;
-  }>;
-}> {
+): Promise<AIProcessingResult> {
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error("OpenAI API key not configured");
+    // Detect intent if not provided
+    if (!context.userIntent) {
+      context.userIntent = analyzeUserIntent(message);
     }
 
-    const systemContent = `${systemPrompts.orchestrator}
+    // Detect interests if not provided
+    if (!context.userProfile?.interests || context.userProfile.interests.length === 0) {
+      context.userProfile = {
+        ...context.userProfile,
+        interests: getInterests(previousMessages)
+      };
+    }
 
-    Current Context:
-    - Page: ${context.currentPage}
-    - Section: ${context.currentSection || 'None'}
-    - Available Actions: ${context.availableActions.join(', ')}
-    - User Intent: ${context.userIntent || 'Unknown'}
-    
-    Return your response in JSON format with the following structure:
-    {
-      "response": string,
-      "actions": Array<{
-        type: 'navigate' | 'show_guide' | 'fill_form' | 'trigger_feature',
-        payload: {
-          route?: string,
-          section?: string,
-          focusContent?: string,
-          guideSection?: string,
-          formData?: object,
-          feature?: string,
-          autoFocus?: boolean
-        }
-      }>,
-      "suggestions": Array<{text: string, path: string, description: string}>
-    }`;
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        {
-          role: "system",
-          content: systemContent
-        },
-        ...previousMessages.map(msg => ({
-          role: msg.role,
-          content: msg.content
-        })),
-        { role: "user", content: message }
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-      response_format: { type: "json_object" }
-    });
-
-    const jsonResponse = JSON.parse(response.choices[0].message.content || "{}");
-
-    // Ensure consistent response format
+    // Process the message with combined AI capabilities
+    return await aiService.processUserMessage(
+      message,
+      context,
+      category || '',
+      previousMessages
+    );
+  } catch (error) {
+    console.error('AI Orchestration Error:', error);
     return {
-      response: jsonResponse.response || "I apologize, I couldn't process that request.",
-      actions: jsonResponse.actions?.map((action: any) => ({
-        type: action.type,
-        payload: action.payload
-      })),
-      suggestions: jsonResponse.suggestions?.map((suggestion: any) => ({
-        text: suggestion.text,
-        path: suggestion.path,
-        description: suggestion.description
-      }))
+      response: "I'm sorry, I encountered an error while processing your request. Please try again or contact support if the issue persists.",
+      category: 'error',
+      confidence: 0
     };
-  } catch (error: any) {
-    console.error("OpenAI API Error:", error);
-    throw new Error("Failed to process request: " + error.message);
   }
 }
 
+/**
+ * Analyzes message history to determine user's preferred communication style
+ * @param messages Previous conversation messages
+ * @returns Description of preferred style
+ */
 export function getPreferredStyle(messages: { role: string; content: string }[]): string {
-  const userMessages = messages.filter(m => m.role === "user");
-  if (userMessages.length === 0) return "concise";
-
-  const avgLength = userMessages.reduce((acc, m) => acc + m.content.length, 0) / userMessages.length;
-  const hasQuestions = userMessages.some(m => m.content.includes("?"));
-  const hasTechnicalTerms = userMessages.some(m => 
-    m.content.match(/\b(api|function|code|error|bug|interface|component)\b/i)
-  );
-
-  if (avgLength > 100) return "detailed";
-  if (hasQuestions) return "inquisitive";
-  if (hasTechnicalTerms) return "technical";
-  return "concise";
+  // This is a simplified version - in a real implementation, we would analyze 
+  // message patterns, vocabulary, and communication style
+  
+  // Filter for user messages only
+  const userMessages = messages.filter(msg => msg.role === 'user');
+  
+  if (userMessages.length < 3) {
+    return 'neutral'; // Not enough data to determine style
+  }
+  
+  // Analyze message length
+  const avgLength = userMessages.reduce((sum, msg) => sum + msg.content.length, 0) / userMessages.length;
+  
+  // Analyze formality (simple heuristic based on punctuation and capitalization)
+  const formalIndicators = userMessages.filter(msg => {
+    return msg.content.includes('.')
+      && !msg.content.includes('!!')
+      && !msg.content.includes('...')
+      && msg.content[0] === msg.content[0].toUpperCase();
+  }).length;
+  
+  const formalityRatio = formalIndicators / userMessages.length;
+  
+  if (avgLength > 100 && formalityRatio > 0.7) {
+    return 'formal';
+  } else if (avgLength < 20 || formalityRatio < 0.3) {
+    return 'casual';
+  } else {
+    return 'balanced';
+  }
 }
 
+/**
+ * Extracts user interests from conversation history
+ * @param messages Previous conversation messages
+ * @returns Array of detected interests
+ */
 export function getInterests(messages: { role: string; content: string }[]): string[] {
-  const content = messages.map(m => m.content.toLowerCase()).join(" ");
-  const interests = [];
-
-  if (content.includes("car") || content.includes("vehicle")) interests.push("vehicle");
-  if (content.includes("cook") || content.includes("recipe")) interests.push("cooking");
-  if (content.includes("job") || content.includes("career")) interests.push("career");
-  if (content.includes("money") || content.includes("budget")) interests.push("finance");
-  if (content.includes("learn") || content.includes("study")) interests.push("education");
-  if (content.includes("health") || content.includes("exercise")) interests.push("wellness");
-
-  return interests;
+  // This is a simplified version - in a real implementation, we would use 
+  // more sophisticated entity extraction and topic modeling
+  
+  const userContent = messages
+    .filter(msg => msg.role === 'user')
+    .map(msg => msg.content)
+    .join(' ');
+    
+  // Simple keyword matching for common interest domains
+  const interestKeywords: Record<string, string[]> = {
+    'finance': ['budget', 'money', 'saving', 'invest', 'financial', 'debt', 'credit'],
+    'career': ['job', 'interview', 'resume', 'career', 'profession', 'work', 'skill'],
+    'health': ['exercise', 'fitness', 'diet', 'nutrition', 'workout', 'healthy', 'wellness'],
+    'learning': ['learn', 'study', 'course', 'education', 'knowledge', 'skill', 'training'],
+    'technology': ['computer', 'software', 'app', 'tech', 'programming', 'digital', 'online'],
+    'cooking': ['recipe', 'cook', 'food', 'meal', 'kitchen', 'ingredient', 'baking']
+  };
+  
+  const detectedInterests: string[] = [];
+  
+  Object.entries(interestKeywords).forEach(([interest, keywords]) => {
+    const hasKeywords = keywords.some(keyword => 
+      userContent.toLowerCase().includes(keyword.toLowerCase())
+    );
+    
+    if (hasKeywords) {
+      detectedInterests.push(interest);
+    }
+  });
+  
+  return detectedInterests;
 }
 
+/**
+ * Analyzes a user message to determine their intent
+ * @param message User's message
+ * @returns String description of detected intent
+ */
 export function analyzeUserIntent(message: string): string {
+  // This is a simplified version - in a real implementation, we would use
+  // a more sophisticated intent classification model
+  
   const lowerMessage = message.toLowerCase();
-
-  if (lowerMessage.includes("show me") || lowerMessage.includes("how to")) {
-    return "guide_request";
+  
+  const intentPatterns: Record<string, RegExp[]> = {
+    'question': [/^what/, /^how/, /^why/, /^when/, /^where/, /^can you/, /^could you/, /\?$/],
+    'action_request': [/^show me/, /^find/, /^search/, /^get/, /^give me/, /^i need/, /^help me/],
+    'navigation': [/^go to/, /^take me to/, /^navigate/, /^open/, /^show/],
+    'form_filling': [/^fill/, /^complete/, /^input/, /^enter/, /^update/],
+    'feedback': [/^i think/, /^i feel/, /^i like/, /^i don't like/, /^i hate/, /^i love/],
+    'greeting': [/^hi/, /^hello/, /^hey/, /^greetings/, /^good morning/, /^good afternoon/, /^good evening/],
+  };
+  
+  for (const [intent, patterns] of Object.entries(intentPatterns)) {
+    for (const pattern of patterns) {
+      if (pattern.test(lowerMessage)) {
+        return intent;
+      }
+    }
   }
-  if (lowerMessage.includes("create") || lowerMessage.includes("make")) {
-    return "creation_request";
-  }
-  if (lowerMessage.includes("help") || lowerMessage.includes("assist")) {
-    return "assistance_request";
-  }
-  if (lowerMessage.includes("what") || lowerMessage.includes("why") || lowerMessage.includes("how")) {
-    return "information_request";
-  }
-
-  return "general_request";
+  
+  return 'other';
 }
