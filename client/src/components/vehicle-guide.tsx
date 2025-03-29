@@ -17,27 +17,31 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Info, Car, Wrench, Star, Search, Maximize2, Minimize2 } from "lucide-react";
+import { 
+  AlertTriangle, Info, Car, Wrench, Star, Search, 
+  Maximize2, Minimize2, FileText, BarChart4, Calendar, FileCheck 
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
+import { 
+  VehicleDetails, 
+  MaintenanceItem, 
+  MaintenanceSchedule, 
+  RecallInfo, 
+  decodeVIN, 
+  getRecalls, 
+  getMaintenanceSchedule 
+} from '@/lib/nhtsa-service';
+import { YouTubeVideo, searchVehicleVideos, getYouTubeEmbedUrl } from '@/lib/youtube-service';
 
 interface VehicleInfo {
   vin?: string;
   make?: string;
   model?: string;
   year?: string;
-}
-
-interface VehicleDetails {
-  Make?: string;
-  Model?: string;
-  ModelYear?: string;
-  VehicleType?: string;
-  PlantCountry?: string;
-  BodyClass?: string;
-  EngineType?: string;
-  FuelTypePrimary?: string;
 }
 
 interface MaintenanceTask {
@@ -99,8 +103,6 @@ const COMMON_TASKS: MaintenanceTask[] = [
   },
   // ... other common tasks
 ];
-
-import { YouTubeVideo, searchVehicleVideos, getYouTubeEmbedUrl } from '@/lib/youtube-service';
 
 export default function VehicleGuide() {
   const [vehicleInfo, setVehicleInfo] = useState<VehicleInfo>({});

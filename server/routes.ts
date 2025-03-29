@@ -12,6 +12,7 @@ import axios from 'axios';
 import resumeRoutes from './routes/resume';
 import learningRoutes from './routes/learning';
 import youtubeRoutes from './routes/youtube';
+import nhtsaRoutes from './routes/nhtsa';
 import { 
   getEmergencyGuidance,
   optimizeResume,
@@ -687,6 +688,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Include YouTube API routes
   app.use('/api/youtube', youtubeRoutes);
+  
+  // Include NHTSA API routes
+  app.use('/api/nhtsa', nhtsaRoutes);
 
   // Return an HTTP server
   return createServer(app);
