@@ -6,58 +6,38 @@ import FloatingChat from '@/components/floating-chat';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
-import ResourceLinks, { Resource } from '@/components/resource-links';
+import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
 
 export default function HealthWellnessCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
 
   // Resources specific to health and wellness
-  const resources: Resource[] = [
+  const resources: SimpleResource[] = [
     {
-      id: "1",
       title: "Physical Activity Guidelines",
       url: "https://health.gov/our-work/nutrition-physical-activity/physical-activity-guidelines",
-      description: "Official physical activity recommendations for Americans",
-      type: "article",
-      level: "beginner",
-      free: true
+      description: "Official physical activity recommendations for Americans"
     },
     {
-      id: "2",
       title: "Meditation for Beginners",
       url: "https://www.youtube.com/c/Headspace",
-      description: "Simple guided meditation videos for stress reduction",
-      type: "video",
-      level: "beginner",
-      free: true
+      description: "Simple guided meditation videos for stress reduction"
     },
     {
-      id: "3",
       title: "MyPlate Food Guide",
       url: "https://www.myplate.gov/",
-      description: "Nutrition guidance and meal planning resources",
-      type: "book",
-      level: "beginner",
-      free: true
+      description: "Nutrition guidance and meal planning resources"
     },
     {
-      id: "4",
       title: "r/Fitness",
       url: "https://www.reddit.com/r/Fitness/",
-      description: "Community forum for fitness advice and motivation",
-      type: "practice",
-      level: "intermediate",
-      free: true
+      description: "Community forum for fitness advice and motivation"
     },
     {
-      id: "5",
       title: "Sleep Calculator",
       url: "https://sleepcalculator.com/",
-      description: "Calculate optimal bedtimes based on sleep cycles",
-      type: "tool",
-      level: "beginner",
-      free: true
+      description: "Calculate optimal bedtimes based on sleep cycles"
     }
   ];
 
@@ -268,11 +248,17 @@ export default function HealthWellnessCourse() {
 
       {activeTab === 'resources' && (
         <div className="mb-6">
-          <ResourceLinks 
-            subject="Health & Wellness"
-            resources={resources}
-            maxHeight="70vh"
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Health & Wellness Resources</CardTitle>
+              <CardDescription>Curated resources to help master these skills</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SimpleResourceLinks 
+                resources={resources}
+              />
+            </CardContent>
+          </Card>
         </div>
       )}
 
