@@ -10,6 +10,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from "mammoth";
 import axios from 'axios';
 import resumeRoutes from './routes/resume';
+import learningRoutes from './routes/learning';
 import { 
   getEmergencyGuidance,
   optimizeResume,
@@ -679,6 +680,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Include resume routes
   app.use('/api/resume', resumeRoutes);
+  
+  // Include learning routes
+  app.use('/api/learning', learningRoutes);
 
   // Return an HTTP server
   return createServer(app);
