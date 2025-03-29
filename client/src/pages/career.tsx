@@ -172,7 +172,20 @@ export default function Career() {
           }}
         >
           <FullScreenDialogContent>
-            <section.component />
+            <FullScreenDialogHeader>
+              <FullScreenDialogTitle>
+                <div className="flex items-center gap-2">
+                  <section.icon className="h-6 w-6 text-primary" />
+                  {section.title}
+                </div>
+              </FullScreenDialogTitle>
+              <FullScreenDialogDescription>
+                {section.description}
+              </FullScreenDialogDescription>
+            </FullScreenDialogHeader>
+            <FullScreenDialogBody>
+              <section.component />
+            </FullScreenDialogBody>
           </FullScreenDialogContent>
         </FullScreenDialog>
       ))}

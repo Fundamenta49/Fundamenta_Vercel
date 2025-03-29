@@ -91,12 +91,15 @@ export default function Navigation() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className={`${navBgColor} border-r border-rose-300 shadow-md`}>
-          <div className="flex items-center gap-2 px-2 py-6 mb-6 w-full">
+          <button 
+            onClick={() => handleNavigation("/")}
+            className="flex items-center gap-2 px-2 py-6 mb-6 w-full hover:bg-rose-50 rounded-md transition-colors"
+          >
             <div className="h-8 w-8 bg-rose-500 rounded-md flex items-center justify-center">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
             <span className={`text-xl font-bold ${logoText}`}>Fundamenta</span>
-          </div>
+          </button>
           
           <div className="flex flex-col gap-1">
             {/* Display navigation items based on current page */}
@@ -131,8 +134,9 @@ export default function Navigation() {
         <button 
           onClick={() => handleNavigation("/")}
           className={cn(
-            "flex items-center gap-3 px-2 py-4 w-full text-left rounded-md",
-            logoText
+            "flex items-center gap-3 px-2 py-4 w-full text-left rounded-md transition-colors",
+            logoText,
+            "hover:bg-rose-50 cursor-pointer"
           )}
         >
           <div className="h-8 w-8 bg-rose-500 rounded-md flex items-center justify-center">
