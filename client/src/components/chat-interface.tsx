@@ -221,62 +221,67 @@ const formatAssistantMessage = (content: string, suggestions?: AppSuggestion[]) 
   return (
     <div className="space-y-4">
       <div className="flex items-start gap-4 mb-4">
-        <div className="flex-shrink-0 w-16 h-16 bg-transparent">
-          {/* Direct SVG Robot implementation */}
+        {/* Completely redesigned SVG implementation */}
+        <div className="w-[64px] h-[64px] flex-shrink-0 overflow-visible flex items-center justify-center">
           <svg 
+            width="64" 
+            height="64" 
             viewBox="0 0 100 100" 
             xmlns="http://www.w3.org/2000/svg"
-            className="w-full h-full"
+            style={{ background: 'transparent' }}
           >
-            {/* Robot head */}
-            <rect x="30" y="15" width="40" height="30" rx="10" fill="#f5f5f5" stroke="#e0e0e0" strokeWidth="1" />
-            
-            {/* Head screen */}
-            <rect x="35" y="18" width="30" height="10" rx="3" fill="#7dd3fc" opacity="0.6" />
-            
-            {/* Ear left */}
-            <rect x="25" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
-            
-            {/* Ear right */}
-            <rect x="70" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
-            
-            {/* Eyes background */}
-            <rect x="35" y="30" width="30" height="10" rx="5" fill="#0f172a" />
-            
-            {/* Left eye */}
-            <ellipse cx="42" cy="35" rx="3" ry="2.5" fill="#38bdf8" opacity="0.8" />
-            
-            {/* Right eye */}
-            <ellipse cx="58" cy="35" rx="3" ry="2.5" fill="#38bdf8" opacity="0.8" />
-            
-            {/* Main robot body */}
-            <path 
-              d="M30,45 C30,65 30,75 50,80 C70,75 70,65 70,45 L60,40 L40,40 L30,45" 
-              fill="#f5f5f5" 
-              stroke="#e0e0e0" 
-              strokeWidth="1"
-            />
-            
-            {/* Center chest light */}
-            <circle cx="50" cy="55" r="5" fill="#38bdf8" opacity="0.7" />
-            
-            {/* Left arm */}
-            <path 
-              d="M30,50 C20,55 20,60 25,65" 
-              fill="none" 
-              stroke="#f5f5f5" 
-              strokeWidth="7" 
-              strokeLinecap="round" 
-            />
-            
-            {/* Right arm */}
-            <path 
-              d="M70,50 C80,55 80,60 75,65" 
-              fill="none" 
-              stroke="#f5f5f5" 
-              strokeWidth="7" 
-              strokeLinecap="round" 
-            />
+            {/* Robot body */}
+            <g>
+              {/* Robot head */}
+              <rect x="30" y="15" width="40" height="30" rx="10" fill="#f5f5f5" stroke="#e0e0e0" strokeWidth="1" />
+              
+              {/* Head screen */}
+              <rect x="35" y="18" width="30" height="10" rx="3" fill="#7dd3fc" opacity="0.6" />
+              
+              {/* Ear left */}
+              <rect x="25" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
+              
+              {/* Ear right */}
+              <rect x="70" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
+              
+              {/* Eyes background */}
+              <rect x="35" y="30" width="30" height="10" rx="5" fill="#0f172a" />
+              
+              {/* Left eye */}
+              <ellipse cx="42" cy="35" rx="3" ry="2.5" fill="#38bdf8" opacity="0.9" />
+              
+              {/* Right eye */}
+              <ellipse cx="58" cy="35" rx="3" ry="2.5" fill="#38bdf8" opacity="0.9" />
+              
+              {/* Main robot body */}
+              <path 
+                d="M30,45 C30,65 30,75 50,80 C70,75 70,65 70,45 L60,40 L40,40 L30,45" 
+                fill="#f5f5f5" 
+                stroke="#e0e0e0" 
+                strokeWidth="1"
+              />
+              
+              {/* Center chest light */}
+              <circle cx="50" cy="55" r="5" fill="#38bdf8" opacity="0.7" />
+              
+              {/* Left arm */}
+              <path 
+                d="M30,50 C20,55 20,60 25,65" 
+                fill="none" 
+                stroke="#f5f5f5" 
+                strokeWidth="7" 
+                strokeLinecap="round" 
+              />
+              
+              {/* Right arm */}
+              <path 
+                d="M70,50 C80,55 80,60 75,65" 
+                fill="none" 
+                stroke="#f5f5f5" 
+                strokeWidth="7" 
+                strokeLinecap="round" 
+              />
+            </g>
           </svg>
         </div>
         <div className="flex-1">
