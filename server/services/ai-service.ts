@@ -339,16 +339,103 @@ export class AIService {
       if (shouldNavigate && navigationTarget && !actions.some((a: any) => 
         a.type === 'navigate' && a.payload?.route === `/${navigationTarget}`
       )) {
+        // Extract section info if mentioned
+        let sectionTarget = '';
+        const sectionPatterns = [
+          /(?:the )?(\w+) feature/i,
+          /(?:the )?(\w+) tool/i,
+          /(?:the )?(\w+) planner/i,
+          /(?:the )?(\w+) calculator/i,
+          /(?:the )?(\w+) dashboard/i,
+          /(?:open|show|display) (?:the )?(\w+)/i,
+        ];
+        
+        // Section keyword mappings for each category
+        const sectionKeywordMappings: Record<string, Record<string, string>> = {
+          'finance': {
+            'advisor': 'advisor',
+            'ai': 'advisor',
+            'chat': 'advisor',
+            'budget': 'budget',
+            'spending': 'budget',
+            'planner': 'budget',
+            'dashboard': 'dashboard',
+            'overview': 'dashboard',
+            'credit': 'credit',
+            'score': 'credit',
+            'retirement': 'retirement',
+            'saving': 'retirement',
+            'future': 'retirement',
+            'mortgage': 'mortgage',
+            'loan': 'mortgage',
+            'house': 'mortgage',
+            'bank': 'bank',
+            'account': 'bank',
+            'transaction': 'bank'
+          },
+          'career': {
+            'advisor': 'advisor',
+            'ai': 'advisor',
+            'chat': 'advisor',
+            'resume': 'resume',
+            'cv': 'resume',
+            'builder': 'resume',
+            'jobs': 'jobs',
+            'search': 'jobs',
+            'listing': 'jobs',
+            'interview': 'interview',
+            'prep': 'interview',
+            'skill': 'skills',
+            'learning': 'skills',
+            'development': 'skills',
+            'networking': 'networking',
+            'connection': 'networking',
+            'planning': 'planning',
+            'path': 'planning',
+            'goal': 'planning'
+          }
+        };
+        
+        // Check for specific section mentions in the message
+        for (const pattern of sectionPatterns) {
+          const match = message.toLowerCase().match(pattern);
+          if (match && match[1]) {
+            const requestedFeature = match[1].toLowerCase();
+            
+            // Check if this maps to a valid section for the navigation target
+            if (navigationTarget in sectionKeywordMappings) {
+              const sectionMap = sectionKeywordMappings[navigationTarget];
+              
+              for (const [keyword, sectionId] of Object.entries(sectionMap)) {
+                if (requestedFeature.includes(keyword) || keyword.includes(requestedFeature)) {
+                  sectionTarget = sectionId;
+                  break;
+                }
+              }
+            }
+            
+            if (sectionTarget) break;
+          }
+        }
+        
+        // Create the navigation action with optional section target
+        const navPayload: any = { route: `/${navigationTarget}` };
+        if (sectionTarget) {
+          navPayload.section = sectionTarget;
+        }
+        
         actions.push({
           type: 'navigate',
-          payload: {
-            route: `/${navigationTarget}`
-          }
+          payload: navPayload
         });
         
         // Update response to acknowledge navigation if not already mentioned
         if (!jsonResponse.response.toLowerCase().includes(navigationTarget)) {
-          jsonResponse.response = `I'll take you to the ${navigationTarget} section. ${jsonResponse.response}`;
+          let responsePrefix = `I'll take you to the ${navigationTarget} section`;
+          if (sectionTarget) {
+            responsePrefix += ` and open the ${sectionTarget} feature`;
+          }
+          jsonResponse.response = `${responsePrefix}. ${jsonResponse.response}`;
         }
       }
 

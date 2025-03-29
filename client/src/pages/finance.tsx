@@ -2,7 +2,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Home, DollarSign, Calculator, Brain, CreditCard, PiggyBank, Building } from "lucide-react";
 import { FINANCE_CATEGORY } from "@/components/chat-interface";
 import { BudgetData } from "@/components/budget-calculator";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import {
   FullScreenDialog,
@@ -108,6 +108,33 @@ export default function Finance() {
       setIsBankOpen(true);
     }
   };
+  
+  // Check sessionStorage for sections to open on mount
+  useEffect(() => {
+    const openSection = sessionStorage.getItem('openSection');
+    if (openSection) {
+      handleCardClick(openSection);
+      // Clear after using
+      sessionStorage.removeItem('openSection');
+    }
+    
+    // Listen for AI open section events
+    const handleOpenSectionEvent = (event: CustomEvent) => {
+      const { route, section } = event.detail;
+      // Only handle if this is the current page
+      if (route === '/finance') {
+        handleCardClick(section);
+      }
+    };
+    
+    // Add event listener
+    document.addEventListener('ai:open-section', handleOpenSectionEvent as EventListener);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('ai:open-section', handleOpenSectionEvent as EventListener);
+    };
+  }, []);
 
   return (
     <div className="w-full h-full mx-auto p-0">

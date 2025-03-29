@@ -18,7 +18,7 @@ import SalaryInsightsPopOut from "@/components/salary-insights-pop-out";
 import InterviewPracticePopOut from "@/components/interview-practice-pop-out";
 import EmotionalResiliencePopOut from "@/components/emotional-resilience-pop-out";
 import EmploymentRightsPopOut from "@/components/employment-rights-pop-out";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { GraduationCap, Search, Book, Brain, FileText, Briefcase, DollarSign, MessageSquare, Scale } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -134,6 +134,33 @@ export default function Career() {
   const handleCardClick = (sectionId: string) => {
     setActiveDialog(sectionId);
   };
+  
+  // Check sessionStorage for sections to open on mount
+  useEffect(() => {
+    const openSection = sessionStorage.getItem('openSection');
+    if (openSection) {
+      handleCardClick(openSection);
+      // Clear after using
+      sessionStorage.removeItem('openSection');
+    }
+    
+    // Listen for AI open section events
+    const handleOpenSectionEvent = (event: CustomEvent) => {
+      const { route, section } = event.detail;
+      // Only handle if this is the current page
+      if (route === '/career') {
+        handleCardClick(section);
+      }
+    };
+    
+    // Add event listener
+    document.addEventListener('ai:open-section', handleOpenSectionEvent as EventListener);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('ai:open-section', handleOpenSectionEvent as EventListener);
+    };
+  }, []);
 
   return (
     <div className="w-full h-full mx-auto p-0">

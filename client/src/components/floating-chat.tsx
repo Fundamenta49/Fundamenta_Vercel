@@ -145,15 +145,39 @@ export default function FloatingChat() {
       switch (action.type) {
         case 'navigate':
           if (action.payload.route) {
-            console.log("Navigating to:", action.payload.route);
+            console.log("Navigating to:", action.payload.route, "Section:", action.payload.section);
+            
+            // Store section to open in sessionStorage if specified
+            if (action.payload.section) {
+              sessionStorage.setItem('openSection', action.payload.section);
+            }
+            
             // Add a small delay to ensure the user sees the AI response before navigation
             setTimeout(() => {
+              // Navigate to the specified route
               setLocation(action.payload.route);
+              
+              // Show toast with appropriate message
+              let toastDesc = `Taking you to ${action.payload.route.replace('/', '')}`;
+              if (action.payload.section) {
+                toastDesc += ` and opening the ${action.payload.section} feature`;
+              }
+              
               toast({ 
                 title: "Navigation", 
-                description: `Taking you to ${action.payload.route.replace('/', '')}`, 
+                description: toastDesc, 
                 duration: 3000 
               });
+              
+              // Dispatch a custom event to notify pages about section to open
+              if (action.payload.section) {
+                document.dispatchEvent(new CustomEvent('ai:open-section', {
+                  detail: {
+                    route: action.payload.route,
+                    section: action.payload.section
+                  }
+                }));
+              }
             }, 500);
           }
           break;
@@ -538,9 +562,13 @@ export default function FloatingChat() {
                     className={cn(
                       "rounded-lg px-4 py-2.5 max-w-[85%] text-sm",
                       msg.role === 'user'
-                        ? "bg-primary text-primary-foreground"
+                        ? `bg-[${getCurrentThemeColor}] text-white`
                         : "bg-white border border-gray-200"
                     )}
+                    style={{
+                      backgroundColor: msg.role === 'user' ? getCurrentThemeColor : '',
+                      color: msg.role === 'user' ? 'white' : ''
+                    }}
                   >
                     {msg.content}
                   </div>
