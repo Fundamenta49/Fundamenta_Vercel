@@ -6,27 +6,37 @@ interface FundiAvatarProps {
 }
 
 export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvatarProps) {
-  // Use larger avatar to replace the previous dark circle
+  // Define sizes for the avatar container - increased to make robot larger
   const sizes = {
-    sm: "w-10 h-10",
-    md: "w-14 h-14",
-    lg: "w-20 h-20"
+    sm: "w-12 h-12", // Increased from w-10 h-10
+    md: "w-16 h-16", // Increased from w-14 h-14
+    lg: "w-24 h-24"  // Increased from w-20 h-20
   };
 
   return (
-    <div className={`${sizes[size]} rounded-full bg-transparent`}>
+    // Do NOT use any UI components - direct custom implementation
+    // No Avatar or AvatarFallback components that might add background
+    <div 
+      className={`${sizes[size]} flex items-center justify-center`} 
+      style={{ background: 'transparent' }} // Force transparent background
+    >
       <motion.div
         className="w-full h-full"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
+        style={{ background: 'transparent' }} // Ensure inner container is also transparent
       >
-        {/* SVG Robot with no background */}
+        {/* SVG Robot with explicit transparent background */}
         <svg 
           viewBox="0 0 100 100" 
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full"
+          style={{ background: 'transparent' }}
         >
+          {/* Explicit transparent background */}
+          <rect x="0" y="0" width="100" height="100" fill="transparent" />
+          
           {/* Shadow effect */}
           <motion.ellipse 
             cx="50" 

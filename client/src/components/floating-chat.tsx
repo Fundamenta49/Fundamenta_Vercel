@@ -221,8 +221,8 @@ export default function FloatingChat() {
             <div className="absolute -inset-3 bg-primary/20 rounded-full blur-xl opacity-50 animate-pulse" />
             
             {/* Fundi Avatar */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <FundiAvatar size="sm" speaking={false} />
+            <div className="absolute inset-0 flex items-center justify-center bg-transparent">
+              <FundiAvatar size="md" speaking={false} />
             </div>
           </Button>
         </motion.div>
@@ -234,7 +234,7 @@ export default function FloatingChat() {
         )}>
           <div className="p-3 border-b flex items-center justify-between bg-background">
             <div className="flex items-center gap-2">
-              <div className="relative h-8 w-8">
+              <div className="relative h-8 w-8 bg-transparent">
                 <FundiAvatar size="sm" speaking={isAiSpeaking} />
               </div>
               <div>
