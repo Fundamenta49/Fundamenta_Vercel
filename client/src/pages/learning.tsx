@@ -159,50 +159,79 @@ export default function Learning() {
     ]
   };
 
-  // Function to render a course card
-  const CourseCard = ({ course }: { course: CourseCard }) => (
-    <Card className="h-full transition-all hover:shadow-md overflow-hidden">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start mb-1">
-          <div className={`rounded-full p-2 ${course.color} text-white`}>
+  // Function to render a course card as a book cover
+  const CourseCard = ({ course }: { course: CourseCard }) => {
+    const [isFlipped, setIsFlipped] = useState(false);
+    
+    return (
+      <div 
+        className="aspect-[3/4] relative transition-all duration-500 transform perspective-1000 cursor-pointer"
+        style={{ transformStyle: 'preserve-3d' }}
+        onClick={() => setIsFlipped(!isFlipped)}
+      >
+        {/* Front side (Book cover) */}
+        <div 
+          className={`absolute inset-0 rounded-lg shadow-lg p-6 flex flex-col items-center justify-center text-center transform ${
+            isFlipped ? 'rotate-y-180 opacity-0' : 'rotate-y-0 opacity-100'
+          } transition-all duration-500 ${course.color}`}
+          style={{ backfaceVisibility: 'hidden' }}
+        >
+          <div className="p-3 bg-white bg-opacity-20 rounded-full mb-4">
             {course.icon}
           </div>
-          <div className="flex gap-2">
-            {course.popular && (
-              <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                Popular
-              </span>
-            )}
-            {course.new && (
-              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                New
-              </span>
-            )}
-            <span className={`px-2 py-1 text-xs rounded-full ${
-              course.level === 'beginner' ? 'bg-green-100 text-green-800' :
-              course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' :
-              'bg-red-100 text-red-800'
-            }`}>
-              {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-            </span>
-          </div>
+          <h3 className="text-xl font-bold text-white mb-2">{course.title}</h3>
+          {(course.popular || course.new) && (
+            <div className="flex gap-2 mt-2">
+              {course.popular && (
+                <span className="px-2 py-1 bg-white bg-opacity-30 text-white text-xs rounded-full">
+                  Popular
+                </span>
+              )}
+              {course.new && (
+                <span className="px-2 py-1 bg-white bg-opacity-30 text-white text-xs rounded-full">
+                  New
+                </span>
+              )}
+            </div>
+          )}
         </div>
-        <CardTitle className="text-lg">{course.title}</CardTitle>
-        <CardDescription className="line-clamp-2 h-10">
-          {course.description}
-        </CardDescription>
-      </CardHeader>
-      <CardFooter className="pt-2">
-        <Button 
-          variant="ghost"
-          className="w-full justify-between"
-          onClick={() => navigate(course.path)}
+        
+        {/* Back side (Details) */}
+        <div 
+          className={`absolute inset-0 rounded-lg shadow-lg bg-white p-4 flex flex-col transform ${
+            isFlipped ? 'rotate-y-0 opacity-100' : 'rotate-y-180 opacity-0'
+          } transition-all duration-500`}
+          style={{ backfaceVisibility: 'hidden' }}
         >
-          Explore Course <ChevronRight className="h-4 w-4 ml-2" />
-        </Button>
-      </CardFooter>
-    </Card>
-  );
+          <div className="flex-1">
+            <h3 className="text-lg font-bold mb-2">{course.title}</h3>
+            <p className="text-sm text-gray-600 mb-3">{course.description}</p>
+            
+            <div className="mt-2 mb-3">
+              <span className={`px-2 py-1 text-xs rounded-full ${
+                course.level === 'beginner' ? 'bg-green-100 text-green-800' :
+                course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
+              </span>
+            </div>
+          </div>
+          
+          <Button 
+            variant="outline"
+            className="w-full mt-auto"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(course.path);
+            }}
+          >
+            Explore <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
   // Function to render a category of courses
   const CourseCategory = ({ 
@@ -225,6 +254,14 @@ export default function Learning() {
       </div>
     </div>
   );
+  
+  // Create a single array of all courses for the book view
+  const allCourses = [
+    ...coursesByCategory.academics,
+    ...coursesByCategory.professional,
+    ...coursesByCategory.languages,
+    ...coursesByCategory.creative,
+  ];
 
   return (
     <div className="container max-w-6xl py-6">
@@ -240,55 +277,15 @@ export default function Learning() {
           </Button>
         </div>
 
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="all">All Courses</TabsTrigger>
-            <TabsTrigger value="academics">Academics</TabsTrigger>
-            <TabsTrigger value="professional">Professional</TabsTrigger>
-            <TabsTrigger value="languages">Languages</TabsTrigger>
-            <TabsTrigger value="creative">Creative</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="all" className="space-y-8">
-            {Object.entries(coursesByCategory).map(([category, courses]) => (
-              <CourseCategory 
-                key={category} 
-                title={category.charAt(0).toUpperCase() + category.slice(1)} 
-                courses={courses} 
-              />
-            ))}
-          </TabsContent>
-
-          <TabsContent value="academics">
-            <CourseCategory 
-              title="Academic Courses" 
-              courses={coursesByCategory.academics} 
-            />
-          </TabsContent>
-
-          <TabsContent value="professional">
-            <CourseCategory 
-              title="Professional Development" 
-              courses={coursesByCategory.professional} 
-            />
-          </TabsContent>
-
-          <TabsContent value="languages">
-            <CourseCategory 
-              title="Language Learning" 
-              courses={coursesByCategory.languages} 
-            />
-          </TabsContent>
-
-          <TabsContent value="creative">
-            <CourseCategory 
-              title="Creative Skills" 
-              courses={coursesByCategory.creative} 
-            />
-          </TabsContent>
-        </Tabs>
+        {/* Book cover grid layout for all courses */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+          {allCourses.map(course => (
+            <CourseCard key={course.id} course={course} />
+          ))}
+        </div>
       </div>
 
+      {/* Always show either the pop-out chat or the floating chat */}
       {showChat ? (
         <LearningCoachPopOut onClose={() => setShowChat(false)} />
       ) : (
