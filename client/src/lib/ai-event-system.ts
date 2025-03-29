@@ -32,6 +32,8 @@ export interface AIResponse {
   sentiment?: string;
   confidence?: number;
   followUpQuestions?: string[];
+  // Legacy field - will be ignored
+  suggestedActions?: AppSuggestion[];
 }
 
 // State and actions for AI event management
@@ -68,8 +70,11 @@ export const useAIEventStore = create<AIEventState>((set, get) => ({
     set({
       lastResponse: response,
       pendingActions: response.actions || [],
+      // Map suggestions from backend if available
       suggestedActions: response.suggestions || [],
-      followUpQuestions: response.followUpQuestions || [],
+      followUpQuestions: Array.isArray(response.followUpQuestions) 
+        ? response.followUpQuestions 
+        : [],
       currentCategory: response.category || 'general',
       isProcessing: false
     });

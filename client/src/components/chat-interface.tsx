@@ -149,6 +149,8 @@ export default function ChatInterface({
       
       if (responseData) {
         const aiResponse = responseData as AIResponse;
+        console.log("AI Response:", aiResponse); // For debugging
+        
         // Add AI response to chat
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -159,7 +161,15 @@ export default function ChatInterface({
         };
         
         setMessages(prev => [...prev, assistantMessage]);
-        setResponse(aiResponse);
+        
+        // Set full AI response in store
+        setResponse({
+          ...aiResponse,
+          // Ensure followUpQuestions is an array
+          followUpQuestions: Array.isArray(aiResponse.followUpQuestions) 
+            ? aiResponse.followUpQuestions 
+            : []
+        });
       }
     } catch (error) {
       console.error('AI Response Error:', error);
@@ -397,7 +407,7 @@ export default function ChatInterface({
           <div className="mt-6">
             <p className="text-sm font-medium text-muted-foreground mb-3">Suggestions:</p>
             <div className="flex flex-wrap gap-3">
-              {followUpQuestions.slice(0, 3).map((question, index) => (
+              {followUpQuestions.length > 0 && followUpQuestions.slice(0, 3).map((question, index) => (
                 <Button
                   key={index}
                   variant="outline"
@@ -413,7 +423,7 @@ export default function ChatInterface({
                 </Button>
               ))}
               
-              {suggestedActions.slice(0, 2).map((suggestion, index) => (
+              {suggestedActions.length > 0 && suggestedActions.slice(0, 2).map((suggestion, index) => (
                 <Button
                   key={`action-${index}`}
                   variant="outline"
@@ -423,7 +433,7 @@ export default function ChatInterface({
                     borderColor: `${categoryColors[category]}30`,
                     color: categoryColors[category]
                   }}
-                  onClick={() => navigate(suggestion.path)}
+                  onClick={() => navigate(suggestion.path || "/")}
                 >
                   {suggestion.text}
                 </Button>
