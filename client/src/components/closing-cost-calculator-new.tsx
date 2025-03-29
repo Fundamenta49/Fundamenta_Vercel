@@ -559,8 +559,8 @@ export const ClosingCostCalculator: React.FC = () => {
             <div className="lg:col-span-1">
               {/* Input Section */}
               <Card>
-                <CardHeader className="bg-green-50">
-                  <CardTitle className="text-lg">Loan Details</CardTitle>
+                <CardHeader className="bg-green-50 dark:bg-green-900">
+                  <CardTitle className="text-lg text-green-900 dark:text-green-50">Loan Details</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 pt-4">
                   <div className="space-y-2">
@@ -674,14 +674,14 @@ export const ClosingCostCalculator: React.FC = () => {
               
               {advancedMode && (
                 <Card className="mt-4">
-                  <CardHeader className="bg-green-50">
-                    <CardTitle className="text-lg">Advanced Options</CardTitle>
+                  <CardHeader className="bg-green-50 dark:bg-green-900">
+                    <CardTitle className="text-lg text-green-900 dark:text-green-50">Advanced Options</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-4">
                     <Tabs defaultValue="closing" className="w-full">
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="closing">Closing Costs</TabsTrigger>
-                        <TabsTrigger value="recurring">Recurring Costs</TabsTrigger>
+                      <TabsList className="grid w-full grid-cols-2 bg-green-100 dark:bg-green-950">
+                        <TabsTrigger value="closing" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Closing Costs</TabsTrigger>
+                        <TabsTrigger value="recurring" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Recurring Costs</TabsTrigger>
                       </TabsList>
                       
                       <TabsContent value="closing" className="space-y-4 pt-4">
@@ -807,17 +807,17 @@ export const ClosingCostCalculator: React.FC = () => {
             <div className="lg:col-span-2">
               {/* Results Section */}
               <Card>
-                <CardHeader className="bg-green-50">
-                  <CardTitle className="text-lg">
+                <CardHeader className="bg-green-50 dark:bg-green-900">
+                  <CardTitle className="text-lg text-green-900 dark:text-green-50">
                     Estimated Costs
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-4">
                   <Tabs defaultValue="monthly" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="upfront">Upfront Costs</TabsTrigger>
-                      <TabsTrigger value="monthly">Monthly Payment</TabsTrigger>
-                      <TabsTrigger value="longterm">Long-term Costs</TabsTrigger>
+                    <TabsList className="grid w-full grid-cols-3 bg-green-100 dark:bg-green-950">
+                      <TabsTrigger value="upfront" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Upfront Costs</TabsTrigger>
+                      <TabsTrigger value="monthly" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Monthly Payment</TabsTrigger>
+                      <TabsTrigger value="longterm" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Long-term Costs</TabsTrigger>
                     </TabsList>
                     
                     <TabsContent value="upfront" className="pt-4">

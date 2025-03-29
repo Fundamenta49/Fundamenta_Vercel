@@ -38,11 +38,35 @@ export function SimpleFullScreenDialog({
           <FullScreenDialogHeader>
             {title && <FullScreenDialogTitle>{title}</FullScreenDialogTitle>}
             {description && <FullScreenDialogDescription>{description}</FullScreenDialogDescription>}
+            
+            {/* Add an explicit close button that's more visible */}
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="absolute right-6 top-6 rounded-full h-10 w-10 p-0 border-2"
+              style={{ borderColor: `${themeColor}`, color: `${themeColor}` }}
+              onClick={onClose}
+            >
+              <X className="h-6 w-6" />
+              <span className="sr-only">Close</span>
+            </Button>
           </FullScreenDialogHeader>
         )}
         
         <FullScreenDialogBody>
           {children}
+          
+          {/* Floating close button at bottom right for mobile */}
+          <Button 
+            variant="default" 
+            size="sm"
+            className="fixed right-6 bottom-6 rounded-full h-12 w-12 p-0 shadow-lg md:hidden flex items-center justify-center"
+            style={{ backgroundColor: themeColor }}
+            onClick={onClose}
+          >
+            <X className="h-6 w-6" />
+            <span className="sr-only">Close</span>
+          </Button>
         </FullScreenDialogBody>
         
         {footerContent && (
