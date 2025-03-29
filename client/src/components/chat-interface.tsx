@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { toast } from '@/hooks/use-toast';
-import FundiAvatar from '@/components/fundi-avatar';
+import SimpleFundi from '@/components/simple-fundi';
 
 // Category constants 
 export const EMERGENCY_CATEGORY = 'emergency';
@@ -215,7 +215,7 @@ export default function ChatInterface({
           <div className="flex items-center gap-3">
             {(currentCategory || category) === 'general' ? (
               <div className="h-10 w-10">
-                <FundiAvatar size="md" speaking={isProcessing} />
+                <SimpleFundi size="md" speaking={isProcessing} category={currentCategory || category} />
               </div>
             ) : (
               <Avatar className="h-10 w-10">
@@ -372,7 +372,7 @@ export default function ChatInterface({
                     <div className="flex items-center gap-2 mb-2">
                       {(msg.category || category) === 'general' ? (
                         <div className="h-6 w-6">
-                          <FundiAvatar size="sm" speaking={false} />
+                          <SimpleFundi size="sm" speaking={false} category={msg.category || category} />
                         </div>
                       ) : (
                         <Avatar className="h-6 w-6">
