@@ -1,120 +1,112 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Home, DollarSign, Calculator, Brain, CreditCard, PiggyBank, Building } from "lucide-react";
-import ChatInterface, { ChatInterfaceComponent } from "@/components/chat-interface";
-import BudgetCalculator, { BudgetData } from "@/components/budget-calculator";
-import BankLink from "@/components/bank-link";
-import RetirementPlanning from "@/components/retirement-planning";
-import FinancialDashboard from "@/components/financial-dashboard";
-import CreditSkills from "@/components/credit-skills";
-import MortgageCalculator from "@/components/mortgage-calculator";
+import { FINANCE_CATEGORY } from "@/components/chat-interface";
+import { BudgetData } from "@/components/budget-calculator";
 import { useState, useRef } from "react";
-import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
+import {
+  FullScreenDialog,
+  FullScreenDialogContent,
+} from "@/components/ui/full-screen-dialog";
 
-// Define finance as a const to ensure proper type inference
-const FINANCE_CATEGORY = "finance" as const;
+// Import pop-out components
+import FinanceAdvisorPopOut from "@/components/finance-advisor-pop-out";
+import BudgetCalculatorPopOut from "@/components/budget-calculator-pop-out";
+import FinancialDashboardPopOut from "@/components/financial-dashboard-pop-out";
+import CreditSkillsPopOut from "@/components/credit-skills-pop-out";
+import RetirementPlanningPopOut from "@/components/retirement-planning-pop-out";
+import MortgageCalculatorPopOut from "@/components/mortgage-calculator-pop-out";
+import BankLinkPopOut from "@/components/bank-link-pop-out";
 
-// Type definitions for section components
-type ComponentWithBudgetUpdate = {
-  onBudgetUpdate: (data: BudgetData) => void;
-};
-
-type ComponentWithBudgetData = {
-  budgetData: BudgetData | null;
-};
-
-type ChatInterfaceProps = {
-  category: typeof FINANCE_CATEGORY;
-};
-
-type Section = {
+// Define section properties
+type SectionType = {
   id: string;
   title: string;
   description: string;
-  icon: React.ElementType;
-  component: React.ComponentType<any>;
-  props?: ComponentWithBudgetUpdate | ComponentWithBudgetData | ChatInterfaceProps;
-  alert?: React.ReactNode;
+  icon: React.ComponentType<{ className?: string }>;
 };
 
-const SECTIONS: Section[] = [
+const SECTIONS: SectionType[] = [
   {
     id: 'advisor',
     title: 'Financial AI Advisor',
     description: 'Get personalized financial advice and guidance',
     icon: Brain,
-    component: ChatInterface as ChatInterfaceComponent,
-    props: { category: FINANCE_CATEGORY },
-    alert: (
-      <Alert className="mt-4 border-blue-500 bg-blue-50">
-        <AlertCircle className="h-4 w-4 text-blue-500" />
-        <AlertDescription className="text-blue-800 text-sm">
-          The AI advisor provides general guidance based on publicly available financial information.
-          For specific advice, please consult with a qualified financial professional.
-        </AlertDescription>
-      </Alert>
-    )
   },
   {
     id: 'budget',
     title: 'Smart Budget Planner',
     description: 'Track your income, expenses, and set savings goals',
     icon: Calculator,
-    component: BudgetCalculator,
-    props: { onBudgetUpdate: undefined as unknown as (data: BudgetData) => void }
   },
   {
     id: 'dashboard',
     title: 'Financial Dashboard',
     description: 'Visualize your financial health and track progress',
     icon: DollarSign,
-    component: FinancialDashboard,
-    props: { budgetData: null as BudgetData | null }
   },
   {
     id: 'credit',
     title: 'Credit Building Skills',
     description: 'Learn about credit scores and building good credit',
     icon: CreditCard,
-    component: CreditSkills
   },
   {
     id: 'retirement',
     title: 'Retirement Planning',
     description: 'Plan for your future with retirement calculators and guides',
     icon: PiggyBank,
-    component: RetirementPlanning
   },
   {
     id: 'mortgage',
     title: 'Fundamenta Mortgage',
     description: 'Calculate mortgage payments and explore home buying resources',
     icon: Building,
-    component: MortgageCalculator
   },
   {
     id: 'bank',
     title: 'Bank Accounts & Transactions',
     description: 'Connect your bank accounts to track spending in real-time',
     icon: Home,
-    component: BankLink
   }
 ];
 
 export default function Finance() {
-  const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [budgetData, setBudgetData] = useState<BudgetData | null>(null);
+  
+  // Dialog states
+  const [isAdvisorOpen, setIsAdvisorOpen] = useState(false);
+  const [isBudgetOpen, setIsBudgetOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isCreditOpen, setIsCreditOpen] = useState(false);
+  const [isRetirementOpen, setIsRetirementOpen] = useState(false);
+  const [isMortgageOpen, setIsMortgageOpen] = useState(false);
+  const [isBankOpen, setIsBankOpen] = useState(false);
 
   const handleCardClick = (sectionId: string) => {
-    setExpandedSection(expandedSection === sectionId ? null : sectionId);
+    // Open the appropriate dialog based on the section clicked
+    if (sectionId === 'advisor') {
+      setIsAdvisorOpen(true);
+    } 
+    else if (sectionId === 'budget') {
+      setIsBudgetOpen(true);
+    }
+    else if (sectionId === 'dashboard') {
+      setIsDashboardOpen(true);
+    }
+    else if (sectionId === 'credit') {
+      setIsCreditOpen(true);
+    }
+    else if (sectionId === 'retirement') {
+      setIsRetirementOpen(true);
+    }
+    else if (sectionId === 'mortgage') {
+      setIsMortgageOpen(true);
+    }
+    else if (sectionId === 'bank') {
+      setIsBankOpen(true);
+    }
   };
 
   return (
@@ -132,45 +124,65 @@ export default function Finance() {
         </AlertDescription>
       </Alert>
 
+      {/* Full-screen dialogs */}
+      <FullScreenDialog open={isAdvisorOpen} onOpenChange={setIsAdvisorOpen}>
+        <FullScreenDialogContent themeColor="#22c55e">
+          <FinanceAdvisorPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isBudgetOpen} onOpenChange={setIsBudgetOpen}>
+        <FullScreenDialogContent themeColor="#22c55e">
+          <BudgetCalculatorPopOut onBudgetUpdate={setBudgetData} />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
+        <FullScreenDialogContent themeColor="#22c55e">
+          <FinancialDashboardPopOut budgetData={budgetData} />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isCreditOpen} onOpenChange={setIsCreditOpen}>
+        <FullScreenDialogContent themeColor="#22c55e">
+          <CreditSkillsPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isRetirementOpen} onOpenChange={setIsRetirementOpen}>
+        <FullScreenDialogContent themeColor="#22c55e">
+          <RetirementPlanningPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isMortgageOpen} onOpenChange={setIsMortgageOpen}>
+        <FullScreenDialogContent themeColor="#22c55e">
+          <MortgageCalculatorPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isBankOpen} onOpenChange={setIsBankOpen}>
+        <FullScreenDialogContent themeColor="#22c55e">
+          <BankLinkPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
       {/* Book-style card carousel */}
       <div ref={carouselRef} className="book-carousel">
         <BookCarousel>
           {SECTIONS.map((section) => {
-            // Update props for special cases
-            if (section.id === 'budget') {
-              section.props = { onBudgetUpdate: setBudgetData };
-            } else if (section.id === 'dashboard') {
-              section.props = { budgetData };
-            }
-            
-            const isExpanded = expandedSection === section.id;
-            
             return (
               <BookPage key={section.id} id={section.id}>
                 <BookCard
                   id={section.id}
                   title={section.title}
                   description={section.description}
-                  icon={section.icon as any}
-                  isExpanded={isExpanded}
+                  icon={section.icon}
+                  isExpanded={false}
                   onToggle={handleCardClick}
                   color="text-green-500" // Finance section color from the home page
-                >
-                  <div className="w-full">
-                    {section.alert && (
-                      <div className="mb-4">{section.alert}</div>
-                    )}
-                    {(() => {
-                      if (section.id === 'advisor') {
-                        // Use the component's required "category" prop
-                        return <ChatInterface category={FINANCE_CATEGORY} />;
-                      } else {
-                        // For regular components
-                        return <section.component {...(section.props || {})} />;
-                      }
-                    })()}
-                  </div>
-                </BookCard>
+                  children={null}
+                />
               </BookPage>
             );
           })}

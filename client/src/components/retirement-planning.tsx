@@ -1,272 +1,635 @@
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Calculator, ExternalLink, Landmark, Percent } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from "recharts";
 
 export default function RetirementPlanning() {
+  // User inputs
   const [currentAge, setCurrentAge] = useState<number>(30);
   const [retirementAge, setRetirementAge] = useState<number>(65);
-  const [currentSavings, setCurrentSavings] = useState<number>(0);
-  const [monthlyContribution, setMonthlyContribution] = useState<number>(0);
-  const [annualReturn, setAnnualReturn] = useState<number>(7);
-  const [estimatedAmount, setEstimatedAmount] = useState<number | null>(null);
+  const [currentSavings, setCurrentSavings] = useState<number>(50000);
+  const [annualContribution, setAnnualContribution] = useState<number>(6000);
+  const [expectedReturn, setExpectedReturn] = useState<number>(7);
+  const [inflationRate, setInflationRate] = useState<number>(2.5);
+  const [desiredIncome, setDesiredIncome] = useState<number>(60000);
+  const [lifeExpectancy, setLifeExpectancy] = useState<number>(90);
+  
+  // Define the types for our projection data
+  interface ProjectionData {
+    age: number;
+    savings: number;
+    contribution: number;
+    interest: number;
+  }
 
+  interface WithdrawalData {
+    age: number;
+    savings: number;
+    withdrawal: number;
+  }
+  
+  // Calculation results
+  const [retirementResults, setRetirementResults] = useState({
+    futureValue: 0,
+    yearsToRetirement: 0,
+    yearsInRetirement: 0,
+    monthlyIncomeInRetirement: 0,
+    inflationAdjustedMonthlyIncome: 0,
+    savingsGap: 0,
+    additionalMonthlySavingsNeeded: 0,
+    projectedSavingsData: [] as ProjectionData[],
+    withdrawalData: [] as WithdrawalData[],
+  });
+  
+  // Calculate retirement projections when inputs change
+  useEffect(() => {
+    calculateRetirement();
+  }, [currentAge, retirementAge, currentSavings, annualContribution, expectedReturn, inflationRate, desiredIncome, lifeExpectancy]);
+  
   const calculateRetirement = () => {
+    // Basic calculations
     const yearsToRetirement = retirementAge - currentAge;
-    const monthlyRate = annualReturn / 12 / 100;
-    const months = yearsToRetirement * 12;
-
-    // Calculate future value using compound interest formula
-    const futureValue = currentSavings * Math.pow(1 + monthlyRate, months) +
-      monthlyContribution * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
-
-    setEstimatedAmount(Math.round(futureValue));
+    const yearsInRetirement = lifeExpectancy - retirementAge;
+    
+    // Future value calculation with compound interest
+    let futureValue = currentSavings;
+    const realRate = (1 + expectedReturn / 100) / (1 + inflationRate / 100) - 1;
+    
+    // Generate projection data for chart
+    const projectedSavingsData: ProjectionData[] = [];
+    for (let year = 0; year <= yearsToRetirement; year++) {
+      if (year > 0) {
+        futureValue = futureValue * (1 + expectedReturn / 100) + annualContribution;
+      }
+      
+      projectedSavingsData.push({
+        age: currentAge + year,
+        savings: Math.round(futureValue),
+        contribution: year === 0 ? 0 : Math.round(annualContribution),
+        interest: year === 0 ? 0 : Math.round(futureValue - (projectedSavingsData[year - 1].savings * (1 + expectedReturn / 100) + annualContribution)),
+      });
+    }
+    
+    // Calculate withdrawals in retirement
+    const withdrawalRate = 0.04; // 4% rule
+    const monthlyIncomeInRetirement = futureValue * withdrawalRate / 12;
+    
+    // Adjust for inflation
+    const inflationFactor = Math.pow(1 + inflationRate / 100, yearsToRetirement);
+    const inflationAdjustedMonthlyIncome = monthlyIncomeInRetirement / inflationFactor;
+    
+    // Calculate savings gap
+    const totalNeeded = (desiredIncome / withdrawalRate);
+    const savingsGap = Math.max(0, totalNeeded - futureValue);
+    
+    // Calculate additional monthly savings needed
+    const additionalSavingsNeeded = savingsGap > 0 ? savingsGap / (Math.pow(1 + expectedReturn / 100, yearsToRetirement) - 1) * (expectedReturn / 100) / 12 : 0;
+    
+    // Generate withdrawal data for retirement years
+    const withdrawalData: WithdrawalData[] = [];
+    let remainingSavings = futureValue;
+    
+    for (let year = 0; year <= yearsInRetirement; year++) {
+      const age = retirementAge + year;
+      const annualWithdrawal = year === 0 ? 0 : desiredIncome; // Start withdrawals in the first year of retirement
+      
+      if (year > 0) {
+        // Adjust remaining savings based on returns and withdrawals
+        remainingSavings = Math.max(0, (remainingSavings * (1 + expectedReturn / 100)) - annualWithdrawal);
+      }
+      
+      withdrawalData.push({
+        age,
+        savings: Math.round(remainingSavings),
+        withdrawal: Math.round(annualWithdrawal),
+      });
+    }
+    
+    setRetirementResults({
+      futureValue,
+      yearsToRetirement,
+      yearsInRetirement,
+      monthlyIncomeInRetirement,
+      inflationAdjustedMonthlyIncome,
+      savingsGap,
+      additionalMonthlySavingsNeeded: additionalSavingsNeeded,
+      projectedSavingsData,
+      withdrawalData,
+    });
   };
-
+  
+  // Format currency values
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+  
   return (
     <div className="space-y-6">
-      {/* Main Educational Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Landmark className="h-5 w-5 text-primary" />
-            Retirement Account Types
-          </CardTitle>
-          <CardDescription>
-            Understanding different retirement savings options
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="401k">
-              <AccordionTrigger>401(k) Plans</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-2">
-                  <p>A 401(k) is an employer-sponsored retirement plan that allows you to contribute pre-tax dollars from your paycheck.</p>
-                  <ul className="list-disc pl-6 space-y-1">
-                    <li>Contributions are made with pre-tax dollars</li>
-                    <li>Many employers offer matching contributions</li>
-                    <li>2024 contribution limit: $23,000 ($30,500 if over 50)</li>
-                    <li>Withdrawals in retirement are taxed as ordinary income</li>
-                  </ul>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="roth">
-              <AccordionTrigger>Roth IRA</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-2">
-                  <p>A Roth IRA is funded with after-tax dollars and grows tax-free.</p>
-                  <ul className="list-disc pl-6 space-y-1">
-                    <li>Contributions are made with after-tax dollars</li>
-                    <li>Qualified withdrawals are tax-free in retirement</li>
-                    <li>2024 contribution limit: $7,000 ($8,000 if over 50)</li>
-                    <li>Income limits apply for eligibility</li>
-                  </ul>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="traditional">
-              <AccordionTrigger>Traditional IRA</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-2">
-                  <p>A Traditional IRA offers tax-deferred growth and potentially deductible contributions.</p>
-                  <ul className="list-disc pl-6 space-y-1">
-                    <li>Contributions may be tax-deductible</li>
-                    <li>Grows tax-deferred until withdrawal</li>
-                    <li>2024 contribution limit: $7,000 ($8,000 if over 50)</li>
-                    <li>Required Minimum Distributions (RMDs) start at age 73</li>
-                  </ul>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardContent>
-      </Card>
-
-      {/* Employer Match Guide */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Percent className="h-5 w-5 text-primary" />
-            Employer Match Guide
-          </CardTitle>
-          <CardDescription>
-            Don't leave free money on the table
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Alert className="border-green-500 bg-green-50">
-              <AlertCircle className="h-4 w-4 text-green-500" />
-              <AlertDescription className="text-green-800">
-                An employer match is essentially free money! If your employer offers a match,
-                try to contribute at least enough to get the full match amount.
-              </AlertDescription>
-            </Alert>
-
-            <div className="space-y-2">
-              <h4 className="font-medium">Common Match Scenarios:</h4>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>
-                  <strong>Dollar-for-dollar up to a percentage:</strong>
-                  <br />
-                  Example: 100% match on first 3% of salary
-                </li>
-                <li>
-                  <strong>Partial match up to a percentage:</strong>
-                  <br />
-                  Example: 50% match on first 6% of salary
-                </li>
-                <li>
-                  <strong>Multi-tier matching:</strong>
-                  <br />
-                  Example: 100% on first 3%, then 50% on next 2%
-                </li>
-              </ul>
+      <Tabs defaultValue="calculator" className="w-full">
+        <TabsList className="w-full grid grid-cols-3 mb-4">
+          <TabsTrigger value="calculator">Retirement Calculator</TabsTrigger>
+          <TabsTrigger value="projections">Savings Projections</TabsTrigger>
+          <TabsTrigger value="resources">Resources</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="calculator" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Personal Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="current-age">Current Age</Label>
+                    <div className="flex items-center gap-2">
+                      <Slider
+                        id="current-age"
+                        min={18}
+                        max={80}
+                        step={1}
+                        value={[currentAge]}
+                        onValueChange={(value) => setCurrentAge(value[0])}
+                      />
+                      <span className="w-12 text-right">{currentAge}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="retirement-age">Planned Retirement Age</Label>
+                    <div className="flex items-center gap-2">
+                      <Slider
+                        id="retirement-age"
+                        min={Math.max(currentAge + 1, 50)}
+                        max={80}
+                        step={1}
+                        value={[retirementAge]}
+                        onValueChange={(value) => setRetirementAge(value[0])}
+                      />
+                      <span className="w-12 text-right">{retirementAge}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="life-expectancy">Life Expectancy</Label>
+                    <div className="flex items-center gap-2">
+                      <Slider
+                        id="life-expectancy"
+                        min={Math.max(retirementAge + 1, 70)}
+                        max={105}
+                        step={1}
+                        value={[lifeExpectancy]}
+                        onValueChange={(value) => setLifeExpectancy(value[0])}
+                      />
+                      <span className="w-12 text-right">{lifeExpectancy}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Savings Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="current-savings">Current Retirement Savings</Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">$0</span>
+                      <Slider
+                        id="current-savings"
+                        min={0}
+                        max={500000}
+                        step={1000}
+                        value={[currentSavings]}
+                        onValueChange={(value) => setCurrentSavings(value[0])}
+                      />
+                      <span className="text-sm">$500k</span>
+                    </div>
+                    <Input
+                      type="number"
+                      value={currentSavings}
+                      onChange={(e) => setCurrentSavings(Number(e.target.value))}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="annual-contribution">Annual Contribution</Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">$0</span>
+                      <Slider
+                        id="annual-contribution"
+                        min={0}
+                        max={20000}
+                        step={500}
+                        value={[annualContribution]}
+                        onValueChange={(value) => setAnnualContribution(value[0])}
+                      />
+                      <span className="text-sm">$20k</span>
+                    </div>
+                    <Input
+                      type="number"
+                      value={annualContribution}
+                      onChange={(e) => setAnnualContribution(Number(e.target.value))}
+                      className="mt-1"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Retirement Goals</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="desired-income">Desired Annual Income in Retirement</Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">$20k</span>
+                      <Slider
+                        id="desired-income"
+                        min={20000}
+                        max={200000}
+                        step={5000}
+                        value={[desiredIncome]}
+                        onValueChange={(value) => setDesiredIncome(value[0])}
+                      />
+                      <span className="text-sm">$200k</span>
+                    </div>
+                    <Input
+                      type="number"
+                      value={desiredIncome}
+                      onChange={(e) => setDesiredIncome(Number(e.target.value))}
+                      className="mt-1"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Market Assumptions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="expected-return">
+                      Expected Average Annual Return (%)
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">0%</span>
+                      <Slider
+                        id="expected-return"
+                        min={0}
+                        max={12}
+                        step={0.5}
+                        value={[expectedReturn]}
+                        onValueChange={(value) => setExpectedReturn(value[0])}
+                      />
+                      <span className="text-sm">12%</span>
+                    </div>
+                    <Input
+                      type="number"
+                      value={expectedReturn}
+                      onChange={(e) => setExpectedReturn(Number(e.target.value))}
+                      className="mt-1"
+                      step={0.1}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="inflation-rate">
+                      Expected Inflation Rate (%)
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">0%</span>
+                      <Slider
+                        id="inflation-rate"
+                        min={0}
+                        max={8}
+                        step={0.5}
+                        value={[inflationRate]}
+                        onValueChange={(value) => setInflationRate(value[0])}
+                      />
+                      <span className="text-sm">8%</span>
+                    </div>
+                    <Input
+                      type="number"
+                      value={inflationRate}
+                      onChange={(e) => setInflationRate(Number(e.target.value))}
+                      className="mt-1"
+                      step={0.1}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Results Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Projected Retirement Savings:</span>
+                    <span className="font-bold">
+                      {formatCurrency(retirementResults.futureValue)}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span>Monthly Income in Retirement:</span>
+                    <span className="font-bold">
+                      {formatCurrency(retirementResults.monthlyIncomeInRetirement)}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <span>Inflation-Adjusted Monthly Income:</span>
+                    <span className="font-bold">
+                      {formatCurrency(retirementResults.inflationAdjustedMonthlyIncome)}
+                    </span>
+                  </div>
+                  
+                  {retirementResults.savingsGap > 0 && (
+                    <>
+                      <div className="flex justify-between text-amber-600">
+                        <span>Savings Gap:</span>
+                        <span className="font-bold">
+                          {formatCurrency(retirementResults.savingsGap)}
+                        </span>
+                      </div>
+                      
+                      <div className="flex justify-between text-amber-600">
+                        <span>Additional Monthly Savings Needed:</span>
+                        <span className="font-bold">
+                          {formatCurrency(retirementResults.additionalMonthlySavingsNeeded)}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  
+                  <div className="border-t pt-2 mt-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Years Until Retirement:</span>
+                      <span>{retirementResults.yearsToRetirement}</span>
+                    </div>
+                    
+                    <div className="flex justify-between text-sm">
+                      <span>Expected Years in Retirement:</span>
+                      <span>{retirementResults.yearsInRetirement}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Retirement Calculator */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-primary" />
-            Retirement Calculator
-          </CardTitle>
-          <CardDescription>
-            Estimate your retirement savings
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="currentAge">Current Age</Label>
-                <Input
-                  id="currentAge"
-                  type="number"
-                  value={currentAge}
-                  onChange={(e) => setCurrentAge(Number(e.target.value))}
-                />
+        </TabsContent>
+        
+        <TabsContent value="projections" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Savings Growth Projection</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={retirementResults.projectedSavingsData}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="age" label={{ value: 'Age', position: 'bottom', offset: 0 }} />
+                    <YAxis tickFormatter={(value: number) => `$${value / 1000}k`} />
+                    <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, ""]} />
+                    <Legend />
+                    <Line type="monotone" dataKey="savings" name="Total Savings" stroke="#8884d8" activeDot={{ r: 8 }} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="retirementAge">Retirement Age</Label>
-                <Input
-                  id="retirementAge"
-                  type="number"
-                  value={retirementAge}
-                  onChange={(e) => setRetirementAge(Number(e.target.value))}
-                />
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Savings Withdrawal in Retirement</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={retirementResults.withdrawalData}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="age" label={{ value: 'Age', position: 'bottom', offset: 0 }} />
+                    <YAxis tickFormatter={(value: number) => `$${value / 1000}k`} />
+                    <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, ""]} />
+                    <Legend />
+                    <Line type="monotone" dataKey="savings" name="Remaining Savings" stroke="#82ca9d" />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="currentSavings">Current Savings ($)</Label>
-              <Input
-                id="currentSavings"
-                type="number"
-                value={currentSavings}
-                onChange={(e) => setCurrentSavings(Number(e.target.value))}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="monthlyContribution">Monthly Contribution ($)</Label>
-              <Input
-                id="monthlyContribution"
-                type="number"
-                value={monthlyContribution}
-                onChange={(e) => setMonthlyContribution(Number(e.target.value))}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="annualReturn">
-                Expected Annual Return (%)
-              </Label>
-              <Input
-                id="annualReturn"
-                type="number"
-                value={annualReturn}
-                onChange={(e) => setAnnualReturn(Number(e.target.value))}
-              />
-            </div>
-
-            <Button onClick={calculateRetirement} className="w-full">
-              Calculate
-            </Button>
-
-            {estimatedAmount !== null && (
-              <div className="mt-4 p-4 bg-primary/10 rounded-lg">
-                <p className="text-lg font-medium">
-                  Estimated Retirement Savings:
-                </p>
-                <p className="text-3xl font-bold text-primary">
-                  ${estimatedAmount.toLocaleString()}
-                </p>
+              
+              <div className="mt-4 h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={retirementResults.withdrawalData.filter(d => d.withdrawal > 0)}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="age" label={{ value: 'Age', position: 'bottom', offset: 0 }} />
+                    <YAxis tickFormatter={(value: number) => `$${value / 1000}k`} />
+                    <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, ""]} />
+                    <Legend />
+                    <Bar dataKey="withdrawal" name="Annual Withdrawal" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Trusted Resources */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Additional Resources</CardTitle>
-          <CardDescription>
-            Trusted financial planning tools and information
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.investor.gov/", "_blank")}
-            >
-              SEC's Investor.gov
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.irs.gov/retirement-plans", "_blank")}
-            >
-              IRS Retirement Plans
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-between"
-              onClick={() => window.open("https://www.finra.org/investors", "_blank")}
-            >
-              FINRA Investor Insights
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Portfolio Breakdown</CardTitle>
+              <p className="text-sm text-gray-500">Recommended Asset Allocation Based on Age</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Stocks', value: 100 - currentAge },
+                          { name: 'Bonds', value: currentAge }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        <Cell fill="#8884d8" />
+                        <Cell fill="#82ca9d" />
+                      </Pie>
+                      <Tooltip formatter={(value: number) => [`${value}%`, ""]} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Guidelines for Age-Based Allocation</h3>
+                  <p className="text-sm">
+                    A common rule of thumb for asset allocation is to subtract your age from 100 to determine 
+                    the percentage of your portfolio that should be in stocks.
+                  </p>
+                  <p className="text-sm">
+                    At your current age of {currentAge}, you might consider allocating approximately:
+                  </p>
+                  <ul className="text-sm space-y-1">
+                    <li className="flex justify-between">
+                      <span>Stocks (higher risk, higher return):</span>
+                      <span className="font-medium">{100 - currentAge}%</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>Bonds (lower risk, lower return):</span>
+                      <span className="font-medium">{currentAge}%</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="resources" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Retirement Accounts Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="bg-muted rounded-lg p-4">
+                    <h3 className="font-semibold mb-2">401(k) / 403(b)</h3>
+                    <p className="text-sm">
+                      Employer-sponsored retirement plans that allow tax-deferred growth.
+                      Many employers offer matching contributions.
+                    </p>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>2023 contribution limit: $22,500</li>
+                      <li>Catch-up contribution (age 50+): $7,500</li>
+                      <li>Traditional: Tax-deductible contributions</li>
+                      <li>Roth: Tax-free withdrawals in retirement</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-muted rounded-lg p-4">
+                    <h3 className="font-semibold mb-2">IRA (Individual Retirement Account)</h3>
+                    <p className="text-sm">
+                      Personal retirement accounts with tax advantages.
+                      Available to anyone with earned income.
+                    </p>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>2023 contribution limit: $6,500</li>
+                      <li>Catch-up contribution (age 50+): $1,000</li>
+                      <li>Traditional: Tax-deductible contributions</li>
+                      <li>Roth: Tax-free growth and withdrawals</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="bg-muted rounded-lg p-4">
+                    <h3 className="font-semibold mb-2">HSA (Health Savings Account)</h3>
+                    <p className="text-sm">
+                      Triple tax advantage: tax-deductible contributions, tax-free growth,
+                      and tax-free withdrawals for qualified medical expenses.
+                    </p>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>2023 contribution limit: $3,850 (individual), $7,750 (family)</li>
+                      <li>Catch-up contribution (age 55+): $1,000</li>
+                      <li>Can be used as an additional retirement account after age 65</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-muted rounded-lg p-4">
+                    <h3 className="font-semibold mb-2">Taxable Brokerage Account</h3>
+                    <p className="text-sm">
+                      Flexible investment accounts with no contribution limits or withdrawal
+                      restrictions, but without special tax advantages.
+                    </p>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>No contribution limits</li>
+                      <li>No withdrawal penalties</li>
+                      <li>Capital gains tax applies to investment gains</li>
+                      <li>Good for medium-term goals or early retirement</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Retirement Planning Strategies</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium mb-1">The Power of Compound Interest</h3>
+                  <p className="text-sm">
+                    Starting early allows your money to grow exponentially through compound interest.
+                    Even small contributions can grow significantly over time.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-1">The 4% Rule</h3>
+                  <p className="text-sm">
+                    A guideline suggesting that retirees can withdraw 4% of their retirement savings
+                    annually with minimal risk of running out of money over a 30-year retirement.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-1">Social Security Optimization</h3>
+                  <p className="text-sm">
+                    Delaying Social Security benefits until age 70 can increase your monthly benefit
+                    by up to 32% compared to taking benefits at full retirement age.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-1">Tax-Efficient Withdrawal Strategy</h3>
+                  <p className="text-sm">
+                    In retirement, consider withdrawing from taxable accounts first, then tax-deferred
+                    accounts (traditional 401(k)/IRA), and tax-free accounts (Roth) last to minimize taxes.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <Button variant="outline" className="w-full">
+                  Schedule a Consultation with a Financial Advisor
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
