@@ -15,7 +15,7 @@ import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 import RiskAssessment from "@/components/risk-assessment";
-import JournalEntry from "@/components/journal-entry";
+import JournalPopOut from "@/components/journal-pop-out";
 import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
@@ -64,7 +64,7 @@ const SECTIONS: SectionType[] = [
     title: 'Wellness Journal',
     description: 'Track your thoughts, feelings, and personal growth',
     icon: Book,
-    component: JournalEntry
+    component: JournalPopOut
   },
   {
     id: 'nutrition',
