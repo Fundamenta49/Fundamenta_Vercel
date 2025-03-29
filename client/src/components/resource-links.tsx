@@ -125,43 +125,58 @@ export default function ResourceLinks({
                     filteredResources.map(resource => (
                       <div 
                         key={resource.id}
-                        className="p-3 border rounded-md hover:bg-slate-50 transition-colors"
+                        className="overflow-hidden rounded-lg border hover:shadow-md transition-all duration-200"
                       >
-                        <div className="flex items-start justify-between mb-1">
-                          <div className="flex items-center gap-2">
-                            <ResourceIcon type={resource.type} />
-                            <h4 className="font-medium text-sm">{resource.title}</h4>
+                        <div className="p-4 space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className={`p-2 rounded-md ${
+                              resource.type === "article" ? "bg-blue-100 text-blue-700" :
+                              resource.type === "video" ? "bg-red-100 text-red-700" :
+                              resource.type === "book" ? "bg-purple-100 text-purple-700" :
+                              resource.type === "course" ? "bg-orange-100 text-orange-700" :
+                              resource.type === "tool" ? "bg-green-100 text-green-700" :
+                              resource.type === "practice" ? "bg-yellow-100 text-yellow-700" :
+                              "bg-slate-100 text-slate-700"
+                            }`}>
+                              <ResourceIcon type={resource.type} />
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-medium text-md">{resource.title}</h4>
+                              <p className="text-sm text-muted-foreground mt-1">{resource.description}</p>
+                            </div>
                           </div>
-                          <div className="flex gap-1">
-                            {resource.duration && (
-                              <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
-                                {resource.duration}
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="flex gap-1.5">
+                              {resource.free !== undefined && (
+                                <span className={`text-xs ${resource.free ? "bg-green-50 text-green-700" : "bg-slate-50 text-slate-700"} px-2 py-0.5 rounded-full`}>
+                                  {resource.free ? "Free" : "Paid"}
+                                </span>
+                              )}
+                              <span className={`text-xs ${
+                                resource.level === "beginner" ? "bg-green-50 text-green-700" :
+                                resource.level === "intermediate" ? "bg-yellow-50 text-yellow-700" :
+                                "bg-red-50 text-red-700"
+                              } px-2 py-0.5 rounded-full`}>
+                                {resource.level.charAt(0).toUpperCase() + resource.level.slice(1)}
                               </span>
-                            )}
-                            {resource.free !== undefined && (
-                              <span className={`text-xs ${resource.free ? "bg-green-50 text-green-700" : "bg-slate-50 text-slate-700"} px-2 py-0.5 rounded-full`}>
-                                {resource.free ? "Free" : "Paid"}
-                              </span>
-                            )}
-                            <span className={`text-xs ${
-                              resource.level === "beginner" ? "bg-green-50 text-green-700" :
-                              resource.level === "intermediate" ? "bg-yellow-50 text-yellow-700" :
-                              "bg-red-50 text-red-700"
-                            } px-2 py-0.5 rounded-full`}>
-                              {resource.level.charAt(0).toUpperCase() + resource.level.slice(1)}
-                            </span>
+                              {resource.duration && (
+                                <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                                  {resource.duration}
+                                </span>
+                              )}
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-xs"
+                              onClick={() => handleResourceClick(resource)}
+                            >
+                              <ExternalLink className="h-3 w-3 mr-1" />
+                              Open
+                            </Button>
                           </div>
                         </div>
-                        <p className="text-xs text-slate-600 mb-2">{resource.description}</p>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full text-xs"
-                          onClick={() => handleResourceClick(resource)}
-                        >
-                          <ExternalLink className="h-3 w-3 mr-1" />
-                          View Resource
-                        </Button>
                       </div>
                     ))
                   ) : (
