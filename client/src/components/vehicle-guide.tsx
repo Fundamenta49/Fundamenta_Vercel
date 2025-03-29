@@ -100,11 +100,7 @@ const COMMON_TASKS: MaintenanceTask[] = [
   // ... other common tasks
 ];
 
-interface YouTubeVideo {
-  id: string;
-  title: string;
-  thumbnail: string;
-}
+import { YouTubeVideo, searchVehicleVideos, getYouTubeEmbedUrl } from '@/lib/youtube-service';
 
 export default function VehicleGuide() {
   const [vehicleInfo, setVehicleInfo] = useState<VehicleInfo>({});
@@ -284,13 +280,8 @@ export default function VehicleGuide() {
     try {
       const vehicleString = getVehicleString();
       const query = `${vehicleString} ${task.title} tutorial how to`;
-      const response = await fetch(`/api/youtube-search?q=${encodeURIComponent(query)}`);
-      const data = await response.json();
-      setVideos(data.items.map((item: any) => ({
-        id: item.id.videoId,
-        title: item.snippet.title,
-        thumbnail: item.snippet.thumbnails.medium.url
-      })));
+      const videoResults = await searchVehicleVideos(query);
+      setVideos(videoResults);
     } catch (error) {
       console.error('Error fetching videos:', error);
     } finally {
@@ -371,7 +362,7 @@ export default function VehicleGuide() {
                 <div key={video.id} className="space-y-2">
                   <div className="relative aspect-video">
                     <iframe
-                      src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`}
+                      src={getYouTubeEmbedUrl(video.id)}
                       title={video.title}
                       className="absolute inset-0 w-full h-full rounded-lg"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

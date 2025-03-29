@@ -11,6 +11,7 @@ import mammoth from "mammoth";
 import axios from 'axios';
 import resumeRoutes from './routes/resume';
 import learningRoutes from './routes/learning';
+import youtubeRoutes from './routes/youtube';
 import { 
   getEmergencyGuidance,
   optimizeResume,
@@ -683,6 +684,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Include learning routes
   app.use('/api/learning', learningRoutes);
+  
+  // Include YouTube API routes
+  app.use('/api/youtube', youtubeRoutes);
 
   // Return an HTTP server
   return createServer(app);
