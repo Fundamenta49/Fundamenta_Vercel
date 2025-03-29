@@ -99,26 +99,7 @@ export default function Learning() {
   
   const ACADEMICS: Course[] = [];
   
-  const PROFESSIONAL: Course[] = [
-    {
-      id: 'programming',
-      title: 'Programming',
-      description: 'Learn to code with JavaScript, Python, and more',
-      icon: Icons.Code,
-      path: '/learning/courses/programming',
-      level: 'beginner',
-      popular: true
-    },
-    {
-      id: 'marketing',
-      title: 'Digital Marketing',
-      description: 'Master social media, SEO, and online campaigns',
-      icon: Icons.GraduationCap,
-      path: '/learning/courses/marketing',
-      level: 'intermediate',
-      new: true
-    }
-  ];
+  const PROFESSIONAL: Course[] = [];
   
   const LANGUAGES: Course[] = [
     {
@@ -312,30 +293,7 @@ export default function Learning() {
         
         {/* Academic Section - Hidden as requested */}
         
-        {/* Professional Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-green-50 text-green-800 rounded-md border-l-4 border-green-500">
-            Professional
-          </h2>
-          <div className="book-carousel">
-            <BookCarousel>
-              {PROFESSIONAL.map((course) => (
-                <BookPage key={course.id} id={course.id}>
-                  <BookCard
-                    id={course.id}
-                    title={course.title}
-                    description={course.description}
-                    icon={course.icon}
-                    isExpanded={expandedCourse === course.id}
-                    onToggle={handleCardClick}
-                    color="text-green-500"
-                    children={renderCourseContent(course.id)}
-                  />
-                </BookPage>
-              ))}
-            </BookCarousel>
-          </div>
-        </div>
+        {/* Professional Section - Hidden as requested */}
         
         {/* Languages Section */}
         <div className="mb-8">
