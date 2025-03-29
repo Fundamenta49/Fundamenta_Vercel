@@ -7,58 +7,38 @@ import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import VehicleGuide from '@/components/vehicle-guide';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
-import ResourceLinks, { Resource } from '@/components/resource-links';
+import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
 
 export default function VehicleMaintenanceCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
 
   // Resources specific to vehicle maintenance
-  const resources: Resource[] = [
+  const resources: SimpleResource[] = [
     {
-      id: "1",
       title: "Car Maintenance 101",
       url: "https://www.aaa.com/autorepair/articles/car-maintenance-basics",
-      description: "AAA's guide to essential car maintenance tasks",
-      type: "article",
-      level: "beginner",
-      free: true
+      description: "AAA's guide to essential car maintenance tasks"
     },
     {
-      id: "2",
       title: "DIY Auto Repair Videos",
       url: "https://www.youtube.com/c/chrisfix",
-      description: "Step-by-step visual guides for car maintenance",
-      type: "video",
-      level: "beginner",
-      free: true
+      description: "Step-by-step visual guides for car maintenance"
     },
     {
-      id: "3",
       title: "Vehicle Owner's Manual Library",
       url: "https://www.edmunds.com/how-to/how-to-find-your-car-owners-manual-online.html",
-      description: "Find manufacturer recommendations for your specific vehicle",
-      type: "book",
-      level: "beginner",
-      free: true
+      description: "Find manufacturer recommendations for your specific vehicle"
     },
     {
-      id: "4",
       title: "Car Talk",
       url: "https://www.cartalk.com/",
-      description: "Expert advice and community Q&A for car problems",
-      type: "practice",
-      level: "intermediate",
-      free: true
+      description: "Expert advice and community Q&A for car problems"
     },
     {
-      id: "5",
       title: "RepairPal",
       url: "https://repairpal.com/",
-      description: "Estimate repair costs and find reliable mechanics in your area",
-      type: "tool",
-      level: "beginner",
-      free: true
+      description: "Estimate repair costs and find reliable mechanics in your area"
     }
   ];
 
@@ -213,6 +193,66 @@ export default function VehicleMaintenanceCourse() {
                     ],
                     correctAnswer: 2,
                     explanation: "Low transmission fluid is often a sign of a leak, as it operates in a closed system and shouldn't be consumed. Adding fluid without fixing the leak is a temporary solution at best and could mask a serious problem."
+                  },
+                  {
+                    id: 6,
+                    question: "What is the purpose of a vehicle's alternator?",
+                    options: [
+                      "To start the engine", 
+                      "To power the vehicle when the engine is off", 
+                      "To charge the battery and power electrical systems while the engine runs", 
+                      "To control the air conditioning system"
+                    ],
+                    correctAnswer: 2,
+                    explanation: "The alternator charges the battery and powers the vehicle's electrical systems while the engine is running. Without a functioning alternator, the battery would eventually drain completely."
+                  },
+                  {
+                    id: 7,
+                    question: "How often should you replace your vehicle's air filter?",
+                    options: [
+                      "Every 15,000-30,000 miles", 
+                      "With every oil change", 
+                      "Once a year regardless of mileage", 
+                      "Only when the check engine light comes on"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Most manufacturers recommend replacing the air filter every 15,000-30,000 miles, though this can vary based on driving conditions. Dusty or polluted environments may require more frequent changes."
+                  },
+                  {
+                    id: 8,
+                    question: "What is the main purpose of a vehicle's timing belt or chain?",
+                    options: [
+                      "To connect the transmission to the wheels", 
+                      "To synchronize the rotation of the crankshaft and camshaft", 
+                      "To control the vehicle's speed", 
+                      "To operate the power steering"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "The timing belt or chain synchronizes the rotation of the crankshaft and camshaft, ensuring valves open and close at the proper times relative to piston movement. A broken timing belt can cause serious engine damage in some engine designs."
+                  },
+                  {
+                    id: 9,
+                    question: "What should you check first if your car won't start and makes a clicking sound?",
+                    options: [
+                      "Fuel level", 
+                      "Battery and connections", 
+                      "Starter motor", 
+                      "Spark plugs"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "A clicking sound when trying to start a vehicle often indicates a battery or electrical issue. Check the battery connections for corrosion or looseness, and ensure the battery has sufficient charge before investigating other potential causes."
+                  },
+                  {
+                    id: 10,
+                    question: "What is hydroplaning and how can you prevent it?",
+                    options: [
+                      "Engine overheating due to low coolant; prevent by checking fluid levels", 
+                      "Tires losing contact with the road due to water; prevent by reducing speed and maintaining good tires", 
+                      "Brakes overheating on long descents; prevent by downshifting", 
+                      "Transmission slipping; prevent by changing transmission fluid regularly"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "Hydroplaning occurs when tires lose contact with the road surface due to water, causing a loss of control. Prevent it by reducing speed in wet conditions, maintaining proper tire inflation, and ensuring your tires have adequate tread depth."
                   }
                 ]}
                 onComplete={(score, total) => {
@@ -226,10 +266,17 @@ export default function VehicleMaintenanceCourse() {
 
       {activeTab === 'resources' && (
         <div className="mb-6">
-          <ResourceLinks 
-            subject="Vehicle Maintenance"
-            resources={resources}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Vehicle Maintenance Resources</CardTitle>
+              <CardDescription>Curated resources to help master these skills</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SimpleResourceLinks 
+                resources={resources}
+              />
+            </CardContent>
+          </Card>
         </div>
       )}
 

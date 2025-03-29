@@ -7,58 +7,38 @@ import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import HandymanGuide from '@/components/handyman-guide';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
-import ResourceLinks, { Resource } from '@/components/resource-links';
+import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
 
 export default function HomeMaintenanceCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
 
   // Resources specific to home maintenance
-  const resources: Resource[] = [
+  const resources: SimpleResource[] = [
     {
-      id: "1",
       title: "Home Repair Basics",
       url: "https://www.familyhandyman.com/list/100-home-repairs-you-can-do-yourself/",
-      description: "Common home repairs you can tackle without calling a pro",
-      type: "article",
-      level: "beginner",
-      free: true
+      description: "Common home repairs you can tackle without calling a pro"
     },
     {
-      id: "2",
       title: "DIY Home Improvement Videos",
       url: "https://www.youtube.com/c/thisoldhouse",
-      description: "Step-by-step visual guides for home repairs and maintenance",
-      type: "video",
-      level: "beginner",
-      free: true
+      description: "Step-by-step visual guides for home repairs and maintenance"
     },
     {
-      id: "3",
       title: "Home Maintenance Schedule",
       url: "https://www.thespruce.com/home-maintenance-schedule-4156922",
-      description: "Seasonal checklist for home maintenance tasks",
-      type: "book",
-      level: "beginner",
-      free: true
+      description: "Seasonal checklist for home maintenance tasks"
     },
     {
-      id: "4",
       title: "DIY Network",
       url: "https://www.diynetwork.com/how-to",
-      description: "Expert guides and project instructions for home improvement",
-      type: "practice",
-      level: "intermediate",
-      free: true
+      description: "Expert guides and project instructions for home improvement"
     },
     {
-      id: "5",
       title: "HomeAdvisor",
       url: "https://www.homeadvisor.com/",
-      description: "Find professionals for jobs you can't handle yourself",
-      type: "tool",
-      level: "beginner",
-      free: true
+      description: "Find professionals for jobs you can't handle yourself"
     }
   ];
 
@@ -200,6 +180,66 @@ export default function HomeMaintenanceCourse() {
                     ],
                     correctAnswer: 1,
                     explanation: "The first step when dealing with any plumbing leak is to stop the water flow by turning off the water supply to that fixture. This prevents further water damage while you assess the situation and either fix it yourself or call a professional."
+                  },
+                  {
+                    id: 6,
+                    question: "What is the recommended depth for attic insulation in most climates?",
+                    options: [
+                      "3-5 inches",
+                      "6-9 inches",
+                      "10-14 inches",
+                      "15-18 inches"
+                    ],
+                    correctAnswer: 2,
+                    explanation: "For most climates in the United States, the Department of Energy recommends attic insulation with an R-value of R-38 to R-60, which typically equates to about 10-14 inches of fiberglass batt insulation or more. This helps maintain energy efficiency year-round."
+                  },
+                  {
+                    id: 7,
+                    question: "What should you check first if your toilet is running continuously?",
+                    options: [
+                      "The water supply line",
+                      "The flush valve (flapper)",
+                      "The wax ring seal",
+                      "The toilet handle mechanism"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "A continuously running toilet is most commonly caused by a faulty flush valve (flapper) that isn't sealing properly. Check if it's worn, misaligned, or if the chain is preventing it from seating correctly. This is typically an easy and inexpensive fix."
+                  },
+                  {
+                    id: 8,
+                    question: "How often should exterior house paint be refreshed in typical climates?",
+                    options: [
+                      "Every 2-3 years",
+                      "Every 5-7 years",
+                      "Every 10-15 years",
+                      "Only when visibly peeling"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "In typical climates, exterior house paint should be refreshed approximately every 5-7 years. However, this can vary significantly based on climate, sun exposure, paint quality, and home construction. More severe weather conditions may require more frequent painting."
+                  },
+                  {
+                    id: 9,
+                    question: "What is the proper way to store paint leftover from home projects?",
+                    options: [
+                      "Leave the can open to dry out before disposal",
+                      "Store in the original can with the lid tightly sealed, in a temperature-controlled environment",
+                      "Transfer to plastic containers for better sealing",
+                      "It cannot be stored once opened and must be used immediately"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "For longest shelf life, store paint in its original can with the lid tightly sealed. Clean the rim of the can before closing to ensure a good seal. Store in a temperature-controlled environment (not too hot or cold) and away from direct sunlight. Properly stored latex paint can last 2-10 years."
+                  },
+                  {
+                    id: 10,
+                    question: "What is the main purpose of a sump pump in a basement?",
+                    options: [
+                      "To improve air circulation",
+                      "To prevent water damage by removing accumulated water",
+                      "To reduce humidity levels",
+                      "To prevent radon gas buildup"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "A sump pump's primary purpose is to prevent water damage in basements by collecting water in a sump pit and pumping it away from the foundation. This is especially important in areas with high water tables or frequent heavy rainfall that could otherwise lead to basement flooding."
                   }
                 ]}
                 onComplete={(score, total) => {
@@ -213,10 +253,17 @@ export default function HomeMaintenanceCourse() {
 
       {activeTab === 'resources' && (
         <div className="mb-6">
-          <ResourceLinks 
-            subject="Home Maintenance"
-            resources={resources}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Home Maintenance Resources</CardTitle>
+              <CardDescription>Curated resources to help master these skills</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SimpleResourceLinks 
+                resources={resources}
+              />
+            </CardContent>
+          </Card>
         </div>
       )}
 

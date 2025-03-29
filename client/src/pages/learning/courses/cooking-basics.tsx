@@ -6,58 +6,38 @@ import FloatingChat from '@/components/floating-chat';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
-import ResourceLinks, { Resource } from '@/components/resource-links';
+import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
 
 export default function CookingBasicsCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
 
   // Resources specific to cooking basics
-  const resources: Resource[] = [
+  const resources: SimpleResource[] = [
     {
-      id: "1",
       title: "Cooking Techniques 101",
       url: "https://www.seriouseats.com/cooking-techniques-how-tos",
-      description: "Essential cooking methods every home cook should know",
-      type: "article",
-      level: "beginner",
-      free: true
+      description: "Essential cooking methods every home cook should know"
     },
     {
-      id: "2",
       title: "Beginner Cooking Videos",
       url: "https://www.youtube.com/c/foodwishes",
-      description: "Step-by-step visual guides for cooking basics",
-      type: "video",
-      level: "beginner",
-      free: true
+      description: "Step-by-step visual guides for cooking basics"
     },
     {
-      id: "3",
       title: "Ingredient Substitutions Guide",
       url: "https://www.allrecipes.com/article/common-ingredient-substitutions/",
-      description: "What to use when you're missing ingredients",
-      type: "book",
-      level: "beginner",
-      free: true
+      description: "What to use when you're missing ingredients"
     },
     {
-      id: "4",
       title: "r/Cooking",
       url: "https://www.reddit.com/r/cooking/",
-      description: "Community forum for cooking questions and inspiration",
-      type: "practice",
-      level: "intermediate",
-      free: true
+      description: "Community forum for cooking questions and inspiration"
     },
     {
-      id: "5",
       title: "Recipe Calculator",
       url: "https://www.myfooddiary.com/resources/recipe_calculator.asp",
-      description: "Calculate nutritional information for your recipes",
-      type: "tool",
-      level: "beginner",
-      free: true
+      description: "Calculate nutritional information for your recipes"
     }
   ];
 
@@ -240,6 +220,66 @@ export default function CookingBasicsCourse() {
                     ],
                     correctAnswer: 2,
                     explanation: "The five mother sauces in classical French cuisine are Béchamel, Velouté, Espagnole, Hollandaise, and Tomato. Mayonnaise is considered a cold emulsion sauce, not a mother sauce."
+                  },
+                  {
+                    id: 6,
+                    question: "Which cooking method best retains the nutrients in vegetables?",
+                    options: [
+                      "Deep frying", 
+                      "Steaming", 
+                      "Boiling", 
+                      "Grilling"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "Steaming preserves the most nutrients in vegetables because it minimizes the contact between the food and water, which can leach out water-soluble vitamins. It's a gentle cooking method that maintains texture, color, and nutritional value."
+                  },
+                  {
+                    id: 7,
+                    question: "What does it mean to 'blanch' vegetables?",
+                    options: [
+                      "Cook them until completely soft", 
+                      "Briefly cook them in boiling water, then cool them in ice water", 
+                      "Marinate them in vinegar solution", 
+                      "Bake them with a bread crumb coating"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "Blanching is a cooking technique that involves briefly immersing food (usually vegetables) in boiling water followed by rapid cooling in ice water. This process helps preserve color, texture, and nutritional value, especially before freezing vegetables."
+                  },
+                  {
+                    id: 8,
+                    question: "What is the purpose of letting meat 'rest' after cooking?",
+                    options: [
+                      "To cool it to a safe temperature", 
+                      "To allow the bacteria on the surface to die", 
+                      "To allow juices to redistribute throughout the meat", 
+                      "To soften tough connective tissues"
+                    ],
+                    correctAnswer: 2,
+                    explanation: "Resting meat allows the juices, which have been driven to the center during cooking, to redistribute throughout the meat. This results in a juicier, more flavorful final product that's easier to slice without losing moisture."
+                  },
+                  {
+                    id: 9,
+                    question: "Which cooking oil has the highest smoke point, making it best for high-heat cooking?",
+                    options: [
+                      "Extra virgin olive oil", 
+                      "Butter", 
+                      "Avocado oil", 
+                      "Sesame oil"
+                    ],
+                    correctAnswer: 2,
+                    explanation: "Avocado oil has one of the highest smoke points (around 520°F/270°C) among cooking oils, making it excellent for high-heat cooking methods like searing and frying. Extra virgin olive oil and butter have relatively low smoke points and are better for low to medium-heat cooking or finishing dishes."
+                  },
+                  {
+                    id: 10,
+                    question: "What is the difference between baking powder and baking soda?",
+                    options: [
+                      "They're different names for the same ingredient", 
+                      "Baking powder contains baking soda plus an acidic component", 
+                      "Baking soda is stronger but expires more quickly", 
+                      "Baking powder is for desserts while baking soda is for bread"
+                    ],
+                    correctAnswer: 1,
+                    explanation: "Baking powder is a complete leavening agent that contains baking soda (sodium bicarbonate) plus an acidic component (usually cream of tartar) and sometimes a moisture-absorbing starch. Baking soda needs an acidic ingredient in the recipe to activate, while baking powder can work with just moisture and heat."
                   }
                 ]}
                 onComplete={(score, total) => {
@@ -253,10 +293,17 @@ export default function CookingBasicsCourse() {
 
       {activeTab === 'resources' && (
         <div className="mb-6">
-          <ResourceLinks 
-            subject="Cooking Basics"
-            resources={resources}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Cooking Basics Resources</CardTitle>
+              <CardDescription>Curated resources to help master these skills</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SimpleResourceLinks 
+                resources={resources}
+              />
+            </CardContent>
+          </Card>
         </div>
       )}
 
