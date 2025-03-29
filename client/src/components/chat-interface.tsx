@@ -207,12 +207,15 @@ export default function ChatInterface({
             <CardTitle className="text-base font-medium">
               {advisorInfo[currentCategory || category].name}
             </CardTitle>
-            <Badge 
-              variant="outline" 
-              className={`text-xs ${categoryColors[currentCategory || category]}`}
-            >
-              {currentCategory || category}
-            </Badge>
+            {/* Only show category badge if not in general mode */}
+            {(currentCategory || category) !== 'general' && (
+              <Badge 
+                variant="outline" 
+                className={`text-xs ${categoryColors[currentCategory || category]}`}
+              >
+                {currentCategory || category}
+              </Badge>
+            )}
           </div>
           {onToggleExpand && (
             <Button 
@@ -264,6 +267,12 @@ export default function ChatInterface({
                       <span className="text-xs font-medium">
                         {advisorInfo[msg.category || category].name}
                       </span>
+                      {/* Only show category badge in message if not general */}
+                      {(msg.category || category) !== 'general' && (
+                        <span className="text-[10px] bg-opacity-50 px-1.5 rounded">
+                          {msg.category || category}
+                        </span>
+                      )}
                     </div>
                   )}
                   <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
