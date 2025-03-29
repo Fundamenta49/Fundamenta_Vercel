@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
-import { motion, useAnimationControls } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Message {
@@ -39,13 +38,11 @@ export default function FloatingChat() {
   const [location, setLocation] = useLocation();
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const controls = useAnimationControls();
   const isMobile = useIsMobile();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
   
   // For dragging functionality
-  const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const chatContainer = useRef<HTMLDivElement>(null);
   
@@ -60,46 +57,75 @@ export default function FloatingChat() {
     emergency: "#ef4444", // Red
   };
   
+  // Much simpler drag functionality with direct DOM manipulation
+  const [dragState, setDragState] = useState({
+    isDragging: false,
+    startX: 0,
+    startY: 0,
+    startLeft: 0,
+    startTop: 0
+  });
+  
   // Function to handle drag start
   const handleDragStart = (e: React.MouseEvent) => {
-    if (isMobile || isMinimized) return;
+    if (isMobile || isMinimized || !chatContainer.current) return;
     
-    setIsDragging(true);
+    // Get current container position
+    const rect = chatContainer.current.getBoundingClientRect();
     
-    const startX = e.clientX - position.x;
-    const startY = e.clientY - position.y;
+    // Set start coordinates
+    setDragState({
+      isDragging: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      startLeft: rect.left,
+      startTop: rect.top
+    });
+  };
+  
+  // Function to handle mouse move during drag
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragState.isDragging || !chatContainer.current) return;
     
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
-      
-      const windowWidth = window.innerWidth;
-      const windowHeight = window.innerHeight;
-      
-      // Get the width and height of the element
-      let width = 384;
-      let height = 500;
-      
-      if (chatContainer.current) {
-        width = chatContainer.current.offsetWidth;
-        height = chatContainer.current.offsetHeight;
-      }
-      
-      // Calculate new position with constraints
-      const newX = Math.max(0, Math.min(windowWidth - width, e.clientX - startX));
-      const newY = Math.max(0, Math.min(windowHeight - height, e.clientY - startY));
-      
-      setPosition({ x: newX, y: newY });
-    };
+    // Calculate the distance moved
+    const deltaX = e.clientX - dragState.startX;
+    const deltaY = e.clientY - dragState.startY;
     
-    const handleMouseUp = () => {
-      setIsDragging(false);
+    // Update position relative to starting position
+    const newLeft = dragState.startLeft + deltaX;
+    const newTop = dragState.startTop + deltaY;
+    
+    // Apply constraints
+    const maxLeft = window.innerWidth - chatContainer.current.offsetWidth;
+    const maxTop = window.innerHeight - chatContainer.current.offsetHeight;
+    
+    // Calculate constrained positions
+    const constrainedLeft = Math.max(0, Math.min(maxLeft, newLeft));
+    const constrainedTop = Math.max(0, Math.min(maxTop, newTop));
+    
+    // Apply the position directly
+    chatContainer.current.style.left = `${constrainedLeft}px`;
+    chatContainer.current.style.top = `${constrainedTop}px`;
+    
+    // Update React state as well for persistence between renders
+    setPosition({ x: constrainedLeft, y: constrainedTop });
+  };
+  
+  // Function to handle drag end
+  const handleMouseUp = () => {
+    setDragState(prev => ({ ...prev, isDragging: false }));
+  };
+  
+  // Set up global event listeners for mouse move and up
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    
+    return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-    
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
+  }, [dragState]);
   
   // For custom events from AI
   useEffect(() => {
@@ -155,10 +181,10 @@ export default function FloatingChat() {
       
       return response;
     },
-    onSuccess: (response) => {
+    onSuccess: (response: any) => {
       setIsAiSpeaking(false);
       
-      if (response.message) {
+      if (response && response.message) {
         const aiMessage: Message = {
           role: 'assistant',
           content: response.message,
@@ -171,7 +197,7 @@ export default function FloatingChat() {
         
         // Process any actions returned from the AI
         if (response.actions && response.actions.length > 0) {
-          response.actions.forEach(action => {
+          response.actions.forEach((action: AIAction) => {
             handleAIAction(action);
           });
         }
@@ -253,16 +279,6 @@ export default function FloatingChat() {
     }
   };
   
-  // For animated welcome effect
-  useEffect(() => {
-    if (!isMinimized) {
-      controls.start({
-        y: [0, -10, 0],
-        transition: { duration: 1, ease: "easeInOut" }
-      });
-    }
-  }, [isMinimized, controls]);
-  
   // Get current theme color based on location
   const getCurrentThemeColor = useMemo(() => {
     const currentPage = location.split('/')[1] || 'home';
@@ -289,10 +305,7 @@ export default function FloatingChat() {
       }}
     >
       {isMinimized ? (
-        <motion.div
-          animate={controls}
-          className="relative"
-        >
+        <div className="relative">
           {/* Just the robot SVG with glow effect */}
           <div 
             className="w-14 h-14 relative cursor-pointer"
@@ -369,7 +382,7 @@ export default function FloatingChat() {
               </g>
             </svg>
           </div>
-        </motion.div>
+        </div>
       ) : (
         <Card className={cn(
           "flex flex-col shadow-xl border-2 border-primary/10",
