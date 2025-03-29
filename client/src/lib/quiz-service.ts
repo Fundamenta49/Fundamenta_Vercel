@@ -15,8 +15,14 @@ interface GenerateResourcesParams {
   previousProgress?: number;
 }
 
+interface QuizResponse {
+  questions: QuizQuestion[];
+}
+
 /**
  * Generates quiz questions using the AI backend
+ * This leverages our hybrid approach combining template-based questions,
+ * OpenAI, and caching for optimal performance and quality
  */
 export async function generateQuiz({
   subject,
@@ -25,6 +31,8 @@ export async function generateQuiz({
   topics = []
 }: GenerateQuizParams): Promise<QuizQuestion[]> {
   try {
+    console.log(`Generating quiz for ${subject} at ${difficulty} level`);
+    
     const response = await fetch('/api/learning/generate-quiz', {
       method: 'POST',
       headers: {
@@ -39,20 +47,26 @@ export async function generateQuiz({
     });
 
     if (!response.ok) {
-      throw new Error('Failed to generate quiz');
+      throw new Error(`Failed to generate quiz: ${response.statusText}`);
     }
 
-    return await response.json();
+    const data = await response.json() as QuizResponse;
+    if (!data.questions || data.questions.length === 0) {
+      throw new Error('No questions received from the server');
+    }
+    
+    return data.questions;
   } catch (error) {
     console.error('Error generating quiz:', error);
     
-    // Return some sample questions as fallback until the backend is implemented
+    // Return some sample questions as fallback in case of API failure
     return getSampleQuizQuestions(subject, difficulty);
   }
 }
 
 /**
  * Fetches recommended learning resources from the AI backend
+ * These resources are personalized based on user level, interests, and progress
  */
 export async function getRecommendedResources({
   subject,
@@ -61,6 +75,8 @@ export async function getRecommendedResources({
   previousProgress = 0
 }: GenerateResourcesParams): Promise<Resource[]> {
   try {
+    console.log(`Fetching ${userLevel} level resources for ${subject}`);
+    
     const response = await fetch('/api/learning/resources', {
       method: 'POST',
       headers: {
@@ -75,53 +91,108 @@ export async function getRecommendedResources({
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch resources');
+      throw new Error(`Failed to fetch resources: ${response.statusText}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    if (!data.resources || !Array.isArray(data.resources)) {
+      throw new Error('Invalid resource data received from server');
+    }
+    
+    return data.resources;
   } catch (error) {
     console.error('Error fetching resources:', error);
     
-    // Return some sample resources as fallback until the backend is implemented
+    // Return some sample resources as fallback in case of API failure
     return getSampleResources(subject);
   }
 }
 
 /**
- * Submit quiz results for analysis and future recommendation improvements
+ * Submit quiz results for analysis and personalized feedback
+ * This feature tracks learning progress and provides adaptive recommendations
+ * based on the user's performance and identified knowledge gaps
  */
 export async function submitQuizResults(
   subject: string,
-  score: number,
-  totalQuestions: number,
-  difficulty: string
-): Promise<{ feedback: string; suggestedActions: string[] }> {
+  difficulty: string,
+  userAnswers: number[] | null = null,
+  correctAnswers: number[] | null = null,
+  score?: number,
+  totalQuestions?: number
+): Promise<{ 
+  feedback: string; 
+  suggestedActions: string[];
+  percentageScore?: number;
+  incorrectQuestions?: number[];
+}> {
   try {
+    // Prepare the request body based on available data
+    const requestBody: any = {
+      subject,
+      difficulty,
+      timestamp: new Date().toISOString()
+    };
+    
+    // If we have detailed answer data, use it (preferred for better analysis)
+    if (Array.isArray(userAnswers) && Array.isArray(correctAnswers)) {
+      console.log(`Submitting detailed quiz results for ${subject}: ${userAnswers.length} answers`);
+      requestBody.userAnswers = userAnswers;
+      requestBody.correctAnswers = correctAnswers;
+    } 
+    // Otherwise use legacy score/total approach
+    else if (typeof score === 'number' && typeof totalQuestions === 'number') {
+      console.log(`Submitting summary quiz results for ${subject}: ${score}/${totalQuestions}`);
+      requestBody.score = score;
+      requestBody.totalQuestions = totalQuestions;
+    }
+    else {
+      throw new Error('Either user/correct answers or score/total must be provided');
+    }
+    
+    // Submit to our enhanced analytics and feedback API
     const response = await fetch('/api/learning/submit-quiz-results', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        subject,
-        score,
-        totalQuestions,
-        difficulty,
-        timestamp: new Date().toISOString()
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
-      throw new Error('Failed to submit quiz results');
+      throw new Error(`Failed to submit quiz results: ${response.statusText}`);
     }
 
-    return await response.json();
+    const result = await response.json();
+    
+    // Also track this activity for personalized recommendations
+    await trackLearningProgress(subject, 'quiz', {
+      difficulty,
+      score: result.percentageScore || result.score,
+      timestamp: new Date().toISOString()
+    }).catch(err => console.error('Failed to track quiz progress:', err));
+    
+    return {
+      feedback: result.feedback || 'Quiz results submitted successfully!',
+      suggestedActions: result.suggestedActions || [],
+      percentageScore: result.percentageScore,
+      incorrectQuestions: result.incorrectQuestions
+    };
   } catch (error) {
     console.error('Error submitting quiz results:', error);
     
+    // Calculate basic metrics for fallback response
+    let percentScore = 0;
+    if (userAnswers && correctAnswers) {
+      const correctCount = userAnswers.filter((ans, i) => ans === correctAnswers[i]).length;
+      percentScore = (correctCount / userAnswers.length) * 100;
+    } else if (typeof score === 'number' && typeof totalQuestions === 'number') {
+      percentScore = (score / totalQuestions) * 100;
+    }
+    
     // Return a generic response as fallback
     return {
-      feedback: score / totalQuestions >= 0.7 
+      feedback: percentScore >= 70 
         ? 'Great job! You\'re making good progress.' 
         : 'Keep practicing to improve your skills.',
       suggestedActions: [
@@ -135,6 +206,8 @@ export async function submitQuizResults(
 
 /**
  * Track user learning progress for personalized recommendations
+ * This data powers the adaptive learning system that tailors content
+ * to each user's unique learning journey and preference patterns
  */
 export async function trackLearningProgress(
   subject: string,
@@ -142,22 +215,44 @@ export async function trackLearningProgress(
   details?: Record<string, any>
 ): Promise<void> {
   try {
-    await fetch('/api/learning/track-progress', {
+    // Add client-side timestamp and session ID for better analytics
+    const eventData = {
+      subject,
+      action,
+      details: {
+        ...details,
+        client_timestamp: new Date().toISOString(),
+        session_id: getOrCreateSessionId(),
+        screen_size: `${window.innerWidth}x${window.innerHeight}`, // For mobile vs desktop analytics
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    // Fire and forget - don't block the UI while waiting for this
+    fetch('/api/learning/track-progress', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        subject,
-        action,
-        details,
-        timestamp: new Date().toISOString()
-      })
+      body: JSON.stringify(eventData)
+    }).catch(err => {
+      // Log but don't disrupt user experience
+      console.error('Background tracking request failed:', err);
     });
   } catch (error) {
-    console.error('Error tracking learning progress:', error);
+    console.error('Error preparing tracking data:', error);
     // Silent fail - tracking shouldn't block the user experience
   }
+}
+
+// Helper to create or retrieve a consistent session ID
+function getOrCreateSessionId(): string {
+  let sessionId = sessionStorage.getItem('learning_session_id');
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    sessionStorage.setItem('learning_session_id', sessionId);
+  }
+  return sessionId;
 }
 
 // Sample data until backend is implemented

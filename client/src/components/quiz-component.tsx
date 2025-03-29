@@ -19,7 +19,12 @@ interface QuizComponentProps {
   subject: string;
   questions?: QuizQuestion[];
   difficulty?: "beginner" | "intermediate" | "advanced";
-  onComplete?: (score: number, totalQuestions: number) => void;
+  onComplete?: (
+    score: number, 
+    totalQuestions: number, 
+    userAnswers?: number[], 
+    correctAnswers?: number[]
+  ) => void;
   onGenerateQuiz?: () => void;
   className?: string;
 }
@@ -94,7 +99,15 @@ export default function QuizComponent({
     }
   };
   
+  // Track user answers throughout the quiz
+  const [userAnswers, setUserAnswers] = useState<number[]>([]);
+  
   const handleNextQuestion = () => {
+    // Record the user's answer for this question
+    const updatedUserAnswers = [...userAnswers];
+    updatedUserAnswers[currentQuestionIndex] = selectedOption !== null ? selectedOption : -1;
+    setUserAnswers(updatedUserAnswers);
+    
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
@@ -102,8 +115,14 @@ export default function QuizComponent({
       setShowExplanation(false);
     } else {
       setQuizCompleted(true);
+      const finalScore = score + (selectedOption === currentQuestion.correctAnswer ? 1 : 0);
+      
+      // Get the correct answers array from questions
+      const correctAnswers = questions.map(q => q.correctAnswer);
+      
       if (onComplete) {
-        onComplete(score + (selectedOption === currentQuestion.correctAnswer ? 1 : 0), questions.length);
+        // Use the updated onComplete function with optional parameters
+        onComplete(finalScore, questions.length, updatedUserAnswers, correctAnswers);
       }
     }
   };

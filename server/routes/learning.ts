@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import OpenAI from 'openai';
 import { QuizQuestion } from '../../client/src/components/quiz-component';
 import { Resource } from '../../client/src/components/resource-links';
+import { generateQuiz, gradeQuiz } from '../services/quiz-service';
 
 const router = Router();
 
@@ -11,59 +12,20 @@ const openai = new OpenAI({
 });
 
 /**
- * Generate AI-powered quiz questions for a subject
+ * Generate AI-powered quiz questions for a subject using our hybrid approach
  */
 router.post('/generate-quiz', async (req: Request, res: Response) => {
   try {
     const { subject, difficulty, numberOfQuestions = 5, topics = [] } = req.body;
     
-    // Build prompt for OpenAI
-    const prompt = `
-      Create ${numberOfQuestions} multiple-choice quiz questions about ${subject} at a ${difficulty} level.
-      ${topics.length > 0 ? `Focus on these specific topics: ${topics.join(', ')}.` : ''}
-      
-      For each question:
-      1. Provide a clear, concise question
-      2. Give exactly 4 possible answers with only one correct answer
-      3. Mark which answer is correct (0-3, where 0 is the first option)
-      4. Include a brief explanation of why the correct answer is right
-      
-      Format the response as a valid JSON object with this structure:
-      {
-        "questions": [
-          {
-            "id": number,
-            "question": string,
-            "options": string[],
-            "correctAnswer": number,
-            "explanation": string
-          }
-        ]
-      }
-    `;
+    console.log(`Generating ${numberOfQuestions} ${difficulty} questions about ${subject}`);
     
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert educational content creator specializing in creating engaging quiz questions. Your answers should be accurate, educational, and appropriate for the specified difficulty level."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      response_format: { type: "json_object" }
-    });
-    
-    // Parse the response
-    if (!response.choices[0].message.content) {
-      throw new Error('No content received from OpenAI');
-    }
-    
-    const content = response.choices[0].message.content;
-    const quizData = JSON.parse(content);
+    const quizData = await generateQuiz(
+      subject, 
+      difficulty, 
+      numberOfQuestions, 
+      topics
+    );
     
     res.json(quizData);
   } catch (error) {
@@ -151,49 +113,103 @@ router.post('/resources', async (req: Request, res: Response) => {
  */
 router.post('/submit-quiz-results', async (req: Request, res: Response) => {
   try {
-    const { subject, score, totalQuestions, difficulty } = req.body;
-    const percentage = (score / totalQuestions) * 100;
+    const { subject, userAnswers, correctAnswers, difficulty } = req.body;
     
-    // Build prompt for OpenAI
-    const prompt = `
-      A user has completed a quiz on ${subject} at the ${difficulty} level.
-      They scored ${score} out of ${totalQuestions} (${percentage.toFixed(1)}%).
+    // Use our grading service if we have user's specific answers
+    if (Array.isArray(userAnswers) && Array.isArray(correctAnswers)) {
+      console.log('Grading quiz with detailed answers');
       
-      Based on this performance:
-      1. Provide personalized, encouraging feedback on their performance
-      2. Suggest 3 specific actions they can take to improve their understanding
+      // Use our grading service
+      const gradeResults = await gradeQuiz(userAnswers, correctAnswers);
       
-      Format your response as a JSON object with this structure:
-      {
-        "feedback": string,
-        "suggestedActions": string[]
-      }
-    `;
-    
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      messages: [
-        {
-          role: "system",
-          content: "You are an encouraging educational coach who provides helpful, constructive feedback to learners. Your tone is supportive but honest, and you focus on growth and improvement."
-        },
-        {
-          role: "user",
-          content: prompt
+      // Enhance feedback with OpenAI if needed
+      if (subject) {
+        // Build prompt for OpenAI to get more personalized advice
+        const prompt = `
+          A user has completed a quiz on ${subject} at the ${difficulty} level.
+          They scored ${gradeResults.score} out of ${correctAnswers.length} (${gradeResults.percentageScore.toFixed(1)}%).
+          They got questions ${gradeResults.incorrectQuestions.map(i => i + 1).join(', ')} wrong.
+          
+          Based on this performance:
+          1. Provide 3 specific actions they can take to improve their understanding of ${subject}
+          
+          Format your response as a JSON object with this structure:
+          {
+            "suggestedActions": string[]
+          }
+        `;
+        
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: [
+            {
+              role: "system",
+              content: "You are an encouraging educational coach who provides helpful, constructive feedback to learners. Your tone is supportive but honest, and you focus on growth and improvement."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          response_format: { type: "json_object" }
+        });
+        
+        if (response.choices[0].message.content) {
+          const aiSuggestions = JSON.parse(response.choices[0].message.content);
+          gradeResults.suggestedActions = aiSuggestions.suggestedActions;
         }
-      ],
-      response_format: { type: "json_object" }
-    });
-    
-    // Parse the response
-    if (!response.choices[0].message.content) {
-      throw new Error('No content received from OpenAI');
+      }
+      
+      return res.json(gradeResults);
+    } 
+    // Backward compatibility with old format
+    else if (typeof req.body.score === 'number' && typeof req.body.totalQuestions === 'number') {
+      const { score, totalQuestions } = req.body;
+      const percentage = (score / totalQuestions) * 100;
+      
+      // Build prompt for OpenAI
+      const prompt = `
+        A user has completed a quiz on ${subject} at the ${difficulty} level.
+        They scored ${score} out of ${totalQuestions} (${percentage.toFixed(1)}%).
+        
+        Based on this performance:
+        1. Provide personalized, encouraging feedback on their performance
+        2. Suggest 3 specific actions they can take to improve their understanding
+        
+        Format your response as a JSON object with this structure:
+        {
+          "feedback": string,
+          "suggestedActions": string[]
+        }
+      `;
+      
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are an encouraging educational coach who provides helpful, constructive feedback to learners. Your tone is supportive but honest, and you focus on growth and improvement."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
+      
+      // Parse the response
+      if (!response.choices[0].message.content) {
+        throw new Error('No content received from OpenAI');
+      }
+      
+      const content = response.choices[0].message.content;
+      const feedbackData = JSON.parse(content);
+      
+      return res.json(feedbackData);
+    } else {
+      throw new Error('Invalid quiz submission format');
     }
-    
-    const content = response.choices[0].message.content;
-    const feedbackData = JSON.parse(content);
-    
-    res.json(feedbackData);
   } catch (error) {
     console.error('Error generating feedback:', error);
     res.status(500).json({ error: 'Failed to generate feedback' });
