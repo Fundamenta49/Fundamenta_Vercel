@@ -165,7 +165,14 @@ const MortgagePage: React.FC = () => {
                   <FullScreenDialogDescription>{tool.description}</FullScreenDialogDescription>
                 </FullScreenDialogHeader>
                 <FullScreenDialogBody>
-                  <tool.component />
+                  {tool.id === "costs" ? (
+                    <ClosingCostCalculator onClose={() => {
+                      const closeButton = document.querySelector("[data-radix-collection-item]") as HTMLElement;
+                      if (closeButton) closeButton.click();
+                    }} />
+                  ) : (
+                    <tool.component />
+                  )}
                 </FullScreenDialogBody>
               </FullScreenDialogContent>
             </FullScreenDialog>

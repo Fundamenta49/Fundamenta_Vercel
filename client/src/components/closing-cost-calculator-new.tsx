@@ -139,7 +139,7 @@ const DEFAULT_HOA_MONTHLY = 250;
 const DEFAULT_UTILITIES = 300;
 const DEFAULT_HOME_MAINTENANCE = 1; // percent annually
 
-export const ClosingCostCalculator: React.FC = () => {
+export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClose }) => {
   // State for net sheet
   const [netSheet, setNetSheet] = useState<NetSheet>({
     homePrice: DEFAULT_HOME_PRICE,
@@ -544,13 +544,34 @@ export const ClosingCostCalculator: React.FC = () => {
       >
         <div className="container max-w-5xl mx-auto p-4">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
-              <Calculator className="h-6 w-6 text-green-600" />
-              Closing Cost & Total Ownership Calculator
-            </h1>
-            <p className="text-gray-600">
-              Understand all costs associated with buying a home, from closing to long-term ownership
-            </p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
+                  <Calculator className="h-6 w-6 text-green-600" />
+                  Closing Cost & Total Ownership Calculator
+                </h1>
+                <p className="text-gray-600">
+                  Understand all costs associated with buying a home, from closing to long-term ownership
+                </p>
+              </div>
+              
+              {/* Desktop Close Button */}
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="hidden md:flex rounded-full h-10 w-10 p-0 border-2 border-green-500"
+                onClick={() => {
+                  if (onClose) {
+                    onClose();
+                  } else {
+                    setShowFullCard(false);
+                  }
+                }}
+              >
+                <X className="h-6 w-6 text-green-600" />
+                <span className="sr-only">Close</span>
+              </Button>
+            </div>
             <Separator className="my-4" />
           </div>
           
