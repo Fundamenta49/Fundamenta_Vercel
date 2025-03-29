@@ -559,10 +559,11 @@ export default function FloatingChat() {
                       "rounded-lg px-4 py-2.5 max-w-[85%] text-sm",
                       msg.role === 'user'
                         ? "bg-primary text-white"
-                        : "bg-white border border-gray-200"
+                        : "bg-primary/10 border border-primary/20"
                     )}
                     style={{
-                      backgroundColor: msg.role === 'user' ? getCurrentThemeColor : '',
+                      backgroundColor: msg.role === 'user' ? getCurrentThemeColor : `${getCurrentThemeColor}10`,
+                      borderColor: msg.role === 'user' ? undefined : `${getCurrentThemeColor}30`,
                       color: msg.role === 'user' ? 'white' : ''
                     }}
                   >
@@ -576,11 +577,37 @@ export default function FloatingChat() {
               
               {chatMutation.isPending && (
                 <div className="flex items-start">
-                  <div className="rounded-lg px-4 py-2.5 max-w-[85%] text-sm bg-white border border-gray-200 flex items-center">
+                  <div 
+                    className="rounded-lg px-4 py-2.5 max-w-[85%] text-sm border flex items-center"
+                    style={{
+                      backgroundColor: `${getCurrentThemeColor}10`,
+                      borderColor: `${getCurrentThemeColor}30`,
+                    }}
+                  >
                     <div className="flex items-center gap-1 h-6">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDuration: "1s" }} />
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDuration: "1s", animationDelay: "0.2s" }} />
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDuration: "1s", animationDelay: "0.4s" }} />
+                      <div 
+                        className="w-1.5 h-1.5 rounded-full animate-bounce" 
+                        style={{ 
+                          backgroundColor: getCurrentThemeColor, 
+                          animationDuration: "1s" 
+                        }} 
+                      />
+                      <div 
+                        className="w-1.5 h-1.5 rounded-full animate-bounce" 
+                        style={{ 
+                          backgroundColor: getCurrentThemeColor, 
+                          animationDuration: "1s", 
+                          animationDelay: "0.2s" 
+                        }}
+                      />
+                      <div 
+                        className="w-1.5 h-1.5 rounded-full animate-bounce" 
+                        style={{ 
+                          backgroundColor: getCurrentThemeColor, 
+                          animationDuration: "1s", 
+                          animationDelay: "0.4s" 
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
