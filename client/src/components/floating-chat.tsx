@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -14,7 +11,6 @@ import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { motion, useAnimationControls } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
-// Removed FundiAvatar import in favor of direct SVG implementation
 
 interface Message {
   role: 'user' | 'assistant';
@@ -39,7 +35,7 @@ export default function FloatingChat() {
   const [isMinimized, setIsMinimized] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [location] = useLocation();
+  const [, setLocation] = useLocation();
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const controls = useAnimationControls();
@@ -77,8 +73,9 @@ export default function FloatingChat() {
 
   // Get current page context
   const getCurrentContext = () => {
+    const location = window.location.pathname;
     const page = location.split('/')[1] || 'home';
-    const params = new URLSearchParams(location.split('?')[1] || '');
+    const params = new URLSearchParams(window.location.search);
     const section = params.get('tab') || 'general';
 
     const availableActions = {
@@ -97,6 +94,11 @@ export default function FloatingChat() {
 
   const handleAIAction = async (action: AIAction) => {
     switch (action.type) {
+      case 'navigate':
+        if (action.payload.route) {
+          setLocation(action.payload.route);
+        }
+        break;
       case 'resume':
         await apiRequest('POST', '/api/resume/update', action.payload);
         toast({ title: "Resume updated", description: "Your resume has been updated with the suggested changes." });
@@ -183,9 +185,8 @@ export default function FloatingChat() {
   };
 
   useEffect(() => {
-    const chatContent = chatRef.current;
-    if (chatContent) {
-      chatContent.scrollTop = chatContent.scrollHeight;
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -207,20 +208,15 @@ export default function FloatingChat() {
           animate={controls}
           className="relative"
         >
-          {/* COMPLETELY NEW APPROACH - No Button component */}
+          {/* Just the robot SVG with glow effect */}
           <div 
-            className="w-14 h-14 rounded-full shadow-lg relative cursor-pointer overflow-visible"
+            className="w-14 h-14 relative cursor-pointer"
             onClick={() => setIsMinimized(false)}
-            style={{
-              background: '#ffffff', // White background instead of primary
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.3s ease'
-            }}
           >
             {/* Glow effect */}
             <div className="absolute -inset-3 bg-primary/20 rounded-full blur-xl opacity-50 animate-pulse" />
             
-            {/* Robot SVG - No containers, directly at the root level */}
+            {/* Robot SVG directly */}
             <svg 
               width="56" 
               height="56" 
@@ -228,8 +224,7 @@ export default function FloatingChat() {
               xmlns="http://www.w3.org/2000/svg"
               className="absolute top-0 left-0 right-0 bottom-0"
               style={{ 
-                margin: 'auto',
-                backgroundColor: 'transparent'
+                margin: 'auto'
               }}
             >
               {/* Robot body */}
@@ -295,89 +290,87 @@ export default function FloatingChat() {
         )}>
           <div className="p-3 border-b flex items-center justify-between bg-background">
             <div className="flex items-center gap-2">
-              {/* Simple div with white background and SVG directly inside */}
-              <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" style={{ backgroundColor: 'white' }}>
-                <svg 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 100 100" 
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Robot body */}
-                  <g>
-                    {/* Robot head */}
-                    <rect x="30" y="15" width="40" height="30" rx="10" fill="#f5f5f5" stroke="#e0e0e0" strokeWidth="1" />
-                    
-                    {/* Head screen */}
-                    <rect x="35" y="18" width="30" height="10" rx="3" fill="#7dd3fc" opacity="0.6" />
-                    
-                    {/* Ear left */}
-                    <rect x="25" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
-                    
-                    {/* Ear right */}
-                    <rect x="70" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
-                    
-                    {/* Eyes background */}
-                    <rect x="35" y="30" width="30" height="10" rx="5" fill="#0f172a" />
-                    
-                    {/* Left eye - brighter when speaking */}
-                    <ellipse 
-                      cx="42" 
-                      cy="35" 
-                      rx="3" 
-                      ry="2.5" 
-                      fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
-                      opacity={isAiSpeaking ? "0.9" : "0.7"}
-                    />
-                    
-                    {/* Right eye - brighter when speaking */}
-                    <ellipse 
-                      cx="58" 
-                      cy="35" 
-                      rx="3" 
-                      ry="2.5" 
-                      fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
-                      opacity={isAiSpeaking ? "0.9" : "0.7"}
-                    />
-                    
-                    {/* Main robot body */}
-                    <path 
-                      d="M30,45 C30,65 30,75 50,80 C70,75 70,65 70,45 L60,40 L40,40 L30,45" 
-                      fill="#f5f5f5" 
-                      stroke="#e0e0e0" 
-                      strokeWidth="1"
-                    />
-                    
-                    {/* Center chest light - pulsing when speaking */}
-                    <circle 
-                      cx="50" 
-                      cy="55" 
-                      r="5" 
-                      fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
-                      opacity={isAiSpeaking ? "0.9" : "0.6"} 
-                      className={isAiSpeaking ? "animate-pulse" : ""}
-                    />
-                    
-                    {/* Left arm */}
-                    <path 
-                      d="M30,50 C20,55 20,60 25,65" 
-                      fill="none" 
-                      stroke="#f5f5f5" 
-                      strokeWidth="7" 
-                      strokeLinecap="round" 
-                    />
-                    
-                    {/* Right arm */}
-                    <path 
-                      d="M70,50 C80,55 80,60 75,65" 
-                      fill="none" 
-                      stroke="#f5f5f5" 
-                      strokeWidth="7" 
-                      strokeLinecap="round" 
-                    />
-                  </g>
-                </svg>
-              </div>
+              {/* SVG directly with no container */}
+              <svg 
+                width="32" 
+                height="32" 
+                viewBox="0 0 100 100" 
+                xmlns="http://www.w3.org/2000/svg"
+                className="flex-shrink-0"
+              >
+                <g>
+                  {/* Robot head */}
+                  <rect x="30" y="15" width="40" height="30" rx="10" fill="#f5f5f5" stroke="#e0e0e0" strokeWidth="1" />
+                  
+                  {/* Head screen */}
+                  <rect x="35" y="18" width="30" height="10" rx="3" fill="#7dd3fc" opacity="0.6" />
+                  
+                  {/* Ear left */}
+                  <rect x="25" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
+                  
+                  {/* Ear right */}
+                  <rect x="70" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
+                  
+                  {/* Eyes background */}
+                  <rect x="35" y="30" width="30" height="10" rx="5" fill="#0f172a" />
+                  
+                  {/* Left eye - brighter when speaking */}
+                  <ellipse 
+                    cx="42" 
+                    cy="35" 
+                    rx="3" 
+                    ry="2.5" 
+                    fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
+                    opacity={isAiSpeaking ? "0.9" : "0.7"}
+                  />
+                  
+                  {/* Right eye - brighter when speaking */}
+                  <ellipse 
+                    cx="58" 
+                    cy="35" 
+                    rx="3" 
+                    ry="2.5" 
+                    fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
+                    opacity={isAiSpeaking ? "0.9" : "0.7"}
+                  />
+                  
+                  {/* Main robot body */}
+                  <path 
+                    d="M30,45 C30,65 30,75 50,80 C70,75 70,65 70,45 L60,40 L40,40 L30,45" 
+                    fill="#f5f5f5" 
+                    stroke="#e0e0e0" 
+                    strokeWidth="1"
+                  />
+                  
+                  {/* Center chest light - pulsing when speaking */}
+                  <circle 
+                    cx="50" 
+                    cy="55" 
+                    r="5" 
+                    fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
+                    opacity={isAiSpeaking ? "0.9" : "0.6"} 
+                    className={isAiSpeaking ? "animate-pulse" : ""}
+                  />
+                  
+                  {/* Left arm */}
+                  <path 
+                    d="M30,50 C20,55 20,60 25,65" 
+                    fill="none" 
+                    stroke="#f5f5f5" 
+                    strokeWidth="7" 
+                    strokeLinecap="round" 
+                  />
+                  
+                  {/* Right arm */}
+                  <path 
+                    d="M70,50 C80,55 80,60 75,65" 
+                    fill="none" 
+                    stroke="#f5f5f5" 
+                    strokeWidth="7" 
+                    strokeLinecap="round" 
+                  />
+                </g>
+              </svg>
               <div>
                 <div className="font-medium text-sm text-foreground">Fundi</div>
                 <div className="text-xs text-muted-foreground flex items-center">
@@ -389,14 +382,14 @@ export default function FloatingChat() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full hover:bg-primary/10 text-text-muted"
+              className="h-8 w-8 rounded-full hover:bg-primary/10 text-muted-foreground"
               onClick={() => setIsMinimized(true)}
             >
               <Minimize2 className="h-4 w-4" />
             </Button>
           </div>
 
-          <ScrollArea className="flex-1 px-4 py-3" style={{ height: keyboardVisible ? '30vh' : 'auto' }}>
+          <ScrollArea className="flex-1 px-4 py-3">
             <div className="space-y-4" ref={chatRef}>
               {messages.length === 0 && (
                 <div className="text-center py-8">
