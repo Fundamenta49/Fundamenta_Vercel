@@ -63,7 +63,91 @@ export default function CriticalThinkingCourse() {
         "Trusting your intuition over evidence"
       ],
       correctAnswer: 2,
-      explanation: "Critical thinking involves evaluating evidence, questioning assumptions, and considering alternative perspectives before drawing conclusions."
+      explanation: "Critical thinking involves evaluating evidence objectively and considering multiple perspectives before drawing conclusions, rather than accepting information uncritically."
+    },
+    {
+      id: 4,
+      question: "What is the Socratic method?",
+      options: [
+        "A mathematical formula for solving complex problems",
+        "A technique that uses focused questioning to stimulate critical thinking",
+        "A memorization strategy for learning new concepts",
+        "A method for organizing ideas in written form"
+      ],
+      correctAnswer: 1,
+      explanation: "The Socratic method is a form of cooperative dialogue where individuals are prompted to examine their ideas through focused questioning, helping to stimulate critical thinking and illuminate ideas."
+    },
+    {
+      id: 5,
+      question: "Which logical fallacy involves attacking the person making the argument rather than addressing the argument itself?",
+      options: [
+        "Straw man fallacy",
+        "Appeal to authority",
+        "Ad hominem fallacy",
+        "False dichotomy"
+      ],
+      correctAnswer: 2,
+      explanation: "The ad hominem fallacy occurs when someone attacks the character, motives, or attributes of the person making an argument rather than addressing the substance of the argument itself."
+    },
+    {
+      id: 6,
+      question: "What is 'intellectual humility' in critical thinking?",
+      options: [
+        "The belief that all opinions are equally valid",
+        "Recognition of the limits of one's knowledge and openness to new information",
+        "Assuming you are wrong about most things",
+        "Deferring to experts on all matters"
+      ],
+      correctAnswer: 1,
+      explanation: "Intellectual humility involves recognizing that your knowledge is limited, being open to new evidence and perspectives, and being willing to revise your beliefs when warranted by new information."
+    },
+    {
+      id: 7,
+      question: "Which of the following is an example of deductive reasoning?",
+      options: [
+        "Drawing a general conclusion from specific observations",
+        "Making a prediction based on past trends",
+        "Applying a general rule to a specific case",
+        "Using intuition to solve a problem"
+      ],
+      correctAnswer: 2,
+      explanation: "Deductive reasoning involves applying general rules or principles to specific cases to draw a conclusion. It moves from the general to the specific, unlike inductive reasoning which does the opposite."
+    },
+    {
+      id: 8,
+      question: "What is a 'red herring' in an argument?",
+      options: [
+        "A piece of information that definitively proves a point",
+        "An irrelevant topic introduced to divert attention from the original issue",
+        "A logical conclusion based on sound premises",
+        "A controversial statement designed to provoke emotional response"
+      ],
+      correctAnswer: 1,
+      explanation: "A red herring is a diversionary tactic that involves introducing an irrelevant topic to distract from the original issue being discussed, derailing the argument and avoiding the actual point of contention."
+    },
+    {
+      id: 9,
+      question: "Which critical thinking skill involves breaking complex ideas into component parts?",
+      options: [
+        "Synthesis",
+        "Evaluation",
+        "Analysis",
+        "Inference"
+      ],
+      correctAnswer: 2,
+      explanation: "Analysis involves breaking down complex information or problems into smaller, more manageable parts to understand the relationships between these components and identify patterns or causes."
+    },
+    {
+      id: 10,
+      question: "What is 'cognitive dissonance'?",
+      options: [
+        "The mental state achieved during deep critical thinking",
+        "The inability to think critically due to mental fatigue",
+        "The psychological discomfort experienced when holding contradictory beliefs",
+        "The process of analyzing different perspectives simultaneously"
+      ],
+      correctAnswer: 2,
+      explanation: "Cognitive dissonance is the mental discomfort that results from holding contradictory beliefs, values, or attitudes. People tend to seek consistency in their cognitions, which can sometimes lead to irrational or maladaptive behavior."
     }
   ];
 
@@ -411,18 +495,18 @@ export default function CriticalThinkingCourse() {
             <CardHeader>
               <CardTitle>Introduction to Critical Thinking</CardTitle>
               <CardDescription>
-                Learn how to evaluate information, recognize biases, and make better decisions
+                Learn how to analyze information, evaluate arguments, and make better decisions
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="mb-4">
-                Critical thinking is the intellectually disciplined process of actively conceptualizing, applying, analyzing,
-                synthesizing, and evaluating information gathered from observation, experience, reflection, reasoning, or
-                communication.
+                Critical thinking is the ability to think clearly and rationally about what to believe or do. It's about 
+                evaluating information, questioning assumptions, analyzing arguments, and drawing logical conclusions.
               </p>
               <p className="mb-4">
-                In a world filled with misinformation and complex problems, critical thinking skills are essential for
-                navigating daily life, making informed decisions, and developing well-reasoned beliefs.
+                In today's world of information overload and misinformation, critical thinking skills are more important 
+                than ever. This course will help you develop a toolkit for analyzing claims, spotting logical fallacies, 
+                overcoming cognitive biases, and making better decisions in all areas of life.
               </p>
             </CardContent>
           </Card>
@@ -482,7 +566,7 @@ export default function CriticalThinkingCourse() {
             <CardHeader>
               <CardTitle>Test Your Critical Thinking Skills</CardTitle>
               <CardDescription>
-                Answer these questions to see how much you've learned about critical thinking
+                Answer these questions to check your understanding of critical thinking concepts
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -505,7 +589,7 @@ export default function CriticalThinkingCourse() {
             <CardHeader>
               <CardTitle>Critical Thinking Resources</CardTitle>
               <CardDescription>
-                Helpful links and tools to improve your critical thinking skills
+                Useful websites, books, and tools to further develop your critical thinking skills
               </CardDescription>
             </CardHeader>
             <CardContent>

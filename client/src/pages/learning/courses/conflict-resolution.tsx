@@ -64,6 +64,90 @@ export default function ConflictResolutionCourse() {
       ],
       correctAnswer: 2,
       explanation: "Pointing out all the ways someone is wrong typically escalates conflict rather than resolving it. The other options are effective de-escalation techniques."
+    },
+    {
+      id: 4,
+      question: "What is the primary purpose of the 'compromising' conflict style?",
+      options: [
+        "To find a solution where both parties win completely",
+        "To sacrifice your needs to maintain the relationship",
+        "To find middle ground where each party gets some of what they want",
+        "To assert your position regardless of others' needs"
+      ],
+      correctAnswer: 2,
+      explanation: "Compromising involves finding a middle ground where each party gives up something while gaining something else, creating a partial win for everyone involved."
+    },
+    {
+      id: 5,
+      question: "Which statement best describes the 'competing' conflict style?",
+      options: [
+        "Prioritizing relationships over personal goals",
+        "Pursuing your concerns at the expense of others",
+        "Finding middle ground through give and take",
+        "Avoiding the conflict altogether"
+      ],
+      correctAnswer: 1,
+      explanation: "The competing style (also called forcing) involves pursuing your own concerns at the expense of others, using power to win the conflict."
+    },
+    {
+      id: 6,
+      question: "What is a 'trigger phrase' in conflict situations?",
+      options: [
+        "A phrase that helps resolve conflicts quickly",
+        "Words or statements that tend to escalate emotions and defensiveness",
+        "A technique for changing the subject",
+        "A specialized term in conflict mediation"
+      ],
+      correctAnswer: 1,
+      explanation: "Trigger phrases are statements that typically provoke an emotional reaction, escalate tension, and increase defensiveness, such as 'you always' or 'you never'."
+    },
+    {
+      id: 7,
+      question: "Which of these is an example of an effective 'I' statement?",
+      options: [
+        "I think you're being unreasonable about this.",
+        "I feel disrespected when meetings start without me being notified.",
+        "I want you to stop interrupting me all the time.",
+        "I know you're deliberately trying to avoid this topic."
+      ],
+      correctAnswer: 1,
+      explanation: "An effective 'I' statement focuses on expressing your feelings about a specific behavior without accusation. 'I feel disrespected when meetings start without me being notified' follows the format of 'I feel [emotion] when [specific behavior happens].'"
+    },
+    {
+      id: 8,
+      question: "What is the 'avoidance' approach to conflict resolution?",
+      options: [
+        "Addressing conflict head-on with assertive communication",
+        "Delaying or ignoring the conflict altogether",
+        "Using a neutral third party to facilitate resolution",
+        "Finding ways to compete more effectively"
+      ],
+      correctAnswer: 1,
+      explanation: "The avoidance approach involves physically or psychologically removing yourself from the conflict, or postponing dealing with it indefinitely."
+    },
+    {
+      id: 9,
+      question: "What is conflict transformation?",
+      options: [
+        "Changing the topic to avoid conflict",
+        "Finding a quick solution to end the conflict",
+        "Viewing conflict as an opportunity for growth and positive change",
+        "Transforming negative emotions into positive ones"
+      ],
+      correctAnswer: 2,
+      explanation: "Conflict transformation is an approach that views conflict as a potential catalyst for growth and positive social change, focusing not just on resolving the immediate issue but on addressing underlying relationships and structures."
+    },
+    {
+      id: 10,
+      question: "What is the most productive mindset to adopt during conflict resolution?",
+      options: [
+        "Viewing the other person as an opponent to be defeated",
+        "Seeing the conflict as a problem to be solved together",
+        "Focusing on who started the conflict",
+        "Preparing to compromise on everything"
+      ],
+      correctAnswer: 1,
+      explanation: "Viewing the conflict as a shared problem to be solved collaboratively creates the foundation for productive conflict resolution, as it puts both parties on the same side against the problem rather than against each other."
     }
   ];
 
