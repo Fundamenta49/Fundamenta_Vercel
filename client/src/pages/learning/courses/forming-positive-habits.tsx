@@ -64,6 +64,114 @@ export default function FormingPositiveHabitsCourse() {
       ],
       correctAnswer: 1,
       explanation: "Research by Phillippa Lally at University College London found habit formation takes anywhere from 18 to 254 days, with 66 days being the average. The time varies based on the person, the habit, and circumstances."
+    },
+    {
+      id: 4,
+      question: "Which part of the brain is primarily responsible for habit formation?",
+      options: [
+        "Prefrontal cortex",
+        "Hippocampus",
+        "Basal ganglia",
+        "Amygdala"
+      ],
+      correctAnswer: 2,
+      explanation: "The basal ganglia plays a critical role in habit formation. This brain structure is involved in movement control, procedural learning, and reward processing, all central to the development of automatic behaviors."
+    },
+    {
+      id: 5,
+      question: "What is the 'implementation intention' strategy for habit formation?",
+      options: [
+        "Setting a vague goal to pursue a habit 'whenever possible'",
+        "Creating a specific plan for when and where you will perform a behavior",
+        "Implementing rewards for successful habit completion",
+        "Gradually increasing the difficulty of a habit over time"
+      ],
+      correctAnswer: 1,
+      explanation: "Implementation intentions are specific plans that detail exactly when and where you will perform a habit. For example: 'I will meditate for 5 minutes at 7am in my bedroom.' Research shows they significantly increase follow-through on intentions."
+    },
+    {
+      id: 6,
+      question: "According to James Clear's framework, what is the first 'law' of behavior change?",
+      options: [
+        "Make it obvious",
+        "Make it attractive", 
+        "Make it easy",
+        "Make it satisfying"
+      ],
+      correctAnswer: 0,
+      explanation: "In 'Atomic Habits,' James Clear outlines four laws of behavior change. The first is 'Make it obvious,' which focuses on creating clear cues for your habits through strategies like implementation intentions and environmental design."
+    },
+    {
+      id: 7,
+      question: "What is 'temptation bundling' in habit formation?",
+      options: [
+        "Avoiding temptations that interfere with good habits",
+        "Pairing something you want to do with something you need to do",
+        "Creating several small habits instead of one large one",
+        "Giving yourself a reward after completing a habit"
+      ],
+      correctAnswer: 1,
+      explanation: "Temptation bundling involves linking an activity you enjoy (want to do) with one you need motivation for (need to do). For example, only watching your favorite show while exercising. This makes the necessary habit more attractive."
+    },
+    {
+      id: 8,
+      question: "What is BJ Fogg's 'Tiny Habits' approach centered on?",
+      options: [
+        "Making habits so small they're impossible to fail at",
+        "Tracking habits with specialized technology",
+        "Focusing on high-impact keystone habits",
+        "Gradually increasing the difficulty of a habit over extended periods"
+      ],
+      correctAnswer: 0,
+      explanation: "BJ Fogg's Tiny Habits method emphasizes starting with habits so small they require minimal motivation - often taking 30 seconds or less. This approach focuses on consistency and building the habit identity rather than impressive results upfront."
+    },
+    {
+      id: 9,
+      question: "What is the significance of celebration in BJ Fogg's habit formation method?",
+      options: [
+        "It's just a nice bonus but not essential to the method",
+        "It replaces the need for discipline and willpower",
+        "It creates positive emotions that help wire in the habit",
+        "It provides accountability by making habits public"
+      ],
+      correctAnswer: 2,
+      explanation: "In Fogg's method, celebration—creating an immediate positive feeling after performing the tiny behavior—is essential for habit formation. This positive emotion helps your brain associate the behavior with pleasure, strengthening the neural pathway."
+    },
+    {
+      id: 10,
+      question: "What is a 'keystone habit'?",
+      options: [
+        "The most difficult habit to form",
+        "A habit that naturally leads to multiple positive behaviors",
+        "The first habit you should establish",
+        "A habit that requires the most consistency"
+      ],
+      correctAnswer: 1,
+      explanation: "Keystone habits are habits that naturally lead to other positive behaviors and outcomes. For example, regular exercise often leads to better eating choices, improved sleep, and increased productivity. They create a 'cascade' of positive changes."
+    },
+    {
+      id: 11,
+      question: "What does the 'two-minute rule' state about habit formation?",
+      options: [
+        "All new habits should be started in two-minute increments",
+        "A new habit should take no more than two minutes to complete",
+        "Wait two minutes before giving in to a craving",
+        "Practice a new habit for at least two minutes daily"
+      ],
+      correctAnswer: 1,
+      explanation: "The two-minute rule, popularized by James Clear, suggests that when starting a new habit, it should take less than two minutes to complete. This makes the habit extremely easy to perform, increasing the likelihood of consistency."
+    },
+    {
+      id: 12,
+      question: "What is 'identity-based' habit formation?",
+      options: [
+        "Forming habits based on your personality type",
+        "Focusing on who you wish to become rather than what you want to achieve",
+        "Creating a public identity around your habits for accountability",
+        "Adapting habits from role models whose identity you admire"
+      ],
+      correctAnswer: 1,
+      explanation: "Identity-based habits focus on changing your beliefs about yourself rather than just your behaviors. Instead of 'I want to run a marathon,' your focus becomes 'I am a runner.' This approach creates internal motivation as behaviors become expressions of identity."
     }
   ];
 

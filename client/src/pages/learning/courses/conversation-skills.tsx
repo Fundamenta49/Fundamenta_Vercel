@@ -64,6 +64,90 @@ export default function ConversationSkillsCourse() {
       ],
       correctAnswer: 2,
       explanation: "One-word answers that don't invite further discussion typically shut down conversation. Effective conversation involves building upon topics through questions, related experiences, and showing interest."
+    },
+    {
+      id: 4,
+      question: "What is 'paraphrasing' in the context of active listening?",
+      options: [
+        "Correcting someone's grammar during conversation",
+        "Restating what the speaker said in your own words to confirm understanding",
+        "Using more sophisticated vocabulary to sound intelligent",
+        "Interrupting someone to finish their thought for them"
+      ],
+      correctAnswer: 1,
+      explanation: "Paraphrasing is restating what someone has said in your own words to verify that you've understood them correctly. It demonstrates that you're actively engaged in the conversation and trying to comprehend their message."
+    },
+    {
+      id: 5,
+      question: "Which of the following is an example of an open-ended question?",
+      options: [
+        "Did you enjoy the movie?",
+        "Was the meeting productive?",
+        "What aspects of the project did you find most challenging?",
+        "Are you going to attend the event?"
+      ],
+      correctAnswer: 2,
+      explanation: "Open-ended questions can't be answered with a simple 'yes' or 'no' and invite more detailed responses. 'What aspects of the project did you find most challenging?' requires an explanation rather than a one-word answer."
+    },
+    {
+      id: 6,
+      question: "In conversation, what does 'proxemics' refer to?",
+      options: [
+        "The use of hand gestures while speaking",
+        "Voice tone and pitch variations",
+        "The physical distance between conversational partners",
+        "The facial expressions used to convey meaning"
+      ],
+      correctAnswer: 2,
+      explanation: "Proxemics refers to the study of spatial requirements and the effects of population density on behavior, communication, and social interaction. In conversation, it specifically relates to the physical distance between people."
+    },
+    {
+      id: 7,
+      question: "What percentage of communication is estimated to be nonverbal?",
+      options: [
+        "Around 10-20%",
+        "Around 30-40%",
+        "Around 60-93%",
+        "100% - all communication includes nonverbal elements"
+      ],
+      correctAnswer: 2,
+      explanation: "Research suggests that between 60-93% of communication is nonverbal, depending on the context. This includes body language, facial expressions, gestures, and vocal elements like tone and pace."
+    },
+    {
+      id: 8,
+      question: "What is 'mirroring' in conversation?",
+      options: [
+        "Mocking or imitating someone in a disrespectful way",
+        "Subtly adopting similar postures or gestures as your conversation partner",
+        "Always agreeing with whatever the other person says",
+        "Ensuring you speak for exactly the same amount of time as the other person"
+      ],
+      correctAnswer: 1,
+      explanation: "Mirroring is the unconscious or conscious subtly matching of another person's body language, vocal tone, or other behaviors. It naturally occurs when people are engaged and can help build rapport and connection."
+    },
+    {
+      id: 9,
+      question: "What should you do if you realize you've been talking for too long in a conversation?",
+      options: [
+        "Abruptly stop mid-sentence to show you recognize the issue",
+        "Talk even faster to finish your point more quickly",
+        "Continue as planned - if your story is interesting, people won't mind",
+        "Wrap up your point briefly and then ask a question to engage the other person"
+      ],
+      correctAnswer: 3,
+      explanation: "If you notice you've been dominating the conversation, the best approach is to briefly conclude your point and then shift focus to the other person with a question. This rebalances the conversation and shows respect for the other person's input."
+    },
+    {
+      id: 10,
+      question: "Which of these is an example of empathic communication?",
+      options: [
+        "\"That's nothing compared to what happened to me last year.\"",
+        "\"You shouldn't feel that way about it.\"",
+        "\"I can see why that situation would make you feel frustrated.\"",
+        "\"Let me tell you what you should do about that.\""
+      ],
+      correctAnswer: 2,
+      explanation: "Empathic communication acknowledges and validates the other person's feelings without judgment. Saying \"I can see why that situation would make you feel frustrated\" shows you're trying to understand their perspective and emotional experience."
     }
   ];
 
