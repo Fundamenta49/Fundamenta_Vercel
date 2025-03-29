@@ -240,10 +240,83 @@ export default function ChatInterface({
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-32 text-center text-muted-foreground">
+            <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground px-4 space-y-3">
               <MessageSquare className="h-8 w-8 mb-2 opacity-50" />
-              <p>Ask me anything about {category === 'general' ? 'any topic' : category}.</p>
-              <p className="text-sm">I'm here to assist you!</p>
+              {category === 'general' ? (
+                <>
+                  <p className="font-medium">What would you like help with today?</p>
+                  <div className="text-sm space-y-2">
+                    <p>• "I need to create a budget for my first apartment"</p>
+                    <p>• "What skills should I develop for my career?"</p>
+                    <p>• "How do I maintain a work-life balance?"</p>
+                  </div>
+                </>
+              ) : category === 'finance' ? (
+                <>
+                  <p className="font-medium">What financial questions can I help with?</p>
+                  <div className="text-sm space-y-2">
+                    <p>• "How should I budget for my monthly expenses?"</p>
+                    <p>• "What's the difference between a 401(k) and Roth IRA?"</p>
+                    <p>• "How can I start investing with limited funds?"</p>
+                  </div>
+                </>
+              ) : category === 'career' ? (
+                <>
+                  <p className="font-medium">How can I assist with your career development?</p>
+                  <div className="text-sm space-y-2">
+                    <p>• "What skills are most valuable in tech right now?"</p>
+                    <p>• "How do I negotiate a salary increase?"</p>
+                    <p>• "Should I include a cover letter with my application?"</p>
+                  </div>
+                </>
+              ) : category === 'wellness' ? (
+                <>
+                  <p className="font-medium">What wellness goals are you focusing on?</p>
+                  <div className="text-sm space-y-2">
+                    <p>• "How can I improve my sleep quality?"</p>
+                    <p>• "What meditation techniques help with anxiety?"</p>
+                    <p>• "How can I build a sustainable self-care routine?"</p>
+                  </div>
+                </>
+              ) : category === 'learning' ? (
+                <>
+                  <p className="font-medium">What would you like to learn about?</p>
+                  <div className="text-sm space-y-2">
+                    <p>• "What's the best way to learn a new language?"</p>
+                    <p>• "How can I improve my critical thinking skills?"</p>
+                    <p>• "What books would help me understand economics?"</p>
+                  </div>
+                </>
+              ) : category === 'cooking' ? (
+                <>
+                  <p className="font-medium">What cooking advice do you need?</p>
+                  <div className="text-sm space-y-2">
+                    <p>• "What meals can I make with minimal ingredients?"</p>
+                    <p>• "How do I meal prep for a busy week?"</p>
+                    <p>• "What basic cooking skills should I learn first?"</p>
+                  </div>
+                </>
+              ) : category === 'fitness' ? (
+                <>
+                  <p className="font-medium">How can I help with your fitness journey?</p>
+                  <div className="text-sm space-y-2">
+                    <p>• "What exercises are best for beginners?"</p>
+                    <p>• "How often should I work out each week?"</p>
+                    <p>• "What's a good balance of cardio and strength training?"</p>
+                  </div>
+                </>
+              ) : category === 'emergency' ? (
+                <>
+                  <p className="font-medium">How can I assist with your urgent situation?</p>
+                  <div className="text-sm space-y-2">
+                    <p>• "What should I do about a minor kitchen fire?"</p>
+                    <p>• "How do I handle a power outage in my apartment?"</p>
+                    <p>• "What steps should I take after a minor car accident?"</p>
+                  </div>
+                </>
+              ) : (
+                <p>How can I help with {category} today?</p>
+              )}
             </div>
           ) : (
             messages.map((msg) => (
