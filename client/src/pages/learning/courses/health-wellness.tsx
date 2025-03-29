@@ -63,41 +63,45 @@ export default function HealthWellnessCourse() {
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
-      <div className="flex items-center mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-3 sm:gap-0">
         <Button 
           variant="ghost" 
           onClick={() => navigate('/learning')}
-          className="mr-4"
+          className="mr-0 sm:mr-4 px-2 py-1 h-auto"
+          size="sm"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Learning
+          Back
         </Button>
         
-        <h1 className="text-2xl font-bold flex items-center">
+        <h1 className="text-xl sm:text-2xl font-bold flex items-center">
           <Heart className="h-6 w-6 mr-2 text-orange-500" />
           Health & Wellness
         </h1>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 mb-6 w-full">
         <Button
           variant={activeTab === 'learn' ? 'default' : 'outline'}
-          className={activeTab === 'learn' ? 'bg-orange-500 hover:bg-orange-600' : ''}
+          className={`${activeTab === 'learn' ? 'bg-orange-500 hover:bg-orange-600' : ''} text-xs sm:text-sm px-2 sm:px-4`}
           onClick={() => setActiveTab('learn')}
+          size="sm"
         >
           Learn
         </Button>
         <Button
           variant={activeTab === 'practice' ? 'default' : 'outline'}
-          className={activeTab === 'practice' ? 'bg-orange-500 hover:bg-orange-600' : ''}
+          className={`${activeTab === 'practice' ? 'bg-orange-500 hover:bg-orange-600' : ''} text-xs sm:text-sm px-2 sm:px-4`}
           onClick={() => setActiveTab('practice')}
+          size="sm"
         >
-          Test Your Knowledge
+          Practice
         </Button>
         <Button
           variant={activeTab === 'resources' ? 'default' : 'outline'}
-          className={activeTab === 'resources' ? 'bg-orange-500 hover:bg-orange-600' : ''}
+          className={`${activeTab === 'resources' ? 'bg-orange-500 hover:bg-orange-600' : ''} text-xs sm:text-sm px-2 sm:px-4`}
           onClick={() => setActiveTab('resources')}
+          size="sm"
         >
           Resources
         </Button>
@@ -106,22 +110,22 @@ export default function HealthWellnessCourse() {
       {activeTab === 'learn' && (
         <div className="mb-6">
           <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Introduction to Health & Wellness</CardTitle>
-              <CardDescription>
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="text-lg sm:text-xl">Introduction to Health & Wellness</CardTitle>
+              <CardDescription className="text-sm sm:text-base">
                 Taking care of your physical and mental wellbeing is essential for a balanced, productive life.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="mb-4">
+            <CardContent className="pt-0 px-3 sm:px-6">
+              <p className="mb-4 text-sm sm:text-base">
                 Health and wellness encompasses physical, mental, and emotional wellbeing. Understanding how to maintain a balanced lifestyle is crucial for long-term health, productivity, and happiness.
               </p>
-              <p className="mb-4">
+              <p className="mb-4 text-sm sm:text-base">
                 In this module, you'll learn about nutrition basics, exercise fundamentals, stress management techniques, sleep hygiene, and mindfulness practices. These tools will help you create sustainable habits for a healthier lifestyle.
               </p>
-              <div className="p-4 bg-amber-50 rounded-md border border-amber-200 mb-4">
-                <h3 className="font-semibold text-amber-800 mb-2">Coming Soon!</h3>
-                <p className="text-amber-700">
+              <div className="p-3 sm:p-4 bg-amber-50 rounded-md border border-amber-200 mb-4">
+                <h3 className="font-semibold text-amber-800 mb-1 sm:mb-2 text-sm sm:text-base">Coming Soon!</h3>
+                <p className="text-amber-700 text-xs sm:text-sm">
                   We're currently developing comprehensive health and wellness guides. Check back soon for interactive health assessments and personalized wellness plans!
                 </p>
               </div>
@@ -129,37 +133,37 @@ export default function HealthWellnessCourse() {
           </Card>
           
           <Card>
-            <CardHeader>
-              <CardTitle>5 Pillars of Wellness</CardTitle>
-              <CardDescription>
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="text-lg sm:text-xl">5 Pillars of Wellness</CardTitle>
+              <CardDescription className="text-sm sm:text-base">
                 Core areas to focus on for a balanced, healthy lifestyle
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="p-4 border rounded-md">
-                  <h3 className="font-semibold mb-1">1. Physical Health</h3>
-                  <p>Regular exercise, balanced nutrition, adequate sleep, and preventive healthcare create the foundation for wellness. Aim for 150 minutes of moderate activity weekly, eat a variety of whole foods, and prioritize 7-9 hours of quality sleep.</p>
+            <CardContent className="pt-0 px-3 sm:px-6">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="p-3 sm:p-4 border rounded-md">
+                  <h3 className="font-semibold mb-1 text-sm sm:text-base">1. Physical Health</h3>
+                  <p className="text-xs sm:text-sm">Regular exercise, balanced nutrition, adequate sleep, and preventive healthcare create the foundation for wellness. Aim for 150 minutes of moderate activity weekly, eat a variety of whole foods, and prioritize 7-9 hours of quality sleep.</p>
                 </div>
                 
-                <div className="p-4 border rounded-md">
-                  <h3 className="font-semibold mb-1">2. Mental & Emotional Wellbeing</h3>
-                  <p>Practicing stress management, mindfulness, and emotional regulation helps build resilience. Consider meditation, journaling, or therapy as tools to support mental health.</p>
+                <div className="p-3 sm:p-4 border rounded-md">
+                  <h3 className="font-semibold mb-1 text-sm sm:text-base">2. Mental & Emotional Wellbeing</h3>
+                  <p className="text-xs sm:text-sm">Practicing stress management, mindfulness, and emotional regulation helps build resilience. Consider meditation, journaling, or therapy as tools to support mental health.</p>
                 </div>
                 
-                <div className="p-4 border rounded-md">
-                  <h3 className="font-semibold mb-1">3. Social Connection</h3>
-                  <p>Meaningful relationships and community involvement support overall wellbeing. Schedule regular time with friends and family, join clubs or groups with shared interests, and practice active listening.</p>
+                <div className="p-3 sm:p-4 border rounded-md">
+                  <h3 className="font-semibold mb-1 text-sm sm:text-base">3. Social Connection</h3>
+                  <p className="text-xs sm:text-sm">Meaningful relationships and community involvement support overall wellbeing. Schedule regular time with friends and family, join clubs or groups with shared interests, and practice active listening.</p>
                 </div>
                 
-                <div className="p-4 border rounded-md">
-                  <h3 className="font-semibold mb-1">4. Purpose & Personal Growth</h3>
-                  <p>Setting meaningful goals, learning new skills, and engaging in activities that provide a sense of purpose contributes to life satisfaction. Identify values that matter to you and align your activities accordingly.</p>
+                <div className="p-3 sm:p-4 border rounded-md">
+                  <h3 className="font-semibold mb-1 text-sm sm:text-base">4. Purpose & Personal Growth</h3>
+                  <p className="text-xs sm:text-sm">Setting meaningful goals, learning new skills, and engaging in activities that provide a sense of purpose contributes to life satisfaction. Identify values that matter to you and align your activities accordingly.</p>
                 </div>
                 
-                <div className="p-4 border rounded-md">
-                  <h3 className="font-semibold mb-1">5. Environmental Wellness</h3>
-                  <p>Creating supportive physical environments and developing sustainable practices. Organize your living space, spend time in nature, and consider how your lifestyle impacts the broader environment.</p>
+                <div className="p-3 sm:p-4 border rounded-md">
+                  <h3 className="font-semibold mb-1 text-sm sm:text-base">5. Environmental Wellness</h3>
+                  <p className="text-xs sm:text-sm">Creating supportive physical environments and developing sustainable practices. Organize your living space, spend time in nature, and consider how your lifestyle impacts the broader environment.</p>
                 </div>
               </div>
             </CardContent>
@@ -170,13 +174,13 @@ export default function HealthWellnessCourse() {
       {activeTab === 'practice' && (
         <div className="mb-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Test Your Knowledge</CardTitle>
-              <CardDescription>
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="text-lg sm:text-xl">Test Your Knowledge</CardTitle>
+              <CardDescription className="text-sm sm:text-base">
                 Answer these questions to see how much you've learned about health and wellness.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0 px-3 sm:px-6">
               <QuizComponent 
                 subject="Health and Wellness"
                 difficulty="beginner"
@@ -245,6 +249,7 @@ export default function HealthWellnessCourse() {
                 onComplete={(score, total) => {
                   console.log(`Quiz results: ${score}/${total}`);
                 }}
+                className="text-sm sm:text-base"
               />
             </CardContent>
           </Card>
@@ -256,6 +261,7 @@ export default function HealthWellnessCourse() {
           <ResourceLinks 
             subject="Health & Wellness"
             resources={resources}
+            maxHeight="70vh"
           />
         </div>
       )}
