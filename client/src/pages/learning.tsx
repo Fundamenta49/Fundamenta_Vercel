@@ -8,7 +8,11 @@ import {
   Calculator,
   Music, 
   GraduationCap,
-  BookIcon
+  BookIcon,
+  Car,
+  Wrench,
+  Utensils,
+  Heart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LearningCoachPopOut from '@/components/learning-coach-pop-out';
@@ -41,6 +45,10 @@ const Icons = {
   Calculator: Calculator as React.ComponentType<{ className?: string }>,
   Music: Music as React.ComponentType<{ className?: string }>,
   GraduationCap: GraduationCap as React.ComponentType<{ className?: string }>,
+  Car: Car as React.ComponentType<{ className?: string }>,
+  Wrench: Wrench as React.ComponentType<{ className?: string }>,
+  Utensils: Utensils as React.ComponentType<{ className?: string }>,
+  Heart: Heart as React.ComponentType<{ className?: string }>,
 };
 
 export default function Learning() {
@@ -155,6 +163,42 @@ export default function Learning() {
       description: 'Develop your storytelling and creative expression',
       icon: Icons.PenTool,
       path: '/learning/courses/creative-writing',
+      level: 'beginner',
+      new: true
+    },
+    // Life Skills
+    {
+      id: 'vehicle-maintenance',
+      title: 'Vehicle Maintenance',
+      description: 'Learn essential car maintenance skills and save money on repairs',
+      icon: Icons.Car,
+      path: '/learning/courses/vehicle-maintenance',
+      level: 'beginner',
+      popular: true
+    },
+    {
+      id: 'home-maintenance',
+      title: 'Home Maintenance',
+      description: 'Master basic home repairs and maintenance tasks',
+      icon: Icons.Wrench,
+      path: '/learning/courses/home-maintenance',
+      level: 'beginner',
+      popular: true
+    },
+    {
+      id: 'cooking-basics',
+      title: 'Cooking Basics',
+      description: 'Learn fundamental cooking techniques and healthy meal preparation',
+      icon: Icons.Utensils,
+      path: '/learning/courses/cooking-basics',
+      level: 'beginner'
+    },
+    {
+      id: 'health-wellness',
+      title: 'Health & Wellness',
+      description: 'Discover practical tips for maintaining physical and mental wellbeing',
+      icon: Icons.Heart,
+      path: '/learning/courses/health-wellness',
       level: 'beginner',
       new: true
     }
