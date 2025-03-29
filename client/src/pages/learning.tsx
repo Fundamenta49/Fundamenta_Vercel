@@ -61,6 +61,42 @@ export default function Learning() {
   
   // Define courses
   const COURSES: Course[] = [
+    // Life Skills
+    {
+      id: 'vehicle-maintenance',
+      title: 'Vehicle Maintenance',
+      description: 'Learn essential car maintenance skills and save money on repairs',
+      icon: Icons.Car,
+      path: '/learning/courses/vehicle-maintenance',
+      level: 'beginner',
+      popular: true
+    },
+    {
+      id: 'home-maintenance',
+      title: 'Home Maintenance',
+      description: 'Master basic home repairs and maintenance tasks',
+      icon: Icons.Wrench,
+      path: '/learning/courses/home-maintenance',
+      level: 'beginner',
+      popular: true
+    },
+    {
+      id: 'cooking-basics',
+      title: 'Cooking Basics',
+      description: 'Learn fundamental cooking techniques and healthy meal preparation',
+      icon: Icons.Utensils,
+      path: '/learning/courses/cooking-basics',
+      level: 'beginner'
+    },
+    {
+      id: 'health-wellness',
+      title: 'Health & Wellness',
+      description: 'Discover practical tips for maintaining physical and mental wellbeing',
+      icon: Icons.Heart,
+      path: '/learning/courses/health-wellness',
+      level: 'beginner',
+      new: true
+    },
     // Academics
     {
       id: 'economics',
@@ -163,42 +199,6 @@ export default function Learning() {
       description: 'Develop your storytelling and creative expression',
       icon: Icons.PenTool,
       path: '/learning/courses/creative-writing',
-      level: 'beginner',
-      new: true
-    },
-    // Life Skills
-    {
-      id: 'vehicle-maintenance',
-      title: 'Vehicle Maintenance',
-      description: 'Learn essential car maintenance skills and save money on repairs',
-      icon: Icons.Car,
-      path: '/learning/courses/vehicle-maintenance',
-      level: 'beginner',
-      popular: true
-    },
-    {
-      id: 'home-maintenance',
-      title: 'Home Maintenance',
-      description: 'Master basic home repairs and maintenance tasks',
-      icon: Icons.Wrench,
-      path: '/learning/courses/home-maintenance',
-      level: 'beginner',
-      popular: true
-    },
-    {
-      id: 'cooking-basics',
-      title: 'Cooking Basics',
-      description: 'Learn fundamental cooking techniques and healthy meal preparation',
-      icon: Icons.Utensils,
-      path: '/learning/courses/cooking-basics',
-      level: 'beginner'
-    },
-    {
-      id: 'health-wellness',
-      title: 'Health & Wellness',
-      description: 'Discover practical tips for maintaining physical and mental wellbeing',
-      icon: Icons.Heart,
-      path: '/learning/courses/health-wellness',
       level: 'beginner',
       new: true
     }
