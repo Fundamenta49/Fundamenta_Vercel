@@ -88,13 +88,12 @@ export default function Learning() {
       level: 'beginner'
     },
     {
-      id: 'health-wellness',
-      title: 'Health & Wellness',
-      description: 'Discover practical tips for maintaining physical and mental wellbeing',
-      icon: Icons.Heart,
-      path: '/learning/courses/health-wellness',
-      level: 'beginner',
-      new: true
+      id: 'public-speaking',
+      title: 'Public Speaking',
+      description: 'Build confidence and deliver impactful speeches',
+      icon: Icons.PenTool,
+      path: '/learning/courses/public-speaking',
+      level: 'beginner'
     }
   ];
   
@@ -135,14 +134,6 @@ export default function Learning() {
       path: '/learning/courses/programming',
       level: 'beginner',
       popular: true
-    },
-    {
-      id: 'public-speaking',
-      title: 'Public Speaking',
-      description: 'Build confidence and deliver impactful speeches',
-      icon: Icons.PenTool,
-      path: '/learning/courses/public-speaking',
-      level: 'beginner'
     },
     {
       id: 'marketing',
