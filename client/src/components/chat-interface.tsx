@@ -23,15 +23,15 @@ export const GENERAL_CATEGORY = 'general';
 
 // Category colors for different advisor types
 const categoryColors: Record<string, string> = {
-  finance: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300',
-  career: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-  wellness: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-  learning: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300',
-  emergency: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-  cooking: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
-  fitness: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300',
-  general: 'bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-300',
-  error: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+  finance: '#22c55e', // green-500
+  career: '#3b82f6', // blue-500
+  wellness: '#a855f7', // purple-500
+  learning: '#f97316', // orange-500
+  emergency: '#ef4444', // red-500
+  cooking: '#f59e0b', // amber-500
+  fitness: '#06b6d4', // cyan-500
+  general: '#6366f1', // indigo-500
+  error: '#ef4444', // red-500
 };
 
 // Advisor images and names
@@ -216,7 +216,12 @@ export default function ChatInterface({
                 </CardTitle>
                 <Badge 
                   variant="outline" 
-                  className={`text-xs ${categoryColors[currentCategory || category]}`}
+                  className="text-xs"
+                  style={{
+                    backgroundColor: `${categoryColors[currentCategory || category]}15`, 
+                    color: categoryColors[currentCategory || category],
+                    borderColor: `${categoryColors[currentCategory || category]}30`
+                  }}
                 >
                   {currentCategory || category}
                 </Badge>
@@ -328,10 +333,19 @@ export default function ChatInterface({
                   className={`
                     max-w-[80%] rounded-lg px-3 py-2 
                     ${msg.role === 'user' 
-                      ? 'bg-blue-100 text-blue-900 dark:bg-blue-700 dark:text-blue-50' 
-                      : 'bg-muted'
+                      ? 'bg-primary text-white' 
+                      : 'bg-primary/10 border border-primary/20'
                     }
                   `}
+                  style={{
+                    backgroundColor: msg.role === 'user' 
+                      ? categoryColors[msg.category || category] 
+                      : `${categoryColors[msg.category || category]}15`, // 15% opacity
+                    borderColor: msg.role === 'user' 
+                      ? undefined 
+                      : `${categoryColors[msg.category || category]}30`, // 30% opacity
+                    color: msg.role === 'user' ? 'white' : ''
+                  }}
                 >
                   {msg.role === 'assistant' && (
                     <div className="flex items-center gap-2 mb-1">
@@ -351,7 +365,13 @@ export default function ChatInterface({
                           <span className="text-xs font-medium">
                             {advisorInfo[msg.category || category].name}
                           </span>
-                          <span className="text-[10px] bg-opacity-50 px-1.5 rounded">
+                          <span className="text-[10px] px-1.5 rounded"
+                            style={{
+                              backgroundColor: `${categoryColors[msg.category || category]}15`,
+                              color: categoryColors[msg.category || category],
+                              borderColor: `${categoryColors[msg.category || category]}30`
+                            }}
+                          >
                             {msg.category || category}
                           </span>
                         </>
