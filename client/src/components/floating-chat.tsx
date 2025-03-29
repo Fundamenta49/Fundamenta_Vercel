@@ -359,7 +359,7 @@ export default function FloatingChat() {
         setPosition({ x: info.point.x, y: info.point.y });
       }}
       className={cn(
-        "fixed z-50 transition-all duration-300 ease-in-out",
+        "fixed z-[1000] transition-all duration-300 ease-in-out",
         isMinimized
           ? "top-4 right-4 w-14 h-14"
           : isMobile
@@ -453,7 +453,7 @@ export default function FloatingChat() {
         </motion.div>
       ) : (
         <Card className={cn(
-          "flex flex-col shadow-lg border-0",
+          "flex flex-col shadow-xl border-2 border-primary/10",
           "overflow-hidden",
           isMobile ? "h-full rounded-b-xl rounded-t-none" : "h-full rounded-xl"
         )}>

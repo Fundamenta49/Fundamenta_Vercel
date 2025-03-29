@@ -6,7 +6,8 @@ import {
   FullScreenDialogBody,
 } from "@/components/ui/full-screen-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import ChatInterface, { CAREER_CATEGORY } from "@/components/chat-interface";
+import ChatRedirect from "@/components/chat-redirect";
+import { CAREER_CATEGORY } from "@/components/chat-interface";
 
 export default function CareerCoachPopOut() {
   return (
@@ -30,7 +31,7 @@ export default function CareerCoachPopOut() {
           </AlertDescription>
         </Alert>
         
-        <ChatInterface category={CAREER_CATEGORY} />
+        <ChatRedirect category={CAREER_CATEGORY} />
       </FullScreenDialogBody>
     </div>
   );
