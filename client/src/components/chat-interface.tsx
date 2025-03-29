@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { toast } from '@/hooks/use-toast';
+import FundiAvatar from '@/components/fundi-avatar';
 
 // Category constants 
 export const EMERGENCY_CATEGORY = 'emergency';
@@ -212,15 +213,21 @@ export default function ChatInterface({
       <CardHeader className="px-5 py-3 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage 
-                src={advisorInfo[currentCategory || category].image} 
-                alt={advisorInfo[currentCategory || category].name} 
-              />
-              <AvatarFallback>
-                {advisorInfo[currentCategory || category].name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
+            {(currentCategory || category) === 'general' ? (
+              <div className="h-10 w-10">
+                <FundiAvatar size="md" speaking={isProcessing} />
+              </div>
+            ) : (
+              <Avatar className="h-10 w-10">
+                <AvatarImage 
+                  src={advisorInfo[currentCategory || category].image} 
+                  alt={advisorInfo[currentCategory || category].name} 
+                />
+                <AvatarFallback>
+                  {advisorInfo[currentCategory || category].name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+            )}
             
             {/* Only show name and badge for specialized advisors */}
             {isSpecialist && (
@@ -363,15 +370,21 @@ export default function ChatInterface({
                 >
                   {msg.role === 'assistant' && (
                     <div className="flex items-center gap-2 mb-2">
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage 
-                          src={advisorInfo[msg.category || category].image} 
-                          alt={advisorInfo[msg.category || category].name} 
-                        />
-                        <AvatarFallback className="text-xs">
-                          {advisorInfo[msg.category || category].name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
+                      {(msg.category || category) === 'general' ? (
+                        <div className="h-6 w-6">
+                          <FundiAvatar size="sm" speaking={false} />
+                        </div>
+                      ) : (
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage 
+                            src={advisorInfo[msg.category || category].image} 
+                            alt={advisorInfo[msg.category || category].name} 
+                          />
+                          <AvatarFallback className="text-xs">
+                            {advisorInfo[msg.category || category].name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
                       
                       {/* Only show name for specialized advisors, not for general AI */}
                       {(msg.category || category) !== 'general' && (

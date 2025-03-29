@@ -3,6 +3,7 @@ import { Bot, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ChatInterface from '@/components/chat-interface';
+import FundiAvatar from '@/components/fundi-avatar';
 
 interface FloatingChatProps {
   category?: string;
@@ -59,7 +60,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
         >
           {/* Fundi robot avatar */}
           <div className="relative">
-            <Bot className="h-6 w-6 text-white" />
+            <FundiAvatar size="sm" speaking={isAnimating} />
             {/* Animation dot to indicate Fundi is available */}
             <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-white animate-ping opacity-75"></span>
             <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-white"></span>
