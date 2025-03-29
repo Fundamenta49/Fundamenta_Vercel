@@ -94,8 +94,15 @@ export function BookCarousel({ children }: BookCarouselProps) {
   const isMobile = useIsMobile();
   
   return isMobile ? (
-    // Mobile layout: vertical scrolling grid instead of horizontal carousel
-    <div className="grid grid-cols-1 gap-6 pb-12 pt-2 max-w-[100%] mx-auto">
+    // Mobile layout: horizontal carousel
+    <div 
+      className="flex w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar"
+      style={{ 
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        height: 'calc(100vh - 4rem)' /* Maximize screen height */
+      }}
+    >
       {children}
     </div>
   ) : (
@@ -115,10 +122,10 @@ export function BookPage({ id, children }: BookPageProps) {
   const isMobile = useIsMobile();
   
   return isMobile ? (
-    // Mobile layout: regular grid item with margin
+    // Mobile layout: full-width snap page
     <div 
       key={id}
-      className="w-full px-2 mb-3"
+      className="snap-center flex-shrink-0 w-full px-2"
     >
       {children}
     </div>
