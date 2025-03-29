@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -117,7 +117,78 @@ export default function VehicleGuide() {
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>(COMMON_TASKS);
   const [isVideoFocused, setIsVideoFocused] = useState(false);
+  const [savedVehicles, setSavedVehicles] = useState<VehicleInfo[]>([]);
 
+
+  // Load saved vehicles from localStorage on component mount
+  useEffect(() => {
+    const savedVehiclesData = localStorage.getItem('savedVehicles');
+    if (savedVehiclesData) {
+      try {
+        const savedVehiclesParsed = JSON.parse(savedVehiclesData);
+        setSavedVehicles(savedVehiclesParsed);
+      } catch (e) {
+        console.error('Error loading saved vehicles:', e);
+      }
+    }
+  }, []);
+
+  // Save vehicle to localStorage
+  const saveVehicle = () => {
+    if (!vehicleInfo.vin || !isVehicleInfoComplete()) return;
+    
+    // Check if this vehicle is already saved
+    if (!savedVehicles.some(v => v.vin === vehicleInfo.vin)) {
+      const updatedSavedVehicles = [...savedVehicles, vehicleInfo];
+      setSavedVehicles(updatedSavedVehicles);
+      localStorage.setItem('savedVehicles', JSON.stringify(updatedSavedVehicles));
+    }
+  };
+
+  // Load selected saved vehicle
+  const loadSavedVehicle = (vehicle: VehicleInfo) => {
+    setVehicleInfo(vehicle);
+  };
+
+  // Populate vehicle information from VIN
+  const populateFromVin = async () => {
+    if (!vehicleInfo.vin) {
+      setError("Please enter a VIN number.");
+      return;
+    }
+
+    // Validate VIN format
+    if (!/^[A-HJ-NPR-Z0-9]{17}$/i.test(vehicleInfo.vin)) {
+      setError("Invalid VIN format. VIN must be 17 characters and contain only letters (except I, O, Q) and numbers.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const details = await decodeVIN(vehicleInfo.vin);
+      
+      // Update vehicle info with data from VIN
+      setVehicleInfo(prev => ({
+        ...prev,
+        make: details.Make,
+        model: details.Model,
+        year: details.ModelYear
+      }));
+      
+      setVehicleDetails(details);
+    } catch (error) {
+      console.error('Error populating from VIN:', error);
+      setError(
+        error instanceof Error
+          ? `Error: ${error.message}`
+          : 'Failed to decode VIN. Please try again later.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchVehicleInfo = async () => {
     if (!vehicleInfo.vin) {
@@ -427,6 +498,47 @@ export default function VehicleGuide() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
+              {/* VIN Input */}
+              <div className="relative">
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Enter VIN (17 characters)"
+                    value={vehicleInfo.vin || ''}
+                    onChange={(e) => handleVehicleInfoChange('vin', e.target.value)}
+                    className="w-full"
+                  />
+                  <Button
+                    variant="default"
+                    onClick={populateFromVin}
+                    disabled={!vehicleInfo.vin || vehicleInfo.vin.length !== 17}
+                    className="whitespace-nowrap"
+                  >
+                    <FileCheck className="h-4 w-4 mr-2" />
+                    Decode VIN
+                  </Button>
+                </div>
+
+                {savedVehicles.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-sm text-muted-foreground mb-2">Saved Vehicles:</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {savedVehicles.map((vehicle, idx) => (
+                        <Badge
+                          key={idx}
+                          variant="outline"
+                          className="cursor-pointer hover:bg-primary/10 transition-colors"
+                          onClick={() => loadSavedVehicle(vehicle)}
+                        >
+                          {vehicle.year} {vehicle.make} {vehicle.model}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Vehicle Details Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Input
                   type="text"
@@ -450,6 +562,18 @@ export default function VehicleGuide() {
                   className="w-full"
                 />
               </div>
+              
+              {/* Save Vehicle Button */}
+              {isVehicleInfoComplete() && vehicleInfo.vin && (
+                <Button
+                  variant="outline"
+                  onClick={saveVehicle}
+                  className="w-full md:w-auto"
+                >
+                  <Star className="h-4 w-4 mr-2" />
+                  Save Vehicle
+                </Button>
+              )}
 
               <div>
                 <Input
