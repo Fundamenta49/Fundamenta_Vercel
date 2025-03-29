@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,13 +35,24 @@ export default function FloatingChat() {
   const [isMinimized, setIsMinimized] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const chatRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const controls = useAnimationControls();
   const isMobile = useIsMobile();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
+  
+  // Theme colors for each section
+  const pageColors = {
+    home: "#3b82f6", // Default blue
+    learning: "#f97316", // Orange
+    finance: "#22c55e", // Green
+    career: "#3b82f6", // Blue
+    wellness: "#a855f7", // Purple
+    active: "#ec4899", // Pink
+    emergency: "#ef4444", // Red
+  };
 
   // Detect keyboard visibility on mobile
   useEffect(() => {
@@ -189,6 +200,13 @@ export default function FloatingChat() {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [messages]);
+  
+  // Get the current page theme color
+  const getCurrentThemeColor = useMemo(() => {
+    // Extract the current page from location (e.g., /finance -> finance)
+    const currentPage = location.split('/')[1] || 'home';
+    return pageColors[currentPage as keyof typeof pageColors] || pageColors.home;
+  }, [location, pageColors]);
 
   return (
     <div
@@ -213,8 +231,11 @@ export default function FloatingChat() {
             className="w-14 h-14 relative cursor-pointer"
             onClick={() => setIsMinimized(false)}
           >
-            {/* Glow effect */}
-            <div className="absolute -inset-3 bg-primary/20 rounded-full blur-xl opacity-50 animate-pulse" />
+            {/* Dynamic theme-based glow effect */}
+            <div 
+              className="absolute -inset-3 rounded-full blur-xl opacity-60 animate-pulse"
+              style={{ backgroundColor: `${getCurrentThemeColor}40` }} /* 40 is for 25% opacity in hex */
+            />
             
             {/* Robot SVG directly */}
             <svg 
@@ -244,11 +265,11 @@ export default function FloatingChat() {
                 {/* Eyes background */}
                 <rect x="35" y="30" width="30" height="10" rx="5" fill="#0f172a" />
                 
-                {/* Left eye */}
-                <ellipse cx="42" cy="35" rx="3" ry="2.5" fill="#38bdf8" opacity="0.9" />
+                {/* Left eye with theme color */}
+                <ellipse cx="42" cy="35" rx="3" ry="2.5" fill={getCurrentThemeColor} opacity="0.9" />
                 
-                {/* Right eye */}
-                <ellipse cx="58" cy="35" rx="3" ry="2.5" fill="#38bdf8" opacity="0.9" />
+                {/* Right eye with theme color */}
+                <ellipse cx="58" cy="35" rx="3" ry="2.5" fill={getCurrentThemeColor} opacity="0.9" />
                 
                 {/* Main robot body */}
                 <path 
@@ -258,8 +279,8 @@ export default function FloatingChat() {
                   strokeWidth="1"
                 />
                 
-                {/* Center chest light */}
-                <circle cx="50" cy="55" r="5" fill="#38bdf8" opacity="0.7" />
+                {/* Center chest light with theme color */}
+                <circle cx="50" cy="55" r="5" fill={getCurrentThemeColor} opacity="0.8" />
                 
                 {/* Left arm */}
                 <path 
@@ -314,24 +335,24 @@ export default function FloatingChat() {
                   {/* Eyes background */}
                   <rect x="35" y="30" width="30" height="10" rx="5" fill="#0f172a" />
                   
-                  {/* Left eye - brighter when speaking */}
+                  {/* Left eye - brighter when speaking, themed color */}
                   <ellipse 
                     cx="42" 
                     cy="35" 
                     rx="3" 
                     ry="2.5" 
-                    fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
-                    opacity={isAiSpeaking ? "0.9" : "0.7"}
+                    fill={isAiSpeaking ? "#ffffff" : getCurrentThemeColor} 
+                    opacity={isAiSpeaking ? "1" : "0.9"}
                   />
                   
-                  {/* Right eye - brighter when speaking */}
+                  {/* Right eye - brighter when speaking, themed color */}
                   <ellipse 
                     cx="58" 
                     cy="35" 
                     rx="3" 
                     ry="2.5" 
-                    fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
-                    opacity={isAiSpeaking ? "0.9" : "0.7"}
+                    fill={isAiSpeaking ? "#ffffff" : getCurrentThemeColor} 
+                    opacity={isAiSpeaking ? "1" : "0.9"}
                   />
                   
                   {/* Main robot body */}
@@ -342,13 +363,13 @@ export default function FloatingChat() {
                     strokeWidth="1"
                   />
                   
-                  {/* Center chest light - pulsing when speaking */}
+                  {/* Center chest light with theme color - pulsing when speaking */}
                   <circle 
                     cx="50" 
                     cy="55" 
                     r="5" 
-                    fill={isAiSpeaking ? "#60ddff" : "#38bdf8"} 
-                    opacity={isAiSpeaking ? "0.9" : "0.6"} 
+                    fill={isAiSpeaking ? "#ffffff" : getCurrentThemeColor} 
+                    opacity={isAiSpeaking ? "1" : "0.8"} 
                     className={isAiSpeaking ? "animate-pulse" : ""}
                   />
                   
