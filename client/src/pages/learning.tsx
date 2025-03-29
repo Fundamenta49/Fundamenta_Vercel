@@ -1,178 +1,299 @@
-import React, { useState, useRef } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import ChatInterface, { LEARNING_CATEGORY, COOKING_CATEGORY } from "@/components/chat-interface";
-import {
-  Brain,
-  Car,
-  ChefHat,
-  Clock,
-  Home,
-  Wrench,
-} from "lucide-react";
-import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
-import {
-  FullScreenDialog,
-  FullScreenDialogContent,
-} from "@/components/ui/full-screen-dialog";
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'wouter';
+import { 
+  BookOpen, 
+  Code, 
+  PenTool, 
+  Languages, 
+  Calculator,
+  Music, 
+  GraduationCap,
+  ChevronRight,
+  BookIcon
+} from 'lucide-react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import LearningCoachPopOut from '@/components/learning-coach-pop-out';
+import FloatingChat from '@/components/floating-chat';
+import { LEARNING_CATEGORY } from '@/components/chat-interface';
 
-// Pop-out components
-import LearningCoachPopOut from "@/components/learning-coach-pop-out";
-import LifeSkillsPopOut from "@/components/life-skills-pop-out";
-import CookingGuidePopOut from "@/components/cooking-guide-pop-out";
-import VehicleGuidePopOut from "@/components/vehicle-guide-pop-out";
-import HandymanGuidePopOut from "@/components/handyman-guide-pop-out";
-import LearningCalendarPopOut from "@/components/learning-calendar-pop-out";
-
-// Define section properties
-type SectionType = {
+interface CourseCard {
   id: string;
   title: string;
   description: string;
-  icon: React.ComponentType<{ className?: string }>;
-};
-
-const SECTIONS: SectionType[] = [
-  {
-    id: 'chat',
-    title: 'AI Learning Coach',
-    description: 'Get personalized guidance for your learning journey',
-    icon: Brain,
-  },
-  {
-    id: 'skills',
-    title: 'Life Skills',
-    description: 'Learn practical skills for everyday life',
-    icon: Home,
-  },
-  {
-    id: 'cooking',
-    title: 'Cooking Basics',
-    description: 'Master essential cooking techniques',
-    icon: ChefHat,
-  },
-  {
-    id: 'vehicle',
-    title: 'Vehicle Maintenance',
-    description: 'Learn basic car maintenance and care',
-    icon: Car,
-  },
-  {
-    id: 'handyman',
-    title: 'Home Repairs',
-    description: 'Essential home maintenance skills',
-    icon: Wrench,
-  },
-  {
-    id: 'calendar',
-    title: 'Schedule',
-    description: 'Your learning schedule',
-    icon: Clock,
-  }
-];
+  icon: React.ReactNode;
+  color: string;
+  path: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  popular?: boolean;
+  new?: boolean;
+}
 
 export default function Learning() {
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [isLearningCoachOpen, setIsLearningCoachOpen] = useState(false);
-  const [isLifeSkillsOpen, setIsLifeSkillsOpen] = useState(false);
-  const [isCookingOpen, setIsCookingOpen] = useState(false);
-  const [isVehicleOpen, setIsVehicleOpen] = useState(false);
-  const [isHandymanOpen, setIsHandymanOpen] = useState(false);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [, navigate] = useLocation();
+  const [showChat, setShowChat] = useState(false);
 
-  const handleCardClick = (sectionId: string) => {
-    // Open the appropriate dialog based on the section clicked
-    if (sectionId === 'chat') {
-      setIsLearningCoachOpen(true);
-    } 
-    else if (sectionId === 'skills') {
-      setIsLifeSkillsOpen(true);
-    }
-    else if (sectionId === 'cooking') {
-      setIsCookingOpen(true);
-    }
-    else if (sectionId === 'vehicle') {
-      setIsVehicleOpen(true);
-    }
-    else if (sectionId === 'handyman') {
-      setIsHandymanOpen(true);
-    }
-    else if (sectionId === 'calendar') {
-      setIsCalendarOpen(true);
-    }
+  // Define course categories with their respective courses
+  const coursesByCategory: Record<string, CourseCard[]> = {
+    'academics': [
+      {
+        id: 'economics',
+        title: 'Economics',
+        description: 'Learn about markets, supply and demand, and economic policies',
+        icon: <Calculator className="h-5 w-5" />,
+        color: 'bg-orange-500',
+        path: '/learning/courses/economics',
+        level: 'beginner',
+        popular: true
+      },
+      {
+        id: 'mathematics',
+        title: 'Mathematics',
+        description: 'From algebra to calculus and practical applications',
+        icon: <Calculator className="h-5 w-5" />,
+        color: 'bg-blue-500',
+        path: '/learning/courses/mathematics',
+        level: 'intermediate'
+      },
+      {
+        id: 'literature',
+        title: 'Literature',
+        description: 'Explore classic and contemporary works',
+        icon: <BookOpen className="h-5 w-5" />,
+        color: 'bg-purple-600',
+        path: '/learning/courses/literature',
+        level: 'beginner'
+      }
+    ],
+    'professional': [
+      {
+        id: 'programming',
+        title: 'Programming',
+        description: 'Learn to code with JavaScript, Python, and more',
+        icon: <Code className="h-5 w-5" />,
+        color: 'bg-blue-600',
+        path: '/learning/courses/programming',
+        level: 'beginner',
+        popular: true
+      },
+      {
+        id: 'public-speaking',
+        title: 'Public Speaking',
+        description: 'Build confidence and deliver impactful speeches',
+        icon: <PenTool className="h-5 w-5" />,
+        color: 'bg-yellow-600',
+        path: '/learning/courses/public-speaking',
+        level: 'beginner'
+      },
+      {
+        id: 'marketing',
+        title: 'Digital Marketing',
+        description: 'Master social media, SEO, and online campaigns',
+        icon: <GraduationCap className="h-5 w-5" />,
+        color: 'bg-green-600',
+        path: '/learning/courses/marketing',
+        level: 'intermediate',
+        new: true
+      }
+    ],
+    'languages': [
+      {
+        id: 'spanish',
+        title: 'Spanish',
+        description: 'Learn one of the world\'s most spoken languages',
+        icon: <Languages className="h-5 w-5" />,
+        color: 'bg-red-500',
+        path: '/learning/courses/spanish',
+        level: 'beginner',
+        popular: true
+      },
+      {
+        id: 'mandarin',
+        title: 'Mandarin Chinese',
+        description: 'Master the basics of this widely spoken language',
+        icon: <Languages className="h-5 w-5" />,
+        color: 'bg-yellow-500',
+        path: '/learning/courses/mandarin',
+        level: 'intermediate'
+      },
+      {
+        id: 'french',
+        title: 'French',
+        description: 'Learn the language of diplomacy and culture',
+        icon: <Languages className="h-5 w-5" />,
+        color: 'bg-blue-400',
+        path: '/learning/courses/french',
+        level: 'beginner'
+      }
+    ],
+    'creative': [
+      {
+        id: 'photography',
+        title: 'Photography',
+        description: 'Capture stunning images with any camera',
+        icon: <PenTool className="h-5 w-5" />,
+        color: 'bg-gray-700',
+        path: '/learning/courses/photography',
+        level: 'beginner'
+      },
+      {
+        id: 'music',
+        title: 'Music Basics',
+        description: 'Theory, appreciation, and instrument fundamentals',
+        icon: <Music className="h-5 w-5" />,
+        color: 'bg-purple-500',
+        path: '/learning/courses/music',
+        level: 'beginner'
+      },
+      {
+        id: 'creative-writing',
+        title: 'Creative Writing',
+        description: 'Develop your storytelling and creative expression',
+        icon: <PenTool className="h-5 w-5" />,
+        color: 'bg-teal-600',
+        path: '/learning/courses/creative-writing',
+        level: 'beginner',
+        new: true
+      }
+    ]
   };
 
-  return (
-    <div className="w-full h-full mx-auto p-0">
-      <h1 className="text-2xl font-bold tracking-tight text-center mb-6">
-        Learning & Development
-      </h1>
+  // Function to render a course card
+  const CourseCard = ({ course }: { course: CourseCard }) => (
+    <Card className="h-full transition-all hover:shadow-md overflow-hidden">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start mb-1">
+          <div className={`rounded-full p-2 ${course.color} text-white`}>
+            {course.icon}
+          </div>
+          <div className="flex gap-2">
+            {course.popular && (
+              <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                Popular
+              </span>
+            )}
+            {course.new && (
+              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                New
+              </span>
+            )}
+            <span className={`px-2 py-1 text-xs rounded-full ${
+              course.level === 'beginner' ? 'bg-green-100 text-green-800' :
+              course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }`}>
+              {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
+            </span>
+          </div>
+        </div>
+        <CardTitle className="text-lg">{course.title}</CardTitle>
+        <CardDescription className="line-clamp-2 h-10">
+          {course.description}
+        </CardDescription>
+      </CardHeader>
+      <CardFooter className="pt-2">
+        <Button 
+          variant="ghost"
+          className="w-full justify-between"
+          onClick={() => navigate(course.path)}
+        >
+          Explore Course <ChevronRight className="h-4 w-4 ml-2" />
+        </Button>
+      </CardFooter>
+    </Card>
+  );
 
-      <Alert variant="default" className="mx-4 sm:mx-6 mb-4 border-rose-500 bg-rose-50">
-        <AlertCircle className="h-4 w-4 text-rose-500" />
-        <AlertDescription className="text-rose-800">
-          Choose a learning module below to get started on your journey to acquiring new skills.
-        </AlertDescription>
-      </Alert>
-
-      {/* Full-screen dialogs */}
-      <FullScreenDialog open={isLearningCoachOpen} onOpenChange={setIsLearningCoachOpen}>
-        <FullScreenDialogContent themeColor="#f97316">
-          <LearningCoachPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      <FullScreenDialog open={isLifeSkillsOpen} onOpenChange={setIsLifeSkillsOpen}>
-        <FullScreenDialogContent themeColor="#f97316">
-          <LifeSkillsPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      <FullScreenDialog open={isCookingOpen} onOpenChange={setIsCookingOpen}>
-        <FullScreenDialogContent themeColor="#f97316">
-          <CookingGuidePopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      <FullScreenDialog open={isVehicleOpen} onOpenChange={setIsVehicleOpen}>
-        <FullScreenDialogContent themeColor="#f97316">
-          <VehicleGuidePopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      <FullScreenDialog open={isHandymanOpen} onOpenChange={setIsHandymanOpen}>
-        <FullScreenDialogContent themeColor="#f97316">
-          <HandymanGuidePopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      <FullScreenDialog open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-        <FullScreenDialogContent themeColor="#f97316">
-          <LearningCalendarPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      {/* Book-style card carousel */}
-      <div ref={carouselRef} className="book-carousel">
-        <BookCarousel>
-          {SECTIONS.map((section) => {
-            return (
-              <BookPage key={section.id} id={section.id}>
-                <BookCard
-                  id={section.id}
-                  title={section.title}
-                  description={section.description}
-                  icon={section.icon}
-                  isExpanded={false}
-                  onToggle={handleCardClick}
-                  color="text-rose-500" // Learning section color from the home page
-                  children={null}
-                />
-              </BookPage>
-            );
-          })}
-        </BookCarousel>
+  // Function to render a category of courses
+  const CourseCategory = ({ 
+    title, courses 
+  }: { 
+    title: string; 
+    courses: CourseCard[];
+  }) => (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <Button variant="link" className="text-orange-500">
+          View All
+        </Button>
       </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {courses.map(course => (
+          <CourseCard key={course.id} course={course} />
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="container max-w-6xl py-6">
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold tracking-tight">Learning Hub</h1>
+          <Button 
+            onClick={() => setShowChat(!showChat)}
+            className="bg-orange-500 hover:bg-orange-600"
+          >
+            <BookIcon className="mr-2 h-4 w-4" />
+            Ask Learning Coach
+          </Button>
+        </div>
+
+        <Tabs defaultValue="all" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="all">All Courses</TabsTrigger>
+            <TabsTrigger value="academics">Academics</TabsTrigger>
+            <TabsTrigger value="professional">Professional</TabsTrigger>
+            <TabsTrigger value="languages">Languages</TabsTrigger>
+            <TabsTrigger value="creative">Creative</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all" className="space-y-8">
+            {Object.entries(coursesByCategory).map(([category, courses]) => (
+              <CourseCategory 
+                key={category} 
+                title={category.charAt(0).toUpperCase() + category.slice(1)} 
+                courses={courses} 
+              />
+            ))}
+          </TabsContent>
+
+          <TabsContent value="academics">
+            <CourseCategory 
+              title="Academic Courses" 
+              courses={coursesByCategory.academics} 
+            />
+          </TabsContent>
+
+          <TabsContent value="professional">
+            <CourseCategory 
+              title="Professional Development" 
+              courses={coursesByCategory.professional} 
+            />
+          </TabsContent>
+
+          <TabsContent value="languages">
+            <CourseCategory 
+              title="Language Learning" 
+              courses={coursesByCategory.languages} 
+            />
+          </TabsContent>
+
+          <TabsContent value="creative">
+            <CourseCategory 
+              title="Creative Skills" 
+              courses={coursesByCategory.creative} 
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      {showChat ? (
+        <LearningCoachPopOut onClose={() => setShowChat(false)} />
+      ) : (
+        <FloatingChat category={LEARNING_CATEGORY} />
+      )}
     </div>
   );
 }

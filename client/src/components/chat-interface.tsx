@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, Loader2, MessageSquare, ArrowRight } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { AIResponse, useAIEventStore, useAIContext, processPendingActions } from '@/lib/ai-event-system';
+import { AIResponse, useAIEventStore, useAIContext, processPendingActions, AppSuggestion } from '@/lib/ai-event-system';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -205,8 +205,8 @@ export default function ChatInterface({
 
   return (
     <Card className={`flex flex-col border shadow-lg ${className}`} style={{ 
-      height: expanded ? '80vh' : '500px',
-      maxWidth: expanded ? '90vw' : '800px',
+      height: expanded ? '85vh' : '500px',
+      maxWidth: expanded ? '95vw' : '800px',
       width: '100%'
     }}>
       <CardHeader className="px-5 py-3 border-b">
@@ -256,8 +256,8 @@ export default function ChatInterface({
         </div>
       </CardHeader>
       
-      <ScrollArea className="flex-1 p-6">
-        <div className="space-y-6">
+      <ScrollArea className="flex-1 px-4 py-5">
+        <div className="space-y-5">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground px-4 space-y-4">
               <MessageSquare className="h-10 w-10 mb-2 opacity-50" />
@@ -433,7 +433,18 @@ export default function ChatInterface({
                     borderColor: `${categoryColors[category]}30`,
                     color: categoryColors[category]
                   }}
-                  onClick={() => navigate(suggestion.path || "/")}
+                  onClick={() => {
+                    if (suggestion.action) {
+                      // If there's a specific action, add it to the pending actions
+                      const aiEventStore = useAIEventStore.getState();
+                      aiEventStore.addPendingAction(suggestion.action);
+                      // Process the action immediately
+                      processPendingActions(navigate);
+                    } else if (suggestion.path) {
+                      // If there's just a path, navigate to it
+                      navigate(suggestion.path);
+                    }
+                  }}
                 >
                   {suggestion.text}
                 </Button>
@@ -443,11 +454,11 @@ export default function ChatInterface({
         )}
       </ScrollArea>
       
-      <CardFooter className="p-4 border-t">
-        <div className="flex w-full items-center gap-3">
+      <CardFooter className="p-3 border-t">
+        <div className="flex w-full items-center gap-2">
           <Textarea
             id="chat-input"
-            className="min-h-12 max-h-36 resize-none py-3 px-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-base rounded-xl"
+            className="min-h-14 max-h-40 resize-none py-3 px-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-base rounded-xl flex-1"
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -459,7 +470,7 @@ export default function ChatInterface({
             size="icon" 
             disabled={!input.trim() || isProcessing}
             onClick={handleSendMessage}
-            className="h-12 w-12 shrink-0 rounded-full"
+            className="h-14 w-14 shrink-0 rounded-full"
             style={{
               backgroundColor: categoryColors[category],
               color: 'white',
@@ -467,9 +478,9 @@ export default function ChatInterface({
             }}
           >
             {isProcessing ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-6 w-6 animate-spin" />
             ) : (
-              <Send className="h-5 w-5" />
+              <Send className="h-6 w-6" />
             )}
           </Button>
         </div>

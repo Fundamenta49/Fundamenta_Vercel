@@ -20,8 +20,9 @@ export interface AIAction {
 
 export interface AppSuggestion {
   text: string;
-  path: string;
-  description: string;
+  path?: string;
+  description?: string;
+  action?: AIAction;
 }
 
 export interface AIResponse {

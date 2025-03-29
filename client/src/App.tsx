@@ -15,6 +15,7 @@ import Career from "@/pages/career";
 import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
+import EconomicsCourse from "@/pages/learning/courses/economics";
 import WelcomeTour from "@/components/welcome-tour";
 
 function Router() {
@@ -32,6 +33,7 @@ function Router() {
         <Route path="/wellness" component={Wellness} />
         <Route path="/active" component={Active} />
         <Route path="/learning" component={Learning} />
+        <Route path="/learning/courses/economics" component={EconomicsCourse} />
         <Route component={NotFound} />
       </Switch>
       <WelcomeTour />

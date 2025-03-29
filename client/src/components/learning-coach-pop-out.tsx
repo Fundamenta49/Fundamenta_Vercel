@@ -1,37 +1,44 @@
-import { Brain, AlertCircle } from "lucide-react";
-import {
-  FullScreenDialogHeader,
-  FullScreenDialogTitle,
-  FullScreenDialogDescription,
-  FullScreenDialogBody,
-} from "@/components/ui/full-screen-dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import ChatInterface, { LEARNING_CATEGORY } from "@/components/chat-interface";
+import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ChatInterface from '@/components/chat-interface';
+import { LEARNING_CATEGORY } from '@/components/chat-interface';
 
-export default function LearningCoachPopOut() {
+interface LearningCoachPopOutProps {
+  onClose: () => void;
+}
+
+export default function LearningCoachPopOut({ onClose }: LearningCoachPopOutProps) {
   return (
-    <div className="w-full max-w-screen-xl mx-auto">
-      <FullScreenDialogHeader>
-        <FullScreenDialogTitle className="flex items-center gap-2">
-          <Brain className="h-6 w-6 text-rose-500" />
-          AI Learning Coach
-        </FullScreenDialogTitle>
-        <FullScreenDialogDescription>
-          Get personalized guidance for your learning journey
-        </FullScreenDialogDescription>
-      </FullScreenDialogHeader>
-      
-      <FullScreenDialogBody>
-        <Alert className="mb-4 border-rose-500 bg-rose-50">
-          <AlertCircle className="h-4 w-4 text-rose-500" />
-          <AlertDescription className="text-rose-800 text-sm">
-            The AI coach provides personalized recommendations to help you learn more effectively.
-            Ask about learning strategies, time management, or specific subjects.
-          </AlertDescription>
-        </Alert>
-        
-        <ChatInterface category={LEARNING_CATEGORY} />
-      </FullScreenDialogBody>
+    <div className="fixed bottom-6 right-6 z-50 w-full max-w-md">
+      <Card className="shadow-xl border-2 border-orange-200">
+        <CardHeader className="p-4 border-b bg-orange-50 flex flex-row items-center justify-between">
+          <CardTitle className="text-lg font-medium text-orange-700">Learning Coach</CardTitle>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={onClose}
+            className="h-8 w-8"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </CardHeader>
+        <CardContent className="p-0">
+          <ChatInterface 
+            category={LEARNING_CATEGORY} 
+            initialContext={{
+              currentPage: 'learning',
+              currentSection: 'courses',
+              availableActions: [
+                '/learning/courses/economics',
+                '/learning/courses/programming',
+                '/learning/courses/spanish'
+              ]
+            }}
+            className="border-none shadow-none"
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
