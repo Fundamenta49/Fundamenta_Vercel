@@ -626,62 +626,64 @@ const JobTargeting: React.FC<{
           Enter a job title and/or paste a job description to tailor your resume
         </p>
         
-        <div className="space-y-3">
-          <FormField
-            control={form.control}
-            name="targetJobTitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs">Job Title</FormLabel>
-                <FormControl>
-                  <Input 
-                    className="text-xs h-8" 
-                    placeholder="e.g. Marketing Manager" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="jobDescription"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs">Job Description (optional)</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    className="text-xs min-h-[80px]" 
-                    placeholder="Paste the job description here for better keyword matching..." 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-          
-          <Button
-            type="button"
-            className="w-full text-xs h-8"
-            onClick={onOptimize}
-            disabled={isOptimizing || !form.watch("targetJobTitle")}
-          >
-            {isOptimizing ? (
-              <>
-                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                Optimizing Resume...
-              </>
-            ) : (
-              <>
-                <Wand2 className="mr-1 h-3 w-3" />
-                Optimize Resume
-              </>
-            )}
-          </Button>
-        </div>
+        <Form {...form}>
+          <div className="space-y-3">
+            <FormField
+              control={form.control}
+              name="targetJobTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs">Job Title</FormLabel>
+                  <FormControl>
+                    <Input 
+                      className="text-xs h-8" 
+                      placeholder="e.g. Marketing Manager" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="jobDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs">Job Description (optional)</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      className="text-xs min-h-[80px]" 
+                      placeholder="Paste the job description here for better keyword matching..." 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            
+            <Button
+              type="button"
+              className="w-full text-xs h-8"
+              onClick={onOptimize}
+              disabled={isOptimizing || !form.watch("targetJobTitle")}
+            >
+              {isOptimizing ? (
+                <>
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  Optimizing Resume...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="mr-1 h-3 w-3" />
+                  Optimize Resume
+                </>
+              )}
+            </Button>
+          </div>
+        </Form>
       </div>
     </div>
   );
