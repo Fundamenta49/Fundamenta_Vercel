@@ -1,4 +1,4 @@
-import { Briefcase, AlertCircle } from "lucide-react";
+import { Briefcase, AlertCircle, Network } from "lucide-react";
 import {
   FullScreenDialogHeader,
   FullScreenDialogTitle,
@@ -13,11 +13,11 @@ export default function JobSearchPopOut() {
     <div className="w-full max-w-screen-xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
-          <Briefcase className="h-6 w-6 text-blue-500" />
-          Job Search
+          <Network className="h-6 w-6 text-blue-500" />
+          Fundamenta Connects
         </FullScreenDialogTitle>
         <FullScreenDialogDescription>
-          Find your next career opportunity
+          Find opportunities and research salary insights - all in one place
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
       
@@ -25,8 +25,8 @@ export default function JobSearchPopOut() {
         <Alert className="mb-4 border-blue-500 bg-blue-50">
           <AlertCircle className="h-4 w-4 text-blue-500" />
           <AlertDescription className="text-blue-800 text-sm">
-            Search for job openings across multiple platforms. Use filters to narrow down results
-            and find positions that match your skills and experience.
+            Search for job openings, explore salary information, and compare compensation data
+            all from one integrated platform. Enter a job title to get comprehensive insights.
           </AlertDescription>
         </Alert>
         

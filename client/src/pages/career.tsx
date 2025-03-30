@@ -61,17 +61,10 @@ const SECTIONS: SectionType[] = [
   },
   {
     id: 'search',
-    title: 'Job Search',
-    description: 'Find your next career opportunity',
+    title: 'Fundamenta Connects',
+    description: 'Find opportunities and research salary insights',
     icon: Briefcase,
     component: JobSearchPopOut
-  },
-  {
-    id: 'salary',
-    title: 'Salary Insights',
-    description: 'Research and compare salary information',
-    icon: DollarSign,
-    component: SalaryInsightsPopOut
   },
   {
     id: 'interview',
