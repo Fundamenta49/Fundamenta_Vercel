@@ -1420,23 +1420,26 @@ export const CreditBuildingSkillsEnhanced: React.FC = () => {
   // Render helper functions
   const renderJourneysGrid = () => {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {CREDIT_JOURNEYS.map(journey => (
           <Card 
             key={journey.id} 
-            className="hover:shadow-md transition-shadow cursor-pointer border-green-100/60 dark:border-green-800/30"
+            className="hover:shadow-lg transition-all cursor-pointer overflow-hidden group border-green-200 dark:border-green-800 hover:border-green-400 dark:hover:border-green-600"
             onClick={() => handleJourneySelect(journey)}
           >
+            <div className="h-2 bg-gradient-to-r from-green-400 to-green-600 w-full"></div>
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
-                <div className="bg-green-100 dark:bg-green-900/40 p-2.5 rounded-full">
-                  {journey.icon}
+                <div className="bg-green-100 dark:bg-green-900/40 p-3 rounded-full group-hover:bg-green-200 dark:group-hover:bg-green-800/60 transition-colors">
+                  <div className="text-green-600 dark:text-green-400">
+                    {journey.icon}
+                  </div>
                 </div>
                 <Badge variant="outline" className="bg-green-50 dark:bg-green-950/50 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800">
                   Age {journey.requiredAge}+
                 </Badge>
               </div>
-              <CardTitle className="text-lg mt-2">{journey.title}</CardTitle>
+              <CardTitle className="text-lg mt-2 text-green-700 dark:text-green-400">{journey.title}</CardTitle>
               <CardDescription>{journey.description}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -1495,25 +1498,32 @@ export const CreditBuildingSkillsEnhanced: React.FC = () => {
 
   const renderEducationalModulesGrid = () => {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {CREDIT_EDUCATIONAL_MODULES.map(module => (
           <Card 
             key={module.id} 
-            className={`hover:shadow-md transition-shadow cursor-pointer ${
+            className={`hover:shadow-lg transition-all cursor-pointer overflow-hidden group ${
               userProgress.completedLevels.includes(module.id)
-                ? 'border-green-300 dark:border-green-700'
-                : 'border-green-100/60 dark:border-green-800/30'
+                ? 'border-green-300 dark:border-green-700 hover:border-green-400 dark:hover:border-green-600'
+                : 'border-green-200 dark:border-green-800 hover:border-green-400 dark:hover:border-green-600'
             }`}
             onClick={() => handleModuleSelect(module)}
           >
+            <div className={`h-2 w-full ${
+              userProgress.completedLevels.includes(module.id)
+                ? 'bg-gradient-to-r from-green-500 to-green-600'
+                : 'bg-gradient-to-r from-green-400 to-green-600'
+            }`}></div>
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
-                <div className={`p-2.5 rounded-full ${
+                <div className={`p-3 rounded-full ${
                   userProgress.completedLevels.includes(module.id)
-                    ? 'bg-green-400/20 dark:bg-green-700/40'
-                    : 'bg-green-100 dark:bg-green-900/40'
-                }`}>
-                  {module.icon}
+                    ? 'bg-green-400/30 dark:bg-green-700/50 group-hover:bg-green-400/40 dark:group-hover:bg-green-700/60'
+                    : 'bg-green-100 dark:bg-green-900/40 group-hover:bg-green-200 dark:group-hover:bg-green-800/60'
+                } transition-colors`}>
+                  <div className="text-green-600 dark:text-green-400">
+                    {module.icon}
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   {userProgress.completedLevels.includes(module.id) && (
@@ -1527,7 +1537,7 @@ export const CreditBuildingSkillsEnhanced: React.FC = () => {
                   </Badge>
                 </div>
               </div>
-              <CardTitle className="text-lg mt-2">{module.title}</CardTitle>
+              <CardTitle className="text-lg mt-2 text-green-700 dark:text-green-400">{module.title}</CardTitle>
               <CardDescription>{module.description}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -1994,10 +2004,25 @@ export const CreditBuildingSkillsEnhanced: React.FC = () => {
         <FullScreenDialogBody>
           <div className="space-y-6">
             <Tabs defaultValue="content" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="content">Learning Content</TabsTrigger>
-                <TabsTrigger value="videos">Video Resources</TabsTrigger>
-                <TabsTrigger value="quiz">Practice Quiz</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 bg-green-100 dark:bg-green-900/30">
+                <TabsTrigger 
+                  value="content" 
+                  className="data-[state=active]:bg-green-500 data-[state=active]:text-white dark:data-[state=active]:bg-green-600"
+                >
+                  Learning Content
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="videos" 
+                  className="data-[state=active]:bg-green-500 data-[state=active]:text-white dark:data-[state=active]:bg-green-600"
+                >
+                  Video Resources
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="quiz" 
+                  className="data-[state=active]:bg-green-500 data-[state=active]:text-white dark:data-[state=active]:bg-green-600"
+                >
+                  Practice Quiz
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="content" className="mt-4">
@@ -2494,10 +2519,25 @@ export const CreditBuildingSkillsEnhanced: React.FC = () => {
       </div>
       
       <Tabs defaultValue="journey" value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="journey">Credit Journeys</TabsTrigger>
-          <TabsTrigger value="learning">Learning Modules</TabsTrigger>
-          <TabsTrigger value="dashboard">Your Progress</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-green-100 dark:bg-green-900/30">
+          <TabsTrigger 
+            value="journey" 
+            className="data-[state=active]:bg-green-500 data-[state=active]:text-white dark:data-[state=active]:bg-green-600"
+          >
+            Credit Journeys
+          </TabsTrigger>
+          <TabsTrigger 
+            value="learning" 
+            className="data-[state=active]:bg-green-500 data-[state=active]:text-white dark:data-[state=active]:bg-green-600"
+          >
+            Learning Modules
+          </TabsTrigger>
+          <TabsTrigger 
+            value="dashboard" 
+            className="data-[state=active]:bg-green-500 data-[state=active]:text-white dark:data-[state=active]:bg-green-600"
+          >
+            Your Progress
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="journey" className="mt-6">
           {renderJourneysGrid()}
