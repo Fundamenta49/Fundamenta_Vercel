@@ -323,7 +323,7 @@ export default function InterviewPractice() {
       setCustomQuestions(data.questions);
       toast({
         title: "Questions Generated",
-        description: `Interview questions generated for ${jobField} role.`,
+        description: `Interview questions generated for ${jobField} role.${data.source === "career-one-stop" ? " (Using Career One Stop data)" : ""}`,
       });
     },
     onError: (error: Error) => {
@@ -333,6 +333,36 @@ export default function InterviewPractice() {
         description: error.message || "Failed to generate questions. Please try again.",
       });
       console.error("Error generating questions:", error);
+    },
+  });
+  
+  // Specific mutation for Career One Stop API
+  const generateCareerOneStopQuestionsMutation = useMutation({
+    mutationFn: async (field: string) => {
+      const res = await apiRequest("POST", "/api/interview/questions/career-one-stop", { occupation: field });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to generate questions from Career One Stop");
+      }
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setCustomQuestions(data.questions);
+      toast({
+        title: "Industry-Specific Questions Ready",
+        description: `${data.count} interview questions from Career One Stop for ${data.occupation}.`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Department of Labor API Failed",
+        description: error.message || "Unable to retrieve industry-specific questions. Falling back to general questions.",
+      });
+      console.error("Error generating Career One Stop questions:", error);
+      
+      // Fall back to OpenAI questions if Career One Stop fails
+      generateQuestionsMutation.mutate(jobField);
     },
   });
 
@@ -389,8 +419,23 @@ export default function InterviewPractice() {
       });
       return;
     }
+    
+    // Use the enhanced OpenAI implementation directly
     generateQuestionsMutation.mutate(jobField);
+    
   }, [jobField, generateQuestionsMutation, toast]);
+  
+  // Option to try Career One Stop API if credentials are available
+  const handleCareerOneStopQuestions = useCallback(() => {
+    if (!jobField.trim()) return;
+    
+    toast({
+      title: "Attempting Career One Stop API",
+      description: "This requires Department of Labor API credentials.",
+    });
+    
+    generateCareerOneStopQuestionsMutation.mutate(jobField);
+  }, [jobField, generateCareerOneStopQuestionsMutation]);
 
   // State variables for enhanced features
   const [activeTab, setActiveTab] = useState("question-bank");
@@ -681,8 +726,30 @@ Result: ${starGuide.result}
                     ) : (
                       <MessageSquare className="h-4 w-4 mr-2" />
                     )}
-                    <span className={isMobile ? "hidden" : "inline"}>Generate</span>
+                    <span className={isMobile ? "hidden" : "inline"}>Generate Questions</span>
                   </Button>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={handleCareerOneStopQuestions}
+                          disabled={generateCareerOneStopQuestionsMutation.isPending || !jobField.trim()}
+                        >
+                          {generateCareerOneStopQuestionsMutation.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Network className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Try Career One Stop API (requires API key)</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
 

@@ -15,6 +15,7 @@ import youtubeRoutes, { youtubeSearchHandler } from './routes/youtube';
 import nhtsaRoutes from './routes/nhtsa';
 import chatRoutes from './routes/chat';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
+import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { 
   getEmergencyGuidance,
   optimizeResume,
@@ -510,8 +511,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // First try to get questions from Career One Stop API
+      const careerOneStopApiKey = process.env.CAREER_ONE_STOP_API_KEY;
+      
+      if (careerOneStopApiKey) {
+        try {
+          // Try to get occupation-specific questions from Career One Stop
+          const careerOneStopQuestions = await getOccupationInterviewQuestions(jobField, careerOneStopApiKey);
+          
+          if (careerOneStopQuestions && careerOneStopQuestions.length > 0) {
+            return res.json({ 
+              questions: careerOneStopQuestions,
+              source: "career-one-stop"
+            });
+          }
+        } catch (apiError) {
+          console.error("Career One Stop API error:", apiError);
+          // Continue to fallback if Career One Stop fails
+        }
+      }
+
+      // Fallback to OpenAI if Career One Stop failed or returned no results
       const questions = await generateJobQuestions(jobField);
-      res.json({ questions });
+      res.json({ 
+        questions,
+        source: "openai" 
+      });
     } catch (error: any) {
       console.error("Question generation error:", error);
 
@@ -535,6 +560,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(500).json({
         error: "Failed to generate interview questions. Please try again later."
+      });
+    }
+  });
+  
+  // Dedicated endpoint specifically for Career One Stop API questions
+  app.post("/api/interview/questions/career-one-stop", async (req, res) => {
+    try {
+      const { occupation } = z.object({ occupation: z.string() }).parse(req.body);
+
+      if (!occupation.trim()) {
+        return res.status(400).json({
+          error: "Please provide an occupation."
+        });
+      }
+      
+      const careerOneStopApiKey = process.env.CAREER_ONE_STOP_API_KEY;
+      
+      if (!careerOneStopApiKey) {
+        return res.status(503).json({
+          error: "Career One Stop API key is not configured. Please contact support."
+        });
+      }
+      
+      const questions = await getOccupationInterviewQuestions(occupation, careerOneStopApiKey);
+      
+      if (!questions || questions.length === 0) {
+        return res.status(404).json({
+          error: "No questions found for this occupation. Please try a different occupation or use the standard question endpoint."
+        });
+      }
+      
+      res.json({ 
+        questions,
+        occupation,
+        count: questions.length
+      });
+    } catch (error: any) {
+      console.error("Career One Stop question error:", error);
+
+      if (error.name === "ZodError") {
+        return res.status(400).json({
+          error: "Invalid request format. Please provide a valid occupation."
+        });
+      }
+      
+      if (error.response && error.response.status === 404) {
+        return res.status(404).json({
+          error: "Occupation not found in Career One Stop database."
+        });
+      }
+      
+      if (error.response && error.response.status === 401) {
+        return res.status(401).json({
+          error: "Unauthorized access to Career One Stop API. Please check API credentials."
+        });
+      }
+
+      res.status(500).json({
+        error: "Failed to retrieve occupation questions. Please try again later."
       });
     }
   });

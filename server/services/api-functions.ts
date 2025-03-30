@@ -179,14 +179,28 @@ export const generateJobQuestions = async (jobField: string): Promise<string[]> 
       messages: [
         {
           role: "system",
-          content: `Generate 10 realistic interview questions specifically for a ${jobField} position. Include:
-          - Technical questions specific to the field
-          - Behavioral questions relevant to the role
-          - Situational questions for this industry
-          - Questions about relevant tools and technologies
-          - Questions that assess both hard and soft skills needed
+          content: `You are an expert in the ${jobField} field with deep industry knowledge. Generate 15 highly realistic and challenging interview questions that would be asked by top employers for a ${jobField} position.
+
+          Create questions in these categories:
+          - Technical Knowledge (4 questions): Specific domain expertise, methodologies, and technical concepts relevant to ${jobField}
+          - Experience & Accomplishments (3 questions): Past work, achievements, and learnings
+          - Problem-solving (3 questions): How candidates approach challenges unique to ${jobField} roles
+          - Industry Awareness (2 questions): Knowledge of trends, competitors, and industry changes  
+          - Soft Skills & Culture Fit (3 questions): Communication, teamwork, and adaptability relevant to this field
+
+          For each question:
+          1. Make it specific to the ${jobField} position (avoid generic questions)
+          2. Include industry terminology and concepts when appropriate
+          3. Frame each as a complete question with context when helpful
           
-          Return ONLY an array of questions, no additional text or explanation.`
+          Return the questions in a JSON object with this format:
+          {
+            "questions": [
+              "Question text here",
+              "Another question here",
+              ...more questions
+            ]
+          }`
         }
       ],
       response_format: { type: "json_object" }
@@ -198,11 +212,25 @@ export const generateJobQuestions = async (jobField: string): Promise<string[]> 
       return Array.isArray(data.questions) ? data.questions : [];
     } catch (parseError) {
       console.error("Error parsing questions response:", parseError);
-      return [`Sample ${jobField} question 1`, `Sample ${jobField} question 2`, `Sample ${jobField} question 3`];
+      // Create a fallback with generic questions that maintain compatibility
+      return [
+        `What specific experience do you have that qualifies you for this ${jobField} position?`,
+        `What do you consider the most important skills for success as a ${jobField}?`,
+        `Describe a challenging situation you've faced in your ${jobField} career and how you resolved it.`,
+        `How do you stay current with trends and developments in the ${jobField} industry?`,
+        `What tools or technologies are you most proficient with that relate to ${jobField}?`
+      ];
     }
   } catch (error) {
     console.error("Generate job questions error:", error);
-    return [`Sample ${jobField} question 1`, `Sample ${jobField} question 2`, `Sample ${jobField} question 3`];
+    // Create a fallback with generic questions that maintain compatibility
+    return [
+      `What specific experience do you have that qualifies you for this ${jobField} position?`,
+      `What do you consider the most important skills for success as a ${jobField}?`,
+      `Describe a challenging situation you've faced in your ${jobField} career and how you resolved it.`,
+      `How do you stay current with trends and developments in the ${jobField} industry?`,
+      `What tools or technologies are you most proficient with that relate to ${jobField}?`
+    ];
   }
 };
 
