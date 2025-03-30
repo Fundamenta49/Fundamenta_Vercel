@@ -48,6 +48,7 @@ interface NutritionAssessmentInput {
     mealFrequency: number;
     typicalFoods: string[];
     restrictions: string[];
+    otherRestriction?: string;
     supplements: string[];
   };
 }
@@ -119,6 +120,7 @@ const initialAssessmentState: NutritionAssessmentInput = {
     mealFrequency: 3,
     typicalFoods: [],
     restrictions: [],
+    otherRestriction: '',
     supplements: [],
   },
 };
@@ -172,11 +174,13 @@ const foodRestrictionOptions = [
   "Eggs",
   "Nuts",
   "Soy",
-  "Fish/Shellfish",
+  "Fish",
+  "Shellfish",
   "Red meat",
   "Nightshades",
   "FODMAPs",
   "Added sugars",
+  "Other",
 ];
 
 const typicalFoodOptions = [
@@ -587,6 +591,20 @@ export default function NutritionAssessment() {
                     </div>
                   ))}
                 </div>
+                
+                {assessment.currentDiet.restrictions.includes("Other") && (
+                  <div className="pt-2">
+                    <Label htmlFor="otherRestriction">Please specify your other dietary restriction:</Label>
+                    <Input
+                      id="otherRestriction"
+                      type="text"
+                      placeholder="Enter your specific restriction"
+                      className="mt-1"
+                      value={assessment.currentDiet.otherRestriction || ""}
+                      onChange={(e) => updateAssessment('currentDiet.otherRestriction', e.target.value)}
+                    />
+                  </div>
+                )}
               </div>
             </CardContent>
           </>
@@ -639,7 +657,16 @@ export default function NutritionAssessment() {
                   <p><span className="font-medium">Health Conditions:</span> {assessment.existingConditions.length ? assessment.existingConditions.join(', ') : 'None'}</p>
                   <p><span className="font-medium">Meals per day:</span> {assessment.currentDiet.mealFrequency}</p>
                   <p><span className="font-medium">Typical Foods:</span> {assessment.currentDiet.typicalFoods.join(', ') || 'None specified'}</p>
-                  <p><span className="font-medium">Restrictions:</span> {assessment.currentDiet.restrictions.length ? assessment.currentDiet.restrictions.join(', ') : 'None'}</p>
+                  <p><span className="font-medium">Restrictions:</span> {
+                    assessment.currentDiet.restrictions.length 
+                      ? (
+                          assessment.currentDiet.restrictions.join(', ') + 
+                          (assessment.currentDiet.restrictions.includes("Other") && assessment.currentDiet.otherRestriction 
+                            ? ` (Other: ${assessment.currentDiet.otherRestriction})` 
+                            : '')
+                        ) 
+                      : 'None'
+                  }</p>
                   <p><span className="font-medium">Supplements:</span> {assessment.currentDiet.supplements.length ? assessment.currentDiet.supplements.join(', ') : 'None'}</p>
                 </div>
               </div>

@@ -167,11 +167,13 @@ const foodRestrictionOptions = [
   "Eggs",
   "Nuts",
   "Soy",
-  "Fish/Shellfish",
+  "Fish",
+  "Shellfish",
   "Red meat",
   "Nightshades",
   "FODMAPs",
   "Added sugars",
+  "Other",
 ];
 
 const typicalFoodOptions = [
@@ -374,6 +376,7 @@ export default function ComprehensiveWellnessAssessment() {
     mealFrequency: number;
     typicalFoods: string[];
     restrictions: string[];
+    otherRestriction?: string;
     supplements: string[];
   }
   
@@ -405,6 +408,7 @@ export default function ComprehensiveWellnessAssessment() {
       mealFrequency: 3,
       typicalFoods: [],
       restrictions: [],
+      otherRestriction: '',
       supplements: [],
     },
   });
@@ -485,6 +489,7 @@ export default function ComprehensiveWellnessAssessment() {
         mealFrequency: 3,
         typicalFoods: [],
         restrictions: [],
+        otherRestriction: '',
         supplements: [],
       },
     });
@@ -929,6 +934,20 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     </div>
                   ))}
                 </div>
+                
+                {physicalAssessment.currentDiet.restrictions.includes("Other") && (
+                  <div className="pt-2">
+                    <Label htmlFor="otherRestriction">Please specify your other dietary restriction:</Label>
+                    <Input
+                      id="otherRestriction"
+                      type="text"
+                      placeholder="Enter your specific restriction"
+                      className="mt-1"
+                      value={physicalAssessment.currentDiet.otherRestriction || ""}
+                      onChange={(e) => updatePhysicalAssessment('currentDiet.otherRestriction', e.target.value)}
+                    />
+                  </div>
+                )}
               </div>
               
               <div className="space-y-4">
@@ -1054,7 +1073,17 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     <p><span className="font-medium">Health Conditions:</span> {physicalAssessment.existingConditions.length ? physicalAssessment.existingConditions.join(', ') : 'None'}</p>
                     <p><span className="font-medium">Meals per day:</span> {physicalAssessment.currentDiet.mealFrequency}</p>
                     <p><span className="font-medium">Typical Foods:</span> {physicalAssessment.currentDiet.typicalFoods.join(', ') || 'None specified'}</p>
-                    <p><span className="font-medium">Restrictions:</span> {physicalAssessment.currentDiet.restrictions.length ? physicalAssessment.currentDiet.restrictions.join(', ') : 'None'}</p>
+                    <p><span className="font-medium">Restrictions:</span> {
+                      physicalAssessment.currentDiet.restrictions.length 
+                        ? (
+                            physicalAssessment.currentDiet.restrictions.includes("Other") && physicalAssessment.currentDiet.otherRestriction
+                              ? physicalAssessment.currentDiet.restrictions.filter(r => r !== "Other").join(', ') + 
+                                (physicalAssessment.currentDiet.restrictions.filter(r => r !== "Other").length > 0 ? ", " : "") + 
+                                "Other: " + physicalAssessment.currentDiet.otherRestriction
+                              : physicalAssessment.currentDiet.restrictions.join(', ')
+                          ) 
+                        : 'None'
+                    }</p>
                     <p><span className="font-medium">Supplements:</span> {physicalAssessment.currentDiet.supplements.length ? physicalAssessment.currentDiet.supplements.join(', ') : 'None'}</p>
                   </div>
                 </div>
