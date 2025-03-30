@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { 
   BookOpen, 
@@ -238,16 +238,19 @@ export default function Learning() {
   ];
 
   const handleCardClick = (courseId: string) => {
-    // If the card is already expanded, navigate to its path
+    // Toggle expansion or navigate based on current state
     if (expandedCourse === courseId) {
-      const course = COURSES.find(c => c.id === courseId);
-      if (course) {
-        navigate(course.path);
-      }
+      // Close the expanded card when clicked again
+      setExpandedCourse(null);
     } else {
-      // Otherwise just expand it
+      // Expand the clicked card
       setExpandedCourse(courseId);
     }
+  };
+  
+  // Handle navigation to course path
+  const navigateToCourse = (path: string) => {
+    navigate(path);
   };
 
   // Check sessionStorage for courses to open on mount
@@ -337,28 +340,52 @@ export default function Learning() {
 
       {/* Categories with book-style cards */}
       <div className="px-4 sm:px-6">
-        {/* Life Skills Section */}
+        {/* Life Skills Section - displayed as a grid */}
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-orange-50 text-orange-800 rounded-md border-l-4 border-orange-500">
             Life Skills
           </h2>
-          <div ref={carouselRef} className="book-carousel">
-            <BookCarousel>
-              {LIFE_SKILLS.map((course) => (
-                <BookPage key={course.id} id={course.id}>
-                  <BookCard
-                    id={course.id}
-                    title={course.title}
-                    description={course.description}
-                    icon={course.icon}
-                    isExpanded={expandedCourse === course.id}
-                    onToggle={handleCardClick}
-                    color="text-orange-500" // Learning section color
-                    children={renderCourseContent(course.id)}
-                  />
-                </BookPage>
-              ))}
-            </BookCarousel>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {LIFE_SKILLS.map((course) => (
+              <div key={course.id} className="flex flex-col">
+                <button
+                  onClick={() => handleCardClick(course.id)}
+                  className={`relative flex flex-col items-center justify-center p-4 rounded-xl border bg-white shadow-sm transition-all duration-200 hover:shadow-md ${
+                    expandedCourse === course.id ? 'ring-2 ring-orange-500' : ''
+                  }`}
+                >
+                  {course.popular && (
+                    <span className="absolute top-2 right-2 w-3 h-3 bg-blue-500 rounded-full" />
+                  )}
+                  {course.new && (
+                    <span className="absolute top-2 left-2 w-3 h-3 bg-orange-500 rounded-full" />
+                  )}
+                  <course.icon className="w-8 h-8 text-orange-500 mb-2" />
+                  <span className="text-sm font-medium text-center">{course.title}</span>
+                </button>
+                {expandedCourse === course.id && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+                    <div className="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
+                      <div className="flex items-center justify-between p-4 border-b">
+                        <div className="flex items-center">
+                          <course.icon className="w-6 h-6 text-orange-500 mr-2" />
+                          <h3 className="font-semibold">{course.title}</h3>
+                        </div>
+                        <button 
+                          onClick={() => setExpandedCourse(null)}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <span className="text-xl">&times;</span>
+                        </button>
+                      </div>
+                      <div className="p-4">
+                        {renderCourseContent(course.id)}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
         
@@ -366,55 +393,7 @@ export default function Learning() {
         
         {/* Professional Section - Hidden as requested */}
         
-        {/* Languages Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-purple-50 text-purple-800 rounded-md border-l-4 border-purple-500">
-            Languages
-          </h2>
-          <div className="book-carousel">
-            <BookCarousel>
-              {LANGUAGES.map((course) => (
-                <BookPage key={course.id} id={course.id}>
-                  <BookCard
-                    id={course.id}
-                    title={course.title}
-                    description={course.description}
-                    icon={course.icon}
-                    isExpanded={expandedCourse === course.id}
-                    onToggle={handleCardClick}
-                    color="text-purple-500"
-                    children={renderCourseContent(course.id)}
-                  />
-                </BookPage>
-              ))}
-            </BookCarousel>
-          </div>
-        </div>
-        
-        {/* Creative Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-pink-50 text-pink-800 rounded-md border-l-4 border-pink-500">
-            Creative
-          </h2>
-          <div className="book-carousel">
-            <BookCarousel>
-              {CREATIVE.map((course) => (
-                <BookPage key={course.id} id={course.id}>
-                  <BookCard
-                    id={course.id}
-                    title={course.title}
-                    description={course.description}
-                    icon={course.icon}
-                    isExpanded={expandedCourse === course.id}
-                    onToggle={handleCardClick}
-                    color="text-pink-500"
-                    children={renderCourseContent(course.id)}
-                  />
-                </BookPage>
-              ))}
-            </BookCarousel>
-          </div>
-        </div>
+        {/* Languages and Creative sections removed as requested */}
       </div>
 
       {/* Always show either the pop-out chat or the floating chat */}
