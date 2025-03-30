@@ -1158,7 +1158,8 @@ export default function CopingWithFailureCourse() {
         </div>
       )}
 
-      <div className="mt-8">
+      {/* Hide Learning Coach button on mobile, show only on SM and larger screens */}
+      <div className="mt-8 hidden sm:block">
         <Button 
           onClick={() => setShowChat(true)}
           className="bg-orange-500 hover:bg-orange-600"

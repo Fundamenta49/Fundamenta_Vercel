@@ -282,7 +282,8 @@ export default function Learning() {
         Learning Hub
       </h1>
       
-      <div className="mx-4 sm:mx-6 mb-6 flex justify-end">
+      {/* Hide Learning Coach button on mobile, show only on SM and larger screens */}
+      <div className="mx-4 sm:mx-6 mb-6 hidden sm:flex justify-end">
         <Button 
           onClick={() => setShowChat(!showChat)}
           className="bg-orange-500 hover:bg-orange-600"
