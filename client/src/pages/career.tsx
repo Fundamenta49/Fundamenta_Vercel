@@ -14,7 +14,7 @@ import CareerCoachPopOut from "@/components/career-coach-pop-out";
 import CareerAssessmentPopOut from "@/components/career-assessment-pop-out";
 import ResumeBuilderPopOut from "@/components/resume-builder-pop-out";
 import JobSearchPopOut from "@/components/job-search-pop-out";
-import SalaryInsightsPopOut from "@/components/salary-insights-pop-out";
+// SalaryInsights is now part of JobSearchPopOut
 import InterviewPracticePopOut from "@/components/interview-practice-pop-out";
 import EmotionalResiliencePopOut from "@/components/emotional-resilience-pop-out";
 import EmploymentRightsPopOut from "@/components/employment-rights-pop-out";

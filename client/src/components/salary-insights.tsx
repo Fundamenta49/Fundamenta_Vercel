@@ -22,17 +22,28 @@ import { Loader2, TrendingUp, DollarSign, Users, BadgePercent } from "lucide-rea
 import { useToast } from "@/hooks/use-toast";
 
 interface SalaryData {
-  title: string;
-  averageSalary: string;
-  salaryRange: {
+  title?: string;
+  averageSalary?: string;
+  salaryRange?: {
     min: string;
     max: string;
   };
-  growthRate: string;
-  demandLevel: string;
-  requiredSkills: string[];
-  marketOutlook: string;
-  industryTrends: string[];
+  growthRate?: string;
+  demandLevel?: string;
+  requiredSkills?: string[];
+  marketOutlook?: string;
+  industryTrends?: string[];
+  
+  // Adzuna API response format
+  median?: number;
+  range?: [number, number];
+  growth?: number;
+  stateData?: Record<string, {
+    median: number;
+    range: [number, number];
+  }>;
+  education?: string[];
+  certifications?: string[];
 }
 
 export default function SalaryInsights() {
@@ -43,9 +54,11 @@ export default function SalaryInsights() {
 
   const salaryMutation = useMutation({
     mutationFn: async () => {
-      const res = await apiRequest("POST", "/api/career/salary-insights", {
+      console.log("Fetching salary insights for:", jobTitle);
+      
+      const res = await apiRequest("POST", "/api/salary/insights", {
         jobTitle,
-        location,
+        location: location || "United States"
       });
       if (!res.ok) {
         const errorData = await res.json();
@@ -133,46 +146,115 @@ export default function SalaryInsights() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
-              {salaryData.title}
+              {jobTitle} Salary Insights
             </CardTitle>
             <CardDescription>
               Comprehensive salary and market analysis
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Handle both API formats */}
             <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
+              <div className="space-y-2 bg-primary/5 p-3 rounded-lg">
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-primary" />
-                  <h4 className="font-medium">Salary Range</h4>
+                  <h4 className="font-medium">Median Salary</h4>
                 </div>
-                <p className="text-2xl font-bold">{salaryData.averageSalary}</p>
+                <p className="text-2xl font-bold">
+                  {salaryData.median 
+                    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(salaryData.median)
+                    : salaryData.averageSalary || 'Not available'}
+                </p>
                 <p className="text-sm text-muted-foreground">
-                  Range: {salaryData.salaryRange.min} - {salaryData.salaryRange.max}
+                  {salaryData.range ? 
+                    `Range: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(salaryData.range[0])} - ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(salaryData.range[1])}` :
+                    salaryData.salaryRange && salaryData.salaryRange.min && salaryData.salaryRange.max ? 
+                      `Range: ${salaryData.salaryRange.min} - ${salaryData.salaryRange.max}` :
+                      'Salary range not available'
+                  }
                 </p>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 bg-primary/5 p-3 rounded-lg">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-primary" />
                   <h4 className="font-medium">Growth Rate</h4>
                 </div>
-                <p className="text-2xl font-bold">{salaryData.growthRate}</p>
-                <p className="text-sm text-muted-foreground">Annual growth</p>
+                <p className="text-2xl font-bold">
+                  {salaryData.growth 
+                    ? `${salaryData.growth}%` 
+                    : salaryData.growthRate || 'N/A'}
+                </p>
+                <p className="text-sm text-muted-foreground">Annual job growth</p>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 bg-primary/5 p-3 rounded-lg">
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-primary" />
-                  <h4 className="font-medium">Market Demand</h4>
+                  <h4 className="font-medium">Location</h4>
                 </div>
-                <p className="text-2xl font-bold">{salaryData.demandLevel}</p>
-                <p className="text-sm text-muted-foreground">Current demand level</p>
+                <p className="text-2xl font-bold">{location || 'National'}</p>
+                <p className="text-sm text-muted-foreground">Market comparison basis</p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
+            {/* Education Requirements (from Adzuna API) */}
+            {salaryData.education && salaryData.education.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <Users className="h-4 w-4 text-primary" />
+                  Recommended Education
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {salaryData.education.map((edu, i) => (
+                    <span key={i} className="text-xs bg-primary/10 text-primary-foreground px-2 py-1 rounded-full">
+                      {edu}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Certifications (from Adzuna API) */}
+            {salaryData.certifications && salaryData.certifications.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <BadgePercent className="h-4 w-4 text-primary" />
+                  Valuable Certifications
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {salaryData.certifications.map((cert, i) => (
+                    <span key={i} className="text-xs bg-primary/10 text-primary-foreground px-2 py-1 rounded-full">
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Regional Data (from Adzuna API) */}
+            {salaryData.stateData && Object.keys(salaryData.stateData).length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <Users className="h-4 w-4 text-primary" />
+                  Regional Salary Comparison
+                </h4>
+                <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+                  {Object.entries(salaryData.stateData).slice(0, 6).map(([state, data]) => (
+                    <div key={state} className="bg-muted/30 p-2 rounded text-xs">
+                      <span className="font-medium">{state}</span>: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(data.median)}
+                      <div className="text-muted-foreground text-xs">
+                        Range: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(data.range[0])} - {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(data.range[1])}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Required Skills (from legacy format) */}
+            {salaryData.requiredSkills && salaryData.requiredSkills.length > 0 && (
+              <div className="mt-4">
                 <h4 className="font-medium mb-2">Required Skills</h4>
                 <div className="flex flex-wrap gap-2">
                   {salaryData.requiredSkills.map((skill, index) => (
@@ -185,13 +267,19 @@ export default function SalaryInsights() {
                   ))}
                 </div>
               </div>
+            )}
 
-              <div>
+            {/* Market Outlook (from legacy format) */}
+            {salaryData.marketOutlook && (
+              <div className="mt-4">
                 <h4 className="font-medium mb-2">Market Outlook</h4>
                 <p className="text-muted-foreground">{salaryData.marketOutlook}</p>
               </div>
+            )}
 
-              <div>
+            {/* Industry Trends (from legacy format) */}
+            {salaryData.industryTrends && salaryData.industryTrends.length > 0 && (
+              <div className="mt-4">
                 <h4 className="font-medium mb-2">Industry Trends</h4>
                 <ul className="space-y-2">
                   {salaryData.industryTrends.map((trend, index) => (
@@ -202,6 +290,10 @@ export default function SalaryInsights() {
                   ))}
                 </ul>
               </div>
+            )}
+            
+            <div className="mt-4 text-xs text-muted-foreground">
+              <p>Data is based on industry averages and may vary based on specific employers and qualifications.</p>
             </div>
           </CardContent>
         </Card>
