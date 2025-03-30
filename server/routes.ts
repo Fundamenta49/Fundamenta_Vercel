@@ -14,6 +14,7 @@ import learningRoutes from './routes/learning';
 import youtubeRoutes, { youtubeSearchHandler } from './routes/youtube';
 import nhtsaRoutes from './routes/nhtsa';
 import chatRoutes from './routes/chat';
+import journalRoutes from './routes/journal';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { 
@@ -793,6 +794,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Include Chat API routes
   app.use('/api/chat', chatRoutes);
+  
+  // Register journal routes
+  app.use('/api/journal', journalRoutes);
 
   // Return an HTTP server
   return createServer(app);
