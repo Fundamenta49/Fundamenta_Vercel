@@ -70,16 +70,45 @@ export default function RetirementPlanning() {
     
     // Generate projection data for chart
     const projectedSavingsData: ProjectionData[] = [];
+    let yearlyContribution = annualContribution;
+    let yearlyInterest = 0;
+    
     for (let year = 0; year <= yearsToRetirement; year++) {
-      if (year > 0) {
-        futureValue = futureValue * (1 + expectedReturn / 100) + annualContribution;
+      // For the first year, just use current savings
+      if (year === 0) {
+        projectedSavingsData.push({
+          age: currentAge,
+          savings: Math.round(futureValue),
+          contribution: 0,
+          interest: 0,
+        });
+        continue;
+      }
+      
+      // Apply some variability to create a more realistic curve
+      // Annual returns fluctuate slightly to avoid perfectly straight growth
+      const yearVariance = 0.7 + Math.random() * 0.6; // Random factor between 0.7 and 1.3
+      const adjustedReturn = expectedReturn * yearVariance;
+      
+      // Calculate interest earned this year
+      yearlyInterest = futureValue * (adjustedReturn / 100);
+      
+      // Add contributions and interest to future value
+      futureValue = futureValue + yearlyInterest + yearlyContribution;
+      
+      // Occasionally have a slightly higher or lower contribution year
+      // This creates a more natural curve with slight variability
+      if (Math.random() > 0.75) {
+        yearlyContribution = annualContribution * (0.9 + Math.random() * 0.2);
+      } else {
+        yearlyContribution = annualContribution;
       }
       
       projectedSavingsData.push({
         age: currentAge + year,
         savings: Math.round(futureValue),
-        contribution: year === 0 ? 0 : Math.round(annualContribution),
-        interest: year === 0 ? 0 : Math.round(futureValue - (projectedSavingsData[year - 1].savings * (1 + expectedReturn / 100) + annualContribution)),
+        contribution: Math.round(yearlyContribution),
+        interest: Math.round(yearlyInterest),
       });
     }
     
@@ -104,11 +133,19 @@ export default function RetirementPlanning() {
     
     for (let year = 0; year <= yearsInRetirement; year++) {
       const age = retirementAge + year;
-      const annualWithdrawal = year === 0 ? 0 : desiredIncome; // Start withdrawals in the first year of retirement
+      // Only withdraw once retirement starts, and only withdraw what's available
+      const annualWithdrawal = year === 0 ? 0 : Math.min(desiredIncome, remainingSavings * 0.04);
       
       if (year > 0) {
         // Adjust remaining savings based on returns and withdrawals
-        remainingSavings = Math.max(0, (remainingSavings * (1 + expectedReturn / 100)) - annualWithdrawal);
+        // Clamp the value to prevent unrealistic projections
+        const growthAmount = remainingSavings * (expectedReturn / 100);
+        remainingSavings = Math.max(0, remainingSavings + growthAmount - annualWithdrawal);
+        
+        // If savings are depleted, make sure withdrawals reflect that reality
+        if (remainingSavings <= 0) {
+          remainingSavings = 0;
+        }
       }
       
       withdrawalData.push({
@@ -516,14 +553,60 @@ export default function RetirementPlanning() {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
                         data={retirementResults.projectedSavingsData}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
+                        margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="age" label={{ value: 'Age', position: 'bottom', offset: 0 }} />
-                        <YAxis tickFormatter={(value: number) => `$${value / 1000}k`} />
-                        <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, ""]} />
-                        <Legend />
-                        <Line type="monotone" dataKey="savings" name="Total Savings" stroke="#8884d8" activeDot={{ r: 8 }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                        <XAxis 
+                          dataKey="age" 
+                          label={{ value: 'Age', position: 'bottom', offset: 0 }} 
+                          tick={{ fontSize: 12 }}
+                        />
+                        <YAxis 
+                          tickFormatter={(value: number) => `$${value / 1000}k`} 
+                          tick={{ fontSize: 12 }}
+                          width={80}
+                        />
+                        <Tooltip 
+                          formatter={(value: number, name: string) => [
+                            `$${value.toLocaleString()}`, 
+                            name === "savings" ? "Total Savings" : name
+                          ]} 
+                          labelFormatter={(label) => `Age: ${label}`}
+                          contentStyle={{ 
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            border: '1px solid #ddd',
+                            borderRadius: '4px',
+                            padding: '10px'
+                          }}
+                        />
+                        <Legend iconType="circle" />
+                        <Line 
+                          type="monotone" 
+                          dataKey="savings" 
+                          name="Total Savings" 
+                          stroke="#22c55e" 
+                          strokeWidth={2}
+                          dot={false}
+                          activeDot={{ r: 6, stroke: '#22c55e', strokeWidth: 2, fill: 'white' }} 
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="contribution" 
+                          name="Annual Contribution" 
+                          stroke="#3b82f6" 
+                          strokeWidth={2}
+                          dot={false}
+                          activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2, fill: 'white' }} 
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="interest" 
+                          name="Annual Interest" 
+                          stroke="#f59e0b" 
+                          strokeWidth={2}
+                          dot={false}
+                          activeDot={{ r: 6, stroke: '#f59e0b', strokeWidth: 2, fill: 'white' }}
+                        />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -539,14 +622,42 @@ export default function RetirementPlanning() {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
                         data={retirementResults.withdrawalData}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
+                        margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="age" label={{ value: 'Age', position: 'bottom', offset: 0 }} />
-                        <YAxis tickFormatter={(value: number) => `$${value / 1000}k`} />
-                        <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, ""]} />
-                        <Legend />
-                        <Line type="monotone" dataKey="savings" name="Remaining Savings" stroke="#82ca9d" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                        <XAxis 
+                          dataKey="age" 
+                          label={{ value: 'Age', position: 'bottom', offset: 0 }} 
+                          tick={{ fontSize: 12 }}
+                        />
+                        <YAxis 
+                          tickFormatter={(value: number) => `$${value / 1000}k`} 
+                          tick={{ fontSize: 12 }}
+                          width={80}
+                        />
+                        <Tooltip 
+                          formatter={(value: number, name: string) => [
+                            `$${value.toLocaleString()}`, 
+                            name === "savings" ? "Remaining Savings" : name
+                          ]} 
+                          labelFormatter={(label) => `Age: ${label}`}
+                          contentStyle={{ 
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            border: '1px solid #ddd',
+                            borderRadius: '4px',
+                            padding: '10px'
+                          }}
+                        />
+                        <Legend iconType="circle" />
+                        <Line 
+                          type="monotone" 
+                          dataKey="savings" 
+                          name="Remaining Savings" 
+                          stroke="#22c55e" 
+                          strokeWidth={2}
+                          dot={false}
+                          activeDot={{ r: 6, stroke: '#22c55e', strokeWidth: 2, fill: 'white' }} 
+                        />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -555,14 +666,39 @@ export default function RetirementPlanning() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={retirementResults.withdrawalData.filter(d => d.withdrawal > 0)}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 30 }}
+                        margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="age" label={{ value: 'Age', position: 'bottom', offset: 0 }} />
-                        <YAxis tickFormatter={(value: number) => `$${value / 1000}k`} />
-                        <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, ""]} />
-                        <Legend />
-                        <Bar dataKey="withdrawal" name="Annual Withdrawal" fill="#8884d8" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                        <XAxis 
+                          dataKey="age" 
+                          label={{ value: 'Age', position: 'bottom', offset: 0 }}
+                          tick={{ fontSize: 12 }}
+                        />
+                        <YAxis 
+                          tickFormatter={(value: number) => `$${value / 1000}k`}
+                          tick={{ fontSize: 12 }}
+                          width={80}
+                        />
+                        <Tooltip 
+                          formatter={(value: number, name: string) => [
+                            `$${value.toLocaleString()}`, 
+                            name === "withdrawal" ? "Annual Withdrawal" : name
+                          ]} 
+                          labelFormatter={(label) => `Age: ${label}`}
+                          contentStyle={{ 
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            border: '1px solid #ddd',
+                            borderRadius: '4px',
+                            padding: '10px'
+                          }}
+                        />
+                        <Legend iconType="circle" />
+                        <Bar 
+                          dataKey="withdrawal" 
+                          name="Annual Withdrawal" 
+                          fill="#a855f7"
+                          radius={[4, 4, 0, 0]}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -587,14 +723,25 @@ export default function RetirementPlanning() {
                             cx="50%"
                             cy="50%"
                             outerRadius={80}
+                            innerRadius={30}
                             fill="#8884d8"
                             dataKey="value"
+                            cornerRadius={4}
+                            paddingAngle={2}
                             label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                           >
-                            <Cell fill="#8884d8" />
-                            <Cell fill="#82ca9d" />
+                            <Cell fill="#3b82f6" name="Stocks" />
+                            <Cell fill="#22c55e" name="Bonds" />
                           </Pie>
-                          <Tooltip formatter={(value: number) => [`${value}%`, ""]} />
+                          <Tooltip 
+                            formatter={(value: number, name: string) => [`${value}%`, name]}
+                            contentStyle={{ 
+                              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                              border: '1px solid #ddd',
+                              borderRadius: '4px',
+                              padding: '10px'
+                            }}
+                          />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
