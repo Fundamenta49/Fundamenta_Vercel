@@ -34,13 +34,26 @@ const SimpleFundi: React.FC = () => {
         <Button
           onClick={toggleExpansion}
           className={cn(
-            "rounded-full p-0 w-16 h-16 bg-primary hover:bg-primary/90",
+            "rounded-full p-0 w-16 h-16 bg-white shadow-lg hover:shadow-xl transition-all",
             isExpanded ? "opacity-100" : "opacity-90 hover:opacity-100"
           )}
         >
-          <Avatar className="w-16 h-16">
-            <AvatarImage src="/avatar.png" alt="AI Assistant" />
-          </Avatar>
+          <div className="relative w-full h-full rounded-full bg-white overflow-hidden">
+            {/* Robot Face */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Eyes Container */}
+              <div className="flex gap-2">
+                {/* Left Eye */}
+                <div className="w-4 h-4 rounded-full bg-blue-400 animate-pulse" 
+                     style={{boxShadow: '0 0 10px #60A5FA'}}/>
+                {/* Right Eye */}
+                <div className="w-4 h-4 rounded-full bg-blue-400 animate-pulse"
+                     style={{boxShadow: '0 0 10px #60A5FA'}}/>
+              </div>
+            </div>
+            {/* Smile */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-6 h-2 rounded-t-full bg-slate-300"/>
+          </div>
         </Button>
 
         {/* Expanded Interface */}
