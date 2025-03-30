@@ -355,6 +355,15 @@ export default function VehicleGuide() {
       const query = `${vehicleString} ${task.title} tutorial how to`;
       const videoResults = await searchVehicleVideos(query);
       setVideos(videoResults);
+      
+      // Scroll to the videos section for better UX
+      const proseElement = document.querySelector('.prose');
+      if (proseElement) {
+        window.scrollTo({
+          top: proseElement.getBoundingClientRect().top + window.pageYOffset,
+          behavior: 'smooth'
+        });
+      }
     } catch (error) {
       console.error('Error fetching videos:', error);
     } finally {
@@ -417,7 +426,24 @@ export default function VehicleGuide() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setIsVideoFocused(!isVideoFocused)}
+                onClick={() => {
+                  const newFocusState = !isVideoFocused;
+                  setIsVideoFocused(newFocusState);
+                  
+                  // If exiting focus mode, scroll back to videos section
+                  if (!newFocusState) {
+                    setTimeout(() => {
+                      const proseElement = document.querySelector('.prose');
+                      if (proseElement) {
+                        window.scrollTo({
+                          top: proseElement.getBoundingClientRect().top + window.pageYOffset,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }, 100); // Small delay to ensure DOM is updated
+                  }
+                }}
+                aria-label={isVideoFocused ? "Exit focus mode" : "Enter focus mode"}
               >
                 {isVideoFocused ? (
                   <><Minimize2 className="h-4 w-4 mr-2" /> Exit Focus Mode</>
@@ -428,8 +454,8 @@ export default function VehicleGuide() {
             </div>
 
             <div className={`
-              grid gap-6 w-full
-              ${isVideoFocused ? 'max-w-4xl' : ''}
+              grid gap-4 w-full
+              ${isVideoFocused ? 'max-w-4xl' : 'grid-cols-1'}
             `}>
               {videos.map((video) => (
                 <div key={video.id} className="space-y-2">
@@ -440,9 +466,10 @@ export default function VehicleGuide() {
                       className="absolute inset-0 w-full h-full rounded-lg"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
+                      loading="lazy"
                     />
                   </div>
-                  <p className={`text-sm font-medium ${isVideoFocused ? 'text-white' : ''}`}>
+                  <p className={`text-xs sm:text-sm font-medium line-clamp-2 ${isVideoFocused ? 'text-white' : ''}`}>
                     {video.title}
                   </p>
                 </div>
@@ -500,22 +527,24 @@ export default function VehicleGuide() {
             <div className="space-y-4">
               {/* VIN Input */}
               <div className="relative">
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input
                     type="text"
                     placeholder="Enter VIN (17 characters)"
                     value={vehicleInfo.vin || ''}
-                    onChange={(e) => handleVehicleInfoChange('vin', e.target.value)}
-                    className="w-full"
+                    onChange={(e) => handleVehicleInfoChange('vin', e.target.value.toUpperCase())}
+                    className="w-full font-mono"
+                    maxLength={17}
+                    aria-label="Vehicle Identification Number"
                   />
                   <Button
                     variant="default"
                     onClick={populateFromVin}
                     disabled={!vehicleInfo.vin || vehicleInfo.vin.length !== 17}
-                    className="whitespace-nowrap"
+                    className="whitespace-nowrap sm:flex-shrink-0"
                   >
-                    <FileCheck className="h-4 w-4 mr-2" />
-                    Decode VIN
+                    <FileCheck className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span>Decode VIN</span>
                   </Button>
                 </div>
 
@@ -539,27 +568,30 @@ export default function VehicleGuide() {
               </div>
 
               {/* Vehicle Details Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
                 <Input
                   type="text"
-                  placeholder="Vehicle Year"
+                  placeholder="Year"
                   value={vehicleInfo.year || ''}
                   onChange={(e) => handleVehicleInfoChange('year', e.target.value)}
                   className="w-full"
+                  aria-label="Vehicle Year"
                 />
                 <Input
                   type="text"
-                  placeholder="Vehicle Make"
+                  placeholder="Make"
                   value={vehicleInfo.make || ''}
                   onChange={(e) => handleVehicleInfoChange('make', e.target.value)}
                   className="w-full"
+                  aria-label="Vehicle Make"
                 />
                 <Input
                   type="text"
-                  placeholder="Vehicle Model"
+                  placeholder="Model"
                   value={vehicleInfo.model || ''}
                   onChange={(e) => handleVehicleInfoChange('model', e.target.value)}
-                  className="w-full"
+                  className="w-full col-span-2 sm:col-span-1"
+                  aria-label="Vehicle Model"
                 />
               </div>
               
@@ -578,40 +610,42 @@ export default function VehicleGuide() {
               <div>
                 <Input
                   type="text"
-                  placeholder="Search for any vehicle maintenance task..."
+                  placeholder="Search tasks..."
                   value={customMaintenanceQuery}
                   onChange={(e) => setCustomMaintenanceQuery(e.target.value)}
-                  className="w-full mb-4"
+                  className="w-full mb-2 sm:mb-4"
+                  aria-label="Search for vehicle maintenance tasks"
                 />
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant="default"
                     onClick={handleSearch}
-                    className="flex-none"
+                    className="w-full"
                     disabled={!isVehicleInfoComplete() || !customMaintenanceQuery.trim()}
                   >
-                    <Search className="h-4 w-4 mr-2" />
-                    Search
+                    <Search className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">Search</span>
                   </Button>
                   <Button
                     variant="outline"
                     onClick={addCustomTask}
                     disabled={!customMaintenanceQuery.trim() || !isVehicleInfoComplete()}
-                    className="flex-none hover:bg-primary/5"
+                    className="w-full hover:bg-primary/5"
                   >
-                    <Star className="h-4 w-4 mr-2" />
-                    Save
+                    <Star className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
+                    <span className="truncate">Save Task</span>
                   </Button>
                 </div>
               </div>
 
               <Command className="rounded-lg border shadow-md">
                 <CommandInput
-                  placeholder="Search available tasks..."
+                  placeholder="Search tasks..."
                   value={searchQuery}
                   onValueChange={setSearchQuery}
+                  className="text-sm"
                 />
-                <CommandList>
+                <CommandList className="max-h-[200px] sm:max-h-[300px]">
                   <CommandEmpty>No maintenance tasks found.</CommandEmpty>
                   <CommandGroup heading="Common Tasks">
                     {filteredTasks.map((task) => (
@@ -624,17 +658,19 @@ export default function VehicleGuide() {
                             fetchYouTubeVideos(task);
                           }
                         }}
-                        className="flex items-center justify-between py-2 hover:bg-primary/5"
+                        className="flex items-center justify-between py-3 hover:bg-primary/5 cursor-pointer"
                       >
-                        <div className="flex items-center gap-2">
-                          {task.isCustom ? (
-                            <Star className="h-4 w-4 text-yellow-500" />
-                          ) : (
-                            task.icon
-                          )}
-                          <span>{task.title}</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="flex-shrink-0">
+                            {task.isCustom ? (
+                              <Star className="h-4 w-4 text-yellow-500" />
+                            ) : (
+                              task.icon
+                            )}
+                          </span>
+                          <span className="truncate">{task.title}</span>
                         </div>
-                        <Badge variant="outline" className={getDifficultyStyle(task.difficulty)}>
+                        <Badge variant="outline" className={`${getDifficultyStyle(task.difficulty)} text-xs ml-2 flex-shrink-0`}>
                           {task.difficulty}
                         </Badge>
                       </CommandItem>

@@ -12,6 +12,18 @@ import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resourc
 export default function VehicleMaintenanceCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
+  
+  // Function to handle navigation back to Learning page
+  const handleBackNavigation = () => {
+    navigate('/learning');
+    window.scrollTo(0, 0);
+  };
+  
+  // Function to handle tab changes
+  const handleTabChange = (tab: 'learn' | 'practice' | 'resources') => {
+    setActiveTab(tab);
+    window.scrollTo(0, 0);
+  };
 
   // Resources specific to vehicle maintenance
   const resources: SimpleResource[] = [
@@ -47,7 +59,7 @@ export default function VehicleMaintenanceCourse() {
       <div className="flex items-center mb-6">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/learning')}
+          onClick={handleBackNavigation}
           className="mr-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -69,7 +81,10 @@ export default function VehicleMaintenanceCourse() {
                   ? 'bg-orange-500 text-white shadow-sm' 
                   : 'text-gray-700 hover:bg-gray-200'
               }`}
-              onClick={() => setActiveTab('learn')}
+              onClick={() => handleTabChange('learn')}
+              role="tab"
+              aria-selected={activeTab === 'learn'}
+              tabIndex={0}
             >
               <span className="text-sm font-medium">Learn</span>
             </div>
@@ -79,7 +94,10 @@ export default function VehicleMaintenanceCourse() {
                   ? 'bg-orange-500 text-white shadow-sm' 
                   : 'text-gray-700 hover:bg-gray-200'
               }`}
-              onClick={() => setActiveTab('practice')}
+              onClick={() => handleTabChange('practice')}
+              role="tab"
+              aria-selected={activeTab === 'practice'}
+              tabIndex={0}
             >
               <span className="text-sm font-medium">Practice</span>
             </div>
@@ -89,7 +107,10 @@ export default function VehicleMaintenanceCourse() {
                   ? 'bg-orange-500 text-white shadow-sm' 
                   : 'text-gray-700 hover:bg-gray-200'
               }`}
-              onClick={() => setActiveTab('resources')}
+              onClick={() => handleTabChange('resources')}
+              role="tab"
+              aria-selected={activeTab === 'resources'}
+              tabIndex={0}
             >
               <span className="text-sm font-medium">Resources</span>
             </div>
