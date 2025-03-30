@@ -70,8 +70,7 @@ export default function Learning() {
   const [showChat, setShowChat] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Course expansion states
-  const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
+  // No need for expandedCourse state since we directly navigate
   
   // Group courses by categories
   const LIFE_SKILLS: Course[] = [
@@ -237,20 +236,12 @@ export default function Learning() {
     // Removed Languages and Creative as requested
   ];
 
+  // Direct navigation to the course page when a card is clicked
   const handleCardClick = (courseId: string) => {
-    // Toggle expansion or navigate based on current state
-    if (expandedCourse === courseId) {
-      // Close the expanded card when clicked again
-      setExpandedCourse(null);
-    } else {
-      // Expand the clicked card
-      setExpandedCourse(courseId);
+    const course = COURSES.find(c => c.id === courseId);
+    if (course) {
+      navigate(course.path);
     }
-  };
-  
-  // Handle navigation to course path
-  const navigateToCourse = (path: string) => {
-    navigate(path);
   };
 
   // Check sessionStorage for courses to open on mount
@@ -280,47 +271,7 @@ export default function Learning() {
     };
   }, []);
 
-  // Create course content components
-  const renderCourseContent = (courseId: string) => {
-    const course = COURSES.find(c => c.id === courseId);
-    if (!course) return null;
-
-    return (
-      <div className="py-4">
-        <div className="mb-4">
-          <span className={`inline-block px-2 py-1 text-xs rounded-full ${
-            course.level === 'beginner' ? 'bg-green-100 text-green-800' :
-            course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' :
-            'bg-red-100 text-red-800'
-          }`}>
-            {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-          </span>
-          
-          {course.popular && (
-            <span className="inline-block ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-              Popular
-            </span>
-          )}
-          
-          {course.new && (
-            <span className="inline-block ml-2 px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
-              New
-            </span>
-          )}
-        </div>
-        
-        <p className="text-gray-700 mb-6">{course.description}</p>
-        
-        <Button 
-          variant="default"
-          className="bg-orange-500 hover:bg-orange-600 text-white"
-          onClick={() => navigate(course.path)}
-        >
-          Start Learning
-        </Button>
-      </div>
-    );
-  };
+  // This content rendering is no longer needed as we're directly navigating to the course page
 
   return (
     <div className="w-full h-full mx-auto p-0">
@@ -350,9 +301,7 @@ export default function Learning() {
               <div key={course.id} className="flex flex-col">
                 <button
                   onClick={() => handleCardClick(course.id)}
-                  className={`relative flex flex-col items-center justify-center p-4 rounded-xl border bg-white shadow-sm transition-all duration-200 hover:shadow-md ${
-                    expandedCourse === course.id ? 'ring-2 ring-orange-500' : ''
-                  }`}
+                  className="relative flex flex-col items-center justify-center p-4 rounded-xl border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500"
                 >
                   {course.popular && (
                     <span className="absolute top-2 right-2 w-3 h-3 bg-blue-500 rounded-full" />
@@ -363,27 +312,6 @@ export default function Learning() {
                   <course.icon className="w-8 h-8 text-orange-500 mb-2" />
                   <span className="text-sm font-medium text-center">{course.title}</span>
                 </button>
-                {expandedCourse === course.id && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-                    <div className="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
-                      <div className="flex items-center justify-between p-4 border-b">
-                        <div className="flex items-center">
-                          <course.icon className="w-6 h-6 text-orange-500 mr-2" />
-                          <h3 className="font-semibold">{course.title}</h3>
-                        </div>
-                        <button 
-                          onClick={() => setExpandedCourse(null)}
-                          className="text-gray-500 hover:text-gray-700"
-                        >
-                          <span className="text-xl">&times;</span>
-                        </button>
-                      </div>
-                      <div className="p-4">
-                        {renderCourseContent(course.id)}
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>
