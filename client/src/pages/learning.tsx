@@ -240,7 +240,10 @@ export default function Learning() {
   const handleCardClick = (courseId: string) => {
     const course = COURSES.find(c => c.id === courseId);
     if (course) {
+      // Navigate to the page
       navigate(course.path);
+      // Scroll to the top of the page after navigation
+      window.scrollTo(0, 0);
     }
   };
 
@@ -296,21 +299,24 @@ export default function Learning() {
           <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-orange-50 text-orange-800 rounded-md border-l-4 border-orange-500">
             Life Skills
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
             {LIFE_SKILLS.map((course) => (
               <div key={course.id} className="flex flex-col">
                 <button
                   onClick={() => handleCardClick(course.id)}
-                  className="relative flex flex-col items-center justify-center p-4 rounded-xl border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500"
+                  className="relative flex flex-col items-center justify-center p-2 sm:p-4 rounded-xl border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500 min-h-[80px] sm:min-h-[100px]"
+                  aria-label={`Open ${course.title}`}
                 >
                   {course.popular && (
-                    <span className="absolute top-2 right-2 w-3 h-3 bg-blue-500 rounded-full" />
+                    <span className="absolute top-1 sm:top-2 right-1 sm:right-2 w-2 sm:w-3 h-2 sm:h-3 bg-blue-500 rounded-full" 
+                          aria-label="Popular course" />
                   )}
                   {course.new && (
-                    <span className="absolute top-2 left-2 w-3 h-3 bg-orange-500 rounded-full" />
+                    <span className="absolute top-1 sm:top-2 left-1 sm:left-2 w-2 sm:w-3 h-2 sm:h-3 bg-orange-500 rounded-full"
+                          aria-label="New course" />
                   )}
-                  <course.icon className="w-8 h-8 text-orange-500 mb-2" />
-                  <span className="text-sm font-medium text-center">{course.title}</span>
+                  <course.icon className="w-6 h-6 sm:w-8 sm:h-8 text-orange-500 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm font-medium text-center line-clamp-2">{course.title}</span>
                 </button>
               </div>
             ))}
