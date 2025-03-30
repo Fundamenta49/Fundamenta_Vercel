@@ -7,9 +7,15 @@ interface JobSearchParams {
 }
 
 // Adzuna API configuration
-const ADZUNA_APP_ID = process.env.ADZUNA_APP_ID;
-const ADZUNA_API_KEY = process.env.ADZUNA_API_KEY;
+const ADZUNA_APP_ID = "7ba9c479";
+const ADZUNA_API_KEY = "c894381ecbd744724a26d3bcecc849d7";
 const ADZUNA_BASE_URL = "https://api.adzuna.com/v1/api/jobs";
+
+// Debug log for API credentials
+console.log("Adzuna API credentials:", {
+  appId: ADZUNA_APP_ID ? "[set]" : "[not set]",
+  apiKey: ADZUNA_API_KEY ? "[set]" : "[not set]",
+});
 
 interface JobListing {
   id: string;

@@ -14,6 +14,7 @@ import learningRoutes from './routes/learning';
 import youtubeRoutes, { youtubeSearchHandler } from './routes/youtube';
 import nhtsaRoutes from './routes/nhtsa';
 import chatRoutes from './routes/chat';
+import { searchJobs as searchJobsFromApi } from './jobs';
 import { 
   getEmergencyGuidance,
   optimizeResume,
@@ -602,9 +603,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sources: sources || ['indeed', 'linkedin', 'ziprecruiter', 'adzuna']
       };
       
-      // Import the searchJobs function from server/jobs.ts instead of using the one from api-functions
-      const { searchJobs } = await import('../jobs');
-      const jobs = await searchJobs(searchParams);
+      // Use the imported searchJobsFromApi function instead of searchJobs from api-functions
+      const jobs = await searchJobsFromApi(searchParams);
       res.json({ jobs });
     } catch (error: any) {
       console.error("Job search error:", error);
