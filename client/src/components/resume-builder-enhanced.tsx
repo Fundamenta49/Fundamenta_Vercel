@@ -511,9 +511,9 @@ const FileUpload: React.FC<{
 
   return (
     <div>
-      <div className="flex flex-col items-center justify-center p-3 sm:p-6 border-2 border-dashed rounded-lg border-blue-100 hover:border-primary/40 transition-colors bg-white">
-        <div className="mb-3 sm:mb-4 bg-blue-50 p-2 sm:p-3 rounded-full">
-          <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
+      <div className="flex flex-col items-center justify-center p-3 sm:p-6 border-2 border-dashed rounded-lg border-[#3b82f6]/20 hover:border-primary/40 transition-colors bg-white">
+        <div className="mb-3 sm:mb-4 bg-[#3b82f6]/10 p-2 sm:p-3 rounded-full">
+          <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-[#3b82f6]" />
         </div>
         <h3 className="text-base sm:text-lg font-medium mb-1 sm:mb-2 text-center">Upload your resume</h3>
         <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 text-center max-w-xs">
@@ -521,7 +521,7 @@ const FileUpload: React.FC<{
         </p>
         <Button 
           variant="outline" 
-          className="relative overflow-hidden bg-white border-blue-500/30 text-blue-500 hover:bg-blue-500/5 text-xs sm:text-sm py-1 sm:py-2 h-auto"
+          className="relative overflow-hidden bg-white border-[#3b82f6]/30 text-[#3b82f6] hover:bg-[#3b82f6]/5 text-xs sm:text-sm py-1 sm:py-2 h-auto"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -564,8 +564,8 @@ const ResumePreview: React.FC<{
 }> = ({ formData, templateId }) => {
   return (
     <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
-      <div className="bg-blue-50 px-4 py-2 border-b border-blue-100 flex justify-between items-center">
-        <h3 className="font-medium text-sm text-blue-700">Live Preview</h3>
+      <div className="bg-[#3b82f6]/10 px-4 py-2 border-b border-[#3b82f6]/20 flex justify-between items-center">
+        <h3 className="font-medium text-sm text-[#3b82f6]">Live Preview</h3>
         <Badge variant="outline" className="text-xs bg-white">
           {RESUME_TEMPLATES.find(t => t.id === templateId)?.name || "Professional"} Template
         </Badge>
@@ -594,8 +594,8 @@ const ResumeTemplateSelector: React.FC<{
           className={cn(
             "border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md",
             selectedTemplate === template.id 
-              ? "ring-2 ring-offset-1 bg-blue-50 border-blue-200" 
-              : "bg-white hover:border-blue-200"
+              ? "ring-2 ring-offset-1 bg-[#3b82f6]/10 border-[#3b82f6]/30" 
+              : "bg-white hover:border-[#3b82f6]/30"
           )}
           onClick={() => onSelectTemplate(template.id)}
         >
@@ -621,9 +621,9 @@ const JobTargeting: React.FC<{
 }> = ({ form, isOptimizing, onOptimize }) => {
   return (
     <div className="space-y-4">
-      <div className="border rounded-lg p-4 bg-blue-50/50">
+      <div className="border rounded-lg p-4 bg-[#3b82f6]/5">
         <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
-          <Briefcase className="h-4 w-4 text-blue-500" />
+          <Briefcase className="h-4 w-4 text-[#3b82f6]" />
           Target Job Position
         </h3>
         <p className="text-xs text-muted-foreground mb-3">
@@ -754,7 +754,7 @@ const BulletPointEnhancer: React.FC<{
         <Button 
           variant="outline" 
           size="sm"
-          className="ml-auto h-7 text-xs border-blue-200 text-blue-500 bg-white"
+          className="ml-auto h-7 text-xs border-[#3b82f6]/20 text-[#3b82f6] bg-white"
           onClick={(e) => e.stopPropagation()}
         >
           <Wand2 className="mr-1 h-3 w-3" />
@@ -764,7 +764,7 @@ const BulletPointEnhancer: React.FC<{
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Wand2 className="h-5 w-5 text-blue-500" />
+            <Wand2 className="h-5 w-5 text-[#3b82f6]" />
             Enhance {section} Section
           </DialogTitle>
         </DialogHeader>
@@ -788,7 +788,7 @@ const BulletPointEnhancer: React.FC<{
           {isLoading && (
             <div className="flex justify-center py-8">
               <div className="flex flex-col items-center gap-2">
-                <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                <Loader2 className="h-8 w-8 animate-spin text-[#3b82f6]" />
                 <p className="text-sm text-muted-foreground">Generating suggestions...</p>
               </div>
             </div>
@@ -805,7 +805,7 @@ const BulletPointEnhancer: React.FC<{
           {suggestions.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-sm font-medium">Suggested Improvements:</h3>
-              <ScrollArea className="h-[200px] border rounded-md p-3 bg-blue-50/30">
+              <ScrollArea className="h-[200px] border rounded-md p-3 bg-[#3b82f6]/5">
                 <div className="space-y-3">
                   {suggestions.map((suggestion, i) => (
                     <div key={i} className="p-2 bg-white rounded border text-sm">
@@ -1150,10 +1150,10 @@ export default function ResumeBuilderEnhanced() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left Column - Controls */}
         <div className="col-span-1 space-y-4 sm:space-y-6">
-          <Card className="shadow-sm bg-white border-t-4 border-t-blue-500">
+          <Card className="shadow-md bg-white/80 backdrop-blur-sm border-t-4 border-t-[#3b82f6]">
             <CardHeader className="px-4 sm:px-6 py-3 sm:py-4">
               <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-500" />
+                <FileText className="h-5 w-5 text-[#3b82f6]" />
                 Resume Builder
               </CardTitle>
               <CardDescription>
@@ -1195,7 +1195,7 @@ export default function ResumeBuilderEnhanced() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="mx-auto bg-white border-blue-200 text-blue-500 hover:bg-blue-50"
+                      className="mx-auto bg-white border-[#3b82f6]/30 text-[#3b82f6] hover:bg-[#3b82f6]/5"
                       onClick={loadSampleData}
                     >
                       <FileText className="mr-2 h-4 w-4" />
@@ -1227,7 +1227,7 @@ export default function ResumeBuilderEnhanced() {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            className="bg-white border-blue-300 text-blue-500 hover:bg-blue-50 text-xs h-7"
+                            className="bg-white border-[#3b82f6]/30 text-[#3b82f6] hover:bg-[#3b82f6]/5 text-xs h-7"
                             onClick={handleAIAnalysis}
                             disabled={isAnalyzing}
                           >
@@ -1246,7 +1246,7 @@ export default function ResumeBuilderEnhanced() {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            className="bg-white border-blue-300 text-blue-500 hover:bg-blue-50 text-xs h-7"
+                            className="bg-white border-[#3b82f6]/30 text-[#3b82f6] hover:bg-[#3b82f6]/5 text-xs h-7"
                             onClick={(e) => {
                               e.stopPropagation();
                               setActiveTab("manual");
@@ -1269,24 +1269,24 @@ export default function ResumeBuilderEnhanced() {
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3">
                         <div className="space-y-1">
                           <div className="text-xs font-medium text-muted-foreground">Name</div>
-                          <div className="text-sm border border-blue-50 bg-blue-50/50 p-1.5 rounded">{form.watch("name") || "Not detected"}</div>
+                          <div className="text-sm border border-[#3b82f6]/20 bg-[#3b82f6]/5 p-1.5 rounded">{form.watch("name") || "Not detected"}</div>
                         </div>
                         
                         <div className="space-y-1">
                           <div className="text-xs font-medium text-muted-foreground">Email</div>
-                          <div className="text-sm border border-blue-50 bg-blue-50/50 p-1.5 rounded">{form.watch("email") || "Not detected"}</div>
+                          <div className="text-sm border border-[#3b82f6]/20 bg-[#3b82f6]/5 p-1.5 rounded">{form.watch("email") || "Not detected"}</div>
                         </div>
                         
                         <div className="space-y-1">
                           <div className="text-xs font-medium text-muted-foreground">Phone</div>
-                          <div className="text-sm border border-blue-50 bg-blue-50/50 p-1.5 rounded truncate">{form.watch("phone") || "Not detected"}</div>
+                          <div className="text-sm border border-[#3b82f6]/20 bg-[#3b82f6]/5 p-1.5 rounded truncate">{form.watch("phone") || "Not detected"}</div>
                         </div>
                       </div>
                       
                       {analysis && (
-                        <div className="mt-4 border border-blue-200 rounded-md p-3 bg-blue-50/50">
+                        <div className="mt-4 border border-[#3b82f6]/30 rounded-md p-3 bg-[#3b82f6]/5">
                           <h3 className="text-xs font-medium mb-2 flex items-center gap-1.5">
-                            <Lightbulb className="h-3.5 w-3.5 text-blue-500" />
+                            <Lightbulb className="h-3.5 w-3.5 text-[#3b82f6]" />
                             AI Resume Analysis
                           </h3>
                           
@@ -1314,7 +1314,7 @@ export default function ResumeBuilderEnhanced() {
                             </div>
                             
                             <div>
-                              <h4 className="font-medium flex items-center gap-1 text-blue-500 mb-1">
+                              <h4 className="font-medium flex items-center gap-1 text-[#3b82f6] mb-1">
                                 <Lightbulb className="h-3 w-3" /> Suggestions
                               </h4>
                               <ul className="list-disc list-inside space-y-1 pl-1">
@@ -1336,7 +1336,7 @@ export default function ResumeBuilderEnhanced() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="bg-white border-blue-200 text-blue-500 hover:bg-blue-50 text-xs sm:text-sm"
+                        className="bg-white border-[#3b82f6]/30 text-[#3b82f6] hover:bg-[#3b82f6]/5 text-xs sm:text-sm"
                         onClick={() => setShowGuide(true)}
                       >
                         <BookOpen className="mr-1.5 h-3.5 w-3.5" />
@@ -1346,7 +1346,7 @@ export default function ResumeBuilderEnhanced() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="bg-white border-blue-200 text-blue-500 hover:bg-blue-50 text-xs sm:text-sm"
+                        className="bg-white border-[#3b82f6]/30 text-[#3b82f6] hover:bg-[#3b82f6]/5 text-xs sm:text-sm"
                         onClick={() => setShowChecklist(true)}
                       >
                         <ListChecks className="mr-1.5 h-3.5 w-3.5" />
@@ -1356,7 +1356,7 @@ export default function ResumeBuilderEnhanced() {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="bg-white border-blue-200 text-blue-500 hover:bg-blue-50 text-xs sm:text-sm"
+                        className="bg-white border-[#3b82f6]/30 text-[#3b82f6] hover:bg-[#3b82f6]/5 text-xs sm:text-sm"
                         onClick={() => setShowTutorial(true)}
                       >
                         <GraduationCap className="mr-1.5 h-3.5 w-3.5" />
@@ -1364,21 +1364,21 @@ export default function ResumeBuilderEnhanced() {
                       </Button>
                     </div>
                     
-                    <div className="bg-blue-50 border border-blue-100 rounded-md p-3">
-                      <h3 className="text-sm font-medium text-blue-700 mb-1.5 flex items-center gap-1.5">
-                        <Lightbulb className="h-4 w-4 text-blue-500" />
+                    <div className="bg-[#3b82f6]/5 border border-[#3b82f6]/10 rounded-md p-3">
+                      <h3 className="text-sm font-medium text-[#3b82f6]/90 mb-1.5 flex items-center gap-1.5">
+                        <Lightbulb className="h-4 w-4 text-[#3b82f6]" />
                         Why Your Resume Matters
                       </h3>
-                      <p className="text-sm text-blue-700 mb-2">
+                      <p className="text-sm text-[#3b82f6]/90 mb-2">
                         Your resume is often the first impression a potential employer has of you. A well-crafted resume:
                       </p>
-                      <ul className="list-disc pl-5 text-xs space-y-1.5 text-blue-600">
+                      <ul className="list-disc pl-5 text-xs space-y-1.5 text-[#3b82f6]/80">
                         <li>Showcases your relevant skills and experience</li>
                         <li>Demonstrates your value to potential employers</li>
                         <li>Opens doors to interview opportunities</li>
                         <li>Sets you apart from other candidates</li>
                       </ul>
-                      <p className="text-xs text-blue-600 mt-2">
+                      <p className="text-xs text-[#3b82f6]/80 mt-2">
                         Click any of the learning resources above to improve your resume-building skills and create a professional, compelling document.
                       </p>
                     </div>
@@ -1386,7 +1386,7 @@ export default function ResumeBuilderEnhanced() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="border rounded-md p-3 bg-white">
                         <h4 className="font-medium text-sm mb-1.5 flex items-center gap-1.5">
-                          <Award className="h-3.5 w-3.5 text-blue-500" />
+                          <Award className="h-3.5 w-3.5 text-[#3b82f6]" />
                           Quick Tip: Quantify Results
                         </h4>
                         <p className="text-xs text-gray-600">
@@ -1396,7 +1396,7 @@ export default function ResumeBuilderEnhanced() {
                       
                       <div className="border rounded-md p-3 bg-white">
                         <h4 className="font-medium text-sm mb-1.5 flex items-center gap-1.5">
-                          <FileText className="h-3.5 w-3.5 text-blue-500" />
+                          <FileText className="h-3.5 w-3.5 text-[#3b82f6]" />
                           Quick Tip: Tailoring
                         </h4>
                         <p className="text-xs text-gray-600">
@@ -1406,7 +1406,7 @@ export default function ResumeBuilderEnhanced() {
                       
                       <div className="border rounded-md p-3 bg-white">
                         <h4 className="font-medium text-sm mb-1.5 flex items-center gap-1.5">
-                          <Briefcase className="h-3.5 w-3.5 text-blue-500" />
+                          <Briefcase className="h-3.5 w-3.5 text-[#3b82f6]" />
                           Quick Tip: Action Verbs
                         </h4>
                         <p className="text-xs text-gray-600">
@@ -1531,7 +1531,7 @@ export default function ResumeBuilderEnhanced() {
                             <FormItem>
                               <div className="flex items-center justify-between">
                                 <FormLabel className="text-xs flex items-center gap-1.5">
-                                  <section.icon className="h-3 w-3 text-blue-500" />
+                                  <section.icon className="h-3 w-3 text-[#3b82f6]" />
                                   {section.label}
                                 </FormLabel>
                                 <BulletPointEnhancer 
@@ -1573,7 +1573,7 @@ export default function ResumeBuilderEnhanced() {
               </Tabs>
             </CardContent>
             
-            <CardFooter className="border-t border-blue-50 p-3 sm:p-6">
+            <CardFooter className="border-t border-[#3b82f6]/10 p-3 sm:p-6">
               {hasContent && (
                 <PDFDownloadLink
                   document={
@@ -1598,7 +1598,7 @@ export default function ResumeBuilderEnhanced() {
                     <Button 
                       type="button"
                       size="default"
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm py-1.5 sm:py-2 h-auto" 
+                      className="w-full bg-[#3b82f6] hover:bg-[#3b82f6]/90 text-white text-xs sm:text-sm py-1.5 sm:py-2 h-auto" 
                       disabled={loading || !form.formState.isValid || isUploading}
                     >
                       {loading ? (
@@ -1626,7 +1626,7 @@ export default function ResumeBuilderEnhanced() {
             <Card className="shadow-sm bg-white">
               <CardHeader className="p-4">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Settings2 className="h-4 w-4 text-blue-500" />
+                  <Settings2 className="h-4 w-4 text-[#3b82f6]" />
                   Resume Optimization
                 </CardTitle>
                 <CardDescription>
@@ -1651,7 +1651,7 @@ export default function ResumeBuilderEnhanced() {
               <Card className="shadow-sm bg-white">
                 <CardHeader className="px-4 py-3">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <BookTemplate className="h-4 w-4 text-blue-500" />
+                    <BookTemplate className="h-4 w-4 text-[#3b82f6]" />
                     Resume Template
                   </CardTitle>
                   <CardDescription>
