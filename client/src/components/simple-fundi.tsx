@@ -1,84 +1,95 @@
 
-import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 
 interface SimpleFundiProps {
-  speaking?: boolean;
-  size?: "sm" | "md" | "lg";
-  category?: string;
+  speaking?: boolean
+  size?: "sm" | "md" | "lg"
+  category?: string
+  style?: "minimal" | "floating" | "radiant"
+  customColor?: string
+  className?: string
 }
 
 export default function SimpleFundi({ 
   speaking = false, 
-  category = 'general', 
-  size = "md" 
+  category = 'general',
+  size = "md",
+  style = "floating",
+  customColor,
+  className
 }: SimpleFundiProps) {
   
-  // Category colors mapping for the glow effect
   const categoryColors: Record<string, string> = {
-    finance: '#22c55e', 
-    career: '#3b82f6', 
+    finance: '#22c55e',
+    career: '#3b82f6',
     wellness: '#a855f7',
     learning: '#f97316',
     emergency: '#ef4444',
     cooking: '#f59e0b',
     fitness: '#06b6d4',
     general: '#6366f1',
-  };
+  }
+  
+  const sizes = {
+    sm: "w-12 h-12",
+    md: "w-16 h-16",
+    lg: "w-24 h-24"
+  }
 
-  const sizeVariants = {
-    sm: "w-14 h-14",
-    md: "w-20 h-20",
-    lg: "w-28 h-28"
-  };
+  const color = customColor || categoryColors[category] || categoryColors.general
   
-  const color = categoryColors[category] || categoryColors.general;
-  
+  const containerStyles = cn(
+    sizes[size],
+    "relative flex items-center justify-center",
+    style === "floating" && "hover:translate-y-[-2px] transition-transform",
+    className
+  )
+
+  const radiantEffect = style === "radiant" && {
+    boxShadow: `0 0 20px ${color}`,
+    animation: "pulse 2s infinite"
+  }
+
   return (
-    <div className={cn(
-      "relative flex items-center justify-center",
-      sizeVariants[size]
-    )}>
-      {/* Glowing background effect */}
-      <div 
-        className="absolute inset-0 rounded-full opacity-20 animate-pulse"
-        style={{ backgroundColor: color }}
-      />
-      
-      {/* Main robot body */}
+    <motion.div 
+      className={containerStyles}
+      animate={speaking ? { scale: [1, 1.05, 1] } : {}}
+      transition={{ duration: 0.3, repeat: speaking ? Infinity : 0 }}
+      style={{
+        ...radiantEffect
+      }}
+    >
       <div className="relative w-full h-full">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          {/* Base shape */}
-          <circle cx="50" cy="50" r="45" fill="white" />
-          
-          {/* Face plate */}
-          <ellipse cx="50" cy="50" rx="40" ry="35" fill="#f8f9fa" stroke="#e2e8f0" strokeWidth="1" />
-          
-          {/* Eyes */}
-          <g className={speaking ? 'animate-pulse' : ''}>
-            <circle cx="35" cy="45" r="12" fill="#e2e8f0" />
-            <circle cx="35" cy="45" r="8" fill={color} />
-            <circle cx="35" cy="45" r="4" fill="white" />
-            
-            <circle cx="65" cy="45" r="12" fill="#e2e8f0" />
-            <circle cx="65" cy="45" r="8" fill={color} />
-            <circle cx="65" cy="45" r="4" fill="white" />
-          </g>
-          
-          {/* Smile */}
-          <path
-            d="M 40 60 Q 50 70 60 60"
-            fill="none"
-            stroke={color}
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-          
-          {/* Top antenna */}
-          <circle cx="50" cy="15" r="3" fill={color} />
-          <line x1="50" y1="15" x2="50" y2="25" stroke={color} strokeWidth="2" />
-        </svg>
+        <div 
+          className="absolute inset-0 rounded-full opacity-20"
+          style={{ 
+            background: color,
+            filter: "blur(10px)",
+            transform: "scale(1.2)"
+          }} 
+        />
+        <div 
+          className="relative w-full h-full rounded-full bg-white"
+          style={{
+            border: `2px solid ${color}`
+          }}
+        >
+          {/* Robot face elements */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-col items-center">
+              <div className="flex space-x-2">
+                <div className="w-3 h-3 rounded-full bg-blue-400" />
+                <div className="w-3 h-3 rounded-full bg-blue-400" />
+              </div>
+              <div 
+                className="w-4 h-1 mt-2 rounded-full"
+                style={{ background: color }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    </motion.div>
+  )
 }
