@@ -201,26 +201,30 @@ export default function Wellness() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      {/* Book-style card carousel */}
-      <div ref={carouselRef} className="book-carousel">
-        <BookCarousel>
-          {SECTIONS.map((section) => {
-            return (
-              <BookPage key={section.id} id={section.id}>
-                <BookCard
-                  id={section.id}
-                  title={section.title}
-                  description={section.description}
-                  icon={section.icon as any}
-                  isExpanded={false}
-                  onToggle={handleCardClick}
-                  color="text-purple-500" // Wellness section color from the home page
-                  children={null}
-                />
-              </BookPage>
-            );
-          })}
-        </BookCarousel>
+      {/* Grid-style cards layout (similar to Learning section) */}
+      <div className="px-4 sm:px-6">
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-purple-50 text-purple-800 rounded-md border-l-4 border-purple-500">
+            Wellness Tools
+          </h2>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
+            {SECTIONS.map((section) => (
+              <div key={section.id} className="flex flex-col">
+                <button
+                  onClick={() => handleCardClick(section.id)}
+                  className="relative flex flex-col items-center justify-between p-2 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[68px] sm:min-h-[85px] w-full"
+                  aria-label={`Open ${section.title}`}
+                >
+                  <div className="flex items-center justify-center h-9 sm:h-10 w-full">
+                    <section.icon className="w-6 h-6 sm:w-7 sm:h-7 text-purple-500" />
+                  </div>
+                  
+                  <span className="text-xs sm:text-sm font-medium text-center line-clamp-2 w-full mt-1">{section.title}</span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
