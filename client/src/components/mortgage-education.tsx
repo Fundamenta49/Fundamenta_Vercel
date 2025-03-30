@@ -813,7 +813,7 @@ const MortgageEducation: React.FC = () => {
         
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1">
+            <AccordionItem value="item-1" className="border-green-200 dark:border-green-800">
               <AccordionTrigger>How much house can I afford?</AccordionTrigger>
               <AccordionContent>
                 <p className="mb-2">
@@ -831,7 +831,7 @@ const MortgageEducation: React.FC = () => {
               </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="item-2">
+            <AccordionItem value="item-2" className="border-green-200 dark:border-green-800">
               <AccordionTrigger>What's the difference between pre-qualification and pre-approval?</AccordionTrigger>
               <AccordionContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -865,7 +865,7 @@ const MortgageEducation: React.FC = () => {
               </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="item-3">
+            <AccordionItem value="item-3" className="border-green-200 dark:border-green-800">
               <AccordionTrigger>Should I choose a fixed-rate or adjustable-rate mortgage?</AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-3">
@@ -873,7 +873,7 @@ const MortgageEducation: React.FC = () => {
                     The choice depends on your specific situation and risk tolerance:
                   </p>
                   
-                  <div className="bg-muted p-3 rounded">
+                  <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                     <h4 className="font-medium text-green-700 dark:text-green-400">Fixed-Rate Mortgage Might Be Better If:</h4>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
                       <li>You plan to stay in the home for a long time (5+ years)</li>
@@ -884,7 +884,7 @@ const MortgageEducation: React.FC = () => {
                     </ul>
                   </div>
                   
-                  <div className="bg-muted p-3 rounded">
+                  <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                     <h4 className="font-medium text-green-700 dark:text-green-400">Adjustable-Rate Mortgage (ARM) Might Be Better If:</h4>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
                       <li>You plan to move or refinance within 5-7 years</li>
@@ -902,7 +902,7 @@ const MortgageEducation: React.FC = () => {
               </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="item-4">
+            <AccordionItem value="item-4" className="border-green-200 dark:border-green-800">
               <AccordionTrigger>What are points and should I pay them?</AccordionTrigger>
               <AccordionContent>
                 <p className="mb-2 text-sm">
@@ -927,19 +927,19 @@ const MortgageEducation: React.FC = () => {
                   </ul>
                 </div>
                 
-                <div className="mt-3 p-3 bg-muted rounded text-sm">
+                <div className="mt-3 p-3 bg-green-50/60 dark:bg-green-950/20 rounded text-sm border border-green-100 dark:border-green-800">
                   <strong>Calculate your break-even point:</strong> Divide the cost of the points by your monthly savings. For example, if one point costs $2,000 and saves you $30 per month, your break-even point is about 67 months ($2,000 ÷ $30 = 66.7). If you plan to stay in the home longer than that, paying points might make sense.
                 </div>
               </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="item-5">
+            <AccordionItem value="item-5" className="border-green-200 dark:border-green-800">
               <AccordionTrigger>How can I improve my chances of getting approved for a mortgage?</AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-3">
-                  <div className="bg-muted p-3 rounded">
+                  <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                     <h4 className="font-medium flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
                       Improve Your Credit Score
                     </h4>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
@@ -951,9 +951,9 @@ const MortgageEducation: React.FC = () => {
                     </ul>
                   </div>
                   
-                  <div className="bg-muted p-3 rounded">
+                  <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                     <h4 className="font-medium flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
                       Strengthen Your Financial Profile
                     </h4>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
@@ -965,9 +965,9 @@ const MortgageEducation: React.FC = () => {
                     </ul>
                   </div>
                   
-                  <div className="bg-muted p-3 rounded">
+                  <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                     <h4 className="font-medium flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-500" />
                       During the Application Process
                     </h4>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
@@ -996,7 +996,7 @@ const MortgageEducation: React.FC = () => {
               </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="item-6">
+            <AccordionItem value="item-6" className="border-green-200 dark:border-green-800">
               <AccordionTrigger>What documents do I need for a mortgage application?</AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2">
@@ -1005,7 +1005,7 @@ const MortgageEducation: React.FC = () => {
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-muted p-3 rounded">
+                    <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                       <h4 className="font-medium text-green-700 dark:text-green-400">Income Documentation</h4>
                       <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
                         <li>Pay stubs from the last 30 days</li>
@@ -1017,7 +1017,7 @@ const MortgageEducation: React.FC = () => {
                       </ul>
                     </div>
                     
-                    <div className="bg-muted p-3 rounded">
+                    <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                       <h4 className="font-medium text-green-700 dark:text-green-400">Asset Documentation</h4>
                       <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
                         <li>Bank statements for the last 2-3 months</li>
@@ -1028,7 +1028,7 @@ const MortgageEducation: React.FC = () => {
                       </ul>
                     </div>
                     
-                    <div className="bg-muted p-3 rounded">
+                    <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                       <h4 className="font-medium text-green-700 dark:text-green-400">Debt & Liability Documentation</h4>
                       <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
                         <li>List of all current debts and minimum payment amounts</li>
@@ -1038,7 +1038,7 @@ const MortgageEducation: React.FC = () => {
                       </ul>
                     </div>
                     
-                    <div className="bg-muted p-3 rounded">
+                    <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                       <h4 className="font-medium text-green-700 dark:text-green-400">Personal Documentation</h4>
                       <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
                         <li>Government-issued ID (driver's license, passport)</li>
@@ -1049,7 +1049,7 @@ const MortgageEducation: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="bg-muted p-3 rounded">
+                  <div className="bg-green-50/60 dark:bg-green-950/20 p-3 rounded border border-green-100 dark:border-green-800">
                     <h4 className="font-medium text-green-700 dark:text-green-400">Property Information (once you've found a home)</h4>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-sm">
                       <li>Purchase agreement/contract</li>
