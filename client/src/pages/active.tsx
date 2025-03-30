@@ -194,7 +194,7 @@ export default function Active() {
                     onClick={() => {
                       setExpandedSection(section.id);
                     }}
-                    className="relative flex flex-col items-center justify-between p-2 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-pink-500 h-[90px] sm:h-[110px] w-full"
+                    className="relative flex flex-col items-center justify-between p-2 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-pink-500 h-[100px] sm:h-[120px] w-full"
                     aria-label={`Open ${section.title}`}
                   >
                     <div className="flex items-center justify-center h-10 w-full">

@@ -305,7 +305,7 @@ export default function Learning() {
               <div key={course.id} className="flex flex-col">
                 <button
                   onClick={() => handleCardClick(course.id)}
-                  className="relative flex flex-col items-center justify-between p-3 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500 min-h-[80px] sm:min-h-[100px] lg:min-h-[110px] w-full"
+                  className="relative flex flex-col items-center justify-between p-3 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500 min-h-[90px] sm:min-h-[110px] lg:min-h-[120px] w-full"
                   aria-label={`Open ${course.title}`}
                 >
                   <div className="flex items-center justify-center h-10 sm:h-12 w-full">

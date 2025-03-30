@@ -62,7 +62,7 @@ export default function ChatRedirect({ category, children }: ChatInterfaceProps)
   useEffect(() => {
     toast({
       title: "Use Fundi for AI assistance",
-      description: "The floating Fundi assistant in the bottom right can help with all your questions!",
+      description: "The floating Fundi assistant in the top right can help with all your questions!",
       duration: 5000,
     });
   }, [toast]);
@@ -100,7 +100,7 @@ export default function ChatRedirect({ category, children }: ChatInterfaceProps)
           
           <p className="text-muted-foreground">
             Fundi is now your central AI assistant for all questions and guidance. 
-            Just click the robot icon in the bottom right corner of your screen to ask anything!
+            Just click the robot icon in the top right corner of your screen to ask anything!
           </p>
           
           <Button onClick={openFundi} className="mt-6">
