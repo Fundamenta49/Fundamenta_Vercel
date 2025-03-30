@@ -9,10 +9,8 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import ChatInterface, { 
-  ChatInterfaceComponent, 
-  FITNESS_CATEGORY 
-} from "@/components/chat-interface";
+import ChatInterface, { FITNESS_CATEGORY } from "@/components/chat-interface";
+
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
@@ -41,7 +39,7 @@ const SECTIONS: SectionType[] = [
     title: 'Fitness AI Coach',
     description: 'Get personalized workout plans and fitness advice',
     icon: Brain,
-    component: ChatInterface as ChatInterfaceComponent,
+    component: ChatInterface,
     props: { category: FITNESS_CATEGORY },
     alert: (
       <Alert className="mt-4 border-pink-500 bg-pink-50">
