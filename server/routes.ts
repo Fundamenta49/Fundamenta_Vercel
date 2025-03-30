@@ -590,12 +590,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/jobs/search", async (req, res) => {
     try {
-      const { query, location } = z.object({
+      const { query, location, sources } = z.object({
         query: z.string(),
-        location: z.string()
+        location: z.string(),
+        sources: z.array(z.string()).optional()
       }).parse(req.body);
       
-      const jobs = await searchJobs(query, location);
+      const searchParams = {
+        query,
+        location,
+        sources: sources || ['indeed', 'linkedin', 'ziprecruiter', 'adzuna']
+      };
+      
+      // Import the searchJobs function from server/jobs.ts instead of using the one from api-functions
+      const { searchJobs } = await import('../jobs');
+      const jobs = await searchJobs(searchParams);
       res.json({ jobs });
     } catch (error: any) {
       console.error("Job search error:", error);

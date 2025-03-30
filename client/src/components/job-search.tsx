@@ -41,6 +41,7 @@ export default function JobSearch() {
     indeed: true,
     linkedin: true,
     ziprecruiter: true,
+    adzuna: true,
   });
   const [jobListings, setJobListings] = useState<JobListing[]>([]);
   const { toast } = useToast();
@@ -155,6 +156,19 @@ export default function JobSearch() {
                   }
                 />
                 <Label htmlFor="ziprecruiter" className="text-sm sm:text-base">ZipRecruiter</Label>
+              </div>
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <Checkbox
+                  id="adzuna"
+                  checked={selectedSources.adzuna}
+                  onCheckedChange={(checked) =>
+                    setSelectedSources({
+                      ...selectedSources,
+                      adzuna: !!checked,
+                    })
+                  }
+                />
+                <Label htmlFor="adzuna" className="text-sm sm:text-base">Adzuna</Label>
               </div>
             </div>
           </div>
