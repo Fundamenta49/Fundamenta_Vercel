@@ -229,13 +229,12 @@ export default function Learning() {
     }
   ];
   
-  // Combine all courses, with life skills first as requested
+  // Combine all courses, with life skills only as requested
   const COURSES: Course[] = [
     ...LIFE_SKILLS,
     ...ACADEMICS,
-    ...PROFESSIONAL,
-    ...LANGUAGES,
-    ...CREATIVE
+    ...PROFESSIONAL
+    // Removed Languages and Creative as requested
   ];
 
   const handleCardClick = (courseId: string) => {
