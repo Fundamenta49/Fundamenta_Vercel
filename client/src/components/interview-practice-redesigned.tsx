@@ -953,28 +953,28 @@ Result: ${starGuide.result}
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="space-y-8 p-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* Question Bank Card */}
-        <Card className="border border-blue-200 shadow-sm hover:border-blue-400 transition-colors">
-          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
+          <CardHeader className="bg-gradient-to-br from-blue-500 to-blue-600 text-white pb-3">
+            <CardTitle className="flex items-center gap-2 text-xl">
               <BookText className="h-5 w-5" />
               Question Bank
             </CardTitle>
-            <CardDescription className="text-blue-100">
+            <CardDescription className="text-blue-50">
               Browse and practice with common interview questions
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="pt-5">
             <div className="space-y-4">
               <div className="flex flex-col space-y-2">
-                <Label htmlFor="category">Question Category</Label>
+                <Label htmlFor="category" className="text-sm font-medium text-blue-900">Question Category</Label>
                 <Select
                   value={industry}
                   onValueChange={(value) => setIndustry(value as keyof typeof industryQuestions)}
                 >
-                  <SelectTrigger id="category">
+                  <SelectTrigger id="category" className="border-blue-200 focus:border-blue-400">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -990,7 +990,7 @@ Result: ${starGuide.result}
               </div>
               
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm group-hover:shadow-md transition-all"
                 onClick={() => setActivePopOut("question-bank")}
               >
                 <MessageSquare className="h-4 w-4 mr-2" />
@@ -1001,26 +1001,27 @@ Result: ${starGuide.result}
         </Card>
 
         {/* Custom Questions Card */}
-        <Card className="border border-blue-200 shadow-sm hover:border-blue-400 transition-colors">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
+          <CardHeader className="bg-gradient-to-br from-blue-600 to-blue-700 text-white pb-3">
+            <CardTitle className="flex items-center gap-2 text-xl">
               <Target className="h-5 w-5" />
               Job-Specific Questions
             </CardTitle>
-            <CardDescription className="text-blue-100">
+            <CardDescription className="text-blue-50">
               Generate questions tailored to your target role
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="pt-5">
             <div className="space-y-4">
               <div className="flex flex-col space-y-2">
-                <Label htmlFor="jobField">Job Title or Field</Label>
+                <Label htmlFor="jobField" className="text-sm font-medium text-blue-900">Job Title or Field</Label>
                 <div className="flex gap-2">
                   <Input
                     id="jobField"
                     placeholder="e.g. Software Engineer, Teacher..."
                     value={jobField}
                     onChange={(e) => setJobField(e.target.value)}
+                    className="border-blue-200 focus:border-blue-400"
                   />
                   <TooltipProvider>
                     <Tooltip>
@@ -1030,7 +1031,7 @@ Result: ${starGuide.result}
                           size="icon"
                           onClick={handleCareerOneStopQuestions}
                           disabled={generateCareerOneStopQuestionsMutation.isPending || !jobField.trim()}
-                          className="flex-shrink-0"
+                          className="flex-shrink-0 border-blue-200"
                         >
                           {generateCareerOneStopQuestionsMutation.isPending ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -1048,7 +1049,7 @@ Result: ${starGuide.result}
               </div>
               
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm group-hover:shadow-md transition-all"
                 onClick={handleGenerateQuestions}
                 disabled={generateQuestionsMutation.isPending || !jobField.trim()}
               >
@@ -1063,7 +1064,7 @@ Result: ${starGuide.result}
               {customQuestions.length > 0 && (
                 <Button 
                   variant="outline" 
-                  className="w-full mt-2"
+                  className="w-full mt-2 border-blue-200 text-blue-700 hover:bg-blue-50"
                   onClick={() => setActivePopOut("custom-questions")}
                 >
                   <Folder className="h-4 w-4 mr-2" />
@@ -1075,31 +1076,31 @@ Result: ${starGuide.result}
         </Card>
 
         {/* STAR Method Card */}
-        <Card className="border border-blue-200 shadow-sm hover:border-blue-400 transition-colors">
-          <CardHeader className="bg-gradient-to-r from-blue-700 to-blue-800 text-white">
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
+          <CardHeader className="bg-gradient-to-br from-blue-700 to-blue-800 text-white pb-3">
+            <CardTitle className="flex items-center gap-2 text-xl">
               <Star className="h-5 w-5" />
               STAR Method
             </CardTitle>
-            <CardDescription className="text-blue-100">
+            <CardDescription className="text-blue-50">
               Structure your responses for behavioral questions
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-2">
-              <p className="text-sm text-gray-600">
+          <CardContent className="pt-5">
+            <div className="space-y-3">
+              <p className="text-sm text-blue-900">
                 The STAR method helps you create structured, compelling responses:
               </p>
-              <ul className="text-sm space-y-1 text-gray-600">
-                <li className="flex items-center gap-1"><span className="text-yellow-500 font-semibold">S</span>ituation - The context</li>
-                <li className="flex items-center gap-1"><span className="text-blue-500 font-semibold">T</span>ask - Your responsibility</li>
-                <li className="flex items-center gap-1"><span className="text-green-500 font-semibold">A</span>ction - What you did</li>
-                <li className="flex items-center gap-1"><span className="text-purple-500 font-semibold">R</span>esult - The outcome</li>
+              <ul className="text-sm space-y-2 text-gray-700">
+                <li className="flex items-center gap-2"><span className="text-yellow-500 font-semibold bg-yellow-50 w-6 h-6 flex items-center justify-center rounded-full">S</span>ituation - The context</li>
+                <li className="flex items-center gap-2"><span className="text-blue-500 font-semibold bg-blue-50 w-6 h-6 flex items-center justify-center rounded-full">T</span>ask - Your responsibility</li>
+                <li className="flex items-center gap-2"><span className="text-green-500 font-semibold bg-green-50 w-6 h-6 flex items-center justify-center rounded-full">A</span>ction - What you did</li>
+                <li className="flex items-center gap-2"><span className="text-purple-500 font-semibold bg-purple-50 w-6 h-6 flex items-center justify-center rounded-full">R</span>esult - The outcome</li>
               </ul>
             </div>
             
             <Button 
-              className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm group-hover:shadow-md transition-all"
               onClick={() => {
                 setAnswer("");
                 setActivePopOut("star");
@@ -1112,30 +1113,50 @@ Result: ${starGuide.result}
         </Card>
 
         {/* Mock Interview Card */}
-        <Card className="border border-blue-200 shadow-sm hover:border-blue-400 transition-colors">
-          <CardHeader className="bg-gradient-to-r from-blue-800 to-indigo-700 text-white">
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
+          <CardHeader className="bg-gradient-to-br from-blue-800 to-indigo-700 text-white pb-3">
+            <CardTitle className="flex items-center gap-2 text-xl">
               <Users className="h-5 w-5" />
               Mock Interview
             </CardTitle>
-            <CardDescription className="text-blue-100">
+            <CardDescription className="text-blue-50">
               Simulate a full interview experience
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="pt-5">
             <div className="space-y-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-blue-900">
                 Practice with a simulated interview that includes:
               </p>
-              <ul className="text-xs space-y-1 text-gray-600 list-disc pl-4">
-                <li>Timed responses</li>
-                <li>Industry-specific questions</li>
-                <li>AI feedback on answers</li>
-                <li>Realistic interview format</li>
+              <ul className="text-sm space-y-2 text-gray-700 grid grid-cols-2 gap-2">
+                <li className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Timer className="h-3.5 w-3.5 text-blue-700" />
+                  </div>
+                  <span>Timed responses</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Briefcase className="h-3.5 w-3.5 text-blue-700" />
+                  </div>
+                  <span>Industry questions</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                    <ThumbsUp className="h-3.5 w-3.5 text-blue-700" />
+                  </div>
+                  <span>AI feedback</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Users className="h-3.5 w-3.5 text-blue-700" />
+                  </div>
+                  <span>Realistic format</span>
+                </li>
               </ul>
               
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm group-hover:shadow-md transition-all"
                 onClick={startMockInterview}
               >
                 <Play className="h-4 w-4 mr-2" />
@@ -1146,29 +1167,32 @@ Result: ${starGuide.result}
         </Card>
 
         {/* Interview Checklist Card */}
-        <Card className="border border-blue-200 shadow-sm hover:border-blue-400 transition-colors">
-          <CardHeader className="bg-gradient-to-r from-indigo-700 to-indigo-800 text-white">
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
+          <CardHeader className="bg-gradient-to-br from-indigo-700 to-indigo-800 text-white pb-3">
+            <CardTitle className="flex items-center gap-2 text-xl">
               <ListChecks className="h-5 w-5" />
               Interview Checklist
             </CardTitle>
-            <CardDescription className="text-blue-100">
+            <CardDescription className="text-blue-50">
               Prepare fully for your interview
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="pt-5">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600">Track your interview preparation:</p>
-                <span className="text-xs font-medium text-blue-800 bg-blue-100 px-2 py-1 rounded-full">
+                <p className="text-sm font-medium text-blue-900">Track your preparation:</p>
+                <span className="text-xs font-medium text-blue-800 bg-blue-100 px-2.5 py-1 rounded-full">
                   {interviewChecklist.filter(i => i.completed).length}/{interviewChecklist.length}
                 </span>
               </div>
               
-              <Progress value={interviewChecklist.filter(i => i.completed).length / interviewChecklist.length * 100} className="h-2" />
+              <Progress 
+                value={interviewChecklist.filter(i => i.completed).length / interviewChecklist.length * 100} 
+                className="h-2.5 bg-blue-100" 
+              />
               
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm group-hover:shadow-md transition-all"
                 onClick={() => setActivePopOut("checklist")}
               >
                 <ListChecks className="h-4 w-4 mr-2" />
@@ -1179,41 +1203,41 @@ Result: ${starGuide.result}
         </Card>
         
         {/* Interview Tips Card */}
-        <Card className="border border-blue-200 shadow-sm hover:border-blue-400 transition-colors">
-          <CardHeader className="bg-gradient-to-r from-indigo-800 to-purple-700 text-white">
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
+          <CardHeader className="bg-gradient-to-br from-indigo-800 to-purple-700 text-white pb-3">
+            <CardTitle className="flex items-center gap-2 text-xl">
               <Lightbulb className="h-5 w-5" />
               Interview Tips
             </CardTitle>
-            <CardDescription className="text-blue-100">
+            <CardDescription className="text-blue-50">
               Expert advice for interview success
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="pt-5">
             <div className="space-y-4">
               <div className="space-y-2">
                 <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="preparation">
-                    <AccordionTrigger className="text-sm font-medium text-gray-700">
+                  <AccordionItem value="preparation" className="border-blue-200">
+                    <AccordionTrigger className="text-sm font-medium text-blue-900 hover:text-blue-700">
                       Preparation Tips
                     </AccordionTrigger>
-                    <AccordionContent className="text-xs text-gray-600">
+                    <AccordionContent className="text-sm text-gray-700 bg-blue-50 p-2 rounded-md">
                       Research the company thoroughly, practice common questions, prepare examples of your achievements, and review the job description carefully.
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="communication">
-                    <AccordionTrigger className="text-sm font-medium text-gray-700">
+                  <AccordionItem value="communication" className="border-blue-200">
+                    <AccordionTrigger className="text-sm font-medium text-blue-900 hover:text-blue-700">
                       Communication Skills
                     </AccordionTrigger>
-                    <AccordionContent className="text-xs text-gray-600">
+                    <AccordionContent className="text-sm text-gray-700 bg-blue-50 p-2 rounded-md">
                       Speak clearly, use the STAR method for behavioral questions, avoid filler words, and practice active listening.
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="followup">
-                    <AccordionTrigger className="text-sm font-medium text-gray-700">
+                  <AccordionItem value="followup" className="border-blue-200">
+                    <AccordionTrigger className="text-sm font-medium text-blue-900 hover:text-blue-700">
                       Follow-up Strategy
                     </AccordionTrigger>
-                    <AccordionContent className="text-xs text-gray-600">
+                    <AccordionContent className="text-sm text-gray-700 bg-blue-50 p-2 rounded-md">
                       Send a thank-you email within 24 hours, reference specific discussion points, express continued interest, and follow their timeline instructions.
                     </AccordionContent>
                   </AccordionItem>
@@ -1221,7 +1245,7 @@ Result: ${starGuide.result}
               </div>
               
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm group-hover:shadow-md transition-all"
                 onClick={() => setActivePopOut("tips")}
               >
                 <FileText className="h-4 w-4 mr-2" />
