@@ -177,45 +177,69 @@ export default function Active() {
         Active You
       </h1>
 
-      {/* Book-style card carousel */}
-      <div ref={carouselRef} className="book-carousel">
-        <BookCarousel>
-          {SECTIONS.map((section) => {
-            // Update props for Profile Manager
-            if (section.id === 'activeyou') {
-              section.props = { onUpdate: handleProfileComplete };
-            }
-            
-            const isExpanded = expandedSection === section.id;
-            
+      {/* Grid-style cards layout */}
+      <div className="px-4 sm:px-6">
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-pink-50 text-pink-800 rounded-md border-l-4 border-pink-500">
+            Fitness Tools
+          </h2>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
+            {SECTIONS.map((section) => {
+              // Update props for Profile Manager
+              if (section.id === 'activeyou') {
+                section.props = { onUpdate: handleProfileComplete };
+              }
+              
+              return (
+                <div key={section.id} className="flex flex-col">
+                  <button
+                    onClick={() => {
+                      setExpandedSection(section.id);
+                    }}
+                    className="relative flex flex-col items-center justify-between p-2 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-pink-500 min-h-[68px] sm:min-h-[85px] w-full"
+                    aria-label={`Open ${section.title}`}
+                  >
+                    <div className="flex items-center justify-center h-9 sm:h-10 w-full">
+                      <section.icon className="w-6 h-6 sm:w-7 sm:h-7 text-pink-500" />
+                    </div>
+                    
+                    <span className="text-xs sm:text-sm font-medium text-center line-clamp-2 w-full mt-1">{section.title}</span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Display the selected section/component when expandedSection is set */}
+        {expandedSection && SECTIONS.map(section => {
+          if (section.id === expandedSection) {
             return (
-              <BookPage key={section.id} id={section.id}>
-                <BookCard
-                  id={section.id}
-                  title={section.title}
-                  description={section.description}
-                  icon={section.icon}
-                  isExpanded={isExpanded}
-                  onToggle={handleCardClick}
-                  color="text-pink-500" // Active section color from the home page
-                >
-                  {section.alert && (
-                    <div className="mb-4">{section.alert}</div>
-                  )}
-                  {(() => {
-                    if (section.id === 'coach') {
-                      // Use the component's required "category" prop
-                      return <ChatInterface category={FITNESS_CATEGORY} />;
-                    } else {
-                      // For regular components
-                      return <section.component {...section.props} />;
-                    }
-                  })()}
-                </BookCard>
-              </BookPage>
+              <div key={section.id} className="mt-4 p-4 border rounded-lg bg-white shadow">
+                <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+                  <section.icon className="h-5 w-5 text-pink-500" />
+                  {section.title}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">{section.description}</p>
+                
+                {section.alert && (
+                  <div className="mb-4">{section.alert}</div>
+                )}
+                
+                {(() => {
+                  if (section.id === 'coach') {
+                    // Use the component's required "category" prop
+                    return <ChatInterface category={FITNESS_CATEGORY} />;
+                  } else {
+                    // For regular components
+                    return <section.component {...section.props} />;
+                  }
+                })()}
+              </div>
             );
-          })}
-        </BookCarousel>
+          }
+          return null;
+        })}
       </div>
     </div>
   );
