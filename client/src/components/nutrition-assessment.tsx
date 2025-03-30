@@ -37,8 +37,9 @@ import { cn } from "@/lib/utils";
 interface NutritionAssessmentInput {
   age: number;
   gender: string;
-  height: number; // in cm
-  weight: number; // in kg
+  heightFeet: number; // feet
+  heightInches: number; // inches
+  weight: number; // in lbs
   activityLevel: string;
   dietaryPreferences: string[];
   healthGoals: string[];
@@ -107,8 +108,9 @@ interface NutritionAssessmentResult {
 const initialAssessmentState: NutritionAssessmentInput = {
   age: 25,
   gender: "female",
-  height: 170, // cm
-  weight: 70, // kg
+  heightFeet: 5, // feet
+  heightInches: 6, // inches
+  weight: 154, // lbs
   activityLevel: "lightly active",
   dietaryPreferences: [],
   healthGoals: [],
@@ -284,7 +286,7 @@ export default function NutritionAssessment() {
         return (
           assessment.age > 0 &&
           assessment.gender !== "" &&
-          assessment.height > 0 &&
+          assessment.heightFeet > 0 &&
           assessment.weight > 0 &&
           assessment.activityLevel !== ""
         );
@@ -359,21 +361,36 @@ export default function NutritionAssessment() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="height">Height (cm)</Label>
-                  <Input
-                    id="height"
-                    type="number"
-                    value={assessment.height}
-                    onChange={(e) => updateAssessment('height', parseInt(e.target.value) || 0)}
-                    min={1}
-                    max={300}
-                  />
+              <div className="space-y-4">
+                <Label>Height</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="heightFeet">Feet</Label>
+                    <Input
+                      id="heightFeet"
+                      type="number"
+                      value={assessment.heightFeet}
+                      onChange={(e) => updateAssessment('heightFeet', parseInt(e.target.value) || 0)}
+                      min={1}
+                      max={8}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="heightInches">Inches</Label>
+                    <Input
+                      id="heightInches"
+                      type="number"
+                      value={assessment.heightInches}
+                      onChange={(e) => updateAssessment('heightInches', parseInt(e.target.value) || 0)}
+                      min={0}
+                      max={11}
+                    />
+                  </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="weight">Weight (kg)</Label>
+                  <Label htmlFor="weight">Weight (lbs)</Label>
                   <Input
                     id="weight"
                     type="number"
@@ -602,8 +619,8 @@ export default function NutritionAssessment() {
                 <div className="space-y-2 text-sm">
                   <p><span className="font-medium">Age:</span> {assessment.age}</p>
                   <p><span className="font-medium">Gender:</span> {assessment.gender}</p>
-                  <p><span className="font-medium">Height:</span> {assessment.height} cm</p>
-                  <p><span className="font-medium">Weight:</span> {assessment.weight} kg</p>
+                  <p><span className="font-medium">Height:</span> {assessment.heightFeet}' {assessment.heightInches}"</p>
+                  <p><span className="font-medium">Weight:</span> {assessment.weight} lbs</p>
                   <p><span className="font-medium">Activity Level:</span> {assessment.activityLevel}</p>
                   <p><span className="font-medium">Dietary Preferences:</span> {assessment.dietaryPreferences.join(', ') || 'None specified'}</p>
                   <p><span className="font-medium">Health Goals:</span> {assessment.healthGoals.join(', ') || 'None specified'}</p>
@@ -681,7 +698,7 @@ export default function NutritionAssessment() {
                 <div className="bg-purple-50 p-3 rounded-lg text-center">
                   <p className="text-sm text-purple-700 font-medium">Weight</p>
                   <p className="text-xl font-bold">{assessment.weight}</p>
-                  <p className="text-xs text-purple-600">kg</p>
+                  <p className="text-xs text-purple-600">lbs</p>
                 </div>
               </div>
               

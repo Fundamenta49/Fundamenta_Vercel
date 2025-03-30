@@ -82,8 +82,9 @@ router.get('/categories', async (req, res) => {
 interface NutritionAssessmentInput {
   age: number;
   gender: string;
-  height: number; // in cm
-  weight: number; // in kg
+  heightFeet: number; // feet
+  heightInches: number; // inches
+  weight: number; // in lbs
   activityLevel: string;
   dietaryPreferences: string[];
   healthGoals: string[];
@@ -101,16 +102,21 @@ router.post('/assessment', async (req, res) => {
   try {
     const assessmentData: NutritionAssessmentInput = req.body;
     
+    // Convert from imperial to metric for calculations
+    const heightInInches = (assessmentData.heightFeet * 12) + assessmentData.heightInches;
+    const heightInCm = heightInInches * 2.54; // inches to cm
+    const weightInKg = assessmentData.weight * 0.453592; // lbs to kg
+    
     // Calculate BMI
-    const heightInMeters = assessmentData.height / 100;
-    const bmi = assessmentData.weight / (heightInMeters * heightInMeters);
+    const heightInMeters = heightInCm / 100;
+    const bmi = weightInKg / (heightInMeters * heightInMeters);
     
     // Calculate estimated daily caloric needs using Mifflin-St Jeor Equation
     let bmr = 0;
     if (assessmentData.gender.toLowerCase() === 'male') {
-      bmr = 10 * assessmentData.weight + 6.25 * assessmentData.height - 5 * assessmentData.age + 5;
+      bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * assessmentData.age + 5;
     } else {
-      bmr = 10 * assessmentData.weight + 6.25 * assessmentData.height - 5 * assessmentData.age - 161;
+      bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * assessmentData.age - 161;
     }
     
     // Activity factor
@@ -137,8 +143,8 @@ router.post('/assessment', async (req, res) => {
 
 Age: ${assessmentData.age}
 Gender: ${assessmentData.gender}
-Height: ${assessmentData.height} cm
-Weight: ${assessmentData.weight} kg
+Height: ${assessmentData.heightFeet}' ${assessmentData.heightInches}" (${heightInCm.toFixed(1)} cm)
+Weight: ${assessmentData.weight} lbs (${weightInKg.toFixed(1)} kg)
 BMI: ${bmi.toFixed(1)}
 Estimated daily caloric needs: ${tdee} calories
 Activity level: ${assessmentData.activityLevel}
