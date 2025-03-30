@@ -34,25 +34,27 @@ const SimpleFundi: React.FC = () => {
         <Button
           onClick={toggleExpansion}
           className={cn(
-            "rounded-full p-0 w-16 h-16 bg-white shadow-lg hover:shadow-xl transition-all",
+            "rounded-full p-0 w-16 h-16 bg-gradient-to-b from-gray-50 to-white shadow-lg hover:shadow-xl transition-all",
             isExpanded ? "opacity-100" : "opacity-90 hover:opacity-100"
           )}
         >
-          <div className="relative w-full h-full rounded-full bg-white overflow-hidden">
+          <div className="relative w-full h-full rounded-full bg-gradient-to-b from-gray-50 to-white overflow-hidden border-2 border-gray-100">
             {/* Robot Face */}
             <div className="absolute inset-0 flex items-center justify-center">
               {/* Eyes Container */}
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 {/* Left Eye */}
-                <div className="w-4 h-4 rounded-full bg-blue-400 animate-pulse" 
-                     style={{boxShadow: '0 0 10px #60A5FA'}}/>
+                <div className="w-5 h-5 rounded-full bg-blue-400 animate-pulse" 
+                     style={{boxShadow: '0 0 15px #60A5FA, inset 0 0 10px rgba(255,255,255,0.8)'}}/>
                 {/* Right Eye */}
-                <div className="w-4 h-4 rounded-full bg-blue-400 animate-pulse"
-                     style={{boxShadow: '0 0 10px #60A5FA'}}/>
+                <div className="w-5 h-5 rounded-full bg-blue-400 animate-pulse"
+                     style={{boxShadow: '0 0 15px #60A5FA, inset 0 0 10px rgba(255,255,255,0.8)'}}/>
               </div>
             </div>
             {/* Smile */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-6 h-2 rounded-t-full bg-slate-300"/>
+            <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 w-7 h-2.5">
+              <div className="w-full h-full rounded-t-full bg-blue-200"/>
+            </div>
           </div>
         </Button>
 
