@@ -140,6 +140,8 @@ export default function JobSearch() {
   // Salary data fetch mutation
   const salaryMutation = useMutation({
     mutationFn: async (jobTitle: string) => {
+      console.log("Fetching salary insights for:", jobTitle);
+      
       const res = await apiRequest("POST", "/api/salary/insights", {
         jobTitle,
         location: location || "United States"
@@ -153,8 +155,13 @@ export default function JobSearch() {
       return res.json();
     },
     onSuccess: (data) => {
-      setSalaryData(data);
       console.log("Salary insights fetched successfully:", data);
+      setSalaryData(data);
+      
+      toast({
+        title: "Salary Insights Available",
+        description: `Showing salary data for ${searchQuery}`,
+      });
     },
     onError: (error: Error) => {
       console.error("Failed to fetch salary insights:", error);
@@ -169,13 +176,7 @@ export default function JobSearch() {
     },
   });
   
-  // Fetch initial salary data when component mounts
-  useEffect(() => {
-    // If user has entered a search query on component mount, fetch salary data
-    if (searchQuery.trim() && salaryData === null) {
-      salaryMutation.mutate(searchQuery);
-    }
-  }, []);
+  // Don't fetch salary data on mount - wait for user to search
 
   const handleSearch = () => {
     if (!searchQuery.trim()) {
