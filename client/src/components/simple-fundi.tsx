@@ -37,54 +37,70 @@ export default function SimpleFundi({
     lg: "w-24 h-24"
   }
 
-  const color = customColor || categoryColors[category] || categoryColors.general
-  
+  const color = customColor || categoryColors[category] || categoryColors.general;
+
   const containerStyles = cn(
     sizes[size],
     "relative flex items-center justify-center",
     style === "floating" && "hover:translate-y-[-2px] transition-transform",
     className
-  )
-
-  const radiantEffect = style === "radiant" && {
-    boxShadow: `0 0 20px ${color}`,
-    animation: "pulse 2s infinite"
-  }
+  );
 
   return (
     <motion.div 
       className={containerStyles}
       animate={speaking ? { scale: [1, 1.05, 1] } : {}}
       transition={{ duration: 0.3, repeat: speaking ? Infinity : 0 }}
-      style={{
-        ...radiantEffect
-      }}
+      whileHover={{ scale: 1.05 }}
     >
       <div className="relative w-full h-full">
+        {/* Background glow */}
         <div 
           className="absolute inset-0 rounded-full opacity-20"
           style={{ 
-            background: color,
-            filter: "blur(10px)",
+            background: `radial-gradient(circle at center, ${color}, transparent)`,
+            filter: style === "radiant" ? "blur(8px)" : "blur(4px)",
             transform: "scale(1.2)"
           }} 
         />
+        
+        {/* Main circle */}
         <div 
-          className="relative w-full h-full rounded-full bg-white"
+          className="relative w-full h-full rounded-full bg-white shadow-lg flex items-center justify-center"
           style={{
-            border: `2px solid ${color}`
+            border: `2px solid ${color}`,
+            background: "linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%)"
           }}
         >
-          {/* Robot face elements */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex flex-col items-center">
-              <div className="flex space-x-2">
-                <div className="w-3 h-3 rounded-full bg-blue-400" />
-                <div className="w-3 h-3 rounded-full bg-blue-400" />
-              </div>
-              <div 
-                className="w-4 h-1 mt-2 rounded-full"
+          {/* Face container */}
+          <div className="w-3/4 h-3/4 relative">
+            {/* Eyes */}
+            <div className="absolute top-1/3 w-full flex justify-between px-1">
+              <motion.div 
+                className="w-2.5 h-2.5 rounded-full"
                 style={{ background: color }}
+                animate={speaking ? { scale: [1, 1.2, 1] } : {}}
+                transition={{ duration: 0.5, repeat: speaking ? Infinity : 0 }}
+              />
+              <motion.div 
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ background: color }}
+                animate={speaking ? { scale: [1, 1.2, 1] } : {}}
+                transition={{ duration: 0.5, repeat: speaking ? Infinity : 0, delay: 0.1 }}
+              />
+            </div>
+            
+            {/* Smile */}
+            <div 
+              className="absolute bottom-1/3 w-full flex justify-center"
+              style={{ transform: "translateY(2px)" }}
+            >
+              <div 
+                className="w-4 h-0.5 rounded-full"
+                style={{ 
+                  background: color,
+                  transform: "rotate(-5deg)"
+                }}
               />
             </div>
           </div>
