@@ -150,10 +150,9 @@ export default function JobSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
   const [industry, setIndustry] = useState("");
-  const [selectedSources, setSelectedSources] = useState({
+  // Default selected sources (hidden from UI)
+  const [selectedSources] = useState({
     indeed: true,
-    linkedin: false,
-    ziprecruiter: false,
     adzuna: true,
   });
   const [jobListings, setJobListings] = useState<JobListing[]>([]);
@@ -309,37 +308,7 @@ export default function JobSearch() {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm sm:text-base">Job Sources</Label>
-            <div className="flex flex-wrap gap-2 sm:gap-4">
-              <div className="flex items-center space-x-1 sm:space-x-2">
-                <Checkbox
-                  id="adzuna"
-                  checked={selectedSources.adzuna}
-                  onCheckedChange={(checked) =>
-                    setSelectedSources({
-                      ...selectedSources,
-                      adzuna: !!checked,
-                    })
-                  }
-                />
-                <Label htmlFor="adzuna" className="text-sm sm:text-base">Adzuna API (Real-time Data)</Label>
-              </div>
-              <div className="flex items-center space-x-1 sm:space-x-2">
-                <Checkbox
-                  id="indeed"
-                  checked={selectedSources.indeed}
-                  onCheckedChange={(checked) =>
-                    setSelectedSources({ ...selectedSources, indeed: !!checked })
-                  }
-                />
-                <Label htmlFor="indeed" className="text-sm sm:text-base">Sample Data</Label>
-              </div>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Note: Only Adzuna provides real-time job listings. Sample data is used when Adzuna is unavailable.
-            </p>
-          </div>
+          {/* Job sources selection removed as requested */}
 
           <Button
             onClick={handleSearch}
