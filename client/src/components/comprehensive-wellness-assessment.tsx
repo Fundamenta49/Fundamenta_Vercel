@@ -936,16 +936,22 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 </div>
                 
                 {physicalAssessment.currentDiet.restrictions.includes("Other") && (
-                  <div className="pt-2">
-                    <Label htmlFor="otherRestriction">Please specify your other dietary restriction:</Label>
+                  <div className="pt-3 pb-1 px-4 rounded-md bg-purple-50 border border-purple-200 mt-2">
+                    <Label htmlFor="otherRestriction" className="text-purple-700 font-medium">
+                      Please specify your other dietary restriction:
+                    </Label>
                     <Input
                       id="otherRestriction"
                       type="text"
                       placeholder="Enter your specific restriction"
-                      className="mt-1"
+                      className="mt-1 border-purple-300 focus:border-purple-500 focus:ring-purple-500"
                       value={physicalAssessment.currentDiet.otherRestriction || ""}
                       onChange={(e) => updatePhysicalAssessment('currentDiet.otherRestriction', e.target.value)}
                     />
+                    <p className="text-xs text-purple-600 mt-1">
+                      <InfoIcon className="inline-block w-3 h-3 mr-1" />
+                      This information will help us provide better personalized recommendations
+                    </p>
                   </div>
                 )}
               </div>
