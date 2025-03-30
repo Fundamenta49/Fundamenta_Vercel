@@ -112,3 +112,42 @@ export const getYouTubeEmbedUrl = (videoId: string): string => {
 export const getYouTubeWatchUrl = (videoId: string): string => {
   return `https://www.youtube.com/watch?v=${videoId}`;
 };
+
+/**
+ * Search for credit education videos on YouTube
+ * @param keyword Specific credit topic to search for (e.g. "credit scores", "credit cards", etc.)
+ * @param maxResults Maximum number of videos to return
+ * @returns Promise with YouTube video search results formatted for the credit-building-skills component
+ */
+export const fetchYouTubeVideos = async (
+  keyword: string, 
+  maxResults: number = 4
+): Promise<{
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+}[]> => {
+  try {
+    // Add "education" and "explained" to make search results more educational
+    const searchQuery = `${keyword} credit education explained`;
+    
+    const response = await apiRequest(
+      'GET',
+      `/api/youtube/search?q=${encodeURIComponent(searchQuery)}&category=finance&limit=${maxResults}`
+    );
+    
+    const data = await response.json();
+    
+    // Map to simplified format for credit skills component
+    return (data.videos || []).map((video: YouTubeVideo) => ({
+      id: video.id,
+      title: video.title,
+      description: video.description,
+      thumbnail: video.thumbnailUrl
+    }));
+  } catch (error) {
+    console.error('Error fetching credit education videos:', error);
+    return [];
+  }
+};
