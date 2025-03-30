@@ -42,6 +42,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { sampleResumeStructured, sampleAnalysis, sampleJobPosition } from "@/lib/sample-resume";
+import { ResumeGuide } from "./resume-guide";
+import { ResumeChecklist } from "./resume-checklist";
+import { ResumeTutorial } from "./resume-tutorial";
+import { BookOpen, ListChecks } from "lucide-react";
 
 // Form validation schema
 const resumeSchema = z.object({
@@ -846,6 +850,9 @@ export default function ResumeBuilderEnhanced() {
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState("professional");
   const [isOptimizing, setIsOptimizing] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<ResumeFormData>({
@@ -1156,9 +1163,13 @@ export default function ResumeBuilderEnhanced() {
             
             <CardContent className="px-3 py-2 sm:px-6 sm:py-0">
               <Tabs defaultValue="upload" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-2 mb-4 sm:mb-6 text-xs sm:text-sm">
+                <TabsList className="grid grid-cols-3 mb-4 sm:mb-6 text-xs sm:text-sm">
                   <TabsTrigger value="upload" className="px-2 py-1 sm:px-4 sm:py-2">Upload Resume</TabsTrigger>
                   <TabsTrigger value="manual" className="px-2 py-1 sm:px-4 sm:py-2">Manual Entry</TabsTrigger>
+                  <TabsTrigger value="learn" className="px-2 py-1 sm:px-4 sm:py-2">
+                    <BookOpen className="h-3.5 w-3.5 mr-1" />
+                    Learn
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="upload" className="mt-0">
@@ -1316,6 +1327,141 @@ export default function ResumeBuilderEnhanced() {
                         </div>
                       )}
                     </div>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="learn" className="mt-0">
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="bg-white border-blue-200 text-blue-500 hover:bg-blue-50 text-xs sm:text-sm"
+                        onClick={() => setShowGuide(true)}
+                      >
+                        <BookOpen className="mr-1.5 h-3.5 w-3.5" />
+                        Resume Guide
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="bg-white border-blue-200 text-blue-500 hover:bg-blue-50 text-xs sm:text-sm"
+                        onClick={() => setShowChecklist(true)}
+                      >
+                        <ListChecks className="mr-1.5 h-3.5 w-3.5" />
+                        Resume Checklist
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="bg-white border-blue-200 text-blue-500 hover:bg-blue-50 text-xs sm:text-sm"
+                        onClick={() => setShowTutorial(true)}
+                      >
+                        <GraduationCap className="mr-1.5 h-3.5 w-3.5" />
+                        Step-by-Step Tutorial
+                      </Button>
+                    </div>
+                    
+                    <div className="bg-blue-50 border border-blue-100 rounded-md p-3">
+                      <h3 className="text-sm font-medium text-blue-700 mb-1.5 flex items-center gap-1.5">
+                        <Lightbulb className="h-4 w-4 text-blue-500" />
+                        Why Your Resume Matters
+                      </h3>
+                      <p className="text-sm text-blue-700 mb-2">
+                        Your resume is often the first impression a potential employer has of you. A well-crafted resume:
+                      </p>
+                      <ul className="list-disc pl-5 text-xs space-y-1.5 text-blue-600">
+                        <li>Showcases your relevant skills and experience</li>
+                        <li>Demonstrates your value to potential employers</li>
+                        <li>Opens doors to interview opportunities</li>
+                        <li>Sets you apart from other candidates</li>
+                      </ul>
+                      <p className="text-xs text-blue-600 mt-2">
+                        Click any of the learning resources above to improve your resume-building skills and create a professional, compelling document.
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="border rounded-md p-3 bg-white">
+                        <h4 className="font-medium text-sm mb-1.5 flex items-center gap-1.5">
+                          <Award className="h-3.5 w-3.5 text-blue-500" />
+                          Quick Tip: Quantify Results
+                        </h4>
+                        <p className="text-xs text-gray-600">
+                          Instead of saying "Improved website performance", try "Reduced page load time by 40%, increasing user engagement by 25%".
+                        </p>
+                      </div>
+                      
+                      <div className="border rounded-md p-3 bg-white">
+                        <h4 className="font-medium text-sm mb-1.5 flex items-center gap-1.5">
+                          <FileText className="h-3.5 w-3.5 text-blue-500" />
+                          Quick Tip: Tailoring
+                        </h4>
+                        <p className="text-xs text-gray-600">
+                          Customize your resume for each job application by highlighting the skills and experiences most relevant to that specific position.
+                        </p>
+                      </div>
+                      
+                      <div className="border rounded-md p-3 bg-white">
+                        <h4 className="font-medium text-sm mb-1.5 flex items-center gap-1.5">
+                          <Briefcase className="h-3.5 w-3.5 text-blue-500" />
+                          Quick Tip: Action Verbs
+                        </h4>
+                        <p className="text-xs text-gray-600">
+                          Start bullet points with strong action verbs like "Led", "Developed", "Created", "Managed", or "Implemented" to create impact.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Resume Guide Dialog */}
+                  {showGuide && (
+                    <Dialog open={showGuide} onOpenChange={setShowGuide}>
+                      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+                        <ScrollArea className="max-h-[90vh] overflow-y-auto">
+                          <div className="p-6">
+                            <ResumeGuide className="shadow-none border-0 border-t-0" />
+                            <div className="flex justify-end mt-4">
+                              <Button onClick={() => setShowGuide(false)}>Close Guide</Button>
+                            </div>
+                          </div>
+                        </ScrollArea>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                  
+                  {/* Resume Checklist Dialog */}
+                  {showChecklist && (
+                    <Dialog open={showChecklist} onOpenChange={setShowChecklist}>
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+                        <ScrollArea className="max-h-[90vh] overflow-y-auto">
+                          <div className="p-6">
+                            <ResumeChecklist 
+                              className="shadow-none border-0 border-t-0" 
+                              onClose={() => setShowChecklist(false)}
+                            />
+                          </div>
+                        </ScrollArea>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                  
+                  {/* Resume Tutorial Dialog */}
+                  {showTutorial && (
+                    <Dialog open={showTutorial} onOpenChange={setShowTutorial}>
+                      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+                        <ScrollArea className="max-h-[90vh] overflow-y-auto">
+                          <div className="p-6">
+                            <ResumeTutorial 
+                              className="shadow-none border-0 border-t-0" 
+                              onFinish={() => setShowTutorial(false)}
+                            />
+                          </div>
+                        </ScrollArea>
+                      </DialogContent>
+                    </Dialog>
                   )}
                 </TabsContent>
                 
