@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -13,7 +14,6 @@ export default function SimpleButtonFundi({
   size = "md" 
 }: SimpleButtonFundiProps) {
   
-  // Category colors mapping for the glow effect
   const categoryColors: Record<string, string> = {
     finance: '#22c55e', 
     career: '#3b82f6', 
@@ -25,59 +25,59 @@ export default function SimpleButtonFundi({
     general: '#6366f1',
   };
   
-  // Get the color based on category
   const color = categoryColors[category] || categoryColors.general;
   
-  // Define sizes for different components
   const sizes = {
-    sm: { iconSize: 16, padding: 2 },
-    md: { iconSize: 20, padding: 3 },
-    lg: { iconSize: 24, padding: 4 }
+    sm: { container: "w-12 h-12", iconSize: "w-8 h-8" },
+    md: { container: "w-16 h-16", iconSize: "w-12 h-12" },
+    lg: { container: "w-24 h-24", iconSize: "w-20 h-20" }
   };
-  
-  // Get size configuration
-  const sizeConfig = sizes[size];
-  
-  // Define animation class
-  const animationClass = speaking ? 'animate-pulse' : '';
 
-  // We're simply creating a rounded button with a light icon centered
   return (
     <div className={cn(
-      "relative w-full h-full rounded-full flex items-center justify-center",
+      "relative flex items-center justify-center",
+      sizes[size].container
     )}>
-      <div 
-        className={`w-full h-full absolute inset-0 rounded-full shadow-lg ${animationClass}`}
-        style={{ 
-          background: color, 
-          boxShadow: `0 0 8px ${color}, 0 0 16px ${color}`,
-          filter: speaking ? 'brightness(1.2)' : 'brightness(1)'
-        }}
-      />
+      <div className={cn(
+        "absolute inset-0 rounded-full",
+        speaking ? "animate-pulse" : "",
+        "transition-colors duration-300"
+      )} 
+      style={{ 
+        background: `radial-gradient(circle, ${color}33 0%, transparent 70%)` 
+      }} />
       
-      {/* Robot icon - simple white icon to indicate this is the AI assistant */}
-      <div className="relative z-10 text-white">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width={sizeConfig.iconSize} 
-          height={sizeConfig.iconSize} 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
-          className="lucide lucide-bot"
-          style={{ padding: sizeConfig.padding }}
-        >
-          <path d="M12 8V4H8" />
-          <rect width="16" height="12" x="4" y="8" rx="2" />
-          <path d="M2 14h2" />
-          <path d="M20 14h2" />
-          <path d="M15 13v2" />
-          <path d="M9 13v2" />
-        </svg>
-      </div>
+      <svg 
+        viewBox="0 0 100 100" 
+        className={cn(sizes[size].iconSize)}
+        style={{ color: color }}
+      >
+        {/* Robot Head - Style 3 */}
+        <path
+          d="M20,30 L80,30 L80,80 L20,80 Z"
+          fill="#ffffff"
+          stroke={color}
+          strokeWidth="2"
+        />
+        {/* Eyes */}
+        <circle cx="35" cy="50" r="8" fill={color} />
+        <circle cx="65" cy="50" r="8" fill={color} />
+        {/* Antenna */}
+        <path
+          d="M50,10 L50,30"
+          stroke={color}
+          strokeWidth="2"
+          fill="none"
+        />
+        <circle cx="50" cy="10" r="3" fill={color} />
+        {/* Mouth */}
+        <path
+          d="M35,65 Q50,75 65,65"
+          stroke={color}
+          strokeWidth="2"
+          fill="none"
+        />
+      </svg>
     </div>
   );
 }
