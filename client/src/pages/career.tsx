@@ -15,7 +15,7 @@ import CareerAssessmentPopOut from "@/components/career-assessment-pop-out";
 import ResumeBuilderPopOut from "@/components/resume-builder-pop-out";
 import JobSearchPopOut from "@/components/job-search-pop-out";
 // SalaryInsights is now part of JobSearchPopOut
-import InterviewPracticePopOut from "@/components/interview-practice-pop-out";
+import InterviewPracticeRedesigned from "@/components/interview-practice-redesigned";
 import EmotionalResiliencePopOut from "@/components/emotional-resilience-pop-out";
 import EmploymentRightsPopOut from "@/components/employment-rights-pop-out";
 import React, { useState, useRef, useEffect } from "react";
@@ -71,7 +71,7 @@ const SECTIONS: SectionType[] = [
     title: 'Interview Practice',
     description: 'Prepare for job interviews with AI feedback',
     icon: MessageSquare,
-    component: InterviewPracticePopOut
+    component: InterviewPracticeRedesigned
   },
   {
     id: 'resilience',
