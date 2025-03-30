@@ -1,5 +1,6 @@
 import express from 'express';
 import { usdaService, FoodItem, FoodDetails } from '../services/usda-service';
+import { nutritionixService, NutritionixSearchResponse, NutritionixFoodDetails } from '../services/nutritionix-service';
 import OpenAI from 'openai';
 
 const router = express.Router();
@@ -79,6 +80,126 @@ router.get('/categories', async (req, res) => {
   }
 });
 
+// Search foods using Nutritionix API
+router.get('/nutritionix/search', async (req, res) => {
+  try {
+    const { query, detailed, limit } = req.query;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+    
+    const result = await nutritionixService.searchFoods(
+      query as string,
+      detailed === 'true',
+      limit ? Number(limit) : 10
+    );
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Nutritionix search error:', error);
+    res.status(500).json({ error: 'Failed to search foods using Nutritionix' });
+  }
+});
+
+// Get food details using Nutritionix API
+router.get('/nutritionix/food', async (req, res) => {
+  try {
+    const { query, quantity, unit } = req.query;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Food query is required' });
+    }
+    
+    const result = await nutritionixService.getFoodDetails(
+      query as string,
+      quantity ? Number(quantity) : 1,
+      unit as string | undefined
+    );
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Nutritionix food details error:', error);
+    res.status(500).json({ error: 'Failed to get food details from Nutritionix' });
+  }
+});
+
+// Analyze nutrition for multiple food items using Nutritionix API
+router.post('/nutritionix/analyze', async (req, res) => {
+  try {
+    const { foodItems } = req.body;
+    
+    if (!foodItems || !Array.isArray(foodItems) || foodItems.length === 0) {
+      return res.status(400).json({ error: 'Food items array is required' });
+    }
+    
+    const result = await nutritionixService.analyzeNutrition(foodItems);
+    res.json(result);
+  } catch (error) {
+    console.error('Nutritionix nutrition analysis error:', error);
+    res.status(500).json({ error: 'Failed to analyze nutrition using Nutritionix' });
+  }
+});
+
+// Get combined search results from both USDA and Nutritionix
+router.get('/combined-search', async (req, res) => {
+  try {
+    const { query, limit } = req.query;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+    
+    // Execute both API calls in parallel for better performance
+    const [usdaResults, nutritionixResults] = await Promise.all([
+      usdaService.searchFoods({
+        query: query as string,
+        pageSize: limit ? Number(limit) : 10,
+        pageNumber: 1,
+      }).catch(error => {
+        console.error('USDA search error:', error);
+        return { totalHits: 0, foods: [], currentPage: 1, totalPages: 0 };
+      }),
+      
+      nutritionixService.searchFoods(
+        query as string,
+        false,
+        limit ? Number(limit) : 10
+      ).catch(error => {
+        console.error('Nutritionix search error:', error);
+        return { common: [], branded: [] };
+      })
+    ]);
+    
+    // Format the results into a unified structure
+    const combinedResults = {
+      usda: usdaResults.foods || [],
+      nutritionix: {
+        common: nutritionixResults.common || [],
+        branded: nutritionixResults.branded || [],
+      },
+      totalResults: (usdaResults.foods?.length || 0) + 
+                    (nutritionixResults.common?.length || 0) + 
+                    (nutritionixResults.branded?.length || 0)
+    };
+    
+    res.json(combinedResults);
+  } catch (error) {
+    console.error('Combined search error:', error);
+    res.status(500).json({ error: 'Failed to perform combined food search' });
+  }
+});
+
+// Define interface for food nutritional data
+interface FoodNutritionData {
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  servingSize?: string;
+}
+
 interface NutritionAssessmentInput {
   age: number;
   gender: string;
@@ -138,6 +259,32 @@ router.post('/assessment', async (req, res) => {
     
     const tdee = Math.round(bmr * activityFactor); // Total Daily Energy Expenditure
     
+    // Fetch nutritional data for typical foods if provided
+    let typicalFoodsData: FoodNutritionData[] = [];
+    try {
+      if (assessmentData.currentDiet.typicalFoods && assessmentData.currentDiet.typicalFoods.length > 0) {
+        // Use the first 3 foods to avoid making too many API calls
+        const foodsToAnalyze = assessmentData.currentDiet.typicalFoods.slice(0, 3).map(food => ({
+          name: food,
+          quantity: 1
+        }));
+        
+        const nutritionData = await nutritionixService.analyzeNutrition(foodsToAnalyze).catch(() => null);
+        if (nutritionData && nutritionData.foods) {
+          typicalFoodsData = nutritionData.foods.map(food => ({
+            name: food.food_name,
+            calories: food.nf_calories,
+            protein: food.nf_protein,
+            carbs: food.nf_total_carbohydrate,
+            fat: food.nf_total_fat
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching nutritional data for typical foods:', error);
+      // Continue without this data if there's an error
+    }
+    
     // Generate personalized recommendations using OpenAI
     const prompt = `Create a comprehensive nutrition plan based on the following assessment:
 
@@ -156,6 +303,11 @@ Current diet:
 - Typical foods: ${assessmentData.currentDiet.typicalFoods.join(', ')}
 - Dietary restrictions: ${assessmentData.currentDiet.restrictions.join(', ')}
 - Supplements: ${assessmentData.currentDiet.supplements.join(', ')}
+${typicalFoodsData.length > 0 ? 
+`- Nutritional analysis of typical foods:
+${typicalFoodsData.map(food => 
+  `  * ${food.name}: ${Math.round(food.calories)} calories, ${food.protein.toFixed(1)}g protein, ${food.carbs.toFixed(1)}g carbs, ${food.fat.toFixed(1)}g fat`
+).join('\n')}` : ''}
 
 Please provide the following in a JSON format:
 1. A summary of their nutritional status
@@ -197,6 +349,7 @@ The response should be structured as a valid JSON object with these 10 sections.
                           bmi < 25 ? 'Healthy Weight' : 
                           bmi < 30 ? 'Overweight' : 'Obesity'
         },
+        typicalFoodsAnalysis: typicalFoodsData.length > 0 ? typicalFoodsData : null,
         recommendations: parsedRecommendations
       };
       
@@ -219,11 +372,90 @@ router.post('/meal-plan', async (req, res) => {
       dietaryPreferences, 
       healthGoals, 
       restrictions, 
-      numberOfDays = 3
+      numberOfDays = 3,
+      useNutritionLookup = true // Flag to enable/disable real nutrition lookups
     } = req.body;
     
     if (!calorieTarget) {
       return res.status(400).json({ error: 'Calorie target is required' });
+    }
+    
+    // Get common foods for meal inspiration if available
+    let commonFoodsData: FoodNutritionData[] = [];
+    if (useNutritionLookup) {
+      try {
+        // Determine what foods to look up based on preferences and restrictions
+        let foodsToLookup = [];
+        
+        // Start with some base foods
+        if (dietaryPreferences?.includes('vegetarian') || dietaryPreferences?.includes('vegan')) {
+          foodsToLookup = ['avocado', 'tofu', 'lentils', 'quinoa', 'broccoli'];
+        } else {
+          foodsToLookup = ['chicken breast', 'salmon', 'egg', 'spinach', 'sweet potato'];
+        }
+        
+        // Modify based on health goals
+        if (healthGoals?.includes('weight loss')) {
+          foodsToLookup.push('greek yogurt', 'berries');
+        } else if (healthGoals?.includes('muscle building')) {
+          foodsToLookup.push('lean beef', 'cottage cheese');
+        }
+        
+        // Get nutrition info for a subset of these foods
+        const lookupPromises = foodsToLookup.slice(0, 3).map(async food => {
+          try {
+            // Try Nutritionix first, as it typically provides richer data
+            return await nutritionixService.getFoodDetails(food);
+          } catch {
+            // Fallback to USDA if Nutritionix lookup fails
+            try {
+              const results = await usdaService.searchFoods({
+                query: food,
+                pageSize: 1
+              });
+              
+              if (results.foods && results.foods.length > 0) {
+                return await usdaService.getFoodDetails(results.foods[0].fdcId);
+              }
+              return null;
+            } catch {
+              return null;
+            }
+          }
+        });
+        
+        const foodResults = await Promise.all(lookupPromises);
+        commonFoodsData = foodResults
+          .filter(result => result !== null)
+          .map(food => {
+            // Handle both API formats
+            if ('nf_calories' in food) { // Nutritionix
+              return {
+                name: food.food_name,
+                calories: food.nf_calories,
+                protein: food.nf_protein,
+                carbs: food.nf_total_carbohydrate,
+                fat: food.nf_total_fat,
+                servingSize: food.serving_qty + ' ' + food.serving_unit
+              };
+            } else if (food.foodNutrients) { // USDA
+              const macros = usdaService.extractMacronutrients(food.foodNutrients);
+              return {
+                name: food.description,
+                calories: macros.calories,
+                protein: macros.protein,
+                carbs: macros.carbs,
+                fat: macros.fat,
+                servingSize: '100g'
+              };
+            }
+            return null;
+          })
+          .filter(food => food !== null);
+      } catch (error) {
+        console.error('Error fetching common foods data:', error);
+        // Continue without food data if there's an error
+      }
     }
     
     const prompt = `Create a detailed ${numberOfDays}-day meal plan that provides approximately ${calorieTarget} calories per day with the following considerations:
@@ -231,6 +463,12 @@ router.post('/meal-plan', async (req, res) => {
 Dietary preferences: ${dietaryPreferences ? dietaryPreferences.join(', ') : 'None specified'}
 Health goals: ${healthGoals ? healthGoals.join(', ') : 'General health'}
 Dietary restrictions: ${restrictions ? restrictions.join(', ') : 'None specified'}
+
+${commonFoodsData.length > 0 ? 
+`Below are accurate nutritional values for some foods that should be incorporated in the meal plan:
+${commonFoodsData.map(food => 
+  `- ${food.name} (${food.servingSize}): ${Math.round(food.calories)} calories, ${food.protein.toFixed(1)}g protein, ${food.carbs.toFixed(1)}g carbs, ${food.fat.toFixed(1)}g fat`
+).join('\n')}` : ''}
 
 For each day, provide:
 1. Breakfast
@@ -264,7 +502,14 @@ The plan should be varied, practical, and use commonly available ingredients. Fo
     
     try {
       const mealPlan = JSON.parse(aiResponse.choices[0].message.content);
-      res.json(mealPlan);
+      
+      // Include the nutrition data used for reference
+      const response = {
+        mealPlan,
+        referenceNutritionData: commonFoodsData.length > 0 ? commonFoodsData : null
+      };
+      
+      res.json(response);
     } catch (parseError) {
       console.error('Error parsing meal plan:', parseError);
       res.status(500).json({ error: 'Failed to parse meal plan' });
