@@ -74,7 +74,7 @@ interface CreditSkillLevel {
   questions: CreditQuestion[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   estimatedTime: string;
-  relevantAge?: string;
+  // removed age designation
   milestones?: CreditMilestone[];
 }
 
@@ -612,7 +612,7 @@ const CREDIT_EDUCATIONAL_MODULES: CreditSkillLevel[] = [
     icon: <BookOpen className="h-5 w-5" />,
     difficulty: 'beginner',
     estimatedTime: '10 min',
-    relevantAge: '17+',
+    // removed age designation
     videoKeywords: 'credit basics for beginners',
     content: (
       <div className="space-y-4">
@@ -771,7 +771,7 @@ const CREDIT_EDUCATIONAL_MODULES: CreditSkillLevel[] = [
     icon: <TrendingUp className="h-5 w-5" />,
     difficulty: 'beginner',
     estimatedTime: '15 min',
-    relevantAge: '17+',
+    // removed age designation
     videoKeywords: 'how credit scores work for beginners',
     content: (
       <div className="space-y-4">
@@ -975,7 +975,7 @@ const CREDIT_EDUCATIONAL_MODULES: CreditSkillLevel[] = [
     icon: <CreditCard className="h-5 w-5" />,
     difficulty: 'beginner',
     estimatedTime: '15 min',
-    relevantAge: '18-19',
+    // removed age designation
     videoKeywords: 'first credit card for beginners',
     content: (
       <div className="space-y-4">
@@ -1536,12 +1536,7 @@ export const CreditBuildingSkillsEnhanced: React.FC = () => {
                   <Clock className="h-4 w-4 mr-1" />
                   {module.estimatedTime}
                 </div>
-                {module.relevantAge && (
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    Ages {module.relevantAge}
-                  </div>
-                )}
+                {/* Removed age information */}
                 <div className="flex items-center">
                   <Film className="h-4 w-4 mr-1" />
                   Videos & Guides
@@ -1992,7 +1987,7 @@ export const CreditBuildingSkillsEnhanced: React.FC = () => {
             {selectedModule.title}
           </FullScreenDialogTitle>
           <FullScreenDialogDescription>
-            {selectedModule.description} • {selectedModule.estimatedTime} • {selectedModule.relevantAge ? `Ages ${selectedModule.relevantAge}` : ''}
+            {selectedModule.description} • {selectedModule.estimatedTime}
           </FullScreenDialogDescription>
         </FullScreenDialogHeader>
 
