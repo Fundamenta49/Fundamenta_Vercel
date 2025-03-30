@@ -87,6 +87,7 @@ interface NetSheet {
   monthlyPayment: MortgageBreakdown;
   cashToClose: number;
   firstYearTotal: number;
+  selectedState: string;
 }
 
 interface NetSheetResults {
@@ -138,6 +139,70 @@ const DEFAULT_PMI_RATE = 0.5; // percent annually
 const DEFAULT_HOA_MONTHLY = 250;
 const DEFAULT_UTILITIES = 300;
 const DEFAULT_HOME_MAINTENANCE = 1; // percent annually
+const DEFAULT_STATE = "CA"; // Default state (California)
+
+// State-specific data
+interface StateData {
+  name: string;
+  propertyTaxRate: number; // percentage annually
+  transferTaxRate: number; // percentage of home price
+  recordingFees: number; // flat fee
+  abbreviation: string;
+}
+
+const STATE_DATA: { [key: string]: StateData } = {
+  "AL": { name: "Alabama", propertyTaxRate: 0.41, transferTaxRate: 0.1, recordingFees: 150, abbreviation: "AL" },
+  "AK": { name: "Alaska", propertyTaxRate: 1.19, transferTaxRate: 0, recordingFees: 125, abbreviation: "AK" },
+  "AZ": { name: "Arizona", propertyTaxRate: 0.62, transferTaxRate: 0, recordingFees: 175, abbreviation: "AZ" },
+  "AR": { name: "Arkansas", propertyTaxRate: 0.63, transferTaxRate: 0.33, recordingFees: 135, abbreviation: "AR" },
+  "CA": { name: "California", propertyTaxRate: 0.74, transferTaxRate: 0.11, recordingFees: 225, abbreviation: "CA" },
+  "CO": { name: "Colorado", propertyTaxRate: 0.51, transferTaxRate: 0.01, recordingFees: 160, abbreviation: "CO" },
+  "CT": { name: "Connecticut", propertyTaxRate: 2.14, transferTaxRate: 1.25, recordingFees: 175, abbreviation: "CT" },
+  "DE": { name: "Delaware", propertyTaxRate: 0.57, transferTaxRate: 1.5, recordingFees: 150, abbreviation: "DE" },
+  "FL": { name: "Florida", propertyTaxRate: 0.83, transferTaxRate: 0.7, recordingFees: 185, abbreviation: "FL" },
+  "GA": { name: "Georgia", propertyTaxRate: 0.87, transferTaxRate: 0.1, recordingFees: 160, abbreviation: "GA" },
+  "HI": { name: "Hawaii", propertyTaxRate: 0.28, transferTaxRate: 0.1, recordingFees: 175, abbreviation: "HI" },
+  "ID": { name: "Idaho", propertyTaxRate: 0.69, transferTaxRate: 0, recordingFees: 130, abbreviation: "ID" },
+  "IL": { name: "Illinois", propertyTaxRate: 2.27, transferTaxRate: 0.1, recordingFees: 175, abbreviation: "IL" },
+  "IN": { name: "Indiana", propertyTaxRate: 0.85, transferTaxRate: 0, recordingFees: 145, abbreviation: "IN" },
+  "IA": { name: "Iowa", propertyTaxRate: 1.53, transferTaxRate: 0.16, recordingFees: 140, abbreviation: "IA" },
+  "KS": { name: "Kansas", propertyTaxRate: 1.41, transferTaxRate: 0, recordingFees: 130, abbreviation: "KS" },
+  "KY": { name: "Kentucky", propertyTaxRate: 0.86, transferTaxRate: 0.1, recordingFees: 150, abbreviation: "KY" },
+  "LA": { name: "Louisiana", propertyTaxRate: 0.55, transferTaxRate: 0, recordingFees: 175, abbreviation: "LA" },
+  "ME": { name: "Maine", propertyTaxRate: 1.36, transferTaxRate: 0.44, recordingFees: 145, abbreviation: "ME" },
+  "MD": { name: "Maryland", propertyTaxRate: 1.09, transferTaxRate: 0.5, recordingFees: 185, abbreviation: "MD" },
+  "MA": { name: "Massachusetts", propertyTaxRate: 1.23, transferTaxRate: 0.46, recordingFees: 200, abbreviation: "MA" },
+  "MI": { name: "Michigan", propertyTaxRate: 1.54, transferTaxRate: 0.86, recordingFees: 160, abbreviation: "MI" },
+  "MN": { name: "Minnesota", propertyTaxRate: 1.12, transferTaxRate: 0.33, recordingFees: 175, abbreviation: "MN" },
+  "MS": { name: "Mississippi", propertyTaxRate: 0.65, transferTaxRate: 0, recordingFees: 135, abbreviation: "MS" },
+  "MO": { name: "Missouri", propertyTaxRate: 0.97, transferTaxRate: 0, recordingFees: 150, abbreviation: "MO" },
+  "MT": { name: "Montana", propertyTaxRate: 0.84, transferTaxRate: 0, recordingFees: 140, abbreviation: "MT" },
+  "NE": { name: "Nebraska", propertyTaxRate: 1.73, transferTaxRate: 0.225, recordingFees: 145, abbreviation: "NE" },
+  "NV": { name: "Nevada", propertyTaxRate: 0.69, transferTaxRate: 0.51, recordingFees: 160, abbreviation: "NV" },
+  "NH": { name: "New Hampshire", propertyTaxRate: 2.18, transferTaxRate: 1.5, recordingFees: 150, abbreviation: "NH" },
+  "NJ": { name: "New Jersey", propertyTaxRate: 2.49, transferTaxRate: 1.21, recordingFees: 200, abbreviation: "NJ" },
+  "NM": { name: "New Mexico", propertyTaxRate: 0.8, transferTaxRate: 0, recordingFees: 145, abbreviation: "NM" },
+  "NY": { name: "New York", propertyTaxRate: 1.72, transferTaxRate: 0.4, recordingFees: 225, abbreviation: "NY" },
+  "NC": { name: "North Carolina", propertyTaxRate: 0.84, transferTaxRate: 0.2, recordingFees: 160, abbreviation: "NC" },
+  "ND": { name: "North Dakota", propertyTaxRate: 0.98, transferTaxRate: 0, recordingFees: 135, abbreviation: "ND" },
+  "OH": { name: "Ohio", propertyTaxRate: 1.56, transferTaxRate: 0.1, recordingFees: 155, abbreviation: "OH" },
+  "OK": { name: "Oklahoma", propertyTaxRate: 0.9, transferTaxRate: 0.075, recordingFees: 145, abbreviation: "OK" },
+  "OR": { name: "Oregon", propertyTaxRate: 0.97, transferTaxRate: 0.1, recordingFees: 170, abbreviation: "OR" },
+  "PA": { name: "Pennsylvania", propertyTaxRate: 1.58, transferTaxRate: 1, recordingFees: 185, abbreviation: "PA" },
+  "RI": { name: "Rhode Island", propertyTaxRate: 1.63, transferTaxRate: 0.46, recordingFees: 170, abbreviation: "RI" },
+  "SC": { name: "South Carolina", propertyTaxRate: 0.57, transferTaxRate: 0.37, recordingFees: 155, abbreviation: "SC" },
+  "SD": { name: "South Dakota", propertyTaxRate: 1.32, transferTaxRate: 0.1, recordingFees: 140, abbreviation: "SD" },
+  "TN": { name: "Tennessee", propertyTaxRate: 0.71, transferTaxRate: 0.37, recordingFees: 150, abbreviation: "TN" },
+  "TX": { name: "Texas", propertyTaxRate: 1.8, transferTaxRate: 0, recordingFees: 175, abbreviation: "TX" },
+  "UT": { name: "Utah", propertyTaxRate: 0.66, transferTaxRate: 0, recordingFees: 150, abbreviation: "UT" },
+  "VT": { name: "Vermont", propertyTaxRate: 1.9, transferTaxRate: 1.25, recordingFees: 145, abbreviation: "VT" },
+  "VA": { name: "Virginia", propertyTaxRate: 0.8, transferTaxRate: 0.33, recordingFees: 180, abbreviation: "VA" },
+  "WA": { name: "Washington", propertyTaxRate: 0.98, transferTaxRate: 1.28, recordingFees: 190, abbreviation: "WA" },
+  "WV": { name: "West Virginia", propertyTaxRate: 0.59, transferTaxRate: 0.22, recordingFees: 140, abbreviation: "WV" },
+  "WI": { name: "Wisconsin", propertyTaxRate: 1.85, transferTaxRate: 0.3, recordingFees: 160, abbreviation: "WI" },
+  "WY": { name: "Wyoming", propertyTaxRate: 0.61, transferTaxRate: 0, recordingFees: 135, abbreviation: "WY" },
+  "DC": { name: "District of Columbia", propertyTaxRate: 0.56, transferTaxRate: 1.1, recordingFees: 200, abbreviation: "DC" }
+}
 
 export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClose }) => {
   // State for net sheet
@@ -148,18 +213,19 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
     loanAmount: DEFAULT_HOME_PRICE * (1 - DEFAULT_DOWN_PAYMENT_PERCENT / 100),
     loanTerm: DEFAULT_LOAN_TERM,
     interestRate: DEFAULT_INTEREST_RATE,
+    selectedState: DEFAULT_STATE,
     closingCosts: {
       loanOrigination: DEFAULT_HOME_PRICE * 0.01,
       appraisalFee: 500,
       creditReportFee: 25,
       titleServices: 1200,
-      governmentRecordingCharges: 125,
-      transferTaxes: DEFAULT_HOME_PRICE * 0.004,
+      governmentRecordingCharges: STATE_DATA[DEFAULT_STATE].recordingFees,
+      transferTaxes: DEFAULT_HOME_PRICE * (STATE_DATA[DEFAULT_STATE].transferTaxRate / 100),
       homeInspection: 400,
       other: 500
     },
     recurringCosts: {
-      propertyTax: (DEFAULT_HOME_PRICE * DEFAULT_PROPERTY_TAX_RATE) / 100 / 12,
+      propertyTax: (DEFAULT_HOME_PRICE * STATE_DATA[DEFAULT_STATE].propertyTaxRate) / 100 / 12,
       homeownersInsurance: (DEFAULT_HOME_PRICE * DEFAULT_HOME_INSURANCE_RATE) / 100 / 12,
       mortgageInsurance: DEFAULT_DOWN_PAYMENT_PERCENT < 20 ? 
         (DEFAULT_HOME_PRICE * (1 - DEFAULT_DOWN_PAYMENT_PERCENT / 100) * DEFAULT_PMI_RATE) / 100 / 12 : 0,
@@ -353,8 +419,11 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
     // Calculate new down payment amount while keeping percentage the same
     const newDownPayment = Math.round((price * netSheet.downPaymentPercent) / 100);
     
-    // Update property tax and insurance based on new home price
-    const newPropertyTax = (price * DEFAULT_PROPERTY_TAX_RATE) / 100 / 12;
+    // Get state data for the currently selected state
+    const stateData = STATE_DATA[netSheet.selectedState];
+    
+    // Update property tax and insurance based on new home price and selected state
+    const newPropertyTax = (price * stateData.propertyTaxRate) / 100 / 12;
     const newHomeownersInsurance = (price * DEFAULT_HOME_INSURANCE_RATE) / 100 / 12;
     
     // Update PMI based on new loan amount
@@ -365,8 +434,8 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
     // Update maintenance cost
     const newMaintenance = (price * DEFAULT_HOME_MAINTENANCE) / 100 / 12;
     
-    // Update transfer taxes
-    const newTransferTaxes = price * 0.004;
+    // Update transfer taxes based on selected state
+    const newTransferTaxes = price * (stateData.transferTaxRate / 100);
     
     // Update loan origination fee
     const newLoanOrigination = price * 0.01;
@@ -450,6 +519,32 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
       loanTerm: parseInt(value)
     }));
   };
+  
+  // Handle state change
+  const handleStateChange = (value: string) => {
+    const stateData = STATE_DATA[value];
+    
+    // Calculate new property tax based on selected state
+    const newPropertyTax = (netSheet.homePrice * stateData.propertyTaxRate) / 100 / 12;
+    
+    // Update transfer taxes and recording fees based on selected state
+    const newTransferTaxes = netSheet.homePrice * (stateData.transferTaxRate / 100);
+    const newRecordingFees = stateData.recordingFees;
+    
+    setNetSheet(prev => ({
+      ...prev,
+      selectedState: value,
+      closingCosts: {
+        ...prev.closingCosts,
+        governmentRecordingCharges: newRecordingFees,
+        transferTaxes: newTransferTaxes
+      },
+      recurringCosts: {
+        ...prev.recurringCosts,
+        propertyTax: newPropertyTax
+      }
+    }));
+  };
 
   // Handle tab change
   const handleTabChange = (value: string) => {
@@ -470,18 +565,19 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
       loanAmount: DEFAULT_HOME_PRICE * (1 - DEFAULT_DOWN_PAYMENT_PERCENT / 100),
       loanTerm: DEFAULT_LOAN_TERM,
       interestRate: DEFAULT_INTEREST_RATE,
+      selectedState: DEFAULT_STATE,
       closingCosts: {
         loanOrigination: DEFAULT_HOME_PRICE * 0.01,
         appraisalFee: 500,
         creditReportFee: 25,
         titleServices: 1200,
-        governmentRecordingCharges: 125,
-        transferTaxes: DEFAULT_HOME_PRICE * 0.004,
+        governmentRecordingCharges: STATE_DATA[DEFAULT_STATE].recordingFees,
+        transferTaxes: DEFAULT_HOME_PRICE * (STATE_DATA[DEFAULT_STATE].transferTaxRate / 100),
         homeInspection: 400,
         other: 500
       },
       recurringCosts: {
-        propertyTax: (DEFAULT_HOME_PRICE * DEFAULT_PROPERTY_TAX_RATE) / 100 / 12,
+        propertyTax: (DEFAULT_HOME_PRICE * STATE_DATA[DEFAULT_STATE].propertyTaxRate) / 100 / 12,
         homeownersInsurance: (DEFAULT_HOME_PRICE * DEFAULT_HOME_INSURANCE_RATE) / 100 / 12,
         mortgageInsurance: DEFAULT_DOWN_PAYMENT_PERCENT < 20 ? 
           (DEFAULT_HOME_PRICE * (1 - DEFAULT_DOWN_PAYMENT_PERCENT / 100) * DEFAULT_PMI_RATE) / 100 / 12 : 0,
@@ -673,6 +769,25 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                     )}
                   </div>
                   
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State</Label>
+                    <Select value={netSheet.selectedState} onValueChange={handleStateChange}>
+                      <SelectTrigger id="state">
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.keys(STATE_DATA).sort().map((stateCode) => (
+                          <SelectItem key={stateCode} value={stateCode}>
+                            {STATE_DATA[stateCode].name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="mt-1 text-xs text-gray-600">
+                      Rates are specific to each state
+                    </div>
+                  </div>
+                  
                   <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center space-x-2">
                       <Switch
@@ -860,13 +975,13 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-sm">
-                                  <p>Closing costs are fees paid at closing including loan origination, appraisal, title insurance, and more</p>
+                                  <p>Closing costs are fees paid at closing including loan origination, appraisal, title insurance, and {STATE_DATA[netSheet.selectedState].name}-specific transfer taxes</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
                           </div>
                           <p className="text-2xl font-bold">{formatCurrency(calculateTotalClosingCosts())}</p>
-                          <p className="text-xs text-gray-500">About {formatPercent(calculateTotalClosingCosts() / netSheet.homePrice * 100)} of home price</p>
+                          <p className="text-xs text-gray-500">About {formatPercent(calculateTotalClosingCosts() / netSheet.homePrice * 100)} of home price (based on {STATE_DATA[netSheet.selectedState].name} rates)</p>
                         </div>
                       </div>
                       
@@ -931,6 +1046,9 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                             {formatCurrencyPrecise(netSheet.monthlyPayment.total)}
                           </p>
                           <p className="text-xs text-gray-500">Principal, interest, taxes, insurance & HOA</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Based on rates for {STATE_DATA[netSheet.selectedState].name}
+                          </p>
                         </div>
                         
                         <div className="w-full md:w-1/2 h-24">
@@ -999,7 +1117,7 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-sm">
-                                  <p>Monthly property tax is estimated at {(DEFAULT_PROPERTY_TAX_RATE).toFixed(2)}% of home value annually</p>
+                                  <p>Monthly property tax is estimated at {(STATE_DATA[netSheet.selectedState].propertyTaxRate).toFixed(2)}% of home value annually in {STATE_DATA[netSheet.selectedState].name}</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -1060,7 +1178,7 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                           <div className="space-y-1">
                             <p className="text-sm font-medium">First Year Total</p>
                             <p className="text-2xl font-bold">{formatCurrency(results.yearlyTotal)}</p>
-                            <p className="text-xs text-gray-500">All housing costs for 12 months</p>
+                            <p className="text-xs text-gray-500">All housing costs for 12 months in {STATE_DATA[netSheet.selectedState].name}</p>
                           </div>
                           <div className="space-y-1">
                             <p className="text-sm font-medium">5-Year Total</p>
@@ -1084,7 +1202,7 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                               <span>{formatCurrency((netSheet.monthlyPayment.principal + netSheet.monthlyPayment.interest) * 12)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span>Property Taxes (Yearly)</span>
+                              <span>Property Taxes ({STATE_DATA[netSheet.selectedState].abbreviation}, Yearly)</span>
                               <span>{formatCurrency(netSheet.recurringCosts.propertyTax * 12)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
@@ -1170,9 +1288,10 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                     
                     <Separator className="my-4" />
                     
-                    <p className="text-sm mb-2">Common buying tips:</p>
+                    <p className="text-sm mb-2">Common buying tips for {STATE_DATA[netSheet.selectedState].name}:</p>
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                       <li>A 20% down payment ({formatPercent(20)}) avoids PMI, saving {formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance)} monthly</li>
+                      <li>Property taxes in {STATE_DATA[netSheet.selectedState].name} average {STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}% of home value yearly</li>
                       <li>Consider all recurring expenses when budgeting for homeownership</li>
                       <li>Include funds for maintenance (typically 1% of home value annually)</li>
                     </ul>
@@ -1224,7 +1343,7 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                 <strong>What are property taxes?</strong> Property taxes are assessed by local governments to fund schools, infrastructure, public services, and more.
               </p>
               <p>
-                <strong>How are they calculated?</strong> Property taxes are typically a percentage of your home's assessed value. In this calculator, we're using {DEFAULT_PROPERTY_TAX_RATE.toFixed(2)}% annually.
+                <strong>How are they calculated?</strong> Property taxes are typically a percentage of your home's assessed value. For {STATE_DATA[netSheet.selectedState].name}, we're using {STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}% annually, which is the average rate for this state.
               </p>
               <p>
                 <strong>How are they paid?</strong> Property taxes are usually paid:
@@ -1295,7 +1414,7 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                 <strong>What are closing costs?</strong> Closing costs are fees and expenses you pay when finalizing your mortgage and home purchase.
               </p>
               <p>
-                <strong>How much are they?</strong> Typically, closing costs range from 2% to 5% of the loan amount. In this calculator, we estimate specific fees.
+                <strong>How much are they?</strong> Typically, closing costs range from 2% to 5% of the loan amount. In {STATE_DATA[netSheet.selectedState].name}, transfer taxes are approximately {STATE_DATA[netSheet.selectedState].transferTaxRate.toFixed(2)}% of the property value.
               </p>
               <p>
                 <strong>Common closing costs include:</strong>
