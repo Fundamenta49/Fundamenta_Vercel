@@ -120,13 +120,13 @@ export default function Emergency() {
 
   return (
     <div className="w-full h-full mx-auto p-0">
-      <h1 className="text-2xl font-bold tracking-tight text-center mb-6">
+      <h1 className="text-2xl font-bold tracking-tight text-center mb-2">
         Emergency Assistance
       </h1>
 
-      <Alert variant="default" className="mx-4 sm:mx-6 mb-4 border-red-500 bg-red-50">
+      <Alert variant="default" className="mx-3 sm:mx-5 mb-2 border-red-500 bg-red-50">
         <AlertCircle className="h-4 w-4 text-red-500" />
-        <AlertDescription className="text-red-800">
+        <AlertDescription className="text-red-800 text-sm">
           In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).
         </AlertDescription>
       </Alert>
@@ -157,24 +157,24 @@ export default function Emergency() {
       </FullScreenDialog>
 
       {/* Grid-style cards layout */}
-      <div className="px-3 sm:px-5 pt-2">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold mb-3 px-2 py-2 bg-red-50 text-red-800 rounded-md border-l-4 border-red-500">
+      <div className="px-2">
+        <div className="mb-4">
+          <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-red-50 text-red-800 rounded-md border-l-4 border-red-500">
             Emergency Resources
           </h2>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 mt-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1 mt-2">
             {SECTIONS.map((section) => (
               <div key={section.id} className="flex flex-col">
                 <button
                   onClick={() => handleCardClick(section.id)}
-                  className="relative flex flex-col items-center justify-between p-3 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-red-500 min-h-[80px] sm:min-h-[100px] lg:min-h-[110px] w-full"
+                  className="relative flex flex-col items-center justify-between p-2 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-red-500 h-[90px] sm:h-[110px] w-full"
                   aria-label={`Open ${section.title}`}
                 >
-                  <div className="flex items-center justify-center h-10 sm:h-12 w-full">
-                    <section.icon className="w-7 h-7 sm:w-8 sm:h-8 text-red-500" />
+                  <div className="flex items-center justify-center h-10 w-full">
+                    <section.icon className="w-7 h-7 text-red-500" />
                   </div>
                   
-                  <span className="text-xs sm:text-sm md:text-base font-medium text-center line-clamp-2 w-full mt-2">{section.title}</span>
+                  <span className="text-xs sm:text-sm font-medium text-center line-clamp-2 w-full">{section.title}</span>
                 </button>
               </div>
             ))}
