@@ -41,6 +41,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { sampleResumeStructured, sampleAnalysis, sampleJobPosition } from "@/lib/sample-resume";
 
 // Form validation schema
 const resumeSchema = z.object({
@@ -862,6 +863,33 @@ export default function ResumeBuilderEnhanced() {
       jobDescription: ""
     }
   });
+  
+  // Function to load sample resume data for testing
+  const loadSampleData = () => {
+    // Set form values from sample data
+    Object.entries(sampleResumeStructured).forEach(([key, value]) => {
+      if (key in form.getValues()) {
+        form.setValue(key as any, value);
+      }
+    });
+    
+    // Set job title and description for targeting
+    form.setValue("targetJobTitle", sampleJobPosition.title);
+    form.setValue("jobDescription", sampleJobPosition.description);
+    
+    // Set analysis data
+    setAnalysis({
+      ...sampleResumeStructured as any,
+      analysis: sampleAnalysis
+    });
+    
+    // Show success message
+    setUploadMessage("Sample resume data loaded successfully");
+    toast({
+      title: "Sample Data Loaded",
+      description: "Sample resume data has been loaded for testing",
+    });
+  };
 
   const hasContent = form.watch("resumeText") !== "";
   
@@ -1012,13 +1040,35 @@ export default function ResumeBuilderEnhanced() {
                 </TabsList>
                 
                 <TabsContent value="upload" className="mt-0">
-                  <FileUpload 
-                    onUpload={(text) => form.setValue("resumeText", text)}
-                    setUploadMessage={setUploadMessage}
-                    form={form}
-                    isUploading={isUploading}
-                    setIsUploading={setIsUploading}
-                  />
+                  <div className="flex flex-col space-y-3">
+                    <FileUpload 
+                      onUpload={(text) => form.setValue("resumeText", text)}
+                      setUploadMessage={setUploadMessage}
+                      form={form}
+                      isUploading={isUploading}
+                      setIsUploading={setIsUploading}
+                    />
+                    
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-200" />
+                      </div>
+                      <div className="relative flex justify-center text-xs">
+                        <span className="bg-white px-2 text-gray-400">or</span>
+                      </div>
+                    </div>
+                    
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mx-auto bg-white border-blue-200 text-blue-500 hover:bg-blue-50"
+                      onClick={loadSampleData}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Load Sample Resume
+                    </Button>
+                  </div>
                   
                   {uploadMessage && (
                     <div className={cn(
