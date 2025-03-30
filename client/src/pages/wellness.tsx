@@ -10,15 +10,15 @@ import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertC
 import ChatInterface, { 
   WELLNESS_CATEGORY 
 } from "@/components/chat-interface";
-import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 import RiskAssessment from "@/components/risk-assessment";
 import BrainTap from "@/components/brain-tap";
 import ComprehensiveWellnessAssessment from "@/components/comprehensive-wellness-assessment";
+import IntegratedNutrition from "@/components/integrated-nutrition";
 import JournalPopOut from "@/components/journal-pop-out";
 import RiskAssessmentPopOut from "@/components/risk-assessment-pop-out";
-import NutritionGuidePopOut from "@/components/nutrition-guide-pop-out";
+import IntegratedNutritionPopOut from "@/components/integrated-nutrition-pop-out";
 import NutritionTrackerPopOut from "@/components/nutrition-tracker-pop-out";
 import ShoppingBuddyPopOut from "@/components/shopping-buddy-pop-out";
 import WellnessCoachPopOut from "@/components/wellness-coach-pop-out";
@@ -83,9 +83,9 @@ const SECTIONS: SectionType[] = [
   {
     id: 'nutrition',
     title: 'Nutrition Guide',
-    description: 'Learn about healthy eating and meal planning',
+    description: 'Learn about nutrition and get personalized recommendations',
     icon: Apple,
-    component: NutritionGuide
+    component: IntegratedNutrition
   },
   {
     id: 'tracker',
@@ -167,7 +167,7 @@ export default function Wellness() {
 
       <FullScreenDialog open={isNutritionOpen} onOpenChange={setIsNutritionOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
-          <NutritionGuidePopOut />
+          <IntegratedNutritionPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
