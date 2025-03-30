@@ -203,13 +203,14 @@ export default function Finance() {
           <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-green-50 text-green-800 rounded-md border-l-4 border-green-500">
             Financial Tools
           </h2>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1 mt-2">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1 mt-2" data-tour="finance-grid">
             {SECTIONS.map((section) => (
               <div key={section.id} className="flex flex-col">
                 <button
                   onClick={() => handleCardClick(section.id)}
                   className="relative flex flex-col items-center justify-between p-2 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-500 h-[100px] sm:h-[120px] w-full"
                   aria-label={`Open ${section.title}`}
+                  data-tour={section.id === 'budget' ? 'budget-calculator' : section.id === 'credit' ? 'credit-skills' : `finance-${section.id}`}
                 >
                   <div className="flex items-center justify-center h-10 w-full">
                     <section.icon className="w-7 h-7 text-green-500" />

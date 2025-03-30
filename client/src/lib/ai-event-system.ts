@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 // Types for AI actions
-export type AIActionType = 'navigate' | 'fill_form' | 'show_guide' | 'trigger_feature' | 'general';
+export type AIActionType = 'navigate' | 'fill_form' | 'show_guide' | 'trigger_feature' | 'general' | 'start_tour';
 
 export interface AIAction {
   type: AIActionType;
@@ -196,6 +196,18 @@ export const AIActionHandlers = {
       return true;
     }
     return false;
+  },
+  
+  start_tour: (action: AIAction) => {
+    // Start an onboarding tour
+    if (action.payload.tourId) {
+      const event = new CustomEvent('ai:trigger-tour', {
+        detail: { tourId: action.payload.tourId }
+      });
+      document.dispatchEvent(event);
+      return true;
+    }
+    return false;
   }
 };
 
@@ -222,6 +234,9 @@ export function processPendingActions(navigate: (path: string) => void) {
         break;
       case 'trigger_feature':
         handled = AIActionHandlers.trigger_feature(action);
+        break;
+      case 'start_tour':
+        handled = AIActionHandlers.start_tour(action);
         break;
       case 'general':
         // General actions don't require specific handling

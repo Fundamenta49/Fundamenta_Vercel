@@ -35,7 +35,9 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <div data-tour="main-nav">
+        <Navigation />
+      </div>
       
       <main className={cn(
         "transition-all duration-300 bg-background min-h-screen",
@@ -52,7 +54,9 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </main>
       
-      <FloatingChat category={currentCategory} />
+      <div data-tour="fundi-assistant">
+        <FloatingChat category={currentCategory} />
+      </div>
     </div>
   );
 }

@@ -24,6 +24,7 @@ export type AdvisorRole =
   | 'emergency_assistant'
   | 'cooking_expert'
   | 'fitness_coach'
+  | 'tour_guide'
   | 'general_assistant';
 
 // Context for AI processing
@@ -163,6 +164,33 @@ const specializedPrompts: Record<AdvisorRole, string> = {
     Emphasize consistency over intensity for beginners.
     Remember, you're helping users develop sustainable fitness habits and body awareness.`,
     
+  tour_guide: `You are Fundi, the Onboarding Tour Guide for Fundamenta.
+    Your role is to help users understand the platform's features through guided tours.
+    
+    Key communication guidelines:
+    1. Be friendly, encouraging, and concise in your explanations.
+    2. Focus on helping users navigate the interface and understand core features.
+    3. When asked about specific features, provide clear, step-by-step instructions.
+    4. Keep explanations brief but informative - users are actively exploring while reading.
+    5. Use a conversational, supportive tone that makes learning feel easy and fun.
+    6. Highlight practical benefits of each feature you're explaining.
+    7. Answer questions specifically about navigating the interface or using features.
+    
+    Available Tours:
+    - initial-tour: Welcome tour for new users showing the basic interface
+    - finance-tour: Tour of the Finance section and its features
+    - career-tour: Tour of the Career section and its features
+    - wellness-tour: Tour of the Wellness section and its features
+    - learning-tour: Tour of the Learning section and its features 
+    - active-tour: Tour of the Active Living section and its features
+    - emergency-tour: Tour of the Emergency Preparedness section and its features
+    
+    If a user asks for a tour or help understanding a section, you can start a tour by
+    adding an action of type 'start_tour' with the appropriate tourId in the payload.
+    
+    Remember, you're the friendly guide helping users feel comfortable and confident 
+    as they explore Fundamenta for the first time.`,
+    
   general_assistant: `You are Fundi, Fundamenta's AI Assistant, capable of helping users across all app features.
     Your role is to understand user intent and guide them to the right features while helping them complete tasks.
     
@@ -287,7 +315,8 @@ export class AIService {
       learning: 'learning_facilitator',
       emergency: 'emergency_assistant',
       cooking: 'cooking_expert',
-      fitness: 'fitness_coach'
+      fitness: 'fitness_coach',
+      tour: 'tour_guide'
     };
 
     return categoryMap[category] || 'general_assistant';
@@ -316,7 +345,7 @@ export class AIService {
     {
       "response": string,
       "actions": Array<{
-        type: 'navigate' | 'show_guide' | 'fill_form' | 'trigger_feature',
+        type: 'navigate' | 'show_guide' | 'fill_form' | 'trigger_feature' | 'start_tour',
         payload: {
           route?: string,
           section?: string,
@@ -324,6 +353,7 @@ export class AIService {
           guideSection?: string,
           formData?: object,
           feature?: string,
+          tourId?: string,
           autoFocus?: boolean
         }
       }>,
