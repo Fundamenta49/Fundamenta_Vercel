@@ -216,13 +216,13 @@ const MortgageMarketTrends: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Mortgage Rate Trends Chart */}
-      <Card className="border-primary">
-        <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
+      <Card className="shadow-md border-green-500 dark:border-green-400">
+        <CardHeader className="bg-green-500 dark:bg-green-600 text-white rounded-t-lg">
           <CardTitle className="flex items-center gap-2">
             <BarChart4 className="h-5 w-5" />
             Mortgage Rate Trends
           </CardTitle>
-          <CardDescription className="text-primary-foreground/90">
+          <CardDescription className="text-white/90">
             Historical mortgage rates from Federal Reserve Economic Data (FRED)
           </CardDescription>
         </CardHeader>
@@ -240,6 +240,7 @@ const MortgageMarketTrends: React.FC = () => {
                     key={months}
                     size="sm"
                     variant={historyTimeframe === months ? "default" : "outline"}
+                    className={historyTimeframe === months ? "bg-green-600 hover:bg-green-700" : "text-green-700 hover:text-green-800 border-green-200 hover:bg-green-50"}
                     onClick={() => setHistoryTimeframe(months)}
                   >
                     {months < 12 ? `${months}m` : months === 12 ? '1y' : `${months / 12}y`}
@@ -272,7 +273,7 @@ const MortgageMarketTrends: React.FC = () => {
                     dataKey="value"
                     data={thirtyYearHistory}
                     name="30-Year Fixed"
-                    stroke="#ff7f0e"
+                    stroke="#16a34a"
                     strokeWidth={2}
                     dot={false}
                     activeDot={{ r: 6 }}
@@ -283,7 +284,7 @@ const MortgageMarketTrends: React.FC = () => {
                     dataKey="value"
                     data={fifteenYearHistory}
                     name="15-Year Fixed"
-                    stroke="#2563eb"
+                    stroke="#0ea5e9"
                     strokeWidth={2}
                     dot={false}
                     activeDot={{ r: 6 }}
@@ -301,13 +302,13 @@ const MortgageMarketTrends: React.FC = () => {
       </Card>
       
       {/* Housing Market Indicators */}
-      <Card>
-        <CardHeader>
+      <Card className="shadow-md border-green-500 dark:border-green-400">
+        <CardHeader className="bg-green-500 dark:bg-green-600 text-white rounded-t-lg">
           <CardTitle className="flex items-center gap-2">
             <HomeIcon className="h-5 w-5" />
             Housing Market Indicators
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-white/90">
             Current market conditions for home buyers and sellers
           </CardDescription>
         </CardHeader>
@@ -320,11 +321,11 @@ const MortgageMarketTrends: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Median Home Price */}
-              <div className="bg-muted/50 rounded-lg p-4">
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-800 rounded-lg p-4">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <h4 className="text-sm font-medium flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-primary" />
+                      <DollarSign className="h-4 w-4 text-green-600 dark:text-green-500" />
                       Median Home Price
                     </h4>
                     <div className="text-2xl font-bold">
@@ -357,11 +358,11 @@ const MortgageMarketTrends: React.FC = () => {
               </div>
               
               {/* Housing Starts */}
-              <div className="bg-muted/50 rounded-lg p-4">
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-800 rounded-lg p-4">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <h4 className="text-sm font-medium flex items-center gap-2">
-                      <Building className="h-4 w-4 text-primary" />
+                      <Building className="h-4 w-4 text-green-600 dark:text-green-500" />
                       New Housing Starts
                     </h4>
                     <div className="text-2xl font-bold">
@@ -397,11 +398,11 @@ const MortgageMarketTrends: React.FC = () => {
               </div>
               
               {/* Home Price Index */}
-              <div className="bg-muted/50 rounded-lg p-4">
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-800 rounded-lg p-4">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <h4 className="text-sm font-medium flex items-center gap-2">
-                      <HomeIcon className="h-4 w-4 text-primary" />
+                      <HomeIcon className="h-4 w-4 text-green-600 dark:text-green-500" />
                       Home Price Index
                     </h4>
                     <div className="text-2xl font-bold">
@@ -437,11 +438,11 @@ const MortgageMarketTrends: React.FC = () => {
               </div>
               
               {/* Housing Supply */}
-              <div className="bg-muted/50 rounded-lg p-4">
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-800 rounded-lg p-4">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <h4 className="text-sm font-medium flex items-center gap-2">
-                      <Percent className="h-4 w-4 text-primary" />
+                      <Percent className="h-4 w-4 text-green-600 dark:text-green-500" />
                       Monthly Supply
                     </h4>
                     <div className="text-2xl font-bold">
