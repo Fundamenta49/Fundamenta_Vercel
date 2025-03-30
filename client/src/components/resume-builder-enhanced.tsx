@@ -670,7 +670,7 @@ const JobTargeting: React.FC<{
             
             <Button
               type="button"
-              className="w-full text-xs h-8"
+              className="w-full text-xs h-8 bg-[#3b82f6] hover:bg-[#3b82f6]/90 text-white"
               onClick={onOptimize}
               disabled={isOptimizing || !form.watch("targetJobTitle")}
             >
@@ -778,7 +778,7 @@ const BulletPointEnhancer: React.FC<{
             <Button
               type="button"
               onClick={generateSuggestions}
-              className="w-full text-sm"
+              className="w-full text-sm bg-[#3b82f6] hover:bg-[#3b82f6]/90 text-white"
             >
               <Wand2 className="mr-1 h-4 w-4" />
               Generate AI Suggestions
@@ -813,7 +813,7 @@ const BulletPointEnhancer: React.FC<{
                       <Button
                         size="sm"
                         variant="outline"
-                        className="mt-1 text-xs h-7"
+                        className="mt-1 text-xs h-7 border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6]/10"
                         onClick={() => onApplySuggestion(suggestion)}
                       >
                         <CheckCheck className="mr-1 h-3 w-3" />
@@ -828,7 +828,7 @@ const BulletPointEnhancer: React.FC<{
                 type="button"
                 onClick={generateSuggestions}
                 variant="outline"
-                className="text-sm"
+                className="text-sm border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6]/10"
               >
                 <RefreshCw className="mr-1 h-4 w-4" />
                 Generate New Suggestions
@@ -1163,10 +1163,10 @@ export default function ResumeBuilderEnhanced() {
             
             <CardContent className="px-3 py-2 sm:px-6 sm:py-0">
               <Tabs defaultValue="upload" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-3 mb-4 sm:mb-6 text-xs sm:text-sm">
-                  <TabsTrigger value="upload" className="px-2 py-1 sm:px-4 sm:py-2">Upload Resume</TabsTrigger>
-                  <TabsTrigger value="manual" className="px-2 py-1 sm:px-4 sm:py-2">Manual Entry</TabsTrigger>
-                  <TabsTrigger value="learn" className="px-2 py-1 sm:px-4 sm:py-2">
+                <TabsList className="grid grid-cols-3 mb-4 sm:mb-6 text-xs sm:text-sm bg-[#3b82f6]/5 p-0.5 border-[#3b82f6]/20">
+                  <TabsTrigger value="upload" className="px-2 py-1 sm:px-4 sm:py-2 data-[state=active]:bg-white data-[state=active]:text-[#3b82f6] data-[state=active]:shadow-none">Upload Resume</TabsTrigger>
+                  <TabsTrigger value="manual" className="px-2 py-1 sm:px-4 sm:py-2 data-[state=active]:bg-white data-[state=active]:text-[#3b82f6] data-[state=active]:shadow-none">Manual Entry</TabsTrigger>
+                  <TabsTrigger value="learn" className="px-2 py-1 sm:px-4 sm:py-2 data-[state=active]:bg-white data-[state=active]:text-[#3b82f6] data-[state=active]:shadow-none">
                     <BookOpen className="h-3.5 w-3.5 mr-1" />
                     Learn
                   </TabsTrigger>
@@ -1424,7 +1424,7 @@ export default function ResumeBuilderEnhanced() {
                           <div className="p-6">
                             <ResumeGuide className="shadow-none border-0 border-t-0" />
                             <div className="flex justify-end mt-4">
-                              <Button onClick={() => setShowGuide(false)}>Close Guide</Button>
+                              <Button onClick={() => setShowGuide(false)} className="bg-[#3b82f6] hover:bg-[#3b82f6]/90 text-white">Close Guide</Button>
                             </div>
                           </div>
                         </ScrollArea>
