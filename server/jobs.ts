@@ -3,6 +3,7 @@ import axios from "axios";
 interface JobSearchParams {
   query: string;
   location: string;
+  industry?: string;
   sources: string[];
 }
 
@@ -193,7 +194,7 @@ async function searchAdzuna(query: string, location: string): Promise<JobListing
 }
 
 export async function searchJobs(params: JobSearchParams): Promise<JobListing[]> {
-  const { query, location, sources } = params;
+  const { query, location, industry, sources } = params;
   const searchPromises: Promise<JobListing[]>[] = [];
 
   if (sources.includes('indeed')) {
@@ -204,10 +205,34 @@ export async function searchJobs(params: JobSearchParams): Promise<JobListing[]>
   }
 
   const results = await Promise.allSettled(searchPromises);
-  const jobs = results
+  let jobs = results
     .filter((result): result is PromiseFulfilledResult<JobListing[]> => result.status === 'fulfilled')
     .map(result => result.value)
     .flat();
+
+  // Filter by industry if specified (and not "all")
+  if (industry && industry !== 'all') {
+    jobs = jobs.filter(job => {
+      const jobText = `${job.title} ${job.description}`.toLowerCase();
+      
+      // Map industry values to keywords to search for
+      const industryKeywords: Record<string, string[]> = {
+        'technology': ['tech', 'software', 'developer', 'engineer', 'programming', 'IT', 'web', 'computer', 'digital'],
+        'healthcare': ['health', 'medical', 'doctor', 'nurse', 'patient', 'hospital', 'care', 'clinic'],
+        'finance': ['finance', 'banking', 'investment', 'financial', 'accountant', 'accounting', 'bank'],
+        'education': ['education', 'teaching', 'teacher', 'school', 'university', 'college', 'professor', 'academic'],
+        'retail': ['retail', 'store', 'sales', 'customer', 'shop', 'merchandise'],
+        'manufacturing': ['manufacturing', 'factory', 'production', 'assembly', 'industrial', 'fabrication'],
+        'hospitality': ['hospitality', 'hotel', 'restaurant', 'tourism', 'travel', 'guest', 'foodservice'],
+        'marketing': ['marketing', 'media', 'advertising', 'PR', 'content', 'brand', 'social media'],
+        'government': ['government', 'public sector', 'policy', 'federal', 'state', 'municipal', 'administration'],
+        'nonprofit': ['nonprofit', 'charity', 'foundation', 'NGO', 'mission', 'community']
+      };
+      
+      // Check if job text contains any of the industry keywords
+      return industryKeywords[industry]?.some(keyword => jobText.includes(keyword)) || false;
+    });
+  }
 
   return jobs;
 }

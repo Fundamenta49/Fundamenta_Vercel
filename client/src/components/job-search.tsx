@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,8 +20,39 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, Briefcase, Building2, MapPin, Users, Network } from "lucide-react";
+import { 
+  Loader2, 
+  Briefcase, 
+  Building2, 
+  MapPin, 
+  DollarSign, 
+  BarChart4, 
+  Network,
+  TrendingUp,
+  TrendingDown,
+  Users,
+  GraduationCap,
+  Award,
+  Map,
+  BookOpen,
+  BarChart
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 
 interface JobListing {
   id: string;
@@ -34,16 +66,105 @@ interface JobListing {
   postedDate: string;
 }
 
+// Sample salary data for different job titles
+const sampleSalaryData: Record<string, {
+  median: number, 
+  range: [number, number],
+  growth: number, // Annual growth rate as percentage
+  stateData: Record<string, {median: number, range: [number, number]}>,
+  education: string[],
+  certifications: string[]
+}> = {
+  "software engineer": { 
+    median: 110000, 
+    range: [85000, 150000],
+    growth: 15.2, // 15.2% annual growth
+    stateData: {
+      "california": { median: 135000, range: [105000, 175000] },
+      "new york": { median: 125000, range: [95000, 165000] },
+      "texas": { median: 105000, range: [80000, 140000] },
+      "florida": { median: 95000, range: [75000, 130000] },
+      "washington": { median: 130000, range: [100000, 170000] },
+      "massachusetts": { median: 120000, range: [90000, 160000] },
+      "illinois": { median: 105000, range: [80000, 140000] },
+      "colorado": { median: 110000, range: [85000, 145000] },
+      "georgia": { median: 100000, range: [75000, 135000] },
+      "oregon": { median: 115000, range: [90000, 150000] }
+    },
+    education: ["Bachelor's in Computer Science", "Bachelor's in Software Engineering", "Bachelor's in Information Technology"],
+    certifications: ["AWS Certified Developer", "Microsoft Certified: Azure Developer", "Google Cloud Professional Developer", "Oracle Certified Professional, Java SE Programmer"]
+  },
+  // Rest of the entries with default structure
+  "software developer": { 
+    median: 105000, 
+    range: [80000, 145000] as [number, number],
+    growth: 12.8,
+    stateData: { "national": { median: 105000, range: [80000, 145000] as [number, number] } },
+    education: ["Bachelor's in Computer Science", "Associates in Software Development"],
+    certifications: ["Full Stack Developer Certification", "JavaScript Certification"]
+  },
+  "web developer": { 
+    median: 95000, 
+    range: [70000, 125000] as [number, number],
+    growth: 8.5,
+    stateData: { "national": { median: 95000, range: [70000, 125000] as [number, number] } },
+    education: ["Bachelor's in Web Development", "Associates in Web Design"],
+    certifications: ["HTML/CSS Certification", "JavaScript Framework Certification"]
+  },
+  "data scientist": { 
+    median: 120000, 
+    range: [90000, 160000] as [number, number],
+    growth: 22.0,
+    stateData: { "national": { median: 120000, range: [90000, 160000] as [number, number] } },
+    education: ["Master's in Data Science", "PhD in Statistics"],
+    certifications: ["Microsoft Certified: Azure Data Scientist", "IBM Data Science Professional"]
+  },
+  "data analyst": { 
+    median: 85000, 
+    range: [65000, 110000] as [number, number],
+    growth: 18.5,
+    stateData: { "national": { median: 85000, range: [65000, 110000] as [number, number] } },
+    education: ["Bachelor's in Statistics", "Bachelor's in Computer Science"],
+    certifications: ["Tableau Certification", "Google Data Analytics Certificate"]
+  },
+  "product manager": { 
+    median: 115000, 
+    range: [95000, 160000] as [number, number],
+    growth: 10.0,
+    stateData: { "national": { median: 115000, range: [95000, 160000] as [number, number] } },
+    education: ["Bachelor's in Business", "MBA"],
+    certifications: ["Certified Scrum Product Owner", "Product Management Certification"]
+  },
+};
+
+// Format currency function
+const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
 export default function JobSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
+  const [industry, setIndustry] = useState("");
   const [selectedSources, setSelectedSources] = useState({
     indeed: true,
-    linkedin: true,
-    ziprecruiter: true,
+    linkedin: false,
+    ziprecruiter: false,
     adzuna: true,
   });
   const [jobListings, setJobListings] = useState<JobListing[]>([]);
+  const [salaryData, setSalaryData] = useState<{
+    median: number, 
+    range: [number, number],
+    growth?: number,
+    stateData?: Record<string, {median: number, range: [number, number]}>,
+    education?: string[],
+    certifications?: string[]
+  } | null>(null);
   const { toast } = useToast();
 
   const searchMutation = useMutation({
@@ -51,6 +172,7 @@ export default function JobSearch() {
       const res = await apiRequest("POST", "/api/jobs/search", {
         query: searchQuery,
         location,
+        industry: industry || undefined, // Only include if it has a value
         sources: Object.entries(selectedSources)
           .filter(([_, enabled]) => enabled)
           .map(([source]) => source),
@@ -77,6 +199,42 @@ export default function JobSearch() {
     },
   });
 
+  // Look up salary data for a job title
+  const lookupSalaryData = (jobTitle: string) => {
+    const normalizedTitle = jobTitle.toLowerCase();
+    
+    // Try to find exact match first
+    if (sampleSalaryData[normalizedTitle]) {
+      return sampleSalaryData[normalizedTitle];
+    }
+    
+    // If no exact match, look for partial matches
+    for (const [title, data] of Object.entries(sampleSalaryData)) {
+      if (normalizedTitle.includes(title) || title.includes(normalizedTitle)) {
+        return data;
+      }
+    }
+    
+    // Default fallback for unknown titles
+    return { 
+      median: 75000, 
+      range: [50000, 120000] as [number, number],
+      growth: 5.0,
+      stateData: { "national": { median: 75000, range: [50000, 120000] as [number, number] } },
+      education: ["Bachelor's degree (recommended)"],
+      certifications: ["Industry-specific certifications may be required"]
+    };
+  };
+  
+  // Update salary data when search query changes
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      setSalaryData(lookupSalaryData(searchQuery));
+    } else {
+      setSalaryData(null);
+    }
+  }, [searchQuery]);
+
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       toast({
@@ -86,6 +244,8 @@ export default function JobSearch() {
       });
       return;
     }
+    // Set salary data based on search query
+    setSalaryData(lookupSalaryData(searchQuery));
     searchMutation.mutate();
   };
 
@@ -98,7 +258,7 @@ export default function JobSearch() {
             Fundamenta Connects
           </CardTitle>
           <CardDescription className="text-sm sm:text-base">
-            Discover career opportunities tailored to your skills and interests
+            Discover career opportunities and salary insights tailored to your skills
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 px-3 py-2 sm:px-6 sm:py-4">
@@ -122,6 +282,31 @@ export default function JobSearch() {
               onChange={(e) => setLocation(e.target.value)}
               className="border-wood/20 text-sm sm:text-base"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="industry" className="text-sm sm:text-base">Industry (Optional)</Label>
+            <Select
+              value={industry}
+              onValueChange={setIndustry}
+            >
+              <SelectTrigger id="industry" className="border-wood/20 text-sm sm:text-base">
+                <SelectValue placeholder="Select an industry (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Industries</SelectItem>
+                <SelectItem value="technology">Technology</SelectItem>
+                <SelectItem value="healthcare">Healthcare</SelectItem>
+                <SelectItem value="finance">Finance</SelectItem>
+                <SelectItem value="education">Education</SelectItem>
+                <SelectItem value="retail">Retail</SelectItem>
+                <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                <SelectItem value="hospitality">Hospitality</SelectItem>
+                <SelectItem value="marketing">Marketing & Media</SelectItem>
+                <SelectItem value="government">Government</SelectItem>
+                <SelectItem value="nonprofit">Nonprofit</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
