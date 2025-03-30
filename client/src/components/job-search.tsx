@@ -66,75 +66,14 @@ interface JobListing {
   postedDate: string;
 }
 
-// Sample salary data for different job titles
-const sampleSalaryData: Record<string, {
-  median: number, 
-  range: [number, number],
-  growth: number, // Annual growth rate as percentage
-  stateData: Record<string, {median: number, range: [number, number]}>,
-  education: string[],
-  certifications: string[]
-}> = {
-  "software engineer": { 
-    median: 110000, 
-    range: [85000, 150000],
-    growth: 15.2, // 15.2% annual growth
-    stateData: {
-      "california": { median: 135000, range: [105000, 175000] },
-      "new york": { median: 125000, range: [95000, 165000] },
-      "texas": { median: 105000, range: [80000, 140000] },
-      "florida": { median: 95000, range: [75000, 130000] },
-      "washington": { median: 130000, range: [100000, 170000] },
-      "massachusetts": { median: 120000, range: [90000, 160000] },
-      "illinois": { median: 105000, range: [80000, 140000] },
-      "colorado": { median: 110000, range: [85000, 145000] },
-      "georgia": { median: 100000, range: [75000, 135000] },
-      "oregon": { median: 115000, range: [90000, 150000] }
-    },
-    education: ["Bachelor's in Computer Science", "Bachelor's in Software Engineering", "Bachelor's in Information Technology"],
-    certifications: ["AWS Certified Developer", "Microsoft Certified: Azure Developer", "Google Cloud Professional Developer", "Oracle Certified Professional, Java SE Programmer"]
-  },
-  // Rest of the entries with default structure
-  "software developer": { 
-    median: 105000, 
-    range: [80000, 145000] as [number, number],
-    growth: 12.8,
-    stateData: { "national": { median: 105000, range: [80000, 145000] as [number, number] } },
-    education: ["Bachelor's in Computer Science", "Associates in Software Development"],
-    certifications: ["Full Stack Developer Certification", "JavaScript Certification"]
-  },
-  "web developer": { 
-    median: 95000, 
-    range: [70000, 125000] as [number, number],
-    growth: 8.5,
-    stateData: { "national": { median: 95000, range: [70000, 125000] as [number, number] } },
-    education: ["Bachelor's in Web Development", "Associates in Web Design"],
-    certifications: ["HTML/CSS Certification", "JavaScript Framework Certification"]
-  },
-  "data scientist": { 
-    median: 120000, 
-    range: [90000, 160000] as [number, number],
-    growth: 22.0,
-    stateData: { "national": { median: 120000, range: [90000, 160000] as [number, number] } },
-    education: ["Master's in Data Science", "PhD in Statistics"],
-    certifications: ["Microsoft Certified: Azure Data Scientist", "IBM Data Science Professional"]
-  },
-  "data analyst": { 
-    median: 85000, 
-    range: [65000, 110000] as [number, number],
-    growth: 18.5,
-    stateData: { "national": { median: 85000, range: [65000, 110000] as [number, number] } },
-    education: ["Bachelor's in Statistics", "Bachelor's in Computer Science"],
-    certifications: ["Tableau Certification", "Google Data Analytics Certificate"]
-  },
-  "product manager": { 
-    median: 115000, 
-    range: [95000, 160000] as [number, number],
-    growth: 10.0,
-    stateData: { "national": { median: 115000, range: [95000, 160000] as [number, number] } },
-    education: ["Bachelor's in Business", "MBA"],
-    certifications: ["Certified Scrum Product Owner", "Product Management Certification"]
-  },
+// Default fallback salary data (only used if API call fails)
+const defaultSalaryData = {
+  median: 75000, 
+  range: [50000, 120000] as [number, number],
+  growth: 5.0,
+  stateData: { "national": { median: 75000, range: [50000, 120000] as [number, number] } },
+  education: ["Bachelor's degree (recommended)"],
+  certifications: ["Industry-specific certifications may be required"]
 };
 
 // Format currency function
@@ -198,41 +137,45 @@ export default function JobSearch() {
     },
   });
 
-  // Look up salary data for a job title
-  const lookupSalaryData = (jobTitle: string) => {
-    const normalizedTitle = jobTitle.toLowerCase();
-    
-    // Try to find exact match first
-    if (sampleSalaryData[normalizedTitle]) {
-      return sampleSalaryData[normalizedTitle];
-    }
-    
-    // If no exact match, look for partial matches
-    for (const [title, data] of Object.entries(sampleSalaryData)) {
-      if (normalizedTitle.includes(title) || title.includes(normalizedTitle)) {
-        return data;
+  // Salary data fetch mutation
+  const salaryMutation = useMutation({
+    mutationFn: async (jobTitle: string) => {
+      const res = await apiRequest("POST", "/api/salary/insights", {
+        jobTitle,
+        location: location || "United States"
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to fetch salary insights");
       }
-    }
-    
-    // Default fallback for unknown titles
-    return { 
-      median: 75000, 
-      range: [50000, 120000] as [number, number],
-      growth: 5.0,
-      stateData: { "national": { median: 75000, range: [50000, 120000] as [number, number] } },
-      education: ["Bachelor's degree (recommended)"],
-      certifications: ["Industry-specific certifications may be required"]
-    };
-  };
+      
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setSalaryData(data);
+      console.log("Salary insights fetched successfully:", data);
+    },
+    onError: (error: Error) => {
+      console.error("Failed to fetch salary insights:", error);
+      // Fall back to default salary data
+      setSalaryData(defaultSalaryData);
+      
+      toast({
+        variant: "default",
+        title: "Salary Insights Available",
+        description: "Using estimated salary data for your search",
+      });
+    },
+  });
   
-  // Update salary data when search query changes
+  // Fetch initial salary data when component mounts
   useEffect(() => {
-    if (searchQuery.trim()) {
-      setSalaryData(lookupSalaryData(searchQuery));
-    } else {
-      setSalaryData(null);
+    // If user has entered a search query on component mount, fetch salary data
+    if (searchQuery.trim() && salaryData === null) {
+      salaryMutation.mutate(searchQuery);
     }
-  }, [searchQuery]);
+  }, []);
 
   const handleSearch = () => {
     if (!searchQuery.trim()) {
@@ -243,8 +186,11 @@ export default function JobSearch() {
       });
       return;
     }
-    // Set salary data based on search query
-    setSalaryData(lookupSalaryData(searchQuery));
+    
+    // Fetch salary insights from API
+    salaryMutation.mutate(searchQuery);
+    
+    // Perform job search
     searchMutation.mutate();
   };
 
@@ -376,6 +322,108 @@ export default function JobSearch() {
                 </div>
               </div>
             ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Salary Insights Card - appears when search is performed and salary data is available */}
+      {salaryData && (
+        <Card>
+          <CardHeader className="px-3 py-3 sm:px-6 sm:py-4 border-b-2 border-primary/20">
+            <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-primary" />
+              Salary Insights for {searchQuery}
+            </CardTitle>
+            <CardDescription className="text-sm sm:text-base">
+              Comprehensive compensation and market analysis
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 px-3 py-2 sm:px-6 sm:py-4">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="space-y-1 bg-primary/5 p-3 rounded-lg">
+                <h4 className="text-sm font-medium flex items-center gap-1.5">
+                  <DollarSign className="h-4 w-4 text-primary" />
+                  Median Salary
+                </h4>
+                <p className="text-xl font-bold">{formatCurrency(salaryData.median)}</p>
+                <p className="text-xs text-muted-foreground">
+                  Range: {formatCurrency(salaryData.range[0])} - {formatCurrency(salaryData.range[1])}
+                </p>
+              </div>
+
+              <div className="space-y-1 bg-primary/5 p-3 rounded-lg">
+                <h4 className="text-sm font-medium flex items-center gap-1.5">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  Growth Rate
+                </h4>
+                <p className="text-xl font-bold">{salaryData.growth ? `${salaryData.growth}%` : 'N/A'}</p>
+                <p className="text-xs text-muted-foreground">Annual job growth</p>
+              </div>
+
+              <div className="space-y-1 bg-primary/5 p-3 rounded-lg">
+                <h4 className="text-sm font-medium flex items-center gap-1.5">
+                  <Map className="h-4 w-4 text-primary" />
+                  Location Data
+                </h4>
+                <p className="text-xl font-bold">{location || 'National'}</p>
+                <p className="text-xs text-muted-foreground">Market comparison basis</p>
+              </div>
+            </div>
+
+            {salaryData.education && salaryData.education.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                  Recommended Education
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {salaryData.education.map((edu, i) => (
+                    <span key={i} className="text-xs bg-primary/10 text-primary-foreground px-2 py-1 rounded-full">
+                      {edu}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {salaryData.certifications && salaryData.certifications.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <Award className="h-4 w-4 text-primary" />
+                  Valuable Certifications
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {salaryData.certifications.map((cert, i) => (
+                    <span key={i} className="text-xs bg-primary/10 text-primary-foreground px-2 py-1 rounded-full">
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {salaryData.stateData && Object.keys(salaryData.stateData).length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <BarChart className="h-4 w-4 text-primary" />
+                  Regional Salary Comparison
+                </h4>
+                <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+                  {Object.entries(salaryData.stateData).slice(0, 6).map(([state, data]) => (
+                    <div key={state} className="bg-muted/30 p-2 rounded text-xs">
+                      <span className="font-medium">{state}</span>: {formatCurrency(data.median)}
+                      <div className="text-muted-foreground text-xs">
+                        Range: {formatCurrency(data.range[0])} - {formatCurrency(data.range[1])}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div className="mt-4 text-xs text-muted-foreground">
+              <p>Data is based on industry averages and may vary based on specific employers and qualifications.</p>
+            </div>
           </CardContent>
         </Card>
       )}

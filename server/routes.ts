@@ -14,7 +14,7 @@ import learningRoutes from './routes/learning';
 import youtubeRoutes, { youtubeSearchHandler } from './routes/youtube';
 import nhtsaRoutes from './routes/nhtsa';
 import chatRoutes from './routes/chat';
-import { searchJobs as searchJobsFromApi } from './jobs';
+import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { 
   getEmergencyGuidance,
   optimizeResume,
@@ -23,7 +23,6 @@ import {
   generateCoverLetter,
   assessCareer,
   searchJobs,
-  getSalaryInsights,
   createLinkToken,
   exchangePublicToken,
   getTransactions,
@@ -628,8 +627,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         location: z.string()
       }).parse(req.body);
       
-      const insights = await getSalaryInsights(jobTitle, location);
+      // Use our new getAdzunaSalaryInsights function from jobs.ts
+      const insights = await getAdzunaSalaryInsights(jobTitle, location);
       res.json(insights);
+      
+      console.log("Salary insights successfully retrieved from Adzuna for:", jobTitle);
     } catch (error: any) {
       console.error("Salary insights error:", error);
 
