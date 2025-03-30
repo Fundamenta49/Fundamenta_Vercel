@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus } from "lucide-react";
+import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus, Dumbbell } from "lucide-react";
 import ChatInterface, { 
   WELLNESS_CATEGORY 
 } from "@/components/chat-interface";
@@ -15,6 +15,7 @@ import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 import RiskAssessment from "@/components/risk-assessment";
 import BrainTap from "@/components/brain-tap";
+import ComprehensiveWellnessAssessment from "@/components/comprehensive-wellness-assessment";
 import JournalPopOut from "@/components/journal-pop-out";
 import RiskAssessmentPopOut from "@/components/risk-assessment-pop-out";
 import NutritionGuidePopOut from "@/components/nutrition-guide-pop-out";
@@ -22,6 +23,7 @@ import NutritionTrackerPopOut from "@/components/nutrition-tracker-pop-out";
 import ShoppingBuddyPopOut from "@/components/shopping-buddy-pop-out";
 import WellnessCoachPopOut from "@/components/wellness-coach-pop-out";
 import BrainTapPopOut from "@/components/brain-tap-pop-out";
+import ComprehensiveWellnessPopOut from "@/components/comprehensive-wellness-pop-out";
 import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
@@ -65,11 +67,11 @@ const SECTIONS: SectionType[] = [
     )
   },
   {
-    id: 'braintap',
-    title: 'Brain Tap',
-    description: 'Mental wellness check-in using clinical screening tools',
-    icon: Brain,
-    component: BrainTap
+    id: 'comprehensive',
+    title: 'Comprehensive Assessment',
+    description: 'Complete physical and mental health evaluation with personalized recommendations',
+    icon: Heart,
+    component: ComprehensiveWellnessAssessment
   },
   {
     id: 'journal',
@@ -110,6 +112,7 @@ export default function Wellness() {
   const [isTrackerOpen, setIsTrackerOpen] = useState(false);
   const [isShoppingOpen, setIsShoppingOpen] = useState(false);
   const [isCoachOpen, setIsCoachOpen] = useState(false);
+  const [isComprehensiveOpen, setIsComprehensiveOpen] = useState(false);
 
   const handleCardClick = (sectionId: string) => {
     // Open the appropriate dialog based on the section clicked
@@ -130,6 +133,9 @@ export default function Wellness() {
     }
     else if (sectionId === 'shopping') {
       setIsShoppingOpen(true);
+    }
+    else if (sectionId === 'comprehensive') {
+      setIsComprehensiveOpen(true);
     }
   };
 
@@ -186,6 +192,12 @@ export default function Wellness() {
       <FullScreenDialog open={isBrainTapOpen} onOpenChange={setIsBrainTapOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
           <BrainTapPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+      
+      <FullScreenDialog open={isComprehensiveOpen} onOpenChange={setIsComprehensiveOpen}>
+        <FullScreenDialogContent themeColor="#a855f7">
+          <ComprehensiveWellnessPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
