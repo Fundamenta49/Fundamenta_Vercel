@@ -8,19 +8,20 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus } from "lucide-react";
 import ChatInterface, { 
-  ChatInterfaceComponent, 
   WELLNESS_CATEGORY 
 } from "@/components/chat-interface";
 import NutritionGuide from "@/components/nutrition-guide";
 import NutritionTracker from "@/components/nutrition-tracker";
 import ShoppingBuddy from "@/components/shopping-buddy";
 import RiskAssessment from "@/components/risk-assessment";
+import BrainTap from "@/components/brain-tap";
 import JournalPopOut from "@/components/journal-pop-out";
 import RiskAssessmentPopOut from "@/components/risk-assessment-pop-out";
 import NutritionGuidePopOut from "@/components/nutrition-guide-pop-out";
 import NutritionTrackerPopOut from "@/components/nutrition-tracker-pop-out";
 import ShoppingBuddyPopOut from "@/components/shopping-buddy-pop-out";
 import WellnessCoachPopOut from "@/components/wellness-coach-pop-out";
+import BrainTapPopOut from "@/components/brain-tap-pop-out";
 import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
@@ -51,7 +52,7 @@ const SECTIONS: SectionType[] = [
     title: 'Wellness AI Coach',
     description: 'Get personalized guidance on nutrition, mental health, and wellness',
     icon: Brain,
-    component: ChatInterface as ChatInterfaceComponent,
+    component: ChatInterface,
     props: { category: WELLNESS_CATEGORY },
     alert: (
       <Alert className="mt-4 border-purple-500 bg-purple-50">
@@ -65,10 +66,10 @@ const SECTIONS: SectionType[] = [
   },
   {
     id: 'braintap',
-    title: 'BrainTap',
-    description: 'Check in with yourself and discover personalized mental wellness resources',
-    icon: Heart,
-    component: RiskAssessment
+    title: 'Brain Tap',
+    description: 'Mental wellness check-in using clinical screening tools',
+    icon: Brain,
+    component: BrainTap
   },
   {
     id: 'journal',
@@ -104,6 +105,7 @@ export default function Wellness() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [isRiskOpen, setIsRiskOpen] = useState(false);
+  const [isBrainTapOpen, setIsBrainTapOpen] = useState(false);
   const [isNutritionOpen, setIsNutritionOpen] = useState(false);
   const [isTrackerOpen, setIsTrackerOpen] = useState(false);
   const [isShoppingOpen, setIsShoppingOpen] = useState(false);
@@ -118,7 +120,7 @@ export default function Wellness() {
       setIsJournalOpen(true);
     }
     else if (sectionId === 'braintap') {
-      setIsRiskOpen(true);
+      setIsBrainTapOpen(true);
     }
     else if (sectionId === 'nutrition') {
       setIsNutritionOpen(true);
@@ -178,6 +180,12 @@ export default function Wellness() {
       <FullScreenDialog open={isCoachOpen} onOpenChange={setIsCoachOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
           <WellnessCoachPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+      
+      <FullScreenDialog open={isBrainTapOpen} onOpenChange={setIsBrainTapOpen}>
+        <FullScreenDialogContent themeColor="#a855f7">
+          <BrainTapPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
