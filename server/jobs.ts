@@ -29,61 +29,37 @@ interface JobListing {
   postedDate: string;
 }
 
-// Sample job database with various categories
+// Sample job data for when Adzuna API is not available
 const sampleJobs = [
-  // Tech Jobs
   {
-    category: "software",
-    jobs: [
-      {
-        title: "Full Stack Developer",
-        company: "Tech Solutions Inc",
-        description: "Looking for a full stack developer with experience in React and Node.js...",
-        salary: "$90,000 - $130,000"
-      },
-      {
-        title: "Frontend Engineer",
-        company: "Web Innovations",
-        description: "Join our team building modern web applications...",
-        salary: "$85,000 - $120,000"
-      }
-    ]
+    title: "Software Engineer",
+    company: "Tech Solutions Inc",
+    description: "We're looking for a talented software engineer to join our growing team. You'll work on cutting-edge projects using modern technologies including React, Node.js, and cloud services.",
+    salary: "$90,000 - $130,000"
   },
-  // Chef Jobs
   {
-    category: "chef",
-    jobs: [
-      {
-        title: "Executive Chef",
-        company: "Gourmet Restaurant Group",
-        description: "Leading kitchen operations and menu development...",
-        salary: "$65,000 - $85,000"
-      },
-      {
-        title: "Sous Chef",
-        company: "Fine Dining Co",
-        description: "Assisting in kitchen management and food preparation...",
-        salary: "$45,000 - $60,000"
-      }
-    ]
+    title: "Frontend Developer",
+    company: "Web Innovations",
+    description: "Join our team building modern web applications. Strong knowledge of JavaScript, React, and CSS required. Experience with TypeScript and testing frameworks is a plus.",
+    salary: "$85,000 - $120,000"
   },
-  // Marketing Jobs
   {
-    category: "marketing",
-    jobs: [
-      {
-        title: "Digital Marketing Manager",
-        company: "Brand Solutions",
-        description: "Managing digital marketing campaigns and strategy...",
-        salary: "$70,000 - $95,000"
-      },
-      {
-        title: "Content Strategist",
-        company: "Media Group",
-        description: "Developing and executing content marketing strategies...",
-        salary: "$60,000 - $80,000"
-      }
-    ]
+    title: "Full Stack Engineer",
+    company: "Digital Products Co",
+    description: "Full stack developer needed for a fast-growing startup. You'll be responsible for developing and maintaining web applications from front to back. Experience with JavaScript, React, Node.js, and databases required.",
+    salary: "$95,000 - $140,000"
+  },
+  {
+    title: "UI/UX Designer",
+    company: "Creative Solutions",
+    description: "Looking for a talented UI/UX designer to create beautiful and intuitive user interfaces for our digital products. Proficiency with design tools and understanding of user experience principles required.",
+    salary: "$80,000 - $110,000"
+  },
+  {
+    title: "Product Manager",
+    company: "Innovate Inc",
+    description: "Experienced product manager needed to lead product development from conception to launch. You'll work closely with engineering, design, and marketing teams to deliver outstanding products.",
+    salary: "$100,000 - $150,000"
   }
 ];
 
@@ -106,70 +82,28 @@ function matchJobToSearch(searchQuery: string): string {
   return "software";
 }
 
-async function searchIndeed(query: string, location: string): Promise<JobListing[]> {
+// Function to get sample job data
+async function getSampleJobs(query: string, location: string, source: string): Promise<JobListing[]> {
   try {
-    const category = matchJobToSearch(query);
-    const categoryJobs = sampleJobs.find(c => c.category === category)?.jobs || [];
-
-    return categoryJobs.map((job, index) => ({
-      id: `indeed-${index}`,
+    return sampleJobs.map((job, index) => ({
+      id: `sample-${index}`,
       title: job.title,
       company: job.company,
       location: location, // Use the provided location
       description: job.description,
       salary: job.salary,
-      url: `https://www.indeed.com/jobs?q=${encodeURIComponent(query)}&l=${encodeURIComponent(location)}`,
-      source: 'Indeed',
+      url: `https://www.google.com/search?q=${encodeURIComponent(job.title)}+jobs+in+${encodeURIComponent(location)}`,
+      source: source,
       postedDate: ['Just posted', '1 day ago', '2 days ago', '3 days ago'][Math.floor(Math.random() * 4)]
     }));
   } catch (error) {
-    console.error("Error searching Indeed:", error);
+    console.error("Error getting sample jobs:", error);
     return [];
   }
 }
 
-async function searchLinkedIn(query: string, location: string): Promise<JobListing[]> {
-  try {
-    const category = matchJobToSearch(query);
-    const categoryJobs = sampleJobs.find(c => c.category === category)?.jobs || [];
-
-    return categoryJobs.map((job, index) => ({
-      id: `linkedin-${index}`,
-      title: job.title,
-      company: job.company,
-      location: location,
-      description: job.description,
-      salary: job.salary,
-      url: `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`,
-      source: 'LinkedIn',
-      postedDate: ['Today', '2 days ago', '3 days ago', '4 days ago'][Math.floor(Math.random() * 4)]
-    }));
-  } catch (error) {
-    console.error("Error searching LinkedIn:", error);
-    return [];
-  }
-}
-
-async function searchZipRecruiter(query: string, location: string): Promise<JobListing[]> {
-  try {
-    const category = matchJobToSearch(query);
-    const categoryJobs = sampleJobs.find(c => c.category === category)?.jobs || [];
-
-    return categoryJobs.map((job, index) => ({
-      id: `ziprecruiter-${index}`,
-      title: job.title,
-      company: job.company,
-      location: location,
-      description: job.description,
-      salary: job.salary,
-      url: `https://www.ziprecruiter.com/candidate/search?search=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`,
-      source: 'ZipRecruiter',
-      postedDate: ['Today', '1 week ago', '2 weeks ago', '3 weeks ago'][Math.floor(Math.random() * 4)]
-    }));
-  } catch (error) {
-    console.error("Error searching ZipRecruiter:", error);
-    return [];
-  }
+async function searchIndeed(query: string, location: string): Promise<JobListing[]> {
+  return getSampleJobs(query, location, 'Sample');
 }
 
 /**
@@ -263,13 +197,7 @@ export async function searchJobs(params: JobSearchParams): Promise<JobListing[]>
   const searchPromises: Promise<JobListing[]>[] = [];
 
   if (sources.includes('indeed')) {
-    searchPromises.push(searchIndeed(query, location));
-  }
-  if (sources.includes('linkedin')) {
-    searchPromises.push(searchLinkedIn(query, location));
-  }
-  if (sources.includes('ziprecruiter')) {
-    searchPromises.push(searchZipRecruiter(query, location));
+    searchPromises.push(getSampleJobs(query, location, 'Sample'));
   }
   if (sources.includes('adzuna')) {
     searchPromises.push(searchAdzuna(query, location));

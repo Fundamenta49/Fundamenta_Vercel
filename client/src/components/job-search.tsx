@@ -19,7 +19,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, Briefcase, Building2, MapPin } from "lucide-react";
+import { Loader2, Briefcase, Building2, MapPin, Users, Network } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface JobListing {
@@ -92,10 +92,13 @@ export default function JobSearch() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="px-3 py-3 sm:px-6 sm:py-4">
-          <CardTitle className="text-lg sm:text-xl">Job Search</CardTitle>
+        <CardHeader className="px-3 py-3 sm:px-6 sm:py-4 border-b-2 border-primary/20">
+          <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
+            <Network className="h-5 w-5 text-primary" /> 
+            Fundamenta Connects
+          </CardTitle>
           <CardDescription className="text-sm sm:text-base">
-            Search across multiple job boards to find your next opportunity
+            Discover career opportunities tailored to your skills and interests
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 px-3 py-2 sm:px-6 sm:py-4">
@@ -122,41 +125,8 @@ export default function JobSearch() {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm sm:text-base">Job Boards</Label>
+            <Label className="text-sm sm:text-base">Job Sources</Label>
             <div className="flex flex-wrap gap-2 sm:gap-4">
-              <div className="flex items-center space-x-1 sm:space-x-2">
-                <Checkbox
-                  id="indeed"
-                  checked={selectedSources.indeed}
-                  onCheckedChange={(checked) =>
-                    setSelectedSources({ ...selectedSources, indeed: !!checked })
-                  }
-                />
-                <Label htmlFor="indeed" className="text-sm sm:text-base">Indeed</Label>
-              </div>
-              <div className="flex items-center space-x-1 sm:space-x-2">
-                <Checkbox
-                  id="linkedin"
-                  checked={selectedSources.linkedin}
-                  onCheckedChange={(checked) =>
-                    setSelectedSources({ ...selectedSources, linkedin: !!checked })
-                  }
-                />
-                <Label htmlFor="linkedin" className="text-sm sm:text-base">LinkedIn</Label>
-              </div>
-              <div className="flex items-center space-x-1 sm:space-x-2">
-                <Checkbox
-                  id="ziprecruiter"
-                  checked={selectedSources.ziprecruiter}
-                  onCheckedChange={(checked) =>
-                    setSelectedSources({
-                      ...selectedSources,
-                      ziprecruiter: !!checked,
-                    })
-                  }
-                />
-                <Label htmlFor="ziprecruiter" className="text-sm sm:text-base">ZipRecruiter</Label>
-              </div>
               <div className="flex items-center space-x-1 sm:space-x-2">
                 <Checkbox
                   id="adzuna"
@@ -168,9 +138,22 @@ export default function JobSearch() {
                     })
                   }
                 />
-                <Label htmlFor="adzuna" className="text-sm sm:text-base">Adzuna</Label>
+                <Label htmlFor="adzuna" className="text-sm sm:text-base">Adzuna API (Real-time Data)</Label>
+              </div>
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <Checkbox
+                  id="indeed"
+                  checked={selectedSources.indeed}
+                  onCheckedChange={(checked) =>
+                    setSelectedSources({ ...selectedSources, indeed: !!checked })
+                  }
+                />
+                <Label htmlFor="indeed" className="text-sm sm:text-base">Sample Data</Label>
               </div>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Note: Only Adzuna provides real-time job listings. Sample data is used when Adzuna is unavailable.
+            </p>
           </div>
 
           <Button
@@ -181,10 +164,12 @@ export default function JobSearch() {
             {searchMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Searching...
+                Connecting...
               </>
             ) : (
-              "Search Jobs"
+              <>
+                <Network className="h-4 w-4 mr-2" /> Find Opportunities
+              </>
             )}
           </Button>
         </CardContent>
@@ -192,10 +177,13 @@ export default function JobSearch() {
 
       {jobListings.length > 0 && (
         <Card>
-          <CardHeader className="px-3 py-3 sm:px-6 sm:py-4">
-            <CardTitle className="text-lg sm:text-xl">Search Results</CardTitle>
+          <CardHeader className="px-3 py-3 sm:px-6 sm:py-4 border-b-2 border-primary/20">
+            <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
+              <Briefcase className="h-5 w-5 text-primary" />
+              Opportunities Found
+            </CardTitle>
             <CardDescription className="text-sm sm:text-base">
-              Found {jobListings.length} matching positions
+              Discovered {jobListings.length} matching positions for you
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 px-3 py-2 sm:px-6 sm:py-4">
@@ -222,15 +210,14 @@ export default function JobSearch() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-white border-primary/30 text-primary hover:bg-primary/5 text-xs sm:text-sm py-1 h-auto self-start"
+                    className="bg-white border-primary/30 text-primary hover:bg-primary/5 text-xs sm:text-sm py-1 h-auto self-start flex items-center gap-1"
                     onClick={() => window.open(job.url, "_blank")}
                   >
-                    View Job
+                    Connect <Network className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
                 <p className="text-xs sm:text-sm line-clamp-2 sm:line-clamp-3">{job.description}</p>
                 <div className="mt-2 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                  <span>Source: {job.source}</span>
                   <span>Posted: {job.postedDate}</span>
                 </div>
               </div>
