@@ -336,8 +336,11 @@ export default function NutritionAssessment() {
                   <Input
                     id="age"
                     type="number"
-                    value={assessment.age}
-                    onChange={(e) => updateAssessment('age', parseInt(e.target.value) || 0)}
+                    value={assessment.age === 0 ? '' : assessment.age}
+                    onChange={(e) => {
+                      const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                      updateAssessment('age', value);
+                    }}
                     min={1}
                     max={120}
                   />
@@ -369,8 +372,11 @@ export default function NutritionAssessment() {
                     <Input
                       id="heightFeet"
                       type="number"
-                      value={assessment.heightFeet}
-                      onChange={(e) => updateAssessment('heightFeet', parseInt(e.target.value) || 0)}
+                      value={assessment.heightFeet === 0 ? '' : assessment.heightFeet}
+                      onChange={(e) => {
+                        const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                        updateAssessment('heightFeet', value);
+                      }}
                       min={1}
                       max={8}
                     />
@@ -381,8 +387,11 @@ export default function NutritionAssessment() {
                     <Input
                       id="heightInches"
                       type="number"
-                      value={assessment.heightInches}
-                      onChange={(e) => updateAssessment('heightInches', parseInt(e.target.value) || 0)}
+                      value={assessment.heightInches === 0 ? '' : assessment.heightInches}
+                      onChange={(e) => {
+                        const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                        updateAssessment('heightInches', value);
+                      }}
                       min={0}
                       max={11}
                     />
@@ -394,8 +403,11 @@ export default function NutritionAssessment() {
                   <Input
                     id="weight"
                     type="number"
-                    value={assessment.weight}
-                    onChange={(e) => updateAssessment('weight', parseInt(e.target.value) || 0)}
+                    value={assessment.weight === 0 ? '' : assessment.weight}
+                    onChange={(e) => {
+                      const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                      updateAssessment('weight', value);
+                    }}
                     min={1}
                     max={500}
                   />
