@@ -299,24 +299,28 @@ export default function Learning() {
           <h2 className="text-xl font-bold mb-4 px-2 py-2 bg-orange-50 text-orange-800 rounded-md border-l-4 border-orange-500">
             Life Skills
           </h2>
-          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
             {LIFE_SKILLS.map((course) => (
               <div key={course.id} className="flex flex-col">
                 <button
                   onClick={() => handleCardClick(course.id)}
-                  className="relative flex flex-col items-center justify-center p-2 sm:p-4 rounded-xl border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500 min-h-[80px] sm:min-h-[100px]"
+                  className="relative flex flex-col items-center justify-between p-2 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500 min-h-[68px] sm:min-h-[85px] w-full"
                   aria-label={`Open ${course.title}`}
                 >
+                  <div className="flex items-center justify-center h-9 sm:h-10 w-full">
+                    <course.icon className="w-6 h-6 sm:w-7 sm:h-7 text-orange-500" />
+                  </div>
+                  
+                  <span className="text-xs sm:text-sm font-medium text-center line-clamp-2 w-full mt-1">{course.title}</span>
+                  
                   {course.popular && (
-                    <span className="absolute top-1 sm:top-2 right-1 sm:right-2 w-2 sm:w-3 h-2 sm:h-3 bg-blue-500 rounded-full" 
+                    <span className="absolute top-1 right-1 w-2 sm:w-2.5 h-2 sm:h-2.5 bg-blue-500 rounded-full" 
                           aria-label="Popular course" />
                   )}
                   {course.new && (
-                    <span className="absolute top-1 sm:top-2 left-1 sm:left-2 w-2 sm:w-3 h-2 sm:h-3 bg-orange-500 rounded-full"
+                    <span className="absolute top-1 left-1 w-2 sm:w-2.5 h-2 sm:h-2.5 bg-orange-500 rounded-full"
                           aria-label="New course" />
                   )}
-                  <course.icon className="w-6 h-6 sm:w-8 sm:h-8 text-orange-500 mb-1 sm:mb-2" />
-                  <span className="text-xs sm:text-sm font-medium text-center line-clamp-2">{course.title}</span>
                 </button>
               </div>
             ))}
