@@ -56,6 +56,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 // Industry-specific question categories
@@ -365,14 +366,21 @@ export default function InterviewPractice() {
     },
   });
 
-  const handleSelectQuestion = (question: string) => {
+  const handleSelectQuestion = useCallback((question: string) => {
     setCurrentQuestion(question);
     setAnswer("");
     setCurrentTips(getQuestionSpecificTips(question));
     setFeedback("");
-  };
+    
+    // Reset timer when a new question is selected
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      setTimerRunning(false);
+    }
+    setTimeLeft(120);
+  }, []);
 
-  const handleGenerateQuestions = () => {
+  const handleGenerateQuestions = useCallback(() => {
     if (!jobField.trim()) {
       toast({
         variant: "destructive",
@@ -382,9 +390,9 @@ export default function InterviewPractice() {
       return;
     }
     generateQuestionsMutation.mutate(jobField);
-  };
+  }, [jobField, generateQuestionsMutation, toast]);
 
-  // New state variables for speech recognition, mock interview, and STAR method
+  // State variables for enhanced features
   const [activeTab, setActiveTab] = useState("question-bank");
   const [isMockInterview, setIsMockInterview] = useState(false);
   const [mockInterviewQuestions, setMockInterviewQuestions] = useState<string[]>([]);
@@ -601,19 +609,6 @@ Result: ${starGuide.result}
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
-
-  // Enhance the original handleSelectQuestion function
-  const originalHandleSelectQuestion = handleSelectQuestion;
-  const handleSelectQuestion = useCallback((question: string) => {
-    originalHandleSelectQuestion(question);
-    resetTimer();
-  }, [originalHandleSelectQuestion]);
-
-  // Enhanced generate questions function
-  const originalHandleGenerateQuestions = handleGenerateQuestions;
-  const enhancedHandleGenerateQuestions = useCallback(() => {
-    originalHandleGenerateQuestions();
-  }, [originalHandleGenerateQuestions]);
 
   return (
     <div className="space-y-6">
