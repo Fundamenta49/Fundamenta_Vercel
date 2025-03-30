@@ -41,8 +41,8 @@ export default function SimpleButtonFundi({
         viewBox="0 0 100 100" 
         className="w-full h-full"
       >
-        {/* Robot Head */}
-        <rect x="20" y="20" width="60" height="60" rx="10" fill={color} />
+        {/* Circular Background */}
+        <circle cx="50" cy="50" r="45" fill={color} />
 
         {/* Eyes */}
         <circle cx="35" cy="45" r="8" fill="white" />
@@ -51,7 +51,8 @@ export default function SimpleButtonFundi({
         <circle cx="65" cy="45" r="4" fill={color} className={speaking ? "animate-pulse" : ""} />
 
         {/* Antenna */}
-        <rect x="45" y="10" width="10" height="10" rx="5" fill={color} />
+        <circle cx="50" cy="15" r="6" fill={color} stroke="white" strokeWidth="2" />
+        <line x1="50" y1="21" x2="50" y2="30" stroke="white" strokeWidth="2" />
 
         {/* Mouth */}
         <path
