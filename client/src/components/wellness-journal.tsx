@@ -717,18 +717,21 @@ export default function WellnessJournal() {
     <div className="w-full max-w-screen-xl mx-auto">
       <FullScreenDialogHeader>
         <div className="flex items-center justify-between">
-          <FullScreenDialogTitle className="flex items-center gap-2">
-            <Book className="h-6 w-6 text-purple-500" />
+          <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
+            <Book className="h-6 w-6 text-purple-600" />
             Wellness Journal
           </FullScreenDialogTitle>
           <div className="flex gap-2">
-            <Button onClick={openNewEntry} className="bg-purple-600 hover:bg-purple-700">
+            <Button 
+              onClick={openNewEntry} 
+              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg"
+            >
               <Plus className="h-4 w-4 mr-2" />
               New Entry
             </Button>
           </div>
         </div>
-        <FullScreenDialogDescription>
+        <FullScreenDialogDescription className="text-purple-600/80">
           Track your thoughts, feelings, and personal growth journey
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
@@ -844,17 +847,18 @@ export default function WellnessJournal() {
           
           {/* Mood trend chart */}
           {moodTrends && moodTrends.moodData && moodTrends.moodData.length > 1 && (
-            <Card>
+            <Card className="shadow-sm border-purple-100 overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-purple-600"></div>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Mood Trends</CardTitle>
+                  <CardTitle className="text-base text-purple-700">Mood Trends</CardTitle>
                   <ToggleGroup type="single" value={timeframe} onValueChange={(value) => value && setTimeframe(value as '7days' | '30days' | 'all')}>
-                    <ToggleGroupItem value="7days" size="sm">7 Days</ToggleGroupItem>
-                    <ToggleGroupItem value="30days" size="sm">30 Days</ToggleGroupItem>
-                    <ToggleGroupItem value="all" size="sm">All</ToggleGroupItem>
+                    <ToggleGroupItem value="7days" size="sm" className="data-[state=on]:bg-purple-600 data-[state=on]:text-white">7 Days</ToggleGroupItem>
+                    <ToggleGroupItem value="30days" size="sm" className="data-[state=on]:bg-purple-600 data-[state=on]:text-white">30 Days</ToggleGroupItem>
+                    <ToggleGroupItem value="all" size="sm" className="data-[state=on]:bg-purple-600 data-[state=on]:text-white">All</ToggleGroupItem>
                   </ToggleGroup>
                 </div>
-                <CardDescription>
+                <CardDescription className="text-purple-600/80">
                   {moodTrends.insightSummary}
                 </CardDescription>
               </CardHeader>
@@ -873,7 +877,7 @@ export default function WellnessJournal() {
                 <Card 
                   key={entry.id} 
                   className={cn(
-                    "cursor-pointer hover:shadow-md transition-shadow border border-purple-100",
+                    "cursor-pointer hover:shadow-md transition-all duration-300 border border-purple-100 hover:border-purple-300 bg-white/50 backdrop-blur-sm",
                     viewMode === 'list' ? "flex flex-col sm:flex-row" : ""
                   )}
                   onClick={() => openEntryView(entry.id)}
@@ -918,7 +922,10 @@ export default function WellnessJournal() {
               <Book className="h-16 w-16 mb-6 opacity-20" />
               <p className="text-lg mb-2">Your journal is empty</p>
               <p className="text-sm mb-6 max-w-md">Start writing to track your wellness journey and gain insights into your emotional patterns</p>
-              <Button onClick={openNewEntry} className="bg-purple-600 hover:bg-purple-700">
+              <Button 
+                onClick={openNewEntry} 
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Entry
               </Button>
@@ -931,11 +938,11 @@ export default function WellnessJournal() {
       <FullScreenDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
           <FullScreenDialogHeader>
-            <FullScreenDialogTitle className="flex items-center gap-2">
-              <Book className="h-6 w-6 text-purple-500" />
+            <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
+              <Book className="h-6 w-6 text-purple-600" />
               Create New Journal Entry
             </FullScreenDialogTitle>
-            <FullScreenDialogDescription>
+            <FullScreenDialogDescription className="text-purple-600/80">
               Write freely and reflect on your thoughts and feelings
             </FullScreenDialogDescription>
           </FullScreenDialogHeader>
@@ -1249,7 +1256,7 @@ export default function WellnessJournal() {
                     <Button
                       onClick={handleEntrySubmit}
                       disabled={!currentEntry.title || !currentEntry.content}
-                      className="bg-purple-600 hover:bg-purple-700"
+                      className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg"
                     >
                       <Save className="h-4 w-4 mr-2" />
                       Save Entry
@@ -1393,7 +1400,7 @@ export default function WellnessJournal() {
                   <Button
                     onClick={handleEntrySubmit}
                     disabled={!currentEntry.title || !currentEntry.content}
-                    className="bg-purple-600 hover:bg-purple-700"
+                    className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg"
                   >
                     <Save className="h-4 w-4 mr-2" />
                     Save Entry
@@ -1413,14 +1420,14 @@ export default function WellnessJournal() {
               <FullScreenDialogHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <FullScreenDialogTitle className="flex items-center gap-2">
-                      <Book className="h-6 w-6 text-purple-500" />
+                    <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
+                      <Book className="h-6 w-6 text-purple-600" />
                       {selectedEntry.title}
                       {selectedEntry.isPrivate && (
-                        <Lock className="h-4 w-4 text-purple-500 ml-1" />
+                        <Lock className="h-4 w-4 text-purple-600 ml-1" />
                       )}
                     </FullScreenDialogTitle>
-                    <FullScreenDialogDescription>
+                    <FullScreenDialogDescription className="text-purple-600/80">
                       {format(new Date(selectedEntry.timestamp), "PPP 'at' p")}
                       {selectedEntry.mood && (
                         <span className="ml-2">• Feeling {moods.find(m => m.label === selectedEntry.mood)?.emoji || ''} {selectedEntry.mood}</span>
@@ -1430,7 +1437,7 @@ export default function WellnessJournal() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                    className="text-red-500 hover:bg-red-50 hover:text-red-600 hover:shadow-sm transition-all"
                     onClick={() => deleteEntry(selectedEntry.id)}
                   >
                     <Trash className="h-4 w-4" />
@@ -1453,8 +1460,8 @@ export default function WellnessJournal() {
                 )}
                 
                 {/* Entry content */}
-                <div className="bg-white p-5 rounded-lg border border-muted shadow-sm">
-                  <p className="whitespace-pre-wrap">{selectedEntry.content}</p>
+                <div className="bg-white p-6 rounded-lg border border-purple-100 shadow-sm bg-gradient-to-r from-white to-purple-50/30">
+                  <p className="whitespace-pre-wrap leading-relaxed text-gray-700">{selectedEntry.content}</p>
                 </div>
                 
                 {/* Tags */}
@@ -1492,37 +1499,39 @@ export default function WellnessJournal() {
                 
                 {/* AI Analysis */}
                 {selectedEntry.analysis && (
-                  <Card className="border-purple-100 mt-6">
+                  <Card className="border-purple-100 mt-6 shadow-sm bg-white/80 backdrop-blur-sm overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-700"></div>
                     <CardHeader>
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <Brain className="h-5 w-5 text-purple-500" />
+                      <CardTitle className="text-base flex items-center gap-2 text-purple-700">
+                        <Brain className="h-5 w-5 text-purple-600" />
                         AI Analysis
                       </CardTitle>
-                      <CardDescription>
+                      <CardDescription className="text-purple-600/70">
                         Insights from your journal entry
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm">Emotional Wellness</h4>
+                        <div className="space-y-3 bg-purple-50/50 p-3 rounded-lg border border-purple-100">
+                          <h4 className="font-medium text-sm text-purple-700">Emotional Wellness</h4>
                           <Progress 
                             value={selectedEntry.analysis.emotionalScore} 
                             className="h-2.5 bg-purple-100" 
                           />
-                          <p className="text-sm text-muted-foreground">
-                            Primary emotion: {selectedEntry.analysis.sentiment}
+                          <p className="text-sm text-purple-800 flex items-center gap-1.5">
+                            <Heart className="h-3.5 w-3.5" />
+                            Primary emotion: <span className="font-medium">{selectedEntry.analysis.sentiment}</span>
                           </p>
                         </div>
                         
                         {selectedEntry.analysis.keyInsights && selectedEntry.analysis.keyInsights.length > 0 && (
-                          <div className="space-y-2">
-                            <h4 className="font-medium text-sm">Key Insights</h4>
-                            <ul className="text-sm space-y-1">
+                          <div className="space-y-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+                            <h4 className="font-medium text-sm text-blue-700">Key Insights</h4>
+                            <ul className="text-sm space-y-1.5">
                               {selectedEntry.analysis.keyInsights.map((insight, index) => (
                                 <li key={index} className="flex items-center gap-2">
-                                  <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
-                                  <span>{insight}</span>
+                                  <CheckCircle className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
+                                  <span className="text-blue-800">{insight}</span>
                                 </li>
                               ))}
                             </ul>
@@ -1538,6 +1547,7 @@ export default function WellnessJournal() {
                 <Button
                   variant="outline"
                   onClick={() => setIsViewDialogOpen(false)}
+                  className="border-purple-200 text-purple-700 hover:bg-purple-50 hover:text-purple-800 transition-all"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Journal
