@@ -189,8 +189,8 @@ const CookingTutorials = () => {
       name: 'Classic Homemade Meatloaf',
       description: 'A homestyle favorite that\'s easy to prepare and customize.',
       difficulty: 'beginner',
-      videoId: 'A-RfHC91Ewc',
-      thumbnailUrl: 'https://img.youtube.com/vi/A-RfHC91Ewc/maxresdefault.jpg',
+      videoId: '0gCM9di_I_E',
+      thumbnailUrl: 'https://img.youtube.com/vi/0gCM9di_I_E/maxresdefault.jpg',
       tips: [
         'Use a mix of ground meats for better flavor',
         'Don\'t overmix or it will become dense',
