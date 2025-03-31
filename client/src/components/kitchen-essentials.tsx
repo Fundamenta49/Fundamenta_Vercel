@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ExternalLink, Info, AlertCircle, CheckCircle, Play } from 'lucide-react';
+import { ExternalLink, Info, AlertCircle, CheckCircle, Play, Utensils, Scissors, CookingPot, Cookie, UtensilsCrossed, Plug } from 'lucide-react';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
 
 interface KitchenTool {
@@ -25,8 +24,18 @@ interface KitchenToolProps {
   tool: KitchenTool;
 }
 
+// Define category icons
+const categoryIcons = {
+  cutting: Scissors,
+  cookware: CookingPot,
+  bakeware: Cookie,
+  tools: UtensilsCrossed,
+  appliances: Plug,
+  all: Utensils
+};
+
 const KitchenEssentials = () => {
-  const [activeTab, setActiveTab] = useState<string>('all');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedTool, setSelectedTool] = useState<KitchenTool | null>(null);
   const [videoDialog, setVideoDialog] = useState<{open: boolean, videoId: string, title: string}>({
     open: false,
@@ -257,12 +266,12 @@ const KitchenEssentials = () => {
     }
   ];
 
-  // Filter tools based on active tab
-  const filteredTools = activeTab === 'all' 
+  // Filter tools based on active category
+  const filteredTools = activeCategory === 'all' 
     ? kitchenTools 
-    : activeTab === 'essentials' 
+    : activeCategory === 'essentials' 
       ? kitchenTools.filter(tool => tool.essential) 
-      : kitchenTools.filter(tool => tool.category === activeTab);
+      : kitchenTools.filter(tool => tool.category === activeCategory);
 
   // Get price indicator based on price category
   const getPriceIndicator = (price: 'budget' | 'moderate' | 'premium') => {
@@ -292,64 +301,133 @@ const KitchenEssentials = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full grid grid-cols-4 sm:grid-cols-7">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="essentials">Essentials</TabsTrigger>
-          <TabsTrigger value="cutting">Cutting</TabsTrigger>
-          <TabsTrigger value="cookware">Cookware</TabsTrigger>
-          <TabsTrigger value="bakeware">Bakeware</TabsTrigger>
-          <TabsTrigger value="tools">Tools</TabsTrigger>
-          <TabsTrigger value="appliances">Appliances</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeTab} className="pt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredTools.map(tool => (
-              <Card key={tool.id} className="overflow-hidden h-full">
-                <div className="h-48 overflow-hidden">
-                  <img
-                    src={tool.image}
-                    alt={tool.name}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-xl">{tool.name}</CardTitle>
-                    <Badge className={tool.essential ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-800'}>
-                      {tool.essential ? 'Essential' : 'Nice to have'}
-                    </Badge>
-                  </div>
-                  <CardDescription className="flex items-center gap-1">
-                    <span>Price: {getPriceIndicator(tool.price)}</span>
-                    <span>•</span>
-                    <span className="capitalize">{tool.category}</span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pb-0">
-                  <p className="text-sm text-gray-600 mb-3">{tool.description}</p>
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => setSelectedTool(tool)}
-                  >
-                    View Details
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+      {/* Category Selection */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-6">
+        <Button 
+          onClick={() => setActiveCategory('all')}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'all' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          variant="ghost"
+        >
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'all' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+            {React.createElement(categoryIcons.all, { className: 'h-4 w-4' })}
           </div>
-          
-          {filteredTools.length === 0 && (
-            <div className="text-center py-12 border rounded-lg bg-gray-50">
-              <AlertCircle className="h-10 w-10 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium">No tools found</h3>
-              <p className="text-gray-500 mt-1">Try selecting a different category</p>
+          <span className="text-xs font-medium">All</span>
+        </Button>
+        
+        <Button 
+          onClick={() => setActiveCategory('essentials')}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'essentials' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          variant="ghost"
+        >
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'essentials' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+            <CheckCircle className="h-4 w-4" />
+          </div>
+          <span className="text-xs font-medium">Essentials</span>
+        </Button>
+        
+        <Button 
+          onClick={() => setActiveCategory('cutting')}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'cutting' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          variant="ghost"
+        >
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'cutting' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+            {React.createElement(categoryIcons.cutting, { className: 'h-4 w-4' })}
+          </div>
+          <span className="text-xs font-medium">Cutting</span>
+        </Button>
+        
+        <Button 
+          onClick={() => setActiveCategory('cookware')}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'cookware' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          variant="ghost"
+        >
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'cookware' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+            {React.createElement(categoryIcons.cookware, { className: 'h-4 w-4' })}
+          </div>
+          <span className="text-xs font-medium">Cookware</span>
+        </Button>
+        
+        <Button 
+          onClick={() => setActiveCategory('bakeware')}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'bakeware' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          variant="ghost"
+        >
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'bakeware' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+            {React.createElement(categoryIcons.bakeware, { className: 'h-4 w-4' })}
+          </div>
+          <span className="text-xs font-medium">Bakeware</span>
+        </Button>
+        
+        <Button 
+          onClick={() => setActiveCategory('tools')}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'tools' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          variant="ghost"
+        >
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'tools' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+            {React.createElement(categoryIcons.tools, { className: 'h-4 w-4' })}
+          </div>
+          <span className="text-xs font-medium">Tools</span>
+        </Button>
+        
+        <Button 
+          onClick={() => setActiveCategory('appliances')}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'appliances' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          variant="ghost"
+        >
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'appliances' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+            {React.createElement(categoryIcons.appliances, { className: 'h-4 w-4' })}
+          </div>
+          <span className="text-xs font-medium">Appliances</span>
+        </Button>
+      </div>
+      
+      {/* Tools Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+        {filteredTools.map(tool => (
+          <Card key={tool.id} className="overflow-hidden h-full border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="h-48 overflow-hidden">
+              <img
+                src={tool.image}
+                alt={tool.name}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              />
             </div>
-          )}
-        </TabsContent>
-      </Tabs>
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-start">
+                <CardTitle className="text-xl">{tool.name}</CardTitle>
+                {tool.essential && (
+                  <Badge className="bg-orange-100 text-orange-800">
+                    Essential
+                  </Badge>
+                )}
+              </div>
+              <CardDescription className="flex items-center gap-1">
+                <span>Price: {getPriceIndicator(tool.price)}</span>
+                <span>•</span>
+                <span className="capitalize">{tool.category}</span>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pb-0">
+              <p className="text-sm text-gray-600 mb-3">{tool.description}</p>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => setSelectedTool(tool)}
+              >
+                View Details
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      
+      {filteredTools.length === 0 && (
+        <div className="text-center py-12 border rounded-lg bg-gray-50">
+          <AlertCircle className="h-10 w-10 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium">No tools found</h3>
+          <p className="text-gray-500 mt-1">Try selecting a different category</p>
+        </div>
+      )}
       
       {selectedTool && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-auto">
