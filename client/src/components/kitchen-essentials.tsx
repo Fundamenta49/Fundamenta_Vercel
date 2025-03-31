@@ -431,7 +431,7 @@ const KitchenEssentials = () => {
                     onClick={() => setVideoDialog({
                       open: true,
                       videoId: selectedTool.videoId as string,
-                      title: `${selectedTool.name} Tutorial`
+                      title: selectedTool.videoTitle || `${selectedTool.name} Tutorial`
                     })}
                   >
                     <Play className="h-4 w-4" />
