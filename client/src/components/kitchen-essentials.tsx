@@ -47,22 +47,15 @@ const KitchenEssentials = () => {
   const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   
-  // Function to fetch a video for a kitchen tool - using direct video IDs for specific titles
-  const fetchVideoForTool = async (tool: KitchenTool) => {
-    setIsLoadingVideo(true);
-    
+  // Debug useEffect to log the video IDs on component mount
+  useEffect(() => {
+    console.log('Kitchen tool video map:', kitchenToolVideoMap);
+  }, []);
+  
+  // Function to directly show a video using predefined IDs without searching
+  const fetchVideoForTool = (tool: KitchenTool) => {
     try {
-      // If the tool already has a video ID, use that directly
-      if (tool.videoId) {
-        setVideoDialog({
-          open: true,
-          videoId: tool.videoId,
-          title: tool.videoTitle || `${tool.name} Tutorial`
-        });
-        return;
-      }
-      
-      // If the tool has a videoTitle, look up its ID in our map
+      // If the tool has a videoTitle, get the ID from our predefined map
       if (tool.videoTitle && kitchenToolVideoMap[tool.videoTitle]) {
         setVideoDialog({
           open: true,
@@ -72,39 +65,20 @@ const KitchenEssentials = () => {
         return;
       }
       
-      // If there's no direct match in our map, fall back to search
-      const searchQuery = tool.videoTitle 
-        ? tool.videoTitle 
-        : `how to use ${tool.name} cooking tutorial`;
-        
-      const videos = await searchCookingVideos(searchQuery);
-      
-      if (videos && videos.length > 0) {
-        // Use the first result
-        const video = videos[0];
+      // If there's a direct videoId on the tool, use that
+      if (tool.videoId) {
         setVideoDialog({
           open: true,
-          videoId: video.id,
-          title: tool.videoTitle || video.title
+          videoId: tool.videoId,
+          title: tool.videoTitle || `${tool.name} Tutorial`
         });
-      } else {
-        console.error('No videos found for', tool.name);
-        // Try a more generic search as fallback
-        const genericVideos = await searchCookingVideos(`${tool.name} kitchen tutorial`);
-        if (genericVideos && genericVideos.length > 0) {
-          setVideoDialog({
-            open: true,
-            videoId: genericVideos[0].id,
-            title: tool.videoTitle || genericVideos[0].title
-          });
-        } else {
-          alert(`Sorry, no tutorial videos found for ${tool.name}`);
-        }
+        return;
       }
+      
+      // Fallback if we don't have a predefined ID
+      alert(`Sorry, no video available for ${tool.name}`);
     } catch (error) {
-      console.error('Error fetching video for tool:', error);
-    } finally {
-      setIsLoadingVideo(false);
+      console.error('Error showing video for tool:', error);
     }
   };
 
