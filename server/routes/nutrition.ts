@@ -2,11 +2,35 @@ import express from 'express';
 import { usdaService, FoodItem, FoodDetails } from '../services/usda-service';
 import { nutritionixService, NutritionixSearchResponse, NutritionixFoodDetails } from '../services/nutritionix-service';
 import OpenAI from 'openai';
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
 
 // Initialize OpenAI
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// Configure multer for food image uploads
+const foodImageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/jpg',
+      'image/webp'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  }
+});
 
 // Search foods in the USDA database
 router.get('/search', async (req, res) => {
@@ -517,6 +541,71 @@ The plan should be varied, practical, and use commonly available ingredients. Fo
   } catch (error) {
     console.error('Meal plan generation error:', error);
     res.status(500).json({ error: 'Failed to generate meal plan' });
+  }
+});
+
+// Analyze food from image using OpenAI's vision capabilities
+router.post('/analyze-food', foodImageUpload.single('image'), async (req, res) => {
+  try {
+    const image = req.file;
+    
+    if (!image) {
+      return res.status(400).json({ error: 'No image uploaded or invalid image type' });
+    }
+    
+    // Convert image to base64 for OpenAI API
+    const base64Image = image.buffer.toString('base64');
+    
+    // Use OpenAI GPT-4 Vision to analyze the food in the image
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a nutrition expert that identifies food in images and estimates their nutritional content. Provide precise but realistic estimates for calories and macronutrients."
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Identify the food in this image and provide its estimated nutritional information. Return the response in this format: {\"foodName\": \"name of food\", \"calories\": number, \"carbs\": number, \"protein\": number, \"fat\": number, \"description\": \"brief description\"}"
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:${image.mimetype};base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      response_format: { type: "json_object" },
+      max_tokens: 1000
+    });
+    
+    if (!response.choices[0].message?.content) {
+      throw new Error('Failed to analyze food image');
+    }
+    
+    try {
+      const nutritionInfo = JSON.parse(response.choices[0].message.content);
+      
+      res.json({
+        foodName: nutritionInfo.foodName,
+        calories: Number(nutritionInfo.calories),
+        carbs: Number(nutritionInfo.carbs),
+        protein: Number(nutritionInfo.protein),
+        fat: Number(nutritionInfo.fat),
+        description: nutritionInfo.description
+      });
+    } catch (parseError) {
+      console.error('Error parsing AI response:', parseError);
+      res.status(500).json({ error: 'Failed to parse food analysis' });
+    }
+  } catch (error) {
+    console.error('Food image analysis error:', error);
+    res.status(500).json({ error: 'Failed to analyze food image' });
   }
 });
 

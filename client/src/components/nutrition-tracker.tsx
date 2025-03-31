@@ -49,7 +49,7 @@ export default function NutritionTracker() {
     mutationFn: async (image: File) => {
       const formData = new FormData();
       formData.append("image", image);
-      const response = await apiRequest("POST", "/api/analyze-food", formData);
+      const response = await apiRequest("POST", "/api/nutrition/analyze-food", formData);
       return response.json();
     },
     onSuccess: (data) => {
