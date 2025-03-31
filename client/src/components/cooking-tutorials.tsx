@@ -109,7 +109,7 @@ const CookingTutorials = () => {
       name: 'Fluffy Homemade Pancakes',
       description: 'Master the technique for light, fluffy pancakes perfect for breakfast.',
       difficulty: 'beginner',
-      videoId: 'GLdxV0PTX3s',
+      videoId: '2b5K_PNDwlQ',
       thumbnailUrl: 'https://img.youtube.com/vi/GLdxV0PTX3s/maxresdefault.jpg',
       tips: [
         'Don\'t overmix the batter - lumps are okay',
@@ -126,10 +126,10 @@ const CookingTutorials = () => {
     },
     {
       id: 'baked-chicken',
-      name: 'Simple Baked Chicken',
+      name: 'Easy Baked Chicken',
       description: 'A foolproof method for juicy, flavorful chicken every time.',
       difficulty: 'beginner',
-      videoId: '4fdwZ1wQn_M',
+      videoId: 'zXiBN_KM_AA',
       thumbnailUrl: 'https://img.youtube.com/vi/4fdwZ1wQn_M/maxresdefault.jpg',
       tips: [
         'Pat chicken dry before seasoning for crispy skin',
@@ -273,7 +273,7 @@ const CookingTutorials = () => {
           </form>
         </CardContent>
       </Card>
-      
+
       <Tabs defaultValue="basics" value={activeTab} onValueChange={setActiveTab}>
         <Card>
           <CardContent className="p-4">
@@ -293,7 +293,7 @@ const CookingTutorials = () => {
             </TabsList>
           </CardContent>
         </Card>
-        
+
         {/* Basic Techniques and All Tutorials */}
         <TabsContent value="basics" className="mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -357,7 +357,7 @@ const CookingTutorials = () => {
             ))}
           </div>
         </TabsContent>
-        
+
         <TabsContent value="all" className="mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {cookingTechniques.map(technique => (
@@ -420,7 +420,7 @@ const CookingTutorials = () => {
             ))}
           </div>
         </TabsContent>
-        
+
         {/* Search Results */}
         <TabsContent value="search" className="mt-4">
           {isSearching ? (
@@ -472,7 +472,7 @@ const CookingTutorials = () => {
                   </CardFooter>
                 </Card>
               ))}
-              
+
               {searchResults.length === 0 && (
                 <Card className="col-span-2">
                   <CardContent className="text-center py-12">
