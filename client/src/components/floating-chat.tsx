@@ -52,7 +52,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
         </div>
       ) : (
         <Button
-          className={`fixed top-6 right-6 sm:top-8 sm:right-8 z-50 h-16 w-16 rounded-lg shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out ${
+          className={`fixed top-6 right-6 sm:top-8 sm:right-8 z-50 h-20 w-20 rounded-lg shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out ${
             isAnimating ? 'scale-110' : 'scale-100'
           }`}
           onClick={() => setIsExpanded(true)}
@@ -60,10 +60,10 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
         >
           {/* Fundi robot avatar - centered properly */}
           <div className="flex items-center justify-center w-full h-full">
-            <FundiAvatar size="sm" speaking={isAnimating} category={category} />
+            <FundiAvatar size="md" speaking={isAnimating} category={category} />
             {/* Animation dot to indicate Fundi is available */}
-            <span className="absolute bottom-1 right-1 h-3 w-3 rounded-full bg-white animate-ping opacity-75"></span>
-            <span className="absolute bottom-1 right-1 h-3 w-3 rounded-full bg-white"></span>
+            <span className="absolute bottom-2 right-2 h-3 w-3 rounded-full bg-white animate-ping opacity-75"></span>
+            <span className="absolute bottom-2 right-2 h-3 w-3 rounded-full bg-white"></span>
           </div>
         </Button>
       )}
