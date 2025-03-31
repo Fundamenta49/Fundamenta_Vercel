@@ -103,7 +103,7 @@ const CookingTutorials = () => {
       category: 'technique',
       difficulty: 'beginner',
       videoId: 'u0j7bCj5uQ4',
-      thumbnailUrl: 'https://img.youtube.com/vi/u0j7bCj5uQ4/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/u0j7bCj5uQ4/hqdefault.jpg',
       tips: [
         'Use a wide, shallow pan with sloped sides',
         'Heat the pan before adding oil or butter',
@@ -118,7 +118,7 @@ const CookingTutorials = () => {
       category: 'technique',
       difficulty: 'beginner',
       videoId: 'MtR9QO36M4w',
-      thumbnailUrl: 'https://img.youtube.com/vi/MtR9QO36M4w/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/MtR9QO36M4w/hqdefault.jpg',
       tips: [
         'Always measure ingredients precisely',
         'Understand how your oven heats (use an oven thermometer)',
@@ -133,7 +133,7 @@ const CookingTutorials = () => {
       category: 'technique',
       difficulty: 'intermediate',
       videoId: 'qZ4LPgq5JEo',
-      thumbnailUrl: 'https://img.youtube.com/vi/qZ4LPgq5JEo/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/qZ4LPgq5JEo/hqdefault.jpg',
       tips: [
         'Brown meat well before adding liquid',
         'Use just enough liquid to cover meat halfway',
@@ -148,7 +148,7 @@ const CookingTutorials = () => {
       category: 'technique',
       difficulty: 'beginner',
       videoId: 'x8PrvBYod-U',
-      thumbnailUrl: 'https://img.youtube.com/vi/x8PrvBYod-U/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/x8PrvBYod-U/hqdefault.jpg',
       tips: [
         'Pat ingredients dry before roasting',
         'Cut vegetables into uniform sizes for even cooking',
@@ -165,7 +165,7 @@ const CookingTutorials = () => {
       category: 'kitchen-safety',
       difficulty: 'beginner',
       videoId: '20gwf7YttQM',
-      thumbnailUrl: 'https://img.youtube.com/vi/20gwf7YttQM/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/20gwf7YttQM/hqdefault.jpg',
       tips: [
         'Keep your fingers curled under when holding food',
         'Let the knife do the work - don\'t force it',
@@ -227,7 +227,7 @@ const CookingTutorials = () => {
       category: 'basic-recipe',
       difficulty: 'beginner',
       videoId: 'UYhKDweME3A',
-      thumbnailUrl: 'https://img.youtube.com/vi/UYhKDweME3A/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/UYhKDweME3A/hqdefault.jpg',
       tips: [
         'Use plenty of water - at least 4 quarts per pound of pasta',
         'Salt the water generously (it should taste like seawater)',
@@ -316,7 +316,7 @@ const CookingTutorials = () => {
       category: 'breakfast',
       difficulty: 'beginner',
       videoId: 'GLdxV0PTX3s',
-      thumbnailUrl: 'https://img.youtube.com/vi/GLdxV0PTX3s/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/GLdxV0PTX3s/hqdefault.jpg',
       tips: [
         'Don\'t overmix the batter - lumps are okay',
         'Let the batter rest for 5-10 minutes before cooking',
@@ -341,7 +341,7 @@ const CookingTutorials = () => {
       category: 'breakfast',
       difficulty: 'intermediate',
       videoId: 'qXPhVYpQLPA',
-      thumbnailUrl: 'https://img.youtube.com/vi/qXPhVYpQLPA/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/qXPhVYpQLPA/hqdefault.jpg',
       tips: [
         'Beat eggs until completely blended',
         'Use a nonstick pan and proper heat control',
@@ -362,7 +362,7 @@ const CookingTutorials = () => {
       category: 'breakfast',
       difficulty: 'beginner',
       videoId: 'MfKyCF8brRo',
-      thumbnailUrl: 'https://img.youtube.com/vi/MfKyCF8brRo/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/MfKyCF8brRo/hqdefault.jpg',
       tips: [
         'Choose ripe but firm avocados',
         'Toast bread until golden and firm',
@@ -386,7 +386,7 @@ const CookingTutorials = () => {
       category: 'lunch',
       difficulty: 'beginner',
       videoId: 'OMPr7YP4fd8',
-      thumbnailUrl: 'https://img.youtube.com/vi/OMPr7YP4fd8/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/OMPr7YP4fd8/hqdefault.jpg',
       tips: [
         'Use butter at room temperature for easy spreading',
         'Cook on medium-low heat for even browning and melting',
@@ -407,7 +407,7 @@ const CookingTutorials = () => {
       category: 'lunch',
       difficulty: 'beginner',
       videoId: 'nJTg9-I0XdE',
-      thumbnailUrl: 'https://img.youtube.com/vi/nJTg9-I0XdE/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/nJTg9-I0XdE/hqdefault.jpg',
       tips: [
         'Cook grains in broth for extra flavor',
         'Include a mix of raw and cooked vegetables',
@@ -429,7 +429,7 @@ const CookingTutorials = () => {
       category: 'lunch',
       difficulty: 'beginner',
       videoId: 'GC9JoAYxfSM',
-      thumbnailUrl: 'https://img.youtube.com/vi/GC9JoAYxfSM/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/GC9JoAYxfSM/hqdefault.jpg',
       tips: [
         'Start with aromatic vegetables (onion, carrot, celery)',
         'Use good quality broth or bouillon',
@@ -454,7 +454,7 @@ const CookingTutorials = () => {
       category: 'dinner',
       difficulty: 'beginner',
       videoId: '1TlVgW-pM5g',
-      thumbnailUrl: 'https://img.youtube.com/vi/1TlVgW-pM5g/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/1TlVgW-pM5g/hqdefault.jpg',
       tips: [
         'Pat chicken dry before seasoning for crispy skin',
         'Use a meat thermometer for perfect doneness',
@@ -476,7 +476,7 @@ const CookingTutorials = () => {
       category: 'dinner',
       difficulty: 'beginner',
       videoId: 'JGPGHrGpwuM',
-      thumbnailUrl: 'https://img.youtube.com/vi/JGPGHrGpwuM/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/JGPGHrGpwuM/hqdefault.jpg',
       tips: [
         'Prep all ingredients before heating the wok/pan',
         'Cook proteins first, then remove while cooking vegetables',
@@ -500,7 +500,7 @@ const CookingTutorials = () => {
       category: 'dinner',
       difficulty: 'beginner',
       videoId: 'ZtZmlK2xLcY',
-      thumbnailUrl: 'https://img.youtube.com/vi/ZtZmlK2xLcY/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/ZtZmlK2xLcY/hqdefault.jpg',
       tips: [
         'Use a mix of ground meats for better flavor',
         'Don\'t overmix or it will become dense',
@@ -524,7 +524,7 @@ const CookingTutorials = () => {
       category: 'dinner',
       difficulty: 'beginner',
       videoId: 'FUeyrEN14Rk',
-      thumbnailUrl: 'https://img.youtube.com/vi/FUeyrEN14Rk/maxresdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/FUeyrEN14Rk/hqdefault.jpg',
       tips: [
         'Use medium or sharp cheddar for more flavor',
         'Cook pasta just under al dente since it will cook more in the sauce',
