@@ -109,7 +109,9 @@ export default function Learning() {
       description: 'Learn fundamental cooking techniques and healthy meal preparation',
       icon: Icons.Utensils,
       path: '/learning/courses/cooking-basics',
-      level: 'beginner'
+      level: 'beginner',
+      new: true,
+      popular: true
     },
     {
       id: 'public-speaking',

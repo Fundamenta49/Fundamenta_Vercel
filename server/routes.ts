@@ -19,6 +19,7 @@ import brainTapRoutes from './routes/brain-tap';
 import nutritionRoutes from './routes/nutrition';
 import comprehensiveWellnessRoutes from './routes/comprehensive-wellness';
 import shoppingRoutes from './routes/shopping';
+import cookingRoutes from './routes/cooking';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { 
@@ -813,6 +814,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register shopping routes
   app.use('/api/shopping', shoppingRoutes);
+  
+  // Register cooking routes
+  app.use('/api/cooking', cookingRoutes);
 
   // Return an HTTP server
   return createServer(app);
