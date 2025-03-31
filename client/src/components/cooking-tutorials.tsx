@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { SearchIcon, BookOpen, ChefHat, Clock, ExternalLink, PlayCircle } from 'lucide-react';
+import { SearchIcon, BookOpen, ChefHat, PlayCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { searchCookingVideos, getYouTubeEmbedUrl } from '@/lib/youtube-service';
+import { searchCookingVideos } from '@/lib/youtube-service';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -29,18 +28,20 @@ interface YouTubeVideo {
 }
 
 const CookingTutorials = () => {
-  const [activeTab, setActiveTab] = useState('basics');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<YouTubeVideo[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<YouTubeVideo | null>(null);
   const [selectedTechnique, setSelectedTechnique] = useState<CookingTechnique | null>(null);
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
-  // Scroll to top when changing tabs
+  // Scroll to top when showing search results
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [activeTab]);
+    if (showSearchResults) {
+      window.scrollTo(0, 0);
+    }
+  }, [showSearchResults]);
 
   // Basic cooking techniques with curated videos for home cooking
   const cookingTechniques: CookingTechnique[] = [
@@ -50,7 +51,7 @@ const CookingTutorials = () => {
       description: 'Learn safe and proper cutting techniques that every home cook should know.',
       difficulty: 'beginner',
       videoId: '20gwf7YttQM',
-      thumbnailUrl: 'https://i.ytimg.com/vi/20gwf7YttQM/hqdefault.jpg',
+      thumbnailUrl: 'https://i.ytimg.com/vi/20gwf7YttQM/maxresdefault.jpg',
       tips: [
         'Keep your fingers curled under when holding food',
         'Let the knife do the work - don\'t force it',
@@ -70,7 +71,7 @@ const CookingTutorials = () => {
       description: 'Make this classic comfort food from scratch - creamy, cheesy, and delicious.',
       difficulty: 'beginner',
       videoId: 'FUeyrEN14Rk',
-      thumbnailUrl: 'https://i.ytimg.com/vi/FUeyrEN14Rk/hqdefault.jpg',
+      thumbnailUrl: 'https://i.ytimg.com/vi/FUeyrEN14Rk/maxresdefault.jpg',
       tips: [
         'Use medium or sharp cheddar for more flavor',
         'Cook pasta just under al dente since it will cook more in the sauce',
@@ -90,7 +91,7 @@ const CookingTutorials = () => {
       description: 'Learn to make juicy, flavorful burgers at home that are better than takeout.',
       difficulty: 'beginner',
       videoId: 'iM_KMYulI_s',
-      thumbnailUrl: 'https://i.ytimg.com/vi/iM_KMYulI_s/hqdefault.jpg',
+      thumbnailUrl: 'https://i.ytimg.com/vi/iM_KMYulI_s/maxresdefault.jpg',
       tips: [
         'Don\'t overwork the meat when forming patties',
         'Make a dimple in the center to prevent bulging',
@@ -109,8 +110,8 @@ const CookingTutorials = () => {
       name: 'Fluffy Homemade Pancakes',
       description: 'Master the technique for light, fluffy pancakes perfect for breakfast.',
       difficulty: 'beginner',
-      videoId: 'FLd00Bx4tOk',
-      thumbnailUrl: 'https://img.youtube.com/vi/FLd00Bx4tOk/maxresdefault.jpg',
+      videoId: 'GLdxV0PTX3s',
+      thumbnailUrl: 'https://img.youtube.com/vi/GLdxV0PTX3s/maxresdefault.jpg',
       tips: [
         'Don\'t overmix the batter - lumps are okay',
         'Let the batter rest for 5-10 minutes before cooking',
@@ -149,8 +150,8 @@ const CookingTutorials = () => {
       name: 'Perfect Grilled Cheese',
       description: 'Master this classic sandwich - crispy outside, gooey melted cheese inside.',
       difficulty: 'beginner',
-      videoId: 'BlTCkNkfmRY', 
-      thumbnailUrl: 'https://img.youtube.com/vi/BlTCkNkfmRY/maxresdefault.jpg',
+      videoId: 'OMPr7YP4fd8',
+      thumbnailUrl: 'https://img.youtube.com/vi/OMPr7YP4fd8/maxresdefault.jpg',
       tips: [
         'Use butter at room temperature for easy spreading',
         'Cook on medium-low heat for even browning and melting',
@@ -189,8 +190,8 @@ const CookingTutorials = () => {
       name: 'Classic Homemade Meatloaf',
       description: 'A homestyle favorite that\'s easy to prepare and customize.',
       difficulty: 'beginner',
-      videoId: 'OMPr7YP4fd8',
-      thumbnailUrl: 'https://img.youtube.com/vi/OMPr7YP4fd8/maxresdefault.jpg',
+      videoId: 'ZtZmlK2xLcY',
+      thumbnailUrl: 'https://img.youtube.com/vi/ZtZmlK2xLcY/maxresdefault.jpg',
       tips: [
         'Use a mix of ground meats for better flavor',
         'Don\'t overmix or it will become dense',
@@ -206,13 +207,6 @@ const CookingTutorials = () => {
     }
   ];
 
-  // Filter techniques based on active tab
-  const filteredTechniques = activeTab === 'basics' 
-    ? cookingTechniques.filter(technique => technique.difficulty === 'beginner')
-    : activeTab === 'all' 
-      ? cookingTechniques 
-      : cookingTechniques.filter(technique => technique.id === activeTab);
-
   // Handle video search
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,7 +214,7 @@ const CookingTutorials = () => {
 
     try {
       setIsSearching(true);
-      setActiveTab('search');
+      setShowSearchResults(true);
       const results = await searchCookingVideos(searchQuery);
       setSearchResults(results);
     } catch (error) {
@@ -233,17 +227,20 @@ const CookingTutorials = () => {
   // Handle opening a technique video
   const openTechniqueVideo = (technique: CookingTechnique) => {
     setSelectedTechnique(technique);
+    setSelectedVideo(null);
     setVideoDialogOpen(true);
   };
 
   // Handle opening a search result video
   const openSearchVideo = (video: YouTubeVideo) => {
     setSelectedVideo(video);
+    setSelectedTechnique(null);
     setVideoDialogOpen(true);
   };
 
   return (
     <div className="space-y-6">
+      {/* Header Section */}
       <div className="bg-orange-50 p-4 rounded-lg border border-orange-200 mb-6">
         <div className="flex gap-2">
           <BookOpen className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
@@ -257,16 +254,17 @@ const CookingTutorials = () => {
         </div>
       </div>
 
-      <Card className="mb-4">
+      {/* Search Bar */}
+      <Card className="mb-6">
         <CardContent className="p-4">
-          <form onSubmit={handleSearch} className="flex gap-2">
+          <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2">
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for cooking tutorials (e.g., 'how to make mac and cheese')"
               className="flex-1"
             />
-            <Button type="submit" className="bg-orange-500 hover:bg-orange-600">
+            <Button type="submit" className="bg-orange-500 hover:bg-orange-600 w-full md:w-auto">
               <SearchIcon className="mr-2 h-4 w-4" />
               Search
             </Button>
@@ -274,94 +272,105 @@ const CookingTutorials = () => {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="basics" value={activeTab} onValueChange={setActiveTab}>
-        <Card>
-          <CardContent className="p-4">
-            <TabsList className="w-full grid grid-cols-2 md:grid-cols-3 gap-2">
-              <TabsTrigger value="basics">
-                <ChefHat className="mr-2 h-4 w-4" />
-                Home Cooking Classics
-              </TabsTrigger>
-              <TabsTrigger value="all">
-                <BookOpen className="mr-2 h-4 w-4" />
-                All Tutorials
-              </TabsTrigger>
-              <TabsTrigger value="search" disabled={searchResults.length === 0}>
-                <SearchIcon className="mr-2 h-4 w-4" />
-                Search Results
-              </TabsTrigger>
-            </TabsList>
-          </CardContent>
-        </Card>
-
-        {/* Basic Techniques and All Tutorials */}
-        <TabsContent value="basics" className="mt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredTechniques.map(technique => (
-              <Card key={technique.id} className="overflow-hidden flex flex-col h-full">
-                <div 
-                  className="aspect-video relative cursor-pointer" 
-                  onClick={() => openTechniqueVideo(technique)}
+      {/* Search Results Section (conditionally rendered) */}
+      {showSearchResults ? (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Search Results</CardTitle>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowSearchResults(false)}
+                  className="text-sm"
                 >
-                  {technique.thumbnailUrl ? (
-                    <img 
-                      src={technique.thumbnailUrl} 
-                      alt={technique.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                      <ChefHat className="h-12 w-12 text-gray-400" />
+                  Back to Tutorials
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isSearching ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
+                  <p className="mt-2 text-gray-600">Searching for tutorials...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {searchResults.map(video => (
+                    <Card key={video.id} className="overflow-hidden flex flex-col h-full">
+                      <div 
+                        className="aspect-video relative cursor-pointer" 
+                        onClick={() => openSearchVideo(video)}
+                      >
+                        <img 
+                          src={video.thumbnailUrl} 
+                          alt={video.title} 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors">
+                          <PlayCircle className="h-16 w-16 text-white" />
+                        </div>
+                      </div>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
+                        <CardDescription className="line-clamp-1">
+                          {video.channelTitle}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="pb-2 flex-grow">
+                        <ScrollArea className="h-16">
+                          <p className="text-sm text-gray-600">
+                            {video.description}
+                          </p>
+                        </ScrollArea>
+                      </CardContent>
+                      <CardFooter>
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => openSearchVideo(video)}
+                        >
+                          <PlayCircle className="h-4 w-4 mr-2" />
+                          Watch Tutorial
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
+
+                  {searchResults.length === 0 && (
+                    <div className="col-span-2 text-center py-12">
+                      <SearchIcon className="h-10 w-10 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium">No tutorials found</h3>
+                      <p className="text-gray-500 mt-1">
+                        Try searching for different cooking techniques or recipes
+                      </p>
                     </div>
                   )}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors">
-                    <PlayCircle className="h-16 w-16 text-white" />
-                  </div>
                 </div>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg">{technique.name}</CardTitle>
-                    <Badge 
-                      className={
-                        technique.difficulty === 'beginner' 
-                          ? 'bg-green-100 text-green-800' 
-                          : technique.difficulty === 'intermediate'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                      }
-                    >
-                      {technique.difficulty}
-                    </Badge>
-                  </div>
-                  <CardDescription>{technique.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="pb-4 flex-grow">
-                  <h4 className="text-sm font-medium mb-2">Quick Tips:</h4>
-                  <ul className="text-sm space-y-1 list-disc list-inside text-gray-600">
-                    {technique.tips.slice(0, 2).map((tip, index) => (
-                      <li key={index}>{tip}</li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter className="pt-0">
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => openTechniqueVideo(technique)}
-                  >
-                    <PlayCircle className="h-4 w-4 mr-2" />
-                    Watch Tutorial
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        /* Home Cooking Classics Section */
+        <div className="space-y-6">
+          {/* Section Header */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <ChefHat className="h-5 w-5 text-orange-600" />
+                <CardTitle>Home Cooking Classics</CardTitle>
+              </div>
+              <CardDescription>
+                Learn essential techniques and recipes for delicious homemade meals
+              </CardDescription>
+            </CardHeader>
+          </Card>
 
-        <TabsContent value="all" className="mt-4">
+          {/* Tutorial Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {cookingTechniques.map(technique => (
-              <Card key={technique.id} className="overflow-hidden flex flex-col h-full">
+              <Card key={technique.id} className="overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
                 <div 
                   className="aspect-video relative cursor-pointer" 
                   onClick={() => openTechniqueVideo(technique)}
@@ -419,77 +428,10 @@ const CookingTutorials = () => {
               </Card>
             ))}
           </div>
-        </TabsContent>
+        </div>
+      )}
 
-        {/* Search Results */}
-        <TabsContent value="search" className="mt-4">
-          {isSearching ? (
-            <Card>
-              <CardContent className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
-                <p className="mt-2 text-gray-600">Searching for tutorials...</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {searchResults.map(video => (
-                <Card key={video.id} className="overflow-hidden flex flex-col h-full">
-                  <div 
-                    className="aspect-video relative cursor-pointer" 
-                    onClick={() => openSearchVideo(video)}
-                  >
-                    <img 
-                      src={video.thumbnailUrl} 
-                      alt={video.title} 
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors">
-                      <PlayCircle className="h-16 w-16 text-white" />
-                    </div>
-                  </div>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
-                    <CardDescription className="line-clamp-1">
-                      {video.channelTitle}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2 flex-grow">
-                    <ScrollArea className="h-16">
-                      <p className="text-sm text-gray-600">
-                        {video.description}
-                      </p>
-                    </ScrollArea>
-                  </CardContent>
-                  <CardFooter>
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={() => openSearchVideo(video)}
-                    >
-                      <PlayCircle className="h-4 w-4 mr-2" />
-                      Watch Tutorial
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-
-              {searchResults.length === 0 && (
-                <Card className="col-span-2">
-                  <CardContent className="text-center py-12">
-                    <SearchIcon className="h-10 w-10 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium">No tutorials found</h3>
-                    <p className="text-gray-500 mt-1">
-                      Try searching for different cooking techniques or recipes
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
-
-      {/* Video Dialog for Technique Videos */}
+      {/* Video Dialog */}
       {selectedTechnique && (
         <VideoPlayerDialog
           open={videoDialogOpen}
@@ -500,7 +442,6 @@ const CookingTutorials = () => {
         />
       )}
 
-      {/* Video Dialog for Search Result Videos */}
       {selectedVideo && (
         <VideoPlayerDialog
           open={videoDialogOpen}
