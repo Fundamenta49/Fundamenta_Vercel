@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ExternalLink, Info, AlertCircle, CheckCircle, Play, Utensils, Scissors, CookingPot, Cookie, UtensilsCrossed, Plug, Loader2 } from 'lucide-react';
+import { ExternalLink, Info, AlertCircle, CheckCircle, Play, Utensils, Scissors, CookingPot, Cookie, UtensilsCrossed, Plug, Loader2, Search } from 'lucide-react';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
 import { searchCookingVideos, YouTubeVideo } from '@/lib/youtube-service';
+import { Input } from '@/components/ui/input';
 
 interface KitchenTool {
   id: string;
@@ -44,6 +45,7 @@ const KitchenEssentials = () => {
     title: ''
   });
   const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   
   // Function to fetch a video for a kitchen tool that doesn't have a predetermined videoId
   const fetchVideoForTool = async (tool: KitchenTool) => {
@@ -98,7 +100,7 @@ const KitchenEssentials = () => {
     {
       id: 'chefs-knife',
       name: "Chef's Knife",
-      description: "The workhorse of the kitchen, useful for chopping, slicing, dicing, and mincing.",
+      description: "A good-quality, sharp chef's knife is your kitchen workhorse.",
       image: "https://images.unsplash.com/photo-1593618998160-e34014e67546?q=80&w=500&auto=format&fit=crop",
       essential: true,
       price: 'moderate',
@@ -115,13 +117,13 @@ const KitchenEssentials = () => {
         "Keep it sharp - a dull knife is more dangerous than a sharp one",
         "Hand wash and dry immediately to maintain edge and prevent rust"
       ],
-      videoId: "1AxLzn3fGxk", // YouTube ID for knife skills tutorial
+      videoId: "1AxLzn3fGxk",
       videoTitle: "Essential Knife Skills - Chef's Knife Tutorial"
     },
     {
       id: 'cutting-board',
       name: "Cutting Board",
-      description: "Essential surface for food preparation and cutting.",
+      description: "Preferably one plastic (for meats) and one wood or bamboo (for fruits/veggies).",
       image: "https://images.unsplash.com/photo-1590401692339-8ea5c9d11204?q=80&w=500&auto=format&fit=crop",
       essential: true,
       price: 'budget',
@@ -129,6 +131,7 @@ const KitchenEssentials = () => {
       uses: [
         "Provides a safe surface for cutting",
         "Protects countertops from damage",
+        "Prevents cross-contamination (separate boards for different foods)",
         "Can be used as a serving platter for charcuterie"
       ],
       tips: [
@@ -139,97 +142,9 @@ const KitchenEssentials = () => {
       ]
     },
     {
-      id: 'stainless-skillet',
-      name: "Stainless Steel Skillet",
-      description: "Versatile pan for searing, sautéing, and making pan sauces.",
-      image: "https://images.unsplash.com/photo-1575318634028-6a0cfcb60c1f?q=80&w=500&auto=format&fit=crop",
-      essential: true,
-      price: 'moderate',
-      category: 'cookware',
-      uses: [
-        "Searing meats",
-        "Sautéing vegetables",
-        "Making pan sauces",
-        "Cooking eggs and pancakes"
-      ],
-      tips: [
-        "Look for tri-ply or fully-clad construction for even heating",
-        "10-12 inch size is most versatile",
-        "Preheat the pan before adding oil to prevent sticking",
-        "Allow food to develop a crust before attempting to flip it"
-      ],
-      videoId: "X1XoCQm5JSQ", // YouTube ID for how to use a skillet
-      videoTitle: "How to Cook with a Stainless Steel Skillet - Tips & Techniques"
-    },
-    {
-      id: 'nonstick-pan',
-      name: "Non-Stick Pan",
-      description: "Perfect for eggs, pancakes, and delicate foods that might stick.",
-      image: "https://images.unsplash.com/photo-1621766565084-441673a0ec80?q=80&w=500&auto=format&fit=crop",
-      essential: true,
-      price: 'budget',
-      category: 'cookware',
-      uses: [
-        "Cooking eggs",
-        "Making pancakes and crepes",
-        "Cooking delicate fish fillets",
-        "Low-fat cooking with minimal oil"
-      ],
-      tips: [
-        "Use only with wooden or silicone utensils to avoid scratching",
-        "Avoid high heat which can release toxic fumes",
-        "Don't use metal utensils which can scratch the coating",
-        "Replace every few years as the coating wears down"
-      ]
-    },
-    {
-      id: 'dutch-oven',
-      name: "Dutch Oven",
-      description: "Heavy pot for soups, stews, braising, and even baking bread.",
-      image: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=500&auto=format&fit=crop",
-      essential: false,
-      price: 'premium',
-      category: 'cookware',
-      uses: [
-        "Making soups and stews",
-        "Braising tough cuts of meat",
-        "Baking artisan bread",
-        "Deep frying"
-      ],
-      tips: [
-        "Enameled cast iron is easiest to maintain",
-        "5-7 quart size is most versatile for most households",
-        "Can go from stovetop to oven",
-        "Heavy lids trap moisture for perfect braising"
-      ],
-      videoId: "QF7yTC4yq80", // YouTube ID for dutch oven cooking
-      videoTitle: "Dutch Oven Cooking Techniques - Soups, Stews & Bread"
-    },
-    {
-      id: 'mixing-bowls',
-      name: "Mixing Bowls",
-      description: "Set of bowls in various sizes for mixing, preparation, and serving.",
-      image: "https://images.unsplash.com/photo-1590528987431-4dfd359055e9?q=80&w=500&auto=format&fit=crop",
-      essential: true,
-      price: 'budget',
-      category: 'tools',
-      uses: [
-        "Mixing ingredients",
-        "Marinating foods",
-        "Serving salads or popcorn",
-        "Whisking dressings or batters"
-      ],
-      tips: [
-        "Stainless steel bowls are lightweight and durable",
-        "Nested sets save storage space",
-        "Bowls with silicone bottoms won't slip",
-        "Look for bowls with measurements marked inside"
-      ]
-    },
-    {
       id: 'measuring-tools',
       name: "Measuring Cups & Spoons",
-      description: "Essential for following recipes accurately.",
+      description: "For accurate measurements in both dry and liquid ingredients.",
       image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?q=80&w=500&auto=format&fit=crop",
       essential: true,
       price: 'budget',
@@ -248,9 +163,95 @@ const KitchenEssentials = () => {
       ]
     },
     {
+      id: 'mixing-bowls',
+      name: "Mixing Bowls",
+      description: "Various sizes are helpful for prep, mixing, and marinating.",
+      image: "https://images.unsplash.com/photo-1590528987431-4dfd359055e9?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'budget',
+      category: 'tools',
+      uses: [
+        "Mixing ingredients",
+        "Marinating foods",
+        "Serving salads or popcorn",
+        "Whisking dressings or batters"
+      ],
+      tips: [
+        "Stainless steel bowls are lightweight and durable",
+        "Nested sets save storage space",
+        "Bowls with silicone bottoms won't slip",
+        "Look for bowls with measurements marked inside"
+      ]
+    },
+    {
+      id: 'skillet',
+      name: "Skillet (Cast Iron or Nonstick)",
+      description: "Ideal for searing, sautéing, frying, and more.",
+      image: "https://images.unsplash.com/photo-1575318634028-6a0cfcb60c1f?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'moderate',
+      category: 'cookware',
+      uses: [
+        "Searing meats",
+        "Sautéing vegetables",
+        "Making pan sauces",
+        "Cooking eggs and pancakes"
+      ],
+      tips: [
+        "Cast iron retains heat well and can go from stovetop to oven",
+        "Nonstick is easier to clean and requires less oil",
+        "10-12 inch size is most versatile",
+        "Preheat the pan before adding oil to prevent sticking"
+      ],
+      videoId: "X1XoCQm5JSQ",
+      videoTitle: "How to Cook with a Skillet - Tips & Techniques"
+    },
+    {
+      id: 'saucepan',
+      name: "Saucepan",
+      description: "For cooking grains, sauces, and reheating.",
+      image: "https://images.unsplash.com/photo-1584637080297-4a42c926db78?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'moderate',
+      category: 'cookware',
+      uses: [
+        "Cooking rice and other grains",
+        "Making sauces and gravies",
+        "Reheating soups and leftovers",
+        "Cooking small portions of pasta"
+      ],
+      tips: [
+        "2-3 quart size is most versatile for everyday cooking",
+        "Look for a heavy bottom to prevent burning",
+        "A tight-fitting lid is essential",
+        "Choose one with a comfortable, heat-resistant handle"
+      ]
+    },
+    {
+      id: 'stockpot',
+      name: "Stockpot",
+      description: "Essential for soups, stews, and boiling pasta or large quantities.",
+      image: "https://images.unsplash.com/photo-1590439375055-f48d6edd67ec?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'moderate',
+      category: 'cookware',
+      uses: [
+        "Making large batches of soup or stew",
+        "Boiling pasta",
+        "Preparing stocks and broths",
+        "Blanching vegetables"
+      ],
+      tips: [
+        "8-12 quart size works for most households",
+        "Stainless steel is durable and won't react with acidic foods",
+        "Look for a pot with handles on both sides for easier lifting",
+        "A clear glass lid lets you monitor cooking without releasing heat"
+      ]
+    },
+    {
       id: 'baking-sheet',
-      name: "Baking Sheet",
-      description: "Flat pan essential for baking cookies, roasting vegetables, and more.",
+      name: "Sheet Pan",
+      description: "Great for roasting veggies, baking, and meal prep.",
       image: "https://images.unsplash.com/photo-1621066946272-25517388cb26?q=80&w=500&auto=format&fit=crop",
       essential: true,
       price: 'budget',
@@ -267,61 +268,197 @@ const KitchenEssentials = () => {
         "Line with parchment or silicone mats for easy cleanup",
         "Light-colored sheets prevent over-browning"
       ],
-      videoId: "XbFwpupIK0A", // YouTube ID for sheet pan cooking
+      videoId: "XbFwpupIK0A",
       videoTitle: "Sheet Pan Cooking Guide - Perfect Roasting Techniques"
     },
     {
-      id: 'food-processor',
-      name: "Food Processor",
-      description: "Electric appliance for chopping, slicing, shredding, and puréeing.",
-      image: "https://images.unsplash.com/photo-1585239244834-fb3ebfdde0c0?q=80&w=500&auto=format&fit=crop",
-      essential: false,
-      price: 'premium',
-      category: 'appliances',
+      id: 'rubber-spatula',
+      name: "Rubber Spatula",
+      description: "Essential for scraping bowls and folding batters.",
+      image: "https://images.unsplash.com/photo-1611072337226-1140a3846a2d?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'budget',
+      category: 'tools',
       uses: [
-        "Chopping vegetables quickly",
-        "Making pesto and sauces",
-        "Shredding cheese",
-        "Making dough for pastry or pizza"
+        "Scraping bowls to get every last bit",
+        "Folding delicate batters",
+        "Spreading frosting or batter",
+        "Stirring sauces without scratching pans"
       ],
       tips: [
-        "7-9 cup capacity works for most households",
-        "Look for models with multiple blade attachments",
-        "Pulse function gives more control than continuous running",
-        "Make sure parts are dishwasher safe for easy cleaning"
+        "Silicone spatulas are heat-resistant and won't melt",
+        "One-piece designs are more hygienic",
+        "Look for a sturdy, comfortable handle",
+        "Different sizes and shapes are useful for different tasks"
       ]
     },
     {
-      id: 'instant-pot',
-      name: "Pressure Cooker/Instant Pot",
-      description: "Multi-functional appliance for quick cooking of beans, grains, and tough cuts of meat.",
-      image: "https://images.unsplash.com/photo-1622223959017-1d398747a0e7?q=80&w=500&auto=format&fit=crop",
-      essential: false,
-      price: 'moderate',
-      category: 'appliances',
+      id: 'metal-spatula',
+      name: "Metal Spatula",
+      description: "Perfect for flipping and serving.",
+      image: "https://images.unsplash.com/photo-1590439471293-5734d09b3a65?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'budget',
+      category: 'tools',
       uses: [
-        "Cooking dried beans without soaking",
-        "Making tender stews in less time",
-        "Preparing rice and other grains",
-        "Steaming vegetables"
+        "Flipping pancakes, burgers, and fish",
+        "Serving slices of lasagna or casserole",
+        "Scraping up fond from the pan for sauces",
+        "Lifting cookies from baking sheets"
       ],
       tips: [
-        "6-quart size is sufficient for most families",
-        "Look for models with sauté function for one-pot meals",
-        "Natural pressure release is best for meats and beans",
-        "Quick release works better for vegetables to prevent overcooking"
+        "Thin, flexible spatulas are best for delicate foods",
+        "Offset spatulas are great for serving",
+        "Don't use on nonstick surfaces",
+        "Look for one with a comfortable, heat-resistant handle"
+      ]
+    },
+    {
+      id: 'tongs',
+      name: "Tongs",
+      description: "Crucial for turning meat, tossing salads, and plating.",
+      image: "https://images.unsplash.com/photo-1594066923262-9c8a2f76b9a8?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'budget',
+      category: 'tools',
+      uses: [
+        "Turning and flipping meat while cooking",
+        "Tossing salads and pasta",
+        "Serving food family-style",
+        "Grabbing hot items safely"
       ],
-      videoId: "QTT0Z3ksW8s", // YouTube ID for Instant Pot basics
-      videoTitle: "Instant Pot Beginners Guide - How to Use a Pressure Cooker"
+      tips: [
+        "Locking tongs save storage space",
+        "Silicone-tipped tongs won't scratch nonstick cookware",
+        "12-inch length keeps hands away from heat",
+        "Look for comfortable, non-slip handles"
+      ]
+    },
+    {
+      id: 'whisk',
+      name: "Whisk",
+      description: "For mixing, beating, and emulsifying.",
+      image: "https://images.unsplash.com/photo-1531259912961-da13ab57a714?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'budget',
+      category: 'tools',
+      uses: [
+        "Beating eggs",
+        "Making sauces and gravies",
+        "Emulsifying salad dressings",
+        "Mixing dry ingredients"
+      ],
+      tips: [
+        "Balloon whisks are great for incorporating air",
+        "Flat or roux whisks work well for sauces",
+        "Silicone-coated whisks won't scratch nonstick surfaces",
+        "Look for a comfortable handle and balanced weight"
+      ]
+    },
+    {
+      id: 'colander',
+      name: "Colander or Strainer",
+      description: "Useful for draining pasta, rinsing beans or produce.",
+      image: "https://images.unsplash.com/photo-1568229561162-9a1a57e4c3af?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'budget',
+      category: 'tools',
+      uses: [
+        "Draining pasta",
+        "Rinsing fruits and vegetables",
+        "Washing rice and beans",
+        "Straining stocks and broths"
+      ],
+      tips: [
+        "Stainless steel colanders are durable and won't stain",
+        "Look for stable feet so it can stand in the sink",
+        "Small holes prevent pasta from slipping through",
+        "Collapsible colanders save storage space"
+      ]
+    },
+    {
+      id: 'peeler',
+      name: "Peeler",
+      description: "Makes quick work of peeling fruits and vegetables.",
+      image: "https://images.unsplash.com/photo-1589717482639-a165cc841cf7?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'budget',
+      category: 'tools',
+      uses: [
+        "Peeling fruits and vegetables",
+        "Creating vegetable ribbons",
+        "Shaving chocolate or cheese",
+        "Removing citrus zest in strips"
+      ],
+      tips: [
+        "Y-peelers give better control for many users",
+        "Swivel peelers are traditional and versatile",
+        "Ceramic blades stay sharp longer than metal",
+        "Look for a comfortable, non-slip handle"
+      ]
+    },
+    {
+      id: 'grater',
+      name: "Grater (Box or Microplane)",
+      description: "For cheese, citrus zest, garlic, etc.",
+      image: "https://images.unsplash.com/photo-1615228939096-9c99e81b55bd?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'budget',
+      category: 'tools',
+      uses: [
+        "Grating cheese",
+        "Zesting citrus fruits",
+        "Grating ginger, garlic, and nutmeg",
+        "Shredding vegetables for salads"
+      ],
+      tips: [
+        "Box graters offer multiple grating sizes",
+        "Microplane graters are perfect for zest and hard cheese",
+        "Look for a comfortable handle and non-slip base",
+        "Dishwasher-safe models make cleanup easier"
+      ]
+    },
+    {
+      id: 'meat-thermometer',
+      name: "Meat Thermometer",
+      description: "Ensures food safety and perfect doneness.",
+      image: "https://images.unsplash.com/photo-1616118132534-381148898bb4?q=80&w=500&auto=format&fit=crop",
+      essential: true,
+      price: 'moderate',
+      category: 'tools',
+      uses: [
+        "Checking meat doneness",
+        "Ensuring food safety",
+        "Testing bread doneness",
+        "Checking oil temperature for frying"
+      ],
+      tips: [
+        "Digital thermometers give quick, accurate readings",
+        "Instant-read models are versatile for most cooking",
+        "Probe thermometers with external displays are best for roasting and baking",
+        "Look for one that's easy to clean and has a clear display"
+      ]
     }
   ];
 
-  // Filter tools based on active category
-  const filteredTools = activeCategory === 'all' 
-    ? kitchenTools 
-    : activeCategory === 'essentials' 
-      ? kitchenTools.filter(tool => tool.essential) 
-      : kitchenTools.filter(tool => tool.category === activeCategory);
+  // Filter tools based on active category and search query
+  const filteredTools = kitchenTools
+    .filter(tool => {
+      // First filter by category
+      const categoryMatch = 
+        activeCategory === 'all' || 
+        (activeCategory === 'essentials' && tool.essential) || 
+        tool.category === activeCategory;
+      
+      // Then filter by search query if one exists
+      const searchMatch = searchQuery === '' || 
+        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.uses.some(use => use.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      // Tool must match both category and search criteria
+      return categoryMatch && searchMatch;
+    });
 
   // Get price indicator based on price category
   const getPriceIndicator = (price: 'budget' | 'moderate' | 'premium') => {
@@ -349,6 +486,49 @@ const KitchenEssentials = () => {
             </p>
           </div>
         </div>
+      </div>
+      
+      {/* Search Bar */}
+      <div className="relative mb-6">
+        <div className="flex gap-2">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search for kitchen tools..."
+              className="pl-10 py-2 w-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                onClick={() => setSearchQuery('')}
+              >
+                &times;
+              </Button>
+            )}
+          </div>
+          {searchQuery && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="whitespace-nowrap"
+              onClick={() => setSearchQuery('')}
+            >
+              Clear Search
+            </Button>
+          )}
+        </div>
+        {searchQuery && (
+          <p className="text-sm text-gray-500 mt-2">
+            {filteredTools.length === 0 
+              ? 'No matches found.' 
+              : `Found ${filteredTools.length} item${filteredTools.length === 1 ? '' : 's'}.`}
+          </p>
+        )}
       </div>
       
       {/* Category Selection */}
