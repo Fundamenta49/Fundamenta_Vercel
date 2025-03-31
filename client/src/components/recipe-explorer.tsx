@@ -37,18 +37,50 @@ const RecipeExplorer = () => {
   const [loadingRecipes, setLoadingRecipes] = useState(false);
   const [loadingVideos, setLoadingVideos] = useState(false);
 
-  // Load random recipes on component mount
+  // Load recipes for basic American meals on component mount
   useEffect(() => {
-    fetchRandomRecipes();
+    fetchBasicAmericanRecipes();
   }, []);
 
-  const fetchRandomRecipes = async () => {
+  // Fetch basic American recipes that beginners can easily make
+  const fetchBasicAmericanRecipes = async () => {
     try {
       setLoadingRecipes(true);
-      const response = await SpoonacularService.getRandomRecipes(8);
-      setRandomRecipes(response.recipes || []);
+      // Focus on simple, popular American dishes for beginners
+      const basicAmericanDishes = [
+        "mac and cheese", 
+        "simple burger", 
+        "basic pancakes", 
+        "easy meatloaf", 
+        "homemade pizza", 
+        "grilled cheese sandwich", 
+        "baked chicken", 
+        "spaghetti"
+      ];
+      
+      // Get a random selection of dishes to search for
+      const randomSelections = basicAmericanDishes.sort(() => 0.5 - Math.random()).slice(0, 3);
+      const promises = randomSelections.map(dish => 
+        SpoonacularService.searchRecipes(dish, undefined, "american", undefined, 30)
+      );
+      
+      const results = await Promise.all(promises);
+      
+      // Combine and shuffle the results
+      const combinedRecipes = results.flatMap(result => result.results || [])
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 8);
+      
+      setRandomRecipes(combinedRecipes);
     } catch (error) {
-      console.error('Error fetching random recipes:', error);
+      console.error('Error fetching basic American recipes:', error);
+      // Fallback to random recipes if the specific search fails
+      try {
+        const response = await SpoonacularService.getRandomRecipes(8, "american");
+        setRandomRecipes(response.recipes || []);
+      } catch (fallbackError) {
+        console.error('Fallback error:', fallbackError);
+      }
     } finally {
       setLoadingRecipes(false);
     }
@@ -281,8 +313,8 @@ const RecipeExplorer = () => {
               <Search className="h-10 w-10 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium">No results found</h3>
               <p className="text-gray-500 mt-1">Try searching with different keywords</p>
-              <Button onClick={fetchRandomRecipes} className="mt-4">
-                Show random recipes
+              <Button onClick={fetchBasicAmericanRecipes} className="mt-4">
+                Show American recipes
               </Button>
             </div>
           )}

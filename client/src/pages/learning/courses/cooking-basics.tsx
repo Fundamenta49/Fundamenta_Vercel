@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { ChefHat, Utensils, Book, ArrowLeft, ShoppingCart, Settings } from 'lucide-react';
+import { ChefHat, Utensils, Book, ArrowLeft, PlayCircle, ShoppingBag } from 'lucide-react';
 import RecipeExplorer from '@/components/recipe-explorer';
 import KitchenEssentials from '@/components/kitchen-essentials';
+import CookingTutorials from '@/components/cooking-tutorials';
 import { Link } from 'wouter';
 
 export default function CookingBasics() {
@@ -34,18 +35,22 @@ export default function CookingBasics() {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <TabsTrigger value="intro" className="flex items-center gap-2">
             <Book className="h-4 w-4" />
             Introduction
           </TabsTrigger>
           <TabsTrigger value="kitchen-essentials" className="flex items-center gap-2">
             <Utensils className="h-4 w-4" />
-            Kitchen Essentials
+            Kitchen Tools
+          </TabsTrigger>
+          <TabsTrigger value="cooking-techniques" className="flex items-center gap-2">
+            <PlayCircle className="h-4 w-4" />
+            Cooking Tutorials
           </TabsTrigger>
           <TabsTrigger value="recipes" className="flex items-center gap-2">
             <ChefHat className="h-4 w-4" />
-            Recipe Explorer
+            American Recipes
           </TabsTrigger>
         </TabsList>
         
@@ -60,13 +65,13 @@ export default function CookingBasics() {
             <CardContent className="space-y-6">
               <div className="relative rounded-lg overflow-hidden aspect-video">
                 <img 
-                  src="https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?q=80&w=1024&auto=format&fit=crop"
-                  alt="Cooking basics"
+                  src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
+                  alt="American kitchen with cooking"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
                   <h2 className="text-white text-xl font-medium">
-                    Learning to cook opens up a world of possibilities
+                    Cooking is a valuable life skill that saves money and improves health
                   </h2>
                 </div>
               </div>
@@ -81,7 +86,7 @@ export default function CookingBasics() {
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <span><strong>Save money</strong> by preparing your own meals instead of ordering takeout</span>
+                      <span><strong>Save $2,000+ per year</strong> by preparing homemade meals instead of takeout</span>
                     </li>
                     <li className="flex gap-2 items-start">
                       <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
@@ -89,7 +94,7 @@ export default function CookingBasics() {
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <span><strong>Eat healthier</strong> by controlling ingredients and portion sizes</span>
+                      <span><strong>Eat healthier</strong> by controlling ingredients, salt, and portion sizes</span>
                     </li>
                     <li className="flex gap-2 items-start">
                       <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
@@ -97,7 +102,7 @@ export default function CookingBasics() {
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <span><strong>Impress others</strong> with your culinary skills</span>
+                      <span><strong>Gain independence</strong> and self-sufficiency in your daily life</span>
                     </li>
                     <li className="flex gap-2 items-start">
                       <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
@@ -105,7 +110,7 @@ export default function CookingBasics() {
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <span><strong>Develop a life skill</strong> that brings joy and satisfaction</span>
+                      <span><strong>Start simple and build</strong> your skills with basic American favorites</span>
                     </li>
                   </ul>
                 </div>
@@ -119,7 +124,7 @@ export default function CookingBasics() {
                           <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
                         </svg>
                       </div>
-                      <span>Essential kitchen tools and how to use them</span>
+                      <span>Essential kitchen tools for beginners and how to use them safely</span>
                     </li>
                     <li className="flex gap-2 items-start">
                       <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
@@ -127,7 +132,7 @@ export default function CookingBasics() {
                           <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
                         </svg>
                       </div>
-                      <span>Basic cooking techniques like sautéing, roasting, and boiling</span>
+                      <span>Basic cooking techniques with step-by-step video tutorials</span>
                     </li>
                     <li className="flex gap-2 items-start">
                       <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
@@ -135,7 +140,7 @@ export default function CookingBasics() {
                           <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
                         </svg>
                       </div>
-                      <span>How to follow recipes and adapt them to your tastes</span>
+                      <span>Simple American recipes like mac & cheese, burgers, and pancakes</span>
                     </li>
                     <li className="flex gap-2 items-start">
                       <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
@@ -143,25 +148,29 @@ export default function CookingBasics() {
                           <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
                         </svg>
                       </div>
-                      <span>Meal planning and grocery shopping strategies</span>
+                      <span>How to find video tutorials for any recipe you want to learn</span>
                     </li>
                   </ul>
                 </div>
               </div>
               
               <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
-                <h3 className="text-lg font-medium mb-2 text-orange-800">Get Started with Cooking</h3>
+                <h3 className="text-lg font-medium mb-2 text-orange-800">Getting Started</h3>
                 <p className="text-orange-700 mb-4">
-                  Explore the tabs above to learn about essential kitchen tools and discover recipes suitable for beginners.
+                  This module helps beginners build kitchen confidence with simple, achievable steps. Explore each section to start your cooking journey.
                 </p>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   <Button onClick={() => setActiveTab('kitchen-essentials')} className="bg-orange-500 hover:bg-orange-600">
                     <Utensils className="h-4 w-4 mr-2" />
-                    Kitchen Essentials
+                    Kitchen Tools
                   </Button>
-                  <Button variant="outline" onClick={() => setActiveTab('recipes')}>
+                  <Button onClick={() => setActiveTab('cooking-techniques')} className="bg-orange-500 hover:bg-orange-600">
+                    <PlayCircle className="h-4 w-4 mr-2" />
+                    Cooking Tutorials
+                  </Button>
+                  <Button onClick={() => setActiveTab('recipes')} className="bg-orange-500 hover:bg-orange-600">
                     <ChefHat className="h-4 w-4 mr-2" />
-                    Recipe Explorer
+                    American Recipes
                   </Button>
                 </div>
               </div>
@@ -172,9 +181,9 @@ export default function CookingBasics() {
         <TabsContent value="kitchen-essentials">
           <Card>
             <CardHeader>
-              <CardTitle>Kitchen Essentials</CardTitle>
+              <CardTitle>Essential Kitchen Tools</CardTitle>
               <CardDescription>
-                The fundamental tools and equipment every home cook should have
+                The basic equipment every beginner cook should have in their kitchen
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -183,12 +192,26 @@ export default function CookingBasics() {
           </Card>
         </TabsContent>
         
+        <TabsContent value="cooking-techniques">
+          <Card>
+            <CardHeader>
+              <CardTitle>Cooking Tutorials</CardTitle>
+              <CardDescription>
+                Step-by-step videos to master basic cooking techniques and simple recipes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CookingTutorials />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
         <TabsContent value="recipes">
           <Card>
             <CardHeader>
-              <CardTitle>Recipe Explorer</CardTitle>
+              <CardTitle>American Recipe Explorer</CardTitle>
               <CardDescription>
-                Discover delicious recipes and cooking tutorials
+                Discover simple, popular American recipes perfect for beginners
               </CardDescription>
             </CardHeader>
             <CardContent>
