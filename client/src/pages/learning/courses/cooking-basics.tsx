@@ -14,19 +14,23 @@ import {
   Cookie,
   Egg,
   Beef,
-  Apple 
+  Apple,
+  X
 } from 'lucide-react';
 import RecipeExplorer from '@/components/recipe-explorer';
 import KitchenEssentials from '@/components/kitchen-essentials';
 import CookingTutorials from '@/components/cooking-tutorials';
 import { Link } from 'wouter';
 
+// Define allowed color values
+type ColorKey = 'orange' | 'green' | 'blue' | 'purple' | 'pink' | 'yellow';
+
 // Define category type
 type GridCardProps = {
   title: string;
   description: string;
   icon: React.ReactNode;
-  color: string;
+  color: ColorKey;
   linkTo: string;
   onClick?: () => void;
 };
@@ -40,6 +44,9 @@ const GridCard: React.FC<GridCardProps> = ({
   linkTo,
   onClick 
 }) => {
+  // Ensure color is valid
+  const safeColor = color || 'orange';
+  
   const colorClasses = {
     orange: "border-orange-200 bg-orange-50 hover:bg-orange-100",
     green: "border-green-200 bg-green-50 hover:bg-green-100",
@@ -60,12 +67,12 @@ const GridCard: React.FC<GridCardProps> = ({
 
   return (
     <Card 
-      className={`cursor-pointer border transition-all hover:shadow-md ${colorClasses[color]}`}
+      className={`cursor-pointer border transition-all hover:shadow-md ${colorClasses[safeColor]}`}
       onClick={onClick}
     >
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <div className={`${iconColors[color]}`}>
+          <div className={iconColors[safeColor]}>
             {icon}
           </div>
           <CardTitle className="text-lg">{title}</CardTitle>
@@ -181,7 +188,7 @@ export default function CookingBasics() {
     title: string;
     description: string;
     icon: React.ReactNode;
-    color: string;
+    color: ColorKey;
   } | null>(null);
   
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -192,7 +199,7 @@ export default function CookingBasics() {
     title: string,
     description: string,
     icon: React.ReactNode,
-    color: string
+    color: ColorKey
   ) => {
     setActiveDialogContent({
       type,
@@ -254,7 +261,7 @@ export default function CookingBasics() {
         {/* Introduction */}
         <div
           className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-orange-200 bg-orange-50 hover:bg-orange-100 p-3 flex flex-col items-center text-center"
-          onClick={() => openDialog('intro', 'Introduction to Cooking', 'Why cooking matters and what you\'ll learn', <Book className="h-5 w-5" />, 'orange')}
+          onClick={() => openDialog('intro', 'Introduction to Cooking', 'Why cooking matters and what you\'ll learn', <Book className="h-5 w-5" />, 'orange' as ColorKey)}
         >
           <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
             <Book className="h-8 w-8 text-orange-600" />
@@ -266,7 +273,7 @@ export default function CookingBasics() {
         {/* Kitchen Tools */}
         <div
           className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-blue-200 bg-blue-50 hover:bg-blue-100 p-3 flex flex-col items-center text-center"
-          onClick={() => openDialog('kitchen-tools', 'Essential Kitchen Tools', 'Basic equipment every cook needs', <Utensils className="h-5 w-5" />, 'blue')}
+          onClick={() => openDialog('kitchen-tools', 'Essential Kitchen Tools', 'Basic equipment every cook needs', <Utensils className="h-5 w-5" />, 'blue' as ColorKey)}
         >
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-2">
             <Utensils className="h-8 w-8 text-blue-600" />
@@ -278,7 +285,7 @@ export default function CookingBasics() {
         {/* Cooking Tutorials */}
         <div
           className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-green-200 bg-green-50 hover:bg-green-100 p-3 flex flex-col items-center text-center"
-          onClick={() => openDialog('cooking-tutorials', 'Cooking Tutorials', 'Step-by-step video guides for beginners', <PlayCircle className="h-5 w-5" />, 'green')}
+          onClick={() => openDialog('cooking-tutorials', 'Cooking Tutorials', 'Step-by-step video guides for beginners', <PlayCircle className="h-5 w-5" />, 'green' as ColorKey)}
         >
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
             <PlayCircle className="h-8 w-8 text-green-600" />
@@ -290,7 +297,7 @@ export default function CookingBasics() {
         {/* Recipe Explorer */}
         <div
           className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-purple-200 bg-purple-50 hover:bg-purple-100 p-3 flex flex-col items-center text-center"
-          onClick={() => openDialog('recipe-explorer', 'Recipe Explorer', 'Discover easy home cooking classics', <ChefHat className="h-5 w-5" />, 'purple')}
+          onClick={() => openDialog('recipe-explorer', 'Recipe Explorer', 'Discover easy home cooking classics', <ChefHat className="h-5 w-5" />, 'purple' as ColorKey)}
         >
           <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-2">
             <ChefHat className="h-8 w-8 text-purple-600" />
@@ -302,7 +309,7 @@ export default function CookingBasics() {
         {/* Breakfast Basics */}
         <div
           className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-yellow-200 bg-yellow-50 hover:bg-yellow-100 p-3 flex flex-col items-center text-center"
-          onClick={() => openDialog('cooking-tutorials', 'Breakfast Basics', 'Start your day with simple recipes', <Egg className="h-5 w-5" />, 'yellow')}
+          onClick={() => openDialog('cooking-tutorials', 'Breakfast Basics', 'Start your day with simple recipes', <Egg className="h-5 w-5" />, 'yellow' as ColorKey)}
         >
           <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-2">
             <Egg className="h-8 w-8 text-yellow-600" />
@@ -314,7 +321,7 @@ export default function CookingBasics() {
         {/* Lunch & Dinner Staples */}
         <div
           className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-orange-200 bg-orange-50 hover:bg-orange-100 p-3 flex flex-col items-center text-center"
-          onClick={() => openDialog('cooking-tutorials', 'Lunch & Dinner Staples', 'Everyday meals made simple', <Beef className="h-5 w-5" />, 'orange')}
+          onClick={() => openDialog('cooking-tutorials', 'Lunch & Dinner Staples', 'Everyday meals made simple', <Beef className="h-5 w-5" />, 'orange' as ColorKey)}
         >
           <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
             <Beef className="h-8 w-8 text-orange-600" />
@@ -326,7 +333,7 @@ export default function CookingBasics() {
         {/* Simple Desserts */}
         <div
           className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-pink-200 bg-pink-50 hover:bg-pink-100 p-3 flex flex-col items-center text-center"
-          onClick={() => openDialog('cooking-tutorials', 'Simple Desserts', 'Sweet treats anyone can make', <Cookie className="h-5 w-5" />, 'pink')}
+          onClick={() => openDialog('cooking-tutorials', 'Simple Desserts', 'Sweet treats anyone can make', <Cookie className="h-5 w-5" />, 'pink' as ColorKey)}
         >
           <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-2">
             <Cookie className="h-8 w-8 text-pink-600" />
@@ -338,7 +345,7 @@ export default function CookingBasics() {
         {/* Quick & Easy Meals */}
         <div
           className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-pink-200 bg-pink-50 hover:bg-pink-100 p-3 flex flex-col items-center text-center"
-          onClick={() => openDialog('cooking-tutorials', 'Quick & Easy Meals', 'Recipes ready in 30 minutes or less', <Clock className="h-5 w-5" />, 'pink')}
+          onClick={() => openDialog('cooking-tutorials', 'Quick & Easy Meals', 'Recipes ready in 30 minutes or less', <Clock className="h-5 w-5" />, 'pink' as ColorKey)}
         >
           <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-2">
             <Clock className="h-8 w-8 text-pink-600" />
@@ -354,11 +361,14 @@ export default function CookingBasics() {
           <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
             <div className="container max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className={`text-${activeDialogContent.color === 'orange' ? 'orange' : 
-                                      activeDialogContent.color === 'blue' ? 'blue' : 
-                                      activeDialogContent.color === 'green' ? 'green' : 
-                                      activeDialogContent.color === 'purple' ? 'purple' : 
-                                      activeDialogContent.color === 'yellow' ? 'yellow' : 'pink'}-600`}>
+                <div className={
+                  activeDialogContent.color === 'orange' ? 'text-orange-600' :
+                  activeDialogContent.color === 'blue' ? 'text-blue-600' :
+                  activeDialogContent.color === 'green' ? 'text-green-600' :
+                  activeDialogContent.color === 'purple' ? 'text-purple-600' :
+                  activeDialogContent.color === 'yellow' ? 'text-yellow-600' : 
+                  'text-pink-600'
+                }>
                   {activeDialogContent.icon}
                 </div>
                 <h2 className="text-xl font-semibold">{activeDialogContent.title}</h2>
