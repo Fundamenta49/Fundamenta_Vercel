@@ -109,8 +109,8 @@ const CookingTutorials = () => {
       name: 'Fluffy Homemade Pancakes',
       description: 'Master the technique for light, fluffy pancakes perfect for breakfast.',
       difficulty: 'beginner',
-      videoId: '2b5K_PNDwlQ',
-      thumbnailUrl: 'https://img.youtube.com/vi/GLdxV0PTX3s/maxresdefault.jpg',
+      videoId: 'FLd00Bx4tOk',
+      thumbnailUrl: 'https://img.youtube.com/vi/FLd00Bx4tOk/maxresdefault.jpg',
       tips: [
         'Don\'t overmix the batter - lumps are okay',
         'Let the batter rest for 5-10 minutes before cooking',
