@@ -547,16 +547,27 @@ The plan should be varied, practical, and use commonly available ingredients. Fo
 // Analyze food from image using OpenAI's vision capabilities
 router.post('/analyze-food', foodImageUpload.single('image'), async (req, res) => {
   try {
+    console.log("Food analysis request received");
     const image = req.file;
     
     if (!image) {
+      console.log("No image file received in request");
       return res.status(400).json({ error: 'No image uploaded or invalid image type' });
     }
+    
+    console.log(`Image received: ${image.originalname}, size: ${image.size}, mimetype: ${image.mimetype}`);
     
     // Convert image to base64 for OpenAI API
     const base64Image = image.buffer.toString('base64');
     
     // Use OpenAI GPT-4 Vision to analyze the food in the image
+    console.log("Calling OpenAI API to analyze the food image...");
+    // Check if API key is available
+    if (!process.env.OPENAI_API_KEY) {
+      console.error("Missing OpenAI API key");
+      return res.status(500).json({ error: 'OpenAI API key is not configured' });
+    }
+    
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
@@ -589,16 +600,21 @@ router.post('/analyze-food', foodImageUpload.single('image'), async (req, res) =
     }
     
     try {
+      console.log("OpenAI API response received:", response.choices[0].message.content);
       const nutritionInfo = JSON.parse(response.choices[0].message.content);
+      console.log("Parsed nutrition info:", nutritionInfo);
       
-      res.json({
+      const result = {
         foodName: nutritionInfo.foodName,
         calories: Number(nutritionInfo.calories),
         carbs: Number(nutritionInfo.carbs),
         protein: Number(nutritionInfo.protein),
         fat: Number(nutritionInfo.fat),
         description: nutritionInfo.description
-      });
+      };
+      
+      console.log("Sending response back to client:", result);
+      res.json(result);
     } catch (parseError) {
       console.error('Error parsing AI response:', parseError);
       res.status(500).json({ error: 'Failed to parse food analysis' });

@@ -15,6 +15,7 @@ import { Camera, Plus, UploadCloud, Utensils, Target, History } from "lucide-rea
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface NutritionGoal {
   dailyCalories: number;
@@ -45,14 +46,38 @@ export default function NutritionTracker() {
     carbs: "",
   });
 
+  const { toast } = useToast();
+    
   const analyzeMutation = useMutation({
     mutationFn: async (image: File) => {
-      const formData = new FormData();
-      formData.append("image", image);
-      const response = await apiRequest("POST", "/api/nutrition/analyze-food", formData);
-      return response.json();
+      try {
+        console.log("Sending image for analysis...");
+        const formData = new FormData();
+        formData.append("image", image);
+        
+        // Use a direct fetch call instead of apiRequest to bypass JSON parsing
+        const response = await fetch("/api/nutrition/analyze-food", {
+          method: "POST",
+          body: formData,
+          // Don't set Content-Type header, let the browser set it with boundary for multipart/form-data
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("API error:", errorData);
+          throw new Error(errorData.error || "Failed to analyze food image");
+        }
+        
+        const data = await response.json();
+        console.log("Analysis result:", data);
+        return data;
+      } catch (error) {
+        console.error("Error in analyze mutation:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
+      console.log("Successfully analyzed food:", data);
       addFoodEntry({
         id: Date.now().toString(),
         timestamp: new Date().toISOString(),
@@ -64,6 +89,19 @@ export default function NutritionTracker() {
       });
       setSelectedImage(null);
       setPreviewUrl(null);
+      
+      toast({
+        title: "Food analyzed!",
+        description: `Added ${data.foodName} to your food log`,
+      });
+    },
+    onError: (error) => {
+      console.error("Food analysis failed:", error);
+      toast({
+        title: "Analysis failed",
+        description: error instanceof Error ? error.message : "Failed to analyze food image",
+        variant: "destructive",
+      });
     },
   });
 
