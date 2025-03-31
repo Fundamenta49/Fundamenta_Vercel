@@ -16,16 +16,27 @@ const FullScreenDialogClose = DialogPrimitive.Close;
 const FullScreenDialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    className={cn(
-      "fixed inset-0 z-40 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
-    {...props}
-  />
-));
+>(({ className, ...props }, ref) => {
+  const isMobile = useIsMobile();
+  
+  return (
+    <DialogPrimitive.Overlay
+      ref={ref}
+      className={cn(
+        "fixed inset-0 z-40 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        className
+      )}
+      style={{
+        // Style that creates a clickable hole for the navigation button
+        ...(isMobile ? {
+          maskImage: 'radial-gradient(circle at 20px 40px, transparent 24px, black 25px)',
+          WebkitMaskImage: 'radial-gradient(circle at 20px 40px, transparent 24px, black 25px)'
+        } : {})
+      }}
+      {...props}
+    />
+  );
+});
 FullScreenDialogOverlay.displayName = "FullScreenDialogOverlay";
 
 interface FullScreenDialogContentProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
@@ -73,6 +84,11 @@ const FullScreenDialogContent = React.forwardRef<
             height: '100%',
             overflow: 'auto',
             backgroundColor: 'white',
+            // Ensure full-screen dialog doesn't block the sidebar menu button
+            boxSizing: 'border-box',
+            // Add the same mask as the overlay for the hamburger menu button
+            maskImage: 'radial-gradient(circle at 20px 40px, transparent 24px, black 25px)',
+            WebkitMaskImage: 'radial-gradient(circle at 20px 40px, transparent 24px, black 25px)'
           }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
