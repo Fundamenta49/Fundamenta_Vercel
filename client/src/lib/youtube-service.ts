@@ -73,6 +73,25 @@ export const searchCookingVideos = async (query: string): Promise<YouTubeVideo[]
   }
 };
 
+// Kitchen tools video ID map - maps video titles to their YouTube IDs
+export const kitchenToolVideoMap: Record<string, string> = {
+  "Basic Knife Skills | Epicurious": "GFFWa5ELqUA",
+  "Choosing and Caring for Cutting Boards | America's Test Kitchen": "kd4vNcJAS8A",
+  "How to Measure Ingredients Correctly | Joy of Baking": "-GHRl8i5-ns",
+  "Mixing Bowls: Types and Uses | Kitchen Conservatory": "0MgbauXapkk",
+  "How to Use and Season a Cast Iron Skillet | Tasty": "rXRDTKHshfk",
+  "Saucepan Basics: Cooking Techniques and Tips | Pro Home Cooks": "7X3Y29oqBrA",
+  "Stockpot Cooking: Tips and Techniques | Chef Billy Parisi": "mZ7R4zh_k1I",
+  "Sheet Pan Cooking: Tips and Recipes | Food Wishes": "KoQ4HQpj7BU",
+  "Spatula Types and Uses | America's Test Kitchen": "3TgBJQ4Ugew",
+  "How to Use Kitchen Tongs Effectively | Serious Eats": "2XSdQ4gjsAQ",
+  "Whisking Techniques: How to Use a Whisk Properly | Bon Appétit": "fM1YJPaFV84",
+  "Colander vs. Strainer: Which One to Use? | Food Network": "vkOBmG1yFLY",
+  "How to Use a Vegetable Peeler | Martha Stewart": "R_yNsToYMNw",
+  "Grating Techniques: Box Grater vs. Microplane | America's Test Kitchen": "ZCgYaxTyXJ4",
+  "How to Use a Meat Thermometer | ChefSteps": "zByxl2BfDd4"
+};
+
 /**
  * Generic YouTube search function for any category
  * @param query Search query

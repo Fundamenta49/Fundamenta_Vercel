@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ExternalLink, Info, AlertCircle, CheckCircle, Play, Utensils, Scissors, CookingPot, Cookie, UtensilsCrossed, Plug, Loader2, Search } from 'lucide-react';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
-import { searchCookingVideos, YouTubeVideo } from '@/lib/youtube-service';
+import { searchCookingVideos, YouTubeVideo, kitchenToolVideoMap } from '@/lib/youtube-service';
 import { Input } from '@/components/ui/input';
 
 interface KitchenTool {
@@ -47,46 +47,32 @@ const KitchenEssentials = () => {
   const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   
-  // Function to fetch a video for a kitchen tool
+  // Function to fetch a video for a kitchen tool - using direct video IDs for specific titles
   const fetchVideoForTool = async (tool: KitchenTool) => {
-    if (tool.videoId) {
-      // If the tool already has a video ID, use that
-      setVideoDialog({
-        open: true,
-        videoId: tool.videoId,
-        title: tool.videoTitle || `${tool.name} Tutorial`
-      });
-      return;
-    }
-    
-    // If tool has a videoTitle but no ID, search for that specific video
-    if (tool.videoTitle) {
-      setIsLoadingVideo(true);
-      try {
-        // Search for the exact video title
-        const exactQuery = tool.videoTitle;
-        const videos = await searchCookingVideos(exactQuery);
-        
-        if (videos && videos.length > 0) {
-          // Use the first result
-          const video = videos[0];
-          setVideoDialog({
-            open: true,
-            videoId: video.id,
-            title: tool.videoTitle
-          });
-          return;
-        }
-      } catch (error) {
-        console.error('Error searching for specific video title:', error);
-        // Continue to the fallback searches
-      }
-    }
-    
-    // Otherwise, search for a video
     setIsLoadingVideo(true);
+    
     try {
-      // Create a search query based on the tool name and category
+      // If the tool already has a video ID, use that directly
+      if (tool.videoId) {
+        setVideoDialog({
+          open: true,
+          videoId: tool.videoId,
+          title: tool.videoTitle || `${tool.name} Tutorial`
+        });
+        return;
+      }
+      
+      // If the tool has a videoTitle, look up its ID in our map
+      if (tool.videoTitle && kitchenToolVideoMap[tool.videoTitle]) {
+        setVideoDialog({
+          open: true,
+          videoId: kitchenToolVideoMap[tool.videoTitle],
+          title: tool.videoTitle
+        });
+        return;
+      }
+      
+      // If there's no direct match in our map, fall back to search
       const searchQuery = tool.videoTitle 
         ? tool.videoTitle 
         : `how to use ${tool.name} cooking tutorial`;
