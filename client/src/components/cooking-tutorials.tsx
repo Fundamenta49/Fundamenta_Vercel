@@ -110,7 +110,7 @@ const CookingTutorials = () => {
       description: 'Master the technique for light, fluffy pancakes perfect for breakfast.',
       difficulty: 'beginner',
       videoId: 'GLdxV0PTX3s',
-      thumbnailUrl: 'https://i.ytimg.com/vi/GLdxV0PTX3s/hqdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/GLdxV0PTX3s/maxresdefault.jpg',
       tips: [
         'Don\'t overmix the batter - lumps are okay',
         'Let the batter rest for 5-10 minutes before cooking',
@@ -130,7 +130,7 @@ const CookingTutorials = () => {
       description: 'A foolproof method for juicy, flavorful chicken every time.',
       difficulty: 'beginner',
       videoId: '4fdwZ1wQn_M',
-      thumbnailUrl: 'https://i.ytimg.com/vi/4fdwZ1wQn_M/hqdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/4fdwZ1wQn_M/maxresdefault.jpg',
       tips: [
         'Pat chicken dry before seasoning for crispy skin',
         'Use a meat thermometer for perfect doneness',
@@ -150,7 +150,7 @@ const CookingTutorials = () => {
       description: 'Master this classic sandwich - crispy outside, gooey melted cheese inside.',
       difficulty: 'beginner',
       videoId: 'BlTCkNkfmRY', 
-      thumbnailUrl: 'https://i.ytimg.com/vi/BlTCkNkfmRY/hqdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/BlTCkNkfmRY/maxresdefault.jpg',
       tips: [
         'Use butter at room temperature for easy spreading',
         'Cook on medium-low heat for even browning and melting',
@@ -170,7 +170,7 @@ const CookingTutorials = () => {
       description: 'Learn to cook pasta properly and make simple, delicious sauces.',
       difficulty: 'beginner',
       videoId: 'UYhKDweME3A',
-      thumbnailUrl: 'https://i.ytimg.com/vi/UYhKDweME3A/hqdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/UYhKDweME3A/maxresdefault.jpg',
       tips: [
         'Use plenty of water - at least 4 quarts per pound of pasta',
         'Salt the water generously (it should taste like seawater)',
@@ -190,7 +190,7 @@ const CookingTutorials = () => {
       description: 'A homestyle favorite that\'s easy to prepare and customize.',
       difficulty: 'beginner',
       videoId: 'A-RfHC91Ewc',
-      thumbnailUrl: 'https://i.ytimg.com/vi/A-RfHC91Ewc/hqdefault.jpg',
+      thumbnailUrl: 'https://img.youtube.com/vi/A-RfHC91Ewc/maxresdefault.jpg',
       tips: [
         'Use a mix of ground meats for better flavor',
         'Don\'t overmix or it will become dense',

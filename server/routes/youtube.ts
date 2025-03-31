@@ -62,7 +62,7 @@ router.get('/search', async (req, res) => {
       id: item.id.videoId,
       title: item.snippet.title,
       description: item.snippet.description,
-      thumbnailUrl: item.snippet.thumbnails.medium.url,
+      thumbnailUrl: `https://img.youtube.com/vi/${item.id.videoId}/maxresdefault.jpg`,
       channelTitle: item.snippet.channelTitle,
       publishedAt: item.snippet.publishedAt
     }));
