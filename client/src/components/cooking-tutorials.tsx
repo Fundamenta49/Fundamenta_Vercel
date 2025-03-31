@@ -129,8 +129,8 @@ const CookingTutorials = () => {
       name: 'Easy Baked Chicken',
       description: 'A foolproof method for juicy, flavorful chicken every time.',
       difficulty: 'beginner',
-      videoId: 'SoOE6nCuozE',
-      thumbnailUrl: 'https://img.youtube.com/vi/SoOE6nCuozE/maxresdefault.jpg',
+      videoId: '1TlVgW-pM5g',
+      thumbnailUrl: 'https://img.youtube.com/vi/1TlVgW-pM5g/maxresdefault.jpg',
       tips: [
         'Pat chicken dry before seasoning for crispy skin',
         'Use a meat thermometer for perfect doneness',
@@ -189,8 +189,8 @@ const CookingTutorials = () => {
       name: 'Classic Homemade Meatloaf',
       description: 'A homestyle favorite that\'s easy to prepare and customize.',
       difficulty: 'beginner',
-      videoId: '7u7_B-s834Y', // Replaced with a valid YouTube video ID
-      thumbnailUrl: 'https://img.youtube.com/vi/7u7_B-s834Y/maxresdefault.jpg', // Updated thumbnail URL
+      videoId: 'OMPr7YP4fd8',
+      thumbnailUrl: 'https://img.youtube.com/vi/OMPr7YP4fd8/maxresdefault.jpg',
       tips: [
         'Use a mix of ground meats for better flavor',
         'Don\'t overmix or it will become dense',
