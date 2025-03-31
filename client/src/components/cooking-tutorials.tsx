@@ -110,7 +110,7 @@ const CookingTutorials = () => {
       description: 'Master the technique for light, fluffy pancakes perfect for breakfast.',
       difficulty: 'beginner',
       videoId: 'GLdxV0PTX3s',
-      thumbnailUrl: 'https://i.ytimg.com/vi/2b5K-S4_B1U/hqdefault.jpg',
+      thumbnailUrl: 'https://i.ytimg.com/vi/GLdxV0PTX3s/hqdefault.jpg',
       tips: [
         'Don\'t overmix the batter - lumps are okay',
         'Let the batter rest for 5-10 minutes before cooking',
@@ -130,7 +130,7 @@ const CookingTutorials = () => {
       description: 'A foolproof method for juicy, flavorful chicken every time.',
       difficulty: 'beginner',
       videoId: '4fdwZ1wQn_M',
-      thumbnailUrl: 'https://i.ytimg.com/vi/yLANUYFB0oQ/hqdefault.jpg',
+      thumbnailUrl: 'https://i.ytimg.com/vi/4fdwZ1wQn_M/hqdefault.jpg',
       tips: [
         'Pat chicken dry before seasoning for crispy skin',
         'Use a meat thermometer for perfect doneness',
@@ -170,7 +170,7 @@ const CookingTutorials = () => {
       description: 'Learn to cook pasta properly and make simple, delicious sauces.',
       difficulty: 'beginner',
       videoId: 'UYhKDweME3A',
-      thumbnailUrl: 'https://i.ytimg.com/vi/OMRUIrbZHlY/hqdefault.jpg',
+      thumbnailUrl: 'https://i.ytimg.com/vi/UYhKDweME3A/hqdefault.jpg',
       tips: [
         'Use plenty of water - at least 4 quarts per pound of pasta',
         'Salt the water generously (it should taste like seawater)',
