@@ -11,7 +11,6 @@ interface FloatingChatProps {
 
 export default function FloatingChat({ category = 'general' }: FloatingChatProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const categoryColors: Record<string, string> = {
@@ -35,32 +34,10 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     return () => clearInterval(animationInterval);
   }, []);
 
-  const [isHidden, setIsHidden] = useState<boolean>(false);
-  
   // Get the color for the current category
   const getCategoryColor = (category: string) => {
     return categoryColors[category] || categoryColors.general;
   };
-  
-  // If hidden, show only a small indicator to bring the chat back
-  if (isHidden && !isExpanded) {
-    return (
-      <Button
-        className="fixed top-6 right-2 z-50 h-8 w-8 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out border"
-        style={{
-          backgroundColor: 'white',
-          borderColor: getCategoryColor(category),
-        }}
-        onClick={() => setIsHidden(false)}
-        title="Show chat"
-      >
-        <MessageSquare 
-          className="h-4 w-4" 
-          style={{ color: getCategoryColor(category) }}
-        />
-      </Button>
-    );
-  }
   
   return (
     <>
@@ -78,37 +55,28 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           />
         </div>
       ) : (
-        <div className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 flex flex-col items-end">
-          <Button
-            className={`h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out border-2 ${
-              isAnimating ? 'scale-110' : 'scale-100'
-            }`}
-            style={{
-              backgroundColor: 'white',
-              borderColor: getCategoryColor(category),
-            }}
-            onClick={() => setIsExpanded(true)}
-          >
-            {/* Chat icon */}
-            <div className="flex items-center justify-center w-full h-full">
-              <MessageSquare 
-                className="h-6 w-6" 
-                style={{ color: getCategoryColor(category) }}
-              />
-              {/* Animation dot to indicate Fundi is available */}
-              <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500 animate-ping opacity-75"></span>
-              <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500"></span>
-            </div>
-          </Button>
-          <Button
-            className="mt-2 h-8 w-8 rounded-full shadow-md flex items-center justify-center border"
-            variant="outline"
-            onClick={() => setIsHidden(true)}
-            title="Hide chat"
-          >
-            <MessageSquare className="h-4 w-4 text-gray-500" />
-          </Button>
-        </div>
+        <Button
+          className={`fixed top-6 right-2 z-50 h-9 w-9 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out border ${
+            isAnimating ? 'scale-110' : 'scale-100'
+          }`}
+          style={{
+            backgroundColor: 'white',
+            borderColor: getCategoryColor(category),
+          }}
+          onClick={() => setIsExpanded(true)}
+          title="Chat with Fundi"
+        >
+          {/* Chat icon */}
+          <div className="flex items-center justify-center w-full h-full relative">
+            <MessageSquare 
+              className="h-5 w-5" 
+              style={{ color: getCategoryColor(category) }}
+            />
+            {/* Animation dot to indicate Fundi is available */}
+            <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 animate-ping opacity-75"></span>
+            <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500"></span>
+          </div>
+        </Button>
       )}
     </>
   );
