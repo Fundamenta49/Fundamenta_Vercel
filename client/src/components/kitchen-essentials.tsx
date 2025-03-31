@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ExternalLink, Info, AlertCircle, CheckCircle } from 'lucide-react';
+import { ExternalLink, Info, AlertCircle, CheckCircle, Play } from 'lucide-react';
+import { VideoPlayerDialog } from '@/components/video-player-dialog';
 
 interface KitchenTool {
   id: string;
@@ -17,6 +18,7 @@ interface KitchenTool {
   uses: string[];
   tips: string[];
   videoId?: string;
+  videoTitle?: string;
 }
 
 interface KitchenToolProps {
@@ -26,6 +28,11 @@ interface KitchenToolProps {
 const KitchenEssentials = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [selectedTool, setSelectedTool] = useState<KitchenTool | null>(null);
+  const [videoDialog, setVideoDialog] = useState<{open: boolean, videoId: string, title: string}>({
+    open: false,
+    videoId: '',
+    title: ''
+  });
 
   // Kitchen tools data
   const kitchenTools: KitchenTool[] = [
@@ -49,7 +56,8 @@ const KitchenEssentials = () => {
         "Keep it sharp - a dull knife is more dangerous than a sharp one",
         "Hand wash and dry immediately to maintain edge and prevent rust"
       ],
-      videoId: "1AxLzn3fGxk" // YouTube ID for knife skills tutorial
+      videoId: "1AxLzn3fGxk", // YouTube ID for knife skills tutorial
+      videoTitle: "Essential Knife Skills - Chef's Knife Tutorial"
     },
     {
       id: 'cutting-board',
@@ -91,7 +99,8 @@ const KitchenEssentials = () => {
         "Preheat the pan before adding oil to prevent sticking",
         "Allow food to develop a crust before attempting to flip it"
       ],
-      videoId: "X1XoCQm5JSQ" // YouTube ID for how to use a skillet
+      videoId: "X1XoCQm5JSQ", // YouTube ID for how to use a skillet
+      videoTitle: "How to Cook with a Stainless Steel Skillet - Tips & Techniques"
     },
     {
       id: 'nonstick-pan',
@@ -134,7 +143,8 @@ const KitchenEssentials = () => {
         "Can go from stovetop to oven",
         "Heavy lids trap moisture for perfect braising"
       ],
-      videoId: "QF7yTC4yq80" // YouTube ID for dutch oven cooking
+      videoId: "QF7yTC4yq80", // YouTube ID for dutch oven cooking
+      videoTitle: "Dutch Oven Cooking Techniques - Soups, Stews & Bread"
     },
     {
       id: 'mixing-bowls',
@@ -198,7 +208,8 @@ const KitchenEssentials = () => {
         "Line with parchment or silicone mats for easy cleanup",
         "Light-colored sheets prevent over-browning"
       ],
-      videoId: "XbFwpupIK0A" // YouTube ID for sheet pan cooking
+      videoId: "XbFwpupIK0A", // YouTube ID for sheet pan cooking
+      videoTitle: "Sheet Pan Cooking Guide - Perfect Roasting Techniques"
     },
     {
       id: 'food-processor',
@@ -241,7 +252,8 @@ const KitchenEssentials = () => {
         "Natural pressure release is best for meats and beans",
         "Quick release works better for vegetables to prevent overcooking"
       ],
-      videoId: "QTT0Z3ksW8s" // YouTube ID for Instant Pot basics
+      videoId: "QTT0Z3ksW8s", // YouTube ID for Instant Pot basics
+      videoTitle: "Instant Pot Beginners Guide - How to Use a Pressure Cooker"
     }
   ];
 
@@ -414,17 +426,17 @@ const KitchenEssentials = () => {
               {selectedTool.videoId && (
                 <div>
                   <h3 className="font-medium mb-2">How-To Video</h3>
-                  <div className="aspect-video">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src={`https://www.youtube.com/embed/${selectedTool.videoId}`}
-                      title={`${selectedTool.name} tutorial`}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
+                  <Button
+                    className="w-full rounded-md flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => setVideoDialog({
+                      open: true,
+                      videoId: selectedTool.videoId as string,
+                      title: `${selectedTool.name} Tutorial`
+                    })}
+                  >
+                    <Play className="h-4 w-4" />
+                    Watch Video Tutorial
+                  </Button>
                 </div>
               )}
             </CardContent>
@@ -436,6 +448,14 @@ const KitchenEssentials = () => {
           </Card>
         </div>
       )}
+      
+      {/* Video Player Dialog */}
+      <VideoPlayerDialog
+        open={videoDialog.open}
+        onOpenChange={(open) => setVideoDialog({ ...videoDialog, open })}
+        videoId={videoDialog.videoId}
+        title={videoDialog.title}
+      />
     </div>
   );
 };
