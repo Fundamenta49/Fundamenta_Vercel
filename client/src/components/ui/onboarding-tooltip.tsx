@@ -179,9 +179,7 @@ export function OnboardingTooltip({
             {/* Tooltip Header */}
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 flex items-center justify-center rounded-md bg-indigo-500">
-                  <ChevronRight className="h-3 w-3 text-white" />
-                </div>
+                <ChevronRight className="h-5 w-5 text-gray-700" />
                 <h3 className="text-lg font-semibold">{step.title}</h3>
               </div>
               <Button

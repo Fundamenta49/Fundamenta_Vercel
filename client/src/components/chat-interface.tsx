@@ -214,10 +214,8 @@ export default function ChatInterface({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {(currentCategory || category) === 'general' ? (
-              <div className="h-10 w-10 flex items-center justify-center rounded-lg"
-                style={{ backgroundColor: categoryColors[currentCategory || category] }}
-              >
-                <MessageSquare className="h-6 w-6 text-white" />
+              <div className="h-10 w-10 flex items-center justify-center">
+                <MessageSquare className="h-6 w-6 text-gray-700" />
               </div>
             ) : (
               <Avatar className="h-10 w-10">
@@ -373,10 +371,8 @@ export default function ChatInterface({
                   {msg.role === 'assistant' && (
                     <div className="flex items-center gap-2 mb-2">
                       {(msg.category || category) === 'general' ? (
-                        <div className="h-6 w-6 flex items-center justify-center rounded"
-                          style={{ backgroundColor: categoryColors[msg.category || category] }}
-                        >
-                          <MessageSquare className="h-3 w-3 text-white" />
+                        <div className="h-6 w-6 flex items-center justify-center">
+                          <MessageSquare className="h-4 w-4 text-gray-700" />
                         </div>
                       ) : (
                         <Avatar className="h-6 w-6">

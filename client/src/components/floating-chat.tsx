@@ -52,18 +52,17 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
         </div>
       ) : (
         <Button
-          className={`fixed top-6 right-6 sm:top-8 sm:right-8 z-50 h-20 w-20 rounded-lg shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out ${
+          className={`fixed top-6 right-6 sm:top-8 sm:right-8 z-50 h-12 w-12 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out ${
             isAnimating ? 'scale-110' : 'scale-100'
           }`}
           onClick={() => setIsExpanded(true)}
-          style={{ backgroundColor: categoryColors[category] }}
         >
           {/* Chat icon */}
           <div className="flex items-center justify-center w-full h-full">
-            <MessageSquare className="h-8 w-8 text-white" />
+            <MessageSquare className="h-6 w-6 text-gray-700" />
             {/* Animation dot to indicate Fundi is available */}
-            <span className="absolute bottom-2 right-2 h-3 w-3 rounded-full bg-white animate-ping opacity-75"></span>
-            <span className="absolute bottom-2 right-2 h-3 w-3 rounded-full bg-white"></span>
+            <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full bg-green-500 animate-ping opacity-75"></span>
+            <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full bg-green-500"></span>
           </div>
         </Button>
       )}
