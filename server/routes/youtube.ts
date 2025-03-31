@@ -3,7 +3,30 @@ import axios from 'axios';
 
 const router = express.Router();
 
-// Get YouTube videos related to vehicle maintenance
+/**
+ * Function to format search query based on category and content
+ * @param q Original search query
+ * @param category Content category
+ * @returns Formatted query string
+ */
+function formatSearchQuery(q: string, category?: string): string {
+  if (category === 'vehicle') {
+    return `${q} vehicle maintenance tutorial step by step`;
+  } else if (category === 'cooking') {
+    return `${q} cooking recipe tutorial step by step homemade`;
+  } else if (category === 'home-repair') {
+    return `${q} home repair DIY guide tutorial step by step`;
+  } else if (category === 'finance') {
+    return `${q} personal finance education tutorial`;
+  } else if (category === 'wellness') {
+    return `${q} wellness health guide tutorial`;
+  } else {
+    // Default enhancement for search query
+    return `${q} tutorial guide how-to step by step`;
+  }
+}
+
+// Get YouTube videos with enhanced formatting for relevance
 router.get('/search', async (req, res) => {
   try {
     const { q, category } = req.query;
@@ -17,28 +40,20 @@ router.get('/search', async (req, res) => {
       return res.status(500).json({ error: 'YouTube API key is not configured' });
     }
     
-    // Format the query based on category (if provided)
-    let formattedQuery = q;
-    if (category === 'vehicle') {
-      formattedQuery = `${q} vehicle maintenance tutorial`;
-    } else if (category === 'cooking') {
-      formattedQuery = `${q} cooking recipe tutorial`;
-    } else if (category === 'home-repair') {
-      formattedQuery = `${q} home repair DIY guide tutorial`;
-    } else {
-      // Default enhancement for search query
-      formattedQuery = `${q} tutorial guide how-to`;
-    }
+    // Format the query based on category for improved relevance
+    const formattedQuery = formatSearchQuery(q, category as string | undefined);
     
     const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
         part: 'snippet',
-        maxResults: 5,
+        maxResults: 8, // Increased from 5 to provide more options
         q: formattedQuery,
         type: 'video',
         key: apiKey,
         relevanceLanguage: 'en',
         videoEmbeddable: true,
+        videoDuration: 'medium', // Filter for medium length videos (4-20 minutes)
+        videoDefinition: 'high', // Prefer high definition videos
       }
     });
     
@@ -79,28 +94,20 @@ export const youtubeSearchHandler = async (req: express.Request, res: express.Re
       return res.status(500).json({ error: 'YouTube API key is not configured' });
     }
     
-    // Format the query based on category (if provided)
-    let formattedQuery = q;
-    if (category === 'vehicle') {
-      formattedQuery = `${q} vehicle maintenance tutorial`;
-    } else if (category === 'cooking') {
-      formattedQuery = `${q} cooking recipe tutorial`;
-    } else if (category === 'home-repair') {
-      formattedQuery = `${q} home repair DIY guide tutorial`;
-    } else {
-      // Default enhancement for search query
-      formattedQuery = `${q} tutorial guide how-to`;
-    }
+    // Format the query based on category for improved relevance
+    const formattedQuery = formatSearchQuery(q, category as string | undefined);
     
     const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
         part: 'snippet',
-        maxResults: 5,
+        maxResults: 8, // Increased from 5 to provide more options
         q: formattedQuery,
         type: 'video',
         key: apiKey,
         relevanceLanguage: 'en',
         videoEmbeddable: true,
+        videoDuration: 'medium', // Filter for medium length videos (4-20 minutes)
+        videoDefinition: 'high', // Prefer high definition videos
       }
     });
     
