@@ -47,7 +47,7 @@ const KitchenEssentials = () => {
   const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   
-  // Function to fetch a video for a kitchen tool that doesn't have a predetermined videoId
+  // Function to fetch a video for a kitchen tool
   const fetchVideoForTool = async (tool: KitchenTool) => {
     if (tool.videoId) {
       // If the tool already has a video ID, use that
@@ -59,11 +59,38 @@ const KitchenEssentials = () => {
       return;
     }
     
+    // If tool has a videoTitle but no ID, search for that specific video
+    if (tool.videoTitle) {
+      setIsLoadingVideo(true);
+      try {
+        // Search for the exact video title
+        const exactQuery = tool.videoTitle;
+        const videos = await searchCookingVideos(exactQuery);
+        
+        if (videos && videos.length > 0) {
+          // Use the first result
+          const video = videos[0];
+          setVideoDialog({
+            open: true,
+            videoId: video.id,
+            title: tool.videoTitle
+          });
+          return;
+        }
+      } catch (error) {
+        console.error('Error searching for specific video title:', error);
+        // Continue to the fallback searches
+      }
+    }
+    
     // Otherwise, search for a video
     setIsLoadingVideo(true);
     try {
       // Create a search query based on the tool name and category
-      const searchQuery = `how to use ${tool.name} cooking tutorial`;
+      const searchQuery = tool.videoTitle 
+        ? tool.videoTitle 
+        : `how to use ${tool.name} cooking tutorial`;
+        
       const videos = await searchCookingVideos(searchQuery);
       
       if (videos && videos.length > 0) {
@@ -72,7 +99,7 @@ const KitchenEssentials = () => {
         setVideoDialog({
           open: true,
           videoId: video.id,
-          title: video.title
+          title: tool.videoTitle || video.title
         });
       } else {
         console.error('No videos found for', tool.name);
@@ -82,7 +109,7 @@ const KitchenEssentials = () => {
           setVideoDialog({
             open: true,
             videoId: genericVideos[0].id,
-            title: genericVideos[0].title
+            title: tool.videoTitle || genericVideos[0].title
           });
         } else {
           alert(`Sorry, no tutorial videos found for ${tool.name}`);
@@ -117,8 +144,7 @@ const KitchenEssentials = () => {
         "Keep it sharp - a dull knife is more dangerous than a sharp one",
         "Hand wash and dry immediately to maintain edge and prevent rust"
       ],
-      videoId: "1AxLzn3fGxk",
-      videoTitle: "Essential Knife Skills - Chef's Knife Tutorial"
+      videoTitle: "Basic Knife Skills | Epicurious"
     },
     {
       id: 'cutting-board',
@@ -139,7 +165,8 @@ const KitchenEssentials = () => {
         "Plastic boards are dishwasher safe but can harbor bacteria in deep cuts",
         "Use separate boards for raw meat and vegetables to prevent cross-contamination",
         "Dampen a paper towel and place under the board to prevent slipping"
-      ]
+      ],
+      videoTitle: "Choosing and Caring for Cutting Boards | America's Test Kitchen"
     },
     {
       id: 'measuring-tools',
@@ -160,7 +187,8 @@ const KitchenEssentials = () => {
         "Stainless steel is durable and won't retain odors",
         "Level off dry ingredients with a straight edge",
         "Liquid measuring cups should be read at eye level"
-      ]
+      ],
+      videoTitle: "How to Measure Ingredients Correctly | Joy of Baking"
     },
     {
       id: 'mixing-bowls',
@@ -181,7 +209,8 @@ const KitchenEssentials = () => {
         "Nested sets save storage space",
         "Bowls with silicone bottoms won't slip",
         "Look for bowls with measurements marked inside"
-      ]
+      ],
+      videoTitle: "Mixing Bowls: Types and Uses | Kitchen Conservatory"
     },
     {
       id: 'skillet',
@@ -203,8 +232,7 @@ const KitchenEssentials = () => {
         "10-12 inch size is most versatile",
         "Preheat the pan before adding oil to prevent sticking"
       ],
-      videoId: "X1XoCQm5JSQ",
-      videoTitle: "How to Cook with a Skillet - Tips & Techniques"
+      videoTitle: "How to Use and Season a Cast Iron Skillet | Tasty"
     },
     {
       id: 'saucepan',
@@ -225,7 +253,8 @@ const KitchenEssentials = () => {
         "Look for a heavy bottom to prevent burning",
         "A tight-fitting lid is essential",
         "Choose one with a comfortable, heat-resistant handle"
-      ]
+      ],
+      videoTitle: "Saucepan Basics: Cooking Techniques and Tips | Pro Home Cooks"
     },
     {
       id: 'stockpot',
@@ -246,7 +275,8 @@ const KitchenEssentials = () => {
         "Stainless steel is durable and won't react with acidic foods",
         "Look for a pot with handles on both sides for easier lifting",
         "A clear glass lid lets you monitor cooking without releasing heat"
-      ]
+      ],
+      videoTitle: "Stockpot Cooking: Tips and Techniques | Chef Billy Parisi"
     },
     {
       id: 'baking-sheet',
@@ -268,8 +298,7 @@ const KitchenEssentials = () => {
         "Line with parchment or silicone mats for easy cleanup",
         "Light-colored sheets prevent over-browning"
       ],
-      videoId: "XbFwpupIK0A",
-      videoTitle: "Sheet Pan Cooking Guide - Perfect Roasting Techniques"
+      videoTitle: "Sheet Pan Cooking: Tips and Recipes | Food Wishes"
     },
     {
       id: 'rubber-spatula',
@@ -290,7 +319,8 @@ const KitchenEssentials = () => {
         "One-piece designs are more hygienic",
         "Look for a sturdy, comfortable handle",
         "Different sizes and shapes are useful for different tasks"
-      ]
+      ],
+      videoTitle: "Spatula Types and Uses | America's Test Kitchen"
     },
     {
       id: 'metal-spatula',
@@ -311,7 +341,8 @@ const KitchenEssentials = () => {
         "Offset spatulas are great for serving",
         "Don't use on nonstick surfaces",
         "Look for one with a comfortable, heat-resistant handle"
-      ]
+      ],
+      videoTitle: "Spatula Types and Uses | America's Test Kitchen"
     },
     {
       id: 'tongs',
@@ -332,7 +363,8 @@ const KitchenEssentials = () => {
         "Silicone-tipped tongs won't scratch nonstick cookware",
         "12-inch length keeps hands away from heat",
         "Look for comfortable, non-slip handles"
-      ]
+      ],
+      videoTitle: "How to Use Kitchen Tongs Effectively | Serious Eats"
     },
     {
       id: 'whisk',
@@ -353,7 +385,8 @@ const KitchenEssentials = () => {
         "Flat or roux whisks work well for sauces",
         "Silicone-coated whisks won't scratch nonstick surfaces",
         "Look for a comfortable handle and balanced weight"
-      ]
+      ],
+      videoTitle: "Whisking Techniques: How to Use a Whisk Properly | Bon Appétit"
     },
     {
       id: 'colander',
@@ -374,7 +407,8 @@ const KitchenEssentials = () => {
         "Look for stable feet so it can stand in the sink",
         "Small holes prevent pasta from slipping through",
         "Collapsible colanders save storage space"
-      ]
+      ],
+      videoTitle: "Colander vs. Strainer: Which One to Use? | Food Network"
     },
     {
       id: 'peeler',
@@ -395,7 +429,8 @@ const KitchenEssentials = () => {
         "Swivel peelers are traditional and versatile",
         "Ceramic blades stay sharp longer than metal",
         "Look for a comfortable, non-slip handle"
-      ]
+      ],
+      videoTitle: "How to Use a Vegetable Peeler | Martha Stewart"
     },
     {
       id: 'grater',
@@ -416,7 +451,8 @@ const KitchenEssentials = () => {
         "Microplane graters are perfect for zest and hard cheese",
         "Look for a comfortable handle and non-slip base",
         "Dishwasher-safe models make cleanup easier"
-      ]
+      ],
+      videoTitle: "Grating Techniques: Box Grater vs. Microplane | America's Test Kitchen"
     },
     {
       id: 'meat-thermometer',
@@ -437,7 +473,8 @@ const KitchenEssentials = () => {
         "Instant-read models are versatile for most cooking",
         "Probe thermometers with external displays are best for roasting and baking",
         "Look for one that's easy to clean and has a clear display"
-      ]
+      ],
+      videoTitle: "How to Use a Meat Thermometer | ChefSteps"
     }
   ];
 
