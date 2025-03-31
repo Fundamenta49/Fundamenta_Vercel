@@ -96,100 +96,35 @@ export default function ShoppingBuddy() {
     setStoreError("");
 
     try {
-      // This would normally make an API call to get nearby stores
-      // For now, we'll simulate an API delay and update mock data
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call our API endpoint to get nearby stores with product prices
+      const response = await fetch('/api/shopping/nearby-stores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          latitude,
+          longitude,
+          products: selectedProducts.length > 0 ? selectedProducts : commonProducts
+        }),
+      });
 
-      // Simulate different stores based on location
-      const stores = [
-        {
-          storeName: "Kroger",
-          distance: "0.5 miles",
-          prices: [
-            { item: "Milk", price: 3.99, deal: "Buy 2 get 1 free" },
-            { item: "Bread", price: 2.49 },
-            { item: "Eggs", price: 3.29, deal: "20% off this week" },
-            { item: "Chicken", price: 6.99 },
-            { item: "Rice", price: 4.99 },
-            { item: "Pasta", price: 2.99 },
-            { item: "Apples", price: 2.49 },
-            { item: "Bananas", price: 0.79 },
-            { item: "Tomatoes", price: 1.99 },
-            { item: "Potatoes", price: 3.49 },
-            { item: "Onions", price: 1.29 },
-            { item: "Cheese", price: 4.99 },
-            { item: "Yogurt", price: 1.99 },
-            { item: "Coffee", price: 8.99 },
-            { item: "Cereal", price: 4.29 }
-          ]
-        },
-        {
-          storeName: "Whole Foods Market",
-          distance: "0.8 miles",
-          prices: [
-            { item: "Milk", price: 4.49 },
-            { item: "Bread", price: 3.99, deal: "Organic" },
-            { item: "Eggs", price: 4.99, deal: "Cage-free" },
-            { item: "Chicken", price: 8.99 },
-            { item: "Rice", price: 6.49 },
-            { item: "Pasta", price: 3.99 },
-            { item: "Apples", price: 3.49 },
-            { item: "Bananas", price: 0.99 },
-            { item: "Tomatoes", price: 2.49 },
-            { item: "Potatoes", price: 4.49 },
-            { item: "Onions", price: 1.49 },
-            { item: "Cheese", price: 6.49 },
-            { item: "Yogurt", price: 2.49 },
-            { item: "Coffee", price: 10.99 },
-            { item: "Cereal", price: 5.29 }
-          ]
-        },
-        {
-          storeName: "Trader Joe's",
-          distance: "1.2 miles",
-          prices: [
-            { item: "Milk", price: 3.79 },
-            { item: "Bread", price: 2.99 },
-            { item: "Eggs", price: 3.49, deal: "Free-range" },
-            { item: "Chicken", price: 7.49 },
-            { item: "Rice", price: 5.49 },
-            { item: "Pasta", price: 3.49 },
-            { item: "Apples", price: 2.99 },
-            { item: "Bananas", price: 0.89 },
-            { item: "Tomatoes", price: 2.29 },
-            { item: "Potatoes", price: 3.99 },
-            { item: "Onions", price: 1.39 },
-            { item: "Cheese", price: 5.49 },
-            { item: "Yogurt", price: 2.29 },
-            { item: "Coffee", price: 9.49 },
-            { item: "Cereal", price: 4.79 }
-          ]
-        },
-        {
-          storeName: "Safeway",
-          distance: "1.5 miles",
-          prices: [
-            { item: "Milk", price: 3.89 },
-            { item: "Bread", price: 2.79, deal: "Fresh baked" },
-            { item: "Eggs", price: 3.19, deal: "Member price" },
-            { item: "Chicken", price: 7.99 },
-            { item: "Rice", price: 5.99 },
-            { item: "Pasta", price: 2.49 },
-            { item: "Apples", price: 2.79 },
-            { item: "Bananas", price: 0.84 },
-            { item: "Tomatoes", price: 2.19 },
-            { item: "Potatoes", price: 3.79 },
-            { item: "Onions", price: 1.19 },
-            { item: "Cheese", price: 5.99 },
-            { item: "Yogurt", price: 1.79 },
-            { item: "Coffee", price: 9.99 },
-            { item: "Cereal", price: 4.49 }
-          ]
-        }
-      ];
+      if (!response.ok) {
+        throw new Error('Failed to fetch store data');
+      }
 
+      const data = await response.json();
+      
+      // If the response has a stores property, use it; otherwise assume the whole response is the stores array
+      const stores = data.stores || data;
+      
+      if (!Array.isArray(stores)) {
+        throw new Error('Invalid store data format');
+      }
+      
       setStoreComparisons(stores);
     } catch (error) {
+      console.error('Error fetching store data:', error);
       setStoreError("Failed to fetch nearby stores. Please try again.");
     } finally {
       setIsLoadingStores(false);
@@ -232,62 +167,56 @@ export default function ShoppingBuddy() {
     );
   };
 
-  const generateGroceryList = () => {
-    // This would normally call an AI service
-    // For now, we'll simulate budget-based suggestions
-    const budgetRanges = {
-      'very-low': { min: 0, max: 30 },
-      'low': { min: 30, max: 50 },
-      'medium': { min: 50, max: 100 },
-      'high': { min: 100, max: 150 },
-      'very-high': { min: 150, max: 300 }
-    };
-
-    const budget = budgetRanges[groceryPreferences.budget];
-
-    // Example generated list based on budget
-    const generateSampleList = () => {
-      if (groceryPreferences.diet === 'vegan') {
-        return {
-          items: [
-            { name: "Tofu (2 blocks)", estimatedCost: 5.98 },
-            { name: "Quinoa (1 lb)", estimatedCost: 4.99 },
-            { name: "Mixed Vegetables", estimatedCost: 6.99 },
-            { name: "Plant-based Milk", estimatedCost: 3.99 },
-            { name: "Legumes (2 cans)", estimatedCost: 3.98 }
-          ],
-          suggestions: [
-            "Buy in bulk to save on staples",
-            "Check frozen vegetables for better value",
-            "Visit local farmers markets for fresh produce deals"
-          ]
-        };
-      } else {
-        return {
-          items: [
-            { name: "Chicken Breast (2 lbs)", estimatedCost: 9.98 },
-            { name: "Brown Rice (2 lbs)", estimatedCost: 3.99 },
-            { name: "Mixed Vegetables", estimatedCost: 6.99 },
-            { name: "Eggs (dozen)", estimatedCost: 3.99 },
-            { name: "Milk (1 gallon)", estimatedCost: 3.89 }
-          ],
-          suggestions: [
-            "Look for family packs of protein for better value",
-            "Compare unit prices between brands",
-            "Check weekly specials for staples"
-          ]
-        };
+  const generateGroceryList = async () => {
+    try {
+      // Show loading state
+      setGeneratedList({
+        items: [],
+        totalCost: 0,
+        suggestions: ['Generating your personalized grocery list...']
+      });
+      
+      // Call our new API endpoint
+      const response = await fetch('/api/shopping/generate-list', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(groceryPreferences),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate grocery list');
       }
-    };
-
-    const list = generateSampleList();
-    const totalCost = list.items.reduce((sum, item) => sum + item.estimatedCost, 0);
-
-    setGeneratedList({
-      items: list.items,
-      totalCost,
-      suggestions: list.suggestions
-    });
+      
+      const data = await response.json();
+      
+      // Calculate total cost if not provided
+      const totalCost = data.totalCost || 
+        data.items.reduce((sum: number, item: { estimatedCost: number }) => 
+          sum + item.estimatedCost, 0);
+      
+      // Update state with the AI-generated list
+      setGeneratedList({
+        items: data.items,
+        totalCost,
+        suggestions: data.suggestions
+      });
+    } catch (error) {
+      console.error('Error generating grocery list:', error);
+      
+      // Fallback to static data if API fails
+      setGeneratedList({
+        items: [
+          { name: "Error occurred", estimatedCost: 0 }
+        ],
+        totalCost: 0,
+        suggestions: [
+          "We couldn't generate your list at this time. Please try again later.",
+          "Check your internet connection and try again."
+        ]
+      });
+    }
   };
 
   return (
@@ -465,9 +394,10 @@ export default function ShoppingBuddy() {
               placeholder="Enter your location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              onKeyPress={(e) => {
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === 'Enter') {
-                  handleLocationSearch(e.target.value);
+                  const inputElement = e.currentTarget;
+                  handleLocationSearch(inputElement.value);
                 }
               }}
               className="flex-1"

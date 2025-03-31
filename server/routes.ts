@@ -18,6 +18,7 @@ import journalRoutes from './routes/journal';
 import brainTapRoutes from './routes/brain-tap';
 import nutritionRoutes from './routes/nutrition';
 import comprehensiveWellnessRoutes from './routes/comprehensive-wellness';
+import shoppingRoutes from './routes/shopping';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { 
@@ -809,6 +810,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register comprehensive wellness assessment routes
   app.use('/api/wellness/comprehensive', comprehensiveWellnessRoutes);
+  
+  // Register shopping routes
+  app.use('/api/shopping', shoppingRoutes);
 
   // Return an HTTP server
   return createServer(app);
