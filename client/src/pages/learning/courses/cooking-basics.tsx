@@ -176,15 +176,43 @@ const introContent = (
 );
 
 export default function CookingBasics() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
+  const [activeDialogContent, setActiveDialogContent] = useState<{
+    type: 'intro' | 'kitchen-tools' | 'cooking-tutorials' | 'recipe-explorer';
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    color: string;
+  } | null>(null);
+  
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
+  // Opens a dialog with the corresponding content
+  const openDialog = (
+    type: 'intro' | 'kitchen-tools' | 'cooking-tutorials' | 'recipe-explorer',
+    title: string,
+    description: string,
+    icon: React.ReactNode,
+    color: string
+  ) => {
+    setActiveDialogContent({
+      type,
+      title,
+      description,
+      icon,
+      color
+    });
+    setDialogOpen(true);
+    // Scroll to top when opening dialog
+    window.scrollTo(0, 0);
+  };
+  
   // Display the appropriate content based on selection
-  const renderContent = () => {
-    if (!selectedCategory) {
+  const renderDialogContent = () => {
+    if (!activeDialogContent) {
       return null;
     }
 
-    switch (selectedCategory) {
+    switch (activeDialogContent.type) {
       case 'intro':
         return introContent;
       case 'kitchen-tools':
@@ -222,135 +250,135 @@ export default function CookingBasics() {
       </div>
       
       {/* Grid Layout of Cooking Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         {/* Introduction */}
-        <GridCard
-          title="Introduction to Cooking"
-          description="Why cooking matters and what you'll learn"
-          icon={<Book className="h-5 w-5" />}
-          color="orange"
-          linkTo="#intro"
-          onClick={() => setSelectedCategory('intro')}
-        />
+        <div
+          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-orange-200 bg-orange-50 hover:bg-orange-100 p-3 flex flex-col items-center text-center"
+          onClick={() => openDialog('intro', 'Introduction to Cooking', 'Why cooking matters and what you\'ll learn', <Book className="h-5 w-5" />, 'orange')}
+        >
+          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
+            <Book className="h-8 w-8 text-orange-600" />
+          </div>
+          <h3 className="font-medium">Introduction to Cooking</h3>
+          <p className="text-xs text-gray-600 mt-1">Why cooking matters and what you'll learn</p>
+        </div>
         
         {/* Kitchen Tools */}
-        <GridCard
-          title="Essential Kitchen Tools"
-          description="Basic equipment every cook needs"
-          icon={<Utensils className="h-5 w-5" />}
-          color="blue"
-          linkTo="#kitchen-tools"
-          onClick={() => setSelectedCategory('kitchen-tools')}
-        />
+        <div
+          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-blue-200 bg-blue-50 hover:bg-blue-100 p-3 flex flex-col items-center text-center"
+          onClick={() => openDialog('kitchen-tools', 'Essential Kitchen Tools', 'Basic equipment every cook needs', <Utensils className="h-5 w-5" />, 'blue')}
+        >
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+            <Utensils className="h-8 w-8 text-blue-600" />
+          </div>
+          <h3 className="font-medium">Essential Kitchen Tools</h3>
+          <p className="text-xs text-gray-600 mt-1">Basic equipment every cook needs</p>
+        </div>
         
         {/* Cooking Tutorials */}
-        <GridCard
-          title="Cooking Tutorials"
-          description="Step-by-step video guides for beginners"
-          icon={<PlayCircle className="h-5 w-5" />}
-          color="green"
-          linkTo="#cooking-tutorials"
-          onClick={() => setSelectedCategory('cooking-tutorials')}
-        />
+        <div
+          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-green-200 bg-green-50 hover:bg-green-100 p-3 flex flex-col items-center text-center"
+          onClick={() => openDialog('cooking-tutorials', 'Cooking Tutorials', 'Step-by-step video guides for beginners', <PlayCircle className="h-5 w-5" />, 'green')}
+        >
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
+            <PlayCircle className="h-8 w-8 text-green-600" />
+          </div>
+          <h3 className="font-medium">Cooking Tutorials</h3>
+          <p className="text-xs text-gray-600 mt-1">Step-by-step video guides</p>
+        </div>
         
         {/* Recipe Explorer */}
-        <GridCard
-          title="Recipe Explorer"
-          description="Discover easy home cooking classics"
-          icon={<ChefHat className="h-5 w-5" />}
-          color="purple"
-          linkTo="#recipe-explorer"
-          onClick={() => setSelectedCategory('recipe-explorer')}
-        />
+        <div
+          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-purple-200 bg-purple-50 hover:bg-purple-100 p-3 flex flex-col items-center text-center"
+          onClick={() => openDialog('recipe-explorer', 'Recipe Explorer', 'Discover easy home cooking classics', <ChefHat className="h-5 w-5" />, 'purple')}
+        >
+          <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-2">
+            <ChefHat className="h-8 w-8 text-purple-600" />
+          </div>
+          <h3 className="font-medium">Recipe Explorer</h3>
+          <p className="text-xs text-gray-600 mt-1">Easy home cooking classics</p>
+        </div>
         
-        {/* Meal Types */}
-        <GridCard
-          title="Meal Types"
-          description="Breakfast, lunch, dinner & snacks"
-          icon={<UtensilsCrossed className="h-5 w-5" />}
-          color="yellow"
-          linkTo="#meal-types"
-          onClick={() => setSelectedCategory('cooking-tutorials')}
-        />
+        {/* Breakfast Basics */}
+        <div
+          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-yellow-200 bg-yellow-50 hover:bg-yellow-100 p-3 flex flex-col items-center text-center"
+          onClick={() => openDialog('cooking-tutorials', 'Breakfast Basics', 'Start your day with simple recipes', <Egg className="h-5 w-5" />, 'yellow')}
+        >
+          <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-2">
+            <Egg className="h-8 w-8 text-yellow-600" />
+          </div>
+          <h3 className="font-medium">Breakfast Basics</h3>
+          <p className="text-xs text-gray-600 mt-1">Simple morning recipes</p>
+        </div>
         
-        {/* Quick Meals */}
-        <GridCard
-          title="Quick & Easy Meals"
-          description="Recipes ready in 30 minutes or less"
-          icon={<Clock className="h-5 w-5" />}
-          color="pink"
-          linkTo="#quick-meals"
-          onClick={() => setSelectedCategory('cooking-tutorials')}
-        />
+        {/* Lunch & Dinner Staples */}
+        <div
+          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-orange-200 bg-orange-50 hover:bg-orange-100 p-3 flex flex-col items-center text-center"
+          onClick={() => openDialog('cooking-tutorials', 'Lunch & Dinner Staples', 'Everyday meals made simple', <Beef className="h-5 w-5" />, 'orange')}
+        >
+          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
+            <Beef className="h-8 w-8 text-orange-600" />
+          </div>
+          <h3 className="font-medium">Lunch & Dinner</h3>
+          <p className="text-xs text-gray-600 mt-1">Everyday meals made simple</p>
+        </div>
         
-        {/* Breakfast */}
-        <GridCard
-          title="Breakfast Basics"
-          description="Start your day with simple recipes"
-          icon={<Egg className="h-5 w-5" />}
-          color="yellow"
-          linkTo="#breakfast"
-          onClick={() => setSelectedCategory('cooking-tutorials')}
-        />
+        {/* Simple Desserts */}
+        <div
+          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-pink-200 bg-pink-50 hover:bg-pink-100 p-3 flex flex-col items-center text-center"
+          onClick={() => openDialog('cooking-tutorials', 'Simple Desserts', 'Sweet treats anyone can make', <Cookie className="h-5 w-5" />, 'pink')}
+        >
+          <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-2">
+            <Cookie className="h-8 w-8 text-pink-600" />
+          </div>
+          <h3 className="font-medium">Simple Desserts</h3>
+          <p className="text-xs text-gray-600 mt-1">Sweet treats anyone can make</p>
+        </div>
         
-        {/* Lunch & Dinner */}
-        <GridCard
-          title="Lunch & Dinner Staples"
-          description="Everyday meals made simple"
-          icon={<Beef className="h-5 w-5" />}
-          color="orange"
-          linkTo="#lunch-dinner"
-          onClick={() => setSelectedCategory('cooking-tutorials')}
-        />
-        
-        {/* Desserts */}
-        <GridCard
-          title="Simple Desserts"
-          description="Sweet treats anyone can make"
-          icon={<Cookie className="h-5 w-5" />}
-          color="pink"
-          linkTo="#desserts"
-          onClick={() => setSelectedCategory('cooking-tutorials')}
-        />
+        {/* Quick & Easy Meals */}
+        <div
+          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-pink-200 bg-pink-50 hover:bg-pink-100 p-3 flex flex-col items-center text-center"
+          onClick={() => openDialog('cooking-tutorials', 'Quick & Easy Meals', 'Recipes ready in 30 minutes or less', <Clock className="h-5 w-5" />, 'pink')}
+        >
+          <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-2">
+            <Clock className="h-8 w-8 text-pink-600" />
+          </div>
+          <h3 className="font-medium">Quick & Easy Meals</h3>
+          <p className="text-xs text-gray-600 mt-1">Ready in 30 minutes or less</p>
+        </div>
       </div>
       
-      {/* Selected Content Display */}
-      {selectedCategory && (
-        <Card className="mb-6">
-          <CardHeader className="bg-orange-50 border-b border-orange-100">
-            <div className="flex justify-between items-center">
+      {/* Full Screen Dialog for Content */}
+      {dialogOpen && activeDialogContent && (
+        <div className="fixed inset-0 bg-white z-50 overflow-auto">
+          <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
+            <div className="container max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {selectedCategory === 'intro' && <Book className="h-5 w-5 text-orange-600" />}
-                {selectedCategory === 'kitchen-tools' && <Utensils className="h-5 w-5 text-blue-600" />}
-                {selectedCategory === 'cooking-tutorials' && <PlayCircle className="h-5 w-5 text-green-600" />}
-                {selectedCategory === 'recipe-explorer' && <ChefHat className="h-5 w-5 text-purple-600" />}
-                
-                <CardTitle>
-                  {selectedCategory === 'intro' && 'Introduction to Cooking'}
-                  {selectedCategory === 'kitchen-tools' && 'Essential Kitchen Tools'}
-                  {selectedCategory === 'cooking-tutorials' && 'Cooking Tutorials'}
-                  {selectedCategory === 'recipe-explorer' && 'Recipe Explorer'}
-                </CardTitle>
+                <div className={`text-${activeDialogContent.color === 'orange' ? 'orange' : 
+                                      activeDialogContent.color === 'blue' ? 'blue' : 
+                                      activeDialogContent.color === 'green' ? 'green' : 
+                                      activeDialogContent.color === 'purple' ? 'purple' : 
+                                      activeDialogContent.color === 'yellow' ? 'yellow' : 'pink'}-600`}>
+                  {activeDialogContent.icon}
+                </div>
+                <h2 className="text-xl font-semibold">{activeDialogContent.title}</h2>
               </div>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm" 
-                onClick={() => setSelectedCategory(null)}
+                onClick={() => setDialogOpen(false)}
+                className="gap-1"
               >
-                Back to All Categories
+                <X className="h-4 w-4" />
+                Close
               </Button>
             </div>
-            <CardDescription>
-              {selectedCategory === 'intro' && 'Why cooking matters and what you\'ll learn'}
-              {selectedCategory === 'kitchen-tools' && 'Basic equipment every cook needs'}
-              {selectedCategory === 'cooking-tutorials' && 'Step-by-step video guides for beginners'}
-              {selectedCategory === 'recipe-explorer' && 'Discover easy home cooking classics'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-6">
-            {renderContent()}
-          </CardContent>
-        </Card>
+          </div>
+          
+          <div className="container max-w-6xl mx-auto px-4 py-6">
+            {renderDialogContent()}
+          </div>
+        </div>
       )}
     </div>
   );
