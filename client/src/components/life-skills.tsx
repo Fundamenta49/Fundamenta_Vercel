@@ -17,6 +17,7 @@ import {
   Zap,
   Lightbulb,
   AlertCircle,
+  ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +25,7 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import ShoppingBuddy from "@/components/shopping-buddy";
 
 // Define user profile interface for personalization
 interface UserProfile {
@@ -49,7 +51,7 @@ interface SmartPrompt {
   createdAt: Date;
 }
 
-type LifeSkillsTabId = "dashboard" | "search" | "financial" | "cooking" | "home" | "time" | "communication";
+type LifeSkillsTabId = "dashboard" | "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping";
 
 // Complete implementation of Life Skills component with horizontal tabs and search functionality
 export const LifeSkillsComponent = () => {
@@ -121,7 +123,8 @@ export const LifeSkillsComponent = () => {
     { id: "cooking", label: "Cooking", icon: ChefHat },
     { id: "home", label: "Home Care", icon: Home },
     { id: "time", label: "Time Management", icon: Clock },
-    { id: "communication", label: "Communication", icon: MessageSquare }
+    { id: "communication", label: "Communication", icon: MessageSquare },
+    { id: "shopping", label: "Shopping Buddy", icon: ShoppingBag }
   ];
 
   // Function to handle search
@@ -636,6 +639,11 @@ export const LifeSkillsComponent = () => {
           <li>Professional email writing</li>
           <li>Non-verbal communication awareness</li>
         </ul>
+      </div>
+    ),
+    shopping: (
+      <div className="pt-4">
+        <ShoppingBuddy />
       </div>
     ),
   };
