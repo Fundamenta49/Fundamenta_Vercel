@@ -5,6 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,10 @@ import {
   TrendingDown,
   AlertCircle,
   X,
+  Utensils,
+  ChefHat,
+  Clock,
+  Plus,
 } from "lucide-react";
 import {
   Select,
@@ -84,6 +89,22 @@ export default function ShoppingBuddy() {
     totalCost: 0,
     suggestions: []
   });
+  
+  // Recipe suggestions state
+  const [recipeSuggestions, setRecipeSuggestions] = useState<Array<{
+    id?: number;
+    title: string;
+    image?: string;
+    description?: string;
+    usedIngredientCount?: number;
+    missedIngredientCount?: number;
+    usedIngredients: string[];
+    missedIngredients: string[];
+    likes?: number;
+  }>>([]);
+  
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
+  const [recipeError, setRecipeError] = useState("");
 
   const commonProducts = [
     "Milk", "Bread", "Eggs", "Chicken", "Rice",
@@ -216,6 +237,53 @@ export default function ShoppingBuddy() {
           "Check your internet connection and try again."
         ]
       });
+    }
+  };
+  
+  // Get recipe suggestions based on selected ingredients or grocery list
+  const getRecipeSuggestions = async () => {
+    setIsLoadingRecipes(true);
+    setRecipeError("");
+    
+    try {
+      // Use either selected products or items from the generated list
+      const items = selectedProducts.length > 0 
+        ? selectedProducts 
+        : generatedList.items.map(item => item.name);
+      
+      // Check if we have items to work with
+      if (items.length === 0) {
+        setRecipeError("Please select some grocery items first");
+        setIsLoadingRecipes(false);
+        return;
+      }
+      
+      // Call our recipe suggestions API endpoint
+      const response = await fetch('/api/shopping/recipe-suggestions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipe suggestions');
+      }
+      
+      const data = await response.json();
+      
+      // Check if the response has the right format
+      if (data.suggestions && Array.isArray(data.suggestions)) {
+        setRecipeSuggestions(data.suggestions);
+      } else {
+        throw new Error('Invalid recipe data format');
+      }
+    } catch (error) {
+      console.error('Error getting recipe suggestions:', error);
+      setRecipeError("Failed to get recipe suggestions. Please try again.");
+    } finally {
+      setIsLoadingRecipes(false);
     }
   };
 
@@ -495,6 +563,124 @@ export default function ShoppingBuddy() {
               </li>
             </ul>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Recipe Suggestions */}
+      <Card className="border-amber-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ChefHat className="h-5 w-5 text-amber-500" />
+            AI-Powered Recipe Suggestions
+          </CardTitle>
+          <CardDescription>
+            Get recipe ideas based on your grocery items
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-muted-foreground">
+              Find recipes using your selected items or grocery list
+            </p>
+            <Button 
+              onClick={getRecipeSuggestions}
+              disabled={isLoadingRecipes || (selectedProducts.length === 0 && generatedList.items.length === 0)}
+            >
+              <Utensils className="h-4 w-4 mr-2" />
+              Get Recipe Ideas
+            </Button>
+          </div>
+
+          {recipeError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{recipeError}</AlertDescription>
+            </Alert>
+          )}
+
+          {isLoadingRecipes && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Finding delicious recipes...</p>
+            </div>
+          )}
+
+          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {recipeSuggestions.map((recipe, index) => (
+              <Card key={index} className="overflow-hidden flex flex-col">
+                {recipe.image && (
+                  <div className="aspect-video w-full overflow-hidden bg-muted">
+                    <img 
+                      src={recipe.image.startsWith('http') ? recipe.image : `https://spoonacular.com/recipeImages/${recipe.image}`} 
+                      alt={recipe.title}
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        // Fallback for broken images
+                        e.currentTarget.src = 'https://placehold.co/400x300/orange/white?text=Recipe';
+                      }}
+                    />
+                  </div>
+                )}
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">{recipe.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="pb-2 flex-1">
+                  {recipe.description && (
+                    <p className="text-sm text-muted-foreground mb-4">{recipe.description}</p>
+                  )}
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="text-sm font-medium mb-1">Ingredients you have:</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {recipe.usedIngredients.map((ing, i) => (
+                          <Badge key={i} variant="default" className="bg-green-500">
+                            {ing}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-1">Additional ingredients needed:</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {recipe.missedIngredients.map((ing, i) => (
+                          <Badge key={i} variant="outline">
+                            {ing}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  {recipe.id && (
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      onClick={() => window.open(`https://spoonacular.com/recipes/${recipe.title.toLowerCase().replace(/\s+/g, '-')}-${recipe.id}`, '_blank')}
+                    >
+                      <Utensils className="h-4 w-4 mr-2" />
+                      View Full Recipe
+                    </Button>
+                  )}
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          
+          {recipeSuggestions.length > 0 && (
+            <div className="mt-4 p-4 border rounded-md bg-amber-50">
+              <h3 className="font-medium text-amber-800 mb-2">Recipe Tips:</h3>
+              <ul className="space-y-1">
+                <li className="text-sm text-amber-700 flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-amber-600" />
+                  Prep ingredients in advance to save time when cooking
+                </li>
+                <li className="text-sm text-amber-700 flex items-center gap-2">
+                  <Plus className="h-4 w-4 text-amber-600" />
+                  Consider making double portions to have leftovers for another meal
+                </li>
+              </ul>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
