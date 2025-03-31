@@ -3,7 +3,7 @@ import { Bot, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ChatInterface from '@/components/chat-interface';
-import FundiAvatar from '@/components/fundi-avatar';
+import FundiAvatar from '@/components/fundi-avatar-new';
 
 interface FloatingChatProps {
   category?: string;

@@ -2,12 +2,14 @@ import { cn } from "@/lib/utils";
 
 interface FundiAvatarProps {
   speaking?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   category?: string;
+  className?: string;
 }
 
-export default function FundiAvatar({ speaking = false, size = "md", category = 'general' }: FundiAvatarProps) {
+export default function FundiAvatar({ speaking = false, size = "md", category = 'general', className }: FundiAvatarProps) {
   const sizeClasses = {
+    xs: "w-8 h-8",
     sm: "w-12 h-12",
     md: "w-16 h-16",
     lg: "w-24 h-24",
@@ -31,10 +33,11 @@ export default function FundiAvatar({ speaking = false, size = "md", category = 
   return (
     <div className={cn(
       "relative flex items-center justify-center",
-      sizeClasses[size]
+      sizeClasses[size],
+      className
     )}>
       <div className={cn(
-        "absolute inset-0 rounded-lg bg-primary flex items-center justify-center",
+        "absolute inset-0 rounded-lg flex items-center justify-center",
         speaking ? "animate-pulse" : ""
       )}
       style={{ backgroundColor: color }}

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import FundiAvatar from '@/components/fundi-avatar';
+import FundiAvatar from '@/components/fundi-avatar-new';
 import { TourStep } from '@/lib/onboarding-context';
 
 interface TooltipProps {

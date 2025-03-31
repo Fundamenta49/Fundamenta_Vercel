@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { toast } from '@/hooks/use-toast';
-import FundiAvatar from '@/components/fundi-avatar';
+import FundiAvatar from '@/components/fundi-avatar-new';
 
 // Category constants 
 export const EMERGENCY_CATEGORY = 'emergency';
