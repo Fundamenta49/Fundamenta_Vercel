@@ -35,15 +35,37 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     return () => clearInterval(animationInterval);
   }, []);
 
+  const [isHidden, setIsHidden] = useState<boolean>(false);
+  
   // Get the color for the current category
   const getCategoryColor = (category: string) => {
     return categoryColors[category] || categoryColors.general;
   };
   
+  // If hidden, show only a small indicator to bring the chat back
+  if (isHidden && !isExpanded) {
+    return (
+      <Button
+        className="fixed top-6 right-2 z-50 h-8 w-8 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out border"
+        style={{
+          backgroundColor: 'white',
+          borderColor: getCategoryColor(category),
+        }}
+        onClick={() => setIsHidden(false)}
+        title="Show chat"
+      >
+        <MessageSquare 
+          className="h-4 w-4" 
+          style={{ color: getCategoryColor(category) }}
+        />
+      </Button>
+    );
+  }
+  
   return (
     <>
       {isExpanded ? (
-        <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-full max-w-md">
+        <div className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 w-full max-w-md">
           <ChatInterface 
             category={category}
             expanded={false}
@@ -56,27 +78,37 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           />
         </div>
       ) : (
-        <Button
-          className={`fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out border-2 ${
-            isAnimating ? 'scale-110' : 'scale-100'
-          }`}
-          style={{
-            backgroundColor: 'white',
-            borderColor: getCategoryColor(category),
-          }}
-          onClick={() => setIsExpanded(true)}
-        >
-          {/* Chat icon */}
-          <div className="flex items-center justify-center w-full h-full">
-            <MessageSquare 
-              className="h-6 w-6" 
-              style={{ color: getCategoryColor(category) }}
-            />
-            {/* Animation dot to indicate Fundi is available */}
-            <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500 animate-ping opacity-75"></span>
-            <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500"></span>
-          </div>
-        </Button>
+        <div className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 flex flex-col items-end">
+          <Button
+            className={`h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out border-2 ${
+              isAnimating ? 'scale-110' : 'scale-100'
+            }`}
+            style={{
+              backgroundColor: 'white',
+              borderColor: getCategoryColor(category),
+            }}
+            onClick={() => setIsExpanded(true)}
+          >
+            {/* Chat icon */}
+            <div className="flex items-center justify-center w-full h-full">
+              <MessageSquare 
+                className="h-6 w-6" 
+                style={{ color: getCategoryColor(category) }}
+              />
+              {/* Animation dot to indicate Fundi is available */}
+              <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500 animate-ping opacity-75"></span>
+              <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500"></span>
+            </div>
+          </Button>
+          <Button
+            className="mt-2 h-8 w-8 rounded-full shadow-md flex items-center justify-center border"
+            variant="outline"
+            onClick={() => setIsHidden(true)}
+            title="Hide chat"
+          >
+            <MessageSquare className="h-4 w-4 text-gray-500" />
+          </Button>
+        </div>
       )}
     </>
   );
