@@ -109,7 +109,7 @@ const CookingTutorials = () => {
       name: 'Fluffy Homemade Pancakes',
       description: 'Master the technique for light, fluffy pancakes perfect for breakfast.',
       difficulty: 'beginner',
-      videoId: 'FLd00Bx4tOk',
+      videoId: 'GLdxV0PTX3s',
       thumbnailUrl: 'https://i.ytimg.com/vi/2b5K-S4_B1U/hqdefault.jpg',
       tips: [
         'Don\'t overmix the batter - lumps are okay',
@@ -129,7 +129,7 @@ const CookingTutorials = () => {
       name: 'Simple Baked Chicken',
       description: 'A foolproof method for juicy, flavorful chicken every time.',
       difficulty: 'beginner',
-      videoId: 'zhnfOjiA3YM',
+      videoId: '4fdwZ1wQn_M',
       thumbnailUrl: 'https://i.ytimg.com/vi/yLANUYFB0oQ/hqdefault.jpg',
       tips: [
         'Pat chicken dry before seasoning for crispy skin',
@@ -169,7 +169,7 @@ const CookingTutorials = () => {
       name: 'Perfect Pasta Cooking',
       description: 'Learn to cook pasta properly and make simple, delicious sauces.',
       difficulty: 'beginner',
-      videoId: 'p_GKiTX5rxc',
+      videoId: 'UYhKDweME3A',
       thumbnailUrl: 'https://i.ytimg.com/vi/OMRUIrbZHlY/hqdefault.jpg',
       tips: [
         'Use plenty of water - at least 4 quarts per pound of pasta',
