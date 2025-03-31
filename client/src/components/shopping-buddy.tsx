@@ -73,6 +73,7 @@ export default function ShoppingBuddy() {
   const [isLoadingStores, setIsLoadingStores] = useState(false);
   const [storeError, setStoreError] = useState<string>("");
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [newProduct, setNewProduct] = useState<string>("");
   const [groceryPreferences, setGroceryPreferences] = useState({
     diet: "",
     budget: "",
@@ -418,29 +419,86 @@ export default function ShoppingBuddy() {
             Choose items you want to compare prices for across stores
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {commonProducts.map((product) => (
-              <Badge
-                key={product}
-                variant={selectedProducts.includes(product) ? "default" : "outline"}
-                className="cursor-pointer"
-                onClick={() => {
-                  setSelectedProducts(prev =>
-                    prev.includes(product)
-                      ? prev.filter(p => p !== product)
-                      : [...prev, product]
-                  );
-                }}
-              >
-                {product}
-              </Badge>
-            ))}
+        <CardContent className="space-y-4">
+          {/* Add custom product */}
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add your own product"
+              value={newProduct}
+              onChange={(e) => setNewProduct(e.target.value)}
+              className="flex-1"
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Enter" && newProduct.trim()) {
+                  setSelectedProducts(prev => [...prev, newProduct.trim()]);
+                  setNewProduct("");
+                }
+              }}
+            />
+            <Button 
+              onClick={() => {
+                if (newProduct.trim()) {
+                  setSelectedProducts(prev => [...prev, newProduct.trim()]);
+                  setNewProduct("");
+                }
+              }}
+              disabled={!newProduct.trim()}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add
+            </Button>
           </div>
+
+          {/* Common products */}
+          <div>
+            <h3 className="text-sm font-medium mb-2">Common items:</h3>
+            <div className="flex flex-wrap gap-2">
+              {commonProducts.map((product) => (
+                <Badge
+                  key={product}
+                  variant={selectedProducts.includes(product) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setSelectedProducts(prev =>
+                      prev.includes(product)
+                        ? prev.filter(p => p !== product)
+                        : [...prev, product]
+                    );
+                  }}
+                >
+                  {product}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Selected products */}
           {selectedProducts.length > 0 && (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Selected {selectedProducts.length} items to compare
-            </p>
+            <div>
+              <h3 className="text-sm font-medium mb-2">Your selected items:</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedProducts
+                  .filter(product => !commonProducts.includes(product))
+                  .map((product, index) => (
+                    <Badge 
+                      key={index} 
+                      variant="default"
+                      className="cursor-pointer bg-teal-500"
+                    >
+                      {product}
+                      <X 
+                        className="h-3 w-3 ml-1" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedProducts(prev => prev.filter(p => p !== product));
+                        }}
+                      />
+                    </Badge>
+                  ))}
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Selected {selectedProducts.length} items to compare
+              </p>
+            </div>
           )}
         </CardContent>
       </Card>
