@@ -573,14 +573,14 @@ router.post('/analyze-food', foodImageUpload.single('image'), async (req, res) =
       messages: [
         {
           role: "system",
-          content: "You are a nutrition expert that identifies food in images and estimates their nutritional content. Provide precise but realistic estimates for calories and macronutrients."
+          content: "You are a nutrition expert that identifies food in images and estimates their nutritional content. Provide precise but realistic estimates for calories and macronutrients. Format your response as JSON."
         },
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: "Identify the food in this image and provide its estimated nutritional information. Return the response in this format: {\"foodName\": \"name of food\", \"calories\": number, \"carbs\": number, \"protein\": number, \"fat\": number, \"description\": \"brief description\"}"
+              text: "Identify the food in this image and provide its estimated nutritional information. Return the response as JSON in this format: {\"foodName\": \"name of food\", \"calories\": number, \"carbs\": number, \"protein\": number, \"fat\": number, \"description\": \"brief description\"}"
             },
             {
               type: "image_url",
