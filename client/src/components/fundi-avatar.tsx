@@ -45,40 +45,47 @@ export default function FundiAvatar({
       className
     )}>
       <svg viewBox="0 0 100 100" width="100%" height="100%">
-        {/* Background Circle */}
-        <circle cx="50" cy="50" r="50" fill={color} />
+        {/* Outer Border */}
+        <circle cx="50" cy="50" r="48" fill="white" opacity="0.15" />
         
-        {/* Eyes */}
-        <circle cx="35" cy="40" r="10" fill="white" />
-        <circle cx="65" cy="40" r="10" fill="white" />
+        {/* Main Background Circle */}
+        <circle cx="50" cy="50" r="45" fill={color} />
         
-        {/* Pupils */}
-        <circle 
-          cx="35" 
-          cy="40" 
-          r="5" 
-          fill={color} 
-          className={speaking ? "animate-pulse" : ""} 
-        />
-        <circle 
-          cx="65" 
-          cy="40" 
-          r="5" 
-          fill={color} 
-          className={speaking ? "animate-pulse" : ""} 
-        />
-        
-        {/* Mouth */}
-        <path 
-          d="M 30 65 Q 50 75 70 65" 
-          stroke="white" 
-          strokeWidth="3" 
-          fill="none" 
-        />
-        
-        {/* Antenna */}
-        <circle cx="50" cy="15" r="7" fill={color} stroke="white" strokeWidth="2" />
-        <line x1="50" y1="22" x2="50" y2="30" stroke="white" strokeWidth="3" />
+        {/* Simple, friendly avatar - clean chat interface */}
+        <g>
+          {/* Speech bubble */}
+          <path 
+            d="M 30 40 
+               Q 30 30 40 30 
+               H 60 
+               Q 70 30 70 40 
+               V 55 
+               Q 70 65 60 65 
+               H 45 
+               L 35 75 
+               V 65 
+               H 40 
+               Q 30 65 30 55 
+               Z" 
+            fill="white" 
+            opacity="0.9" 
+          />
+          
+          {/* Chat dots or speaking animation */}
+          {speaking ? (
+            <>
+              <circle cx="40" cy="47.5" r="3" fill={color} className="animate-pulse" />
+              <circle cx="50" cy="47.5" r="3" fill={color} className="animate-pulse" style={{ animationDelay: '0.5s' }} />
+              <circle cx="60" cy="47.5" r="3" fill={color} className="animate-pulse" style={{ animationDelay: '1s' }} />
+            </>
+          ) : (
+            <>
+              <circle cx="40" cy="47.5" r="3" fill={color} />
+              <circle cx="50" cy="47.5" r="3" fill={color} />
+              <circle cx="60" cy="47.5" r="3" fill={color} />
+            </>
+          )}
+        </g>
       </svg>
     </div>
   );
