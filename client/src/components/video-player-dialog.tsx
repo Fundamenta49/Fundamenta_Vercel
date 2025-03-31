@@ -21,47 +21,49 @@ export function VideoPlayerDialog({
 }: VideoPlayerDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] p-0">
-        <DialogHeader className="p-4 pb-2">
-          <div className="flex items-start justify-between">
-            <DialogTitle className="text-xl pr-8">{title}</DialogTitle>
-            <Button 
-              variant="ghost" 
-              onClick={() => onOpenChange(false)} 
-              className="h-8 w-8 p-0 rounded-full"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </DialogHeader>
-        
-        <div className="aspect-video w-full">
-          <iframe 
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-            title={title}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-          />
-        </div>
-        
-        {description && (
-          <ScrollArea className="p-4 max-h-[120px]">
-            <p className="text-sm text-gray-600">{description}</p>
-          </ScrollArea>
-        )}
-        
-        <DialogFooter className="p-4 pt-2">
+      <DialogContent className="w-screen h-screen max-w-none p-0 m-0 rounded-none border-none">
+        <div className="absolute top-4 right-4 z-50">
           <Button 
             variant="outline" 
-            className="w-full"
-            onClick={() => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')}
+            onClick={() => onOpenChange(false)} 
+            className="h-10 w-10 p-0 rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50 border-none"
           >
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Watch on YouTube
+            <X className="h-6 w-6 text-white" />
           </Button>
-        </DialogFooter>
+        </div>
+        
+        <div className="w-full h-full flex flex-col">
+          <div className="flex-1 w-full bg-black flex items-center justify-center">
+            <iframe 
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+              title={title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </div>
+          
+          {description && (
+            <div className="bg-white p-4 w-full">
+              <DialogHeader className="pb-2">
+                <DialogTitle className="text-xl">{title}</DialogTitle>
+              </DialogHeader>
+              <ScrollArea className="max-h-[120px]">
+                <p className="text-sm text-gray-600">{description}</p>
+              </ScrollArea>
+              <DialogFooter className="pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Watch on YouTube
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );

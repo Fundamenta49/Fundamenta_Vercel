@@ -42,7 +42,7 @@ const CookingTutorials = () => {
     window.scrollTo(0, 0);
   }, [activeTab]);
 
-  // Basic cooking techniques with curated videos for American-style cooking
+  // Basic cooking techniques with curated videos for home cooking
   const cookingTechniques: CookingTechnique[] = [
     {
       id: 'knife-skills',
@@ -67,7 +67,7 @@ const CookingTutorials = () => {
     {
       id: 'mac-and-cheese',
       name: 'Easy Mac and Cheese',
-      description: 'Make the classic American comfort food from scratch - creamy, cheesy, and delicious.',
+      description: 'Make this classic comfort food from scratch - creamy, cheesy, and delicious.',
       difficulty: 'beginner',
       videoId: 'FUeyrEN14Rk',
       thumbnailUrl: 'https://i.ytimg.com/vi/FUeyrEN14Rk/hqdefault.jpg',
@@ -106,7 +106,7 @@ const CookingTutorials = () => {
     },
     {
       id: 'pancakes',
-      name: 'Fluffy American Pancakes',
+      name: 'Fluffy Homemade Pancakes',
       description: 'Master the technique for light, fluffy pancakes perfect for breakfast.',
       difficulty: 'beginner',
       videoId: '2b5K-S4_B1U',
@@ -147,7 +147,7 @@ const CookingTutorials = () => {
     {
       id: 'grilled-cheese',
       name: 'Perfect Grilled Cheese',
-      description: 'Master this American classic - crispy outside, gooey melted cheese inside.',
+      description: 'Master this classic sandwich - crispy outside, gooey melted cheese inside.',
       difficulty: 'beginner',
       videoId: 'BlTCkNkfmRY', 
       thumbnailUrl: 'https://i.ytimg.com/vi/BlTCkNkfmRY/hqdefault.jpg',
@@ -186,7 +186,7 @@ const CookingTutorials = () => {
     },
     {
       id: 'meatloaf',
-      name: 'Classic American Meatloaf',
+      name: 'Classic Homemade Meatloaf',
       description: 'A homestyle favorite that\'s easy to prepare and customize.',
       difficulty: 'beginner',
       videoId: 'A-RfHC91Ewc',
@@ -248,9 +248,9 @@ const CookingTutorials = () => {
         <div className="flex gap-2">
           <BookOpen className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-medium text-orange-800">American Cooking Basics</h3>
+            <h3 className="font-medium text-orange-800">Cooking Basics</h3>
             <p className="text-sm text-orange-700 mt-1">
-              Learn to make popular American dishes with these step-by-step video tutorials.
+              Learn to make popular dishes with these step-by-step video tutorials.
               Click any card to watch in fullscreen mode.
             </p>
           </div>
@@ -280,7 +280,7 @@ const CookingTutorials = () => {
             <TabsList className="w-full grid grid-cols-2 md:grid-cols-3 gap-2">
               <TabsTrigger value="basics">
                 <ChefHat className="mr-2 h-4 w-4" />
-                American Classics
+                Home Cooking Classics
               </TabsTrigger>
               <TabsTrigger value="all">
                 <BookOpen className="mr-2 h-4 w-4" />

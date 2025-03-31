@@ -50,7 +50,7 @@ export default function CookingBasics() {
           </TabsTrigger>
           <TabsTrigger value="recipes" className="flex items-center gap-2">
             <ChefHat className="h-4 w-4" />
-            American Recipes
+            Home Cooking Classics
           </TabsTrigger>
         </TabsList>
         
@@ -66,7 +66,7 @@ export default function CookingBasics() {
               <div className="relative rounded-lg overflow-hidden aspect-video">
                 <img 
                   src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
-                  alt="American kitchen with cooking"
+                  alt="Kitchen with cooking setup"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
@@ -110,7 +110,7 @@ export default function CookingBasics() {
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <span><strong>Start simple and build</strong> your skills with basic American favorites</span>
+                      <span><strong>Start simple and build</strong> your skills with basic home cooking favorites</span>
                     </li>
                   </ul>
                 </div>
@@ -140,7 +140,7 @@ export default function CookingBasics() {
                           <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
                         </svg>
                       </div>
-                      <span>Simple American recipes like mac & cheese, burgers, and pancakes</span>
+                      <span>Simple home-style recipes like mac & cheese, burgers, and pancakes</span>
                     </li>
                     <li className="flex gap-2 items-start">
                       <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
@@ -170,7 +170,7 @@ export default function CookingBasics() {
                   </Button>
                   <Button onClick={() => setActiveTab('recipes')} className="bg-orange-500 hover:bg-orange-600">
                     <ChefHat className="h-4 w-4 mr-2" />
-                    American Recipes
+                    Home Cooking Classics
                   </Button>
                 </div>
               </div>
@@ -209,9 +209,9 @@ export default function CookingBasics() {
         <TabsContent value="recipes">
           <Card>
             <CardHeader>
-              <CardTitle>American Recipe Explorer</CardTitle>
+              <CardTitle>Home Cooking Classics Explorer</CardTitle>
               <CardDescription>
-                Discover simple, popular American recipes perfect for beginners
+                Discover simple, popular home cooking recipes perfect for beginners
               </CardDescription>
             </CardHeader>
             <CardContent>
