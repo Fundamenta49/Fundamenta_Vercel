@@ -31,6 +31,25 @@ export function OnboardingTooltip({
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipRef = useRef<HTMLDivElement>(null);
   
+  // Handle click outside to close the tooltip
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      if (tooltipRef.current && 
+          !tooltipRef.current.contains(e.target as Node) && 
+          !step.disableOverlayClose) {
+        onClose();
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose, step.disableOverlayClose]);
+  
   // Compute tooltip position based on target element and placement
   useEffect(() => {
     if (!isOpen) return;
@@ -213,14 +232,24 @@ export function OnboardingTooltip({
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Back
                 </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={onNext}
-                >
-                  {currentIndex === totalSteps - 1 ? 'Finish' : 'Next'}
-                  {currentIndex < totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-1" />}
-                </Button>
+                {currentIndex === totalSteps - 1 ? (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={onClose}
+                  >
+                    Finish
+                  </Button>
+                ) : (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={onNext}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                )}
               </div>
             </div>
           </motion.div>
