@@ -27,6 +27,7 @@ interface OnboardingState {
   activeTour: Tour | null;
   currentStepIndex: number;
   isTourActive: boolean;
+  disableAllTours: boolean; // Global toggle to disable all tours
 }
 
 // Define context interface
@@ -41,6 +42,8 @@ interface OnboardingContextType {
   markTourAsCompleted: (tourId: string) => void;
   resetAllTours: () => void;
   currentStep: TourStep | null;
+  disableAllTours: () => void; // Method to disable all tours
+  enableAllTours: () => void; // Method to re-enable tours if needed
 }
 
 // Create context with default values
@@ -77,7 +80,8 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
       completedTours: [],
       activeTour: null,
       currentStepIndex: 0,
-      isTourActive: false
+      isTourActive: false,
+      disableAllTours: false
     };
   });
 
@@ -93,6 +97,12 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
 
   // Start a tour by ID
   const startTour = (tourId: string) => {
+    // If all tours are disabled, don't start a new tour
+    if (onboardingState.disableAllTours) {
+      console.log('All tours are disabled. Use enableAllTours() to re-enable tours.');
+      return;
+    }
+    
     const tour = tours.find(t => t.id === tourId);
     
     if (!tour) {
@@ -216,8 +226,27 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
       completedTours: [],
       activeTour: null,
       currentStepIndex: 0,
-      isTourActive: false
+      isTourActive: false,
+      disableAllTours: false
     });
+  };
+  
+  // Permanently disable all tours
+  const disableAllTours = () => {
+    setOnboardingState(prev => ({
+      ...prev,
+      disableAllTours: true,
+      isTourActive: false,
+      activeTour: null
+    }));
+  };
+  
+  // Re-enable tours if needed
+  const enableAllTours = () => {
+    setOnboardingState(prev => ({
+      ...prev,
+      disableAllTours: false
+    }));
   };
 
   // Filter tours that are available based on current location
@@ -239,7 +268,9 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
     skipTour,
     markTourAsCompleted,
     resetAllTours,
-    currentStep
+    currentStep,
+    disableAllTours,
+    enableAllTours
   };
 
   return (

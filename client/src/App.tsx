@@ -41,6 +41,7 @@ import {
   emergencyTour
 } from "@/lib/onboarding-tours";
 import { OnboardingTour } from "@/components/onboarding-tour";
+import { TourDismissButton } from "@/components/tour-dismiss-button";
 
 function Router() {
   return (
@@ -75,6 +76,7 @@ function Router() {
       </Switch>
       <WelcomeTour />
       <OnboardingTour />
+      <TourDismissButton />
       <Toaster />
     </Layout>
   );

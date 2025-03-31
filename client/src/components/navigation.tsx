@@ -15,7 +15,8 @@ import {
   GraduationCap,
   AlertCircle,
   Home,
-  Sparkles
+  Sparkles,
+  HelpCircle
 } from "lucide-react";
 import {
   Sheet,
@@ -25,6 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
+import { TourSettings } from "@/components/tour-settings";
 
 const defaultNavItems = [
   { href: "/", label: "Home", icon: Home },
@@ -118,6 +120,15 @@ export default function Navigation() {
                 <span className="font-medium">{label}</span>
               </button>
             ))}
+            
+            {/* Tour Settings Button */}
+            <div className="mt-4 mx-2">
+              <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                <HelpCircle className="h-4 w-4" />
+                <span>Help & Settings</span>
+              </div>
+              <TourSettings />
+            </div>
           </div>
         </SheetContent>
       </Sheet>
@@ -177,6 +188,17 @@ export default function Navigation() {
             {!isMinimized && <span className="font-medium">{label}</span>}
           </button>
         ))}
+        
+        {/* Help & Tour Settings */}
+        <div className={cn("mt-auto pt-6", isMinimized ? "absolute bottom-4 left-0 right-0 flex justify-center" : "mt-auto pt-6")}>
+          {!isMinimized && (
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-1 px-3">
+              <HelpCircle className="h-4 w-4" />
+              <span>Help & Settings</span>
+            </div>
+          )}
+          <TourSettings />
+        </div>
       </div>
     </nav>
   );
