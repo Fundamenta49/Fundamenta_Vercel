@@ -24,6 +24,7 @@ export default function FundiAvatar({
     cooking: '#f59e0b', // amber-500
     fitness: '#06b6d4', // cyan-500
     general: '#6366f1', // indigo-500
+    tour: '#6366f1', // indigo-500
   };
 
   // Size mapping
@@ -36,39 +37,49 @@ export default function FundiAvatar({
 
   const color = categoryColors[category] || categoryColors.general;
 
+  // Using SVG for consistent rendering across browsers
   return (
     <div className={cn(
-      "rounded-full bg-gradient-to-b flex items-center justify-center",
+      "flex items-center justify-center",
       sizes[size],
       className
-    )} style={{ background: color }}>
-      <div className="relative w-full h-full">
+    )}>
+      <svg viewBox="0 0 100 100" width="100%" height="100%">
+        {/* Background Circle */}
+        <circle cx="50" cy="50" r="50" fill={color} />
+        
         {/* Eyes */}
-        <div className="absolute rounded-full bg-white w-[25%] h-[25%] top-[30%] left-[25%] flex items-center justify-center">
-          <div className={cn(
-            "rounded-full bg-current w-1/2 h-1/2",
-            speaking && "animate-pulse"
-          )} style={{ color }}></div>
-        </div>
-        <div className="absolute rounded-full bg-white w-[25%] h-[25%] top-[30%] right-[25%] flex items-center justify-center">
-          <div className={cn(
-            "rounded-full bg-current w-1/2 h-1/2",
-            speaking && "animate-pulse"
-          )} style={{ color }}></div>
-        </div>
+        <circle cx="35" cy="40" r="10" fill="white" />
+        <circle cx="65" cy="40" r="10" fill="white" />
+        
+        {/* Pupils */}
+        <circle 
+          cx="35" 
+          cy="40" 
+          r="5" 
+          fill={color} 
+          className={speaking ? "animate-pulse" : ""} 
+        />
+        <circle 
+          cx="65" 
+          cy="40" 
+          r="5" 
+          fill={color} 
+          className={speaking ? "animate-pulse" : ""} 
+        />
         
         {/* Mouth */}
-        <div className="absolute bg-white h-[3px] w-[40%] rounded-full bottom-[30%] left-[30%]"
-          style={{ 
-            transform: 'rotate(5deg)',
-            boxShadow: `0 2px 0 rgba(255,255,255,0.5)`
-          }}
-        ></div>
-
+        <path 
+          d="M 30 65 Q 50 75 70 65" 
+          stroke="white" 
+          strokeWidth="3" 
+          fill="none" 
+        />
+        
         {/* Antenna */}
-        <div className="absolute w-[12%] h-[12%] rounded-full bg-white top-[5%] left-[44%]"></div>
-        <div className="absolute w-[2px] h-[15%] bg-white top-[17%] left-[49%]"></div>
-      </div>
+        <circle cx="50" cy="15" r="7" fill={color} stroke="white" strokeWidth="2" />
+        <line x1="50" y1="22" x2="50" y2="30" stroke="white" strokeWidth="3" />
+      </svg>
     </div>
   );
 }
