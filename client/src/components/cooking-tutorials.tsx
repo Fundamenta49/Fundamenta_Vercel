@@ -129,7 +129,7 @@ const CookingTutorials = () => {
       name: 'Easy Baked Chicken',
       description: 'A foolproof method for juicy, flavorful chicken every time.',
       difficulty: 'beginner',
-      videoId: 'zXiBN_KM_AA',
+      videoId: '4fdwZ1wQn_M',
       thumbnailUrl: 'https://img.youtube.com/vi/4fdwZ1wQn_M/maxresdefault.jpg',
       tips: [
         'Pat chicken dry before seasoning for crispy skin',
