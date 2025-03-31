@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import FundiAvatar from '@/components/fundi-avatar-new';
+
 import { TourStep } from '@/lib/onboarding-context';
 
 interface TooltipProps {
@@ -179,7 +179,9 @@ export function OnboardingTooltip({
             {/* Tooltip Header */}
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
-                <FundiAvatar size="sm" speaking={false} category="tour" className="h-6 w-6" />
+                <div className="h-6 w-6 flex items-center justify-center rounded-md bg-indigo-500">
+                  <ChevronRight className="h-3 w-3 text-white" />
+                </div>
                 <h3 className="text-lg font-semibold">{step.title}</h3>
               </div>
               <Button
