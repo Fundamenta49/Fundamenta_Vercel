@@ -8,7 +8,8 @@ import {
   Plus, 
   Youtube,
   ExternalLink,
-  ThumbsUp
+  ThumbsUp,
+  PlayCircle
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SpoonacularService, Recipe } from '@/services/spoonacular-service';
 import { searchCookingVideos, getYouTubeEmbedUrl } from '@/lib/youtube-service';
 import { Skeleton } from '@/components/ui/skeleton';
+import { RecipeDetailDialog } from '@/components/recipe-detail-dialog';
+import { VideoPlayerDialog } from '@/components/video-player-dialog';
 
 interface YouTubeVideo {
   id: string;
@@ -33,6 +36,8 @@ const RecipeExplorer = () => {
   const [randomRecipes, setRandomRecipes] = useState<Recipe[]>([]);
   const [videos, setVideos] = useState<YouTubeVideo[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<YouTubeVideo | null>(null);
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('discover');
   const [loadingRecipes, setLoadingRecipes] = useState(false);
   const [loadingVideos, setLoadingVideos] = useState(false);
@@ -338,14 +343,22 @@ const RecipeExplorer = () => {
               ))
             ) : (
               videos.map(video => (
-                <Card key={video.id} className="overflow-hidden">
-                  <div className="aspect-video">
-                    <iframe 
-                      src={getYouTubeEmbedUrl(video.id)}
-                      title={video.title}
-                      allowFullScreen
-                      className="w-full h-full border-0"
+                <Card key={video.id} className="overflow-hidden flex flex-col h-full">
+                  <div 
+                    className="aspect-video relative cursor-pointer" 
+                    onClick={() => {
+                      setSelectedVideo(video);
+                      setVideoDialogOpen(true);
+                    }}
+                  >
+                    <img 
+                      src={video.thumbnailUrl} 
+                      alt={video.title} 
+                      className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors">
+                      <PlayCircle className="h-16 w-16 text-white" />
+                    </div>
                   </div>
                   <CardHeader className="p-4 pb-2">
                     <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
@@ -353,8 +366,8 @@ const RecipeExplorer = () => {
                       {video.channelTitle}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-4 pt-0">
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                  <CardContent className="p-4 pt-0 flex-grow">
+                    <p className="text-sm text-gray-600 line-clamp-3">
                       {video.description}
                     </p>
                   </CardContent>
@@ -362,10 +375,13 @@ const RecipeExplorer = () => {
                     <Button 
                       variant="outline" 
                       className="w-full"
-                      onClick={() => window.open(`https://www.youtube.com/watch?v=${video.id}`, '_blank')}
+                      onClick={() => {
+                        setSelectedVideo(video);
+                        setVideoDialogOpen(true);
+                      }}
                     >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Watch on YouTube
+                      <PlayCircle className="h-4 w-4 mr-2" />
+                      Watch Video
                     </Button>
                   </CardFooter>
                 </Card>
@@ -382,98 +398,26 @@ const RecipeExplorer = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Recipe detail modal would go here */}
+      {/* Recipe detail dialog */}
       {selectedRecipe && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-xl">{selectedRecipe.title}</CardTitle>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                    {selectedRecipe.readyInMinutes && (
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {selectedRecipe.readyInMinutes} min
-                      </div>
-                    )}
-                    {selectedRecipe.servings && (
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1" />
-                        {selectedRecipe.servings} servings
-                      </div>
-                    )}
-                    {selectedRecipe.aggregateLikes !== undefined && (
-                      <div className="flex items-center">
-                        <ThumbsUp className="h-4 w-4 mr-1" />
-                        {selectedRecipe.aggregateLikes} likes
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  onClick={() => setSelectedRecipe(null)}
-                  className="h-8 w-8 p-0"
-                >
-                  &times;
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                {selectedRecipe.image && (
-                  <img 
-                    src={selectedRecipe.image} 
-                    alt={selectedRecipe.title} 
-                    className="w-full rounded-md mb-4" 
-                  />
-                )}
-                <div className="mb-4">
-                  <h3 className="font-medium text-lg mb-2">Description</h3>
-                  <div 
-                    className="text-sm text-gray-700"
-                    dangerouslySetInnerHTML={{ __html: selectedRecipe.summary }}
-                  />
-                </div>
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {selectedRecipe.diets?.map(diet => (
-                    <Badge key={diet} className="bg-green-100 text-green-800 hover:bg-green-200">
-                      {diet}
-                    </Badge>
-                  ))}
-                  {selectedRecipe.dishTypes?.map(type => (
-                    <Badge key={type} variant="outline">
-                      {type}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="mb-4">
-                  <h3 className="font-medium text-lg mb-2">Ingredients</h3>
-                  <ul className="list-disc list-inside space-y-1 text-sm">
-                    {selectedRecipe.extendedIngredients?.map((ingredient, index) => (
-                      <li key={index}>{ingredient.original}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="font-medium text-lg mb-2">Instructions</h3>
-                  <div 
-                    className="text-sm text-gray-700"
-                    dangerouslySetInnerHTML={{ __html: selectedRecipe.instructions }}
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setSelectedRecipe(null)}>
-                Close
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+        <RecipeDetailDialog
+          open={!!selectedRecipe}
+          onOpenChange={(open) => {
+            if (!open) setSelectedRecipe(null);
+          }}
+          recipe={selectedRecipe}
+        />
+      )}
+
+      {/* Video player dialog */}
+      {selectedVideo && (
+        <VideoPlayerDialog
+          open={videoDialogOpen}
+          onOpenChange={setVideoDialogOpen}
+          videoId={selectedVideo.id}
+          title={selectedVideo.title}
+          description={selectedVideo.description}
+        />
       )}
     </div>
   );
