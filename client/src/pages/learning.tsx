@@ -19,7 +19,8 @@ import {
   Clock,
   Lightbulb,
   MessageSquare,
-  Star
+  Star,
+  ShoppingBag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LearningCoachPopOut from '@/components/learning-coach-pop-out';
@@ -63,6 +64,7 @@ const Icons = {
   Lightbulb: Lightbulb as React.ComponentType<{ className?: string }>,
   MessageSquare: MessageSquare as React.ComponentType<{ className?: string }>,
   Star: Star as React.ComponentType<{ className?: string }>,
+  ShoppingBag: ShoppingBag as React.ComponentType<{ className?: string }>,
 };
 
 export default function Learning() {
@@ -74,6 +76,15 @@ export default function Learning() {
   
   // Group courses by categories
   const LIFE_SKILLS: Course[] = [
+    {
+      id: 'shopping-buddy',
+      title: 'Shopping Buddy',
+      description: 'Get help with grocery planning and healthy food choices',
+      icon: Icons.ShoppingBag,
+      path: '/learning/courses/shopping-buddy',
+      level: 'beginner',
+      new: true
+    },
     {
       id: 'vehicle-maintenance',
       title: 'Vehicle Maintenance',
