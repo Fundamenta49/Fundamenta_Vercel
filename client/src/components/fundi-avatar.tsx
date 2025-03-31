@@ -45,11 +45,11 @@ export default function FundiAvatar({
       className
     )}>
       <svg viewBox="0 0 100 100" width="100%" height="100%">
-        {/* Outer Border */}
-        <circle cx="50" cy="50" r="48" fill="white" opacity="0.15" />
+        {/* Outer Container - now rectangular with rounded corners instead of circular */}
+        <rect x="5" y="5" width="90" height="90" rx="15" fill="white" opacity="0.15" />
         
-        {/* Main Background Circle */}
-        <circle cx="50" cy="50" r="45" fill={color} />
+        {/* Main Background */}
+        <rect x="10" y="10" width="80" height="80" rx="12" fill={color} />
         
         {/* Simple, friendly avatar - clean chat interface */}
         <g>
