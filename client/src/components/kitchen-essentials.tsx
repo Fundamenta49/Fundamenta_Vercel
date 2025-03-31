@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ExternalLink, Info, AlertCircle, CheckCircle, Play, Utensils, Scissors, CookingPot, Cookie, UtensilsCrossed, Plug } from 'lucide-react';
+import { ExternalLink, Info, AlertCircle, CheckCircle, Play, Utensils, Scissors, CookingPot, Cookie, UtensilsCrossed, Plug, Loader2 } from 'lucide-react';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
+import { searchCookingVideos, YouTubeVideo } from '@/lib/youtube-service';
 
 interface KitchenTool {
   id: string;
@@ -42,6 +43,55 @@ const KitchenEssentials = () => {
     videoId: '',
     title: ''
   });
+  const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false);
+  
+  // Function to fetch a video for a kitchen tool that doesn't have a predetermined videoId
+  const fetchVideoForTool = async (tool: KitchenTool) => {
+    if (tool.videoId) {
+      // If the tool already has a video ID, use that
+      setVideoDialog({
+        open: true,
+        videoId: tool.videoId,
+        title: tool.videoTitle || `${tool.name} Tutorial`
+      });
+      return;
+    }
+    
+    // Otherwise, search for a video
+    setIsLoadingVideo(true);
+    try {
+      // Create a search query based on the tool name and category
+      const searchQuery = `how to use ${tool.name} cooking tutorial`;
+      const videos = await searchCookingVideos(searchQuery);
+      
+      if (videos && videos.length > 0) {
+        // Use the first result
+        const video = videos[0];
+        setVideoDialog({
+          open: true,
+          videoId: video.id,
+          title: video.title
+        });
+      } else {
+        console.error('No videos found for', tool.name);
+        // Try a more generic search as fallback
+        const genericVideos = await searchCookingVideos(`${tool.name} kitchen tutorial`);
+        if (genericVideos && genericVideos.length > 0) {
+          setVideoDialog({
+            open: true,
+            videoId: genericVideos[0].id,
+            title: genericVideos[0].title
+          });
+        } else {
+          alert(`Sorry, no tutorial videos found for ${tool.name}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching video for tool:', error);
+    } finally {
+      setIsLoadingVideo(false);
+    }
+  };
 
   // Kitchen tools data
   const kitchenTools: KitchenTool[] = [
@@ -385,11 +435,15 @@ const KitchenEssentials = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
         {filteredTools.map(tool => (
           <Card key={tool.id} className="overflow-hidden h-full border border-gray-200 hover:shadow-md transition-shadow">
-            <div className="h-48 overflow-hidden">
+            <div className="h-48 overflow-hidden relative bg-gray-100">
               <img
                 src={tool.image}
                 alt={tool.name}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  e.currentTarget.src = "https://images.unsplash.com/photo-1556911261-6bd341186b2f?q=80&w=500&auto=format&fit=crop";
+                  e.currentTarget.alt = "Image not available";
+                }}
               />
             </div>
             <CardHeader className="pb-2">
@@ -459,11 +513,15 @@ const KitchenEssentials = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="h-52 overflow-hidden rounded-md">
+              <div className="h-52 overflow-hidden rounded-md bg-gray-100">
                 <img
                   src={selectedTool.image}
                   alt={selectedTool.name}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://images.unsplash.com/photo-1556911261-6bd341186b2f?q=80&w=500&auto=format&fit=crop";
+                    e.currentTarget.alt = "Image not available";
+                  }}
                 />
               </div>
               
@@ -501,22 +559,26 @@ const KitchenEssentials = () => {
                 </AccordionItem>
               </Accordion>
               
-              {selectedTool.videoId && (
-                <div>
-                  <h3 className="font-medium mb-2">How-To Video</h3>
-                  <Button
-                    className="w-full rounded-md flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-                    onClick={() => setVideoDialog({
-                      open: true,
-                      videoId: selectedTool.videoId as string,
-                      title: selectedTool.videoTitle || `${selectedTool.name} Tutorial`
-                    })}
-                  >
-                    <Play className="h-4 w-4" />
-                    Watch Video Tutorial
-                  </Button>
-                </div>
-              )}
+              <div>
+                <h3 className="font-medium mb-2">How-To Video</h3>
+                <Button
+                  className="w-full rounded-md flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => fetchVideoForTool(selectedTool)}
+                  disabled={isLoadingVideo}
+                >
+                  {isLoadingVideo ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Finding Videos...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-4 w-4" />
+                      Watch Video Tutorial
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
             <CardFooter className="flex justify-end space-x-2">
               <Button variant="outline" onClick={() => setSelectedTool(null)}>

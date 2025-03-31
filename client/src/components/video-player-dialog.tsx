@@ -23,11 +23,8 @@ export function VideoPlayerDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-screen h-screen max-w-none p-0 m-0 rounded-none border-none">
-        {/* Hidden, but accessible to screen readers */}
-        <DialogHeader className="sr-only">
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description || `Video: ${title}`}</DialogDescription>
-        </DialogHeader>
+        <DialogTitle className="sr-only">{title}</DialogTitle>
+        <DialogDescription className="sr-only">{description || `Video: ${title}`}</DialogDescription>
         
         <div className="absolute top-4 right-4 z-50">
           <Button 
