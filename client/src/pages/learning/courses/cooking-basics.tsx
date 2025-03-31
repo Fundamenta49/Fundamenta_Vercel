@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChefHat, Utensils, Book, ArrowLeft, PlayCircle, ShoppingBag } from 'lucide-react';
+import { ChefHat, Utensils, Book, ArrowLeft, PlayCircle } from 'lucide-react';
 import RecipeExplorer from '@/components/recipe-explorer';
 import KitchenEssentials from '@/components/kitchen-essentials';
 import CookingTutorials from '@/components/cooking-tutorials';
 import { Link } from 'wouter';
 
 export default function CookingBasics() {
-  const [activeTab, setActiveTab] = useState('intro');
-  
   return (
     <div className="container max-w-6xl mx-auto py-6 px-4 sm:px-6">
       <div className="flex justify-between items-center mb-6">
@@ -34,192 +31,223 @@ export default function CookingBasics() {
         </p>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <TabsTrigger value="intro" className="flex items-center gap-2">
-            <Book className="h-4 w-4" />
-            Introduction
-          </TabsTrigger>
-          <TabsTrigger value="kitchen-essentials" className="flex items-center gap-2">
-            <Utensils className="h-4 w-4" />
-            Kitchen Tools
-          </TabsTrigger>
-          <TabsTrigger value="cooking-techniques" className="flex items-center gap-2">
-            <PlayCircle className="h-4 w-4" />
-            Cooking Tutorials
-          </TabsTrigger>
-          <TabsTrigger value="recipes" className="flex items-center gap-2">
-            <ChefHat className="h-4 w-4" />
-            Home Cooking Classics
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="intro" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Welcome to Cooking Basics</CardTitle>
-              <CardDescription>
-                Your journey to becoming confident in the kitchen starts here
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="relative rounded-lg overflow-hidden aspect-video">
-                <img 
-                  src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
-                  alt="Kitchen with cooking setup"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
-                  <h2 className="text-white text-xl font-medium">
-                    Cooking is a valuable life skill that saves money and improves health
-                  </h2>
-                </div>
+      <div className="space-y-6">
+        {/* Introduction Card */}
+        <Card id="introduction" className="overflow-hidden">
+          <CardHeader className="bg-orange-50 border-b border-orange-100">
+            <div className="flex items-center gap-2">
+              <Book className="h-5 w-5 text-orange-600" />
+              <CardTitle>Introduction to Cooking Basics</CardTitle>
+            </div>
+            <CardDescription>
+              Your journey to becoming confident in the kitchen starts here
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6 pt-6">
+            <div className="relative rounded-lg overflow-hidden aspect-video">
+              <img 
+                src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
+                alt="Kitchen with cooking setup"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                <h2 className="text-white text-xl font-medium">
+                  Cooking is a valuable life skill that saves money and improves health
+                </h2>
+              </div>
+            </div>
+            
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <h3 className="text-lg font-medium mb-2">Why Learn to Cook?</h3>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex gap-2 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span><strong>Save $2,000+ per year</strong> by preparing homemade meals instead of takeout</span>
+                  </li>
+                  <li className="flex gap-2 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span><strong>Eat healthier</strong> by controlling ingredients, salt, and portion sizes</span>
+                  </li>
+                  <li className="flex gap-2 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span><strong>Gain independence</strong> and self-sufficiency in your daily life</span>
+                  </li>
+                  <li className="flex gap-2 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span><strong>Start simple and build</strong> your skills with basic home cooking favorites</span>
+                  </li>
+                </ul>
               </div>
               
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Why Learn to Cook?</h3>
-                  <ul className="space-y-2 text-gray-600">
-                    <li className="flex gap-2 items-start">
-                      <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <span><strong>Save $2,000+ per year</strong> by preparing homemade meals instead of takeout</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <span><strong>Eat healthier</strong> by controlling ingredients, salt, and portion sizes</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <span><strong>Gain independence</strong> and self-sufficiency in your daily life</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <span><strong>Start simple and build</strong> your skills with basic home cooking favorites</span>
-                    </li>
-                  </ul>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-2">What You'll Learn</h3>
-                  <ul className="space-y-2 text-gray-600">
-                    <li className="flex gap-2 items-start">
-                      <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
-                        </svg>
-                      </div>
-                      <span>Essential kitchen tools for beginners and how to use them safely</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
-                        </svg>
-                      </div>
-                      <span>Basic cooking techniques with step-by-step video tutorials</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
-                        </svg>
-                      </div>
-                      <span>Simple home-style recipes like mac & cheese, burgers, and pancakes</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
-                        </svg>
-                      </div>
-                      <span>How to find video tutorials for any recipe you want to learn</span>
-                    </li>
-                  </ul>
-                </div>
+              <div>
+                <h3 className="text-lg font-medium mb-2">What You'll Learn</h3>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex gap-2 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                      </svg>
+                    </div>
+                    <span>Essential kitchen tools for beginners and how to use them safely</span>
+                  </li>
+                  <li className="flex gap-2 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                      </svg>
+                    </div>
+                    <span>Basic cooking techniques with step-by-step video tutorials</span>
+                  </li>
+                  <li className="flex gap-2 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                      </svg>
+                    </div>
+                    <span>Simple home-style recipes like mac & cheese, burgers, and pancakes</span>
+                  </li>
+                  <li className="flex gap-2 items-start">
+                    <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                      </svg>
+                    </div>
+                    <span>How to find video tutorials for any recipe you want to learn</span>
+                  </li>
+                </ul>
               </div>
-              
-              <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
-                <h3 className="text-lg font-medium mb-2 text-orange-800">Getting Started</h3>
-                <p className="text-orange-700 mb-4">
-                  This module helps beginners build kitchen confidence with simple, achievable steps. Explore each section to start your cooking journey.
-                </p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Button onClick={() => setActiveTab('kitchen-essentials')} className="bg-orange-500 hover:bg-orange-600">
+            </div>
+            
+            <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+              <h3 className="text-lg font-medium mb-2 text-orange-800">Getting Started</h3>
+              <p className="text-orange-700 mb-4">
+                This module helps beginners build kitchen confidence with simple, achievable steps. Explore each section to start your cooking journey.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                <a href="#kitchen-tools" className="no-underline">
+                  <Button className="bg-orange-500 hover:bg-orange-600 w-full">
                     <Utensils className="h-4 w-4 mr-2" />
                     Kitchen Tools
                   </Button>
-                  <Button onClick={() => setActiveTab('cooking-techniques')} className="bg-orange-500 hover:bg-orange-600">
+                </a>
+                <a href="#cooking-tutorials" className="no-underline">
+                  <Button className="bg-orange-500 hover:bg-orange-600 w-full">
                     <PlayCircle className="h-4 w-4 mr-2" />
                     Cooking Tutorials
                   </Button>
-                  <Button onClick={() => setActiveTab('recipes')} className="bg-orange-500 hover:bg-orange-600">
+                </a>
+                <a href="#home-cooking" className="no-underline">
+                  <Button className="bg-orange-500 hover:bg-orange-600 w-full">
                     <ChefHat className="h-4 w-4 mr-2" />
                     Home Cooking Classics
                   </Button>
-                </div>
+                </a>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="kitchen-essentials">
-          <Card>
-            <CardHeader>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Kitchen Tools Card */}
+        <Card id="kitchen-tools" className="overflow-hidden">
+          <CardHeader className="bg-orange-50 border-b border-orange-100">
+            <div className="flex items-center gap-2">
+              <Utensils className="h-5 w-5 text-orange-600" />
               <CardTitle>Essential Kitchen Tools</CardTitle>
-              <CardDescription>
-                The basic equipment every beginner cook should have in their kitchen
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <KitchenEssentials />
-            </CardContent>
-          </Card>
-        </TabsContent>
+            </div>
+            <CardDescription>
+              The basic equipment every beginner cook should have in their kitchen
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <KitchenEssentials />
+          </CardContent>
+          <CardFooter className="border-t border-gray-100 pt-4 flex justify-between">
+            <a href="#introduction" className="no-underline">
+              <Button variant="outline">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Introduction
+              </Button>
+            </a>
+            <a href="#cooking-tutorials" className="no-underline">
+              <Button className="bg-orange-500 hover:bg-orange-600">
+                Cooking Tutorials
+                <PlayCircle className="h-4 w-4 ml-2" />
+              </Button>
+            </a>
+          </CardFooter>
+        </Card>
         
-        <TabsContent value="cooking-techniques">
-          <Card>
-            <CardHeader>
+        {/* Cooking Tutorials Card */}
+        <Card id="cooking-tutorials" className="overflow-hidden">
+          <CardHeader className="bg-orange-50 border-b border-orange-100">
+            <div className="flex items-center gap-2">
+              <PlayCircle className="h-5 w-5 text-orange-600" />
               <CardTitle>Cooking Tutorials</CardTitle>
-              <CardDescription>
-                Step-by-step videos to master basic cooking techniques and simple recipes
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CookingTutorials />
-            </CardContent>
-          </Card>
-        </TabsContent>
+            </div>
+            <CardDescription>
+              Step-by-step videos to master basic cooking techniques and simple recipes
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <CookingTutorials />
+          </CardContent>
+          <CardFooter className="border-t border-gray-100 pt-4 flex justify-between">
+            <a href="#kitchen-tools" className="no-underline">
+              <Button variant="outline">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Kitchen Tools
+              </Button>
+            </a>
+            <a href="#home-cooking" className="no-underline">
+              <Button className="bg-orange-500 hover:bg-orange-600">
+                Home Cooking Classics
+                <ChefHat className="h-4 w-4 ml-2" />
+              </Button>
+            </a>
+          </CardFooter>
+        </Card>
         
-        <TabsContent value="recipes">
-          <Card>
-            <CardHeader>
+        {/* Home Cooking Classics Card */}
+        <Card id="home-cooking" className="overflow-hidden">
+          <CardHeader className="bg-orange-50 border-b border-orange-100">
+            <div className="flex items-center gap-2">
+              <ChefHat className="h-5 w-5 text-orange-600" />
               <CardTitle>Home Cooking Classics Explorer</CardTitle>
-              <CardDescription>
-                Discover simple, popular home cooking recipes perfect for beginners
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RecipeExplorer />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+            <CardDescription>
+              Discover simple, popular home cooking recipes perfect for beginners
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <RecipeExplorer />
+          </CardContent>
+          <CardFooter className="border-t border-gray-100 pt-4 flex justify-start">
+            <a href="#cooking-tutorials" className="no-underline">
+              <Button variant="outline">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Cooking Tutorials
+              </Button>
+            </a>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }
