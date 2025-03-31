@@ -1,106 +1,73 @@
-// Remove framer-motion imports and use basic CSS animations
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface FundiAvatarProps {
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   speaking?: boolean;
-  size?: "sm" | "md" | "lg";
+  category?: string;
+  className?: string;
 }
 
-export default function FundiAvatar({ speaking = false, size = "md" }: FundiAvatarProps) {
-  // Define sizes for the avatar container
-  const sizes = {
-    sm: "w-12 h-12",
-    md: "w-16 h-16",
-    lg: "w-24 h-24"
+export default function FundiAvatar({
+  size = 'md',
+  speaking = false,
+  category = 'general',
+  className
+}: FundiAvatarProps) {
+  // Category colors
+  const categoryColors: Record<string, string> = {
+    finance: '#22c55e', // green-500
+    career: '#3b82f6', // blue-500
+    wellness: '#a855f7', // purple-500
+    learning: '#f97316', // orange-500
+    emergency: '#ef4444', // red-500
+    cooking: '#f59e0b', // amber-500
+    fitness: '#06b6d4', // cyan-500
+    general: '#6366f1', // indigo-500
   };
 
-  return (
-    <div 
-      className={cn(
-        "flex items-center justify-center",
-        sizes[size]
-      )}
-    >
-      <div className="w-full h-full relative">
-        {/* SVG Robot with fixed positioning */}
-        <svg 
-          viewBox="0 0 100 100" 
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full"
-        >
-          {/* Main robot body */}
-          <path 
-            d="M30,45 C30,65 30,75 50,80 C70,75 70,65 70,45 L60,40 L40,40 L30,45" 
-            fill="#f5f5f5" 
-            stroke="#e0e0e0" 
-            strokeWidth="1"
-          />
+  // Size mapping
+  const sizes = {
+    xs: 'w-8 h-8',
+    sm: 'w-12 h-12',
+    md: 'w-16 h-16',
+    lg: 'w-24 h-24',
+  };
 
-          {/* Robot head */}
-          <rect x="30" y="15" width="40" height="30" rx="10" fill="#f5f5f5" stroke="#e0e0e0" strokeWidth="1" />
-          
-          {/* Head screen */}
-          <rect x="35" y="18" width="30" height="10" rx="3" fill="#7dd3fc" opacity="0.6" />
-          
-          {/* Ear left */}
-          <rect x="25" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
-          
-          {/* Ear right */}
-          <rect x="70" y="25" width="5" height="10" rx="2" fill="#e0e0e0" />
-          
-          {/* Center chest light */}
-          <circle 
-            cx="50" 
-            cy="55" 
-            r="5" 
-            fill="#38bdf8"
-            className={speaking ? "animate-pulse" : ""}
-            opacity="0.6"
-          />
-          
-          {/* Eyes background */}
-          <rect x="35" y="30" width="30" height="10" rx="5" fill="#0f172a" />
-          
-          {/* Left eye */}
-          <ellipse 
-            cx="42" 
-            cy="35" 
-            rx="3" 
-            ry="2.5" 
-            fill="#38bdf8"
-            className={speaking ? "animate-pulse" : ""}
-            opacity="0.8"
-          />
-          
-          {/* Right eye */}
-          <ellipse 
-            cx="58" 
-            cy="35" 
-            rx="3" 
-            ry="2.5" 
-            fill="#38bdf8"
-            className={speaking ? "animate-pulse" : ""}
-            opacity="0.8"
-          />
-          
-          {/* Left arm */}
-          <path 
-            d="M30,50 C20,55 20,60 25,65" 
-            fill="none" 
-            stroke="#f5f5f5" 
-            strokeWidth="7" 
-            strokeLinecap="round" 
-          />
-          
-          {/* Right arm */}
-          <path 
-            d="M70,50 C80,55 80,60 75,65" 
-            fill="none" 
-            stroke="#f5f5f5" 
-            strokeWidth="7" 
-            strokeLinecap="round" 
-          />
-        </svg>
+  const color = categoryColors[category] || categoryColors.general;
+
+  return (
+    <div className={cn(
+      "rounded-full bg-gradient-to-b flex items-center justify-center",
+      sizes[size],
+      className
+    )} style={{ background: color }}>
+      <div className="relative w-full h-full">
+        {/* Eyes */}
+        <div className="absolute rounded-full bg-white w-[25%] h-[25%] top-[30%] left-[25%] flex items-center justify-center">
+          <div className={cn(
+            "rounded-full bg-current w-1/2 h-1/2",
+            speaking && "animate-pulse"
+          )} style={{ color }}></div>
+        </div>
+        <div className="absolute rounded-full bg-white w-[25%] h-[25%] top-[30%] right-[25%] flex items-center justify-center">
+          <div className={cn(
+            "rounded-full bg-current w-1/2 h-1/2",
+            speaking && "animate-pulse"
+          )} style={{ color }}></div>
+        </div>
+        
+        {/* Mouth */}
+        <div className="absolute bg-white h-[3px] w-[40%] rounded-full bottom-[30%] left-[30%]"
+          style={{ 
+            transform: 'rotate(5deg)',
+            boxShadow: `0 2px 0 rgba(255,255,255,0.5)`
+          }}
+        ></div>
+
+        {/* Antenna */}
+        <div className="absolute w-[12%] h-[12%] rounded-full bg-white top-[5%] left-[44%]"></div>
+        <div className="absolute w-[2px] h-[15%] bg-white top-[17%] left-[49%]"></div>
       </div>
     </div>
   );
