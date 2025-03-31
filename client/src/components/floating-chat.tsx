@@ -35,10 +35,15 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     return () => clearInterval(animationInterval);
   }, []);
 
+  // Get the color for the current category
+  const getCategoryColor = (category: string) => {
+    return categoryColors[category] || categoryColors.general;
+  };
+  
   return (
     <>
       {isExpanded ? (
-        <div className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 w-full max-w-md">
+        <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-full max-w-md">
           <ChatInterface 
             category={category}
             expanded={false}
@@ -47,22 +52,29 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               currentPage: category,
               availableActions: [`/${category}`]
             }}
-            className="shadow-xl"
+            className="shadow-xl rounded-2xl overflow-hidden"
           />
         </div>
       ) : (
         <Button
-          className={`fixed top-6 right-6 sm:top-8 sm:right-8 z-50 h-12 w-12 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out ${
+          className={`fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 h-14 w-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out border-2 ${
             isAnimating ? 'scale-110' : 'scale-100'
           }`}
+          style={{
+            backgroundColor: 'white',
+            borderColor: getCategoryColor(category),
+          }}
           onClick={() => setIsExpanded(true)}
         >
           {/* Chat icon */}
           <div className="flex items-center justify-center w-full h-full">
-            <MessageSquare className="h-6 w-6 text-gray-700" />
+            <MessageSquare 
+              className="h-6 w-6" 
+              style={{ color: getCategoryColor(category) }}
+            />
             {/* Animation dot to indicate Fundi is available */}
-            <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full bg-green-500 animate-ping opacity-75"></span>
-            <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full bg-green-500"></span>
+            <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500 animate-ping opacity-75"></span>
+            <span className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-green-500"></span>
           </div>
         </Button>
       )}

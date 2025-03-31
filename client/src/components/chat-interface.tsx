@@ -206,19 +206,19 @@ export default function ChatInterface({
 
   return (
     <Card className={`flex flex-col border shadow-lg ${className}`} style={{ 
-      height: expanded ? '85vh' : '500px',
+      height: expanded ? '85vh' : 'min(500px, 70vh)',
       maxWidth: expanded ? '95vw' : '800px',
       width: '100%'
     }}>
-      <CardHeader className="px-5 py-3 border-b">
+      <CardHeader className="px-4 py-2.5 sm:px-5 sm:py-3 border-b">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {(currentCategory || category) === 'general' ? (
-              <div className="h-10 w-10 flex items-center justify-center">
-                <MessageSquare className="h-6 w-6 text-gray-700" />
+              <div className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center">
+                <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" />
               </div>
             ) : (
-              <Avatar className="h-10 w-10">
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                 <AvatarImage 
                   src={advisorInfo[currentCategory || category].image} 
                   alt={advisorInfo[currentCategory || category].name} 
@@ -232,12 +232,12 @@ export default function ChatInterface({
             {/* Only show name and badge for specialized advisors */}
             {isSpecialist && (
               <>
-                <CardTitle className="text-lg font-medium">
+                <CardTitle className="text-sm md:text-lg font-medium">
                   {advisorInfo[currentCategory || category].name}
                 </CardTitle>
                 <Badge 
                   variant="outline" 
-                  className="text-sm px-3 py-1"
+                  className="text-xs sm:text-sm px-2 py-0.5 sm:px-3 sm:py-1"
                   style={{
                     backgroundColor: `${categoryColors[currentCategory || category]}15`, 
                     color: categoryColors[currentCategory || category],
@@ -352,7 +352,7 @@ export default function ChatInterface({
               >
                 <div 
                   className={`
-                    max-w-[85%] rounded-lg px-5 py-3 shadow-sm
+                    max-w-[90%] sm:max-w-[85%] rounded-lg px-3 py-2 sm:px-4 sm:py-3 shadow-sm
                     ${msg.role === 'user' 
                       ? 'bg-primary text-white' 
                       : 'bg-primary/10 border border-primary/20'
@@ -369,18 +369,18 @@ export default function ChatInterface({
                   }}
                 >
                   {msg.role === 'assistant' && (
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                       {(msg.category || category) === 'general' ? (
-                        <div className="h-6 w-6 flex items-center justify-center">
-                          <MessageSquare className="h-4 w-4 text-gray-700" />
+                        <div className="h-5 w-5 sm:h-6 sm:w-6 flex items-center justify-center">
+                          <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-700" />
                         </div>
                       ) : (
-                        <Avatar className="h-6 w-6">
+                        <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
                           <AvatarImage 
                             src={advisorInfo[msg.category || category].image} 
                             alt={advisorInfo[msg.category || category].name} 
                           />
-                          <AvatarFallback className="text-xs">
+                          <AvatarFallback className="text-[10px] sm:text-xs">
                             {advisorInfo[msg.category || category].name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
@@ -389,10 +389,10 @@ export default function ChatInterface({
                       {/* Only show name for specialized advisors, not for general AI */}
                       {(msg.category || category) !== 'general' && (
                         <>
-                          <span className="text-sm font-medium">
+                          <span className="text-xs sm:text-sm font-medium">
                             {advisorInfo[msg.category || category].name}
                           </span>
-                          <span className="text-xs px-2 py-0.5 rounded"
+                          <span className="text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 rounded"
                             style={{
                               backgroundColor: `${categoryColors[msg.category || category]}15`,
                               color: categoryColors[msg.category || category],
@@ -405,8 +405,8 @@ export default function ChatInterface({
                       )}
                     </div>
                   )}
-                  <p className="text-base leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
-                  <p className="text-xs opacity-70 text-right mt-2">
+                  <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
+                  <p className="text-[10px] sm:text-xs opacity-70 text-right mt-1.5 sm:mt-2">
                     {msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                   </p>
                 </div>
@@ -417,22 +417,22 @@ export default function ChatInterface({
         </div>
         
         {showSuggestions && (followUpQuestions.length > 0 || suggestedActions.length > 0) && (
-          <div className="mt-6">
-            <p className="text-sm font-medium text-muted-foreground mb-3">Suggestions:</p>
-            <div className="flex flex-wrap gap-3">
+          <div className="mt-4 sm:mt-6">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-2 sm:mb-3">Suggestions:</p>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {followUpQuestions.length > 0 && followUpQuestions.slice(0, 3).map((question, index) => (
                 <Button
                   key={index}
                   variant="outline"
                   size="sm"
-                  className="text-sm justify-start text-left py-2 px-3"
+                  className="text-xs sm:text-sm justify-start text-left py-1.5 px-2.5 sm:py-2 sm:px-3"
                   style={{
                     borderColor: `${categoryColors[category]}30`,
                     color: categoryColors[category]
                   }}
                   onClick={() => handleSuggestionClick(question)}
                 >
-                  {question.length > 40 ? question.substring(0, 40) + '...' : question}
+                  {question.length > 30 ? question.substring(0, 30) + '...' : question}
                 </Button>
               ))}
               
@@ -441,7 +441,7 @@ export default function ChatInterface({
                   key={`action-${index}`}
                   variant="outline"
                   size="sm"
-                  className="text-sm justify-start text-left py-2 px-3"
+                  className="text-xs sm:text-sm justify-start text-left py-1.5 px-2.5 sm:py-2 sm:px-3"
                   style={{
                     borderColor: `${categoryColors[category]}30`,
                     color: categoryColors[category]
@@ -467,11 +467,11 @@ export default function ChatInterface({
         )}
       </ScrollArea>
       
-      <CardFooter className="p-3 border-t">
-        <div className="flex w-full items-center gap-2">
+      <CardFooter className="p-2 sm:p-3 border-t">
+        <div className="flex w-full items-center gap-1.5 sm:gap-2">
           <Textarea
             id="chat-input"
-            className="min-h-14 max-h-40 resize-none py-3 px-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-base rounded-xl flex-1"
+            className="min-h-12 sm:min-h-14 max-h-32 sm:max-h-40 resize-none py-2.5 px-3 sm:py-3 sm:px-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm sm:text-base rounded-xl flex-1"
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -483,7 +483,7 @@ export default function ChatInterface({
             size="icon" 
             disabled={!input.trim() || isProcessing}
             onClick={handleSendMessage}
-            className="h-14 w-14 shrink-0 rounded-full"
+            className="h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-full"
             style={{
               backgroundColor: categoryColors[category],
               color: 'white',
@@ -491,9 +491,9 @@ export default function ChatInterface({
             }}
           >
             {isProcessing ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
+              <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin" />
             ) : (
-              <Send className="h-6 w-6" />
+              <Send className="h-5 w-5 sm:h-6 sm:w-6" />
             )}
           </Button>
         </div>
