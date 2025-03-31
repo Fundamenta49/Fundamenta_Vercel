@@ -26,10 +26,20 @@ interface FoodEntry {
   id: string;
   timestamp: string;
   imageUrl?: string;
+  thumbnailUrl?: string;
   calories: number;
   carbs: number;
+  protein?: number;
+  fat?: number;
+  fiber?: number;
+  sugar?: number;
   name: string;
+  description?: string;
+  servingUnit?: string;
+  servingQty?: number;
+  servingWeight?: number;
   aiAnalyzed: boolean;
+  dataSource?: string;
 }
 
 export default function NutritionTracker() {
@@ -82,17 +92,28 @@ export default function NutritionTracker() {
         id: Date.now().toString(),
         timestamp: new Date().toISOString(),
         imageUrl: previewUrl || undefined,
+        thumbnailUrl: data.thumbnailUrl,
         calories: data.calories,
         carbs: data.carbs,
+        protein: data.protein,
+        fat: data.fat,
+        fiber: data.fiber,
+        sugar: data.sugar,
         name: data.foodName,
+        description: data.description,
+        servingUnit: data.servingUnit,
+        servingQty: data.servingQty,
+        servingWeight: data.servingWeight,
         aiAnalyzed: true,
+        dataSource: data.source || 'openai'
       });
       setSelectedImage(null);
       setPreviewUrl(null);
       
       toast({
         title: "Food analyzed!",
-        description: `Added ${data.foodName} to your food log`,
+        description: `Added ${data.foodName} to your food log${data.source === 'nutritionix' ? ' (Nutritionix data)' : ''}`,
+        variant: "default"
       });
     },
     onError: (error) => {
@@ -346,19 +367,66 @@ export default function NutritionTracker() {
                       </div>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
-                      <div className="grid grid-cols-2 gap-4">
+                      {entry.description && (
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {entry.description}
+                        </p>
+                      )}
+                      
+                      {entry.servingQty && entry.servingUnit && (
+                        <p className="text-xs text-muted-foreground mb-2">
+                          Serving size: {entry.servingQty} {entry.servingUnit} 
+                          {entry.servingWeight && ` (${entry.servingWeight}g)`}
+                        </p>
+                      )}
+                      
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
                         <div>
-                          <p className="text-sm text-muted-foreground">Calories</p>
-                          <p className="font-medium">{entry.calories}</p>
+                          <p className="text-xs text-muted-foreground">Calories</p>
+                          <p className="font-medium text-sm">{entry.calories}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">Carbs</p>
-                          <p className="font-medium">{entry.carbs}g</p>
+                          <p className="text-xs text-muted-foreground">Carbs</p>
+                          <p className="font-medium text-sm">{entry.carbs}g</p>
                         </div>
+                        {entry.protein && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">Protein</p>
+                            <p className="font-medium text-sm">{entry.protein}g</p>
+                          </div>
+                        )}
+                        {entry.fat && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">Fat</p>
+                            <p className="font-medium text-sm">{entry.fat}g</p>
+                          </div>
+                        )}
+                        {entry.fiber && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">Fiber</p>
+                            <p className="font-medium text-sm">{entry.fiber}g</p>
+                          </div>
+                        )}
+                        {entry.sugar && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">Sugar</p>
+                            <p className="font-medium text-sm">{entry.sugar}g</p>
+                          </div>
+                        )}
                       </div>
-                      {entry.imageUrl && (
+                      
+                      <div className="flex items-center gap-2 mb-2">
+                        {entry.dataSource && (
+                          <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">
+                            Source: {entry.dataSource === 'nutritionix' ? 'Nutritionix' : 'AI Estimate'}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Use the Nutritionix thumbnail if available, otherwise use the uploaded image */}
+                      {(entry.thumbnailUrl || entry.imageUrl) && (
                         <img
-                          src={entry.imageUrl}
+                          src={entry.thumbnailUrl || entry.imageUrl}
                           alt={entry.name}
                           className="mt-2 rounded-lg w-full h-32 object-cover"
                         />

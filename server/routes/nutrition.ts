@@ -601,19 +601,58 @@ router.post('/analyze-food', foodImageUpload.single('image'), async (req, res) =
     
     try {
       console.log("OpenAI API response received:", response.choices[0].message.content);
-      const nutritionInfo = JSON.parse(response.choices[0].message.content);
-      console.log("Parsed nutrition info:", nutritionInfo);
+      const openAiNutritionInfo = JSON.parse(response.choices[0].message.content);
+      console.log("Parsed OpenAI nutrition info:", openAiNutritionInfo);
       
-      const result = {
-        foodName: nutritionInfo.foodName,
-        calories: Number(nutritionInfo.calories),
-        carbs: Number(nutritionInfo.carbs),
-        protein: Number(nutritionInfo.protein),
-        fat: Number(nutritionInfo.fat),
-        description: nutritionInfo.description
+      let result = {
+        foodName: openAiNutritionInfo.foodName,
+        calories: Number(openAiNutritionInfo.calories),
+        carbs: Number(openAiNutritionInfo.carbs),
+        protein: Number(openAiNutritionInfo.protein),
+        fat: Number(openAiNutritionInfo.fat),
+        description: openAiNutritionInfo.description,
+        source: 'openai' // Track source of nutritional data
       };
       
-      console.log("Sending response back to client:", result);
+      // Try to get more accurate data from Nutritionix API
+      try {
+        console.log(`Querying Nutritionix for more accurate data on: ${openAiNutritionInfo.foodName}`);
+        const nutritionixData = await nutritionixService.getFoodDetails(openAiNutritionInfo.foodName);
+        
+        if (nutritionixData) {
+          console.log("Nutritionix data found:", nutritionixData);
+          
+          // Extract macronutrient information
+          const macros = nutritionixService.extractMacronutrients(nutritionixData);
+          
+          // Create a new enriched result object with all the data
+          const enrichedResult: any = {
+            foodName: nutritionixData.food_name,
+            calories: Math.round(macros.calories),
+            carbs: Math.round(macros.carbs),
+            protein: Math.round(macros.protein),
+            fat: Math.round(macros.fat),
+            description: openAiNutritionInfo.description,
+            servingUnit: nutritionixData.serving_unit,
+            servingWeight: nutritionixData.serving_weight_grams,
+            servingQty: nutritionixData.serving_qty,
+            fiber: Math.round(macros.fiber),
+            sugar: Math.round(macros.sugar),
+            thumbnailUrl: nutritionixData.photo?.thumb || null,
+            source: 'nutritionix'
+          };
+          
+          // Override the result with the enriched data
+          result = enrichedResult;
+        }
+      } catch (error) {
+        // Type assertion for error handling
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.log("Could not retrieve Nutritionix data, using OpenAI estimates instead:", errorMessage);
+        // Continue with OpenAI data, already set in result
+      }
+      
+      console.log("Sending final response back to client:", result);
       res.json(result);
     } catch (parseError) {
       console.error('Error parsing AI response:', parseError);
