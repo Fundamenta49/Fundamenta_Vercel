@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import RecipeExplorer from '@/components/recipe-explorer';
 import KitchenSkillsLearning from '@/components/kitchen-skills-learning-updated';
-import CookingTutorialsSpoonacular from '@/components/cooking-tutorials-spoonacular';
+import CookingTutorialsNew from '@/components/cooking-tutorials-new';
 import KitchenEssentials from '@/components/kitchen-essentials';
 import { Link } from 'wouter';
 
@@ -226,7 +226,7 @@ export default function CookingBasics() {
       case 'kitchen-tools':
         return <KitchenSkillsLearning />;
       case 'cooking-tutorials':
-        return <CookingTutorialsSpoonacular />;
+        return <CookingTutorialsNew />;
       case 'recipe-explorer':
         return <RecipeExplorer />;
       default:

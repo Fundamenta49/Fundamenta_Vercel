@@ -141,10 +141,10 @@ export default function CookingGuide() {
       const guidanceData = await guidanceResponse.json();
       setGuidance(guidanceData.guidance);
       
-      // Then, fetch YouTube videos
+      // Fetch cooking videos from Spoonacular
       try {
         const videoResponse = await fetch(
-          `/api/youtube-search?q=${encodeURIComponent(topic.title)}&category=cooking`
+          `/api/cooking/videos/search?query=${encodeURIComponent(topic.title)}&number=6`
         );
         
         if (!videoResponse.ok) {
@@ -153,16 +153,16 @@ export default function CookingGuide() {
         
         const videoData = await videoResponse.json();
         
-        if (videoData.items && Array.isArray(videoData.items)) {
-          setVideos(videoData.items.map((item: any) => ({
-            id: item.id.videoId,
-            title: item.snippet.title,
+        if (videoData.videos && Array.isArray(videoData.videos)) {
+          setVideos(videoData.videos.map((video: any) => ({
+            id: video.youTubeId,
+            title: video.title,
             thumbnail: {
-              url: item.snippet.thumbnails.medium.url,
-              width: item.snippet.thumbnails.medium.width,
-              height: item.snippet.thumbnails.medium.height
+              url: video.thumbnail,
+              width: 320,
+              height: 180
             },
-            duration: "Video"
+            duration: `${Math.floor(video.length / 60)}:${(video.length % 60).toString().padStart(2, '0')}`
           })));
         }
       } catch (videoError) {
