@@ -20,6 +20,7 @@ import {
 import RecipeExplorer from '@/components/recipe-explorer';
 import KitchenSkillsLearning from '@/components/kitchen-skills-learning-updated';
 import CookingTutorials from '@/components/cooking-tutorials';
+import KitchenEssentials from '@/components/kitchen-essentials';
 import { Link } from 'wouter';
 
 // Define allowed color values
