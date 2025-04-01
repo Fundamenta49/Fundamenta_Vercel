@@ -16,6 +16,15 @@ export interface Recipe {
   aggregateLikes?: number;
 }
 
+export interface Video {
+  title: string;
+  shortTitle?: string;
+  youTubeId: string;
+  thumbnail: string;
+  views: number;
+  length: number; // in seconds
+}
+
 interface SearchResponse {
   results: Recipe[];
   totalResults: number;
@@ -25,6 +34,17 @@ interface SearchResponse {
 
 interface RandomRecipesResponse {
   recipes: Recipe[];
+}
+
+interface VideosSearchResponse {
+  videos: Video[];
+  totalResults: number;
+  offset?: number;
+  number: number;
+}
+
+interface RandomVideosResponse {
+  videos: Video[];
 }
 
 export class SpoonacularService {
@@ -150,5 +170,90 @@ export class SpoonacularService {
       console.error('Error generating meal plan:', error);
       throw error;
     }
+  }
+
+  /**
+   * Search for cooking videos
+   * @param query Search term
+   * @param cuisine Optional cuisine filter (e.g., italian, mexican)
+   * @param type Optional meal type (e.g., main course, dessert)
+   * @param diet Optional diet filter (e.g., vegetarian, vegan)
+   * @param includeIngredients Optional ingredients to include
+   * @param excludeIngredients Optional ingredients to exclude
+   * @param number Number of results to return (default: 10)
+   * @returns Promise with video search results
+   */
+  static async searchVideos(
+    query: string,
+    cuisine?: string,
+    type?: string,
+    diet?: string,
+    includeIngredients?: string,
+    excludeIngredients?: string,
+    number: number = 10
+  ): Promise<VideosSearchResponse> {
+    try {
+      let url = `/api/cooking/videos/search?query=${encodeURIComponent(query)}&number=${number}`;
+      
+      if (cuisine) url += `&cuisine=${encodeURIComponent(cuisine)}`;
+      if (type) url += `&type=${encodeURIComponent(type)}`;
+      if (diet) url += `&diet=${encodeURIComponent(diet)}`;
+      if (includeIngredients) url += `&includeIngredients=${encodeURIComponent(includeIngredients)}`;
+      if (excludeIngredients) url += `&excludeIngredients=${encodeURIComponent(excludeIngredients)}`;
+      
+      const response = await apiRequest('GET', url);
+      return await response.json();
+    } catch (error) {
+      console.error('Error searching cooking videos:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Get random cooking videos
+   * @param number Number of videos to return (default: 10)
+   * @param tags Optional comma-separated tags to filter results
+   * @returns Promise with random cooking videos
+   */
+  static async getRandomVideos(number: number = 10, tags?: string): Promise<RandomVideosResponse> {
+    try {
+      let url = `/api/cooking/videos/random?number=${number}`;
+      if (tags) url += `&tags=${encodeURIComponent(tags)}`;
+      
+      const response = await apiRequest('GET', url);
+      return await response.json();
+    } catch (error) {
+      console.error('Error getting random cooking videos:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get cooking videos by category
+   * @param category Category of cooking videos (e.g., breakfast, lunch, dinner, desserts, quick)
+   * @param number Number of videos to return (default: 10)
+   * @returns Promise with cooking videos for the specified category
+   */
+  static async getVideosByCategory(category: string, number: number = 10): Promise<VideosSearchResponse> {
+    try {
+      const url = `/api/cooking/videos/category/${encodeURIComponent(category)}?number=${number}`;
+      
+      const response = await apiRequest('GET', url);
+      return await response.json();
+    } catch (error) {
+      console.error('Error getting cooking videos by category:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Format video length in seconds to MM:SS format
+   * @param seconds Video length in seconds
+   * @returns Formatted time string (MM:SS)
+   */
+  static formatVideoLength(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   }
 }
