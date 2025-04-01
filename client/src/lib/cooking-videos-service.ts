@@ -14,6 +14,7 @@ export interface CookingVideo {
   youTubeId: string;
   views: number;
   length: number;
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
 }
 
 /**

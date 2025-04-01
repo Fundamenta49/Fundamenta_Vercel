@@ -89,6 +89,43 @@ const CookingTutorials = () => {
     }
   ];
 
+  // Difficulty levels for tutorials
+  const difficultyLevels = [
+    { id: 'beginner', name: 'Beginner', description: 'Perfect for first-time cooks learning basics' },
+    { id: 'intermediate', name: 'Intermediate', description: 'For those who have mastered the basics' },
+    { id: 'advanced', name: 'Advanced', description: 'Complex techniques for experienced cooks' }
+  ];
+  
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('beginner');
+  
+  // Function to determine difficulty level based on video metadata
+  // This is a simple heuristic that could be improved with actual API data
+  const categorizeDifficulty = (video: CookingVideo): 'beginner' | 'intermediate' | 'advanced' => {
+    const title = video.title.toLowerCase();
+    const views = video.views;
+    
+    // Keywords that might indicate difficulty levels
+    const beginnerKeywords = ['basic', 'simple', 'easy', 'beginner', 'how to', '101', 'first time'];
+    const advancedKeywords = ['complex', 'advanced', 'gourmet', 'professional', 'chef', 'perfect', 'master'];
+    
+    // Check for beginner keywords
+    for (const keyword of beginnerKeywords) {
+      if (title.includes(keyword)) {
+        return 'beginner';
+      }
+    }
+    
+    // Check for advanced keywords
+    for (const keyword of advancedKeywords) {
+      if (title.includes(keyword)) {
+        return 'advanced';
+      }
+    }
+    
+    // Default to intermediate if no matches
+    return 'intermediate';
+  };
+  
   // Load videos for a specific category
   const loadCategoryVideos = async (categoryId: string) => {
     setIsLoadingCategory(true);
@@ -100,7 +137,16 @@ const CookingTutorials = () => {
       }
       
       const videos = await getCookingVideosByCategory(category.queryValue);
-      setCategoryVideos(videos);
+      
+      // Assign difficulty levels to videos
+      const videosWithDifficulty = videos.map(video => {
+        return {
+          ...video,
+          difficulty: categorizeDifficulty(video)
+        };
+      });
+      
+      setCategoryVideos(videosWithDifficulty as CookingVideo[]);
       setSelectedCategory(categoryId);
     } catch (error) {
       console.error('Error loading category videos:', error);
@@ -313,41 +359,128 @@ const CookingTutorials = () => {
                   </Button>
                 </div>
               ) : categoryVideos.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categoryVideos.map((video) => (
-                    <Card key={video.id} className="overflow-hidden h-full flex flex-col">
-                      <div 
-                        className="relative aspect-video cursor-pointer overflow-hidden"
-                        onClick={() => playVideo(video)}
-                      >
-                        <img 
-                          src={video.thumbnailUrl} 
-                          alt={video.title} 
-                          className="w-full h-full object-cover transition-transform hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <PlayCircle className="h-12 w-12 text-white" />
+                <div className="space-y-6">
+                  {/* Difficulty level filter */}
+                  <div className="border rounded-lg p-4 bg-gray-50">
+                    <h3 className="text-sm font-medium mb-3">Difficulty Level</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {difficultyLevels.map((level) => (
+                        <Button
+                          key={level.id}
+                          variant={selectedDifficulty === level.id ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setSelectedDifficulty(level.id)}
+                          className={
+                            level.id === 'beginner' ? 'bg-green-100 text-green-800 hover:bg-green-200 border-green-200' :
+                            level.id === 'intermediate' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-yellow-200' :
+                            'bg-red-100 text-red-800 hover:bg-red-200 border-red-200'
+                          }
+                        >
+                          {level.name}
+                        </Button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {difficultyLevels.find(level => level.id === selectedDifficulty)?.description}
+                    </p>
+                  </div>
+                  
+                  {/* Videos grid with difficulty filtering */}
+                  <div>
+                    <h3 className="text-lg font-medium mb-4">
+                      {difficultyLevels.find(level => level.id === selectedDifficulty)?.name} {categories.find(cat => cat.id === selectedCategory)?.name}
+                    </h3>
+                    
+                    {/* Filter videos by selected difficulty */}
+                    {(() => {
+                      const filteredVideos = categoryVideos.filter(
+                        video => video.difficulty === selectedDifficulty
+                      );
+                      
+                      if (filteredVideos.length === 0) {
+                        return (
+                          <div className="text-center py-8 bg-gray-50 rounded-lg">
+                            <p className="text-gray-500">No videos found for this difficulty level</p>
+                            <p className="text-sm text-gray-400 mt-1">Try selecting a different difficulty level</p>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {filteredVideos.map((video) => (
+                            <Card key={video.id} className="overflow-hidden h-full flex flex-col">
+                              <div 
+                                className="relative aspect-video cursor-pointer overflow-hidden"
+                                onClick={() => playVideo(video)}
+                              >
+                                <img 
+                                  src={video.thumbnailUrl} 
+                                  alt={video.title} 
+                                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <PlayCircle className="h-12 w-12 text-white" />
+                                </div>
+                                <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded px-1.5 py-0.5">
+                                  {formatVideoLength(video.length)}
+                                </div>
+                                <div className="absolute top-2 left-2">
+                                  <span className={`
+                                    text-xs rounded px-2 py-1 font-medium
+                                    ${video.difficulty === 'beginner' ? 'bg-green-100 text-green-800' : 
+                                      video.difficulty === 'intermediate' ? 'bg-yellow-100 text-yellow-800' : 
+                                      'bg-red-100 text-red-800'}
+                                  `}>
+                                    {video.difficulty ? `${video.difficulty.charAt(0).toUpperCase()}${video.difficulty.slice(1)}` : 'Beginner'}
+                                  </span>
+                                </div>
+                              </div>
+                              <CardHeader className="p-3 pb-2">
+                                <CardTitle className="text-base line-clamp-2 h-12">{video.title}</CardTitle>
+                              </CardHeader>
+                              <CardFooter className="p-3 pt-0 mt-auto">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="ml-auto"
+                                  onClick={() => playVideo(video)}
+                                >
+                                  <PlayCircle className="h-4 w-4 mr-1" />
+                                  Watch
+                                </Button>
+                              </CardFooter>
+                            </Card>
+                          ))}
                         </div>
-                        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded px-1.5 py-0.5">
-                          {formatVideoLength(video.length)}
+                      );
+                    })()}
+                  </div>
+                  
+                  {/* Difficulty level descriptions */}
+                  <div className="border rounded-lg p-4 mt-8 bg-gray-50">
+                    <h3 className="font-medium mb-2">About Our Difficulty Levels</h3>
+                    <div className="grid gap-3 mt-2">
+                      <div className="flex gap-2">
+                        <div className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">Beginner</div>
+                        <div className="text-sm">
+                          <p>First-time cooks: Basic recipes like how to fry an egg, make scrambled eggs, or a simple omelette</p>
                         </div>
                       </div>
-                      <CardHeader className="p-3 pb-2">
-                        <CardTitle className="text-base line-clamp-2 h-12">{video.title}</CardTitle>
-                      </CardHeader>
-                      <CardFooter className="p-3 pt-0 mt-auto">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="ml-auto"
-                          onClick={() => playVideo(video)}
-                        >
-                          <PlayCircle className="h-4 w-4 mr-1" />
-                          Watch
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
+                      <div className="flex gap-2">
+                        <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">Intermediate</div>
+                        <div className="text-sm">
+                          <p>Builds on basics: Poached eggs with hollandaise, egg dishes with multiple components</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">Advanced</div>
+                        <div className="text-sm">
+                          <p>Complex techniques: Soufflés, multi-component egg dishes, and restaurant-quality preparations</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="text-center py-8">
