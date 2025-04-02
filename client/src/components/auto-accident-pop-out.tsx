@@ -117,21 +117,21 @@ const accidentVideos: Video[] = [
     id: "video1",
     title: "What to Do Immediately After an Accident",
     description: "Step-by-step guidance on the critical first 15 minutes after a car crash",
-    thumbnailUrl: "https://i.ytimg.com/vi/xtJhsqn4QcA/mqdefault.jpg",
+    thumbnailUrl: "/accident-video-1.jpg", // Using default image path
     duration: "4:26"
   },
   {
     id: "video2",
     title: "How to Document an Accident Scene Properly",
     description: "Essential tips for gathering evidence that will help your insurance claim",
-    thumbnailUrl: "https://i.ytimg.com/vi/nQJMWwHVHcM/mqdefault.jpg",
+    thumbnailUrl: "/accident-video-2.jpg", // Using default image path
     duration: "3:15"
   },
   {
     id: "video3",
     title: "Dealing with Insurance Companies After an Accident",
     description: "Expert advice on navigating the claims process for the best outcome",
-    thumbnailUrl: "https://i.ytimg.com/vi/aolXcXmbMU8/mqdefault.jpg",
+    thumbnailUrl: "/accident-video-3.jpg", // Using default image path
     duration: "5:42"
   }
 ];
@@ -258,11 +258,13 @@ export default function AutoAccidentPopOut() {
         {accidentVideos.map(video => (
           <Card key={video.id} className="overflow-hidden">
             <div className="relative pb-[56.25%] bg-gray-100">
-              <img 
-                src={video.thumbnailUrl} 
-                alt={video.title}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
+              {/* Fallback image display with custom styling */}
+              <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-red-50">
+                <div className="text-center">
+                  <MonitorPlay className="h-12 w-12 text-red-400 mx-auto mb-2" />
+                  <div className="text-xs text-red-700 font-medium">Auto Safety Video</div>
+                </div>
+              </div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <Button variant="outline" size="icon" className="rounded-full bg-white/80 hover:bg-white">
                   <Play className="h-6 w-6 text-red-500" />
