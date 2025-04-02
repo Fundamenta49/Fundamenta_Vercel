@@ -38,6 +38,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Progress } from "@/components/ui/progress";
+import { VideoPlayerDialog } from "@/components/video-player-dialog";
 
 // Define quiz questions
 interface QuizQuestion {
@@ -116,21 +117,21 @@ interface Video {
 
 const accidentVideos: Video[] = [
   {
-    id: "video1",
+    id: "4ELJGfRla6k",
     title: "What to Do Immediately After an Accident",
     description: "Step-by-step guidance on the critical first 15 minutes after a car crash",
     thumbnailUrl: "/accident-video-1.jpg", // Using default image path
     duration: "4:26"
   },
   {
-    id: "video2",
+    id: "qQtVS4h7l3g",
     title: "How to Document an Accident Scene Properly",
     description: "Essential tips for gathering evidence that will help your insurance claim",
     thumbnailUrl: "/accident-video-2.jpg", // Using default image path
     duration: "3:15"
   },
   {
-    id: "video3",
+    id: "LR1h_wFxRbk",
     title: "Dealing with Insurance Companies After an Accident",
     description: "Expert advice on navigating the claims process for the best outcome",
     thumbnailUrl: "/accident-video-3.jpg", // Using default image path
@@ -154,13 +155,20 @@ export default function AutoAccidentPopOut() {
   const [quizScore, setQuizScore] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
   
+  // State for video player dialog
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  
   // Handle video play action
   const handlePlayVideo = (video: Video) => {
+    setSelectedVideo(video);
+    setVideoDialogOpen(true);
+    
     toast({
       title: `Playing: ${video.title}`,
-      description: "This is a demo. In a production environment, this would play the actual video.",
+      description: "Opening video player...",
       className: "bg-red-50 border-red-200 text-red-900",
-      duration: 3000,
+      duration: 1500,
     });
   };
   
@@ -669,6 +677,17 @@ export default function AutoAccidentPopOut() {
         {currentSection === "videos" && renderVideos()}
         {currentSection === "quiz" && renderQuiz()}
       </FullScreenDialogBody>
+      
+      {/* Video Player Dialog */}
+      {selectedVideo && (
+        <VideoPlayerDialog
+          open={videoDialogOpen}
+          onOpenChange={setVideoDialogOpen}
+          videoId={selectedVideo.id}
+          title={selectedVideo.title}
+          description={selectedVideo.description}
+        />
+      )}
     </div>
   );
 }
