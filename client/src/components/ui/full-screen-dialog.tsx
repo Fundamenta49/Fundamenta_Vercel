@@ -27,9 +27,8 @@ const FullScreenDialogOverlay = React.forwardRef<
         className
       )}
       style={{
-        // Instead of using a mask cutout, we'll make the entire overlay not capture pointer events
-        // This lets all mouse clicks go through to whatever is underneath (including the menu button)
-        pointerEvents: 'none'
+        // Use clip-path to create a cutout for the menu button in the top-left corner
+        clipPath: 'polygon(48px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 48px, 48px 48px)'
       }}
       {...props}
     />
@@ -84,11 +83,9 @@ const FullScreenDialogContent = React.forwardRef<
             backgroundColor: 'white',
             // Ensure full-screen dialog doesn't block the sidebar menu button
             boxSizing: 'border-box',
-            // Make the leftmost 60px of the screen not capture pointer events
-            // This creates a clickable "safe zone" for the menu button
-            paddingLeft: '60px',
-            maskImage: 'linear-gradient(to right, transparent 48px, white 48px)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 48px, white 48px)'
+            // Instead of completely disabling pointer events, we'll use a clip-path
+            // to create a clickable area in the top-left corner for the menu button
+            clipPath: 'polygon(48px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 48px, 48px 48px)'
           }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
@@ -101,6 +98,7 @@ const FullScreenDialogContent = React.forwardRef<
               "w-full h-full bg-white dark:bg-gray-950 shadow-xl duration-200 overflow-auto",
               className
             )}
+            style={{ pointerEvents: 'auto' }} // This re-enables pointer events for the inner content
             {...props}
           >
             {/* Swipe handle indicator */}
