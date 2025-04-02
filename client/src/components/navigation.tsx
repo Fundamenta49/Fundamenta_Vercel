@@ -121,11 +121,11 @@ export default function Navigation() {
               </button>
             ))}
             
-            {/* Tour Settings Button */}
+            {/* Help & Support Button */}
             <div className="mt-4 mx-2">
               <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
                 <HelpCircle className="h-4 w-4" />
-                <span>Help & Settings</span>
+                <span>Help & Support</span>
               </div>
               <TourSettings />
             </div>
@@ -189,12 +189,12 @@ export default function Navigation() {
           </button>
         ))}
         
-        {/* Help & Tour Settings */}
+        {/* Help & Support */}
         <div className={cn("mt-auto pt-6", isMinimized ? "absolute bottom-4 left-0 right-0 flex justify-center" : "mt-auto pt-6")}>
           {!isMinimized && (
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-1 px-3">
               <HelpCircle className="h-4 w-4" />
-              <span>Help & Settings</span>
+              <span>Help & Support</span>
             </div>
           )}
           <TourSettings />

@@ -29,19 +29,6 @@ import CopingWithFailureCourse from "@/pages/learning/courses/coping-with-failur
 import ConversationSkillsCourse from "@/pages/learning/courses/conversation-skills";
 import FormingPositiveHabitsCourse from "@/pages/learning/courses/forming-positive-habits";
 import PublicSpeakingCourse from "@/pages/learning/courses/public-speaking";
-import WelcomeTour from "@/components/welcome-tour";
-import { OnboardingProvider } from "@/lib/onboarding-context";
-import { 
-  initialTour,
-  financeTour,
-  careerTour,
-  wellnessTour,
-  learningTour,
-  activeTour,
-  emergencyTour
-} from "@/lib/onboarding-tours";
-import { OnboardingTour } from "@/components/onboarding-tour";
-import { TourDismissButton } from "@/components/tour-dismiss-button";
 
 function Router() {
   return (
@@ -74,9 +61,6 @@ function Router() {
         <Route path="/learning/courses/public-speaking" component={PublicSpeakingCourse} />
         <Route component={NotFound} />
       </Switch>
-      <WelcomeTour />
-      <OnboardingTour />
-      <TourDismissButton />
       <Toaster />
     </Layout>
   );
@@ -85,17 +69,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <OnboardingProvider tours={[
-        initialTour,
-        financeTour,
-        careerTour,
-        wellnessTour,
-        learningTour,
-        activeTour, 
-        emergencyTour
-      ]}>
-        <Router />
-      </OnboardingProvider>
+      <Router />
     </QueryClientProvider>
   );
 }
