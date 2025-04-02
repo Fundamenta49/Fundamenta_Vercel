@@ -208,7 +208,7 @@ export default function Emergency() {
       </FullScreenDialog>
 
       <FullScreenDialog open={isAutoAccidentOpen} onOpenChange={setIsAutoAccidentOpen}>
-        <FullScreenDialogContent themeColor="#ef4444">
+        <FullScreenDialogContent themeColor="#ef4444" className="overflow-x-hidden">
           <AutoAccidentPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>

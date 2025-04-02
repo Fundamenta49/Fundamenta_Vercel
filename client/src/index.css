@@ -105,6 +105,8 @@
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    position: relative;
+    width: 100%;
   }
 
   /* Add a new class for input text color */
@@ -125,6 +127,8 @@
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
     transition: margin-left 0.3s ease;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   body.sidebar-minimized {
@@ -205,6 +209,7 @@
       margin-left: 0;
       width: 100%;
       padding: 1rem 0.5rem;
+      overflow-x: hidden;
     }
     
     .card {
@@ -218,6 +223,11 @@
     
     .grid {
       grid-gap: 0.75rem;
+    }
+    
+    [role="dialog"] {
+      overflow-x: hidden;
+      max-width: 100vw;
     }
   }
 
@@ -240,5 +250,11 @@
   .scroll-container-x::-webkit-scrollbar-thumb:hover,
   .tabs-container::-webkit-scrollbar-thumb:hover {
     background: var(--wood-light);
+  }
+  
+  /* Fix for full-screen dialogs */
+  [role="dialog"] > div {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
   }
 }
