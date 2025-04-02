@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Brain, Flame, Heart, PhoneCall, X, ClipboardList, Car } from "lucide-react";
+import { AlertCircle, Brain, Flame, Heart, PhoneCall, ClipboardList, Car } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 import {
   FullScreenDialog,
   FullScreenDialogContent,
@@ -78,19 +77,14 @@ export default function Emergency() {
   useEffect(() => {
     // Show disclaimer as a dismissable toast
     if (showDisclaimer) {
-      const { dismiss: dismissDisclaimer } = toast({
+      toast({
         title: "Emergency Disclaimer",
         description: "In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).",
         variant: "destructive",
         duration: 15000, // 15 seconds
-        action: (
-          <Button variant="outline" size="sm" onClick={() => {
-            dismissDisclaimer();
-            setShowDisclaimer(false);
-          }}>
-            <X className="h-4 w-4" />
-          </Button>
-        ),
+        onOpenChange: (open) => {
+          if (!open) setShowDisclaimer(false);
+        },
       });
     }
   }, [showDisclaimer, toast]);
@@ -101,30 +95,20 @@ export default function Emergency() {
       setIsEmergencyAIOpen(true);
       
       // Show AI Assistant disclaimer toast
-      const { dismiss: dismissAI } = toast({
+      toast({
         title: "AI Assistant Disclaimer",
         description: "For immediate emergency assistance, always call your local emergency services first. This AI assistant provides general guidance only.",
         duration: 10000,
-        action: (
-          <Button variant="outline" size="sm" onClick={() => dismissAI()}>
-            <X className="h-4 w-4" />
-          </Button>
-        ),
       });
     }
     else if (sectionId === 'checklists') {
       setIsChecklistsOpen(true);
       
       // Show Emergency Checklists disclaimer toast
-      const { dismiss: dismissChecklists } = toast({
+      toast({
         title: "Emergency Checklists",
         description: "These checklists provide general preparation guidelines. Adapt them to your specific situation and local emergency protocols.",
         duration: 10000,
-        action: (
-          <Button variant="outline" size="sm" onClick={() => dismissChecklists()}>
-            <X className="h-4 w-4" />
-          </Button>
-        ),
       });
     }
     else if (sectionId === 'guides') {
@@ -134,16 +118,11 @@ export default function Emergency() {
       setIsAutoAccidentOpen(true);
       
       // Show Auto Accident disclaimer toast
-      const { dismiss } = toast({
+      toast({
         title: "Auto Accident Response",
         description: "In case of a serious accident with injuries, immediately call your local emergency services (911 in the US).",
         variant: "destructive",
         duration: 10000,
-        action: (
-          <Button variant="outline" size="sm" onClick={() => dismiss()}>
-            <X className="h-4 w-4" />
-          </Button>
-        ),
       });
     }
     else if (sectionId === 'fire') {
@@ -153,15 +132,10 @@ export default function Emergency() {
       setIsCPRGuideOpen(true);
       
       // Show CPR Training disclaimer toast
-      const { dismiss: dismissCPR } = toast({
+      toast({
         title: "CPR Training Disclaimer",
         description: "This guide is not a substitute for professional CPR training. Please seek certified training for proper CPR techniques.",
         duration: 10000,
-        action: (
-          <Button variant="outline" size="sm" onClick={() => dismissCPR()}>
-            <X className="h-4 w-4" />
-          </Button>
-        ),
       });
     }
   };
