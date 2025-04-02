@@ -117,25 +117,25 @@ interface Video {
 
 const accidentVideos: Video[] = [
   {
-    id: "4ELJGfRla6k",
-    title: "What to Do Immediately After an Accident",
-    description: "Step-by-step guidance on the critical first 15 minutes after a car crash",
+    id: "-RKNElMwERo",
+    title: "What To Do After a Car Accident",
+    description: "Former NYPD Officer's safety tips on what to do immediately after a car accident",
     thumbnailUrl: "/accident-video-1.jpg", // Using default image path
-    duration: "4:26"
+    duration: "8:47"
   },
   {
-    id: "qQtVS4h7l3g",
-    title: "How to Document an Accident Scene Properly",
-    description: "Essential tips for gathering evidence that will help your insurance claim",
+    id: "OjipGGSV8wo",
+    title: "Car Accident Evidence: What to Document",
+    description: "Learn what evidence to collect after a crash to protect your rights and insurance claim",
     thumbnailUrl: "/accident-video-2.jpg", // Using default image path
-    duration: "3:15"
+    duration: "4:59"
   },
   {
-    id: "LR1h_wFxRbk",
-    title: "Dealing with Insurance Companies After an Accident",
-    description: "Expert advice on navigating the claims process for the best outcome",
+    id: "CMgA_DX6-90",
+    title: "What to Say to Insurance Adjuster",
+    description: "Expert advice on how to communicate with insurance adjusters after an accident",
     thumbnailUrl: "/accident-video-3.jpg", // Using default image path
-    duration: "5:42"
+    duration: "6:13"
   }
 ];
 
