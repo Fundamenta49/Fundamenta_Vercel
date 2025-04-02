@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Brain, Flame, Heart, PhoneCall, X, ClipboardList } from "lucide-react";
+import { AlertCircle, Brain, Flame, Heart, PhoneCall, X, ClipboardList, Car } from "lucide-react";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import EmergencyGuidePopOut from "@/components/emergency-guide-pop-out";
 import FireSafetyPopOut from "@/components/fire-safety-pop-out";
 import CPRGuidePopOut from "@/components/cpr-guide-pop-out";
 import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out";
+import AutoAccidentPopOut from "@/components/auto-accident-pop-out";
 
 // Define section properties
 type SectionType = {
@@ -44,6 +45,12 @@ const SECTIONS: SectionType[] = [
     icon: PhoneCall,
   },
   {
+    id: 'auto',
+    title: 'Auto Accident Response',
+    description: "What to do if you're involved in a vehicle accident",
+    icon: Car,
+  },
+  {
     id: 'fire',
     title: 'Fire Safety',
     description: 'Learn about fire prevention and emergency procedures',
@@ -68,6 +75,7 @@ export default function Emergency() {
   const [isFireSafetyOpen, setIsFireSafetyOpen] = useState(false);
   const [isCPRGuideOpen, setIsCPRGuideOpen] = useState(false);
   const [isChecklistsOpen, setIsChecklistsOpen] = useState(false);
+  const [isAutoAccidentOpen, setIsAutoAccidentOpen] = useState(false);
 
   useEffect(() => {
     // Show disclaimer as a dismissable toast
@@ -120,6 +128,22 @@ export default function Emergency() {
     }
     else if (sectionId === 'guides') {
       setIsEmergencyGuideOpen(true);
+    }
+    else if (sectionId === 'auto') {
+      setIsAutoAccidentOpen(true);
+      
+      // Show Auto Accident disclaimer toast
+      toast({
+        title: "Auto Accident Response",
+        description: "In case of a serious accident with injuries, immediately call your local emergency services (911 in the US).",
+        variant: "destructive",
+        duration: 10000,
+        action: (
+          <Button variant="outline" size="sm" onClick={() => {}}>
+            <X className="h-4 w-4" />
+          </Button>
+        ),
+      });
     }
     else if (sectionId === 'fire') {
       setIsFireSafetyOpen(true);
@@ -182,6 +206,12 @@ export default function Emergency() {
       <FullScreenDialog open={isChecklistsOpen} onOpenChange={setIsChecklistsOpen}>
         <FullScreenDialogContent themeColor="#ef4444">
           <EmergencyChecklistPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isAutoAccidentOpen} onOpenChange={setIsAutoAccidentOpen}>
+        <FullScreenDialogContent themeColor="#ef4444">
+          <AutoAccidentPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
