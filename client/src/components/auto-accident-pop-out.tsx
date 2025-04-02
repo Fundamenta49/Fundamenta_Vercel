@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   FullScreenDialogHeader,
   FullScreenDialogTitle,
   FullScreenDialogDescription,
   FullScreenDialogBody,
 } from "@/components/ui/full-screen-dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Card, 
   CardContent, 
@@ -29,8 +28,6 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default function AutoAccidentPopOut() {
-  const [activeTab, setActiveTab] = useState("immediate");
-
   return (
     <div className="w-full max-w-screen-xl mx-auto">
       <FullScreenDialogHeader>
@@ -52,15 +49,10 @@ export default function AutoAccidentPopOut() {
           </AlertDescription>
         </Alert>
         
-        <Tabs defaultValue="immediate" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-6 w-full">
-            <TabsTrigger value="immediate">Immediate Steps</TabsTrigger>
-            <TabsTrigger value="documentation">Documentation</TabsTrigger>
-            <TabsTrigger value="after">After the Accident</TabsTrigger>
-          </TabsList>
-          
-          {/* Immediate Steps Content */}
-          <TabsContent value="immediate" className="space-y-6">
+        <div className="space-y-8 w-full">
+          {/* Immediate Steps Section */}
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">Immediate Steps</h2>
             <div className="space-y-4">
               <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">1</Badge>
@@ -122,18 +114,12 @@ export default function AutoAccidentPopOut() {
                   <span><strong>Police information:</strong> Officer's name, badge number, and how to obtain the accident report.</span>
                 </li>
               </ul>
-              <Button 
-                variant="outline" 
-                className="mt-4 w-full" 
-                onClick={() => setActiveTab("documentation")}
-              >
-                Next: Document Everything <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
             </div>
-          </TabsContent>
+          </div>
           
-          {/* Documentation Content */}
-          <TabsContent value="documentation" className="space-y-6">
+          {/* Documentation Section */}
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">Documentation</h2>
             <div className="space-y-4">
               <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">4</Badge>
@@ -191,25 +177,12 @@ export default function AutoAccidentPopOut() {
                   <span>Point of impact</span>
                 </li>
               </ul>
-              <div className="mt-4 flex justify-between">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setActiveTab("immediate")}
-                >
-                  Back
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setActiveTab("after")}
-                >
-                  Next: After the Accident <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
             </div>
-          </TabsContent>
+          </div>
           
-          {/* After the Accident Content */}
-          <TabsContent value="after" className="space-y-6">
+          {/* After the Accident Section */}
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">After the Accident</h2>
             <div className="space-y-4">
               <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">6</Badge>
@@ -299,17 +272,9 @@ export default function AutoAccidentPopOut() {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-              <div className="mt-4">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setActiveTab("documentation")}
-                >
-                  Back
-                </Button>
-              </div>
             </div>
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
       </FullScreenDialogBody>
     </div>
   );
