@@ -512,10 +512,10 @@ export default function EmergencyChecklistPopOut() {
         
         {/* Tabs for before, during, after phases */}
         <Tabs defaultValue="before" className="w-full">
-          <TabsList className="w-full">
-            <TabsTrigger value="before" className="flex-1">Before</TabsTrigger>
-            <TabsTrigger value="during" className="flex-1">During</TabsTrigger>
-            <TabsTrigger value="after" className="flex-1">After</TabsTrigger>
+          <TabsList className="w-full bg-red-50 border-red-200">
+            <TabsTrigger value="before" className="flex-1 data-[state=active]:bg-red-100 data-[state=active]:text-red-900">Before</TabsTrigger>
+            <TabsTrigger value="during" className="flex-1 data-[state=active]:bg-red-100 data-[state=active]:text-red-900">During</TabsTrigger>
+            <TabsTrigger value="after" className="flex-1 data-[state=active]:bg-red-100 data-[state=active]:text-red-900">After</TabsTrigger>
           </TabsList>
           
           {/* Before Items */}
@@ -525,7 +525,7 @@ export default function EmergencyChecklistPopOut() {
                 <h3 className="font-medium text-gray-900">Before {currentChecklist.title.toLowerCase()} occurs:</h3>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="border-red-200 hover:bg-red-50 hover:text-red-700">
                       <Plus className="h-4 w-4 mr-1" /> Add Item
                     </Button>
                   </DialogTrigger>
@@ -561,7 +561,10 @@ export default function EmergencyChecklistPopOut() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button onClick={() => addNewItem(currentChecklist.id, "before")}>
+                      <Button 
+                        onClick={() => addNewItem(currentChecklist.id, "before")}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                      >
                         Add Item
                       </Button>
                     </DialogFooter>
@@ -631,7 +634,7 @@ export default function EmergencyChecklistPopOut() {
                 <h3 className="font-medium text-gray-900">During {currentChecklist.title.toLowerCase()}:</h3>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="border-red-200 hover:bg-red-50 hover:text-red-700">
                       <Plus className="h-4 w-4 mr-1" /> Add Item
                     </Button>
                   </DialogTrigger>
@@ -667,7 +670,10 @@ export default function EmergencyChecklistPopOut() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button onClick={() => addNewItem(currentChecklist.id, "during")}>
+                      <Button 
+                        onClick={() => addNewItem(currentChecklist.id, "during")}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                      >
                         Add Item
                       </Button>
                     </DialogFooter>
@@ -737,7 +743,7 @@ export default function EmergencyChecklistPopOut() {
                 <h3 className="font-medium text-gray-900">After {currentChecklist.title.toLowerCase()}:</h3>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="border-red-200 hover:bg-red-50 hover:text-red-700">
                       <Plus className="h-4 w-4 mr-1" /> Add Item
                     </Button>
                   </DialogTrigger>
@@ -773,7 +779,10 @@ export default function EmergencyChecklistPopOut() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button onClick={() => addNewItem(currentChecklist.id, "after")}>
+                      <Button 
+                        onClick={() => addNewItem(currentChecklist.id, "after")}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                      >
                         Add Item
                       </Button>
                     </DialogFooter>
