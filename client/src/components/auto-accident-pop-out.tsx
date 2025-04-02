@@ -117,21 +117,21 @@ const accidentVideos: Video[] = [
     id: "video1",
     title: "What to Do Immediately After an Accident",
     description: "Step-by-step guidance on the critical first 15 minutes after a car crash",
-    thumbnailUrl: "https://img.youtube.com/vi/dydqfnQUoJQ/mqdefault.jpg",
+    thumbnailUrl: "https://i.ytimg.com/vi/xtJhsqn4QcA/mqdefault.jpg",
     duration: "4:26"
   },
   {
     id: "video2",
     title: "How to Document an Accident Scene Properly",
     description: "Essential tips for gathering evidence that will help your insurance claim",
-    thumbnailUrl: "https://img.youtube.com/vi/7KiD5yU4XT8/mqdefault.jpg",
+    thumbnailUrl: "https://i.ytimg.com/vi/nQJMWwHVHcM/mqdefault.jpg",
     duration: "3:15"
   },
   {
     id: "video3",
     title: "Dealing with Insurance Companies After an Accident",
     description: "Expert advice on navigating the claims process for the best outcome",
-    thumbnailUrl: "https://img.youtube.com/vi/R1mMJYIxLmI/mqdefault.jpg",
+    thumbnailUrl: "https://i.ytimg.com/vi/aolXcXmbMU8/mqdefault.jpg",
     duration: "5:42"
   }
 ];
