@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Brain, Flame, Heart, PhoneCall, X } from "lucide-react";
+import { AlertCircle, Brain, Flame, Heart, PhoneCall, X, ClipboardList } from "lucide-react";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import EmergencyAIPopOut from "@/components/emergency-ai-pop-out";
 import EmergencyGuidePopOut from "@/components/emergency-guide-pop-out";
 import FireSafetyPopOut from "@/components/fire-safety-pop-out";
 import CPRGuidePopOut from "@/components/cpr-guide-pop-out";
+import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out";
 
 // Define section properties
 type SectionType = {
@@ -29,6 +30,12 @@ const SECTIONS: SectionType[] = [
     title: 'Emergency AI Assistant',
     description: 'Get immediate guidance for emergency situations',
     icon: Brain,
+  },
+  {
+    id: 'checklists',
+    title: 'Emergency Checklists',
+    description: 'Preparation steps for different types of emergencies',
+    icon: ClipboardList,
   },
   {
     id: 'guides',
@@ -60,6 +67,7 @@ export default function Emergency() {
   const [isEmergencyGuideOpen, setIsEmergencyGuideOpen] = useState(false);
   const [isFireSafetyOpen, setIsFireSafetyOpen] = useState(false);
   const [isCPRGuideOpen, setIsCPRGuideOpen] = useState(false);
+  const [isChecklistsOpen, setIsChecklistsOpen] = useState(false);
 
   useEffect(() => {
     // Show disclaimer as a dismissable toast
@@ -87,6 +95,21 @@ export default function Emergency() {
       toast({
         title: "AI Assistant Disclaimer",
         description: "For immediate emergency assistance, always call your local emergency services first. This AI assistant provides general guidance only.",
+        duration: 10000,
+        action: (
+          <Button variant="outline" size="sm" onClick={() => {}}>
+            <X className="h-4 w-4" />
+          </Button>
+        ),
+      });
+    }
+    else if (sectionId === 'checklists') {
+      setIsChecklistsOpen(true);
+      
+      // Show Emergency Checklists disclaimer toast
+      toast({
+        title: "Emergency Checklists",
+        description: "These checklists provide general preparation guidelines. Adapt them to your specific situation and local emergency protocols.",
         duration: 10000,
         action: (
           <Button variant="outline" size="sm" onClick={() => {}}>
@@ -153,6 +176,12 @@ export default function Emergency() {
       <FullScreenDialog open={isCPRGuideOpen} onOpenChange={setIsCPRGuideOpen}>
         <FullScreenDialogContent themeColor="#ef4444">
           <CPRGuidePopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isChecklistsOpen} onOpenChange={setIsChecklistsOpen}>
+        <FullScreenDialogContent themeColor="#ef4444">
+          <EmergencyChecklistPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
