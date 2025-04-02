@@ -30,8 +30,10 @@ import {
   Trophy,
   X,
   MonitorPlay,
-  ChevronLeft
+  ChevronLeft,
+  ExternalLink
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -139,6 +141,9 @@ const accidentVideos: Video[] = [
 type SectionType = "menu" | "guide" | "videos" | "quiz";
 
 export default function AutoAccidentPopOut() {
+  // Access toast system
+  const { toast } = useToast();
+  
   // State for section navigation
   const [currentSection, setCurrentSection] = useState<SectionType>("menu");
 
@@ -148,6 +153,16 @@ export default function AutoAccidentPopOut() {
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
   const [quizScore, setQuizScore] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
+  
+  // Handle video play action
+  const handlePlayVideo = (video: Video) => {
+    toast({
+      title: `Playing: ${video.title}`,
+      description: "This is a demo. In a production environment, this would play the actual video.",
+      className: "bg-red-50 border-red-200 text-red-900",
+      duration: 3000,
+    });
+  };
   
   // Handle quiz answer selection
   const handleAnswerSelect = (answerIndex: number) => {
@@ -259,14 +274,22 @@ export default function AutoAccidentPopOut() {
           <Card key={video.id} className="overflow-hidden">
             <div className="relative pb-[56.25%] bg-gray-100">
               {/* Fallback image display with custom styling */}
-              <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-red-50">
+              <div 
+                className="absolute inset-0 w-full h-full flex items-center justify-center bg-red-50 cursor-pointer" 
+                onClick={() => handlePlayVideo(video)}
+              >
                 <div className="text-center">
                   <MonitorPlay className="h-12 w-12 text-red-400 mx-auto mb-2" />
                   <div className="text-xs text-red-700 font-medium">Auto Safety Video</div>
                 </div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <Button variant="outline" size="icon" className="rounded-full bg-white/80 hover:bg-white">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="rounded-full bg-white/80 hover:bg-white"
+                  onClick={() => handlePlayVideo(video)}
+                >
                   <Play className="h-6 w-6 text-red-500" />
                   <span className="sr-only">Play video</span>
                 </Button>
@@ -282,8 +305,13 @@ export default function AutoAccidentPopOut() {
               <CardDescription className="text-xs">{video.description}</CardDescription>
             </CardContent>
             <CardFooter className="pt-3 pb-3">
-              <Button variant="outline" size="sm" className="w-full">
-                Watch Video
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full"
+                onClick={() => handlePlayVideo(video)}
+              >
+                <Play className="h-4 w-4 mr-2" /> Watch Video
               </Button>
             </CardFooter>
           </Card>
