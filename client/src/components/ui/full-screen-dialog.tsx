@@ -29,8 +29,8 @@ const FullScreenDialogOverlay = React.forwardRef<
       style={{
         // Style that creates a clickable hole for the navigation button
         ...(isMobile ? {
-          maskImage: 'radial-gradient(circle at 20px 40px, transparent 24px, black 25px)',
-          WebkitMaskImage: 'radial-gradient(circle at 20px 40px, transparent 24px, black 25px)'
+          maskImage: 'radial-gradient(circle at 25px 45px, transparent 30px, black 31px)',
+          WebkitMaskImage: 'radial-gradient(circle at 25px 45px, transparent 30px, black 31px)'
         } : {})
       }}
       {...props}
@@ -87,8 +87,8 @@ const FullScreenDialogContent = React.forwardRef<
             // Ensure full-screen dialog doesn't block the sidebar menu button
             boxSizing: 'border-box',
             // Add the same mask as the overlay for the hamburger menu button
-            maskImage: 'radial-gradient(circle at 20px 40px, transparent 24px, black 25px)',
-            WebkitMaskImage: 'radial-gradient(circle at 20px 40px, transparent 24px, black 25px)'
+            maskImage: 'radial-gradient(circle at 25px 45px, transparent 30px, black 31px)',
+            WebkitMaskImage: 'radial-gradient(circle at 25px 45px, transparent 30px, black 31px)'
           }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
