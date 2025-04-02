@@ -100,7 +100,7 @@ export default function Emergency() {
       toast({
         title: "AI Assistant Disclaimer",
         description: "For immediate emergency assistance, always call your local emergency services first. This AI assistant provides general guidance only.",
-        duration: 10000,
+        duration: 5000, // Reduced duration for better responsiveness
       });
     }
     else if (sectionId === 'checklists') {
@@ -110,7 +110,7 @@ export default function Emergency() {
       toast({
         title: "Emergency Checklists",
         description: "These checklists provide general preparation guidelines. Adapt them to your specific situation and local emergency protocols.",
-        duration: 10000,
+        duration: 5000, // Reduced duration for better responsiveness
       });
     }
     else if (sectionId === 'guides') {
@@ -124,7 +124,7 @@ export default function Emergency() {
         title: "Auto Accident Response",
         description: "In case of a serious accident with injuries, immediately call your local emergency services (911 in the US).",
         variant: "destructive",
-        duration: 10000,
+        duration: 5000, // Reduced duration for better responsiveness
       });
     }
     else if (sectionId === 'fire') {
@@ -137,7 +137,7 @@ export default function Emergency() {
       toast({
         title: "CPR Training Disclaimer",
         description: "This guide is not a substitute for professional CPR training. Please seek certified training for proper CPR techniques.",
-        duration: 10000,
+        duration: 5000, // Reduced duration for better responsiveness
       });
     }
   };
