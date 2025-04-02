@@ -45,6 +45,7 @@ type EmergencyChecklist = {
   id: string;
   title: string;
   icon: React.ReactNode;
+  iconType: "zap" | "alertCircle" | "alertTriangle"; // Store icon type instead of React element
   description: string;
   beforeItems: ChecklistItem[];
   duringItems: ChecklistItem[];
@@ -59,6 +60,7 @@ const createBaseChecklists = (): EmergencyChecklist[] => [
     id: "natural-disaster",
     title: "Natural Disasters",
     icon: <Zap className="h-5 w-5 text-red-500" />,
+    iconType: "zap",
     description: "Preparation and response for hurricanes, floods, earthquakes, and wildfires",
     beforeItems: [
       { id: generateId("natural-before", 0), text: "Create an emergency plan with your family", critical: true, completed: false },
@@ -90,6 +92,7 @@ const createBaseChecklists = (): EmergencyChecklist[] => [
     id: "medical",
     title: "Medical Emergencies",
     icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+    iconType: "alertCircle",
     description: "How to respond to serious injuries, cardiac events, and other medical crises",
     beforeItems: [
       { id: generateId("medical-before", 0), text: "Learn CPR and basic first aid", critical: true, completed: false },
@@ -119,6 +122,7 @@ const createBaseChecklists = (): EmergencyChecklist[] => [
     id: "home",
     title: "Home Emergencies",
     icon: <AlertTriangle className="h-5 w-5 text-orange-500" />,
+    iconType: "alertTriangle",
     description: "Handling fires, gas leaks, power outages, and carbon monoxide",
     beforeItems: [
       { id: generateId("home-before", 0), text: "Install smoke and carbon monoxide detectors on every level", critical: true, completed: false },
@@ -148,6 +152,7 @@ const createBaseChecklists = (): EmergencyChecklist[] => [
     id: "vehicle",
     title: "Vehicle Emergencies",
     icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
+    iconType: "alertTriangle",
     description: "Handling breakdowns, accidents, and getting stranded",
     beforeItems: [
       { id: generateId("vehicle-before", 0), text: "Keep an emergency kit in your vehicle", critical: true, completed: false },
@@ -178,11 +183,45 @@ const createBaseChecklists = (): EmergencyChecklist[] => [
 // Initialize checklists
 const CHECKLISTS: EmergencyChecklist[] = createBaseChecklists();
 
+// A helper function to recreate icon components from saved iconType
+const getIconFromType = (iconType: string, className: string = "h-5 w-5 text-red-500") => {
+  switch(iconType) {
+    case "zap":
+      return <Zap className={className} />;
+    case "alertCircle":
+      return <AlertCircle className={className} />;
+    case "alertTriangle":
+      return <AlertTriangle className={className} />;
+    default:
+      return <AlertCircle className={className} />;
+  }
+};
+
 export default function EmergencyChecklistPopOut() {
   // State for user-editable checklists
   const [checklists, setChecklists] = useState<EmergencyChecklist[]>(() => {
     const savedChecklists = localStorage.getItem('emergency_checklists');
-    return savedChecklists ? JSON.parse(savedChecklists) : createBaseChecklists();
+    
+    if (savedChecklists) {
+      try {
+        // Parse the saved checklists
+        const parsedChecklists = JSON.parse(savedChecklists);
+        
+        // Reconstruct React components from iconType
+        return parsedChecklists.map((checklist: any) => ({
+          ...checklist,
+          icon: getIconFromType(checklist.iconType, 
+            checklist.id === "vehicle" ? "h-5 w-5 text-yellow-500" : 
+            checklist.id === "home" ? "h-5 w-5 text-orange-500" : 
+            "h-5 w-5 text-red-500")
+        }));
+      } catch (error) {
+        console.error("Error parsing saved checklists:", error);
+        return createBaseChecklists();
+      }
+    }
+    
+    return createBaseChecklists();
   });
 
   // State for adding new checklist item
@@ -211,8 +250,15 @@ export default function EmergencyChecklistPopOut() {
     
     setProgress(newProgress);
     
+    // Create a serializable version of the checklists (without React elements)
+    const serializableChecklists = checklists.map(checklist => ({
+      ...checklist,
+      // Remove the icon property as it's a React element
+      icon: undefined
+    }));
+    
     // Save to local storage
-    localStorage.setItem('emergency_checklists', JSON.stringify(checklists));
+    localStorage.setItem('emergency_checklists', JSON.stringify(serializableChecklists));
   }, [checklists]);
 
   // Helper to calculate progress percentage
