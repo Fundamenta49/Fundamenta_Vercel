@@ -27,8 +27,9 @@ const FullScreenDialogOverlay = React.forwardRef<
         className
       )}
       style={{
-        // No mask needed - we'll let the menu button show naturally
-        // This removes the cutout effect that was causing a pink background to show
+        // Instead of using a mask cutout, we'll make the entire overlay not capture pointer events
+        // This lets all mouse clicks go through to whatever is underneath (including the menu button)
+        pointerEvents: 'none'
       }}
       {...props}
     />
@@ -82,9 +83,12 @@ const FullScreenDialogContent = React.forwardRef<
             overflow: 'auto',
             backgroundColor: 'white',
             // Ensure full-screen dialog doesn't block the sidebar menu button
-            boxSizing: 'border-box'
-            // No mask needed - removing to prevent the pink background showing through
-            // This creates a cleaner look for the menu button
+            boxSizing: 'border-box',
+            // Make the leftmost 60px of the screen not capture pointer events
+            // This creates a clickable "safe zone" for the menu button
+            paddingLeft: '60px',
+            maskImage: 'linear-gradient(to right, transparent 48px, white 48px)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 48px, white 48px)'
           }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
