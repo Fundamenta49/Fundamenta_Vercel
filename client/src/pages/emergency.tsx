@@ -77,15 +77,17 @@ export default function Emergency() {
   useEffect(() => {
     // Show disclaimer as a dismissable toast
     if (showDisclaimer) {
-      toast({
+      const { dismiss } = toast({
         title: "Emergency Disclaimer",
         description: "In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).",
         variant: "destructive",
         duration: 15000, // 15 seconds
-        onOpenChange: (open) => {
-          if (!open) setShowDisclaimer(false);
-        },
       });
+      
+      // Set up a cleanup function to track when the toast is dismissed
+      return () => {
+        setShowDisclaimer(false);
+      };
     }
   }, [showDisclaimer, toast]);
 
