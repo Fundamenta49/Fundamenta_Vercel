@@ -203,20 +203,26 @@ export default function Finance() {
           <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-green-50 text-green-800 rounded-md border-l-4 border-green-500">
             Financial Tools
           </h2>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1 mt-2" data-tour="finance-grid">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5 mt-4" data-tour="finance-grid">
             {SECTIONS.map((section) => (
-              <div key={section.id} className="flex flex-col">
+              <div key={section.id} className="flex flex-col h-full">
                 <button
                   onClick={() => handleCardClick(section.id)}
-                  className="relative flex flex-col items-center justify-between p-2 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-500 h-[100px] sm:h-[120px] w-full"
+                  className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
                   aria-label={`Open ${section.title}`}
                   data-tour={section.id === 'budget' ? 'budget-calculator' : section.id === 'credit' ? 'credit-skills' : `finance-${section.id}`}
                 >
-                  <div className="flex items-center justify-center h-10 w-full">
-                    <section.icon className="w-7 h-7 text-green-500" />
+                  <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
+                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 text-green-500" />
                   </div>
                   
-                  <span className="text-xs sm:text-sm font-medium text-center line-clamp-2 w-full">{section.title}</span>
+                  <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
+                  
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
+                    {section.description.length > 60 
+                      ? `${section.description.substring(0, 60)}...` 
+                      : section.description}
+                  </p>
                 </button>
               </div>
             ))}
