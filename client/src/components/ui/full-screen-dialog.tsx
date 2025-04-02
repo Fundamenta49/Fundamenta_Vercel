@@ -27,11 +27,8 @@ const FullScreenDialogOverlay = React.forwardRef<
         className
       )}
       style={{
-        // Style that creates a clickable hole for the navigation button - just for the menu icon
-        ...(isMobile ? {
-          maskImage: 'radial-gradient(circle at 24px 24px, transparent 16px, black 17px)',
-          WebkitMaskImage: 'radial-gradient(circle at 24px 24px, transparent 16px, black 17px)'
-        } : {})
+        // No mask needed - we'll let the menu button show naturally
+        // This removes the cutout effect that was causing a pink background to show
       }}
       {...props}
     />
@@ -85,10 +82,9 @@ const FullScreenDialogContent = React.forwardRef<
             overflow: 'auto',
             backgroundColor: 'white',
             // Ensure full-screen dialog doesn't block the sidebar menu button
-            boxSizing: 'border-box',
-            // Add the same mask as the overlay for the hamburger menu button - smaller cutout
-            maskImage: 'radial-gradient(circle at 24px 24px, transparent 16px, black 17px)',
-            WebkitMaskImage: 'radial-gradient(circle at 24px 24px, transparent 16px, black 17px)'
+            boxSizing: 'border-box'
+            // No mask needed - removing to prevent the pink background showing through
+            // This creates a cleaner look for the menu button
           }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
