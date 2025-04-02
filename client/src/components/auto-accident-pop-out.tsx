@@ -53,7 +53,7 @@ export default function AutoAccidentPopOut() {
         </Alert>
         
         <Tabs defaultValue="immediate" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-6">
+          <TabsList className="grid grid-cols-3 mb-6 w-full">
             <TabsTrigger value="immediate">Immediate Steps</TabsTrigger>
             <TabsTrigger value="documentation">Documentation</TabsTrigger>
             <TabsTrigger value="after">After the Accident</TabsTrigger>

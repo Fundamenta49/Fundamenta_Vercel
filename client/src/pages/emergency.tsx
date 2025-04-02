@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Brain, Flame, Heart, PhoneCall, X, ClipboardList, Car } from "lucide-react";
-import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -66,7 +65,6 @@ const SECTIONS: SectionType[] = [
 
 export default function Emergency() {
   const [showDisclaimer, setShowDisclaimer] = useState(true);
-  const carouselRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   
   // Dialog states
@@ -166,7 +164,7 @@ export default function Emergency() {
   };
 
   return (
-    <div className="w-full h-full mx-auto p-0">
+    <div className="w-full h-full mx-auto p-0 overflow-hidden">
       <h1 className="text-2xl font-bold tracking-tight text-center mb-2">
         Emergency Assistance
       </h1>
