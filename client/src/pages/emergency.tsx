@@ -78,13 +78,16 @@ export default function Emergency() {
   useEffect(() => {
     // Show disclaimer as a dismissable toast
     if (showDisclaimer) {
-      toast({
+      const { dismiss: dismissDisclaimer } = toast({
         title: "Emergency Disclaimer",
         description: "In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).",
         variant: "destructive",
         duration: 15000, // 15 seconds
         action: (
-          <Button variant="outline" size="sm" onClick={() => setShowDisclaimer(false)}>
+          <Button variant="outline" size="sm" onClick={() => {
+            dismissDisclaimer();
+            setShowDisclaimer(false);
+          }}>
             <X className="h-4 w-4" />
           </Button>
         ),
@@ -98,12 +101,12 @@ export default function Emergency() {
       setIsEmergencyAIOpen(true);
       
       // Show AI Assistant disclaimer toast
-      toast({
+      const { dismiss: dismissAI } = toast({
         title: "AI Assistant Disclaimer",
         description: "For immediate emergency assistance, always call your local emergency services first. This AI assistant provides general guidance only.",
         duration: 10000,
         action: (
-          <Button variant="outline" size="sm" onClick={() => {}}>
+          <Button variant="outline" size="sm" onClick={() => dismissAI()}>
             <X className="h-4 w-4" />
           </Button>
         ),
@@ -113,12 +116,12 @@ export default function Emergency() {
       setIsChecklistsOpen(true);
       
       // Show Emergency Checklists disclaimer toast
-      toast({
+      const { dismiss: dismissChecklists } = toast({
         title: "Emergency Checklists",
         description: "These checklists provide general preparation guidelines. Adapt them to your specific situation and local emergency protocols.",
         duration: 10000,
         action: (
-          <Button variant="outline" size="sm" onClick={() => {}}>
+          <Button variant="outline" size="sm" onClick={() => dismissChecklists()}>
             <X className="h-4 w-4" />
           </Button>
         ),
@@ -131,13 +134,13 @@ export default function Emergency() {
       setIsAutoAccidentOpen(true);
       
       // Show Auto Accident disclaimer toast
-      toast({
+      const { dismiss } = toast({
         title: "Auto Accident Response",
         description: "In case of a serious accident with injuries, immediately call your local emergency services (911 in the US).",
         variant: "destructive",
         duration: 10000,
         action: (
-          <Button variant="outline" size="sm" onClick={() => {}}>
+          <Button variant="outline" size="sm" onClick={() => dismiss()}>
             <X className="h-4 w-4" />
           </Button>
         ),
@@ -150,12 +153,12 @@ export default function Emergency() {
       setIsCPRGuideOpen(true);
       
       // Show CPR Training disclaimer toast
-      toast({
+      const { dismiss: dismissCPR } = toast({
         title: "CPR Training Disclaimer",
         description: "This guide is not a substitute for professional CPR training. Please seek certified training for proper CPR techniques.",
         duration: 10000,
         action: (
-          <Button variant="outline" size="sm" onClick={() => {}}>
+          <Button variant="outline" size="sm" onClick={() => dismissCPR()}>
             <X className="h-4 w-4" />
           </Button>
         ),
