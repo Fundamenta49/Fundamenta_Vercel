@@ -68,6 +68,15 @@ export default {
         'custom-md': 'var(--shadow-md)',
         'custom-lg': 'var(--shadow-lg)',
       },
+      keyframes: {
+        "swipe-hint": {
+          "0%, 100%": { transform: "translateX(0)" },
+          "50%": { transform: "translateX(5px)" },
+        },
+      },
+      animation: {
+        "swipe-hint": "swipe-hint 1.5s ease-in-out infinite",
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],

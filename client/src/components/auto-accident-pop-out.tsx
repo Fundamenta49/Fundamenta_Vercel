@@ -40,7 +40,7 @@ export default function AutoAccidentPopOut() {
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
       
-      <FullScreenDialogBody>
+      <FullScreenDialogBody className="px-2 sm:px-4">
         <Alert className="mb-4 border-red-500 bg-red-50">
           <AlertCircle className="h-4 w-4 text-red-500" />
           <AlertDescription className="text-red-800 text-sm">
@@ -49,12 +49,12 @@ export default function AutoAccidentPopOut() {
           </AlertDescription>
         </Alert>
         
-        <div className="space-y-8 w-full">
+        <div className="space-y-6 sm:space-y-8 w-full">
           {/* Immediate Steps Section */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">Immediate Steps</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">Immediate Steps</h2>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">1</Badge>
                 Safety First
               </h3>
@@ -75,7 +75,7 @@ export default function AutoAccidentPopOut() {
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">2</Badge>
                 Notify Authorities
               </h3>
@@ -96,7 +96,7 @@ export default function AutoAccidentPopOut() {
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">3</Badge>
                 Exchange Information
               </h3>
@@ -119,9 +119,9 @@ export default function AutoAccidentPopOut() {
           
           {/* Documentation Section */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">Documentation</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">Documentation</h2>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">4</Badge>
                 Document the Scene
               </h3>
@@ -129,7 +129,7 @@ export default function AutoAccidentPopOut() {
                 <li className="flex items-start gap-2">
                   <Camera className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                   <span><strong>Take photos</strong> from multiple angles showing:
-                    <ul className="list-disc pl-6 mt-1 space-y-1">
+                    <ul className="list-disc pl-4 sm:pl-6 mt-1 space-y-1 text-xs sm:text-sm">
                       <li>Damage to all vehicles involved</li>
                       <li>The entire accident scene, including road conditions</li>
                       <li>License plates of all vehicles</li>
@@ -141,7 +141,7 @@ export default function AutoAccidentPopOut() {
                 <li className="flex items-start gap-2">
                   <FileText className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                   <span><strong>Take notes</strong> about the accident including:
-                    <ul className="list-disc pl-6 mt-1 space-y-1">
+                    <ul className="list-disc pl-4 sm:pl-6 mt-1 space-y-1 text-xs sm:text-sm">
                       <li>Time, date, and exact location</li>
                       <li>Weather and road conditions</li>
                       <li>Direction of travel for each vehicle</li>
@@ -154,7 +154,7 @@ export default function AutoAccidentPopOut() {
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">5</Badge>
                 Accident Diagram
               </h3>
@@ -182,9 +182,9 @@ export default function AutoAccidentPopOut() {
           
           {/* After the Accident Section */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">After the Accident</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">After the Accident</h2>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">6</Badge>
                 Contact Your Insurance
               </h3>
@@ -209,7 +209,7 @@ export default function AutoAccidentPopOut() {
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">7</Badge>
                 Seek Medical Attention
               </h3>
@@ -230,7 +230,7 @@ export default function AutoAccidentPopOut() {
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-red-600 border-b pb-2">
                 <Badge variant="destructive">8</Badge>
                 Follow Up
               </h3>
