@@ -20,7 +20,6 @@ import {
 import RecipeExplorer from '@/components/recipe-explorer';
 import KitchenSkillsLearning from '@/components/kitchen-skills-learning-updated';
 import CookingTutorialsNew from '@/components/cooking-tutorials-new';
-import KitchenEssentials from '@/components/kitchen-essentials';
 import { Link } from 'wouter';
 
 // Define allowed color values
@@ -185,7 +184,7 @@ const introContent = (
 
 export default function CookingBasics() {
   const [activeDialogContent, setActiveDialogContent] = useState<{
-    type: 'intro' | 'kitchen-tools' | 'cooking-tutorials' | 'recipe-explorer' | 'kitchen-skills';
+    type: 'intro' | 'cooking-tutorials' | 'recipe-explorer' | 'kitchen-skills';
     title: string;
     description: string;
     icon: React.ReactNode;
@@ -196,7 +195,7 @@ export default function CookingBasics() {
   
   // Opens a dialog with the corresponding content
   const openDialog = (
-    type: 'intro' | 'kitchen-tools' | 'cooking-tutorials' | 'recipe-explorer' | 'kitchen-skills',
+    type: 'intro' | 'cooking-tutorials' | 'recipe-explorer' | 'kitchen-skills',
     title: string,
     description: string,
     icon: React.ReactNode,
@@ -223,8 +222,6 @@ export default function CookingBasics() {
     switch (activeDialogContent.type) {
       case 'intro':
         return introContent;
-      case 'kitchen-tools':
-        return <KitchenEssentials />;
       case 'cooking-tutorials':
         return <CookingTutorialsNew />;
       case 'recipe-explorer':
@@ -279,28 +276,6 @@ export default function CookingBasics() {
             <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
               <Book className="h-3.5 w-3.5 mr-1.5" />
               Learn More
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        {/* Kitchen Tools */}
-        <Card 
-          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
-          onClick={() => openDialog('kitchen-tools', 'Essential Kitchen Tools', 'Basic equipment every cook needs', <Utensils className="h-5 w-5" />, 'blue' as ColorKey)}
-        >
-          <CardHeader className="pb-2 pt-4 text-center">
-            <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-2">
-              <Utensils className="h-8 w-8 text-blue-600" />
-            </div>
-            <CardTitle className="text-base">Essential Kitchen Tools</CardTitle>
-            <CardDescription className="text-xs">
-              Basic equipment every cook needs
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="pt-1 pb-4 justify-center">
-            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
-              <Utensils className="h-3.5 w-3.5 mr-1.5" />
-              Explore Tools
             </Button>
           </CardFooter>
         </Card>
