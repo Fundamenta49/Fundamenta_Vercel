@@ -180,17 +180,20 @@ export const searchYouTubeVideos = async (query: string, category?: string): Pro
     if (!data || !data.videos) {
       if (data && data.items && Array.isArray(data.items)) {
         // Handle the YouTubeAPI format
-        return data.items.map((item: YouTubeVideoItem) => ({
-          id: item.id?.videoId || '',
-          title: item.snippet?.title || 'Cooking Tutorial',
-          description: item.snippet?.description || '',
-          thumbnailUrl: item.snippet?.thumbnails?.high?.url || `https://img.youtube.com/vi/${item.id?.videoId}/hqdefault.jpg`,
-          channelTitle: item.snippet?.channelTitle || '',
-          publishedAt: item.snippet?.publishedAt || '',
-          youTubeId: item.id?.videoId || '',
-          views: 0,
-          length: 0
-        })).filter((video: CookingVideo) => Boolean(video.youTubeId));
+        return data.items.map((item: YouTubeVideoItem) => {
+          const videoId = item.id?.videoId || '';
+          return {
+            id: videoId,
+            title: item.snippet?.title || 'Cooking Tutorial',
+            description: item.snippet?.description || '',
+            thumbnailUrl: item.snippet?.thumbnails?.high?.url || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+            channelTitle: item.snippet?.channelTitle || '',
+            publishedAt: item.snippet?.publishedAt || '',
+            youTubeId: videoId, // Ensure the youTubeId is set consistently
+            views: 0,
+            length: 0
+          };
+        }).filter((video: CookingVideo) => Boolean(video.youTubeId));
       }
       
       console.error('Unexpected response format from YouTube search:', data);
@@ -198,17 +201,20 @@ export const searchYouTubeVideos = async (query: string, category?: string): Pro
     }
     
     // Standard format for our API
-    return data.videos.map((video: any) => ({
-      id: video.id || '',
-      title: video.title || 'Cooking Tutorial',
-      description: video.description || '',
-      thumbnailUrl: video.thumbnailUrl || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`,
-      channelTitle: video.channelTitle || '',
-      publishedAt: video.publishedAt || '',
-      youTubeId: video.id || '',
-      views: 0,
-      length: 0
-    })).filter((video: CookingVideo) => Boolean(video.youTubeId));
+    return data.videos.map((video: any) => {
+      const videoId = video.id || '';
+      return {
+        id: videoId,
+        title: video.title || 'Cooking Tutorial',
+        description: video.description || '',
+        thumbnailUrl: video.thumbnailUrl || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+        channelTitle: video.channelTitle || '',
+        publishedAt: video.publishedAt || '',
+        youTubeId: videoId, // Ensure the youTubeId is set to the same value as id
+        views: 0,
+        length: 0
+      };
+    }).filter((video: CookingVideo) => Boolean(video.youTubeId));
   } catch (error) {
     console.error('Error searching YouTube videos:', error);
     return []; // Return empty array instead of throwing error
