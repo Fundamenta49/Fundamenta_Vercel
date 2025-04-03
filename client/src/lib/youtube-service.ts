@@ -122,6 +122,46 @@ export const searchVideos = async (query: string, category?: string): Promise<Yo
  * @param seed Optional random seed for consistent but varied results
  * @returns Promise with YouTube video search results related to the exercise
  */
+// Cache YouTube API responses on the client side to reduce API calls
+const clientCache: Record<string, { videos: YouTubeVideo[], timestamp: number }> = {};
+const CACHE_TTL = 1000 * 60 * 60 * 2; // 2 hours
+
+// Default fallback videos for when the API fails or is rate-limited
+const fallbackFitnessVideos: YouTubeVideo[] = [
+  {
+    id: "ml6cT4AZdqI",
+    title: "30-Minute HIIT Workout - No Equipment with Modifications",
+    description: "Full body HIIT workout that's apartment-friendly with no equipment required.",
+    thumbnailUrl: "https://img.youtube.com/vi/ml6cT4AZdqI/maxresdefault.jpg",
+    channelTitle: "SELF",
+    publishedAt: "2020-03-15T00:00:00Z"
+  },
+  {
+    id: "ltuLMm5NUM8",
+    title: "Plyometric Training for Beginners - Power Exercises",
+    description: "Learn the fundamentals of plyometric training with these bodyweight exercises.",
+    thumbnailUrl: "https://img.youtube.com/vi/ltuLMm5NUM8/maxresdefault.jpg",
+    channelTitle: "Fitness Blender",
+    publishedAt: "2020-01-20T00:00:00Z"
+  },
+  {
+    id: "qULTwquOuT4",
+    title: "Full Body Stretching Routine - 15 Minutes for Flexibility",
+    description: "Follow along with this full body stretching routine to improve your flexibility.",
+    thumbnailUrl: "https://img.youtube.com/vi/qULTwquOuT4/maxresdefault.jpg",
+    channelTitle: "MadFit",
+    publishedAt: "2019-11-05T00:00:00Z"
+  },
+  {
+    id: "kIVxdW9aS8k",
+    title: "Beginner Calisthenics Workout - Build Strength with Bodyweight",
+    description: "Start your calisthenics journey with these fundamental bodyweight exercises.",
+    thumbnailUrl: "https://img.youtube.com/vi/kIVxdW9aS8k/maxresdefault.jpg",
+    channelTitle: "THENX",
+    publishedAt: "2018-09-22T00:00:00Z"
+  }
+];
+
 export const searchExerciseVideos = async (
   exerciseName: string, 
   equipment?: string,
@@ -129,12 +169,24 @@ export const searchExerciseVideos = async (
   seed?: string
 ): Promise<YouTubeVideo[]> => {
   try {
+    // Generate a cache key based on the parameters
+    const cacheKey = `${exerciseName}-${equipment || 'none'}-${(muscleGroups || []).join('-')}-${seed || 'default'}`;
+    
+    // Check client-side cache first
+    const cachedData = clientCache[cacheKey];
+    if (cachedData && (Date.now() - cachedData.timestamp < CACHE_TTL)) {
+      console.log('Using client-side cache for exercise videos');
+      return cachedData.videos;
+    }
+    
     // Create a base targeted search query for better fitness tutorial results
     let searchQuery = `${exerciseName} exercise tutorial`;
     
     // Add equipment to the search query if specified
     if (equipment && equipment !== 'body weight') {
       searchQuery += ` with ${equipment}`;
+    } else if (equipment === 'body weight') {
+      searchQuery += ' bodyweight';
     }
     
     // Add a muscle group modifier if available (helps with result variety)
@@ -174,12 +226,63 @@ export const searchExerciseVideos = async (
       `/api/youtube/search?q=${encodeURIComponent(searchQuery)}&category=fitness`
     );
     
+    if (!response.ok) {
+      // If we get a 403 or 429 (rate limit errors), throw a specific error
+      if (response.status === 403 || response.status === 429) {
+        console.error('API Request error:', response.statusText);
+        throw new Error('YouTube API rate limit exceeded');
+      }
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+    
     const data = await response.json();
-    return data.videos || [];
+    
+    // Only cache responses with actual videos
+    if (data.videos && data.videos.length > 0) {
+      // Store in client-side cache with timestamp
+      clientCache[cacheKey] = {
+        videos: data.videos,
+        timestamp: Date.now()
+      };
+      return data.videos;
+    } else {
+      // If no videos were found, return fallbacks (this helps with rate limiting)
+      return getFallbackVideos(exerciseName, equipment);
+    }
   } catch (error) {
     console.error('Error searching exercise videos:', error);
-    return []; // Return empty array instead of throwing to gracefully handle failures
+    // Return fallback videos on error
+    return getFallbackVideos(exerciseName, equipment);
   }
+};
+
+// Helper function to get fallback videos based on exercise context
+function getFallbackVideos(exerciseName: string, equipment?: string): YouTubeVideo[] {
+  // Filter fallbacks to try to match the exercise type if possible
+  const lowerName = exerciseName.toLowerCase();
+  const isCardio = lowerName.includes('cardio') || lowerName.includes('hiit');
+  const isStrength = lowerName.includes('strength') || lowerName.includes('weight');
+  const isYoga = lowerName.includes('yoga') || lowerName.includes('pose');
+  const isPlyo = lowerName.includes('jump') || lowerName.includes('plyo');
+  const isStretch = lowerName.includes('stretch') || lowerName.includes('mobility');
+  
+  // Try to match one video that's relevant to the exercise type
+  let matchedVideo = fallbackFitnessVideos[0]; // Default to first
+  
+  if (isCardio) {
+    matchedVideo = fallbackFitnessVideos[0]; // HIIT video
+  } else if (isPlyo) {
+    matchedVideo = fallbackFitnessVideos[1]; // Plyometrics video
+  } else if (isStretch) {
+    matchedVideo = fallbackFitnessVideos[2]; // Stretching video
+  } else if (isYoga) {
+    matchedVideo = fallbackFitnessVideos[2]; // Stretching video (close to yoga)
+  } else {
+    matchedVideo = fallbackFitnessVideos[3]; // Calisthenics/strength
+  }
+  
+  // Return a mix of matched video and others to provide variety
+  return [matchedVideo, ...fallbackFitnessVideos.filter(v => v.id !== matchedVideo.id).slice(0, 3)];
 };
 
 /**

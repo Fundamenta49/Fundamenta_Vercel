@@ -5,13 +5,20 @@ import NodeCache from 'node-cache';
 const router = express.Router();
 
 // Create a cache for YouTube API responses to minimize API calls
-const youtubeCache = new NodeCache({ stdTTL: 3600 }); // Cache results for 1 hour
+const youtubeCache = new NodeCache({ 
+  stdTTL: 7200,     // Cache results for 2 hours to reduce API calls
+  checkperiod: 120, // Check for expired keys every 2 minutes
+  useClones: false  // Don't clone data for better performance
+}); 
 
 // Track rate limiting to avoid quota issues
 let apiCallCount = 0;
 let lastResetTime = Date.now();
-const MAX_CALLS_PER_HOUR = 80;  // Conservative limit to avoid hitting quota
+const MAX_CALLS_PER_HOUR = 50;  // More conservative limit to avoid hitting quota
 const HOUR_MS = 60 * 60 * 1000;  // 1 hour in milliseconds
+
+// Create a secondary backup cache for when API is rate limited
+const emergencyCache: Record<string, any> = {};
 
 /**
  * Function to format search query based on category and content

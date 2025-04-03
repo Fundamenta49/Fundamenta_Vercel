@@ -289,6 +289,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 <h3 className="font-medium text-lg mb-3">Plyometric Exercises</h3>
                 <FitnessExercises 
                   muscleFilter="legs" 
+                  equipmentFilter="body weight"
                   difficultyFilter="intermediate"
                   categoryFilter="plyometrics"
                   keywordFilter="jump"
