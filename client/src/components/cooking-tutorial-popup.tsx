@@ -201,77 +201,53 @@ const CookingTutorialPopup: React.FC = () => {
             
             <div className="mt-4">
               <TabsContent value="techniques" className="mt-0">
-                <Card className="mb-4 border-blue-200 bg-blue-50">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start gap-3">
-                      <Info className="h-5 w-5 text-blue-600 mt-0.5" />
-                      <div>
-                        <CardTitle className="text-base text-blue-800">Essential Techniques</CardTitle>
-                        <CardDescription className="text-blue-700">
-                          Master these fundamental techniques to build a strong foundation for all your cooking.
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                </Card>
+                <h2 className="text-lg font-bold mb-3 px-3 py-2 bg-blue-50 text-blue-800 rounded-md border-l-4 border-blue-500 flex items-center">
+                  <Info className="h-5 w-5 mr-2 text-blue-600" />
+                  Essential Techniques
+                </h2>
+                <p className="mb-4 text-sm px-2 text-gray-600">
+                  Master these fundamental techniques to build a strong foundation for all your cooking.
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <TechniqueTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
               
               <TabsContent value="safety" className="mt-0">
-                <Card className="mb-4 border-yellow-200 bg-yellow-50">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start gap-3">
-                      <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                      <div>
-                        <CardTitle className="text-base text-yellow-800">Kitchen Safety Is Essential</CardTitle>
-                        <CardDescription className="text-yellow-700">
-                          Proper technique and safety practices help prevent injury and foodborne illness. 
-                          These fundamentals should be mastered before attempting complex recipes.
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                </Card>
+                <h2 className="text-lg font-bold mb-3 px-3 py-2 bg-yellow-50 text-yellow-800 rounded-md border-l-4 border-yellow-500 flex items-center">
+                  <AlertTriangle className="h-5 w-5 mr-2 text-yellow-600" />
+                  Kitchen Safety
+                </h2>
+                <p className="mb-4 text-sm px-2 text-gray-600">
+                  Proper technique and safety practices help prevent injury and foodborne illness. 
+                  These fundamentals should be mastered before attempting complex recipes.
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <KitchenSafetyTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
               
               <TabsContent value="recipes" className="mt-0">
-                <Card className="mb-4 border-green-200 bg-green-50">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start gap-3">
-                      <Info className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
-                        <CardTitle className="text-base text-green-800">Basic Recipes</CardTitle>
-                        <CardDescription className="text-green-700">
-                          Simple, foundational recipes that every home cook should know. Perfect for beginners.
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                </Card>
+                <h2 className="text-lg font-bold mb-3 px-3 py-2 bg-green-50 text-green-800 rounded-md border-l-4 border-green-500 flex items-center">
+                  <Info className="h-5 w-5 mr-2 text-green-600" />
+                  Basic Recipes
+                </h2>
+                <p className="mb-4 text-sm px-2 text-gray-600">
+                  Simple, foundational recipes that every home cook should know. Perfect for beginners.
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <BasicRecipesTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
               
               <TabsContent value="meals" className="mt-0">
-                <Card className="mb-4 border-orange-200 bg-orange-50">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start gap-3">
-                      <Info className="h-5 w-5 text-orange-600 mt-0.5" />
-                      <div>
-                        <CardTitle className="text-base text-orange-800">Meal Tutorials</CardTitle>
-                        <CardDescription className="text-orange-700">
-                          Learn how to prepare complete meals for breakfast, lunch, and dinner.
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                </Card>
+                <h2 className="text-lg font-bold mb-3 px-3 py-2 bg-orange-50 text-orange-800 rounded-md border-l-4 border-orange-500 flex items-center">
+                  <Info className="h-5 w-5 mr-2 text-orange-600" />
+                  Meal Tutorials
+                </h2>
+                <p className="mb-4 text-sm px-2 text-gray-600">
+                  Learn how to prepare complete meals for breakfast, lunch, and dinner.
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <MealTutorials onPlayVideo={handlePlayVideo} />
                 </div>
