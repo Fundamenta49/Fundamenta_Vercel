@@ -3,7 +3,37 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ExternalLink, Info, AlertCircle, CheckCircle, Play, Utensils, Scissors, CookingPot, Cookie, UtensilsCrossed, Plug, Loader2, Search } from 'lucide-react';
+import { 
+  ExternalLink, 
+  Info, 
+  AlertCircle, 
+  CheckCircle, 
+  Play, 
+  Utensils, 
+  Scissors, 
+  CookingPot, 
+  Cookie, 
+  UtensilsCrossed, 
+  Plug, 
+  Loader2, 
+  Search,
+  ChefHat,
+  Coffee,
+  Scale,
+  Bowl,
+  Cast,
+  Saucepan,
+  Soup,
+  PanelTop,
+  Spade,
+  SpatialTool,
+  Grip,
+  Wand2,
+  Dices,
+  Banana,
+  Grater,
+  Thermometer
+} from 'lucide-react';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
 import { searchCookingVideos, YouTubeVideo, kitchenToolVideoMap } from '@/lib/youtube-service';
 import { Input } from '@/components/ui/input';
@@ -34,6 +64,53 @@ const categoryIcons = {
   tools: UtensilsCrossed,
   appliances: Plug,
   all: Utensils
+};
+
+// Define tool icons
+const toolIcons = {
+  'chefs-knife': ChefHat,
+  'cutting-board': Coffee,
+  'measuring-tools': Scale,
+  'mixing-bowls': Bowl,
+  'skillet': Cast,
+  'saucepan': Saucepan,
+  'stockpot': Soup,
+  'baking-sheet': PanelTop,
+  'rubber-spatula': Spade,
+  'metal-spatula': SpatialTool,
+  'tongs': Grip,
+  'whisk': Wand2,
+  'colander': Dices,
+  'peeler': Banana,
+  'grater': Grater,
+  'meat-thermometer': Thermometer
+};
+
+// Function to render tool icon with background
+const renderToolIcon = (toolId: string) => {
+  const IconComponent = toolIcons[toolId] || Utensils;
+  const bgColors = {
+    'tools': 'bg-blue-100',
+    'cutting': 'bg-green-100',
+    'cookware': 'bg-orange-100',
+    'bakeware': 'bg-yellow-100',
+    'appliances': 'bg-purple-100'
+  };
+  const iconColors = {
+    'tools': 'text-blue-600',
+    'cutting': 'text-green-600',
+    'cookware': 'text-orange-600',
+    'bakeware': 'text-yellow-600',
+    'appliances': 'text-purple-600'
+  };
+  
+  return (
+    <div className="h-full w-full flex items-center justify-center">
+      <div className={`w-36 h-36 ${bgColors['tools']} rounded-full flex items-center justify-center`}>
+        <IconComponent className={`h-20 w-20 ${iconColors['tools']}`} />
+      </div>
+    </div>
+  );
 };
 
 const KitchenEssentials = () => {
