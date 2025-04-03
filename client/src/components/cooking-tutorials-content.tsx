@@ -3,7 +3,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PlayCircle, BookOpen, ChefHat, Utensils, AlertTriangle, Info, Clock } from 'lucide-react';
+import { 
+  PlayCircle, 
+  BookOpen, 
+  ChefHat, 
+  Utensils, 
+  AlertTriangle, 
+  Info, 
+  Clock,
+  Check,
+  DollarSign,
+  ShieldAlert
+} from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export interface CookingTutorial {
@@ -570,12 +581,93 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
 export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = ({ onPlayVideo }) => {
   return (
     <div className="space-y-10">
-      <div className="text-center max-w-2xl mx-auto mb-6">
-        <h1 className="text-2xl font-bold text-learning-color mb-3">Cooking Fundamentals</h1>
-        <p className="text-gray-600">
-          These essential tutorials will build your confidence in the kitchen and teach you the 
-          foundational skills every home cook should master.
-        </p>
+      {/* Hero Introduction with Image */}
+      <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+        <div className="relative aspect-video md:h-[400px] overflow-hidden">
+          <img 
+            src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
+            alt="Kitchen with cooking setup"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6 md:p-8">
+            <h1 className="text-white text-2xl md:text-3xl font-bold mb-2">
+              Learn to Cook with Confidence
+            </h1>
+            <p className="text-white text-sm md:text-base max-w-2xl opacity-90 mb-3">
+              These essential tutorials will build your confidence in the kitchen and teach you the 
+              foundational skills every home cook should master.
+            </p>
+            <div className="flex flex-wrap gap-3 mt-2">
+              <div className="bg-white/90 text-learning-color rounded-full px-3 py-1 text-xs font-medium">
+                Step-by-Step Videos
+              </div>
+              <div className="bg-white/90 text-learning-color rounded-full px-3 py-1 text-xs font-medium">
+                Essential Techniques
+              </div>
+              <div className="bg-white/90 text-learning-color rounded-full px-3 py-1 text-xs font-medium">
+                Beginner Friendly
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-5 bg-white">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-lg font-medium mb-2 text-learning-color flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Why Learn to Cook?
+              </h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5 flex-shrink-0">
+                    <Check className="h-3 w-3" />
+                  </div>
+                  <span><strong>Save $2,000+ per year</strong> by preparing homemade meals</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5 flex-shrink-0">
+                    <Check className="h-3 w-3" />
+                  </div>
+                  <span><strong>Eat healthier</strong> by controlling ingredients and portions</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5 flex-shrink-0">
+                    <Check className="h-3 w-3" />
+                  </div>
+                  <span><strong>Gain independence</strong> and confidence in the kitchen</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-2 text-learning-color flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                What You'll Learn
+              </h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5 flex-shrink-0">
+                    <Utensils className="h-3 w-3" />
+                  </div>
+                  <span>Essential cooking techniques with clear demonstrations</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5 flex-shrink-0">
+                    <ChefHat className="h-3 w-3" />
+                  </div>
+                  <span>Simple recipes for breakfast, lunch, and dinner</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5 flex-shrink-0">
+                    <ShieldAlert className="h-3 w-3" />
+                  </div>
+                  <span>Kitchen safety and proper food handling</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
       
       <section className="mb-10">
