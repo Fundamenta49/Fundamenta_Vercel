@@ -898,19 +898,6 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-
-                  <button 
-                    className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
-                    onClick={() => {
-                      // Set the pose for analysis
-                      setAnalysisPose(yogaExercises.downwardDog);
-                      setAnalysisPoseId("downwardDog");
-                      setPoseAnalysisOpen(true);
-                    }}
-                  >
-                    <Video size={14} />
-                    <span className="ml-1">Practice Pose</span>
-                  </button>
                   
                   {cameraEnabled && (
                     <button 
@@ -950,19 +937,6 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-
-                  <button 
-                    className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
-                    onClick={() => {
-                      // Set the pose for analysis
-                      setAnalysisPose(yogaExercises.warriorII);
-                      setAnalysisPoseId("warriorII");
-                      setPoseAnalysisOpen(true);
-                    }}
-                  >
-                    <Video size={14} />
-                    <span className="ml-1">Practice Pose</span>
-                  </button>
                   
                   {cameraEnabled && (
                     <button 
@@ -1001,19 +975,6 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   >
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
-                  </button>
-
-                  <button 
-                    className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
-                    onClick={() => {
-                      // Set the pose for analysis
-                      setAnalysisPose(yogaExercises.treePose);
-                      setAnalysisPoseId("treePose");
-                      setPoseAnalysisOpen(true);
-                    }}
-                  >
-                    <Video size={14} />
-                    <span className="ml-1">Practice Pose</span>
                   </button>
                   
                   {cameraEnabled && (
@@ -1055,19 +1016,6 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <span className="ml-1">Show Details</span>
                   </button>
                   
-                  <button 
-                    className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
-                    onClick={() => {
-                      // Set the pose for analysis
-                      setAnalysisPose(yogaExercises.childsPose);
-                      setAnalysisPoseId("childsPose");
-                      setPoseAnalysisOpen(true);
-                    }}
-                  >
-                    <Video size={14} />
-                    <span className="ml-1">Practice Pose</span>
-                  </button>
-                  
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1105,19 +1053,6 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   >
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
-                  </button>
-                  
-                  <button 
-                    className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
-                    onClick={() => {
-                      // Set the pose for analysis
-                      setAnalysisPose(yogaExercises.cobraPose);
-                      setAnalysisPoseId("cobraPose");
-                      setPoseAnalysisOpen(true);
-                    }}
-                  >
-                    <Video size={14} />
-                    <span className="ml-1">Practice Pose</span>
                   </button>
                   
                   {cameraEnabled && (
@@ -2123,20 +2058,6 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           onClose={() => setYogaPromptOpen(false)}
         />
       )}
-      
-      {/* Pose-Specific Analysis Dialog */}
-      <PoseAnalysisDialog
-        open={poseAnalysisOpen}
-        onOpenChange={setPoseAnalysisOpen}
-        pose={analysisPose}
-        poseId={analysisPoseId}
-        onPoseCompletion={(poseId, accuracy) => {
-          // Update pose status in the progression context
-          updatePoseStatus(poseId, 'completed', accuracy);
-          // Close the dialog after completion
-          setPoseAnalysisOpen(false);
-        }}
-      />
     </>
   );
 }
