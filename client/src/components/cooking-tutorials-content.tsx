@@ -633,7 +633,7 @@ export const TechniqueTutorials: React.FC<CookingTutorialsSectionProps> = ({ onP
   
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {techniques.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={handlePlayVideo} />
         ))}
@@ -660,7 +660,7 @@ export const KitchenSafetyTutorials: React.FC<CookingTutorialsSectionProps> = ({
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {safetyTutorials.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
         ))}
@@ -687,7 +687,7 @@ export const BasicRecipesTutorials: React.FC<CookingTutorialsSectionProps> = ({ 
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {basicRecipes.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
         ))}
@@ -710,7 +710,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </TabsList>
       
       <TabsContent value="breakfast" className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {breakfastTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
@@ -718,7 +718,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </TabsContent>
       
       <TabsContent value="lunch" className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {lunchTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
@@ -726,7 +726,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </TabsContent>
       
       <TabsContent value="dinner" className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {dinnerTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
@@ -761,8 +761,28 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
   // Some tutorials should show embedded video directly
   const showEmbedded = tutorial.featured === true;
   
+  // Determine border color based on category
+  const getBorderColorClass = () => {
+    switch(tutorial.category) {
+      case 'technique':
+        return 'border-blue-400';
+      case 'kitchen-safety':
+        return 'border-yellow-400';
+      case 'basic-recipe':
+        return 'border-green-400';
+      case 'breakfast':
+        return 'border-orange-400';
+      case 'lunch':
+        return 'border-orange-400';
+      case 'dinner':
+        return 'border-orange-400';
+      default:
+        return 'border-learning-color';
+    }
+  };
+
   return (
-    <Card className="overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow border-t-4 border-t-learning-color">
+    <Card className={`overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow border-t-4 ${getBorderColorClass()} border group`}>
       {showEmbedded ? (
         <div className="aspect-video overflow-hidden">
           <EmbeddedYouTubePlayer
@@ -773,22 +793,22 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
         </div>
       ) : (
         <div 
-          className="relative aspect-video cursor-pointer overflow-hidden"
+          className="relative aspect-video cursor-pointer overflow-hidden bg-gray-100"
           onClick={handlePlayVideo}
         >
           {tutorial.thumbnailUrl ? (
             <img 
               src={tutorial.thumbnailUrl} 
               alt={tutorial.name} 
-              className="w-full h-full object-cover transition-transform hover:scale-105"
+              className="w-full h-full object-cover transition-transform group-hover:scale-105"
             />
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
               <ChefHat className="h-12 w-12 text-gray-400" />
             </div>
           )}
-          <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-            <PlayCircle className="h-12 w-12 text-white" />
+          <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <PlayCircle className="h-16 w-16 text-white" />
           </div>
           {tutorial.duration && (
             <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded px-1.5 py-0.5 flex items-center">
@@ -811,8 +831,12 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
       )}
       
       <CardHeader className="p-4 pb-2">
-        <CardTitle className="text-base">{tutorial.name}</CardTitle>
-        <CardDescription className="line-clamp-2">{tutorial.description}</CardDescription>
+        <CardTitle className="text-base font-semibold truncate group-hover:text-learning-color">
+          {tutorial.name}
+        </CardTitle>
+        <CardDescription className="line-clamp-2 text-sm text-gray-600">
+          {tutorial.description}
+        </CardDescription>
       </CardHeader>
       
       <CardContent className="p-4 pt-0 flex-grow">
@@ -835,9 +859,17 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
       {!showEmbedded && (
         <CardFooter className="p-4 pt-0 mt-auto">
           <Button 
-            variant="ghost" 
+            variant="outline" 
             size="sm" 
-            className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
+            className={`w-full justify-center ${
+              tutorial.category === 'technique' 
+                ? 'text-blue-600 hover:text-white hover:bg-blue-600 border-blue-300' 
+                : tutorial.category === 'kitchen-safety'
+                  ? 'text-yellow-600 hover:text-white hover:bg-yellow-600 border-yellow-300'
+                  : tutorial.category === 'basic-recipe'
+                    ? 'text-green-600 hover:text-white hover:bg-green-600 border-green-300'
+                    : 'text-orange-600 hover:text-white hover:bg-orange-600 border-orange-300'
+            }`}
             onClick={handlePlayVideo}
           >
             <PlayCircle className="h-4 w-4 mr-1" />
@@ -942,34 +974,46 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
       </div>
       
       <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-learning-color">
-          <Utensils className="h-5 w-5" />
-          Essential Cooking Techniques
-        </h2>
+        <div className="border-l-4 border-blue-400 pl-3 py-1">
+          <h2 className="text-xl font-semibold mb-1 flex items-center gap-2 text-blue-700">
+            <Utensils className="h-5 w-5" />
+            Essential Cooking Techniques
+          </h2>
+          <p className="text-sm text-blue-600 mb-4">Learn the fundamental skills that professional chefs use daily</p>
+        </div>
         <TechniqueTutorials onPlayVideo={onPlayVideo} />
       </section>
       
       <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-learning-color">
-          <AlertTriangle className="h-5 w-5" />
-          Kitchen Safety & Skills
-        </h2>
+        <div className="border-l-4 border-yellow-400 pl-3 py-1">
+          <h2 className="text-xl font-semibold mb-1 flex items-center gap-2 text-yellow-700">
+            <AlertTriangle className="h-5 w-5" />
+            Kitchen Safety & Skills
+          </h2>
+          <p className="text-sm text-yellow-600 mb-4">Prevent injuries and foodborne illness with proper techniques</p>
+        </div>
         <KitchenSafetyTutorials onPlayVideo={onPlayVideo} />
       </section>
       
       <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-learning-color">
-          <BookOpen className="h-5 w-5" />
-          Basic Recipes Everyone Should Know
-        </h2>
+        <div className="border-l-4 border-green-400 pl-3 py-1">
+          <h2 className="text-xl font-semibold mb-1 flex items-center gap-2 text-green-700">
+            <BookOpen className="h-5 w-5" />
+            Basic Recipes Everyone Should Know
+          </h2>
+          <p className="text-sm text-green-600 mb-4">Master these simple recipes to build your cooking confidence</p>
+        </div>
         <BasicRecipesTutorials onPlayVideo={onPlayVideo} />
       </section>
       
       <section>
-        <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-learning-color">
-          <ChefHat className="h-5 w-5" />
-          Meals by Time of Day
-        </h2>
+        <div className="border-l-4 border-orange-400 pl-3 py-1">
+          <h2 className="text-xl font-semibold mb-1 flex items-center gap-2 text-orange-700">
+            <ChefHat className="h-5 w-5" />
+            Meals by Time of Day
+          </h2>
+          <p className="text-sm text-orange-600 mb-4">Simple breakfast, lunch, and dinner recipes for everyday cooking</p>
+        </div>
         <MealTutorials onPlayVideo={onPlayVideo} />
       </section>
     </div>

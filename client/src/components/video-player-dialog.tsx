@@ -85,14 +85,19 @@ export function VideoPlayerDialog({
           </div>
           
           {description && (
-            <div className="bg-white p-4 w-full">
-              <h2 className="text-xl font-semibold pb-2">{title}</h2>
-              <ScrollArea className="max-h-[120px]">
-                <p className="text-sm text-gray-600">{description}</p>
+            <div className="bg-white p-4 w-full border-t shadow-sm">
+              <h2 className="text-xl font-semibold pb-2 border-l-4 border-learning-color pl-3">{title}</h2>
+              <ScrollArea className="max-h-[120px] mb-4">
+                <p className="text-sm text-gray-700 leading-relaxed">{description}</p>
               </ScrollArea>
-              <div className="pt-4 flex justify-end">
+              <div className="pt-2 flex justify-between items-center">
+                <p className="text-xs text-gray-500">
+                  This content is provided for educational purposes
+                </p>
                 <Button 
                   variant="outline" 
+                  size="sm"
+                  className="text-learning-color border-learning-color/30 hover:bg-learning-color hover:text-white"
                   onClick={() => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />

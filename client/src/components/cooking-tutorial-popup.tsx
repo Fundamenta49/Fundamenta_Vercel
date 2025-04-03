@@ -147,28 +147,35 @@ const CookingTutorialPopup: React.FC = () => {
             ) : searchResults.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {searchResults.map((video) => (
-                  <Card key={video.id} className="overflow-hidden hover:shadow-md transition-shadow border">
+                  <Card key={video.id} className="overflow-hidden hover:shadow-md transition-shadow border border-t-4 border-t-learning-color group">
                     <div 
-                      className="relative aspect-video cursor-pointer overflow-hidden"
+                      className="relative aspect-video cursor-pointer overflow-hidden bg-gray-100"
                       onClick={() => playSearchResult(video)}
                     >
                       <img 
                         src={video.thumbnailUrl} 
                         alt={video.title} 
-                        className="w-full h-full object-cover transition-transform hover:scale-105"
+                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <PlayCircle className="h-12 w-12 text-white" />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <PlayCircle className="h-16 w-16 text-white" />
                       </div>
                     </div>
-                    <CardHeader className="p-3 pb-2">
-                      <CardTitle className="text-base line-clamp-2">{video.title}</CardTitle>
+                    <CardHeader className="p-4 pb-2">
+                      <CardTitle className="text-base font-semibold truncate group-hover:text-learning-color">
+                        {video.title}
+                      </CardTitle>
+                      {video.description && (
+                        <CardDescription className="line-clamp-2 text-sm text-gray-600">
+                          {video.description}
+                        </CardDescription>
+                      )}
                     </CardHeader>
-                    <CardFooter className="p-3 pt-0">
+                    <CardFooter className="p-4 pt-0 mt-auto">
                       <Button 
-                        variant="ghost" 
+                        variant="outline" 
                         size="sm" 
-                        className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
+                        className="w-full justify-center text-learning-color hover:text-white hover:bg-learning-color border-learning-color/30"
                         onClick={() => playSearchResult(video)}
                       >
                         <PlayCircle className="h-4 w-4 mr-1" />
@@ -191,12 +198,32 @@ const CookingTutorialPopup: React.FC = () => {
         {!showSearchResults && (
           <Tabs defaultValue="techniques" value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="sticky top-0 bg-white z-10 pb-2">
-              <TabsList className="grid grid-cols-4 w-full">
-                <TabsTrigger value="techniques">Techniques</TabsTrigger>
-                <TabsTrigger value="safety">Safety</TabsTrigger>
-                <TabsTrigger value="recipes">Recipes</TabsTrigger>
-                <TabsTrigger value="meals">Meals</TabsTrigger>
-              </TabsList>
+              <div className="grid grid-cols-4 w-full gap-1">
+                <button 
+                  onClick={() => setActiveTab('techniques')} 
+                  className={`py-2 px-1 text-center rounded font-medium text-sm ${activeTab === 'techniques' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                >
+                  Techniques
+                </button>
+                <button 
+                  onClick={() => setActiveTab('safety')} 
+                  className={`py-2 px-1 text-center rounded font-medium text-sm ${activeTab === 'safety' ? 'bg-yellow-50 text-yellow-700 border-b-2 border-yellow-500' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                >
+                  Safety
+                </button>
+                <button 
+                  onClick={() => setActiveTab('recipes')} 
+                  className={`py-2 px-1 text-center rounded font-medium text-sm ${activeTab === 'recipes' ? 'bg-green-50 text-green-700 border-b-2 border-green-500' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                >
+                  Recipes
+                </button>
+                <button 
+                  onClick={() => setActiveTab('meals')} 
+                  className={`py-2 px-1 text-center rounded font-medium text-sm ${activeTab === 'meals' ? 'bg-orange-50 text-orange-700 border-b-2 border-orange-500' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                >
+                  Meals
+                </button>
+              </div>
             </div>
             
             <div className="mt-4">
