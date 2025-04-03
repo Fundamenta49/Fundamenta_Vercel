@@ -9,6 +9,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import MeditationGuide from "./meditation-guide";
 import FitnessProgress from "./fitness-progress";
+import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
 import {
   Dumbbell,
@@ -72,6 +73,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
               Get personalized workout plans and form guidance
             </p>
           </div>
+          <FitnessExercises />
           <FitnessProgress />
         </div>
       );
