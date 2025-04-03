@@ -273,13 +273,13 @@ const cookingTutorials: CookingTutorial[] = [
   },
   {
     id: 'omelet',
-    name: 'Perfect French Omelet',
+    name: 'How to Make an Omelette',
     description: 'Create a light, fluffy omelet with your favorite fillings.',
     category: 'breakfast',
-    difficulty: 'intermediate',
-    videoId: 'qXPhVYpQLPA',
-    thumbnailUrl: 'https://img.youtube.com/vi/qXPhVYpQLPA/hqdefault.jpg',
-    duration: 8,
+    difficulty: 'beginner',
+    videoId: 'fqqwFWqxUr4',
+    thumbnailUrl: 'https://img.youtube.com/vi/fqqwFWqxUr4/hqdefault.jpg',
+    duration: 6,
     steps: [
       'Beat eggs with salt and pepper until well blended',
       'Heat a nonstick pan over medium heat',
