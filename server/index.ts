@@ -18,6 +18,9 @@ log(`Express initialized (${Date.now() - startTime}ms)`);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Serve static files from the public directory
+app.use(express.static('public'));
+
 // Request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();

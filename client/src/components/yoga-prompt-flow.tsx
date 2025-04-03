@@ -383,111 +383,13 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
 
   // Function to handle the "Just Browsing" button
   const handleJustBrowsing = () => {
-    // Skip the prompt flow and show all sessions with video URLs and audio-guided options
-    const allSessions: YogaSession[] = [
-      {
-        id: 'audio1',
-        title: 'Guided Breathing & Stretching',
-        duration: 15,
-        type: 'mindful',
-        description: 'A voice-guided session focusing on deep breathing and gentle stretches. No video needed - just follow the audio instructions.',
-        imageUrl: 'https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHlvZ2ElMjBtZWRpdGF0aW9ufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60',
-        level: 'beginner',
-        moodTags: ['anxious', 'stressed', 'tired'],
-        isAudioOnly: true,
-        audioUrl: '/audio/guided-meditation.mp3',
-        guidedInstructions: [
-          "Find a comfortable seated position or lie down on your back",
-          "Close your eyes and begin to notice your natural breath",
-          "Slowly deepen your breath, inhaling for 4 counts, exhaling for 6",
-          "Gently roll your shoulders back, creating space in your chest",
-          "As you inhale, feel your spine lengthening",
-          "As you exhale, feel your shoulders relaxing away from your ears",
-          "Bring awareness to any areas of tension and consciously soften those areas",
-          "Now, gently bring your right ear toward your right shoulder for a neck stretch",
-          "Hold for 3 breaths, then slowly return to center",
-          "Repeat on the left side, bringing your left ear toward your left shoulder",
-          "Return to center and take a deep cleansing breath",
-          "Now, transition to a gentle forward fold if seated, or a reclined twist if lying down"
-        ]
-      },
-      {
-        id: '1',
-        title: 'Morning Energy Flow',
-        duration: 10,
-        type: 'energizing',
-        description: 'Wake up your body with gentle movements to increase circulation and energy.',
-        imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
-        level: 'beginner',
-        moodTags: ['tired', 'focused'],
-        videoUrl: 'https://www.youtube.com/embed/UEEsdXn8oG8'
-      },
-      {
-        id: '2',
-        title: 'Calming Anxiety Sequence',
-        duration: 20,
-        type: 'calming',
-        description: 'Gentle poses and breathing exercises to help quiet the mind and reduce anxiety.',
-        imageUrl: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
-        level: 'beginner',
-        moodTags: ['anxious', 'reflective'],
-        videoUrl: 'https://www.youtube.com/embed/hJbRpHZr_d0'
-      },
-      {
-        id: '3',
-        title: 'Restorative Evening Practice',
-        duration: 30,
-        type: 'restorative',
-        description: 'Wind down with calming, supported poses to prepare for a restful night.',
-        imageUrl: 'https://images.unsplash.com/photo-1510894347713-fc3ed6fdf539?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
-        level: 'beginner',
-        moodTags: ['tired', 'sore'],
-        videoUrl: 'https://www.youtube.com/embed/BiWDsfZ3zbo'
-      },
-      {
-        id: '4',
-        title: 'Quick Desk Stretch',
-        duration: 5,
-        type: 'energizing',
-        description: 'Brief stretches you can do at your desk to refresh your body and mind.',
-        imageUrl: 'https://images.unsplash.com/photo-1599447292180-45fd84092ef4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
-        level: 'beginner',
-        moodTags: ['focused', 'energetic', 'sore'],
-        videoUrl: 'https://www.youtube.com/embed/tAUf7aajBWE'
-      },
-      {
-        id: '5',
-        title: 'Mindful Flow',
-        duration: 20,
-        type: 'mindful',
-        description: 'A focused practice connecting breath and movement for present-moment awareness.',
-        imageUrl: 'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
-        level: 'intermediate',
-        moodTags: ['focused', 'reflective'],
-        videoUrl: 'https://www.youtube.com/embed/sTANio_2E0Q'
-      },
-    ];
-    setRecommendedSessions(allSessions);
+    // Skip the prompt flow and show all sessions
+    // Generate recommendations with default values
+    generateRecommendations('anxious', 30, 'silence');
     setCurrentPrompt('results');
   };
 
-  // Function to go back to the previous prompt
-  const handleBack = () => {
-    if (currentPrompt === 'mood') {
-      setCurrentPrompt('welcome');
-    } else if (currentPrompt === 'time') {
-      setCurrentPrompt('mood');
-    } else if (currentPrompt === 'sound') {
-      setCurrentPrompt('time');
-    } else if (currentPrompt === 'results') {
-      setCurrentPrompt('sound');
-    } else if (currentPrompt === 'session') {
-      setCurrentPrompt('results');
-      setIsPlaying(false);
-    }
-  };
-
-  // Render the current prompt
+  // Function to render the appropriate prompt
   const renderPrompt = () => {
     switch (currentPrompt) {
       case 'welcome':
@@ -500,22 +402,15 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                 className="py-6 text-lg" 
                 onClick={handleLetsFlow}
               >
+                <ArrowRight className="mr-2 h-5 w-5" />
                 Let's Flow
-                <MoveRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
                 variant="outline" 
-                className="py-6 text-lg" 
+                className="py-6 text-lg"
                 onClick={handleJustBrowsing}
               >
                 Just Browsing
-              </Button>
-              <Button 
-                variant="ghost" 
-                className="py-4" 
-                onClick={onClose}
-              >
-                Maybe Later
               </Button>
             </div>
           </div>
@@ -524,63 +419,57 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
       case 'mood':
         return (
           <div className="flex flex-col p-6 space-y-6">
-            <h2 className="text-2xl font-bold text-center">How are you feeling right now?</h2>
+            <h2 className="text-xl font-bold">How are you feeling today?</h2>
+            <p className="text-muted-foreground">Select what best describes your current mood.</p>
+            
             <div className="grid grid-cols-2 gap-4">
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleMoodSelect('anxious')}
               >
-                <Frown className="h-8 w-8 mb-2" />
-                Anxious
+                <AlertCircle className="h-6 w-6 mb-2" />
+                <span>Anxious</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleMoodSelect('tired')}
               >
-                <Frown className="h-8 w-8 mb-2" />
-                Tired
+                <Frown className="h-6 w-6 mb-2" />
+                <span>Tired</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleMoodSelect('focused')}
               >
-                <Smile className="h-8 w-8 mb-2" />
-                Focused
+                <Info className="h-6 w-6 mb-2" />
+                <span>Focused</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleMoodSelect('energetic')}
               >
-                <Smile className="h-8 w-8 mb-2" />
-                Energetic
+                <Smile className="h-6 w-6 mb-2" />
+                <span>Energetic</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleMoodSelect('sore')}
               >
-                <Frown className="h-8 w-8 mb-2" />
-                Sore
+                <AlertCircle className="h-6 w-6 mb-2" />
+                <span>Sore</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleMoodSelect('reflective')}
               >
-                <Smile className="h-8 w-8 mb-2" />
-                Reflective
-              </Button>
-            </div>
-            <div className="pt-4">
-              <Button 
-                variant="ghost" 
-                onClick={handleBack}
-              >
-                Back
+                <Info className="h-6 w-6 mb-2" />
+                <span>Reflective</span>
               </Button>
             </div>
           </div>
@@ -589,47 +478,41 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
       case 'time':
         return (
           <div className="flex flex-col p-6 space-y-6">
-            <h2 className="text-2xl font-bold text-center">How much time do you have today?</h2>
+            <h2 className="text-xl font-bold">How much time do you have?</h2>
+            <p className="text-muted-foreground">Select a duration that fits your schedule.</p>
+            
             <div className="grid grid-cols-2 gap-4">
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleTimeSelect(5)}
               >
-                <Clock className="h-8 w-8 mb-2" />
-                5 Minutes
+                <Clock className="h-6 w-6 mb-2" />
+                <span>5 minutes</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleTimeSelect(10)}
               >
-                <Clock className="h-8 w-8 mb-2" />
-                10 Minutes
+                <Clock className="h-6 w-6 mb-2" />
+                <span>10 minutes</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
-                onClick={() => handleTimeSelect(20)}
+                className="flex flex-col h-24 p-4"
+                onClick={() => handleTimeSelect(15)}
               >
-                <Clock className="h-8 w-8 mb-2" />
-                20 Minutes
+                <Clock className="h-6 w-6 mb-2" />
+                <span>15 minutes</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleTimeSelect(30)}
               >
-                <Clock className="h-8 w-8 mb-2" />
-                30+ Minutes
-              </Button>
-            </div>
-            <div className="pt-4">
-              <Button 
-                variant="ghost" 
-                onClick={handleBack}
-              >
-                Back
+                <Clock className="h-6 w-6 mb-2" />
+                <span>30 minutes</span>
               </Button>
             </div>
           </div>
@@ -638,47 +521,41 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
       case 'sound':
         return (
           <div className="flex flex-col p-6 space-y-6">
-            <h2 className="text-2xl font-bold text-center">What's your vibe today?</h2>
+            <h2 className="text-xl font-bold">What sounds would you like?</h2>
+            <p className="text-muted-foreground">Choose audio to accompany your practice.</p>
+            
             <div className="grid grid-cols-2 gap-4">
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleSoundSelect('calming')}
               >
-                <Music className="h-8 w-8 mb-2" />
-                Calming Music
+                <Music className="h-6 w-6 mb-2" />
+                <span>Calming Music</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleSoundSelect('nature')}
               >
-                <Volume2 className="h-8 w-8 mb-2" />
-                Nature Sounds
+                <Volume1 className="h-6 w-6 mb-2" />
+                <span>Nature Sounds</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleSoundSelect('silence')}
               >
-                <VolumeX className="h-8 w-8 mb-2" />
-                Silence
+                <VolumeX className="h-6 w-6 mb-2" />
+                <span>Silence</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="py-8 flex flex-col items-center" 
+                className="flex flex-col h-24 p-4"
                 onClick={() => handleSoundSelect('later')}
               >
-                <ArrowRight className="h-8 w-8 mb-2" />
-                Pick Later
-              </Button>
-            </div>
-            <div className="pt-4">
-              <Button 
-                variant="ghost" 
-                onClick={handleBack}
-              >
-                Back
+                <CheckCircle2 className="h-6 w-6 mb-2" />
+                <span>Pick Later</span>
               </Button>
             </div>
           </div>
@@ -687,35 +564,29 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
       case 'results':
         return (
           <div className="flex flex-col p-6 space-y-6">
-            <h2 className="text-2xl font-bold text-center">Your Personalized Sessions</h2>
-            <p className="text-center text-muted-foreground">
-              Based on your preferences, here are some sessions we think you'll enjoy:
-            </p>
+            <div>
+              <h2 className="text-xl font-bold mb-2">Your Personalized Sessions</h2>
+              <p className="text-muted-foreground">Based on your preferences, here are some sessions you might enjoy.</p>
+            </div>
             
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-4">
               {recommendedSessions.map(session => (
                 <Card key={session.id} className="overflow-hidden">
-                  <div className="aspect-video w-full overflow-hidden relative">
+                  <div className="aspect-video w-full overflow-hidden">
                     <img 
                       src={session.imageUrl} 
                       alt={session.title} 
                       className="w-full h-full object-cover"
                     />
-                    {session.isAudioOnly && (
-                      <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-md flex items-center">
-                        <Headphones className="h-4 w-4 mr-1" />
-                        <span className="text-xs font-medium">Audio Guided</span>
-                      </div>
-                    )}
                   </div>
                   <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <CardTitle>{session.title}</CardTitle>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-lg">{session.title}</CardTitle>
                       <Badge>{session.duration} min</Badge>
                     </div>
-                    <CardDescription>{session.description}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-2 pb-2">
+                    <CardDescription>{session.description}</CardDescription>
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="outline">{session.level}</Badge>
                       <Badge variant="outline">{session.type}</Badge>
@@ -725,11 +596,6 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                           Audio Only
                         </Badge>
                       )}
-                      {session.moodTags.map(tag => (
-                        <Badge key={tag} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                          {tag}
-                        </Badge>
-                      ))}
                     </div>
                   </CardContent>
                   <CardFooter>
@@ -738,26 +604,16 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                       onClick={() => handleStartSession(session)}
                     >
                       Start Session
+                      <MoveRight className="ml-2 h-4 w-4" />
                     </Button>
                   </CardFooter>
                 </Card>
               ))}
             </div>
             
-            <div className="flex justify-between pt-4">
-              <Button 
-                variant="ghost" 
-                onClick={handleBack}
-              >
-                Back
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={onClose}
-              >
-                Close
-              </Button>
-            </div>
+            <Button variant="outline" onClick={() => setCurrentPrompt('welcome')}>
+              Start Over
+            </Button>
           </div>
         );
         
@@ -772,32 +628,21 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
             
             {/* Audio player - shown for all sessions */}
             {audioTrack && (
-              <div className="bg-slate-100 rounded-md p-3 flex items-center justify-between">
-                <div className="flex items-center">
-                  {audioPlaying ? (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0 rounded-full"
-                      onClick={() => setAudioPlaying(false)}
-                    >
-                      <PauseCircle className="h-6 w-6" />
-                      <span className="sr-only">Pause</span>
-                    </Button>
-                  ) : (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0 rounded-full"
-                      onClick={() => setAudioPlaying(true)}
-                    >
-                      <Play className="h-6 w-6" />
-                      <span className="sr-only">Play</span>
-                    </Button>
-                  )}
-                  <span className="ml-2 text-sm">
-                    {selectedSession.isAudioOnly ? "Guided Audio" : "Background Sound"}
-                  </span>
+              <div className="border rounded-md p-3 bg-slate-50 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setAudioPlaying(!audioPlaying)}
+                    className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                  >
+                    {audioPlaying ? (
+                      <PauseCircle className="h-5 w-5" />
+                    ) : (
+                      <Play className="h-5 w-5" />
+                    )}
+                  </button>
+                  <div className="text-sm">
+                    {audioPlaying ? 'Playing...' : 'Paused'}
+                  </div>
                 </div>
                 
                 <div className="flex gap-2">
@@ -807,12 +652,11 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                 <audio 
                   ref={audioRef} 
                   src={audioTrack} 
-                  loop={!selectedSession.isAudioOnly} // Loop background music, but not guided audio
+                  loop={!selectedSession.isAudioOnly} 
                   preload="auto"
                   controls={false}
                   onError={(e) => console.error("Audio error event:", e)}
                   onCanPlay={() => console.log("Audio is ready to play")}
-                  crossOrigin="anonymous"
                 />
               </div>
             )}
