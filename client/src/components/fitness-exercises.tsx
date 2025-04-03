@@ -314,32 +314,44 @@ export default function FitnessExercises({
   // Track API request status to avoid excessive calls
   const [apiRequestCount, setApiRequestCount] = useState(0);
   const [apiThrottled, setApiThrottled] = useState(false);
-  const MAX_API_REQUESTS = 3; // Maximum concurrent requests to avoid API throttling
-  
+  const MAX_API_REQUESTS = 5; // Increased to allow more concurrent requests
+  const STAGGER_DELAY = 500; // Stagger delay between API calls to avoid rate issues
+
   // Auto-load videos for exercises when data is loaded
   useEffect(() => {
     // Only run this effect when exercises are loaded and it's in compact view
     // This ensures videos are preloaded in the ActiveYou exercise cards without user interaction
     if (compactView && exercisesQuery.data && !exercisesQuery.isPending && !apiThrottled) {
-      // Set a hard limit on the number of exercises to load videos for
-      const exerciseLimit = Math.min(maxExercises || 3, 3); // Never load more than 3 per card
+      // Get all exercises to display, respecting the maxExercises limit
+      const exerciseLimit = maxExercises || 4; 
       const exercises = exercisesQuery.data.slice(0, exerciseLimit);
       
-      // Only load videos for the first exercise to reduce API load
-      // Users can click to expand others if interested
-      const firstExercise = exercises[0];
-      if (firstExercise && !exerciseVideos[firstExercise.id]?.length && apiRequestCount < MAX_API_REQUESTS) {
-        setApiRequestCount(prev => prev + 1);
+      // Check if we have the capacity to load more videos
+      const availableSlots = MAX_API_REQUESTS - apiRequestCount;
+      
+      if (availableSlots > 0 && exercises.length > 0) {
+        // Load videos for up to MAX_API_REQUESTS exercises, but stagger the requests
+        const exercisesToLoad = exercises.filter((ex: Exercise) => !exerciseVideos[ex.id]?.length);
         
-        // Load videos for the first exercise only
-        loadExerciseVideos(
-          firstExercise.id, 
-          firstExercise.name, 
-          firstExercise.equipment,
-          firstExercise.muscleGroups,
-          true // auto-loading flag
-        ).finally(() => {
-          setApiRequestCount(prev => Math.max(0, prev - 1));
+        // Limit to available slots to prevent rate limit issues
+        const exerciseBatch = exercisesToLoad.slice(0, availableSlots);
+        
+        // Update request counter
+        setApiRequestCount(prev => prev + exerciseBatch.length);
+        
+        // Load videos for each exercise with a staggered delay to avoid API spikes
+        exerciseBatch.forEach((exercise: Exercise, index: number) => {
+          setTimeout(() => {
+            loadExerciseVideos(
+              exercise.id,
+              exercise.name,
+              exercise.equipment,
+              exercise.muscleGroups,
+              true // auto-loading flag
+            ).finally(() => {
+              setApiRequestCount(prev => Math.max(0, prev - 1));
+            });
+          }, index * STAGGER_DELAY);
         });
       }
     }
@@ -354,7 +366,7 @@ export default function FitnessExercises({
       const timer = setTimeout(() => {
         setApiThrottled(false);
         setApiRequestCount(0);
-      }, 60000); // 1 minute cooldown
+      }, 30000); // Reduced to 30 seconds to recover more quickly
       
       return () => clearTimeout(timer);
     }
@@ -981,7 +993,7 @@ export default function FitnessExercises({
                     </div>
                   ) : videos.length > 0 ? (
                     <div className="space-y-2">
-                      {videos.slice(0, 2).map((video) => (
+                      {videos.slice(0, 4).map((video) => (
                         <div key={video.id} className="rounded-md overflow-hidden border">
                           <div className="aspect-video relative">
                             <iframe
