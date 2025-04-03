@@ -427,8 +427,9 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
                       onClick={() => handleShowDetails('yoga', 'downwardDog')}
                     >
+                      {/* Using the imported Info icon */}
                       <Info size={14} />
-                      <span>Show Details</span>
+                      <span className="ml-1">Show Details</span>
                     </button>
                   </div>
                   
@@ -446,7 +447,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       onClick={() => handleShowDetails('yoga', 'warriorII')}
                     >
                       <Info size={14} />
-                      <span>Show Details</span>
+                      <span className="ml-1">Show Details</span>
                     </button>
                   </div>
                   
@@ -464,7 +465,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       onClick={() => handleShowDetails('yoga', 'treePose')}
                     >
                       <Info size={14} />
-                      <span>Show Details</span>
+                      <span className="ml-1">Show Details</span>
                     </button>
                   </div>
                   
@@ -482,7 +483,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       onClick={() => handleShowDetails('yoga', 'bridgePose')}
                     >
                       <Info size={14} />
-                      <span>Show Details</span>
+                      <span className="ml-1">Show Details</span>
                     </button>
                   </div>
                 </div>
@@ -727,7 +728,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       onClick={() => handleShowDetails('stretch', 'hamstringStretch')}
                     >
                       <Info size={14} />
-                      <span>Show Details</span>
+                      <span className="ml-1">Show Details</span>
                     </button>
                   </div>
                   
@@ -745,7 +746,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       onClick={() => handleShowDetails('stretch', 'figureFourStretch')}
                     >
                       <Info size={14} />
-                      <span>Show Details</span>
+                      <span className="ml-1">Show Details</span>
                     </button>
                   </div>
                   
@@ -763,7 +764,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       onClick={() => handleShowDetails('stretch', 'chestStretch')}
                     >
                       <Info size={14} />
-                      <span>Show Details</span>
+                      <span className="ml-1">Show Details</span>
                     </button>
                   </div>
                   
@@ -781,7 +782,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       onClick={() => handleShowDetails('stretch', 'catCowStretch')}
                     >
                       <Info size={14} />
-                      <span>Show Details</span>
+                      <span className="ml-1">Show Details</span>
                     </button>
                   </div>
                 </div>
