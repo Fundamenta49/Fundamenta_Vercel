@@ -66,13 +66,36 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
   
   // Effect for handling audio playback
   useEffect(() => {
-    if (audioRef.current) {
-      if (audioPlaying) {
-        audioRef.current.play().catch(e => console.error("Error playing audio:", e));
-      } else {
-        audioRef.current.pause();
+    const handleAudioPlayback = async () => {
+      if (audioRef.current) {
+        if (audioPlaying) {
+          try {
+            // Load the audio if needed and play
+            if (audioRef.current.readyState === 0) {
+              await audioRef.current.load();
+            }
+            
+            // Play the audio with user interaction context
+            const playPromise = audioRef.current.play();
+            
+            if (playPromise !== undefined) {
+              playPromise.catch(error => {
+                console.error("Error playing audio:", error);
+                // Auto-pause on error to prevent console spam
+                setAudioPlaying(false);
+              });
+            }
+          } catch (error) {
+            console.error("Audio playback error:", error);
+            setAudioPlaying(false);
+          }
+        } else {
+          audioRef.current.pause();
+        }
       }
-    }
+    };
+    
+    handleAudioPlayback();
     
     return () => {
       // Clean up audio on unmount
@@ -142,9 +165,9 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
     
     // Set up audio tracks based on selection
     if (sound === 'calming') {
-      setAudioTrack('https://cdn.pixabay.com/download/audio/2022/03/09/audio_2aac6e6c0f.mp3?filename=meditation-yoga-relaxation-7783.mp3');
+      setAudioTrack('/audio/yoga-meditation.mp3');
     } else if (sound === 'nature') {
-      setAudioTrack('https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1ac8.mp3?filename=forest-with-small-river-birds-and-nature-field-recording-6735.mp3');
+      setAudioTrack('/audio/nature-sounds.mp3');
     } else {
       // For 'silence' or 'later', don't set an audio track
       setAudioTrack(null);
@@ -184,7 +207,7 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         level: 'beginner',
         moodTags: ['anxious', 'stressed', 'tired'],
         isAudioOnly: true,
-        audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=guided-meditation-yoga-nidra-10-min-calm-7932.mp3',
+        audioUrl: '/audio/guided-meditation.mp3',
         guidedInstructions: [
           "Find a comfortable seated position or lie down on your back",
           "Close your eyes and begin to notice your natural breath",
@@ -210,7 +233,7 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         level: 'beginner',
         moodTags: ['tired', 'anxious', 'sore'],
         isAudioOnly: true,
-        audioUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1ac8.mp3?filename=forest-with-small-river-birds-and-nature-field-recording-6735.mp3',
+        audioUrl: '/audio/nature-sounds.mp3',
         guidedInstructions: [
           "Find a comfortable position, either seated or lying down on your back",
           "Take a moment to settle in, allowing your body to be fully supported",
@@ -372,7 +395,7 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         level: 'beginner',
         moodTags: ['anxious', 'stressed', 'tired'],
         isAudioOnly: true,
-        audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=guided-meditation-yoga-nidra-10-min-calm-7932.mp3',
+        audioUrl: '/audio/guided-meditation.mp3',
         guidedInstructions: [
           "Find a comfortable seated position or lie down on your back",
           "Close your eyes and begin to notice your natural breath",
@@ -785,6 +808,11 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                   ref={audioRef} 
                   src={audioTrack} 
                   loop={!selectedSession.isAudioOnly} // Loop background music, but not guided audio
+                  preload="auto"
+                  controls={false}
+                  onError={(e) => console.error("Audio error event:", e)}
+                  onCanPlay={() => console.log("Audio is ready to play")}
+                  crossOrigin="anonymous"
                 />
               </div>
             )}
