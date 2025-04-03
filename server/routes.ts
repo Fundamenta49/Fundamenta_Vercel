@@ -22,6 +22,7 @@ import shoppingRoutes from './routes/shopping';
 import cookingRoutes from './routes/cooking';
 import fitnessRoutes from './routes/fitness';
 import yogaRoutes from './routes/yoga';
+import repairRoutes from './routes/repair';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { 
@@ -825,6 +826,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register yoga routes
   app.use('/api/yoga', yogaRoutes);
+  // Register the repair routes
+  app.use('/api/repair', repairRoutes);
 
   // Return an HTTP server
   return createServer(app);
