@@ -46,6 +46,7 @@ import FitnessProgress from "./fitness-progress";
 import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
 import ChatInterface from "./chat-interface";
+import YogaPromptFlow from "./yoga-prompt-flow";
 import { FITNESS_CATEGORY } from "./chat-interface";
 import {
   Dumbbell,
@@ -130,6 +131,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   const [selectedExercise, setSelectedExercise] = useState<ExerciseDetails | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [videoFullscreen, setVideoFullscreen] = useState(false);
+  const [yogaPromptOpen, setYogaPromptOpen] = useState(false);
 
   // Camera and AI Form Analysis States
   const [cameraEnabled, setCameraEnabled] = useState(false);
@@ -582,6 +584,11 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     }
     setDialogOpen(true);
   };
+  
+  // Function to handle completion of yoga prompt flow
+  const handleYogaPromptComplete = () => {
+    setYogaPromptOpen(false);
+  };
 
   // Create a variable to hold the content based on the tab
   let tabContent;
@@ -590,11 +597,21 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   const renderYogaSection = () => (
     <div className="space-y-4">
       <div className="pb-4 mb-4 border-b" style={{ borderColor: WELLNESS_COLOR }}>
-        <div className="flex items-center">
-          <YogaIcon className="h-6 w-6 mr-2" style={{ color: WELLNESS_COLOR }} />
-          <h2 className="text-xl font-bold" style={{ color: WELLNESS_COLOR }}>
-            AI Yoga Assistant
-          </h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <YogaIcon className="h-6 w-6 mr-2" style={{ color: WELLNESS_COLOR }} />
+            <h2 className="text-xl font-bold" style={{ color: WELLNESS_COLOR }}>
+              AI Yoga Assistant
+            </h2>
+          </div>
+          <Button 
+            onClick={() => setYogaPromptOpen(true)}
+            className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
+            size="sm"
+          >
+            <ArrowRight className="h-4 w-4 mr-1" />
+            Start Guided Flow
+          </Button>
         </div>
         <p className="text-sm text-muted-foreground mt-1">
           Get real-time form corrections and personalized yoga guidance
@@ -1931,6 +1948,14 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           )}
         </DialogContent>
       </Dialog>
+      
+      {/* Yoga Prompt Flow */}
+      {yogaPromptOpen && (
+        <YogaPromptFlow 
+          onComplete={handleYogaPromptComplete}
+          onClose={() => setYogaPromptOpen(false)}
+        />
+      )}
     </>
   );
 }
