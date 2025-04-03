@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Lightbulb, WifiIcon, Smartphone, Activity, Droplets, X } from 'lucide-react';
+import { ArrowLeft, Lightbulb, WifiIcon, Smartphone, Activity, Droplets, X, MapPin, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SimpleResourceLinks from '@/components/simple-resource-links';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import FloatingChat from '@/components/floating-chat';
 import LearningCoachPopOut from '@/components/learning-coach-pop-out';
 import QuizComponent from '@/components/quiz-component';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { cn } from "@/lib/utils";
 import {
   FullScreenDialog,
@@ -26,6 +31,10 @@ export default function UtilitiesGuideCourse() {
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
   const [showChat, setShowChat] = useState(false);
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [cityInput, setCityInput] = useState<string>("");
+  const [showLocalResources, setShowLocalResources] = useState<boolean>(false);
 
   // Course modules as cards
   const COURSE_MODULES = [
@@ -250,6 +259,211 @@ export default function UtilitiesGuideCourse() {
       description: 'Example of a mobile coverage comparison tool'
     }
   ];
+  
+  // State-specific utility provider data
+  const STATE_UTILITIES = {
+    "California": {
+      internet: [
+        { name: "AT&T", url: "https://www.att.com/internet/", description: "DSL and fiber internet service" },
+        { name: "Comcast Xfinity", url: "https://www.xfinity.com/", description: "Cable internet provider" },
+        { name: "Spectrum", url: "https://www.spectrum.com/", description: "Cable internet provider" },
+        { name: "Frontier", url: "https://frontier.com/", description: "DSL and fiber internet service" }
+      ],
+      electricity: [
+        { name: "Pacific Gas & Electric (PG&E)", url: "https://www.pge.com/", description: "Northern California electricity provider" },
+        { name: "Southern California Edison (SCE)", url: "https://www.sce.com/", description: "Southern California electricity provider" },
+        { name: "San Diego Gas & Electric (SDG&E)", url: "https://www.sdge.com/", description: "San Diego area electricity provider" }
+      ],
+      water: [
+        { name: "California Water Service", url: "https://www.calwater.com/", description: "Water provider for multiple California areas" },
+        { name: "Metropolitan Water District", url: "https://www.mwdh2o.com/", description: "Southern California water supplier" }
+      ],
+      city_specific: {
+        "Los Angeles": {
+          water: { name: "LADWP", url: "https://www.ladwp.com/", description: "Los Angeles Department of Water and Power" },
+          electricity: { name: "LADWP", url: "https://www.ladwp.com/", description: "Los Angeles Department of Water and Power" }
+        },
+        "San Francisco": {
+          water: { name: "SFPUC", url: "https://www.sfpuc.org/", description: "San Francisco Public Utilities Commission" },
+          electricity: { name: "PG&E", url: "https://www.pge.com/", description: "Pacific Gas & Electric" }
+        },
+        "San Diego": {
+          water: { name: "City of San Diego Public Utilities", url: "https://www.sandiego.gov/public-utilities", description: "San Diego water and wastewater services" },
+          electricity: { name: "SDG&E", url: "https://www.sdge.com/", description: "San Diego Gas & Electric" }
+        }
+      }
+    },
+    "Texas": {
+      internet: [
+        { name: "AT&T", url: "https://www.att.com/internet/", description: "DSL and fiber internet service" },
+        { name: "Spectrum", url: "https://www.spectrum.com/", description: "Cable internet provider" },
+        { name: "Xfinity", url: "https://www.xfinity.com/", description: "Cable internet provider" },
+        { name: "Frontier", url: "https://frontier.com/", description: "DSL and fiber internet service" }
+      ],
+      electricity: [
+        { name: "Power To Choose", url: "https://www.powertochoose.org/", description: "Compare electricity providers in Texas" },
+        { name: "TXU Energy", url: "https://www.txu.com/", description: "Major Texas electricity provider" },
+        { name: "Reliant", url: "https://www.reliant.com/", description: "Major Texas electricity provider" }
+      ],
+      water: [
+        { name: "Texas Water Development Board", url: "https://www.twdb.texas.gov/", description: "State water planning and financing" }
+      ],
+      city_specific: {
+        "Houston": {
+          water: { name: "City of Houston Water", url: "https://www.houstonpublicworks.org/", description: "Houston water utility services" }
+        },
+        "Dallas": {
+          water: { name: "Dallas Water Utilities", url: "https://dallascityhall.com/departments/waterutilities/", description: "Dallas water and wastewater services" }
+        },
+        "Austin": {
+          water: { name: "Austin Water", url: "https://www.austintexas.gov/department/water", description: "Austin water utility services" },
+          electricity: { name: "Austin Energy", url: "https://austinenergy.com/", description: "Austin municipal utility" }
+        }
+      }
+    },
+    "New York": {
+      internet: [
+        { name: "Spectrum", url: "https://www.spectrum.com/", description: "Cable internet provider" },
+        { name: "Verizon Fios", url: "https://www.verizon.com/home/fios/", description: "Fiber optic internet service" },
+        { name: "Optimum", url: "https://www.optimum.com/", description: "Cable internet provider" }
+      ],
+      electricity: [
+        { name: "Con Edison", url: "https://www.coned.com/", description: "New York City electricity provider" },
+        { name: "National Grid", url: "https://www.nationalgridus.com/", description: "Upstate New York electricity provider" },
+        { name: "PSEG Long Island", url: "https://www.psegliny.com/", description: "Long Island electricity provider" }
+      ],
+      water: [
+        { name: "New York City Water Board", url: "https://www1.nyc.gov/site/dep/water/water-rates.page", description: "NYC water service" }
+      ],
+      city_specific: {
+        "New York City": {
+          water: { name: "NYC Environmental Protection", url: "https://www1.nyc.gov/site/dep/index.page", description: "NYC water and wastewater services" },
+          electricity: { name: "Con Edison", url: "https://www.coned.com/", description: "NYC electricity provider" }
+        },
+        "Buffalo": {
+          water: { name: "Buffalo Water", url: "https://www.buffalowaterauthority.com/", description: "Buffalo water service" },
+          electricity: { name: "National Grid", url: "https://www.nationalgridus.com/", description: "Buffalo electricity provider" }
+        }
+      }
+    },
+    "Florida": {
+      internet: [
+        { name: "AT&T", url: "https://www.att.com/internet/", description: "DSL and fiber internet service" },
+        { name: "Xfinity", url: "https://www.xfinity.com/", description: "Cable internet provider" },
+        { name: "Spectrum", url: "https://www.spectrum.com/", description: "Cable internet provider" },
+        { name: "CenturyLink", url: "https://www.centurylink.com/", description: "DSL and fiber internet service" }
+      ],
+      electricity: [
+        { name: "Florida Power & Light (FPL)", url: "https://www.fpl.com/", description: "Largest Florida electricity provider" },
+        { name: "Duke Energy", url: "https://www.duke-energy.com/home", description: "Florida electricity provider" },
+        { name: "Tampa Electric (TECO)", url: "https://www.tampaelectric.com/", description: "Tampa area electricity provider" }
+      ],
+      water: [
+        { name: "Florida Government Utility Information", url: "https://www.floridajobs.org/community-planning-and-development/assistance-for-governments-and-organizations/florida-public-utilities-information", description: "Information on Florida water utilities" }
+      ],
+      city_specific: {
+        "Miami": {
+          water: { name: "Miami-Dade Water and Sewer", url: "https://www.miamidade.gov/water/", description: "Miami water utility services" },
+          electricity: { name: "FPL", url: "https://www.fpl.com/", description: "Florida Power & Light" }
+        },
+        "Orlando": {
+          water: { name: "Orlando Utilities Commission", url: "https://www.ouc.com/", description: "Orlando water services" },
+          electricity: { name: "Orlando Utilities Commission", url: "https://www.ouc.com/", description: "Orlando electricity provider" }
+        },
+        "Tampa": {
+          water: { name: "City of Tampa Water", url: "https://www.tampa.gov/water", description: "Tampa water utility services" },
+          electricity: { name: "Tampa Electric", url: "https://www.tampaelectric.com/", description: "Tampa electricity provider" }
+        }
+      }
+    },
+    "Illinois": {
+      internet: [
+        { name: "AT&T", url: "https://www.att.com/internet/", description: "DSL and fiber internet service" },
+        { name: "Xfinity", url: "https://www.xfinity.com/", description: "Cable internet provider" },
+        { name: "WOW!", url: "https://www.wowway.com/", description: "Cable internet provider" },
+        { name: "Mediacom", url: "https://mediacomcable.com/", description: "Cable internet provider" }
+      ],
+      electricity: [
+        { name: "ComEd", url: "https://www.comed.com/", description: "Northern Illinois electricity provider" },
+        { name: "Ameren Illinois", url: "https://www.ameren.com/illinois", description: "Central and Southern Illinois electricity provider" }
+      ],
+      water: [
+        { name: "Illinois American Water", url: "https://www.amwater.com/ilaw/", description: "Water service for many Illinois communities" }
+      ],
+      city_specific: {
+        "Chicago": {
+          water: { name: "City of Chicago Water Management", url: "https://www.chicago.gov/city/en/depts/water.html", description: "Chicago water services" },
+          electricity: { name: "ComEd", url: "https://www.comed.com/", description: "Chicago electricity provider" }
+        },
+        "Springfield": {
+          water: { name: "City Water, Light & Power", url: "https://www.cwlp.com/", description: "Springfield municipal utility" },
+          electricity: { name: "City Water, Light & Power", url: "https://www.cwlp.com/", description: "Springfield municipal utility" }
+        }
+      }
+    }
+  };
+  
+  // List of US states for the dropdown
+  const US_STATES = [
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", 
+    "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", 
+    "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", 
+    "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", 
+    "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+  ];
+  
+  // City suggestions for selected states
+  const getCitySuggestions = (state: string): string[] => {
+    switch(state) {
+      case "California":
+        return ["Los Angeles", "San Francisco", "San Diego", "Sacramento", "San Jose", "Fresno", "Oakland"];
+      case "Texas":
+        return ["Houston", "Dallas", "Austin", "San Antonio", "Fort Worth", "El Paso", "Arlington"];
+      case "New York":
+        return ["New York City", "Buffalo", "Rochester", "Yonkers", "Syracuse", "Albany"];
+      case "Florida":
+        return ["Miami", "Orlando", "Tampa", "Jacksonville", "St. Petersburg", "Hialeah", "Fort Lauderdale"];
+      case "Illinois":
+        return ["Chicago", "Aurora", "Naperville", "Joliet", "Rockford", "Springfield", "Peoria"];
+      default:
+        return [];
+    }
+  };
+  
+  // Handler for state selection
+  // Safely get utilities for a state
+  const getStateUtilities = (state: string) => {
+    if (state in STATE_UTILITIES) {
+      return STATE_UTILITIES[state as keyof typeof STATE_UTILITIES];
+    }
+    return null;
+  };
+
+  // Safely get city-specific utilities
+  const getCityUtilities = (state: string, city: string) => {
+    const stateData = getStateUtilities(state);
+    if (stateData && 'city_specific' in stateData) {
+      const cityData = stateData.city_specific as Record<string, any>;
+      if (city in cityData) {
+        return cityData[city];
+      }
+    }
+    return null;
+  };
+
+  // Handler for state selection
+  const handleStateChange = (value: string) => {
+    setSelectedState(value);
+    setSelectedCity("");
+    setCityInput("");
+    setShowLocalResources(!!getStateUtilities(value));
+  };
+  
+  // Handler for city selection
+  const handleCitySelect = (city: string) => {
+    setSelectedCity(city);
+    setCityInput(city);
+  };
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
@@ -399,12 +613,195 @@ export default function UtilitiesGuideCourse() {
       )}
 
       {activeTab === 'resources' && (
-        <div className="mb-6">
+        <div className="mb-6 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Helpful Resources</CardTitle>
+              <CardTitle className="flex items-center">
+                <MapPin className="h-5 w-5 mr-2 text-orange-500" />
+                Find Local Utility Providers
+              </CardTitle>
               <CardDescription>
-                Additional tools and guides to help you set up and manage your home utilities.
+                Select your location to view utility providers specific to your area.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 mb-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="state">Select Your State</Label>
+                  <Select
+                    value={selectedState}
+                    onValueChange={handleStateChange}
+                  >
+                    <SelectTrigger id="state" className="w-full">
+                      <SelectValue placeholder="Select state..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {US_STATES.map((state) => (
+                        <SelectItem key={state} value={state}>
+                          {state}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {selectedState && (
+                  <div className="grid gap-2">
+                    <Label htmlFor="city">City (Optional)</Label>
+                    <div className="relative">
+                      <Input
+                        id="city"
+                        placeholder="Enter your city..."
+                        value={cityInput}
+                        onChange={(e) => setCityInput(e.target.value)}
+                        className="w-full"
+                      />
+                      {cityInput && getCitySuggestions(selectedState).filter(city => 
+                        city.toLowerCase().includes(cityInput.toLowerCase()) && city.toLowerCase() !== cityInput.toLowerCase()
+                      ).length > 0 && (
+                        <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-md mt-1 border z-10">
+                          {getCitySuggestions(selectedState)
+                            .filter(city => city.toLowerCase().includes(cityInput.toLowerCase()))
+                            .map(city => (
+                              <div 
+                                key={city} 
+                                className="p-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => handleCitySelect(city)}
+                              >
+                                {city}
+                              </div>
+                            ))
+                          }
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {showLocalResources && getStateUtilities(selectedState) && (
+                <div className="mt-6">
+                  <Alert className="mb-4 bg-orange-50 border-orange-200">
+                    <AlertDescription className="text-orange-800">
+                      Displaying utility providers for {selectedState}{selectedCity ? ` - ${selectedCity}` : ''}. These are common providers but may not be exhaustive for all areas.
+                    </AlertDescription>
+                  </Alert>
+                  
+                  <div className="space-y-6">
+                    {/* Internet providers */}
+                    <div>
+                      <h3 className="text-lg font-medium mb-3 flex items-center">
+                        <WifiIcon className="h-5 w-5 mr-2 text-orange-500" />
+                        Internet Service Providers
+                      </h3>
+                      <div className="grid gap-3">
+                        {getStateUtilities(selectedState)?.internet.map((provider, index) => (
+                          <a 
+                            key={index}
+                            href={provider.url}
+                            target="_blank"
+                            rel="noopener noreferrer" 
+                            className="block p-3 border rounded-md hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                          >
+                            <div className="font-medium">{provider.name}</div>
+                            <div className="text-sm text-gray-600">{provider.description}</div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Electricity providers */}
+                    <div>
+                      <h3 className="text-lg font-medium mb-3 flex items-center">
+                        <Activity className="h-5 w-5 mr-2 text-orange-500" />
+                        Electricity Providers
+                      </h3>
+                      <div className="grid gap-3">
+                        {selectedCity && getCityUtilities(selectedState, selectedCity)?.electricity && (
+                          <div>
+                            <Badge className="mb-2 bg-green-100 text-green-800 hover:bg-green-100">City Specific</Badge>
+                            <a 
+                              href={getCityUtilities(selectedState, selectedCity)?.electricity.url}
+                              target="_blank"
+                              rel="noopener noreferrer" 
+                              className="block p-3 border border-green-200 rounded-md hover:border-green-300 hover:bg-green-50 transition-colors"
+                            >
+                              <div className="font-medium">{getCityUtilities(selectedState, selectedCity)?.electricity.name}</div>
+                              <div className="text-sm text-gray-600">{getCityUtilities(selectedState, selectedCity)?.electricity.description}</div>
+                            </a>
+                          </div>
+                        )}
+                        
+                        {getStateUtilities(selectedState)?.electricity.map((provider, index) => (
+                          <a 
+                            key={index}
+                            href={provider.url}
+                            target="_blank"
+                            rel="noopener noreferrer" 
+                            className="block p-3 border rounded-md hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                          >
+                            <div className="font-medium">{provider.name}</div>
+                            <div className="text-sm text-gray-600">{provider.description}</div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Water providers */}
+                    <div>
+                      <h3 className="text-lg font-medium mb-3 flex items-center">
+                        <Droplets className="h-5 w-5 mr-2 text-orange-500" />
+                        Water Providers
+                      </h3>
+                      <div className="grid gap-3">
+                        {selectedCity && getCityUtilities(selectedState, selectedCity)?.water && (
+                          <div>
+                            <Badge className="mb-2 bg-green-100 text-green-800 hover:bg-green-100">City Specific</Badge>
+                            <a 
+                              href={getCityUtilities(selectedState, selectedCity)?.water.url}
+                              target="_blank"
+                              rel="noopener noreferrer" 
+                              className="block p-3 border border-green-200 rounded-md hover:border-green-300 hover:bg-green-50 transition-colors"
+                            >
+                              <div className="font-medium">{getCityUtilities(selectedState, selectedCity)?.water.name}</div>
+                              <div className="text-sm text-gray-600">{getCityUtilities(selectedState, selectedCity)?.water.description}</div>
+                            </a>
+                          </div>
+                        )}
+                        
+                        {getStateUtilities(selectedState)?.water.map((provider, index) => (
+                          <a 
+                            key={index}
+                            href={provider.url}
+                            target="_blank"
+                            rel="noopener noreferrer" 
+                            className="block p-3 border rounded-md hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                          >
+                            <div className="font-medium">{provider.name}</div>
+                            <div className="text-sm text-gray-600">{provider.description}</div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {selectedState && !showLocalResources && (
+                <Alert className="mt-4 bg-yellow-50 border-yellow-200">
+                  <AlertDescription className="text-yellow-800">
+                    Detailed utility information for {selectedState} is not currently available in our database. Please refer to the general resources below or contact your local municipality for specific information.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>General Resources</CardTitle>
+              <CardDescription>
+                Helpful tools and guides for setting up and managing your home utilities.
               </CardDescription>
             </CardHeader>
             <CardContent>
