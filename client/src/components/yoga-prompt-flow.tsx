@@ -649,6 +649,10 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                   <Volume2 className="h-4 w-4 text-muted-foreground" />
                 </div>
                 
+                <div className="mt-2 p-2 bg-yellow-50 text-yellow-800 rounded text-xs">
+                  <AlertCircle className="h-3 w-3 inline mr-1" />
+                  Note: Audio is silent. In a production app, this would be replaced with actual meditation music and guided voice instructions.
+                </div>
                 <audio 
                   ref={audioRef} 
                   src={audioTrack} 
@@ -699,6 +703,10 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                       <p className="mt-2 text-base">
                         {selectedSession.guidedInstructions[activeInstructionIndex]}
                       </p>
+                      <div className="mt-3 p-2 bg-yellow-50 text-yellow-800 rounded text-xs">
+                        <AlertCircle className="h-3 w-3 inline mr-1" />
+                        Note: In a production app, these instructions would be voiced in the audio and timed to match the session flow.
+                      </div>
                     </div>
                   </div>
                 </div>
