@@ -91,7 +91,7 @@ const CookingTutorialPopup: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col pb-12 overflow-hidden">
+    <div className="flex flex-col h-full pb-6">
       {/* Header Section */}
       <div className="bg-white dark:bg-gray-950 px-4 py-4 border-b mb-2 flex items-center justify-between sticky top-0 z-10">
         <div>
@@ -105,8 +105,8 @@ const CookingTutorialPopup: React.FC = () => {
         </div>
       </div>
 
-      {/* Search Box */}
-      <div className="px-4 py-2 mb-4">
+      {/* Search Box - Fixed position below header */}
+      <div className="px-4 py-2 mb-4 sticky top-[74px] z-10 bg-white border-b pb-3">
         <form onSubmit={handleSearch} className="flex gap-2">
           <Input
             type="text"
@@ -127,69 +127,70 @@ const CookingTutorialPopup: React.FC = () => {
         </form>
       </div>
 
-      {/* Search Results */}
-      {showSearchResults && (
-        <div className="px-4 flex-1 overflow-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium">Search Results</h3>
-            <Button variant="ghost" size="sm" onClick={clearSearch}>
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back to Categories
-            </Button>
-          </div>
-          
-          {isSearching ? (
-            <div className="flex justify-center items-center h-40">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-learning-color"></div>
+      {/* Content area - takes remaining height without causing double scrollbars */}
+      <div className="flex-1 px-4">
+        {/* Search Results */}
+        {showSearchResults && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium">Search Results</h3>
+              <Button variant="ghost" size="sm" onClick={clearSearch}>
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to Categories
+              </Button>
             </div>
-          ) : searchResults.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {searchResults.map((video) => (
-                <Card key={video.id} className="overflow-hidden hover:shadow-md transition-shadow border">
-                  <div 
-                    className="relative aspect-video cursor-pointer overflow-hidden"
-                    onClick={() => playSearchResult(video)}
-                  >
-                    <img 
-                      src={video.thumbnailUrl} 
-                      alt={video.title} 
-                      className="w-full h-full object-cover transition-transform hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <PlayCircle className="h-12 w-12 text-white" />
-                    </div>
-                  </div>
-                  <CardHeader className="p-3 pb-2">
-                    <CardTitle className="text-base line-clamp-2">{video.title}</CardTitle>
-                  </CardHeader>
-                  <CardFooter className="p-3 pt-0">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
+            
+            {isSearching ? (
+              <div className="flex justify-center items-center h-40">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-learning-color"></div>
+              </div>
+            ) : searchResults.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {searchResults.map((video) => (
+                  <Card key={video.id} className="overflow-hidden hover:shadow-md transition-shadow border">
+                    <div 
+                      className="relative aspect-video cursor-pointer overflow-hidden"
                       onClick={() => playSearchResult(video)}
                     >
-                      <PlayCircle className="h-4 w-4 mr-1" />
-                      Watch Video
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No videos found for "{searchQuery}"</p>
-              <p className="text-gray-400 text-sm mt-1">Try different keywords or browse our categories</p>
-            </div>
-          )}
-        </div>
-      )}
+                      <img 
+                        src={video.thumbnailUrl} 
+                        alt={video.title} 
+                        className="w-full h-full object-cover transition-transform hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <PlayCircle className="h-12 w-12 text-white" />
+                      </div>
+                    </div>
+                    <CardHeader className="p-3 pb-2">
+                      <CardTitle className="text-base line-clamp-2">{video.title}</CardTitle>
+                    </CardHeader>
+                    <CardFooter className="p-3 pt-0">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
+                        onClick={() => playSearchResult(video)}
+                      >
+                        <PlayCircle className="h-4 w-4 mr-1" />
+                        Watch Video
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No videos found for "{searchQuery}"</p>
+                <p className="text-gray-400 text-sm mt-1">Try different keywords or browse our categories</p>
+              </div>
+            )}
+          </div>
+        )}
 
-      {/* Main Tabs for Categories */}
-      {!showSearchResults && (
-        <div className="px-4 flex-1 overflow-auto">
+        {/* Main Tabs for Categories */}
+        {!showSearchResults && (
           <Tabs defaultValue="techniques" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="sticky top-[72px] bg-white z-10 pb-2">
+            <div className="sticky top-0 bg-white z-10 pb-2">
               <TabsList className="grid grid-cols-4 w-full">
                 <TabsTrigger value="techniques">Techniques</TabsTrigger>
                 <TabsTrigger value="safety">Safety</TabsTrigger>
@@ -199,54 +200,86 @@ const CookingTutorialPopup: React.FC = () => {
             </div>
             
             <div className="mt-4">
-              {activeTab === "techniques" && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-6">
-                  <div className="flex items-start gap-3">
-                    <Info className="h-5 w-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium text-blue-800">Essential Techniques</h3>
-                      <p className="text-sm text-blue-700">
-                        Master these fundamental techniques to build a strong foundation for all your cooking.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {activeTab === "safety" && (
-                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-6">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium text-yellow-800">Kitchen Safety Is Essential</h3>
-                      <p className="text-sm text-yellow-700">
-                        Proper technique and safety practices help prevent injury and foodborne illness. 
-                        These fundamentals should be mastered before attempting complex recipes.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               <TabsContent value="techniques" className="mt-0">
-                <TechniqueTutorials onPlayVideo={handlePlayVideo} />
+                <Card className="mb-4 border-blue-200 bg-blue-50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start gap-3">
+                      <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <div>
+                        <CardTitle className="text-base text-blue-800">Essential Techniques</CardTitle>
+                        <CardDescription className="text-blue-700">
+                          Master these fundamental techniques to build a strong foundation for all your cooking.
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <TechniqueTutorials onPlayVideo={handlePlayVideo} />
+                </div>
               </TabsContent>
               
               <TabsContent value="safety" className="mt-0">
-                <KitchenSafetyTutorials onPlayVideo={handlePlayVideo} />
+                <Card className="mb-4 border-yellow-200 bg-yellow-50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                      <div>
+                        <CardTitle className="text-base text-yellow-800">Kitchen Safety Is Essential</CardTitle>
+                        <CardDescription className="text-yellow-700">
+                          Proper technique and safety practices help prevent injury and foodborne illness. 
+                          These fundamentals should be mastered before attempting complex recipes.
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <KitchenSafetyTutorials onPlayVideo={handlePlayVideo} />
+                </div>
               </TabsContent>
               
               <TabsContent value="recipes" className="mt-0">
-                <BasicRecipesTutorials onPlayVideo={handlePlayVideo} />
+                <Card className="mb-4 border-green-200 bg-green-50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start gap-3">
+                      <Info className="h-5 w-5 text-green-600 mt-0.5" />
+                      <div>
+                        <CardTitle className="text-base text-green-800">Basic Recipes</CardTitle>
+                        <CardDescription className="text-green-700">
+                          Simple, foundational recipes that every home cook should know. Perfect for beginners.
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <BasicRecipesTutorials onPlayVideo={handlePlayVideo} />
+                </div>
               </TabsContent>
               
               <TabsContent value="meals" className="mt-0">
-                <MealTutorials onPlayVideo={handlePlayVideo} />
+                <Card className="mb-4 border-orange-200 bg-orange-50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start gap-3">
+                      <Info className="h-5 w-5 text-orange-600 mt-0.5" />
+                      <div>
+                        <CardTitle className="text-base text-orange-800">Meal Tutorials</CardTitle>
+                        <CardDescription className="text-orange-700">
+                          Learn how to prepare complete meals for breakfast, lunch, and dinner.
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <MealTutorials onPlayVideo={handlePlayVideo} />
+                </div>
               </TabsContent>
             </div>
           </Tabs>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Video Player Dialog */}
       <VideoPlayerDialog
