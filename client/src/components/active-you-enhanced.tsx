@@ -70,7 +70,8 @@ import {
   ArrowRight,
   User,
   Video,
-  Loader2
+  Loader2,
+  ExternalLink
 } from "lucide-react";
 
 // Custom Stretch icon component
