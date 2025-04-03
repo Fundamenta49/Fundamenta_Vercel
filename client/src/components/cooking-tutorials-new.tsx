@@ -6,6 +6,8 @@ import { SearchIcon, BookOpen, ChefHat, PlayCircle, Utensils, ShieldAlert, BookM
 import { Input } from '@/components/ui/input';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CookingTutorialsContent } from '@/components/cooking-tutorials-content';
 import { 
   searchCookingVideos,
   getCookingVideosByCategory,
@@ -197,6 +199,24 @@ const CookingTutorials = () => {
   // Play a video
   const playVideo = (video: CookingVideo) => {
     setSelectedVideo(video);
+    setVideoDialogOpen(true);
+  };
+  
+  // Play a video from tutorial content
+  const playTutorialVideo = (videoId: string, title: string, description?: string) => {
+    // Create a CookingVideo object from the tutorial data
+    const tutorialVideo: CookingVideo = {
+      id: videoId,
+      title: title,
+      description: description || '',
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      youTubeId: videoId,
+      length: 0, // We don't have this information from the tutorial data
+      views: 0,  // We don't have this information from the tutorial data
+      difficulty: 'beginner'
+    };
+    
+    setSelectedVideo(tutorialVideo);
     setVideoDialogOpen(true);
   };
 
@@ -513,43 +533,80 @@ const CookingTutorials = () => {
           </Card>
         </div>
       ) : (
-        // CATEGORIES LIST
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((category) => (
-            <Card 
-              key={category.id} 
-              className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
-              onClick={() => handleCategoryClick(category.id)}
-            >
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <div className="text-learning-color">
-                    {category.icon}
+        // Main Content - Tabs for API Search vs Curated Content
+        <div className="space-y-6">
+          <Card className="shadow-sm border-t-4 border-t-learning-color overflow-hidden">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg sm:text-xl flex items-center gap-2 text-learning-color">
+                <ChefHat className="h-5 w-5" />
+                Learn to Cook - Step by Step
+              </CardTitle>
+              <CardDescription>
+                Cooking fundamentals, recipes, and techniques to build your confidence in the kitchen
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pb-6">
+              <Tabs defaultValue="curated" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="curated" className="text-sm">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Curated Learning Path
+                  </TabsTrigger>
+                  <TabsTrigger value="categories" className="text-sm">
+                    <Utensils className="h-4 w-4 mr-2" />
+                    Browse Categories
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="curated" className="mt-0">
+                  {/* Curated Content from our new component */}
+                  <CookingTutorialsContent onPlayVideo={playTutorialVideo} />
+                </TabsContent>
+                
+                <TabsContent value="categories" className="mt-0">
+                  {/* Categories Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {categories.map((category) => (
+                      <Card 
+                        key={category.id} 
+                        className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
+                        onClick={() => handleCategoryClick(category.id)}
+                      >
+                        <CardHeader className="pb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="text-learning-color">
+                              {category.icon}
+                            </div>
+                            <CardTitle className="text-lg text-learning-color">{category.name}</CardTitle>
+                          </div>
+                          <CardDescription className="line-clamp-2">{category.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="mt-2 text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
+                          >
+                            Browse Videos <PlayCircle className="ml-1 h-4 w-4" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                  <CardTitle className="text-lg text-learning-color">{category.name}</CardTitle>
-                </div>
-                <CardDescription className="line-clamp-2">{category.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="mt-2 text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
-                >
-                  Browse Videos <PlayCircle className="ml-1 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
         </div>
       )}
-      
+
       {/* Video Player Dialog */}
       <VideoPlayerDialog
         open={videoDialogOpen}
         onOpenChange={setVideoDialogOpen}
         videoId={selectedVideo?.youTubeId || ''}
         title={selectedVideo?.title || ''}
+        description={selectedVideo?.description}
       />
     </div>
   );
