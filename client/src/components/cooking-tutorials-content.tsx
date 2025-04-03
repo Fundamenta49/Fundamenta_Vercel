@@ -115,8 +115,8 @@ const cookingTutorials: CookingTutorial[] = [
     description: 'Learn the science and technique behind successful baking.',
     category: 'technique',
     difficulty: 'beginner',
-    videoId: 'vpS0chcD_Dk',
-    thumbnailUrl: 'https://img.youtube.com/vi/vpS0chcD_Dk/hqdefault.jpg',
+    videoId: 'BGM5_vbVtiE',
+    thumbnailUrl: 'https://img.youtube.com/vi/BGM5_vbVtiE/hqdefault.jpg',
     duration: 12,
     featured: true,
     steps: [
@@ -189,8 +189,8 @@ const cookingTutorials: CookingTutorial[] = [
     description: 'Learn to cook pasta properly and make simple, delicious sauces.',
     category: 'basic-recipe',
     difficulty: 'beginner',
-    videoId: 'UYhKDweME3A',
-    thumbnailUrl: 'https://img.youtube.com/vi/UYhKDweME3A/hqdefault.jpg',
+    videoId: '47nu4L_aoRs',
+    thumbnailUrl: 'https://img.youtube.com/vi/47nu4L_aoRs/hqdefault.jpg',
     duration: 12,
     featured: true,
     steps: [
@@ -255,8 +255,8 @@ const cookingTutorials: CookingTutorial[] = [
     description: 'Master the technique for light, fluffy pancakes perfect for breakfast.',
     category: 'breakfast',
     difficulty: 'beginner',
-    videoId: 'GLdxV0PTX3s',
-    thumbnailUrl: 'https://img.youtube.com/vi/GLdxV0PTX3s/hqdefault.jpg',
+    videoId: '_Dt_0bcBHZw',
+    thumbnailUrl: 'https://img.youtube.com/vi/_Dt_0bcBHZw/hqdefault.jpg',
     duration: 15,
     featured: true,
     steps: [
