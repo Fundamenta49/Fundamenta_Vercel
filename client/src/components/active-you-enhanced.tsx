@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "wouter";
 import {
   Card,
   CardContent,
@@ -73,7 +74,8 @@ import {
   Video,
   Loader2,
   ExternalLink,
-  Maximize2
+  Maximize2,
+  Milestone
 } from "lucide-react";
 
 // Custom Stretch icon component
@@ -608,14 +610,25 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               AI Yoga Assistant
             </h2>
           </div>
-          <Button 
-            onClick={() => setYogaPromptOpen(true)}
-            className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
-            size="sm"
-          >
-            <ArrowRight className="h-4 w-4 mr-1" />
-            Start Guided Flow
-          </Button>
+          <div className="flex gap-2">
+            <Link href="/yoga-progression">
+              <Button 
+                className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200"
+                size="sm"
+              >
+                <Milestone className="h-4 w-4 mr-1" />
+                Yoga Progression
+              </Button>
+            </Link>
+            <Button 
+              onClick={() => setYogaPromptOpen(true)}
+              className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
+              size="sm"
+            >
+              <ArrowRight className="h-4 w-4 mr-1" />
+              Start Guided Flow
+            </Button>
+          </div>
         </div>
         <p className="text-sm text-muted-foreground mt-1">
           Get real-time form corrections and personalized yoga guidance
