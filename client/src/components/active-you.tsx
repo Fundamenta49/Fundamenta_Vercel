@@ -73,7 +73,22 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
               Get personalized workout plans and form guidance
             </p>
           </div>
-          <FitnessExercises />
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-0">
+              <CardTitle>Weight Training</CardTitle>
+              <CardDescription>
+                Build strength, muscle, and power with these weightlifting routines
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <Alert className="bg-blue-50 border-blue-200 mb-4">
+                <AlertDescription className="text-blue-800">
+                  Find exercises that match your equipment and experience level
+                </AlertDescription>
+              </Alert>
+              <FitnessExercises muscleFilter="strength" equipmentFilter="dumbbell" />
+            </CardContent>
+          </Card>
           <FitnessProgress />
         </div>
       );
@@ -92,6 +107,22 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
               Follow guided yoga sessions with AI assistance
             </p>
           </div>
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-0">
+              <CardTitle>Yoga Practices</CardTitle>
+              <CardDescription>
+                Improve flexibility, balance, and mindfulness with these yoga poses
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <Alert className="bg-blue-50 border-blue-200 mb-4">
+                <AlertDescription className="text-blue-800">
+                  Find yoga poses suitable for your experience level
+                </AlertDescription>
+              </Alert>
+              <FitnessExercises muscleFilter="flexibility" equipmentFilter="body weight" showFilters={false} compactView={true} />
+            </CardContent>
+          </Card>
           <FitnessProgress />
         </div>
       );
@@ -143,24 +174,38 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 </AlertDescription>
               </Alert>
               
-              <div className="grid gap-4 mt-4">
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Tabata Protocol</div>
-                  <p className="text-sm text-muted-foreground mb-2">20 seconds work, 10 seconds rest for 8 rounds (4 minutes total)</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Suggested exercises:</span>
-                    <span>Burpees, High Knees, Mountain Climbers, Jump Squats</span>
+              <div className="mb-6">
+                <h3 className="font-medium text-lg my-3">HIIT Protocols</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Tabata Protocol</div>
+                    <p className="text-sm text-muted-foreground mb-2">20 seconds work, 10 seconds rest for 8 rounds (4 minutes total)</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-wellness-600 font-medium">Suggested exercises:</span>
+                      <span>Burpees, High Knees, Mountain Climbers, Jump Squats</span>
+                    </div>
+                  </div>
+                  
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">30-30 Intervals</div>
+                    <p className="text-sm text-muted-foreground mb-2">30 seconds work, 30 seconds rest for 10-20 minutes</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-wellness-600 font-medium">Suggested exercises:</span>
+                      <span>Kettlebell Swings, Battle Ropes, Box Jumps, Sprints</span>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">30-30 Intervals</div>
-                  <p className="text-sm text-muted-foreground mb-2">30 seconds work, 30 seconds rest for 10-20 minutes</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Suggested exercises:</span>
-                    <span>Kettlebell Swings, Battle Ropes, Box Jumps, Sprints</span>
-                  </div>
-                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-lg mb-3">HIIT Exercises</h3>
+                <FitnessExercises 
+                  muscleFilter="full body" 
+                  difficultyFilter="intermediate"
+                  showFilters={false} 
+                  compactView={true}
+                  maxExercises={6}
+                />
               </div>
             </CardContent>
           </Card>
@@ -197,24 +242,38 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 </AlertDescription>
               </Alert>
               
-              <div className="grid gap-4 mt-4">
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Lower Body Power</div>
-                  <p className="text-sm text-muted-foreground mb-2">3 sets of 8-12 reps with full recovery between sets</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Exercises:</span>
-                    <span>Box Jumps, Broad Jumps, Jump Squats, Lateral Bounds</span>
+              <div className="mb-6">
+                <h3 className="font-medium text-lg my-3">Plyometric Programs</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Lower Body Power</div>
+                    <p className="text-sm text-muted-foreground mb-2">3 sets of 8-12 reps with full recovery between sets</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-wellness-600 font-medium">Exercises:</span>
+                      <span>Box Jumps, Broad Jumps, Jump Squats, Lateral Bounds</span>
+                    </div>
+                  </div>
+                  
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Upper Body Power</div>
+                    <p className="text-sm text-muted-foreground mb-2">3 sets of 6-10 reps with full recovery between sets</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-wellness-600 font-medium">Exercises:</span>
+                      <span>Plyo Push-ups, Medicine Ball Chest Passes, Clap Push-ups</span>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Upper Body Power</div>
-                  <p className="text-sm text-muted-foreground mb-2">3 sets of 6-10 reps with full recovery between sets</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Exercises:</span>
-                    <span>Plyo Push-ups, Medicine Ball Chest Passes, Clap Push-ups</span>
-                  </div>
-                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-lg mb-3">Plyometric Exercises</h3>
+                <FitnessExercises 
+                  muscleFilter="legs" 
+                  difficultyFilter="intermediate"
+                  showFilters={false} 
+                  compactView={true}
+                  maxExercises={6}
+                />
               </div>
             </CardContent>
           </Card>
@@ -244,33 +303,52 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4 space-y-4">
-              <div className="grid gap-4 mt-2">
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Dynamic Warm-Up Routine</div>
-                  <p className="text-sm text-muted-foreground mb-2">Perform before workouts to prepare muscles and joints</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Duration:</span>
-                    <span>5-10 minutes</span>
+              <Alert className="bg-blue-50 border-blue-200 mb-4">
+                <AlertDescription className="text-blue-800">
+                  Find stretches to improve mobility and aid recovery
+                </AlertDescription>
+              </Alert>
+              
+              <div className="mb-6">
+                <h3 className="font-medium text-lg mb-3">Recommended Routines</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Dynamic Warm-Up Routine</div>
+                    <p className="text-sm text-muted-foreground mb-2">Perform before workouts to prepare muscles and joints</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-wellness-600 font-medium">Duration:</span>
+                      <span>5-10 minutes</span>
+                    </div>
+                  </div>
+                  
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Full Body Flexibility</div>
+                    <p className="text-sm text-muted-foreground mb-2">Hold each stretch for 30 seconds, 2-3 rounds</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-wellness-600 font-medium">Target areas:</span>
+                      <span>Hamstrings, Hip Flexors, Shoulders, Lower Back</span>
+                    </div>
+                  </div>
+                  
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Recovery Session</div>
+                    <p className="text-sm text-muted-foreground mb-2">Gentle stretches to aid muscle recovery after workouts</p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-wellness-600 font-medium">Duration:</span>
+                      <span>15-20 minutes</span>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Full Body Flexibility</div>
-                  <p className="text-sm text-muted-foreground mb-2">Hold each stretch for 30 seconds, 2-3 rounds</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Target areas:</span>
-                    <span>Hamstrings, Hip Flexors, Shoulders, Lower Back</span>
-                  </div>
-                </div>
-                
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Recovery Session</div>
-                  <p className="text-sm text-muted-foreground mb-2">Gentle stretches to aid muscle recovery after workouts</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Duration:</span>
-                    <span>15-20 minutes</span>
-                  </div>
-                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-lg mb-3">Exercise Library</h3>
+                <FitnessExercises 
+                  muscleFilter="flexibility" 
+                  showFilters={false} 
+                  compactView={true}
+                  maxExercises={6}
+                />
               </div>
             </CardContent>
           </Card>
@@ -307,34 +385,13 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 </AlertDescription>
               </Alert>
               
-              <div className="grid gap-4 mt-4">
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Upper Body Basics</div>
-                  <p className="text-sm text-muted-foreground mb-2">3 sets of 8-12 reps with 60-90 seconds rest</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Exercises:</span>
-                    <span>Push-ups, Inverted Rows, Dips, Scapular Pull-ups</span>
-                  </div>
-                </div>
-                
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Core Strength</div>
-                  <p className="text-sm text-muted-foreground mb-2">3 sets of 30-60 seconds with 45 seconds rest</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Exercises:</span>
-                    <span>Planks, Hollow Body Hold, Mountain Climbers, Leg Raises</span>
-                  </div>
-                </div>
-                
-                <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                  <div className="font-medium text-lg mb-1">Lower Body Development</div>
-                  <p className="text-sm text-muted-foreground mb-2">3 sets of 12-15 reps with 60 seconds rest</p>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-wellness-600 font-medium">Exercises:</span>
-                    <span>Bodyweight Squats, Lunges, Glute Bridges, Calf Raises</span>
-                  </div>
-                </div>
-              </div>
+              <FitnessExercises 
+                muscleFilter="full body" 
+                equipmentFilter="body weight" 
+                difficultyFilter="beginner"
+                showFilters={false}
+                compactView={true}
+              />
             </CardContent>
           </Card>
           <FitnessProgress />

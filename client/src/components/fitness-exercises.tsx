@@ -53,9 +53,27 @@ interface FilterOptions {
   difficulty?: string;
 }
 
-export default function FitnessExercises() {
+interface FitnessExercisesProps {
+  muscleFilter?: string;
+  equipmentFilter?: string;
+  difficultyFilter?: string;
+  showFilters?: boolean;
+  compactView?: boolean;
+  maxExercises?: number;
+}
+
+export default function FitnessExercises({
+  muscleFilter,
+  equipmentFilter,
+  difficultyFilter = 'beginner',
+  showFilters = true,
+  compactView = false,
+  maxExercises = 10
+}: FitnessExercisesProps) {
   const [filters, setFilters] = useState<FilterOptions>({
-    difficulty: 'beginner',
+    muscleGroup: muscleFilter,
+    equipment: equipmentFilter,
+    difficulty: difficultyFilter,
   });
   const [selectedTab, setSelectedTab] = useState<string>('exercises');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -82,15 +100,22 @@ export default function FitnessExercises() {
       const data = await response.json();
       return data.exercises;
     },
-    enabled: selectedTab === 'exercises',
+    enabled: true,
   });
   
-  // Update URL when filters change
+  // Update when filters change
   useEffect(() => {
-    if (selectedTab === 'exercises') {
-      exercisesQuery.refetch();
-    }
-  }, [filters, selectedTab]);
+    exercisesQuery.refetch();
+  }, [filters]);
+
+  // Update filters when props change
+  useEffect(() => {
+    setFilters({
+      muscleGroup: muscleFilter,
+      equipment: equipmentFilter,
+      difficulty: difficultyFilter,
+    });
+  }, [muscleFilter, equipmentFilter, difficultyFilter]);
 
   // Muscle group options
   const muscleGroups = [
@@ -119,16 +144,97 @@ export default function FitnessExercises() {
     { value: 'intermediate', label: 'Intermediate' },
     { value: 'advanced', label: 'Advanced' },
   ];
-
-  return (
-    <div className="space-y-6">
-      <Tabs defaultValue={selectedTab} onValueChange={setSelectedTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="exercises">Exercise Library</TabsTrigger>
-          <TabsTrigger value="workouts">Workout Plans</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="exercises" className="space-y-4 mt-4">
+  
+  // Render exercise cards
+  const renderExercises = () => {
+    if (exercisesQuery.isPending) {
+      return Array.from({ length: 3 }).map((_, index) => (
+        <Card key={`skeleton-${index}`}>
+          <CardHeader className="pb-2">
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/2 mt-2" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-20 w-full" />
+          </CardContent>
+        </Card>
+      ));
+    }
+    
+    if (exercisesQuery.isError) {
+      return (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Error loading exercises. {exercisesQuery.error instanceof Error && exercisesQuery.error.message}
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    
+    if (!exercisesQuery.data || exercisesQuery.data.length === 0) {
+      return (
+        <Card>
+          <CardContent className="pt-6 flex flex-col items-center justify-center min-h-[200px]">
+            <Dumbbell className="h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium mb-2">No exercises found</h3>
+            <p className="text-muted-foreground text-center max-w-md">
+              Try adjusting your filters or check back later for new exercises.
+            </p>
+          </CardContent>
+        </Card>
+      );
+    }
+    
+    // Limit the number of exercises shown
+    const displayExercises = exercisesQuery.data.slice(0, maxExercises);
+    
+    return displayExercises.map((exercise: Exercise) => (
+      <Card key={exercise.id} className="overflow-hidden">
+        <CardHeader className={compactView ? "p-3" : "pb-2"}>
+          <div className="flex justify-between items-start">
+            <CardTitle className={compactView ? "text-base" : ""}>{exercise.name}</CardTitle>
+            <div className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+              {exercise.difficulty}
+            </div>
+          </div>
+          <CardDescription>
+            {exercise.muscleGroups.join(', ')} | {exercise.equipment.join(', ')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className={compactView ? "p-3 pt-0" : "space-y-2"}>
+          {!compactView && <p className="text-sm">{exercise.description}</p>}
+          
+          {!compactView && exercise.instructions.length > 0 && (
+            <div className="mt-2">
+              <h4 className="text-sm font-medium mb-1">Instructions:</h4>
+              <ul className="list-disc pl-5 space-y-1">
+                {exercise.instructions.map((instruction, idx) => (
+                  <li key={idx} className="text-sm">{instruction}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {exercise.imageUrl && !compactView && (
+            <div className="mt-3 flex justify-center">
+              <img 
+                src={exercise.imageUrl} 
+                alt={exercise.name}
+                className="rounded-md max-h-60 object-contain"
+              />
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    ));
+  };
+  
+  // Render the component
+  if (compactView) {
+    return (
+      <div className="space-y-4">
+        {showFilters && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium">Muscle Group</label>
@@ -189,82 +295,89 @@ export default function FitnessExercises() {
               </Select>
             </div>
           </div>
+        )}
+        
+        <div className="grid gap-4 mt-2">
+          {renderExercises()}
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="space-y-6">
+      <Tabs defaultValue={selectedTab} onValueChange={setSelectedTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="exercises">Exercise Library</TabsTrigger>
+          <TabsTrigger value="workouts">Workout Plans</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="exercises" className="space-y-4 mt-4">
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm font-medium">Muscle Group</label>
+                <Select
+                  value={filters.muscleGroup || ''}
+                  onValueChange={(value) => setFilters({...filters, muscleGroup: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Muscle Group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Muscle Groups</SelectItem>
+                    {muscleGroups.map(group => (
+                      <SelectItem key={group.value} value={group.value}>
+                        {group.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Equipment</label>
+                <Select
+                  value={filters.equipment || ''}
+                  onValueChange={(value) => setFilters({...filters, equipment: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Equipment" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Any Equipment</SelectItem>
+                    {equipmentOptions.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Difficulty</label>
+                <Select
+                  value={filters.difficulty || 'beginner'}
+                  onValueChange={(value) => setFilters({...filters, difficulty: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {difficultyLevels.map(level => (
+                      <SelectItem key={level.value} value={level.value}>
+                        {level.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
           
-          <div className="grid gap-4 mt-6">
-            {exercisesQuery.isPending ? (
-              // Loading skeleton
-              Array.from({ length: 3 }).map((_, index) => (
-                <Card key={`skeleton-${index}`}>
-                  <CardHeader className="pb-2">
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2 mt-2" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-20 w-full" />
-                  </CardContent>
-                </Card>
-              ))
-            ) : exercisesQuery.isError ? (
-              // Error state
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Error loading exercises. {exercisesQuery.error instanceof Error && exercisesQuery.error.message}
-                </AlertDescription>
-              </Alert>
-            ) : exercisesQuery.data?.length === 0 ? (
-              // Empty state
-              <Card>
-                <CardContent className="pt-6 flex flex-col items-center justify-center min-h-[200px]">
-                  <Dumbbell className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No exercises found</h3>
-                  <p className="text-muted-foreground text-center max-w-md">
-                    Try adjusting your filters or check back later for new exercises.
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              // Display exercises
-              exercisesQuery.data.map((exercise: Exercise) => (
-                <Card key={exercise.id} className="overflow-hidden">
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <CardTitle>{exercise.name}</CardTitle>
-                      <div className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                        {exercise.difficulty}
-                      </div>
-                    </div>
-                    <CardDescription>
-                      {exercise.muscleGroups.join(', ')} | {exercise.equipment.join(', ')}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <p className="text-sm">{exercise.description}</p>
-                    
-                    {exercise.instructions.length > 0 && (
-                      <div className="mt-2">
-                        <h4 className="text-sm font-medium mb-1">Instructions:</h4>
-                        <ul className="list-disc pl-5 space-y-1">
-                          {exercise.instructions.map((instruction, idx) => (
-                            <li key={idx} className="text-sm">{instruction}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    
-                    {exercise.imageUrl && (
-                      <div className="mt-3 flex justify-center">
-                        <img 
-                          src={exercise.imageUrl} 
-                          alt={exercise.name}
-                          className="rounded-md max-h-60 object-contain"
-                        />
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))
-            )}
+          <div className="grid gap-4 mt-4">
+            {renderExercises()}
           </div>
         </TabsContent>
         
