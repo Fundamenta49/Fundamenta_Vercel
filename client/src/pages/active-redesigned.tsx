@@ -22,7 +22,7 @@ import {
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
-import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, Menu, ArrowRight } from "lucide-react";
+import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, Menu, ArrowRight, Flame, Activity, Waypoints } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Section colors from the design system
@@ -102,6 +102,38 @@ const SECTIONS: SectionType[] = [
     icon: Timer,
     component: ActiveYou,
     props: { defaultTab: "running" as const }
+  },
+  {
+    id: 'hiit',
+    title: 'HIIT',
+    description: 'High-Intensity Interval Training for maximum results',
+    icon: Flame,
+    component: ActiveYou,
+    props: { defaultTab: "hiit" as const }
+  },
+  {
+    id: 'plyometrics',
+    title: 'Plyometrics',
+    description: 'Explosive movement training for power and athleticism',
+    icon: Activity,
+    component: ActiveYou,
+    props: { defaultTab: "plyometrics" as const }
+  },
+  {
+    id: 'stretch',
+    title: 'Stretch Zone',
+    description: 'Improve flexibility and recovery with guided stretching',
+    icon: Brain, // Using Brain as a temporary icon for stretch
+    component: ActiveYou,
+    props: { defaultTab: "stretch" as const }
+  },
+  {
+    id: 'calisthenics',
+    title: 'Calisthenics',
+    description: 'Bodyweight exercises for strength and skill development',
+    icon: Waypoints,
+    component: ActiveYou,
+    props: { defaultTab: "calisthenics" as const }
   }
 ];
 
@@ -181,7 +213,9 @@ function SectionDialog({
       <FullScreenDialogHeader>
         <FullScreenDialogTitle>
           <div className="flex items-center">
-            <section.icon className="h-6 w-6 mr-2" style={{ color: themeColor }} />
+            <div className="h-6 w-6 mr-2 text-wellness-600 flex items-center">
+              <section.icon />
+            </div>
             <span style={{ color: themeColor }}>{section.title}</span>
           </div>
         </FullScreenDialogTitle>
