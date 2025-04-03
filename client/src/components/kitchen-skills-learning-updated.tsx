@@ -64,7 +64,7 @@ interface UserProgress {
 
 const KitchenSkillsLearning: React.FC = () => {
   // Main training video ID from Joshua Weissman
-  const mainVideoId = 'O5hW_65fTxs';
+  const mainVideoId = 'GFFWa5ELqUA'; // Basic Knife Skills video ID that is known to work
   
   // State for the selected skill and video dialog
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
@@ -279,7 +279,7 @@ const KitchenSkillsLearning: React.FC = () => {
       id: 'prep-tools',
       name: 'Preparation Tools',
       description: 'Master common prep tools like graters, peelers, zesters, and measuring tools.',
-      icon: <ChefHat className="h-5 w-5" />,
+      icon: <Utensils className="h-5 w-5" />,
       skills: [
         {
           id: 'measuring-basics',
@@ -446,7 +446,7 @@ const KitchenSkillsLearning: React.FC = () => {
       id: 'cookware',
       name: 'Cookware Mastery',
       description: 'Learn proper usage techniques for pots, pans, and bakeware to elevate your cooking.',
-      icon: <ChefHat className="h-5 w-5" />,
+      icon: <Utensils className="h-5 w-5" />,
       skills: [
         {
           id: 'pan-selection',
@@ -838,7 +838,7 @@ const KitchenSkillsLearning: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <CardTitle className="text-xl sm:text-2xl font-bold text-learning-color flex items-center gap-2">
-                <ChefHat className="h-5 w-5" />
+                <Utensils className="h-5 w-5" />
                 Kitchen Skills Academy
               </CardTitle>
               <CardDescription className="text-gray-600 mt-1">
