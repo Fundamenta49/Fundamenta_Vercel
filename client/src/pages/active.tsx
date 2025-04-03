@@ -15,7 +15,7 @@ import ChatInterface, { FITNESS_CATEGORY } from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
-import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, X as CloseIcon, ChevronDown } from "lucide-react";
+import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, X as CloseIcon, ChevronDown, Flame, Activity, Waypoints } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -252,6 +252,38 @@ const SECTIONS: SectionType[] = [
     icon: Timer,
     component: ActiveYou,
     props: { defaultTab: "running" as const }
+  },
+  {
+    id: 'hiit',
+    title: 'HIIT',
+    description: 'High-Intensity Interval Training for maximum results',
+    icon: Flame,
+    component: ActiveYou,
+    props: { defaultTab: "hiit" as const }
+  },
+  {
+    id: 'plyometrics',
+    title: 'Plyometrics',
+    description: 'Explosive movement training for power and athleticism',
+    icon: Activity,
+    component: ActiveYou,
+    props: { defaultTab: "plyometrics" as const }
+  },
+  {
+    id: 'stretch',
+    title: 'Stretch Zone',
+    description: 'Improve flexibility and recovery with guided stretching',
+    icon: Brain,
+    component: ActiveYou,
+    props: { defaultTab: "stretch" as const }
+  },
+  {
+    id: 'calisthenics',
+    title: 'Calisthenics',
+    description: 'Bodyweight exercises for strength and skill development',
+    icon: Waypoints,
+    component: ActiveYou,
+    props: { defaultTab: "calisthenics" as const }
   }
 ];
 
