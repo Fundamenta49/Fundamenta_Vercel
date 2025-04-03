@@ -256,6 +256,86 @@ export default function CookingBasics() {
         </p>
       </div>
       
+      {/* Introduction Header */}
+      <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm mb-8">
+        <div className="relative aspect-video overflow-hidden">
+          <img 
+            src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
+            alt="Kitchen with cooking setup"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+            <h2 className="text-white text-xl font-medium">
+              Learn to cook and save money while eating healthier
+            </h2>
+          </div>
+        </div>
+        
+        <div className="p-5 bg-white">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <h3 className="text-lg font-medium mb-2">Why Learn to Cook?</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span><strong>Save $2,000+ per year</strong> by preparing homemade meals</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span><strong>Eat healthier</strong> by controlling ingredients and portions</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span><strong>Gain independence</strong> and confidence in the kitchen</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-2">What You'll Learn</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                    </svg>
+                  </div>
+                  <span>Essential kitchen tools and how to use them</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                    </svg>
+                  </div>
+                  <span>Basic cooking techniques with step-by-step videos</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                    </svg>
+                  </div>
+                  <span>Simple home recipes like mac & cheese and pancakes</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Grid Layout of Cooking Categories */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         {/* Introduction */}
