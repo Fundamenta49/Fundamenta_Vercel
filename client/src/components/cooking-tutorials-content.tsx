@@ -122,13 +122,13 @@ const cookingTutorials: CookingTutorial[] = [
   },
   {
     id: 'braising-technique',
-    name: 'Braising For Tender Results',
+    name: 'What is Braising',
     description: 'Transform tough cuts into tender, flavorful meals with this slow-cooking method.',
     category: 'technique',
     difficulty: 'intermediate',
-    videoId: 'qZ4LPgq5JEo',
-    thumbnailUrl: 'https://img.youtube.com/vi/qZ4LPgq5JEo/hqdefault.jpg',
-    duration: 15,
+    videoId: 'gLLHpkbEGzk',
+    thumbnailUrl: 'https://img.youtube.com/vi/gLLHpkbEGzk/hqdefault.jpg',
+    duration: 12,
     steps: [
       'Season and sear meat on all sides until well browned',
       'Add aromatics like onions, carrots, and garlic',
