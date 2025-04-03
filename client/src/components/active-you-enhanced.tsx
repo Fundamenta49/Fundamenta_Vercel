@@ -1743,24 +1743,26 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         <DialogContent className="max-w-3xl">
           {selectedExercise && (
             <>
-              <DialogHeader>
+              <DialogHeader className="pb-2 border-b">
                 <div className="flex items-center justify-between">
-                  <DialogTitle className="text-xl font-bold">{selectedExercise?.name}</DialogTitle>
+                  <div>
+                    <DialogTitle className="text-2xl font-bold text-gray-900">{selectedExercise?.name}</DialogTitle>
+                    <DialogDescription className="text-gray-600 mt-1">
+                      {selectedExercise?.category === 'yoga' ? 'Yoga Pose' : 'Stretching Exercise'}
+                    </DialogDescription>
+                  </div>
                   <button 
-                    className="rounded-full p-1 hover:bg-gray-100" 
+                    className="rounded-full p-2 hover:bg-gray-100 transition-colors" 
                     onClick={() => setDialogOpen(false)}
                   >
                     <X size={20} />
                   </button>
                 </div>
-                <DialogDescription>
-                  {selectedExercise?.category === 'yoga' ? 'Yoga Pose' : 'Stretching Exercise'}
-                </DialogDescription>
               </DialogHeader>
               
-              <div className="mt-4 space-y-6 max-h-[70vh] overflow-y-auto pr-2">
+              <div className="mt-4 space-y-8 max-h-[70vh] overflow-y-auto pr-2">
                 {selectedExercise?.imageUrl && (
-                  <div className="rounded-lg overflow-hidden border">
+                  <div className="rounded-lg overflow-hidden shadow-md">
                     <img 
                       src={selectedExercise?.imageUrl} 
                       alt={`${selectedExercise?.name} demonstration`} 
@@ -1769,16 +1771,16 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   </div>
                 )}
                 
-                <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-                  <div className="md:col-span-2 space-y-4">
-                    <div className="bg-gray-50 p-4 rounded-lg border">
-                      <h3 className="text-lg font-medium mb-2 text-gray-800">Description</h3>
-                      <p className="text-gray-700">{selectedExercise?.description}</p>
+                <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
+                  <div className="md:col-span-2 space-y-8">
+                    <div>
+                      <h3 className="text-lg font-medium mb-3 text-gray-800">Description</h3>
+                      <p className="text-gray-700 leading-relaxed">{selectedExercise?.description}</p>
                     </div>
                     
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                      <h3 className="text-lg font-medium mb-2 text-blue-800 flex items-center">
-                        <span className="mr-2">How to Perform</span>
+                    <div>
+                      <h3 className="text-lg font-medium mb-3 text-blue-800 flex items-center">
+                        <span>How to Perform</span>
                       </h3>
                       <ol className="list-decimal pl-5 space-y-2">
                         {selectedExercise?.instructions.map((instruction, index) => (
@@ -1787,9 +1789,9 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                       </ol>
                     </div>
                     
-                    <div className="bg-green-50 p-4 rounded-lg border border-green-100">
-                      <h3 className="text-lg font-medium mb-2 text-green-800 flex items-center">
-                        <span className="mr-2">Benefits</span>
+                    <div>
+                      <h3 className="text-lg font-medium mb-3 text-green-800 flex items-center">
+                        <span>Benefits</span>
                       </h3>
                       <ul className="list-disc pl-5 space-y-2">
                         {selectedExercise?.benefits.map((benefit, index) => (
@@ -1799,10 +1801,10 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     </div>
                   </div>
                   
-                  <div className="space-y-4">
-                    <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
-                      <h3 className="text-lg font-medium mb-2 text-amber-800 flex items-center">
-                        <span className="mr-2">Tips for Best Results</span>
+                  <div className="space-y-8">
+                    <div>
+                      <h3 className="text-lg font-medium mb-3 text-amber-800 flex items-center">
+                        <span>Tips for Best Results</span>
                       </h3>
                       <ul className="list-disc pl-5 space-y-2">
                         {selectedExercise?.tips.map((tip, index) => (
@@ -1812,10 +1814,10 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     </div>
                     
                     {selectedExercise?.videoUrl && (
-                      <div className="p-4 rounded-lg border">
-                        <h3 className="text-lg font-medium mb-2">Video Tutorial</h3>
+                      <div className="mt-6 mb-4">
+                        <h3 className="text-lg font-medium mb-3 text-gray-800">Video Tutorial</h3>
                         <div 
-                          className="relative aspect-video w-full overflow-hidden rounded-lg cursor-pointer" 
+                          className="relative aspect-video w-full overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-all duration-200" 
                           onClick={() => setVideoFullscreen(true)}
                         >
                           <iframe 
@@ -1825,8 +1827,8 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                             allowFullScreen
                           ></iframe>
-                          <div className="absolute inset-0 bg-black bg-opacity-0 flex items-center justify-center hover:bg-opacity-20 transition-all duration-200">
-                            <Maximize2 className="h-10 w-10 text-white opacity-0 hover:opacity-100 filter drop-shadow-lg" />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 flex items-center justify-center transition-all duration-200">
+                            <Maximize2 className="h-12 w-12 text-white opacity-0 hover:opacity-100 filter drop-shadow-lg" />
                           </div>
                         </div>
                         <div className="flex items-center justify-between gap-2 mt-3">
@@ -1880,11 +1882,11 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     )}
                     
                     {cameraEnabled && (
-                      <div className="p-4 rounded-lg border border-blue-200 bg-blue-50">
-                        <h3 className="text-lg font-medium mb-2 text-blue-800">Form Analysis</h3>
-                        <div className="flex items-center justify-center gap-2 mt-2">
+                      <div className="mt-4">
+                        <h3 className="text-lg font-medium mb-3 text-blue-800">Form Analysis</h3>
+                        <div className="flex items-center justify-center gap-2">
                           <Button 
-                            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700"
+                            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 shadow-md"
                             onClick={() => {
                               setDialogOpen(false);
                               setTimeout(() => {
@@ -1902,11 +1904,11 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              <DialogFooter className="flex justify-between mt-4">
+              <DialogFooter className="flex justify-between mt-6 pt-4 border-t">
                 <Button
                   variant="outline"
                   onClick={() => setShowAICoach(true)}
-                  className="gap-2"
+                  className="gap-2 shadow-sm hover:shadow-md transition-all"
                 >
                   <MessageSquare className="h-4 w-4" />
                   Ask AI Coach
@@ -1914,6 +1916,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 
                 <Button
                   onClick={() => setDialogOpen(false)}
+                  className="shadow-sm hover:shadow-md transition-all"
                 >
                   Close
                 </Button>
