@@ -100,6 +100,29 @@ const cookingTutorials: CookingTutorial[] = [
   
   // KITCHEN SAFETY
   {
+    id: 'measuring-tools',
+    name: 'Measuring Tools for Beginners',
+    description: 'Learn how to use various measuring tools accurately for consistent cooking and baking results.',
+    category: 'kitchen-safety',
+    difficulty: 'beginner',
+    videoId: '044Tazwn7yQ',
+    thumbnailUrl: 'https://img.youtube.com/vi/044Tazwn7yQ/hqdefault.jpg',
+    duration: 7,
+    steps: [
+      'Understand the difference between liquid and dry measuring cups',
+      'Learn proper technique for measuring dry ingredients',
+      'Master the correct way to measure liquids at eye level',
+      'Get familiar with measuring spoons for small amounts',
+      'Practice using kitchen scales for the most accurate measurements'
+    ],
+    tips: [
+      'Level off dry ingredients with a straight edge',
+      'Use clear measuring cups for liquids and check at eye level',
+      'Don\'t pack ingredients unless the recipe specifically calls for it',
+      'Consider investing in a digital kitchen scale for precision'
+    ]
+  },
+  {
     id: 'knife-skills',
     name: 'Basic Knife Skills',
     description: 'Learn safe and proper cutting techniques that every home cook should know.',
