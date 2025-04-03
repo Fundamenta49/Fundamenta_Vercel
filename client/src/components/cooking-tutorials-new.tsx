@@ -214,9 +214,9 @@ const CookingTutorials = () => {
   return (
     <div className="space-y-6">
       {/* Search Box */}
-      <Card className="shadow-sm">
+      <Card className="shadow-sm border-t-4 border-t-learning-color">
         <CardHeader className="pb-3">
-          <CardTitle className="text-xl flex items-center gap-2">
+          <CardTitle className="text-lg sm:text-xl flex items-center gap-2 text-learning-color">
             <SearchIcon className="h-5 w-5" />
             Find Cooking Tutorials
           </CardTitle>
@@ -225,7 +225,7 @@ const CookingTutorials = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSearch} className="flex gap-2">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
             <Input
               type="text"
               placeholder="Search for recipes, techniques, or ingredients..."
@@ -233,7 +233,11 @@ const CookingTutorials = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1"
             />
-            <Button type="submit" disabled={isSearching}>
+            <Button 
+              type="submit" 
+              disabled={isSearching} 
+              className="bg-learning-color hover:bg-learning-color/90"
+            >
               {isSearching ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -254,15 +258,19 @@ const CookingTutorials = () => {
       {showSearchResults ? (
         // SEARCH RESULTS
         <div className="space-y-6">
-          <Card>
+          <Card className="shadow-sm border-t-4 border-t-learning-color">
             <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Search Results</CardTitle>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <CardTitle className="text-learning-color flex items-center gap-2">
+                  <SearchIcon className="h-5 w-5" />
+                  Search Results
+                </CardTitle>
                 <Button 
                   variant="outline" 
                   onClick={() => setShowSearchResults(false)}
                   className="text-sm"
                 >
+                  <PlayCircle className="mr-1.5 h-4 w-4" />
                   Back to Categories
                 </Button>
               </div>
@@ -322,24 +330,31 @@ const CookingTutorials = () => {
       ) : selectedCategory ? (
         // SELECTED CATEGORY
         <div className="space-y-6">
-          <Card>
+          <Card className="shadow-sm border-t-4 border-t-learning-color">
             <CardHeader>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  {categories.find(cat => cat.id === selectedCategory)?.icon}
-                  <CardTitle>{categories.find(cat => cat.id === selectedCategory)?.name}</CardTitle>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-learning-color">
+                      {categories.find(cat => cat.id === selectedCategory)?.icon}
+                    </div>
+                    <CardTitle className="text-learning-color">
+                      {categories.find(cat => cat.id === selectedCategory)?.name}
+                    </CardTitle>
+                  </div>
+                  <CardDescription className="mt-1">
+                    {categories.find(cat => cat.id === selectedCategory)?.description}
+                  </CardDescription>
                 </div>
                 <Button 
                   variant="outline" 
                   onClick={() => setSelectedCategory(null)}
-                  className="text-sm"
+                  className="text-sm whitespace-nowrap"
                 >
+                  <Utensils className="mr-1.5 h-4 w-4" />
                   All Categories
                 </Button>
               </div>
-              <CardDescription>
-                {categories.find(cat => cat.id === selectedCategory)?.description}
-              </CardDescription>
             </CardHeader>
             <CardContent>
               {isLoadingCategory ? (
@@ -409,7 +424,7 @@ const CookingTutorials = () => {
                       return (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {filteredVideos.map((video) => (
-                            <Card key={video.id} className="overflow-hidden h-full flex flex-col">
+                            <Card key={video.id} className="overflow-hidden h-full flex flex-col border-learning-color shadow-sm transition-all duration-200 hover:shadow-md">
                               <div 
                                 className="relative aspect-video cursor-pointer overflow-hidden"
                                 onClick={() => playVideo(video)}
@@ -443,7 +458,7 @@ const CookingTutorials = () => {
                                 <Button 
                                   variant="ghost" 
                                   size="sm" 
-                                  className="ml-auto"
+                                  className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
                                   onClick={() => playVideo(video)}
                                 >
                                   <PlayCircle className="h-4 w-4 mr-1" />
@@ -503,18 +518,24 @@ const CookingTutorials = () => {
           {categories.map((category) => (
             <Card 
               key={category.id} 
-              className="cursor-pointer transition-all duration-200 hover:shadow-md"
+              className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
               onClick={() => handleCategoryClick(category.id)}
             >
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
-                  {category.icon}
-                  <CardTitle className="text-lg">{category.name}</CardTitle>
+                  <div className="text-learning-color">
+                    {category.icon}
+                  </div>
+                  <CardTitle className="text-lg text-learning-color">{category.name}</CardTitle>
                 </div>
-                <CardDescription>{category.description}</CardDescription>
+                <CardDescription className="line-clamp-2">{category.description}</CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
-                <Button variant="ghost" size="sm" className="mt-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="mt-2 text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
+                >
                   Browse Videos <PlayCircle className="ml-1 h-4 w-4" />
                 </Button>
               </CardContent>

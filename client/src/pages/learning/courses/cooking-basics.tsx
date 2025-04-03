@@ -258,135 +258,215 @@ export default function CookingBasics() {
       </div>
       
       {/* Grid Layout of Cooking Categories */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         {/* Introduction */}
-        <div
-          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-orange-200 bg-orange-50 hover:bg-orange-100 p-3 flex flex-col items-center text-center"
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
           onClick={() => openDialog('intro', 'Introduction to Cooking', 'Why cooking matters and what you\'ll learn', <Book className="h-5 w-5" />, 'orange' as ColorKey)}
         >
-          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
-            <Book className="h-8 w-8 text-orange-600" />
-          </div>
-          <h3 className="font-medium">Introduction to Cooking</h3>
-          <p className="text-xs text-gray-600 mt-1">Why cooking matters and what you'll learn</p>
-        </div>
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-2">
+              <Book className="h-8 w-8 text-learning-color" />
+            </div>
+            <CardTitle className="text-base">Introduction to Cooking</CardTitle>
+            <CardDescription className="text-xs">
+              Why cooking matters and what you'll learn
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <Book className="h-3.5 w-3.5 mr-1.5" />
+              Learn More
+            </Button>
+          </CardFooter>
+        </Card>
         
         {/* Kitchen Tools */}
-        <div
-          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-blue-200 bg-blue-50 hover:bg-blue-100 p-3 flex flex-col items-center text-center"
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
           onClick={() => openDialog('kitchen-tools', 'Essential Kitchen Tools', 'Basic equipment every cook needs', <Utensils className="h-5 w-5" />, 'blue' as ColorKey)}
         >
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-2">
-            <Utensils className="h-8 w-8 text-blue-600" />
-          </div>
-          <h3 className="font-medium">Essential Kitchen Tools</h3>
-          <p className="text-xs text-gray-600 mt-1">Basic equipment every cook needs</p>
-        </div>
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-2">
+              <Utensils className="h-8 w-8 text-blue-600" />
+            </div>
+            <CardTitle className="text-base">Essential Kitchen Tools</CardTitle>
+            <CardDescription className="text-xs">
+              Basic equipment every cook needs
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <Utensils className="h-3.5 w-3.5 mr-1.5" />
+              Explore Tools
+            </Button>
+          </CardFooter>
+        </Card>
         
         {/* Cooking Tutorials */}
-        <div
-          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-green-200 bg-green-50 hover:bg-green-100 p-3 flex flex-col items-center text-center"
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
           onClick={() => openDialog('cooking-tutorials', 'Cooking Tutorials', 'Step-by-step video guides for beginners', <PlayCircle className="h-5 w-5" />, 'green' as ColorKey)}
         >
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-2">
-            <PlayCircle className="h-8 w-8 text-green-600" />
-          </div>
-          <h3 className="font-medium">Cooking Tutorials</h3>
-          <p className="text-xs text-gray-600 mt-1">Step-by-step video guides</p>
-        </div>
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-2">
+              <PlayCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <CardTitle className="text-base">Cooking Tutorials</CardTitle>
+            <CardDescription className="text-xs">
+              Step-by-step video guides
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <PlayCircle className="h-3.5 w-3.5 mr-1.5" />
+              Watch Videos
+            </Button>
+          </CardFooter>
+        </Card>
         
         {/* Recipe Explorer */}
-        <div
-          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-purple-200 bg-purple-50 hover:bg-purple-100 p-3 flex flex-col items-center text-center"
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
           onClick={() => openDialog('recipe-explorer', 'Recipe Explorer', 'Discover easy home cooking classics', <ChefHat className="h-5 w-5" />, 'purple' as ColorKey)}
         >
-          <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-2">
-            <ChefHat className="h-8 w-8 text-purple-600" />
-          </div>
-          <h3 className="font-medium">Recipe Explorer</h3>
-          <p className="text-xs text-gray-600 mt-1">Easy home cooking classics</p>
-        </div>
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-2">
+              <ChefHat className="h-8 w-8 text-purple-600" />
+            </div>
+            <CardTitle className="text-base">Recipe Explorer</CardTitle>
+            <CardDescription className="text-xs">
+              Easy home cooking classics
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <ChefHat className="h-3.5 w-3.5 mr-1.5" />
+              Find Recipes
+            </Button>
+          </CardFooter>
+        </Card>
         
         {/* Breakfast Basics */}
-        <div
-          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-yellow-200 bg-yellow-50 hover:bg-yellow-100 p-3 flex flex-col items-center text-center"
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
           onClick={() => openDialog('cooking-tutorials', 'Breakfast Basics', 'Start your day with simple recipes', <Egg className="h-5 w-5" />, 'yellow' as ColorKey)}
         >
-          <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-2">
-            <Egg className="h-8 w-8 text-yellow-600" />
-          </div>
-          <h3 className="font-medium">Breakfast Basics</h3>
-          <p className="text-xs text-gray-600 mt-1">Simple morning recipes</p>
-        </div>
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-yellow-100 rounded-full flex items-center justify-center mb-2">
+              <Egg className="h-8 w-8 text-yellow-600" />
+            </div>
+            <CardTitle className="text-base">Breakfast Basics</CardTitle>
+            <CardDescription className="text-xs">
+              Simple morning recipes
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <Egg className="h-3.5 w-3.5 mr-1.5" />
+              See Breakfast Ideas
+            </Button>
+          </CardFooter>
+        </Card>
         
         {/* Lunch & Dinner Staples */}
-        <div
-          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-orange-200 bg-orange-50 hover:bg-orange-100 p-3 flex flex-col items-center text-center"
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
           onClick={() => openDialog('cooking-tutorials', 'Lunch & Dinner Staples', 'Everyday meals made simple', <Beef className="h-5 w-5" />, 'orange' as ColorKey)}
         >
-          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
-            <Beef className="h-8 w-8 text-orange-600" />
-          </div>
-          <h3 className="font-medium">Lunch & Dinner</h3>
-          <p className="text-xs text-gray-600 mt-1">Everyday meals made simple</p>
-        </div>
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-2">
+              <Beef className="h-8 w-8 text-orange-600" />
+            </div>
+            <CardTitle className="text-base">Lunch & Dinner</CardTitle>
+            <CardDescription className="text-xs">
+              Everyday meals made simple
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <Beef className="h-3.5 w-3.5 mr-1.5" />
+              View Meal Ideas
+            </Button>
+          </CardFooter>
+        </Card>
         
         {/* Simple Desserts */}
-        <div
-          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-pink-200 bg-pink-50 hover:bg-pink-100 p-3 flex flex-col items-center text-center"
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
           onClick={() => openDialog('cooking-tutorials', 'Simple Desserts', 'Sweet treats anyone can make', <Cookie className="h-5 w-5" />, 'pink' as ColorKey)}
         >
-          <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-2">
-            <Cookie className="h-8 w-8 text-pink-600" />
-          </div>
-          <h3 className="font-medium">Simple Desserts</h3>
-          <p className="text-xs text-gray-600 mt-1">Sweet treats anyone can make</p>
-        </div>
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-pink-100 rounded-full flex items-center justify-center mb-2">
+              <Cookie className="h-8 w-8 text-pink-600" />
+            </div>
+            <CardTitle className="text-base">Simple Desserts</CardTitle>
+            <CardDescription className="text-xs">
+              Sweet treats anyone can make
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <Cookie className="h-3.5 w-3.5 mr-1.5" />
+              Discover Desserts
+            </Button>
+          </CardFooter>
+        </Card>
         
         {/* Quick & Easy Meals */}
-        <div
-          className="cursor-pointer rounded-xl border transition-all hover:shadow-md border-pink-200 bg-pink-50 hover:bg-pink-100 p-3 flex flex-col items-center text-center"
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
           onClick={() => openDialog('cooking-tutorials', 'Quick & Easy Meals', 'Recipes ready in 30 minutes or less', <Clock className="h-5 w-5" />, 'pink' as ColorKey)}
         >
-          <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-2">
-            <Clock className="h-8 w-8 text-pink-600" />
-          </div>
-          <h3 className="font-medium">Quick & Easy Meals</h3>
-          <p className="text-xs text-gray-600 mt-1">Ready in 30 minutes or less</p>
-        </div>
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-pink-100 rounded-full flex items-center justify-center mb-2">
+              <Clock className="h-8 w-8 text-pink-600" />
+            </div>
+            <CardTitle className="text-base">Quick & Easy Meals</CardTitle>
+            <CardDescription className="text-xs">
+              Ready in 30 minutes or less
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <Clock className="h-3.5 w-3.5 mr-1.5" />
+              Find Quick Recipes
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
       
       {/* Full Screen Dialog for Content */}
       {dialogOpen && activeDialogContent && (
         <div className="fixed inset-0 bg-white z-50 overflow-auto">
-          <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
+          <div className="sticky top-0 z-10 bg-white border-b shadow-sm border-b-learning-color">
             <div className="container max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className={
-                  activeDialogContent.color === 'orange' ? 'text-orange-600' :
-                  activeDialogContent.color === 'blue' ? 'text-blue-600' :
-                  activeDialogContent.color === 'green' ? 'text-green-600' :
-                  activeDialogContent.color === 'purple' ? 'text-purple-600' :
-                  activeDialogContent.color === 'yellow' ? 'text-yellow-600' : 
-                  'text-pink-600'
-                }>
+                <div className="text-learning-color">
                   {activeDialogContent.icon}
                 </div>
-                <h2 className="text-xl font-semibold">{activeDialogContent.title}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold truncate max-w-[200px] sm:max-w-md">
+                  {activeDialogContent.title}
+                </h2>
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setDialogOpen(false)}
-                className="gap-1"
-              >
-                <X className="h-4 w-4" />
-                Close
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline"
+                  size="sm" 
+                  onClick={() => setDialogOpen(false)}
+                  className="h-9 px-2 sm:px-3"
+                >
+                  <span className="sr-only sm:not-sr-only">Close</span>
+                  <X className="h-4 w-4 sm:ml-1" />
+                </Button>
+              </div>
             </div>
           </div>
           
-          <div className="container max-w-6xl mx-auto px-4 py-6">
+          <div className="container max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+            <div className="px-1">
+              <p className="text-sm text-muted-foreground mb-4">{activeDialogContent.description}</p>
+            </div>
             {renderDialogContent()}
           </div>
         </div>

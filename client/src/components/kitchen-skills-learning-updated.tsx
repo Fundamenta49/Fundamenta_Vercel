@@ -833,20 +833,23 @@ const KitchenSkillsLearning: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50">
+      <Card className="border-t-4 border-t-learning-color shadow-sm">
         <CardHeader className="pb-4">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <CardTitle className="text-2xl font-bold text-orange-800">Kitchen Skills Academy</CardTitle>
-              <CardDescription className="text-orange-700 mt-1">
+              <CardTitle className="text-xl sm:text-2xl font-bold text-learning-color flex items-center gap-2">
+                <ChefHat className="h-5 w-5" />
+                Kitchen Skills Academy
+              </CardTitle>
+              <CardDescription className="text-gray-600 mt-1">
                 Master essential kitchen tools and techniques with our comprehensive training program
               </CardDescription>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-orange-700 mb-1">Your Progress</p>
+            <div className="w-full sm:w-auto sm:text-right">
+              <p className="text-sm text-gray-600 mb-1">Your Progress</p>
               <div className="flex items-center gap-2">
-                <Progress value={completionPercentage} className="h-2 w-24" />
-                <span className="text-sm font-medium text-orange-800">{Math.round(completionPercentage)}%</span>
+                <Progress value={completionPercentage} className="h-2 w-full sm:w-24" />
+                <span className="text-sm font-medium">{Math.round(completionPercentage)}%</span>
               </div>
             </div>
           </div>
