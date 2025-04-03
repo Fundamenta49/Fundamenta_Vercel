@@ -286,15 +286,15 @@ const CookingTutorials = () => {
               className="bg-learning-color hover:bg-learning-color/90"
             >
               {isSearching ? (
-                <React.Fragment>
+                <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Searching
-                </React.Fragment>
+                </>
               ) : (
-                <React.Fragment>
+                <>
                   <SearchIcon className="mr-2 h-4 w-4" />
                   Search
-                </React.Fragment>
+                </>
               )}
             </Button>
           </form>
