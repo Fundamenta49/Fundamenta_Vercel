@@ -824,7 +824,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
             <>
               <DialogHeader>
                 <div className="flex items-center justify-between">
-                  <DialogTitle className="text-xl font-bold">{selectedExercise.name}</DialogTitle>
+                  <DialogTitle className="text-xl font-bold">{selectedExercise?.name}</DialogTitle>
                   <button 
                     className="rounded-full p-1 hover:bg-gray-100" 
                     onClick={() => setDialogOpen(false)}
@@ -833,51 +833,57 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                   </button>
                 </div>
                 <DialogDescription>
-                  {selectedExercise.category === 'yoga' ? 'Yoga Pose' : 'Stretching Exercise'}
+                  {selectedExercise?.category === 'yoga' ? 'Yoga Pose' : 'Stretching Exercise'}
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="mt-4 space-y-4">
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Description</h3>
-                  <p className="text-gray-700">{selectedExercise.description}</p>
+              <div className="mt-4 space-y-6 max-h-[70vh] overflow-y-auto pr-2">
+                <div className="bg-gray-50 p-4 rounded-lg border">
+                  <h3 className="text-lg font-medium mb-2 text-gray-800">Description</h3>
+                  <p className="text-gray-700">{selectedExercise?.description}</p>
                 </div>
                 
-                <div>
-                  <h3 className="text-lg font-medium mb-2">How to Perform</h3>
-                  <ol className="list-decimal pl-5 space-y-1">
-                    {selectedExercise.instructions.map((instruction, index) => (
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <h3 className="text-lg font-medium mb-2 text-blue-800 flex items-center">
+                    <span className="mr-2">How to Perform</span>
+                  </h3>
+                  <ol className="list-decimal pl-5 space-y-2">
+                    {selectedExercise?.instructions.map((instruction, index) => (
                       <li key={index} className="text-gray-700">{instruction}</li>
                     ))}
                   </ol>
                 </div>
                 
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Benefits</h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {selectedExercise.benefits.map((benefit, index) => (
+                <div className="bg-green-50 p-4 rounded-lg border border-green-100">
+                  <h3 className="text-lg font-medium mb-2 text-green-800 flex items-center">
+                    <span className="mr-2">Benefits</span>
+                  </h3>
+                  <ul className="list-disc pl-5 space-y-2">
+                    {selectedExercise?.benefits.map((benefit, index) => (
                       <li key={index} className="text-gray-700">{benefit}</li>
                     ))}
                   </ul>
                 </div>
                 
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Tips for Best Results</h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {selectedExercise.tips.map((tip, index) => (
+                <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                  <h3 className="text-lg font-medium mb-2 text-amber-800 flex items-center">
+                    <span className="mr-2">Tips for Best Results</span>
+                  </h3>
+                  <ul className="list-disc pl-5 space-y-2">
+                    {selectedExercise?.tips.map((tip, index) => (
                       <li key={index} className="text-gray-700">{tip}</li>
                     ))}
                   </ul>
                 </div>
                 
-                {selectedExercise.imageUrl && (
-                  <div>
+                {selectedExercise?.imageUrl && (
+                  <div className="p-4 rounded-lg border">
                     <h3 className="text-lg font-medium mb-2">Visual Guide</h3>
                     <div className="rounded-lg overflow-hidden">
                       <img 
-                        src={selectedExercise.imageUrl} 
-                        alt={`${selectedExercise.name} demonstration`} 
-                        className="w-full object-cover" 
+                        src={selectedExercise?.imageUrl} 
+                        alt={`${selectedExercise?.name} demonstration`} 
+                        className="w-full object-cover h-auto max-h-80 mx-auto" 
                       />
                     </div>
                   </div>
