@@ -71,6 +71,7 @@ export default function ShoppingBuddy() {
   const [locationError, setLocationError] = useState<string>("");
   const [storeComparisons, setStoreComparisons] = useState<StoreComparison[]>([]);
   const [isLoadingStores, setIsLoadingStores] = useState(false);
+  const [isLoadingGroceryList, setIsLoadingGroceryList] = useState(false);
   const [storeError, setStoreError] = useState<string>("");
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [newProduct, setNewProduct] = useState<string>("");
@@ -232,6 +233,9 @@ export default function ShoppingBuddy() {
   };
 
   const generateGroceryList = async () => {
+    setIsLoadingGroceryList(true);
+    setStoreError(""); // Clear any previous errors
+    
     try {
       // Show loading state
       setGeneratedList({
@@ -269,17 +273,20 @@ export default function ShoppingBuddy() {
     } catch (error) {
       console.error('Error generating grocery list:', error);
       
-      // Fallback to static data if API fails
+      // Show error state with a meaningful message
       setGeneratedList({
-        items: [
-          { name: "Error occurred", estimatedCost: 0 }
-        ],
+        items: [],
         totalCost: 0,
         suggestions: [
           "We couldn't generate your list at this time. Please try again later.",
-          "Check your internet connection and try again."
+          "This could be due to an API limit or network issue."
         ]
       });
+      
+      // Set an error state that can be displayed in UI
+      setStoreError(error instanceof Error ? error.message : "Failed to generate grocery list");
+    } finally {
+      setIsLoadingGroceryList(false);
     }
   };
   
@@ -413,9 +420,21 @@ export default function ShoppingBuddy() {
           <Button
             className="w-full"
             onClick={generateGroceryList}
-            disabled={!groceryPreferences.diet || !groceryPreferences.budget}
+            disabled={!groceryPreferences.diet || !groceryPreferences.budget || isLoadingGroceryList}
           >
-            Generate Shopping List
+            {isLoadingGroceryList ? (
+              <>
+                <span className="mr-2">
+                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+                Generating...
+              </>
+            ) : (
+              "Generate Shopping List"
+            )}
           </Button>
 
           {generatedList.items.length > 0 && (
@@ -444,6 +463,19 @@ export default function ShoppingBuddy() {
                     </li>
                   ))}
                 </ul>
+              </div>
+              
+              {/* Recipe suggestions call to action */}
+              <div className="mt-4 pt-3 border-t">
+                <Button 
+                  onClick={getRecipeSuggestions}
+                  disabled={isLoadingRecipes}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <UtensilsCrossed className="h-4 w-4 mr-2" />
+                  Find Recipes With These Ingredients
+                </Button>
               </div>
             </div>
           )}
