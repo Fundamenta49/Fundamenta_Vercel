@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, X } from 'lucide-react';
+import { ExternalLink, X, AlertCircle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { EmbeddedYouTubePlayer } from './embedded-youtube-player';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
 
 interface VideoPlayerDialogProps {
   open: boolean;
@@ -22,6 +25,19 @@ export function VideoPlayerDialog({
 }: VideoPlayerDialogProps) {
   // Log the video ID for debugging
   console.log('VideoPlayerDialog received videoId:', videoId);
+  
+  const [playerError, setPlayerError] = useState<boolean>(false);
+  const { toast } = useToast();
+  
+  // Handle player error
+  const handlePlayerError = () => {
+    setPlayerError(true);
+    toast({
+      title: "Video Error",
+      description: "There was a problem loading this video. Please try again or watch on YouTube.",
+      variant: "destructive"
+    });
+  };
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -42,15 +58,30 @@ export function VideoPlayerDialog({
         
         <div className="w-full h-full flex flex-col">
           <div className="flex-1 w-full bg-black flex items-center justify-center">
-            <iframe 
-              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&origin=${encodeURIComponent(window.location.origin)}`}
-              title={title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              className="w-full h-full"
-              loading="lazy"
-            />
+            {playerError ? (
+              <div className="flex flex-col items-center justify-center text-white p-6 text-center">
+                <AlertCircle className="h-12 w-12 mb-4 text-red-500" />
+                <h3 className="text-xl font-medium mb-2">Video Playback Error</h3>
+                <p className="mb-4">We couldn't load this video. It might be unavailable or there could be a connection issue.</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')}
+                  className="text-white border-white hover:bg-white/20"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Try watching on YouTube
+                </Button>
+              </div>
+            ) : (
+              <EmbeddedYouTubePlayer
+                videoId={videoId}
+                title={title}
+                autoplay={true}
+                onError={handlePlayerError}
+                width="100%"
+                height="100%"
+              />
+            )}
           </div>
           
           {description && (

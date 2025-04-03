@@ -30,6 +30,7 @@ export interface CookingTutorial {
   thumbnailUrl?: string;
   duration?: number; // in minutes
   steps?: string[];
+  featured?: boolean; // Whether to show embedded video directly
 }
 
 export interface CookingTutorialsSectionProps {
@@ -117,6 +118,7 @@ const cookingTutorials: CookingTutorial[] = [
     videoId: 'vpS0chcD_Dk',
     thumbnailUrl: 'https://img.youtube.com/vi/vpS0chcD_Dk/hqdefault.jpg',
     duration: 12,
+    featured: true,
     steps: [
       'Preheat your oven to the required temperature',
       'Measure all ingredients accurately',
@@ -190,6 +192,7 @@ const cookingTutorials: CookingTutorial[] = [
     videoId: 'UYhKDweME3A',
     thumbnailUrl: 'https://img.youtube.com/vi/UYhKDweME3A/hqdefault.jpg',
     duration: 12,
+    featured: true,
     steps: [
       'Bring a large pot of water to a full rolling boil',
       'Add salt (about 1 tablespoon per pound of pasta)',
@@ -255,6 +258,7 @@ const cookingTutorials: CookingTutorial[] = [
     videoId: 'GLdxV0PTX3s',
     thumbnailUrl: 'https://img.youtube.com/vi/GLdxV0PTX3s/hqdefault.jpg',
     duration: 15,
+    featured: true,
     steps: [
       'Mix dry ingredients in one bowl (flour, baking powder, sugar, salt)',
       'Mix wet ingredients in another bowl (milk, eggs, melted butter)',
@@ -502,6 +506,8 @@ interface TutorialCardProps {
   onPlayVideo: (videoId: string, title: string, description?: string) => void;
 }
 
+import { EmbeddedYouTubePlayer } from './embedded-youtube-player';
+
 const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) => {
   const handlePlayVideo = () => {
     console.log('Playing tutorial from TutorialCard:', {
@@ -517,44 +523,57 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
     onPlayVideo(tutorial.videoId, tutorial.name, tutorial.description);
   };
   
+  // Some tutorials should show embedded video directly
+  const showEmbedded = tutorial.featured === true;
+  
   return (
     <Card className="overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow border-t-4 border-t-learning-color">
-      <div 
-        className="relative aspect-video cursor-pointer overflow-hidden"
-        onClick={handlePlayVideo}
-      >
-        {tutorial.thumbnailUrl ? (
-          <img 
-            src={tutorial.thumbnailUrl} 
-            alt={tutorial.name} 
-            className="w-full h-full object-cover transition-transform hover:scale-105"
+      {showEmbedded ? (
+        <div className="aspect-video overflow-hidden">
+          <EmbeddedYouTubePlayer
+            videoId={tutorial.videoId}
+            title={tutorial.name}
+            className="w-full"
           />
-        ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <ChefHat className="h-12 w-12 text-gray-400" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-          <PlayCircle className="h-12 w-12 text-white" />
         </div>
-        {tutorial.duration && (
-          <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded px-1.5 py-0.5 flex items-center">
-            <Clock className="h-3 w-3 mr-1" />
-            {tutorial.duration} min
-          </div>
-        )}
-        <Badge 
-          className={`absolute top-2 left-2 ${
-            tutorial.difficulty === 'beginner' 
-              ? 'bg-green-100 text-green-800 hover:bg-green-100' 
-              : tutorial.difficulty === 'intermediate'
-                ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
-                : 'bg-red-100 text-red-800 hover:bg-red-100'
-          }`}
+      ) : (
+        <div 
+          className="relative aspect-video cursor-pointer overflow-hidden"
+          onClick={handlePlayVideo}
         >
-          {tutorial.difficulty}
-        </Badge>
-      </div>
+          {tutorial.thumbnailUrl ? (
+            <img 
+              src={tutorial.thumbnailUrl} 
+              alt={tutorial.name} 
+              className="w-full h-full object-cover transition-transform hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <ChefHat className="h-12 w-12 text-gray-400" />
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+            <PlayCircle className="h-12 w-12 text-white" />
+          </div>
+          {tutorial.duration && (
+            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded px-1.5 py-0.5 flex items-center">
+              <Clock className="h-3 w-3 mr-1" />
+              {tutorial.duration} min
+            </div>
+          )}
+          <Badge 
+            className={`absolute top-2 left-2 ${
+              tutorial.difficulty === 'beginner' 
+                ? 'bg-green-100 text-green-800 hover:bg-green-100' 
+                : tutorial.difficulty === 'intermediate'
+                  ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
+                  : 'bg-red-100 text-red-800 hover:bg-red-100'
+            }`}
+          >
+            {tutorial.difficulty}
+          </Badge>
+        </div>
+      )}
       
       <CardHeader className="p-4 pb-2">
         <CardTitle className="text-base">{tutorial.name}</CardTitle>
@@ -578,17 +597,19 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
         )}
       </CardContent>
       
-      <CardFooter className="p-4 pt-0 mt-auto">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
-          onClick={handlePlayVideo}
-        >
-          <PlayCircle className="h-4 w-4 mr-1" />
-          Watch Tutorial
-        </Button>
-      </CardFooter>
+      {!showEmbedded && (
+        <CardFooter className="p-4 pt-0 mt-auto">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
+            onClick={handlePlayVideo}
+          >
+            <PlayCircle className="h-4 w-4 mr-1" />
+            Watch Tutorial
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };

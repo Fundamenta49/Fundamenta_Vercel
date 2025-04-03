@@ -628,8 +628,9 @@ const CookingTutorials = () => {
       )}
 
       {/* Video Player Dialog */}
-      {/* Log the selected video object to help debugging */}
-      {selectedVideo && <React.Fragment>{console.log('Sending to VideoPlayerDialog:', selectedVideo)}</React.Fragment>}
+      {selectedVideo && (
+        <span className="sr-only">Selected video ID: {selectedVideo.youTubeId}</span>
+      )}
       <VideoPlayerDialog
         open={videoDialogOpen}
         onOpenChange={setVideoDialogOpen}
