@@ -279,6 +279,8 @@ export default function EmergencyGuide() {
   const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
   const [checklistProgress, setChecklistProgress] = useState(0);
   const [isLocationLoading, setIsLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState<string>("");
+  const [hasLocationPermission, setHasLocationPermission] = useState<boolean | null>(null);
   const [quizScore, setQuizScore] = useState<number | null>(null);
   const [showAIGuidance, setShowAIGuidance] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
@@ -368,6 +370,118 @@ export default function EmergencyGuide() {
     updateProgress(updatedChecklist);
   };
 
+  // Check location permission status
+  const checkLocationPermission = async () => {
+    try {
+      const permission = await navigator.permissions.query({ name: 'geolocation' });
+      setHasLocationPermission(permission.state === 'granted');
+      
+      // Set up listener for permission changes
+      permission.addEventListener('change', () => {
+        setHasLocationPermission(permission.state === 'granted');
+      });
+      
+      return permission.state;
+    } catch (error) {
+      console.error("Error checking location permission:", error);
+      return 'denied';
+    }
+  };
+
+  // Detect current location using GPS
+  const detectCurrentLocation = async () => {
+    setIsLocationLoading(true);
+    setLocationError("");
+    
+    try {
+      // First check if we have permission
+      const permissionState = await checkLocationPermission();
+      
+      if (permissionState === 'denied') {
+        setLocationError("Location access is denied. Please enable location in your device settings.");
+        setIsLocationLoading(false);
+        return;
+      }
+      
+      if (!navigator.geolocation) {
+        setLocationError("Geolocation is not supported by your browser");
+        setIsLocationLoading(false);
+        return;
+      }
+      
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          try {
+            // Attempt reverse geocoding to get city and state
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`);
+            const data = await response.json();
+            
+            // Extract location details
+            const city = data.address.city || data.address.town || data.address.village || data.address.hamlet || '';
+            const state = data.address.state || '';
+            const country = data.address.country || '';
+            
+            // Update location state
+            const newLocation = { 
+              city, 
+              state, 
+              country,
+              latitude,
+              longitude
+            };
+            
+            setLocation(newLocation);
+            localStorage.setItem('emergency_location_data', JSON.stringify(newLocation));
+            
+          } catch (error) {
+            console.error("Error in reverse geocoding:", error);
+            // If geocoding fails, at least save the coordinates
+            const newLocation = { 
+              ...location,
+              latitude, 
+              longitude,
+            };
+            setLocation(newLocation);
+            localStorage.setItem('emergency_location_data', JSON.stringify(newLocation));
+          }
+          
+          setIsLocationLoading(false);
+        },
+        (error) => {
+          // Provide more specific error messages based on the error code
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              setLocationError(
+                "Location access was denied. Please enable location in your device settings to use this feature."
+              );
+              break;
+            case error.POSITION_UNAVAILABLE:
+              setLocationError("Location information is unavailable. Please try again later.");
+              break;
+            case error.TIMEOUT:
+              setLocationError("Location request timed out. Please try again.");
+              break;
+            default:
+              setLocationError("Unable to retrieve your location. Please enter it manually.");
+          }
+          setIsLocationLoading(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      );
+    } catch (error) {
+      console.error("Error detecting location:", error);
+      setLocationError("An error occurred while trying to get your location.");
+      setIsLocationLoading(false);
+    }
+  };
+
+  // Handle manual location submission
   const handleLocationSubmit = () => {
     if (location.city && location.state) {
       localStorage.setItem('emergency_location_data', JSON.stringify(location));
@@ -482,6 +596,83 @@ export default function EmergencyGuide() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            {/* GPS Detection button */}
+            <div className="flex flex-col gap-3">
+              <Button
+                variant="default"
+                className="w-full flex items-center justify-center gap-2"
+                onClick={detectCurrentLocation}
+                disabled={isLocationLoading}
+              >
+                {isLocationLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <MapPin className="h-4 w-4 mr-2" />
+                )}
+                {isLocationLoading ? "Detecting Location..." : "Use My Current Location"}
+              </Button>
+              
+              <p className="text-xs text-muted-foreground text-center">
+                Clicking this button will request GPS access to find nearby emergency resources
+              </p>
+            </div>
+            
+            {/* Location errors or permission issues */}
+            {locationError && (
+              <Alert variant="destructive" className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-4 w-4 mt-0.5" />
+                  <AlertDescription className="flex-1">{locationError}</AlertDescription>
+                </div>
+                
+                {/* Settings deep link section */}
+                <div className="pl-6 pt-1">
+                  <p className="text-sm mb-2">To enable location services:</p>
+                  <ul className="text-sm list-disc pl-4 space-y-1 mb-3">
+                    <li>iOS: Settings → Privacy → Location Services → Safari</li>
+                    <li>Android: Settings → Apps → Browser → Permissions → Location</li>
+                  </ul>
+                  
+                  {/* Deep link to settings */}
+                  <a 
+                    href={
+                      // iOS deep link - will only work on Safari iOS
+                      navigator.userAgent.match(/iPhone|iPad|iPod/i) 
+                        ? "App-prefs:root=Privacy&path=LOCATION" 
+                        // Android - only works on some devices/browsers
+                        : navigator.userAgent.match(/Android/i)
+                          ? "intent://settings/location#Intent;scheme=android-app;end"
+                          : "#"
+                    }
+                    className="text-sm text-blue-600 hover:underline cursor-pointer"
+                    onClick={(e) => {
+                      // For devices where deep links don't work, show how to do it manually
+                      if (!navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
+                        e.preventDefault();
+                        setLocationError(
+                          "Please open your device settings manually and enable location services for this browser."
+                        );
+                      }
+                    }}
+                  >
+                    Open Device Location Settings
+                  </a>
+                </div>
+              </Alert>
+            )}
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or enter manually
+                </span>
+              </div>
+            </div>
+            
+            {/* Manual location input */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="city">City</Label>
@@ -511,6 +702,21 @@ export default function EmergencyGuide() {
             >
               Update Location
             </Button>
+            
+            {/* Show current location if available */}
+            {location.city && location.state && (
+              <Alert className="bg-green-50 border-green-200">
+                <MapPin className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800 ml-2">
+                  Current location: {location.city}, {location.state}
+                  {location.latitude && location.longitude && (
+                    <span className="block text-xs text-green-600 mt-1">
+                      GPS coordinates: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
+                    </span>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
         </CardContent>
       </Card>
