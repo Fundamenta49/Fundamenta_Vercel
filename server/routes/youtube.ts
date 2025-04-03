@@ -20,6 +20,8 @@ function formatSearchQuery(q: string, category?: string): string {
     return `${q} personal finance education tutorial`;
   } else if (category === 'wellness') {
     return `${q} wellness health guide tutorial`;
+  } else if (category === 'fitness') {
+    return `${q} proper form technique demonstration`;
   } else {
     // Default enhancement for search query
     return `${q} tutorial guide how-to step by step`;

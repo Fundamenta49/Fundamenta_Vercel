@@ -115,6 +115,35 @@ export const searchVideos = async (query: string, category?: string): Promise<Yo
 };
 
 /**
+ * Search for fitness exercise tutorial videos on YouTube
+ * @param exerciseName The name of the exercise to search videos for
+ * @param equipment Optional equipment used for the exercise (for more specific results)
+ * @returns Promise with YouTube video search results related to the exercise
+ */
+export const searchExerciseVideos = async (exerciseName: string, equipment?: string): Promise<YouTubeVideo[]> => {
+  try {
+    // Create a targeted search query for better fitness tutorial results
+    let searchQuery = `${exerciseName} exercise tutorial proper form`;
+    
+    // Add equipment to the search query if specified
+    if (equipment && equipment !== 'body weight') {
+      searchQuery += ` with ${equipment}`;
+    }
+    
+    const response = await apiRequest(
+      'GET',
+      `/api/youtube/search?q=${encodeURIComponent(searchQuery)}&category=fitness`
+    );
+    
+    const data = await response.json();
+    return data.videos || [];
+  } catch (error) {
+    console.error('Error searching exercise videos:', error);
+    return []; // Return empty array instead of throwing to gracefully handle failures
+  }
+};
+
+/**
  * Get the YouTube embed URL for a video
  * @param videoId The YouTube video ID
  * @returns Embeddable URL for the video
