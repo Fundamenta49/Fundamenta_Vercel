@@ -71,7 +71,8 @@ import {
   User,
   Video,
   Loader2,
-  ExternalLink
+  ExternalLink,
+  Maximize2
 } from "lucide-react";
 
 // Custom Stretch icon component
@@ -128,6 +129,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   // State for managing the exercise detail dialog
   const [selectedExercise, setSelectedExercise] = useState<ExerciseDetails | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [videoFullscreen, setVideoFullscreen] = useState(false);
 
   // Camera and AI Form Analysis States
   const [cameraEnabled, setCameraEnabled] = useState(false);
@@ -1812,7 +1814,10 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     {selectedExercise?.videoUrl && (
                       <div className="p-4 rounded-lg border">
                         <h3 className="text-lg font-medium mb-2">Video Tutorial</h3>
-                        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                        <div 
+                          className="relative aspect-video w-full overflow-hidden rounded-lg cursor-pointer" 
+                          onClick={() => setVideoFullscreen(true)}
+                        >
                           <iframe 
                             className="absolute inset-0 w-full h-full"
                             src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
@@ -1820,8 +1825,11 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                             allowFullScreen
                           ></iframe>
+                          <div className="absolute inset-0 bg-black bg-opacity-0 flex items-center justify-center hover:bg-opacity-20 transition-all duration-200">
+                            <Maximize2 className="h-10 w-10 text-white opacity-0 hover:opacity-100 filter drop-shadow-lg" />
+                          </div>
                         </div>
-                        <div className="flex items-center justify-start gap-2 mt-3">
+                        <div className="flex items-center justify-between gap-2 mt-3">
                           <a 
                             href={selectedExercise.videoUrl} 
                             target="_blank" 
@@ -1831,8 +1839,44 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                             <ExternalLink className="h-3.5 w-3.5 mr-1" />
                             Open on YouTube
                           </a>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-sm flex items-center gap-1.5"
+                            onClick={() => setVideoFullscreen(true)}
+                          >
+                            <Maximize2 className="h-3.5 w-3.5" />
+                            Full Screen
+                          </Button>
                         </div>
                       </div>
+                    )}
+                    
+                    {/* Full-screen Video Dialog */}
+                    {videoFullscreen && selectedExercise?.videoUrl && (
+                      <Dialog 
+                        open={videoFullscreen} 
+                        onOpenChange={setVideoFullscreen}
+                        modal={true}
+                      >
+                        <DialogContent className="max-w-[95vw] w-full max-h-[90vh] p-0 border-none bg-black">
+                          <div className="relative w-full h-[90vh]">
+                            <iframe 
+                              className="absolute inset-0 w-full h-full"
+                              src={selectedExercise.videoUrl.replace('watch?v=', 'embed/?autoplay=1')} 
+                              title={`${selectedExercise.name} tutorial video (fullscreen)`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                              allowFullScreen
+                            ></iframe>
+                            <Button 
+                              className="absolute top-2 right-2 rounded-full p-2 h-10 w-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white"
+                              onClick={() => setVideoFullscreen(false)}
+                            >
+                              <X className="h-5 w-5" />
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     )}
                     
                     {cameraEnabled && (
