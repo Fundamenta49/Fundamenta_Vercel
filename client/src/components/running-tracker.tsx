@@ -76,7 +76,18 @@ export default function RunningTracker() {
           title: "Location Permission Required",
           description: "Please enable location services to track your runs.",
         });
+      } else if (permission.state === 'denied') {
+        toast({
+          variant: "destructive",
+          title: "Location Access Denied",
+          description: "You've denied location access. Please enable it in your device settings to use this feature.",
+        });
       }
+
+      // Listen for permission changes
+      permission.addEventListener('change', () => {
+        setHasLocationPermission(permission.state === 'granted');
+      });
     } catch (error) {
       toast({
         variant: "destructive",
@@ -209,18 +220,65 @@ export default function RunningTracker() {
         </CardHeader>
         <CardContent className="space-y-4">
           {!hasLocationPermission ? (
-            <Alert>
-              <AlertDescription>
-                Please enable location services to use GPS tracking.
-                <Button 
-                  variant="outline" 
-                  className="ml-2"
-                  onClick={checkLocationPermission}
+            <div className="space-y-4">
+              <Alert className="bg-amber-50 border-amber-200">
+                <AlertDescription className="flex flex-col space-y-4">
+                  <div className="text-amber-800">
+                    <strong>Location permission required:</strong> This feature needs access to your GPS to track your runs.
+                  </div>
+                  <div className="text-sm text-slate-600">
+                    <ul className="list-disc pl-4 space-y-2">
+                      <li>Clicking the button below will prompt for location access</li>
+                      <li>If previously denied, you'll need to update your browser/device settings</li>
+                      <li>For iOS: Settings → Safari → Location (or relevant browser)</li>
+                      <li>For Android: Settings → Apps → Browser → Permissions → Location</li>
+                    </ul>
+                  </div>
+                  <Button 
+                    className="self-start bg-amber-600 hover:bg-amber-700"
+                    onClick={() => {
+                      // Attempt to request location permission
+                      navigator.geolocation.getCurrentPosition(
+                        () => checkLocationPermission(),
+                        () => checkLocationPermission(),
+                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                      );
+                    }}
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Enable GPS Location
+                  </Button>
+                </AlertDescription>
+              </Alert>
+              
+              {/* Deep link to device settings for mobile devices where possible */}
+              <div className="text-center">
+                <a 
+                  href={
+                    // iOS deep link - will only work on Safari iOS
+                    navigator.userAgent.match(/iPhone|iPad|iPod/i) 
+                      ? "App-prefs:root=Privacy&path=LOCATION" 
+                      // Android - only works on some devices/browsers
+                      : navigator.userAgent.match(/Android/i)
+                        ? "intent://settings/location#Intent;scheme=android-app;end"
+                        : "#"
+                  }
+                  className="text-sm text-blue-600 hover:underline cursor-pointer"
+                  onClick={(e) => {
+                    // For devices where deep links don't work, show instructions
+                    if (!navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
+                      e.preventDefault();
+                      toast({
+                        title: "Open Settings Manually",
+                        description: "Please open your device settings and enable location services for this browser."
+                      });
+                    }
+                  }}
                 >
-                  Enable Location
-                </Button>
-              </AlertDescription>
-            </Alert>
+                  Open Device Location Settings
+                </a>
+              </div>
+            </div>
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

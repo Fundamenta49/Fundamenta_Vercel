@@ -160,12 +160,39 @@ export default function ShoppingBuddy() {
     searchNearbyStores(37.7749, -122.4194);
   };
 
-  const getCurrentLocation = () => {
+  // Check location permission status
+  const checkLocationPermission = async () => {
+    try {
+      const permission = await navigator.permissions.query({ name: 'geolocation' });
+      
+      // If permission is denied, provide more helpful guidance
+      if (permission.state === 'denied') {
+        setLocationError(
+          "Location access is denied. Please enable location in your device settings to use this feature."
+        );
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error checking location permission:", error);
+      return true; // Proceed with request if we can't check permissions
+    }
+  };
+
+  const getCurrentLocation = async () => {
     setIsLocating(true);
     setLocationError("");
 
     if (!navigator.geolocation) {
       setLocationError("Geolocation is not supported by your browser");
+      setIsLocating(false);
+      return;
+    }
+
+    // First check permissions
+    const canProceed = await checkLocationPermission();
+    if (!canProceed) {
       setIsLocating(false);
       return;
     }
@@ -178,7 +205,22 @@ export default function ShoppingBuddy() {
         setIsLocating(false);
       },
       (error) => {
-        setLocationError("Unable to retrieve your location. Please enter it manually.");
+        // Provide more specific error messages based on the error code
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError(
+              "Location access was denied. Please enable location in your device settings to use this feature."
+            );
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationError("Location information is unavailable. Please try again later.");
+            break;
+          case error.TIMEOUT:
+            setLocationError("Location request timed out. Please try again.");
+            break;
+          default:
+            setLocationError("Unable to retrieve your location. Please enter it manually.");
+        }
         setIsLocating(false);
       },
       {
@@ -540,9 +582,45 @@ export default function ShoppingBuddy() {
           </div>
 
           {locationError && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{locationError}</AlertDescription>
+            <Alert variant="destructive" className="space-y-3">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 mt-0.5" />
+                <AlertDescription className="flex-1">{locationError}</AlertDescription>
+              </div>
+              
+              {/* Settings deep link section */}
+              <div className="pl-6 pt-1">
+                <p className="text-sm mb-2">To enable location services:</p>
+                <ul className="text-sm list-disc pl-4 space-y-1 mb-3">
+                  <li>iOS: Settings → Privacy → Location Services → Safari</li>
+                  <li>Android: Settings → Apps → Browser → Permissions → Location</li>
+                </ul>
+                
+                {/* Deep link to settings */}
+                <a 
+                  href={
+                    // iOS deep link - will only work on Safari iOS
+                    navigator.userAgent.match(/iPhone|iPad|iPod/i) 
+                      ? "App-prefs:root=Privacy&path=LOCATION" 
+                      // Android - only works on some devices/browsers
+                      : navigator.userAgent.match(/Android/i)
+                        ? "intent://settings/location#Intent;scheme=android-app;end"
+                        : "#"
+                  }
+                  className="text-sm text-blue-600 hover:underline cursor-pointer"
+                  onClick={(e) => {
+                    // For devices where deep links don't work, show how to do it manually
+                    if (!navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
+                      e.preventDefault();
+                      setLocationError(
+                        "Please open your device settings manually and enable location services for this browser."
+                      );
+                    }
+                  }}
+                >
+                  Open Device Location Settings
+                </a>
+              </div>
             </Alert>
           )}
 
