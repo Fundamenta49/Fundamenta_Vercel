@@ -540,7 +540,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         "Start with gentle stretch and progressively increase",
         "Maintain neutral neck position, avoiding forward head posture"
       ],
-      imageUrl: "https://www.healthline.com/health/fitness-exercise/chest-stretches#doorway-stretch",
+      imageUrl: "https://acewebcontent.azureedge.net/exercise-library/large/81-1.jpg",
       videoUrl: "https://www.youtube.com/watch?v=aVj3iuWGvNA"
     },
     "catCowStretch": {
@@ -1862,10 +1862,16 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                         modal={true}
                       >
                         <DialogContent className="max-w-[95vw] w-full max-h-[90vh] p-0 border-none bg-black">
+                          <DialogTitle className="sr-only">
+                            {selectedExercise.name} Video Tutorial
+                          </DialogTitle>
+                          <DialogDescription className="sr-only">
+                            Full screen video tutorial for {selectedExercise.name}
+                          </DialogDescription>
                           <div className="relative w-full h-[90vh]">
                             <iframe 
                               className="absolute inset-0 w-full h-full"
-                              src={selectedExercise.videoUrl.replace('watch?v=', 'embed/?autoplay=1')} 
+                              src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
                               title={`${selectedExercise.name} tutorial video (fullscreen)`}
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                               allowFullScreen
