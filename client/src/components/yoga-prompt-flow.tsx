@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight, Play, PauseCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight, Play, PauseCircle, Headphones, Volume1 } from "lucide-react";
 
 // Define types for the various options
 export interface YogaSession {
@@ -30,7 +30,10 @@ export interface YogaSession {
   imageUrl: string;
   level: 'beginner' | 'intermediate' | 'advanced';
   moodTags: string[];
-  videoUrl?: string; // Add videoUrl for yoga sessions
+  videoUrl?: string; // URL for video sessions
+  audioUrl?: string; // URL for audio-guided sessions
+  isAudioOnly?: boolean; // Flag to indicate an audio-only guided session
+  guidedInstructions?: string[]; // Verbal instructions for audio-guided sessions
 }
 
 interface YogaPromptFlowProps {
@@ -53,6 +56,73 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
   // State for the selected session and video player
   const [selectedSession, setSelectedSession] = useState<YogaSession | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  
+  // State for audio player
+  const [audioPlaying, setAudioPlaying] = useState<boolean>(false);
+  const [audioTrack, setAudioTrack] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [activeInstructionIndex, setActiveInstructionIndex] = useState<number>(0);
+  const [instructionInterval, setInstructionInterval] = useState<number | null>(null);
+  
+  // Effect for handling audio playback
+  useEffect(() => {
+    if (audioRef.current) {
+      if (audioPlaying) {
+        audioRef.current.play().catch(e => console.error("Error playing audio:", e));
+      } else {
+        audioRef.current.pause();
+      }
+    }
+    
+    return () => {
+      // Clean up audio on unmount
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, [audioPlaying]);
+  
+  // Effect for handling session audio
+  useEffect(() => {
+    if (selectedSession?.audioUrl && currentPrompt === 'session') {
+      setAudioTrack(selectedSession.audioUrl);
+      
+      // Auto-play the audio when a session with audio is selected
+      if (selectedSession.isAudioOnly) {
+        setAudioPlaying(true);
+        
+        // For audio-guided sessions, set up the instruction timing
+        if (selectedSession.guidedInstructions && selectedSession.guidedInstructions.length > 0) {
+          setActiveInstructionIndex(0);
+          
+          // Clear any existing interval
+          if (instructionInterval) {
+            window.clearInterval(instructionInterval);
+          }
+          
+          // Move to the next instruction every 10 seconds
+          const interval = window.setInterval(() => {
+            setActiveInstructionIndex(prev => {
+              // If we've reached the end of instructions, loop back to the beginning
+              if (prev >= (selectedSession.guidedInstructions?.length || 0) - 1) {
+                return 0;
+              }
+              return prev + 1;
+            });
+          }, 10000); // 10 seconds per instruction
+          
+          setInstructionInterval(interval);
+        }
+      }
+    }
+    
+    return () => {
+      // Clean up interval on session change or unmount
+      if (instructionInterval) {
+        window.clearInterval(instructionInterval);
+      }
+    };
+  }, [selectedSession, currentPrompt]);
 
   // Function to handle mood selection
   const handleMoodSelect = (mood: string) => {
@@ -69,6 +139,17 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
   // Function to handle sound preference selection
   const handleSoundSelect = (sound: string) => {
     setSelectedSound(sound);
+    
+    // Set up audio tracks based on selection
+    if (sound === 'calming') {
+      setAudioTrack('https://cdn.pixabay.com/download/audio/2022/03/09/audio_2aac6e6c0f.mp3?filename=meditation-yoga-relaxation-7783.mp3');
+    } else if (sound === 'nature') {
+      setAudioTrack('https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1ac8.mp3?filename=forest-with-small-river-birds-and-nature-field-recording-6735.mp3');
+    } else {
+      // For 'silence' or 'later', don't set an audio track
+      setAudioTrack(null);
+    }
+    
     // Generate recommendations based on selections
     generateRecommendations(selectedMood as string, selectedTime as number, sound);
     setCurrentPrompt('results');
@@ -91,8 +172,60 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
     
     const sessionType = moodToSessionType[mood] || 'balanced';
     
-    // Sample yoga sessions with video URLs
+    // Sample yoga sessions with both video URLs and audio-guided options
     const allSessions: YogaSession[] = [
+      {
+        id: 'audio1',
+        title: 'Guided Breathing & Stretching',
+        duration: 15,
+        type: 'mindful',
+        description: 'A voice-guided session focusing on deep breathing and gentle stretches. No video needed - just follow the audio instructions.',
+        imageUrl: 'https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHlvZ2ElMjBtZWRpdGF0aW9ufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60',
+        level: 'beginner',
+        moodTags: ['anxious', 'stressed', 'tired'],
+        isAudioOnly: true,
+        audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=guided-meditation-yoga-nidra-10-min-calm-7932.mp3',
+        guidedInstructions: [
+          "Find a comfortable seated position or lie down on your back",
+          "Close your eyes and begin to notice your natural breath",
+          "Slowly deepen your breath, inhaling for 4 counts, exhaling for 6",
+          "Gently roll your shoulders back, creating space in your chest",
+          "As you inhale, feel your spine lengthening",
+          "As you exhale, feel your shoulders relaxing away from your ears",
+          "Bring awareness to any areas of tension and consciously soften those areas",
+          "Now, gently bring your right ear toward your right shoulder for a neck stretch",
+          "Hold for 3 breaths, then slowly return to center",
+          "Repeat on the left side, bringing your left ear toward your left shoulder",
+          "Return to center and take a deep cleansing breath",
+          "Now, transition to a gentle forward fold if seated, or a reclined twist if lying down"
+        ]
+      },
+      {
+        id: 'audio2',
+        title: 'Evening Wind Down',
+        duration: 10,
+        type: 'restorative',
+        description: 'A calming audio-guided session to help you relax before bed with gentle stretches and mindful breathing.',
+        imageUrl: 'https://images.unsplash.com/photo-1506126944674-00c6c192e0a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHlvZ2ElMjBuaWdodHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
+        level: 'beginner',
+        moodTags: ['tired', 'anxious', 'sore'],
+        isAudioOnly: true,
+        audioUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0c6ff1ac8.mp3?filename=forest-with-small-river-birds-and-nature-field-recording-6735.mp3',
+        guidedInstructions: [
+          "Find a comfortable position, either seated or lying down on your back",
+          "Take a moment to settle in, allowing your body to be fully supported",
+          "Begin to deepen your breath, feeling your belly rise and fall",
+          "With each exhale, release a little more tension from your body",
+          "Bring your knees to your chest and gently rock side to side",
+          "Release your knees and extend your legs long on your mat",
+          "Stretch your arms overhead, creating length through your entire body",
+          "Draw your right knee back to your chest, feeling a stretch in your lower back",
+          "Hold for 3-5 breaths, then switch to your left knee",
+          "Return both legs to the floor and rest your hands on your belly",
+          "Notice the natural rise and fall of your breath",
+          "Allow your body to completely relax, preparing for a restful night"
+        ]
+      },
       {
         id: '1',
         title: 'Morning Energy Flow',
@@ -227,8 +360,34 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
 
   // Function to handle the "Just Browsing" button
   const handleJustBrowsing = () => {
-    // Skip the prompt flow and show all sessions with video URLs
+    // Skip the prompt flow and show all sessions with video URLs and audio-guided options
     const allSessions: YogaSession[] = [
+      {
+        id: 'audio1',
+        title: 'Guided Breathing & Stretching',
+        duration: 15,
+        type: 'mindful',
+        description: 'A voice-guided session focusing on deep breathing and gentle stretches. No video needed - just follow the audio instructions.',
+        imageUrl: 'https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHlvZ2ElMjBtZWRpdGF0aW9ufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60',
+        level: 'beginner',
+        moodTags: ['anxious', 'stressed', 'tired'],
+        isAudioOnly: true,
+        audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=guided-meditation-yoga-nidra-10-min-calm-7932.mp3',
+        guidedInstructions: [
+          "Find a comfortable seated position or lie down on your back",
+          "Close your eyes and begin to notice your natural breath",
+          "Slowly deepen your breath, inhaling for 4 counts, exhaling for 6",
+          "Gently roll your shoulders back, creating space in your chest",
+          "As you inhale, feel your spine lengthening",
+          "As you exhale, feel your shoulders relaxing away from your ears",
+          "Bring awareness to any areas of tension and consciously soften those areas",
+          "Now, gently bring your right ear toward your right shoulder for a neck stretch",
+          "Hold for 3 breaths, then slowly return to center",
+          "Repeat on the left side, bringing your left ear toward your left shoulder",
+          "Return to center and take a deep cleansing breath",
+          "Now, transition to a gentle forward fold if seated, or a reclined twist if lying down"
+        ]
+      },
       {
         id: '1',
         title: 'Morning Energy Flow',
@@ -513,12 +672,18 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
             <div className="grid grid-cols-1 gap-6">
               {recommendedSessions.map(session => (
                 <Card key={session.id} className="overflow-hidden">
-                  <div className="aspect-video w-full overflow-hidden">
+                  <div className="aspect-video w-full overflow-hidden relative">
                     <img 
                       src={session.imageUrl} 
                       alt={session.title} 
                       className="w-full h-full object-cover"
                     />
+                    {session.isAudioOnly && (
+                      <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-md flex items-center">
+                        <Headphones className="h-4 w-4 mr-1" />
+                        <span className="text-xs font-medium">Audio Guided</span>
+                      </div>
+                    )}
                   </div>
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
@@ -531,6 +696,12 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="outline">{session.level}</Badge>
                       <Badge variant="outline">{session.type}</Badge>
+                      {session.isAudioOnly && (
+                        <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                          <Headphones className="h-3 w-3 mr-1" />
+                          Audio Only
+                        </Badge>
+                      )}
                       {session.moodTags.map(tag => (
                         <Badge key={tag} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                           {tag}
@@ -576,27 +747,126 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
               <Badge>{selectedSession.duration} min</Badge>
             </div>
             
-            <div className="aspect-video w-full overflow-hidden border rounded-md">
-              {selectedSession.videoUrl ? (
-                <iframe
-                  src={selectedSession.videoUrl}
-                  className="w-full h-full"
-                  title={selectedSession.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                  <p className="text-muted-foreground">No video available</p>
+            {/* Audio player - shown for all sessions */}
+            {audioTrack && (
+              <div className="bg-slate-100 rounded-md p-3 flex items-center justify-between">
+                <div className="flex items-center">
+                  {audioPlaying ? (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0 rounded-full"
+                      onClick={() => setAudioPlaying(false)}
+                    >
+                      <PauseCircle className="h-6 w-6" />
+                      <span className="sr-only">Pause</span>
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0 rounded-full"
+                      onClick={() => setAudioPlaying(true)}
+                    >
+                      <Play className="h-6 w-6" />
+                      <span className="sr-only">Play</span>
+                    </Button>
+                  )}
+                  <span className="ml-2 text-sm">
+                    {selectedSession.isAudioOnly ? "Guided Audio" : "Background Sound"}
+                  </span>
                 </div>
-              )}
-            </div>
+                
+                <div className="flex gap-2">
+                  <Volume2 className="h-4 w-4 text-muted-foreground" />
+                </div>
+                
+                <audio 
+                  ref={audioRef} 
+                  src={audioTrack} 
+                  loop={!selectedSession.isAudioOnly} // Loop background music, but not guided audio
+                />
+              </div>
+            )}
+            
+            {/* Video content - shown for video sessions */}
+            {!selectedSession.isAudioOnly && (
+              <div className="aspect-video w-full overflow-hidden border rounded-md">
+                {selectedSession.videoUrl ? (
+                  <iframe
+                    src={selectedSession.videoUrl}
+                    className="w-full h-full"
+                    title={selectedSession.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <p className="text-muted-foreground">No video available</p>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Audio-only guided session view */}
+            {selectedSession.isAudioOnly && selectedSession.guidedInstructions && (
+              <div className="border rounded-md overflow-hidden">
+                <div className="aspect-video w-full overflow-hidden relative">
+                  <img 
+                    src={selectedSession.imageUrl} 
+                    alt={selectedSession.title} 
+                    className="w-full h-full object-cover opacity-50"
+                  />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                    <Headphones className="h-12 w-12 mb-4 text-primary" />
+                    <h3 className="text-lg font-medium mb-2">Audio-Guided Session</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Follow the instructions below while listening to the guided audio</p>
+                    
+                    <div className="bg-white/90 p-4 rounded-md max-w-md w-full shadow-sm">
+                      <p className="font-medium text-primary">Current Instruction:</p>
+                      <p className="mt-2 text-base">
+                        {selectedSession.guidedInstructions[activeInstructionIndex]}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-slate-50">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium">Sequence of Instructions</h4>
+                    <Badge variant="outline" className="text-xs">
+                      {activeInstructionIndex + 1} of {selectedSession.guidedInstructions.length}
+                    </Badge>
+                  </div>
+                  <div className="space-y-3 max-h-40 overflow-y-auto pr-2">
+                    {selectedSession.guidedInstructions.map((instruction, index) => (
+                      <div 
+                        key={index} 
+                        className={`p-2 rounded text-sm ${
+                          index === activeInstructionIndex 
+                            ? 'bg-primary/10 border-l-2 border-primary' 
+                            : 'opacity-60'
+                        }`}
+                      >
+                        {index + 1}. {instruction}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
             
             <CardDescription>{selectedSession.description}</CardDescription>
             
             <div className="flex flex-wrap gap-2 py-2">
               <Badge variant="outline">{selectedSession.level}</Badge>
               <Badge variant="outline">{selectedSession.type}</Badge>
+              {selectedSession.isAudioOnly && (
+                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                  <Headphones className="h-3 w-3 mr-1" />
+                  Audio Only
+                </Badge>
+              )}
               {selectedSession.moodTags.map(tag => (
                 <Badge key={tag} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                   {tag}
@@ -607,7 +877,16 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
             <div className="flex justify-between pt-4">
               <Button 
                 variant="outline" 
-                onClick={() => setCurrentPrompt('results')}
+                onClick={() => {
+                  setCurrentPrompt('results');
+                  setAudioPlaying(false);
+                  
+                  // Clear instruction interval if it exists
+                  if (instructionInterval) {
+                    window.clearInterval(instructionInterval);
+                    setInstructionInterval(null);
+                  }
+                }}
               >
                 Back to Sessions
               </Button>
