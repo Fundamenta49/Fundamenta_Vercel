@@ -34,8 +34,8 @@ const cookingTutorials: CookingTutorial[] = [
     description: 'Master the quick cooking technique for vegetables, meats, and more.',
     category: 'technique',
     difficulty: 'beginner',
-    videoId: 'u0j7bCj5uQ4',
-    thumbnailUrl: 'https://img.youtube.com/vi/u0j7bCj5uQ4/hqdefault.jpg',
+    videoId: 'JS2Hxk60fWQ',
+    thumbnailUrl: 'https://img.youtube.com/vi/JS2Hxk60fWQ/hqdefault.jpg',
     duration: 8,
     steps: [
       'Heat your pan over medium-high heat',
@@ -57,8 +57,8 @@ const cookingTutorials: CookingTutorial[] = [
     description: 'Learn the science and technique behind successful baking.',
     category: 'technique',
     difficulty: 'beginner',
-    videoId: 'MtR9QO36M4w',
-    thumbnailUrl: 'https://img.youtube.com/vi/MtR9QO36M4w/hqdefault.jpg',
+    videoId: 'vpS0chcD_Dk',
+    thumbnailUrl: 'https://img.youtube.com/vi/vpS0chcD_Dk/hqdefault.jpg',
     duration: 12,
     steps: [
       'Preheat your oven to the required temperature',
