@@ -47,6 +47,7 @@ export function VideoPlayerDialog({
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="w-full h-full"
+              loading="lazy"
             />
           </div>
           

@@ -463,11 +463,16 @@ interface TutorialCardProps {
 }
 
 const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) => {
+  const handlePlayVideo = () => {
+    console.log('Playing tutorial from TutorialCard:', tutorial.videoId, tutorial.name);
+    onPlayVideo(tutorial.videoId, tutorial.name, tutorial.description);
+  };
+  
   return (
     <Card className="overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow border-t-4 border-t-learning-color">
       <div 
         className="relative aspect-video cursor-pointer overflow-hidden"
-        onClick={() => onPlayVideo(tutorial.videoId, tutorial.name, tutorial.description)}
+        onClick={handlePlayVideo}
       >
         {tutorial.thumbnailUrl ? (
           <img 
@@ -529,7 +534,7 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
           variant="ghost" 
           size="sm" 
           className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
-          onClick={() => onPlayVideo(tutorial.videoId, tutorial.name, tutorial.description)}
+          onClick={handlePlayVideo}
         >
           <PlayCircle className="h-4 w-4 mr-1" />
           Watch Tutorial

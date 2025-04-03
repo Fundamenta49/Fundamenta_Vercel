@@ -216,6 +216,9 @@ const CookingTutorials = () => {
       difficulty: 'beginner'
     };
     
+    // Log the video data to help with debugging
+    console.log('Playing tutorial video:', { videoId, title, description });
+    
     setSelectedVideo(tutorialVideo);
     setVideoDialogOpen(true);
   };
@@ -606,7 +609,7 @@ const CookingTutorials = () => {
         onOpenChange={setVideoDialogOpen}
         videoId={selectedVideo?.youTubeId || ''}
         title={selectedVideo?.title || ''}
-        description={selectedVideo?.description}
+        description={selectedVideo?.description || ''}
       />
     </div>
   );
