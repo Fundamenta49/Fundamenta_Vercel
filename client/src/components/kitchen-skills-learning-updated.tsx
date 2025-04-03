@@ -875,16 +875,16 @@ const KitchenSkillsLearning: React.FC = () => {
             
             {/* Overview Tab - Display the main image instead of video */}
             <TabsContent value="overview" className="space-y-4">
-              <div className="relative overflow-hidden rounded-lg border bg-white">
-                <div className="relative aspect-video overflow-hidden rounded-t-lg">
+              <div className="relative overflow-hidden rounded-lg border shadow-md">
+                <div className="relative aspect-video overflow-hidden rounded-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1566454419290-57a0589c9c51?q=80&w=800&auto=format&fit=crop" 
                     alt="Kitchen tools collection" 
                     className="object-cover w-full h-full" 
                   />
-                  <div className="absolute inset-0 bg-black/20 z-10 flex items-center justify-center">
-                    <div className="bg-white/90 backdrop-blur-sm p-4 rounded-lg max-w-md text-center shadow-lg">
-                      <h3 className="font-semibold text-lg mb-2">Essential Kitchen Tools & Techniques</h3>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-black/20 z-10 flex items-center justify-center">
+                    <div className="bg-white/90 backdrop-blur-sm p-6 rounded-lg max-w-md text-center shadow-lg transform transition-all duration-300 hover:scale-[1.02]">
+                      <h3 className="font-semibold text-xl mb-3 text-learning-color">Essential Kitchen Tools & Techniques</h3>
                       <p className="text-sm text-gray-700">
                         Learn to use and master the most important tools in your kitchen
                       </p>
@@ -895,11 +895,13 @@ const KitchenSkillsLearning: React.FC = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {skillCategories.map(category => (
-                  <Card key={category.id} className="h-full">
+                  <Card key={category.id} className="h-full border-learning-color shadow-sm transition-all duration-200 hover:shadow-md overflow-hidden">
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-2">
-                        {category.icon}
-                        <CardTitle className="text-lg">{category.name}</CardTitle>
+                        <div className="text-learning-color">
+                          {category.icon}
+                        </div>
+                        <CardTitle className="text-lg text-learning-color">{category.name}</CardTitle>
                       </div>
                       <CardDescription>{category.description}</CardDescription>
                     </CardHeader>
@@ -908,7 +910,7 @@ const KitchenSkillsLearning: React.FC = () => {
                         {category.skills.map(skill => (
                           <div 
                             key={skill.id} 
-                            className="flex items-center justify-between p-2 rounded-md hover:bg-gray-50 cursor-pointer"
+                            className="flex items-center justify-between p-2 rounded-md hover:bg-learning-color/5 cursor-pointer transition-colors"
                             onClick={() => openSkill(skill)}
                           >
                             <div className="flex items-center gap-2">
@@ -918,7 +920,7 @@ const KitchenSkillsLearning: React.FC = () => {
                                     <CheckCircle className="h-4 w-4 text-green-500 drop-shadow-sm" />
                                   </div>
                                 ) : null}
-                                <div className="h-10 w-10 rounded-md overflow-hidden border border-gray-200">
+                                <div className="h-10 w-10 rounded-md overflow-hidden border border-gray-200 shadow-sm">
                                   <img 
                                     src={skill.image} 
                                     alt={skill.name}
@@ -938,7 +940,7 @@ const KitchenSkillsLearning: React.FC = () => {
                     <CardFooter className="pt-0">
                       <Button 
                         variant="outline" 
-                        className="w-full text-sm" 
+                        className="w-full text-sm text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10 border-learning-color/30" 
                         onClick={() => setActiveTab('skills')}
                       >
                         View All Skills
@@ -962,10 +964,12 @@ const KitchenSkillsLearning: React.FC = () => {
               <Accordion type="multiple" className="w-full">
                 {skillCategories.map(category => (
                   <AccordionItem key={category.id} value={category.id}>
-                    <AccordionTrigger className="hover:bg-gray-50 px-4 rounded-md">
+                    <AccordionTrigger className="hover:bg-learning-color/5 px-4 rounded-md transition-colors">
                       <div className="flex items-center gap-2">
-                        {category.icon}
-                        <span>{category.name}</span>
+                        <div className="text-learning-color">
+                          {category.icon}
+                        </div>
+                        <span className="font-medium text-learning-color">{category.name}</span>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="px-2">
@@ -973,7 +977,7 @@ const KitchenSkillsLearning: React.FC = () => {
                         {category.skills.map(skill => (
                           <div key={skill.id} className="relative">
                             <Card 
-                              className={`cursor-pointer transition-all hover:shadow-md ${userProgress.completedSkills.includes(skill.id) ? 'border-green-200 bg-green-50' : ''}`}
+                              className={`cursor-pointer transition-all hover:shadow-md border-learning-color/20 ${userProgress.completedSkills.includes(skill.id) ? 'border-green-200 bg-green-50' : ''}`}
                               onClick={() => openSkill(skill)}
                             >
                               {userProgress.completedSkills.includes(skill.id) && (
@@ -997,7 +1001,7 @@ const KitchenSkillsLearning: React.FC = () => {
                                   <Button 
                                     variant="ghost" 
                                     size="sm"
-                                    className="absolute top-2 right-2 h-8 w-8 p-1 rounded-full bg-white/80 text-black hover:bg-white shadow-sm"
+                                    className="absolute top-2 right-2 h-8 w-8 p-1 rounded-full bg-white/80 text-learning-color hover:bg-white shadow-sm"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       watchSkillSection(skill);
@@ -1008,7 +1012,7 @@ const KitchenSkillsLearning: React.FC = () => {
                                 )}
                               </div>
                               <CardHeader className="pb-2 pt-3">
-                                <CardTitle className="text-base">{skill.name}</CardTitle>
+                                <CardTitle className="text-base text-learning-color">{skill.name}</CardTitle>
                                 <CardDescription className="text-xs">
                                   {skill.description}
                                 </CardDescription>
