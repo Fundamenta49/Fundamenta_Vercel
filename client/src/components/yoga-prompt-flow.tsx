@@ -180,20 +180,53 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
 
   // Function to generate session recommendations based on selections
   const generateRecommendations = (mood: string, time: number, sound: string) => {
-    // This would normally call an API or search a database
-    // For now, we'll create some sample recommendations
+    // This would normally call an AI API to get personalized recommendations
+    // For now, we'll enhance our algorithm logic
     
-    // Map moods to session types
-    const moodToSessionType: Record<string, string> = {
-      'anxious': 'calming',
-      'tired': 'energizing',
-      'focused': 'mindful',
-      'energetic': 'grounding',
-      'sore': 'restorative',
-      'reflective': 'meditative'
+    // Map moods to primary and secondary session types for more nuanced matching
+    const moodToSessionTypes: Record<string, {primary: string, secondary: string[]}> = {
+      'anxious': {
+        primary: 'calming',
+        secondary: ['grounding', 'restorative']
+      },
+      'tired': {
+        primary: 'energizing', 
+        secondary: ['restorative', 'mindful']
+      },
+      'focused': {
+        primary: 'mindful',
+        secondary: ['meditative', 'balanced']
+      },
+      'energetic': {
+        primary: 'grounding',
+        secondary: ['energizing', 'balanced']
+      },
+      'sore': {
+        primary: 'restorative',
+        secondary: ['calming', 'gentle']
+      },
+      'reflective': {
+        primary: 'meditative',
+        secondary: ['mindful', 'calming']
+      }
     };
     
-    const sessionType = moodToSessionType[mood] || 'balanced';
+    // Get recommended session types for the selected mood
+    const recommendedTypes = moodToSessionTypes[mood] || {primary: 'balanced', secondary: ['mindful', 'energizing']};
+    
+    // Generate personalized recommendation context based on mood and time
+    const getPersonalizedContext = (sessionType: string, mood: string, time: number): string => {
+      const contextMap: Record<string, string> = {
+        'anxious': `Based on your anxious mood, this ${time}-minute session is designed to help calm your nervous system and bring a sense of ease.`,
+        'tired': `This ${time}-minute practice is perfect for your tired state, offering gentle energizing movements without exhaustion.`,
+        'focused': `With your focused mindset, this ${time}-minute session will help channel that concentration into mindful movement and awareness.`,
+        'energetic': `Your energetic mood will be balanced by this ${time}-minute session that helps ground and direct that energy productively.`,
+        'sore': `This gentle ${time}-minute session is specifically selected for your sore body, focusing on gentle relief and recovery.`,
+        'reflective': `Matching your reflective mood, this ${time}-minute practice creates space for introspection while moving mindfully.`
+      };
+      
+      return contextMap[mood] || `This ${time}-minute ${sessionType} session is personalized based on your current mood and available time.`;
+    };
     
     // Sample yoga sessions with both video URLs and audio-guided options
     const allSessions: YogaSession[] = [
