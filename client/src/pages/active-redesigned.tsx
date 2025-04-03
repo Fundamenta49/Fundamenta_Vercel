@@ -111,14 +111,7 @@ const SECTIONS: SectionType[] = [
     component: ActiveYou,
     props: { defaultTab: "hiit" as const }
   },
-  {
-    id: 'plyometrics',
-    title: 'Plyometrics',
-    description: 'Explosive movement training for power and athleticism',
-    icon: Activity,
-    component: ActiveYou,
-    props: { defaultTab: "plyometrics" as const }
-  },
+  // Plyometrics section removed
   {
     id: 'stretch',
     title: 'Stretch Zone',
@@ -127,14 +120,7 @@ const SECTIONS: SectionType[] = [
     component: ActiveYou,
     props: { defaultTab: "stretch" as const }
   },
-  {
-    id: 'calisthenics',
-    title: 'Calisthenics',
-    description: 'Bodyweight exercises for strength and skill development',
-    icon: Waypoints,
-    component: ActiveYou,
-    props: { defaultTab: "calisthenics" as const }
-  }
+  // Calisthenics section removed
 ];
 
 // Component for section cards following design system guidelines
