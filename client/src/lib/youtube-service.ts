@@ -268,6 +268,41 @@ const fallbackFitnessVideos: {[key: string]: YouTubeVideo[]} = {
       publishedAt: "2019-05-25T00:00:00Z"
     }
   ],
+  // Tabata specific fallbacks
+  'tabata': [
+    {
+      id: "XIeCMhNWFQQ",
+      title: "Tabata Workout - Jump Squats and Burpees",
+      description: "20 seconds on, 10 seconds rest - classic Tabata jump squats and burpees",
+      thumbnailUrl: "https://img.youtube.com/vi/XIeCMhNWFQQ/maxresdefault.jpg",
+      channelTitle: "FitnessBlender",
+      publishedAt: "2019-06-15T00:00:00Z"
+    },
+    {
+      id: "mmq1RgbOe0g",
+      title: "20-Minute Tabata Workout - Mountain Climbers & Push-ups",
+      description: "High intensity Tabata workout focusing on mountain climbers and push-ups",
+      thumbnailUrl: "https://img.youtube.com/vi/mmq1RgbOe0g/maxresdefault.jpg",
+      channelTitle: "SELF",
+      publishedAt: "2020-04-22T00:00:00Z"
+    },
+    {
+      id: "2KY7ggzB8iE",
+      title: "High Knees & Plank to Shoulder Tap Tabata",
+      description: "Tabata protocol with high knees and plank to shoulder tap exercises",
+      thumbnailUrl: "https://img.youtube.com/vi/2KY7ggzB8iE/maxresdefault.jpg",
+      channelTitle: "Heather Robertson",
+      publishedAt: "2019-10-05T00:00:00Z"
+    },
+    {
+      id: "aUYRVSNz4lU",
+      title: "Complete Tabata Workout - 8 Rounds of 20/10",
+      description: "Full Tabata session with all essential exercises for maximum effectiveness",
+      thumbnailUrl: "https://img.youtube.com/vi/aUYRVSNz4lU/maxresdefault.jpg",
+      channelTitle: "MadFit",
+      publishedAt: "2020-01-10T00:00:00Z"
+    }
+  ],
   // Calisthenics specific fallbacks
   'calisthenics': [
     {
@@ -442,7 +477,18 @@ function getFallbackVideos(exerciseName: string, equipment?: string): YouTubeVid
   // Match exercise type to our fallback categories
   let categoryKey = 'general';
   
-  if (lowerName.includes('jump') || lowerName.includes('plyo') || lowerName.includes('explosive')) {
+  // Check for Tabata exercises first - these are the specific Tabata protocol exercises
+  // in the ActiveYou card
+  if (lowerName.includes('tabata') || 
+      // Check for specific Tabata exercises
+      lowerName.includes('jump squat') || 
+      lowerName.includes('burpee') || 
+      lowerName.includes('mountain climber') || 
+      lowerName.includes('push-up') || lowerName.includes('pushup') ||
+      lowerName.includes('high knee') || 
+      lowerName.includes('plank to shoulder')) {
+    categoryKey = 'tabata';
+  } else if (lowerName.includes('jump') || lowerName.includes('plyo') || lowerName.includes('explosive')) {
     categoryKey = 'plyometrics';
   } else if (lowerName.includes('cardio') || lowerName.includes('hiit') || lowerName.includes('interval')) {
     categoryKey = 'hiit';

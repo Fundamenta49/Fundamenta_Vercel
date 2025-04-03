@@ -314,8 +314,8 @@ export default function FitnessExercises({
   // Track API request status to avoid excessive calls
   const [apiRequestCount, setApiRequestCount] = useState(0);
   const [apiThrottled, setApiThrottled] = useState(false);
-  const MAX_API_REQUESTS = 5; // Increased to allow more concurrent requests
-  const STAGGER_DELAY = 500; // Stagger delay between API calls to avoid rate issues
+  const MAX_API_REQUESTS = 20; // Increased significantly with new API key to allow more concurrent requests
+  const STAGGER_DELAY = 200; // Reduced stagger delay to speed up loading
 
   // Auto-load videos for exercises when data is loaded
   useEffect(() => {

@@ -14,7 +14,7 @@ const youtubeCache = new NodeCache({
 // Track rate limiting to avoid quota issues
 let apiCallCount = 0;
 let lastResetTime = Date.now();
-const MAX_CALLS_PER_HOUR = 50;  // More conservative limit to avoid hitting quota
+const MAX_CALLS_PER_HOUR = 500;  // Increased with new API key (YouTube daily limit is 10,000 queries)
 const HOUR_MS = 60 * 60 * 1000;  // 1 hour in milliseconds
 
 // Create a secondary backup cache for when API is rate limited
@@ -40,6 +40,23 @@ function formatSearchQuery(q: string, category?: string): string {
   } else if (category === 'fitness') {
     // Check if the query already contains specific keywords to avoid duplication
     const lowerQuery = q.toLowerCase();
+    
+    // Special handling for Tabata exercises
+    if (lowerQuery.includes('tabata') || 
+        lowerQuery.includes('jump squat') || 
+        lowerQuery.includes('burpee') || 
+        lowerQuery.includes('mountain climber') || 
+        lowerQuery.includes('push-up') || lowerQuery.includes('pushup') ||
+        lowerQuery.includes('high knee') || 
+        lowerQuery.includes('plank to shoulder')) {
+      
+      // For Tabata exercises, we want to ensure "Tabata" is in the query if it's not already
+      if (!lowerQuery.includes('tabata')) {
+        return `${q} tabata protocol 20 10 interval`;
+      } else {
+        return `${q} form demonstration 20 seconds 10 seconds`;
+      }
+    }
     
     // Dynamically add appropriate modifiers based on what's NOT already in the query
     const modifiers = [];
