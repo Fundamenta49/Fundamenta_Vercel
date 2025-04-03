@@ -7,14 +7,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle2, Clipboard, FileUp, Plus, ShoppingBag, Trash2, UtensilsCrossed, X } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clipboard, FileUp, MapPin, Plus, ShoppingBag, TrendingDown, Trash2, UtensilsCrossed, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface GroceryItem {
   name: string;
   quantity: string;
   estimatedCost: number;
   category?: string;
+}
+
+interface StoreComparison {
+  storeName: string;
+  distance: string;
+  prices: {
+    item: string;
+    price: number;
+    deal?: string;
+  }[];
 }
 
 interface CustomGroceryListProps {
@@ -36,6 +47,14 @@ export default function CustomGroceryList({ onGroceryListGenerated }: CustomGroc
   const [recipeTitle, setRecipeTitle] = useState<string>("");
   const [copiedToClipboard, setCopiedToClipboard] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Price comparison state
+  const [showPriceComparison, setShowPriceComparison] = useState<boolean>(false);
+  const [location, setLocation] = useState<string>("");
+  const [isLocating, setIsLocating] = useState<boolean>(false);
+  const [locationError, setLocationError] = useState<string>("");
+  const [storeComparisons, setStoreComparisons] = useState<StoreComparison[]>([]);
+  const [isLoadingStores, setIsLoadingStores] = useState<boolean>(false);
 
   // Add a new item manually
   const addItem = () => {
@@ -215,6 +234,133 @@ export default function CustomGroceryList({ onGroceryListGenerated }: CustomGroc
     if (file) {
       // Clear any existing recipe text if a file is uploaded
       setRecipeText("");
+    }
+  };
+  
+  // Check location permission status
+  const checkLocationPermission = async () => {
+    try {
+      const permission = await navigator.permissions.query({ name: 'geolocation' });
+      
+      // If permission is denied, provide more helpful guidance
+      if (permission.state === 'denied') {
+        setLocationError(
+          "Location access is denied. Please enable location in your device settings to use this feature."
+        );
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error checking location permission:", error);
+      return true; // Proceed with request if we can't check permissions
+    }
+  };
+
+  // Get the user's current location
+  const getCurrentLocation = async () => {
+    setIsLocating(true);
+    setLocationError("");
+
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      setIsLocating(false);
+      return;
+    }
+
+    // First check permissions
+    const canProceed = await checkLocationPermission();
+    if (!canProceed) {
+      setIsLocating(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        searchNearbyStores(latitude, longitude);
+        setIsLocating(false);
+      },
+      (error) => {
+        // Provide more specific error messages based on the error code
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError(
+              "Location access was denied. Please enable location in your device settings to use this feature."
+            );
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationError("Location information is unavailable. Please try again later.");
+            break;
+          case error.TIMEOUT:
+            setLocationError("Location request timed out. Please try again.");
+            break;
+          default:
+            setLocationError("Unable to retrieve your location. Please enter it manually.");
+        }
+        setIsLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      }
+    );
+  };
+
+  // Handle manual location search
+  const handleLocationSearch = (manualLocation: string) => {
+    setLocation(manualLocation);
+    // In a real app, we would geocode the address here
+    // For now, just simulate some coordinates
+    searchNearbyStores(37.7749, -122.4194);
+  };
+  
+  // Search for nearby stores with pricing for grocery items
+  const searchNearbyStores = async (latitude: number, longitude: number) => {
+    if (groceryItems.length === 0) {
+      setLocationError("Please add grocery items to your list first");
+      return;
+    }
+
+    setIsLoadingStores(true);
+    setLocationError("");
+
+    try {
+      // Call our API endpoint to get nearby stores with product prices
+      const response = await fetch('/api/shopping/nearby-stores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          latitude,
+          longitude,
+          products: groceryItems.map(item => item.name)
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch store data');
+      }
+
+      const data = await response.json();
+      
+      // If the response has a stores property, use it; otherwise assume the whole response is the stores array
+      const stores = data.stores || data;
+      
+      if (!Array.isArray(stores)) {
+        throw new Error('Invalid store data format');
+      }
+      
+      setStoreComparisons(stores);
+      setShowPriceComparison(true);
+    } catch (error) {
+      console.error('Error fetching store data:', error);
+      setLocationError("Failed to fetch nearby stores. Please try again.");
+    } finally {
+      setIsLoadingStores(false);
     }
   };
 
@@ -433,31 +579,163 @@ export default function CustomGroceryList({ onGroceryListGenerated }: CustomGroc
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row gap-2">
-        <Button 
-          className="w-full sm:w-auto" 
-          onClick={saveGroceryList}
-          disabled={loading || groceryItems.length === 0}
-        >
-          <ShoppingBag className="h-4 w-4 mr-2" />
-          Save Grocery List
-        </Button>
-        
-        {groceryItems.length > 0 && (
+      <CardFooter className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Button 
             className="w-full sm:w-auto" 
-            variant="outline"
-            onClick={() => {
-              if (onGroceryListGenerated) {
-                onGroceryListGenerated(groceryItems);
-              }
-              setMessage("List sent to recipe finder!");
-            }}
+            onClick={saveGroceryList}
+            disabled={loading || groceryItems.length === 0}
           >
-            <UtensilsCrossed className="h-4 w-4 mr-2" />
-            Find Recipes
+            <ShoppingBag className="h-4 w-4 mr-2" />
+            Save Grocery List
           </Button>
-        )}
+          
+          {groceryItems.length > 0 && (
+            <>
+              <Button 
+                className="w-full sm:w-auto" 
+                variant="outline"
+                onClick={() => {
+                  if (onGroceryListGenerated) {
+                    onGroceryListGenerated(groceryItems);
+                  }
+                  setMessage("List sent to recipe finder!");
+                }}
+              >
+                <UtensilsCrossed className="h-4 w-4 mr-2" />
+                Find Recipes
+              </Button>
+              
+              <Dialog open={showPriceComparison} onOpenChange={setShowPriceComparison}>
+                <DialogTrigger asChild>
+                  <Button 
+                    className="w-full sm:w-auto" 
+                    variant="outline"
+                    onClick={() => {
+                      // If we already have items, prompt for location
+                      if (groceryItems.length > 0 && !location) {
+                        setShowPriceComparison(true);
+                      }
+                    }}
+                  >
+                    <TrendingDown className="h-4 w-4 mr-2" />
+                    Compare Prices
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader>
+                    <DialogTitle>Smart Price Comparison</DialogTitle>
+                    <DialogDescription>
+                      Find the best deals for your grocery items at stores near you
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  <div className="space-y-4 py-4">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Enter your location"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                          if (e.key === 'Enter') {
+                            const inputElement = e.currentTarget;
+                            handleLocationSearch(inputElement.value);
+                          }
+                        }}
+                        className="flex-1"
+                      />
+                      <Button
+                        variant="outline"
+                        className="shrink-0"
+                        onClick={getCurrentLocation}
+                        disabled={isLocating}
+                      >
+                        <MapPin className="h-4 w-4 mr-2" />
+                        {isLocating ? "Locating..." : "Use Current Location"}
+                      </Button>
+                    </div>
+                    
+                    {locationError && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{locationError}</AlertDescription>
+                      </Alert>
+                    )}
+                    
+                    {location && (
+                      <Alert className="bg-green-50 border-green-200">
+                        <MapPin className="h-4 w-4 text-green-600" />
+                        <AlertDescription className="text-green-800">
+                          {isLoadingStores ? (
+                            "Finding stores near your location..."
+                          ) : (
+                            `Showing stores near: ${location}`
+                          )}
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    
+                    <div className="space-y-4">
+                      {isLoadingStores ? (
+                        <div className="text-center py-6">
+                          <p className="text-muted-foreground">Loading nearby stores...</p>
+                        </div>
+                      ) : (
+                        storeComparisons.map((store, index) => (
+                          <Card key={index}>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="text-lg flex items-center justify-between">
+                                <span>{store.storeName}</span>
+                                <span className="text-sm text-muted-foreground">{store.distance}</span>
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-2">
+                                {store.prices.map((item, itemIndex) => (
+                                  <div key={itemIndex} className="flex items-center justify-between">
+                                    <span>{item.item}</span>
+                                    <div className="text-right">
+                                      <span className="font-medium">${item.price.toFixed(2)}</span>
+                                      {item.deal && (
+                                        <Badge variant="secondary" className="ml-2">
+                                          {item.deal}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))
+                      )}
+                    </div>
+                    
+                    {storeComparisons.length > 0 && (
+                      <div className="space-y-2 pt-2 border-t">
+                        <h3 className="font-medium">Money-Saving Tips:</h3>
+                        <ul className="space-y-1">
+                          <li className="text-sm text-muted-foreground flex items-center gap-2">
+                            <TrendingDown className="h-4 w-4" />
+                            Compare unit prices for the best value
+                          </li>
+                          <li className="text-sm text-muted-foreground flex items-center gap-2">
+                            <TrendingDown className="h-4 w-4" />
+                            Check store loyalty programs for additional savings
+                          </li>
+                          <li className="text-sm text-muted-foreground flex items-center gap-2">
+                            <TrendingDown className="h-4 w-4" />
+                            Shop during sales and promotions for maximum savings
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
+        </div>
       </CardFooter>
     </Card>
   );
