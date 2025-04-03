@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import {
   Card,
@@ -14,9 +15,81 @@ import ChatInterface, { FITNESS_CATEGORY } from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
-import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User } from "lucide-react";
+import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, X as CloseIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
+import * as Dialog from "@radix-ui/react-dialog";
+
+// Create our own FullScreenDialog components to avoid any potential import issues
+const FullScreenDialog = Dialog.Root;
+const FullScreenDialogTrigger = Dialog.Trigger;
+const FullScreenDialogClose = Dialog.Close;
+
+// Override Content to add styling
+type FullScreenDialogContentProps = React.ComponentPropsWithoutRef<typeof Dialog.Content> & {
+  themeColor?: string;
+};
+
+const FullScreenDialogContent = React.forwardRef<
+  React.ElementRef<typeof Dialog.Content>,
+  FullScreenDialogContentProps
+>(({ className, themeColor = "#ec4899", children, ...props }, ref) => (
+  <Dialog.Portal>
+    <Dialog.Overlay className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+    <Dialog.Content
+      ref={ref}
+      className={cn(
+        "fixed inset-0 z-50 w-full h-full overflow-auto bg-white shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      
+      <Dialog.Close 
+        className="absolute right-4 top-4 rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
+        style={{ backgroundColor: `${themeColor}20` }}
+      >
+        <CloseIcon className="h-6 w-6" style={{ color: themeColor }} />
+        <span className="sr-only">Close</span>
+      </Dialog.Close>
+    </Dialog.Content>
+  </Dialog.Portal>
+));
+FullScreenDialogContent.displayName = "FullScreenDialogContent";
+
+// Simple styled components
+const FullScreenDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={cn("sticky top-0 z-10 px-6 py-4 flex flex-col gap-1.5 border-b bg-white", className)} {...props} />
+);
+
+const FullScreenDialogBody = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={cn("px-6 py-4 pb-16", className)} {...props} />
+);
+
+const FullScreenDialogTitle = React.forwardRef<
+  React.ElementRef<typeof Dialog.Title>,
+  React.ComponentPropsWithoutRef<typeof Dialog.Title>
+>(({ className, ...props }, ref) => (
+  <Dialog.Title
+    ref={ref}
+    className={cn("text-2xl font-semibold leading-none tracking-tight", className)}
+    {...props}
+  />
+));
+FullScreenDialogTitle.displayName = "FullScreenDialogTitle";
+
+const FullScreenDialogDescription = React.forwardRef<
+  React.ElementRef<typeof Dialog.Description>,
+  React.ComponentPropsWithoutRef<typeof Dialog.Description>
+>(({ className, ...props }, ref) => (
+  <Dialog.Description
+    ref={ref}
+    className={cn("text-sm text-muted-foreground mt-2", className)}
+    {...props}
+  />
+));
+FullScreenDialogDescription.displayName = "FullScreenDialogDescription";
 
 // Define a type for our sections to improve TypeScript support
 type ChatInterfaceProps = {
@@ -189,61 +262,60 @@ export default function Active() {
               }
               
               return (
-                <div key={section.id} className="flex flex-col h-full">
-                  <button
-                    onClick={() => {
-                      setExpandedSection(section.id);
-                    }}
-                    className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-pink-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
-                    aria-label={`Open ${section.title}`}
-                  >
-                    <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
-                      <section.icon className="w-9 h-9 sm:w-10 sm:h-10 text-pink-500" />
+                <FullScreenDialog key={section.id}>
+                  <FullScreenDialogTrigger asChild>
+                    <div className="flex flex-col h-full">
+                      <button
+                        className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-pink-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
+                        aria-label={`Open ${section.title}`}
+                      >
+                        <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
+                          <section.icon className="w-9 h-9 sm:w-10 sm:h-10 text-pink-500" />
+                        </div>
+                        
+                        <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
+                        
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
+                          {section.description.length > 60 
+                            ? `${section.description.substring(0, 60)}...` 
+                            : section.description}
+                        </p>
+                      </button>
                     </div>
+                  </FullScreenDialogTrigger>
+                  
+                  <FullScreenDialogContent themeColor="#ec4899">
+                    <FullScreenDialogHeader>
+                      <FullScreenDialogTitle className="flex items-center gap-2">
+                        <section.icon className="h-6 w-6 text-pink-500" />
+                        {section.title}
+                      </FullScreenDialogTitle>
+                      <FullScreenDialogDescription>
+                        {section.description}
+                      </FullScreenDialogDescription>
+                      
+                      {section.alert && (
+                        <div className="mt-2">{section.alert}</div>
+                      )}
+                    </FullScreenDialogHeader>
                     
-                    <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
-                    
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
-                      {section.description.length > 60 
-                        ? `${section.description.substring(0, 60)}...` 
-                        : section.description}
-                    </p>
-                  </button>
-                </div>
+                    <FullScreenDialogBody>
+                      {(() => {
+                        if (section.id === 'coach') {
+                          // Use the component's required "category" prop
+                          return <ChatInterface category={FITNESS_CATEGORY} />;
+                        } else {
+                          // For regular components
+                          return <section.component {...section.props} />;
+                        }
+                      })()}
+                    </FullScreenDialogBody>
+                  </FullScreenDialogContent>
+                </FullScreenDialog>
               );
             })}
           </div>
         </div>
-        
-        {/* Display the selected section/component when expandedSection is set */}
-        {expandedSection && SECTIONS.map(section => {
-          if (section.id === expandedSection) {
-            return (
-              <div key={section.id} className="mt-4 p-4 border rounded-lg bg-white shadow">
-                <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                  <section.icon className="h-5 w-5 text-pink-500" />
-                  {section.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">{section.description}</p>
-                
-                {section.alert && (
-                  <div className="mb-4">{section.alert}</div>
-                )}
-                
-                {(() => {
-                  if (section.id === 'coach') {
-                    // Use the component's required "category" prop
-                    return <ChatInterface category={FITNESS_CATEGORY} />;
-                  } else {
-                    // For regular components
-                    return <section.component {...section.props} />;
-                  }
-                })()}
-              </div>
-            );
-          }
-          return null;
-        })}
       </div>
     </div>
   );
