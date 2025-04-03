@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import CustomGroceryList from "./custom-grocery-list";
 import {
   ShoppingBag,
   UtensilsCrossed,
@@ -368,12 +369,29 @@ export default function ShoppingBuddy() {
         </CardContent>
       </Card>
 
-      {/* Smart Grocery List Generator */}
-      <Card className="border-blue-200">
+      {/* Grocery List Builder */}
+      <div className="mb-6">
+        <CustomGroceryList 
+          onGroceryListGenerated={(items) => {
+            // When a custom grocery list is generated, we can use it for recipes
+            setSelectedProducts(items.map(item => item.name));
+            // Scroll to recipe suggestions section
+            setTimeout(() => {
+              const recipeSection = document.getElementById('recipe-suggestions');
+              if (recipeSection) {
+                recipeSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }, 100);
+          }} 
+        />
+      </div>
+      
+      {/* Legacy Smart Grocery List Generator - Keeping for backwards compatibility */}
+      <Card className="border-blue-200 hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-blue-500" />
-            Smart Grocery List Generator
+            Legacy Grocery List Generator
           </CardTitle>
           <CardDescription>
             Get a personalized shopping list based on your preferences
@@ -735,7 +753,7 @@ export default function ShoppingBuddy() {
       </Card>
 
       {/* Recipe Suggestions */}
-      <Card className="border-amber-200">
+      <Card id="recipe-suggestions" className="border-amber-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ChefHat className="h-5 w-5 text-amber-500" />

@@ -2,6 +2,15 @@ import express from 'express';
 import { SpoonacularService } from '../services/spoonacular-service';
 import OpenAI from 'openai';
 import { spoonacularRouter } from './spoonacular';
+import multer from 'multer';
+
+// Setup multer for file uploads
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  }
+});
 
 const router = express.Router();
 export const shoppingRouter = router;
@@ -364,6 +373,99 @@ const errorHandler = (error: unknown) => {
   }
   return 'Unknown error occurred';
 };
+
+// Parse a recipe and extract its ingredients
+router.post('/parse-recipe', upload.single('recipeFile'), async (req, res) => {
+  try {
+    let recipeText = '';
+    const servings = parseInt(req.body.servings) || 1;
+    
+    // Get recipe from either file upload or text input
+    if (req.file) {
+      // Recipe was uploaded as a file
+      recipeText = req.file.buffer.toString('utf-8');
+    } else if (req.body.recipeText) {
+      // Recipe was provided as text
+      recipeText = req.body.recipeText;
+    } else {
+      return res.status(400).json({ error: 'Either a recipe file or recipe text must be provided' });
+    }
+
+    // Use OpenAI to extract ingredients from the recipe text
+    const prompt = `Parse the following recipe and extract all ingredients with their quantities.
+      Recipe: ${recipeText}
+      
+      Multiply all ingredient quantities by ${servings} to adjust for the desired number of servings.
+      
+      For each ingredient include:
+      1. The name of the ingredient
+      2. The quantity (with units)
+      3. An estimated cost in USD (be realistic)
+      4. The appropriate category (produce, dairy, grains, meat, spices, etc.)
+      
+      Format the response as JSON with this exact structure:
+      {
+        "recipeTitle": "Title of the recipe",
+        "items": [
+          {"name": "Ingredient name", "quantity": "amount with unit", "estimatedCost": 0.00, "category": "category name"},
+          ...
+        ],
+        "totalCost": 0.00,
+        "servings": ${servings}
+      }
+      The total cost should be the sum of all ingredient costs.`;
+
+    // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "You are a helpful assistant that parses recipes and extracts their ingredients." },
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7
+    });
+
+    const responseContent = response.choices[0].message.content || '';
+    const parsedResponse = JSON.parse(responseContent);
+    
+    res.json(parsedResponse);
+  } catch (error: any) {
+    console.error('Error parsing recipe:', error);
+    res.status(500).json({ 
+      error: 'Failed to parse recipe',
+      message: error?.message || 'Unknown error'
+    });
+  }
+});
+
+// Custom grocery list endpoint for user-created lists
+router.post('/custom-list', async (req, res) => {
+  try {
+    const { items } = req.body;
+    
+    if (!items || !Array.isArray(items)) {
+      return res.status(400).json({ error: 'Valid items array is required' });
+    }
+    
+    // Calculate the total cost
+    const totalCost = items.reduce((sum, item) => 
+      sum + (typeof item.estimatedCost === 'number' ? item.estimatedCost : 0), 0);
+    
+    // Return the processed list
+    res.json({
+      items,
+      totalCost,
+      customList: true
+    });
+  } catch (error: any) {
+    console.error('Error creating custom grocery list:', error);
+    res.status(500).json({ 
+      error: 'Failed to create custom grocery list',
+      message: error?.message || 'Unknown error'
+    });
+  }
+});
 
 // Type definitions for Spoonacular recipes
 interface SpoonacularIngredient {
