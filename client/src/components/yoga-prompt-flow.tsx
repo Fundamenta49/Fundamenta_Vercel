@@ -375,8 +375,11 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
     // Filter sessions by time (less than or equal to requested time)
     let filtered = allSessions.filter(session => session.duration <= time);
     
+    // Get the recommended session type for this mood
+    const recommendedType = moodToSessionTypes[mood]?.primary || 'balanced';
+    
     // Filter by type if possible
-    const typeMatches = filtered.filter(session => session.type === sessionType);
+    const typeMatches = filtered.filter(session => session.type === recommendedType);
     if (typeMatches.length > 0) {
       filtered = typeMatches;
     }
