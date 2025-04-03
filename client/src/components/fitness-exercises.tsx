@@ -180,7 +180,50 @@ export default function FitnessExercises({
     exercises: []
   });
   
-  const [savedWorkouts, setSavedWorkouts] = useState<Array<{
+  // Define interface for workout exercise
+  interface WorkoutExercise {
+    exerciseId: string;
+    name: string;
+    sets: number;
+    reps: number;
+    restTime: number;
+    difficulty: string;
+    weight?: number;
+    modifications?: {
+      easier: string;
+      harder: string;
+    };
+    progression?: {
+      setIncrease: number;
+      repIncrease: number;
+      restDecrease: number;
+      weightIncrease?: number;
+      adaptationRate?: number;
+    };
+    progressionHistory?: Array<{
+      date: string;
+      sets: number;
+      reps: number;
+      restTime: number;
+      weight: number;
+      perceivedExertion?: number;
+    }>;
+  }
+
+  // Define interface for workout feedback with both numeric and descriptive values
+  interface WorkoutFeedback {
+    perceivedDifficulty: number; // 1-10 scale
+    energyLevel: number; // 1-10 scale
+    completionLevel: number; // percentage 0-100
+    difficulty?: 'easy' | 'moderate' | 'challenging' | 'too_hard';
+    energy?: 'low' | 'moderate' | 'high';
+    enjoyment?: 'low' | 'moderate' | 'high';
+    soreness?: 'none' | 'mild' | 'moderate' | 'severe';
+    progression?: 'slower' | 'maintain' | 'faster';
+  }
+  
+  // Define interface for saved workout
+  interface SavedWorkout {
     id: string;
     name: string;
     level: 'beginner' | 'intermediate' | 'advanced';
@@ -188,24 +231,13 @@ export default function FitnessExercises({
     lastCompleted?: string;
     progressionFactor: number;
     completed: number; // Number of times the workout has been completed
-    exercises: Array<{
-      exerciseId: string;
-      name: string;
-      sets: number;
-      reps: number;
-      restTime: number;
-      difficulty: string;
-      modifications?: {
-        easier: string;
-        harder: string;
-      };
-      progression?: {
-        setIncrease: number;
-        repIncrease: number;
-        restDecrease: number;
-      };
-    }>;
-  }>>([]);
+    progressionStrategy?: 'linear' | 'wave' | 'step';
+    weeklyFrequency?: number;
+    userFeedback?: WorkoutFeedback;
+    exercises: WorkoutExercise[];
+  }
+  
+  const [savedWorkouts, setSavedWorkouts] = useState<SavedWorkout[]>([]);
   const [showWorkoutBuilder, setShowWorkoutBuilder] = useState(false);
   
   // Fetch categories
@@ -442,7 +474,7 @@ export default function FitnessExercises({
   };
   
   // Function to load a saved workout
-  const loadWorkout = (workout: any) => {
+  const loadWorkout = (workout: SavedWorkout) => {
     // Ensure workout data has all the necessary fields with enhanced properties
     const workoutData = {
       name: workout.name,
@@ -461,11 +493,7 @@ export default function FitnessExercises({
   };
   
   // Function to mark a saved workout as completed and progress its difficulty with enhanced adaptive scaling
-  const completeWorkout = (workout: any, index: number, userFeedbackData?: {
-    perceivedDifficulty: number;
-    energyLevel: number;
-    completionLevel: number;
-  }) => {
+  const completeWorkout = (workout: SavedWorkout, index: number, userFeedbackData?: WorkoutFeedback) => {
     if (!workout.adaptiveDifficulty) {
       // If adaptive difficulty is turned off, just mark as completed
       const updatedWorkout = {
@@ -523,7 +551,7 @@ export default function FitnessExercises({
     // Linear strategy uses default multiplier of 1.0
     
     // Generate a new workout with increased difficulty
-    const progressedExercises = workout.exercises.map((exercise: any) => {
+    const progressedExercises = workout.exercises.map((exercise: WorkoutExercise) => {
       // If no progression is defined, use default
       const progression = exercise.progression || { 
         setIncrease: 0, 
@@ -1382,7 +1410,7 @@ export default function FitnessExercises({
                                               style={{width: `${workout.userFeedback.perceivedDifficulty * 10}%`}}
                                             ></div>
                                           </div>
-                                          <p className="mt-1">{workout.userFeedback.perceivedDifficulty}/10</p>
+                                          <p className="mt-1">{workout.userFeedback.perceivedDifficulty}/10 ({workout.userFeedback.difficulty || 'moderate'})</p>
                                         </div>
                                         <div className="bg-muted p-2 rounded">
                                           <p className="font-medium">Energy</p>
@@ -1392,7 +1420,7 @@ export default function FitnessExercises({
                                               style={{width: `${workout.userFeedback.energyLevel * 10}%`}}
                                             ></div>
                                           </div>
-                                          <p className="mt-1">{workout.userFeedback.energyLevel}/10</p>
+                                          <p className="mt-1">{workout.userFeedback.energyLevel}/10 ({workout.userFeedback.energy || 'moderate'})</p>
                                         </div>
                                         <div className="bg-muted p-2 rounded">
                                           <p className="font-medium">Completion</p>
@@ -1539,11 +1567,30 @@ export default function FitnessExercises({
                                       const energy = parseInt(feedbackElement.getAttribute('data-energy') || '7');
                                       const completion = parseInt(feedbackElement.getAttribute('data-completion') || '100');
                                       
-                                      // Call the completeWorkout function with feedback data
+                                      // Get text descriptors for the numeric values
+                                      const getDifficultyText = (value: number): 'easy' | 'moderate' | 'challenging' | 'too_hard' => {
+                                        if (value <= 3) return 'easy';
+                                        if (value <= 6) return 'moderate';
+                                        if (value <= 8) return 'challenging';
+                                        return 'too_hard';
+                                      };
+                                      
+                                      const getEnergyText = (value: number): 'low' | 'moderate' | 'high' => {
+                                        if (value <= 3) return 'low';
+                                        if (value <= 7) return 'moderate';
+                                        return 'high';
+                                      };
+                                      
+                                      // Call the completeWorkout function with enhanced feedback data
                                       completeWorkout(workout, savedWorkouts.indexOf(workout), {
                                         perceivedDifficulty: difficulty,
                                         energyLevel: energy,
-                                        completionLevel: completion
+                                        completionLevel: completion,
+                                        difficulty: getDifficultyText(difficulty),
+                                        energy: getEnergyText(energy),
+                                        enjoyment: energy > 7 ? 'high' : energy > 4 ? 'moderate' : 'low',
+                                        soreness: difficulty > 8 ? 'severe' : difficulty > 6 ? 'moderate' : difficulty > 3 ? 'mild' : 'none',
+                                        progression: difficulty > 7 ? 'slower' : difficulty < 4 ? 'faster' : 'maintain'
                                       });
                                     }
                                     

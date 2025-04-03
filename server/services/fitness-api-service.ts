@@ -373,6 +373,18 @@ const isApiConfigured = !!API_KEY;
 // Service methods
 export const fitnessApiService = {
   /**
+   * Shuffle array using Fisher-Yates algorithm
+   */
+  shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  },
+  
+  /**
    * Get a list of exercises based on filters
    */
   async getExercises(options: {
@@ -397,8 +409,11 @@ export const fitnessApiService = {
         try {
           const response = await apiClient.get('/exercises', { params });
           
+          // Shuffle API response data for variety
+          const shuffledData = [...response.data].sort(() => Math.random() - 0.5);
+          
           // Transform the API response to match our Exercise interface
-          const exercises: Exercise[] = response.data.slice(0, limit).map((item: any) => ({
+          const exercises: Exercise[] = shuffledData.slice(0, limit).map((item: any) => ({
             id: item.id || String(item.uuid) || String(Math.random()),
             name: item.name,
             description: item.description || item.instructions || '',
@@ -494,12 +509,19 @@ export const fitnessApiService = {
           );
         }
         
-        // Return filtered sample results or all samples if no matches
-        return sampleResults.length > 0 ? sampleResults.slice(0, limit) : sampleExercises.slice(0, limit);
+        // Shuffle the results for more variety
+        const results = sampleResults.length > 0 ? [...sampleResults] : [...sampleExercises];
+        
+        // Simple shuffle using sort with random comparator
+        const shuffled = [...results].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, limit);
       }
       
+      // Shuffle before converting to ensure different exercises each time
+      const shuffledExercises = [...filteredExercises].sort(() => Math.random() - 0.5);
+      
       // Convert local exercise format to our application's Exercise interface
-      const exercises: Exercise[] = filteredExercises.slice(0, limit).map((ex, index) => ({
+      const exercises: Exercise[] = shuffledExercises.slice(0, limit).map((ex, index) => ({
         id: ex.id || `local-ex-${index}`,
         name: ex.name,
         description: ex.instructions.join(' ') || `${ex.name} targeting ${ex.primaryMuscles.join(', ')}`,
@@ -514,9 +536,10 @@ export const fitnessApiService = {
       return exercises;
     } catch (error) {
       console.error('Error fetching exercises:', error);
-      // Safely return some sample exercises as fallback
+      // Safely return some randomized sample exercises as fallback
       const limit = options?.limit || 20;
-      return sampleExercises.slice(0, limit);
+      const shuffled = [...sampleExercises].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, limit);
     }
   },
 
