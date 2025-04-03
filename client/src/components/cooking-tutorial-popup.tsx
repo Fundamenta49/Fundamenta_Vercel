@@ -1,0 +1,263 @@
+import React, { useState } from 'react';
+import { 
+  ChefHat, 
+  ArrowLeft, 
+  Search,
+  PlayCircle,
+  Info,
+  AlertTriangle
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { VideoPlayerDialog } from '@/components/video-player-dialog';
+import { 
+  TechniqueTutorials,
+  KitchenSafetyTutorials,
+  BasicRecipesTutorials,
+  MealTutorials,
+  CookingTutorial
+} from '@/components/cooking-tutorials-content';
+import { searchYouTubeVideos, CookingVideo } from '@/lib/cooking-videos-service';
+import { useToast } from '@/hooks/use-toast';
+
+const CookingTutorialPopup: React.FC = () => {
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
+  const [currentVideoId, setCurrentVideoId] = useState("");
+  const [currentVideoTitle, setCurrentVideoTitle] = useState("");
+  const [currentVideoDescription, setCurrentVideoDescription] = useState("");
+  const [activeTab, setActiveTab] = useState("techniques");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<CookingVideo[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  
+  const { toast } = useToast();
+
+  const handlePlayVideo = (videoId: string, title: string, description?: string) => {
+    setCurrentVideoId(videoId);
+    setCurrentVideoTitle(title);
+    setCurrentVideoDescription(description || "");
+    setVideoDialogOpen(true);
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!searchQuery.trim()) {
+      toast({
+        title: 'Please enter a search term',
+        description: 'Type what you\'d like to learn about in the search box',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    setIsSearching(true);
+    setSearchResults([]);
+    
+    try {
+      const results = await searchYouTubeVideos(searchQuery, 'cooking');
+      
+      setSearchResults(results);
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error('Error searching videos:', error);
+      toast({
+        title: 'Search error',
+        description: 'We had trouble searching for videos. Please try again later.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const playSearchResult = (video: CookingVideo) => {
+    handlePlayVideo(
+      video.youTubeId || video.id, 
+      video.title, 
+      video.description
+    );
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setShowSearchResults(false);
+  };
+
+  return (
+    <div className="h-full flex flex-col pb-12 overflow-hidden">
+      {/* Header Section */}
+      <div className="bg-white dark:bg-gray-950 px-4 py-4 border-b mb-2 flex items-center justify-between sticky top-0 z-10">
+        <div>
+          <h2 className="text-xl font-bold flex items-center">
+            <ChefHat className="h-5 w-5 mr-2 text-learning-color" />
+            Cooking Tutorials
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Learn essential cooking skills with step-by-step videos
+          </p>
+        </div>
+      </div>
+
+      {/* Search Box */}
+      <div className="px-4 py-2 mb-4">
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <Input
+            type="text"
+            placeholder="Search for cooking tutorials..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1"
+          />
+          <Button 
+            type="submit" 
+            size="sm" 
+            disabled={isSearching}
+            className="bg-learning-color hover:bg-learning-color/90"
+          >
+            <Search className="h-4 w-4" />
+            <span className="sr-only">Search</span>
+          </Button>
+        </form>
+      </div>
+
+      {/* Search Results */}
+      {showSearchResults && (
+        <div className="px-4 flex-1 overflow-auto">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium">Search Results</h3>
+            <Button variant="ghost" size="sm" onClick={clearSearch}>
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back to Categories
+            </Button>
+          </div>
+          
+          {isSearching ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-learning-color"></div>
+            </div>
+          ) : searchResults.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {searchResults.map((video) => (
+                <Card key={video.id} className="overflow-hidden hover:shadow-md transition-shadow border">
+                  <div 
+                    className="relative aspect-video cursor-pointer overflow-hidden"
+                    onClick={() => playSearchResult(video)}
+                  >
+                    <img 
+                      src={video.thumbnailUrl} 
+                      alt={video.title} 
+                      className="w-full h-full object-cover transition-transform hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <PlayCircle className="h-12 w-12 text-white" />
+                    </div>
+                  </div>
+                  <CardHeader className="p-3 pb-2">
+                    <CardTitle className="text-base line-clamp-2">{video.title}</CardTitle>
+                  </CardHeader>
+                  <CardFooter className="p-3 pt-0">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="ml-auto text-learning-color hover:text-learning-color/90 hover:bg-learning-color/10"
+                      onClick={() => playSearchResult(video)}
+                    >
+                      <PlayCircle className="h-4 w-4 mr-1" />
+                      Watch Video
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No videos found for "{searchQuery}"</p>
+              <p className="text-gray-400 text-sm mt-1">Try different keywords or browse our categories</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Main Tabs for Categories */}
+      {!showSearchResults && (
+        <div className="px-4 flex-1 overflow-auto">
+          <Tabs defaultValue="techniques" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="sticky top-[72px] bg-white z-10 pb-2">
+              <TabsList className="grid grid-cols-4 w-full">
+                <TabsTrigger value="techniques">Techniques</TabsTrigger>
+                <TabsTrigger value="safety">Safety</TabsTrigger>
+                <TabsTrigger value="recipes">Recipes</TabsTrigger>
+                <TabsTrigger value="meals">Meals</TabsTrigger>
+              </TabsList>
+            </div>
+            
+            <div className="mt-4">
+              {activeTab === "techniques" && (
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-6">
+                  <div className="flex items-start gap-3">
+                    <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium text-blue-800">Essential Techniques</h3>
+                      <p className="text-sm text-blue-700">
+                        Master these fundamental techniques to build a strong foundation for all your cooking.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === "safety" && (
+                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-6">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium text-yellow-800">Kitchen Safety Is Essential</h3>
+                      <p className="text-sm text-yellow-700">
+                        Proper technique and safety practices help prevent injury and foodborne illness. 
+                        These fundamentals should be mastered before attempting complex recipes.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <TabsContent value="techniques" className="mt-0">
+                <TechniqueTutorials onPlayVideo={handlePlayVideo} />
+              </TabsContent>
+              
+              <TabsContent value="safety" className="mt-0">
+                <KitchenSafetyTutorials onPlayVideo={handlePlayVideo} />
+              </TabsContent>
+              
+              <TabsContent value="recipes" className="mt-0">
+                <BasicRecipesTutorials onPlayVideo={handlePlayVideo} />
+              </TabsContent>
+              
+              <TabsContent value="meals" className="mt-0">
+                <MealTutorials onPlayVideo={handlePlayVideo} />
+              </TabsContent>
+            </div>
+          </Tabs>
+        </div>
+      )}
+
+      {/* Video Player Dialog */}
+      <VideoPlayerDialog
+        open={videoDialogOpen}
+        onOpenChange={setVideoDialogOpen}
+        videoId={currentVideoId}
+        title={currentVideoTitle}
+        description={currentVideoDescription}
+      />
+    </div>
+  );
+};
+
+export default CookingTutorialPopup;
