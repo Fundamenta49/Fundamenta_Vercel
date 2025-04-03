@@ -19,6 +19,7 @@ import {
   Flame,
   Activity,
   Waypoints,
+  Info,
 } from "lucide-react";
 
 // Custom Stretch icon component
@@ -145,15 +146,16 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
             <CardContent className="pt-4 space-y-4">
               <Alert className="bg-blue-50 border-blue-200 mb-4">
                 <AlertDescription className="text-blue-800">
-                  Find yoga poses suitable for your experience level
+                  Practice these authentic yoga poses to improve flexibility and mindfulness
                 </AlertDescription>
               </Alert>
               
+              {/* Beginner Yoga Flow */}
               <div className="mb-6">
-                <h3 className="font-medium text-lg my-3">Sample Routine</h3>
+                <h3 className="font-medium text-lg my-3">Beginner Yoga Flow</h3>
                 <div className="grid gap-4">
                   <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">Beginner Yoga Flow</div>
+                    <div className="font-medium text-lg mb-1">Morning Energizing Flow</div>
                     <p className="text-sm text-muted-foreground mb-2">Hold each pose for 30-60 seconds, focusing on breath and form</p>
                     <div className="text-sm space-y-2">
                       <div><span className="font-medium">1.</span> Downward Dog: Opens shoulders and stretches hamstrings</div>
@@ -167,16 +169,89 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              <FitnessExercises 
-                muscleFilter="flexibility" 
-                equipmentFilter="body weight" 
-                difficultyFilter="beginner"
-                categoryFilter="yoga"
-                keywordFilter="stretch"
-                showFilters={false} 
-                compactView={true}
-                maxExercises={4}
-              />
+              {/* Custom Yoga Poses Cards */}
+              <div>
+                <h3 className="font-medium text-lg my-3">Essential Yoga Poses</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Yoga Pose 1 */}
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div className="font-medium text-lg mb-1">Downward Dog (Adho Mukha Svanasana)</div>
+                    <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">beginner</div>
+                    <p className="text-sm text-muted-foreground mb-2">A foundational pose that stretches and strengthens the entire body</p>
+                    <div className="text-sm space-y-1 mb-2">
+                      <div><span className="font-medium">Benefits:</span> Stretches the hamstrings, calves, and shoulders while strengthening the arms and legs</div>
+                      <div><span className="font-medium">Focus on:</span> Creating an inverted V-shape with your body, pressing heels down</div>
+                    </div>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                      <Info size={14} />
+                      <span>Show Details</span>
+                    </button>
+                  </div>
+                  
+                  {/* Yoga Pose 2 */}
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div className="font-medium text-lg mb-1">Warrior II (Virabhadrasana II)</div>
+                    <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">beginner</div>
+                    <p className="text-sm text-muted-foreground mb-2">A standing pose that builds strength and stamina</p>
+                    <div className="text-sm space-y-1 mb-2">
+                      <div><span className="font-medium">Benefits:</span> Strengthens legs, opens hips and chest, improves concentration</div>
+                      <div><span className="font-medium">Focus on:</span> Keeping the front knee aligned with ankle, extending arms fully</div>
+                    </div>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                      <Info size={14} />
+                      <span>Show Details</span>
+                    </button>
+                  </div>
+                  
+                  {/* Yoga Pose 3 */}
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div className="font-medium text-lg mb-1">Tree Pose (Vrikshasana)</div>
+                    <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">beginner</div>
+                    <p className="text-sm text-muted-foreground mb-2">A balancing pose that improves focus and stability</p>
+                    <div className="text-sm space-y-1 mb-2">
+                      <div><span className="font-medium">Benefits:</span> Improves balance, strengthens legs and core, enhances concentration</div>
+                      <div><span className="font-medium">Focus on:</span> Keeping your standing leg strong and hips level</div>
+                    </div>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                      <Info size={14} />
+                      <span>Show Details</span>
+                    </button>
+                  </div>
+                  
+                  {/* Yoga Pose 4 */}
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div className="font-medium text-lg mb-1">Bridge Pose (Setu Bandhasana)</div>
+                    <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">beginner</div>
+                    <p className="text-sm text-muted-foreground mb-2">A gentle backbend that opens the chest and strengthens the back</p>
+                    <div className="text-sm space-y-1 mb-2">
+                      <div><span className="font-medium">Benefits:</span> Stretches chest, strengthens back and glutes, relieves stress</div>
+                      <div><span className="font-medium">Focus on:</span> Keeping knees hip-width apart, engaging glutes and core</div>
+                    </div>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                      <Info size={14} />
+                      <span>Show Details</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Additional Flows */}
+              <div className="mt-6">
+                <h3 className="font-medium text-lg my-3">Other Yoga Sequences</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Evening Relaxation Flow</div>
+                    <p className="text-sm text-muted-foreground mb-2">A gentle sequence to release tension and prepare for sleep</p>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">1.</span> Reclining Bound Angle Pose (Supta Baddha Konasana)</div>
+                      <div><span className="font-medium">2.</span> Happy Baby Pose (Ananda Balasana)</div>
+                      <div><span className="font-medium">3.</span> Legs-Up-The-Wall Pose (Viparita Karani)</div>
+                      <div><span className="font-medium">4.</span> Supine Spinal Twist (Jathara Parivartanasana)</div>
+                      <div><span className="font-medium">5.</span> Corpse Pose (Savasana)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
           <FitnessProgress />
@@ -370,19 +445,79 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                   <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
                     <div className="font-medium text-lg mb-1">Dynamic Warm-Up Routine</div>
                     <p className="text-sm text-muted-foreground mb-2">Perform before workouts to prepare muscles and joints</p>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-wellness-600 font-medium">Duration:</span>
-                      <span>5-10 minutes</span>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">1.</span> Arm Circles: Gradually increases shoulder mobility</div>
+                      <div><span className="font-medium">2.</span> Leg Swings: Activates hip flexors and hamstrings</div>
+                      <div><span className="font-medium">3.</span> Bodyweight Squats: Warms up quads and knees</div>
+                      <div><span className="font-medium">4.</span> Walking Lunges: Engages multiple leg muscles</div>
+                      <div><span className="font-medium">5.</span> Torso Twists: Prepares core for rotation</div>
                     </div>
                   </div>
-                  
-                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">Recovery Session</div>
-                    <p className="text-sm text-muted-foreground mb-2">Gentle stretches to aid muscle recovery after workouts</p>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-wellness-600 font-medium">Duration:</span>
-                      <span>15-20 minutes</span>
+                </div>
+              </div>
+              
+              {/* Custom Stretch Cards */}
+              <div>
+                <h3 className="font-medium text-lg mb-3">Essential Stretches</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Stretch 1 */}
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div className="font-medium text-lg mb-1">Standing Hamstring Stretch</div>
+                    <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">lower body</div>
+                    <p className="text-sm text-muted-foreground mb-2">Lengthens hamstrings and reduces lower back tension</p>
+                    <div className="text-sm space-y-1 mb-2">
+                      <div><span className="font-medium">How to:</span> Stand tall, place one foot in front with heel on ground, toe up. Hinge forward at the hips while maintaining straight back.</div>
+                      <div><span className="font-medium">Feel it:</span> Along the back of the extended leg and possibly the lower back</div>
                     </div>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                      <Info size={14} />
+                      <span>Show Details</span>
+                    </button>
+                  </div>
+                  
+                  {/* Stretch 2 */}
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div className="font-medium text-lg mb-1">Figure Four Stretch</div>
+                    <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">hips</div>
+                    <p className="text-sm text-muted-foreground mb-2">Opens hip rotators and relieves glute tension</p>
+                    <div className="text-sm space-y-1 mb-2">
+                      <div><span className="font-medium">How to:</span> Lie on back, cross right ankle over left thigh, reach through legs and pull left thigh toward chest.</div>
+                      <div><span className="font-medium">Feel it:</span> In the outer hip and glute of the crossed leg</div>
+                    </div>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                      <Info size={14} />
+                      <span>Show Details</span>
+                    </button>
+                  </div>
+                  
+                  {/* Stretch 3 */}
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div className="font-medium text-lg mb-1">Doorway Chest Stretch</div>
+                    <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">upper body</div>
+                    <p className="text-sm text-muted-foreground mb-2">Opens chest and counteracts rounded shoulders</p>
+                    <div className="text-sm space-y-1 mb-2">
+                      <div><span className="font-medium">How to:</span> Stand in doorway, place forearms on door frame at 90° angles, lean forward gently.</div>
+                      <div><span className="font-medium">Feel it:</span> Across chest and front of shoulders</div>
+                    </div>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                      <Info size={14} />
+                      <span>Show Details</span>
+                    </button>
+                  </div>
+                  
+                  {/* Stretch 4 */}
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <div className="font-medium text-lg mb-1">Cat-Cow Stretch</div>
+                    <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">spine</div>
+                    <p className="text-sm text-muted-foreground mb-2">Improves spinal mobility and relieves back tension</p>
+                    <div className="text-sm space-y-1 mb-2">
+                      <div><span className="font-medium">How to:</span> Start on hands and knees, alternate between arching (cow) and rounding (cat) your back.</div>
+                      <div><span className="font-medium">Feel it:</span> Throughout the entire spine and core</div>
+                    </div>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                      <Info size={14} />
+                      <span>Show Details</span>
+                    </button>
                   </div>
                 </div>
               </div>
