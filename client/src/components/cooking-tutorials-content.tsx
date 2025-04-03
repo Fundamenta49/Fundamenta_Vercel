@@ -128,9 +128,9 @@ const cookingTutorials: CookingTutorial[] = [
     description: 'Learn safe and proper cutting techniques that every home cook should know.',
     category: 'kitchen-safety',
     difficulty: 'beginner',
-    videoId: '20gwf7YttQM',
-    thumbnailUrl: 'https://img.youtube.com/vi/20gwf7YttQM/hqdefault.jpg',
-    duration: 10,
+    videoId: 'YrHpeEwk_-U',
+    thumbnailUrl: 'https://img.youtube.com/vi/YrHpeEwk_-U/hqdefault.jpg',
+    duration: 12,
     steps: [
       'Hold the knife properly with a pinch grip',
       'Position your guiding hand in a claw position',
