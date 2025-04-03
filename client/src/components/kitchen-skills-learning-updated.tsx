@@ -791,7 +791,7 @@ const KitchenSkillsLearning: React.FC = () => {
   const getBadgeIcon = (badgeId: string): React.ReactNode => {
     switch (badgeId) {
       case 'beginner-mastery':
-        return <Award className="h-5 w-5 text-blue-500" />;
+        return <Award className="h-5 w-5 text-amber-500" />;
       case 'intermediate-mastery':
         return <Star className="h-5 w-5 text-purple-500" />;
       case 'expert-mastery':
@@ -807,7 +807,7 @@ const KitchenSkillsLearning: React.FC = () => {
   const getLevelBadgeColor = (level: SkillLevel): string => {
     switch (level) {
       case SkillLevel.Beginner:
-        return 'bg-blue-100 text-blue-800 hover:bg-blue-200';
+        return 'bg-amber-100 text-amber-800 hover:bg-amber-200';
       case SkillLevel.Intermediate:
         return 'bg-purple-100 text-purple-800 hover:bg-purple-200';
       case SkillLevel.Expert:
@@ -1045,11 +1045,11 @@ const KitchenSkillsLearning: React.FC = () => {
                     </div>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <h3 className="text-blue-800 font-medium mb-1">Beginner Skills</h3>
-                        <div className="text-2xl font-bold text-blue-900">
+                      <div className="bg-amber-50 p-4 rounded-lg">
+                        <h3 className="text-amber-800 font-medium mb-1">Beginner Skills</h3>
+                        <div className="text-2xl font-bold text-amber-900">
                           {userProgress.skillLevels[SkillLevel.Beginner]} 
-                          <span className="text-sm font-normal text-blue-700 ml-1">completed</span>
+                          <span className="text-sm font-normal text-amber-700 ml-1">completed</span>
                         </div>
                         <Progress 
                           value={(userProgress.skillLevels[SkillLevel.Beginner] / skillCategories.reduce((count, cat) => count + cat.skills.filter(s => s.level === SkillLevel.Beginner).length, 0)) * 100} 
@@ -1130,10 +1130,10 @@ const KitchenSkillsLearning: React.FC = () => {
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     {/* Kitchen Apprentice Badge */}
-                    <Card className={`border-2 ${userProgress.earnedBadges.includes('beginner-mastery') ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50 opacity-70'}`}>
+                    <Card className={`border-2 ${userProgress.earnedBadges.includes('beginner-mastery') ? 'border-amber-400 bg-amber-50' : 'border-gray-200 bg-gray-50 opacity-70'}`}>
                       <CardHeader className="p-4 text-center">
-                        <div className={`mx-auto rounded-full p-3 ${userProgress.earnedBadges.includes('beginner-mastery') ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                          <Award className={`h-8 w-8 ${userProgress.earnedBadges.includes('beginner-mastery') ? 'text-blue-600' : 'text-gray-400'}`} />
+                        <div className={`mx-auto rounded-full p-3 ${userProgress.earnedBadges.includes('beginner-mastery') ? 'bg-amber-100' : 'bg-gray-100'}`}>
+                          <Award className={`h-8 w-8 ${userProgress.earnedBadges.includes('beginner-mastery') ? 'text-amber-600' : 'text-gray-400'}`} />
                         </div>
                         <CardTitle className="text-base mt-2">Kitchen Apprentice</CardTitle>
                       </CardHeader>
@@ -1295,7 +1295,7 @@ const KitchenSkillsLearning: React.FC = () => {
                                 ? 'bg-red-50 border-red-200'
                                 : 'bg-white border-gray-200'
                             : quizState.selectedAnswer === i
-                              ? 'bg-blue-50 border-blue-200'
+                              ? 'bg-amber-50 border-amber-200'
                               : 'bg-white border-gray-200 hover:bg-gray-50'
                           }
                         `}
@@ -1311,7 +1311,7 @@ const KitchenSkillsLearning: React.FC = () => {
                                   ? 'bg-red-500 border-red-500 text-white'
                                   : 'border-gray-300'
                               : quizState.selectedAnswer === i
-                                ? 'bg-blue-500 border-blue-500 text-white'
+                                ? 'bg-amber-500 border-amber-500 text-white'
                                 : 'border-gray-300'
                             }
                           `}>
@@ -1372,17 +1372,17 @@ const KitchenSkillsLearning: React.FC = () => {
                 
                 {/* Video Section */}
                 {selectedSkill.videoTimestamp && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
                     <div className="flex items-center gap-2 mb-2">
-                      <Video className="h-5 w-5 text-blue-500" />
-                      <h3 className="font-medium">Technique Demonstration</h3>
+                      <Video className="h-5 w-5 text-amber-500" />
+                      <h3 className="font-medium text-amber-800">Technique Demonstration</h3>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-amber-700 mb-3">
                       Watch the video demonstration of this technique from our comprehensive kitchen tools guide.
                     </p>
                     <Button 
                       onClick={() => watchSkillSection(selectedSkill)} 
-                      className="w-full sm:w-auto"
+                      className="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white"
                     >
                       <PlayCircle className="h-4 w-4 mr-2" />
                       Watch Demo Video
@@ -1407,12 +1407,12 @@ const KitchenSkillsLearning: React.FC = () => {
                 </div>
                 
                 {/* Practical Task */}
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
                   <div className="flex items-center gap-2 mb-2">
-                    <BookOpen className="h-5 w-5 text-blue-500" />
-                    <h3 className="font-medium text-blue-800">Practical Task</h3>
+                    <BookOpen className="h-5 w-5 text-amber-500" />
+                    <h3 className="font-medium text-amber-800">Practical Task</h3>
                   </div>
-                  <p className="text-sm text-blue-700">
+                  <p className="text-sm text-amber-700">
                     {selectedSkill.practicalTask}
                   </p>
                 </div>
@@ -1435,7 +1435,7 @@ const KitchenSkillsLearning: React.FC = () => {
                     <Button 
                       onClick={startQuiz} 
                       variant="outline" 
-                      className="w-full sm:w-auto"
+                      className="w-full sm:w-auto border-amber-500 text-amber-600 hover:text-amber-700 hover:bg-amber-50"
                     >
                       Start Quiz
                     </Button>

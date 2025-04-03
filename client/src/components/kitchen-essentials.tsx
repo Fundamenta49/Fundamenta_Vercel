@@ -17,22 +17,7 @@ import {
   Plug, 
   Loader2, 
   Search,
-  ChefHat,
-  Coffee,
-  Scale,
-  Bowl,
-  Cast,
-  Saucepan,
-  Soup,
-  PanelTop,
-  Spade,
-  SpatialTool,
-  Grip,
-  Wand2,
-  Dices,
-  Banana,
-  Grater,
-  Thermometer
+  ChefHat
 } from 'lucide-react';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
 import { searchCookingVideos, YouTubeVideo, kitchenToolVideoMap } from '@/lib/youtube-service';
@@ -66,48 +51,19 @@ const categoryIcons = {
   all: Utensils
 };
 
-// Define tool icons
-const toolIcons = {
-  'chefs-knife': ChefHat,
-  'cutting-board': Coffee,
-  'measuring-tools': Scale,
-  'mixing-bowls': Bowl,
-  'skillet': Cast,
-  'saucepan': Saucepan,
-  'stockpot': Soup,
-  'baking-sheet': PanelTop,
-  'rubber-spatula': Spade,
-  'metal-spatula': SpatialTool,
-  'tongs': Grip,
-  'whisk': Wand2,
-  'colander': Dices,
-  'peeler': Banana,
-  'grater': Grater,
-  'meat-thermometer': Thermometer
-};
-
-// Function to render tool icon with background
-const renderToolIcon = (toolId: string) => {
-  const IconComponent = toolIcons[toolId] || Utensils;
-  const bgColors = {
-    'tools': 'bg-blue-100',
-    'cutting': 'bg-green-100',
-    'cookware': 'bg-orange-100',
-    'bakeware': 'bg-yellow-100',
-    'appliances': 'bg-purple-100'
-  };
-  const iconColors = {
-    'tools': 'text-blue-600',
-    'cutting': 'text-green-600',
-    'cookware': 'text-orange-600',
-    'bakeware': 'text-yellow-600',
-    'appliances': 'text-purple-600'
-  };
+// Function to render category icon for a kitchen tool
+const renderKitchenIcon = (tool: KitchenTool) => {
+  // Get the appropriate icon based on category
+  const IconComponent = categoryIcons[tool.category] || Utensils;
+  
+  // Use Learning Yellow theme color (#f59e0b) for all icons
+  const bgColor = 'bg-amber-100';
+  const iconColor = 'text-amber-600';
   
   return (
     <div className="h-full w-full flex items-center justify-center">
-      <div className={`w-36 h-36 ${bgColors['tools']} rounded-full flex items-center justify-center`}>
-        <IconComponent className={`h-20 w-20 ${iconColors['tools']}`} />
+      <div className={`w-36 h-36 ${bgColor} rounded-full flex items-center justify-center`}>
+        <IconComponent className={`h-24 w-24 ${iconColor}`} />
       </div>
     </div>
   );
@@ -609,10 +565,10 @@ const KitchenEssentials = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-6">
         <Button 
           onClick={() => setActiveCategory('all')}
-          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'all' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'all' ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           variant="ghost"
         >
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'all' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'all' ? 'bg-amber-200' : 'bg-gray-200'}`}>
             {React.createElement(categoryIcons.all, { className: 'h-4 w-4' })}
           </div>
           <span className="text-xs font-medium">All</span>
@@ -620,10 +576,10 @@ const KitchenEssentials = () => {
         
         <Button 
           onClick={() => setActiveCategory('essentials')}
-          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'essentials' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'essentials' ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           variant="ghost"
         >
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'essentials' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'essentials' ? 'bg-amber-200' : 'bg-gray-200'}`}>
             <CheckCircle className="h-4 w-4" />
           </div>
           <span className="text-xs font-medium">Essentials</span>
@@ -631,10 +587,10 @@ const KitchenEssentials = () => {
         
         <Button 
           onClick={() => setActiveCategory('cutting')}
-          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'cutting' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'cutting' ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           variant="ghost"
         >
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'cutting' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'cutting' ? 'bg-amber-200' : 'bg-gray-200'}`}>
             {React.createElement(categoryIcons.cutting, { className: 'h-4 w-4' })}
           </div>
           <span className="text-xs font-medium">Cutting</span>
@@ -642,10 +598,10 @@ const KitchenEssentials = () => {
         
         <Button 
           onClick={() => setActiveCategory('cookware')}
-          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'cookware' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'cookware' ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           variant="ghost"
         >
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'cookware' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'cookware' ? 'bg-amber-200' : 'bg-gray-200'}`}>
             {React.createElement(categoryIcons.cookware, { className: 'h-4 w-4' })}
           </div>
           <span className="text-xs font-medium">Cookware</span>
@@ -653,10 +609,10 @@ const KitchenEssentials = () => {
         
         <Button 
           onClick={() => setActiveCategory('bakeware')}
-          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'bakeware' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'bakeware' ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           variant="ghost"
         >
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'bakeware' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'bakeware' ? 'bg-amber-200' : 'bg-gray-200'}`}>
             {React.createElement(categoryIcons.bakeware, { className: 'h-4 w-4' })}
           </div>
           <span className="text-xs font-medium">Bakeware</span>
@@ -664,10 +620,10 @@ const KitchenEssentials = () => {
         
         <Button 
           onClick={() => setActiveCategory('tools')}
-          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'tools' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'tools' ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           variant="ghost"
         >
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'tools' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'tools' ? 'bg-amber-200' : 'bg-gray-200'}`}>
             {React.createElement(categoryIcons.tools, { className: 'h-4 w-4' })}
           </div>
           <span className="text-xs font-medium">Tools</span>
@@ -675,10 +631,10 @@ const KitchenEssentials = () => {
         
         <Button 
           onClick={() => setActiveCategory('appliances')}
-          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'appliances' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          className={`py-2 px-3 rounded-lg flex flex-col items-center justify-center h-auto ${activeCategory === 'appliances' ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           variant="ghost"
         >
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'appliances' ? 'bg-blue-200' : 'bg-gray-200'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${activeCategory === 'appliances' ? 'bg-amber-200' : 'bg-gray-200'}`}>
             {React.createElement(categoryIcons.appliances, { className: 'h-4 w-4' })}
           </div>
           <span className="text-xs font-medium">Appliances</span>
@@ -689,22 +645,14 @@ const KitchenEssentials = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
         {filteredTools.map(tool => (
           <Card key={tool.id} className="overflow-hidden h-full border border-gray-200 hover:shadow-md transition-shadow">
-            <div className="h-48 overflow-hidden relative bg-gray-100">
-              <img
-                src={tool.image}
-                alt={tool.name}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                onError={(e) => {
-                  e.currentTarget.src = "https://images.unsplash.com/photo-1556911261-6bd341186b2f?q=80&w=500&auto=format&fit=crop";
-                  e.currentTarget.alt = "Image not available";
-                }}
-              />
+            <div className="h-48 overflow-hidden relative bg-amber-50">
+              {renderKitchenIcon(tool)}
             </div>
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
                 <CardTitle className="text-xl">{tool.name}</CardTitle>
                 {tool.essential && (
-                  <Badge className="bg-orange-100 text-orange-800">
+                  <Badge className="bg-amber-100 text-amber-800">
                     Essential
                   </Badge>
                 )}
@@ -746,7 +694,7 @@ const KitchenEssentials = () => {
                   <CardTitle className="text-xl flex items-center gap-2">
                     {selectedTool.name}
                     {selectedTool.essential && (
-                      <Badge className="bg-orange-100 text-orange-800">
+                      <Badge className="bg-amber-100 text-amber-800">
                         Essential
                       </Badge>
                     )}
@@ -767,16 +715,8 @@ const KitchenEssentials = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="h-52 overflow-hidden rounded-md bg-gray-100">
-                <img
-                  src={selectedTool.image}
-                  alt={selectedTool.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://images.unsplash.com/photo-1556911261-6bd341186b2f?q=80&w=500&auto=format&fit=crop";
-                    e.currentTarget.alt = "Image not available";
-                  }}
-                />
+              <div className="h-52 overflow-hidden rounded-md bg-amber-50">
+                {renderKitchenIcon(selectedTool)}
               </div>
               
               <div>
@@ -816,7 +756,7 @@ const KitchenEssentials = () => {
               <div>
                 <h3 className="font-medium mb-2">How-To Video</h3>
                 <Button
-                  className="w-full rounded-md flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full rounded-md flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white"
                   onClick={() => fetchVideoForTool(selectedTool)}
                   disabled={isLoadingVideo}
                 >
