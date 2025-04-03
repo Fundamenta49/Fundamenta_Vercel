@@ -51,12 +51,16 @@ interface FilterOptions {
   muscleGroup?: string;
   equipment?: string;
   difficulty?: string;
+  category?: string;
+  keyword?: string;
 }
 
 interface FitnessExercisesProps {
   muscleFilter?: string;
   equipmentFilter?: string;
   difficultyFilter?: string;
+  categoryFilter?: string;
+  keywordFilter?: string;
   showFilters?: boolean;
   compactView?: boolean;
   maxExercises?: number;
@@ -66,6 +70,8 @@ export default function FitnessExercises({
   muscleFilter,
   equipmentFilter,
   difficultyFilter = 'beginner',
+  categoryFilter,
+  keywordFilter,
   showFilters = true,
   compactView = false,
   maxExercises = 10
@@ -74,6 +80,8 @@ export default function FitnessExercises({
     muscleGroup: muscleFilter,
     equipment: equipmentFilter,
     difficulty: difficultyFilter,
+    category: categoryFilter,
+    keyword: keywordFilter,
   });
   const [selectedTab, setSelectedTab] = useState<string>('exercises');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -88,10 +96,40 @@ export default function FitnessExercises({
   const exercisesQuery = useQuery({
     queryKey: ['/api/fitness/exercises', filters],
     queryFn: async () => {
+      // If we have a specific category, try the category endpoint first
+      if (filters.category && !filters.muscleGroup && !filters.equipment) {
+        try {
+          const response = await fetch(`/api/fitness/category/${filters.category}?limit=${maxExercises}`);
+          if (response.ok) {
+            const data = await response.json();
+            return data.exercises;
+          }
+        } catch (error) {
+          console.warn('Failed to fetch by category, falling back to general endpoint');
+        }
+      }
+      
+      // If we have a specific muscle group only, try the muscle endpoint
+      if (filters.muscleGroup && !filters.category && !filters.equipment) {
+        try {
+          const response = await fetch(`/api/fitness/muscle/${filters.muscleGroup}?limit=${maxExercises}`);
+          if (response.ok) {
+            const data = await response.json();
+            return data.exercises;
+          }
+        } catch (error) {
+          console.warn('Failed to fetch by muscle, falling back to general endpoint');
+        }
+      }
+      
+      // Fall back to the general endpoint with all filters
       const queryParams = new URLSearchParams();
       if (filters.muscleGroup) queryParams.append('muscleGroup', filters.muscleGroup);
       if (filters.equipment) queryParams.append('equipment', filters.equipment);
       if (filters.difficulty) queryParams.append('difficulty', filters.difficulty);
+      if (filters.category) queryParams.append('category', filters.category);
+      if (filters.keyword) queryParams.append('keyword', filters.keyword);
+      if (maxExercises) queryParams.append('limit', maxExercises.toString());
       
       const response = await fetch(`/api/fitness/exercises?${queryParams.toString()}`);
       if (!response.ok) {
@@ -114,8 +152,10 @@ export default function FitnessExercises({
       muscleGroup: muscleFilter,
       equipment: equipmentFilter,
       difficulty: difficultyFilter,
+      category: categoryFilter,
+      keyword: keywordFilter,
     });
-  }, [muscleFilter, equipmentFilter, difficultyFilter]);
+  }, [muscleFilter, equipmentFilter, difficultyFilter, categoryFilter, keywordFilter]);
 
   // Muscle group options
   const muscleGroups = [

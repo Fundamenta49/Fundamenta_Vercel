@@ -11,6 +11,8 @@ router.get('/exercises', async (req, res) => {
       muscleGroup: z.string().optional(),
       equipment: z.string().optional(),
       difficulty: z.string().optional(),
+      category: z.string().optional(),
+      keyword: z.string().optional(),
       limit: z.string().transform(val => parseInt(val)).optional(),
     });
 
@@ -20,6 +22,8 @@ router.get('/exercises', async (req, res) => {
       muscleGroup: query.muscleGroup,
       equipment: query.equipment,
       difficulty: query.difficulty,
+      category: query.category,
+      keyword: query.keyword,
       limit: query.limit,
     });
 
@@ -102,6 +106,76 @@ router.get('/exercises/:id', async (req, res) => {
     res.status(400).json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to fetch exercise details'
+    });
+  }
+});
+
+// Get exercises by specific category
+router.get('/category/:categoryName', async (req, res) => {
+  try {
+    const { categoryName } = req.params;
+    const { limit } = req.query;
+    
+    if (!categoryName) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Category name is required'
+      });
+    }
+
+    const limitNumber = limit ? parseInt(limit as string) : 20;
+    const exercises = await fitnessApiService.getExercisesByCategory(categoryName, limitNumber);
+    
+    res.json({ success: true, exercises });
+  } catch (error) {
+    console.error('Error in /api/fitness/category/:categoryName:', error);
+    res.status(400).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch exercises for category'
+    });
+  }
+});
+
+// Get exercises by muscle group
+router.get('/muscle/:muscleName', async (req, res) => {
+  try {
+    const { muscleName } = req.params;
+    const { limit } = req.query;
+    
+    if (!muscleName) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Muscle name is required'
+      });
+    }
+
+    const limitNumber = limit ? parseInt(limit as string) : 20;
+    const exercises = await fitnessApiService.getExercisesByMuscleGroup(muscleName, limitNumber);
+    
+    res.json({ success: true, exercises });
+  } catch (error) {
+    console.error('Error in /api/fitness/muscle/:muscleName:', error);
+    res.status(400).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch exercises for muscle group'
+    });
+  }
+});
+
+// Get beginner-friendly exercises
+router.get('/beginner', async (req, res) => {
+  try {
+    const { limit } = req.query;
+    const limitNumber = limit ? parseInt(limit as string) : 20;
+    
+    const exercises = await fitnessApiService.getBeginnerExercises(limitNumber);
+    
+    res.json({ success: true, exercises });
+  } catch (error) {
+    console.error('Error in /api/fitness/beginner:', error);
+    res.status(400).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch beginner exercises'
     });
   }
 });
