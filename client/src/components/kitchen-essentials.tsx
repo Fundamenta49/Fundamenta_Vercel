@@ -41,7 +41,139 @@ interface KitchenToolProps {
   tool: KitchenTool;
 }
 
-// Define category icons
+// Kitchen tool SVG icons
+const KitchenToolIcons = {
+  // Cutting category
+  "Chef's Knife": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M3 21h18M17.5 3l-11 11c-.5.5-1 1.5-1 2v.5c0 1 .5 1.5 1 2s1 1 2 1h.5c.5 0 1.5-.5 2-1l7.5-9.5" />
+      <path d="M17.5 3c.5-.5 1.5-.5 2 0s.5 1.5 0 2L13 11" />
+    </svg>
+  ),
+  "Cutting Board": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <rect x="4" y="4" width="16" height="16" rx="1" />
+      <line x1="9" y1="4" x2="9" y2="20" />
+      <line x1="15" y1="4" x2="15" y2="20" />
+      <line x1="4" y1="9" x2="20" y2="9" />
+      <line x1="4" y1="15" x2="20" y2="15" />
+    </svg>
+  ),
+  
+  // Tools category
+  "Measuring Cups & Spoons": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M6 9v9c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V9M6 9h7M6 12h7M3 7h12v2H3zM17 5c.55 0 1 .45 1 1v1h-2V6c0-.55.45-1 1-1zM17 10c.55 0 1 .45 1 1v1h-2v-1c0-.55.45-1 1-1zM17 15c.55 0 1 .45 1 1v1h-2v-1c0-.55.45-1 1-1z" />
+    </svg>
+  ),
+  "Mixing Bowls": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <ellipse cx="12" cy="7" rx="7" ry="3" />
+      <path d="M5 7v7c0 1.66 3.13 3 7 3s7-1.34 7-3V7" />
+    </svg>
+  ),
+  
+  // Cookware category
+  "Skillet (Cast Iron or Nonstick)": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M19 12h5" />
+    </svg>
+  ),
+  "Saucepan": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M4 10a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4z" />
+      <path d="M18 8V5a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v3" />
+      <path d="M20 10h2" />
+    </svg>
+  ),
+  "Stockpot": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M5 10h14v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-8z" />
+      <path d="M5 10V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4" />
+      <path d="M5 14h14" />
+      <path d="M19 10h3" />
+      <path d="M2 10h3" />
+    </svg>
+  ),
+  
+  // Bakeware category
+  "Sheet Pan": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <rect x="3" y="8" width="18" height="12" rx="2" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="16" x2="21" y2="16" />
+      <line x1="12" y1="8" x2="12" y2="20" />
+    </svg>
+  ),
+  
+  // More tools 
+  "Rubber Spatula": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M6 20l12-16" />
+      <path d="M9 17l3 3h3a2 2 0 0 0 2-2v-3l-3-3" />
+    </svg>
+  ),
+  "Metal Spatula": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M5 20l9-9" />
+      <path d="M14 11l5-5" />
+      <path d="M19 6h-4v-4" />
+      <path d="M5 20v-3h3l3-3 4 4-3 3v3z" />
+    </svg>
+  ),
+  "Tongs": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M8 4V2M16 4V2M12 18v-5M9 15l-3-3 4-4M15 15l3-3-4-4M12 13V3" />
+    </svg>
+  ),
+  "Whisk": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M5 16a4 4 0 0 0 4 4h.5M16 10c0-3.5-4-3.5-4-7C15 3 17 3 18 6c2 6-9 11-11 10" />
+      <path d="M17.68 8.32C19.5 10.5 19 13 16 14c-3 1-5.5-.5-8-3.5C8 8 10 4.5 12 3c.5 1 1 1.5 3 2" />
+    </svg>
+  ),
+  "Colander or Strainer": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M6 8l1 10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-10" />
+      <path d="M4 8h16M9 8V6c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v2" />
+      <path d="M8 12v.01M12 12v.01M16 12v.01M8 16v.01M12 16v.01M16 16v.01" />
+    </svg>
+  ),
+  "Peeler": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M9 12l6-6M15 6l3 3-3 3-3-3zM9 12l-6 6 3 3 6-6" />
+    </svg>
+  ),
+  "Grater (Box or Microplane)": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <rect x="6" y="4" width="12" height="16" rx="1" />
+      <line x1="8" y1="8" x2="8" y2="16" />
+      <line x1="12" y1="8" x2="12" y2="16" />
+      <line x1="16" y1="8" x2="16" y2="16" />
+    </svg>
+  ),
+  "Can Opener": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <circle cx="7" cy="12" r="5" />
+      <path d="M7 7v5M15 9l3 3M18 12l3 3M15 15h6" />
+    </svg>
+  ),
+  "Thermometer": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M14 4v10.54c-1.19.69-2 1.99-2 3.46 0 2.21 1.79 4 4 4s4-1.79 4-4c0-1.47-.81-2.77-2-3.46V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2zM12 9H7.5a2.5 2.5 0 0 1 0-5H12" />
+    </svg>
+  ),
+  
+  // Default icon for any missing tools
+  "default": () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
+      <path d="M3 10h18M3 14h18M9 4v16M15 4v16" />
+    </svg>
+  )
+};
+
+// Category icons (still needed for filtering UI)
 const categoryIcons = {
   cutting: Scissors,
   cookware: CookingPot,
@@ -51,10 +183,10 @@ const categoryIcons = {
   all: Utensils
 };
 
-// Function to render category icon for a kitchen tool
+// Function to render kitchen tool icon
 const renderKitchenIcon = (tool: KitchenTool) => {
-  // Get the appropriate icon based on category
-  const IconComponent = categoryIcons[tool.category] || Utensils;
+  // Get the appropriate icon for the specific tool
+  const IconComponent = KitchenToolIcons[tool.name] || KitchenToolIcons["default"];
   
   // Use Learning Yellow theme color (#f59e0b) for all icons
   const bgColor = 'bg-amber-100';
@@ -63,7 +195,7 @@ const renderKitchenIcon = (tool: KitchenTool) => {
   return (
     <div className="h-full w-full flex items-center justify-center">
       <div className={`w-36 h-36 ${bgColor} rounded-full flex items-center justify-center`}>
-        <IconComponent className={`h-24 w-24 ${iconColor}`} />
+        <IconComponent />
       </div>
     </div>
   );
