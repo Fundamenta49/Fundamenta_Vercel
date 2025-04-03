@@ -34,9 +34,9 @@ const cookingTutorials: CookingTutorial[] = [
     description: 'Master the quick cooking technique for vegetables, meats, and more.',
     category: 'technique',
     difficulty: 'beginner',
-    videoId: 'JS2Hxk60fWQ',
-    thumbnailUrl: 'https://img.youtube.com/vi/JS2Hxk60fWQ/hqdefault.jpg',
-    duration: 8,
+    videoId: 'liPGv6M--9M',
+    thumbnailUrl: 'https://img.youtube.com/vi/liPGv6M--9M/hqdefault.jpg',
+    duration: 10,
     steps: [
       'Heat your pan over medium-high heat',
       'Add a small amount of oil or butter',
