@@ -12,7 +12,8 @@ import {
   searchCookingVideos,
   getCookingVideosByCategory,
   formatVideoLength,
-  CookingVideo
+  CookingVideo,
+  searchYouTubeVideos
 } from '@/lib/cooking-videos-service';
 import { useToast } from '@/hooks/use-toast';
 
@@ -180,7 +181,15 @@ const CookingTutorials = () => {
     setSearchResults([]);
     
     try {
-      const results = await searchCookingVideos(searchQuery);
+      // Try to search with YouTube API first (more reliable)
+      let results = await searchYouTubeVideos(searchQuery, 'cooking');
+      
+      // If YouTube API fails or returns no results, fall back to Spoonacular
+      if (!results || results.length === 0) {
+        console.log('YouTube search returned no results, trying Spoonacular API');
+        results = await searchCookingVideos(searchQuery);
+      }
+      
       setSearchResults(results);
       setShowSearchResults(true);
       setSelectedCategory(null);
