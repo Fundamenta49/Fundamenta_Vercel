@@ -320,7 +320,7 @@ export default function FitnessExercises({
       const exercises = exercisesQuery.data.slice(0, maxExercises);
       
       // Process each exercise with a small delay to avoid rate limiting issues
-      exercises.forEach((exercise, index) => {
+      exercises.forEach((exercise: Exercise, index: number) => {
         // Skip if we already have videos for this exercise
         if (exerciseVideos[exercise.id]?.length > 0) return;
         
@@ -337,7 +337,7 @@ export default function FitnessExercises({
         }, index * 300); // 300ms delay between each request
       });
     }
-  }, [compactView, exercisesQuery.data, exercisesQuery.isPending]);
+  }, [compactView, exercisesQuery.data, exercisesQuery.isPending, maxExercises, exerciseVideos]);
 
   // Load saved workouts from localStorage
   useEffect(() => {

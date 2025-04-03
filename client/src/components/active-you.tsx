@@ -86,7 +86,16 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                   Find exercises that match your equipment and experience level
                 </AlertDescription>
               </Alert>
-              <FitnessExercises muscleFilter="strength" equipmentFilter="dumbbell" />
+              <FitnessExercises 
+                muscleFilter="strength" 
+                equipmentFilter="dumbbell" 
+                difficultyFilter="intermediate"
+                categoryFilter="weightlifting" 
+                keywordFilter="curl"
+                showFilters={false}
+                compactView={true}
+                maxExercises={4}
+              />
             </CardContent>
           </Card>
           <FitnessProgress />
@@ -120,7 +129,16 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                   Find yoga poses suitable for your experience level
                 </AlertDescription>
               </Alert>
-              <FitnessExercises muscleFilter="flexibility" equipmentFilter="body weight" showFilters={false} compactView={true} />
+              <FitnessExercises 
+                muscleFilter="flexibility" 
+                equipmentFilter="body weight" 
+                difficultyFilter="intermediate"
+                categoryFilter="yoga"
+                keywordFilter="pose"
+                showFilters={false} 
+                compactView={true}
+                maxExercises={4}
+              />
             </CardContent>
           </Card>
           <FitnessProgress />
@@ -202,9 +220,11 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 <FitnessExercises 
                   muscleFilter="full body" 
                   difficultyFilter="intermediate"
+                  categoryFilter="hiit"
+                  keywordFilter="burpee" 
                   showFilters={false} 
                   compactView={true}
-                  maxExercises={6}
+                  maxExercises={3}
                 />
               </div>
             </CardContent>
@@ -270,9 +290,11 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 <FitnessExercises 
                   muscleFilter="legs" 
                   difficultyFilter="intermediate"
+                  categoryFilter="plyometrics"
+                  keywordFilter="jump"
                   showFilters={false} 
                   compactView={true}
-                  maxExercises={6}
+                  maxExercises={3}
                 />
               </div>
             </CardContent>
@@ -345,9 +367,12 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 <h3 className="font-medium text-lg mb-3">Exercise Library</h3>
                 <FitnessExercises 
                   muscleFilter="flexibility" 
+                  categoryFilter="stretching"
+                  keywordFilter="hamstring"
+                  difficultyFilter="beginner"
                   showFilters={false} 
                   compactView={true}
-                  maxExercises={6}
+                  maxExercises={4}
                 />
               </div>
             </CardContent>
@@ -389,8 +414,11 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 muscleFilter="full body" 
                 equipmentFilter="body weight" 
                 difficultyFilter="beginner"
+                categoryFilter="calisthenics"
+                keywordFilter="push up"
                 showFilters={false}
                 compactView={true}
+                maxExercises={4}
               />
             </CardContent>
           </Card>
