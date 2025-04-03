@@ -20,6 +20,9 @@ export function VideoPlayerDialog({
   title,
   description
 }: VideoPlayerDialogProps) {
+  // Log the video ID for debugging
+  console.log('VideoPlayerDialog received videoId:', videoId);
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-screen h-screen max-w-none p-0 m-0 rounded-none border-none">
@@ -29,7 +32,6 @@ export function VideoPlayerDialog({
         <div className="absolute top-4 right-4 z-50">
           <Button 
             variant="outline"
-
             aria-label="Close video"
             onClick={() => onOpenChange(false)} 
             className="h-10 w-10 p-0 rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50 border-none"
@@ -41,10 +43,10 @@ export function VideoPlayerDialog({
         <div className="w-full h-full flex flex-col">
           <div className="flex-1 w-full bg-black flex items-center justify-center">
             <iframe 
-              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&origin=${encodeURIComponent(window.location.origin)}`}
               title={title}
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               className="w-full h-full"
               loading="lazy"

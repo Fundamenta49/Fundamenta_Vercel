@@ -386,11 +386,17 @@ const cookingTutorials: CookingTutorial[] = [
 export const TechniqueTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVideo }) => {
   const techniques = cookingTutorials.filter(tutorial => tutorial.category === 'technique');
   
+  // Add debug wrapper for onPlayVideo
+  const handlePlayVideo = (videoId: string, title: string, description?: string) => {
+    console.log('TechniqueTutorials calling onPlayVideo with:', { videoId, title, description });
+    onPlayVideo(videoId, title, description);
+  };
+  
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {techniques.map(tutorial => (
-          <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
+          <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={handlePlayVideo} />
         ))}
       </div>
     </div>
@@ -498,7 +504,16 @@ interface TutorialCardProps {
 
 const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) => {
   const handlePlayVideo = () => {
-    console.log('Playing tutorial from TutorialCard:', tutorial.videoId, tutorial.name);
+    console.log('Playing tutorial from TutorialCard:', {
+      videoId: tutorial.videoId,
+      name: tutorial.name,
+      description: tutorial.description
+    });
+    // Make sure we're passing valid data to onPlayVideo
+    if (!tutorial.videoId) {
+      console.error('Error: Tutorial has no videoId!', tutorial);
+      return;
+    }
     onPlayVideo(tutorial.videoId, tutorial.name, tutorial.description);
   };
   

@@ -613,6 +613,8 @@ const CookingTutorials = () => {
       )}
 
       {/* Video Player Dialog */}
+      {/* Log the selected video object to help debugging */}
+      {selectedVideo ? console.log('Sending to VideoPlayerDialog:', selectedVideo) : null}
       <VideoPlayerDialog
         open={videoDialogOpen}
         onOpenChange={setVideoDialogOpen}
