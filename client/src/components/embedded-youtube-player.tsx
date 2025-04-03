@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface EmbeddedYouTubePlayerProps {
   videoId: string;
@@ -23,12 +23,54 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
 }) => {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [processedVideoId, setProcessedVideoId] = useState<string>('');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   
-  // Reset error state if videoId changes
+  // Process and validate videoId when it changes
   useEffect(() => {
     setError(false);
     setLoading(true);
-    console.log(`EmbeddedYouTubePlayer mounted with videoId: ${videoId}`);
+    
+    if (!videoId || videoId.trim() === '') {
+      console.error('Empty videoId provided to EmbeddedYouTubePlayer');
+      setError(true);
+      return;
+    }
+    
+    // Extract video ID from URLs if needed, or use as is if it's already just an ID
+    let extractedId = videoId.trim();
+    
+    // Handle different YouTube URL formats
+    if (videoId.includes('youtube.com') || videoId.includes('youtu.be')) {
+      try {
+        // youtube.com/watch?v=VIDEO_ID
+        if (videoId.includes('watch?v=')) {
+          const urlParts = videoId.split('watch?v=');
+          if (urlParts.length > 1) {
+            extractedId = urlParts[1].split('&')[0];
+          }
+        } 
+        // youtu.be/VIDEO_ID
+        else if (videoId.includes('youtu.be/')) {
+          extractedId = videoId.split('youtu.be/')[1]?.split('?')[0] || '';
+        }
+        // youtube.com/embed/VIDEO_ID
+        else if (videoId.includes('/embed/')) {
+          extractedId = videoId.split('/embed/')[1]?.split('?')[0] || '';
+        }
+      } catch (e) {
+        console.error('Error parsing YouTube URL:', e);
+      }
+    }
+    
+    // Validate that we have a proper video ID (typically 11 characters)
+    if (extractedId && extractedId.length >= 10) {
+      console.log(`EmbeddedYouTubePlayer: processed videoId from ${videoId} to ${extractedId}`);
+      setProcessedVideoId(extractedId);
+    } else {
+      console.error('Invalid YouTube video ID:', extractedId, 'from original:', videoId);
+      setError(true);
+    }
   }, [videoId]);
 
   // Handle iframe load
@@ -52,14 +94,16 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
     const params = new URLSearchParams({
       rel: '0', // Don't show related videos
       modestbranding: '1', // Minimal YouTube branding
-      origin: origin
+      origin: origin,
+      enablejsapi: '1' // Enable JavaScript API
     });
 
     if (autoplay) {
       params.append('autoplay', '1');
     }
 
-    return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+    // Always use the processed ID to ensure proper formatting
+    return `https://www.youtube.com/embed/${processedVideoId}?${params.toString()}`;
   };
 
   return (
@@ -80,7 +124,7 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
           </svg>
           <p className="text-sm">Video unavailable</p>
           <a 
-            href={`https://www.youtube.com/watch?v=${videoId}`}
+            href={`https://www.youtube.com/watch?v=${processedVideoId || videoId}`}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-2 text-xs text-blue-600 hover:underline"
@@ -88,8 +132,9 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
             Try watching on YouTube
           </a>
         </div>
-      ) : (
+      ) : processedVideoId ? (
         <iframe
+          ref={iframeRef}
           src={createYouTubeEmbedUrl()}
           title={title}
           width="100%"
@@ -102,7 +147,7 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
           onLoad={handleIframeLoad}
           onError={handleIframeError}
         />
-      )}
+      ) : null}
     </div>
   );
 };
