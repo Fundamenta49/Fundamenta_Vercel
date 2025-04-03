@@ -311,33 +311,54 @@ export default function FitnessExercises({
     });
   }, [muscleFilter, equipmentFilter, difficultyFilter, categoryFilter, keywordFilter]);
   
+  // Track API request status to avoid excessive calls
+  const [apiRequestCount, setApiRequestCount] = useState(0);
+  const [apiThrottled, setApiThrottled] = useState(false);
+  const MAX_API_REQUESTS = 3; // Maximum concurrent requests to avoid API throttling
+  
   // Auto-load videos for exercises when data is loaded
   useEffect(() => {
     // Only run this effect when exercises are loaded and it's in compact view
     // This ensures videos are preloaded in the ActiveYou exercise cards without user interaction
-    if (compactView && exercisesQuery.data && !exercisesQuery.isPending) {
-      // Limit to a reasonable number to avoid too many API calls
-      const exercises = exercisesQuery.data.slice(0, maxExercises);
+    if (compactView && exercisesQuery.data && !exercisesQuery.isPending && !apiThrottled) {
+      // Set a hard limit on the number of exercises to load videos for
+      const exerciseLimit = Math.min(maxExercises || 3, 3); // Never load more than 3 per card
+      const exercises = exercisesQuery.data.slice(0, exerciseLimit);
       
-      // Process each exercise with a small delay to avoid rate limiting issues
-      exercises.forEach((exercise: Exercise, index: number) => {
-        // Skip if we already have videos for this exercise
-        if (exerciseVideos[exercise.id]?.length > 0) return;
+      // Only load videos for the first exercise to reduce API load
+      // Users can click to expand others if interested
+      const firstExercise = exercises[0];
+      if (firstExercise && !exerciseVideos[firstExercise.id]?.length && apiRequestCount < MAX_API_REQUESTS) {
+        setApiRequestCount(prev => prev + 1);
         
-        // Stagger video loading with a slight delay between each
-        setTimeout(() => {
-          // Pass the muscle groups for better search results
-          loadExerciseVideos(
-            exercise.id, 
-            exercise.name, 
-            exercise.equipment,
-            exercise.muscleGroups,
-            true // auto-loading flag
-          );
-        }, index * 300); // 300ms delay between each request
-      });
+        // Load videos for the first exercise only
+        loadExerciseVideos(
+          firstExercise.id, 
+          firstExercise.name, 
+          firstExercise.equipment,
+          firstExercise.muscleGroups,
+          true // auto-loading flag
+        ).finally(() => {
+          setApiRequestCount(prev => Math.max(0, prev - 1));
+        });
+      }
     }
-  }, [compactView, exercisesQuery.data, exercisesQuery.isPending, maxExercises, exerciseVideos]);
+  }, [compactView, exercisesQuery.data, exercisesQuery.isPending, maxExercises, exerciseVideos, apiRequestCount, apiThrottled]);
+  
+  // API throttling handler - after multiple failures, stop trying
+  useEffect(() => {
+    if (apiRequestCount >= MAX_API_REQUESTS) {
+      setApiThrottled(true);
+      
+      // Reset after a cooldown period
+      const timer = setTimeout(() => {
+        setApiThrottled(false);
+        setApiRequestCount(0);
+      }, 60000); // 1 minute cooldown
+      
+      return () => clearTimeout(timer);
+    }
+  }, [apiRequestCount]);
 
   // Load saved workouts from localStorage
   useEffect(() => {
@@ -664,6 +685,34 @@ export default function FitnessExercises({
     return Math.abs(hash).toString(16).padStart(8, '0');
   };
   
+  // Default fallback videos - used when API is rate limited
+  const fallbackVideos: Record<string, {id: string, title: string}[]> = {
+    "weightlifting": [
+      { id: "IODxDxX7oi4", title: "Dumbbell Exercises for Beginners" },
+      { id: "CfMKG2nIf6I", title: "Upper Body Dumbbell Workout" }
+    ],
+    "yoga": [
+      { id: "v7AYKMP6rOE", title: "Yoga For Complete Beginners" },
+      { id: "b1H3xO3x_Js", title: "Yoga Poses for Flexibility" }
+    ],
+    "hiit": [
+      { id: "ml6cT4AZdqI", title: "30-Minute HIIT Workout" },
+      { id: "5qCjyxUj6DQ", title: "Tabata HIIT Training" }
+    ],
+    "plyometrics": [
+      { id: "ltuLMm5NUM8", title: "Plyometric Training for Beginners" },
+      { id: "QG8Ts_RgaEo", title: "Jump Training Exercises" }
+    ],
+    "stretching": [
+      { id: "qULTwquOuT4", title: "Full Body Stretching Routine" },
+      { id: "g_tea8ZNk5A", title: "Hamstring Stretches for Flexibility" }
+    ],
+    "calisthenics": [
+      { id: "kIVxdW9aS8k", title: "Beginner Calisthenics Workout" },
+      { id: "31GlECfj9Rg", title: "Push-Up Variations for Beginners" }
+    ]
+  };
+
   const loadExerciseVideos = async (
     exerciseId: string, 
     exerciseName: string, 
@@ -679,6 +728,35 @@ export default function FitnessExercises({
     // If autoloading and we're already loading this exercise, don't start another request
     if (autoload && loadingVideos[exerciseId]) {
       return;
+    }
+    
+    // If we're throttled or at our API limit, use fallback videos
+    if (apiThrottled || apiRequestCount >= MAX_API_REQUESTS) {
+      // Try to find relevant category based on filters
+      const category = filters.category || 
+                      (filters.muscleGroup === 'flexibility' ? 'yoga' : 'weightlifting');
+      
+      // Get fallback videos for the category if available
+      const fallbacks = fallbackVideos[category] || fallbackVideos.weightlifting;
+      
+      if (fallbacks) {
+        // Create video objects with the fallback data
+        const staticVideos = fallbacks.map(video => ({
+          id: video.id,
+          title: video.title,
+          description: `Exercise demonstration for ${exerciseName}`,
+          thumbnailUrl: `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`,
+          channelTitle: "Fitness Instructor",
+          publishedAt: new Date().toISOString()
+        }));
+        
+        setExerciseVideos({
+          ...exerciseVideos,
+          [exerciseId]: staticVideos
+        });
+        
+        return;
+      }
     }
     
     setLoadingVideos({...loadingVideos, [exerciseId]: true});
@@ -698,12 +776,42 @@ export default function FitnessExercises({
         seed
       );
       
-      setExerciseVideos({
-        ...exerciseVideos,
-        [exerciseId]: videos
-      });
+      // If we got videos back, store them
+      if (videos && videos.length > 0) {
+        setExerciseVideos({
+          ...exerciseVideos,
+          [exerciseId]: videos
+        });
+      } else {
+        // If API returned empty, use fallbacks based on category
+        const category = filters.category || 
+                        (filters.muscleGroup === 'flexibility' ? 'yoga' : 'weightlifting');
+        
+        const fallbacks = fallbackVideos[category] || fallbackVideos.weightlifting;
+        
+        if (fallbacks) {
+          const staticVideos = fallbacks.map(video => ({
+            id: video.id,
+            title: video.title,
+            description: `Exercise demonstration for ${exerciseName}`,
+            thumbnailUrl: `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`,
+            channelTitle: "Fitness Instructor",
+            publishedAt: new Date().toISOString()
+          }));
+          
+          setExerciseVideos({
+            ...exerciseVideos,
+            [exerciseId]: staticVideos
+          });
+        }
+      }
     } catch (error) {
       console.error('Error loading videos for exercise:', error);
+      
+      // On error, increment the API request count to trigger throttling
+      if (autoload) {
+        setApiRequestCount(prev => prev + 1);
+      }
     } finally {
       setLoadingVideos({...loadingVideos, [exerciseId]: false});
     }
