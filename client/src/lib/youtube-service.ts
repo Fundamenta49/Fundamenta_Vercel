@@ -115,19 +115,58 @@ export const searchVideos = async (query: string, category?: string): Promise<Yo
 };
 
 /**
- * Search for fitness exercise tutorial videos on YouTube
- * @param exerciseName The name of the exercise to search videos for
+ * Search for fitness exercise tutorial videos on YouTube with enhanced variety
+ * @param exerciseName The name of the exercise to search for
  * @param equipment Optional equipment used for the exercise (for more specific results)
+ * @param muscleGroups Optional muscle groups targeted (for more specific results)
+ * @param seed Optional random seed for consistent but varied results
  * @returns Promise with YouTube video search results related to the exercise
  */
-export const searchExerciseVideos = async (exerciseName: string, equipment?: string): Promise<YouTubeVideo[]> => {
+export const searchExerciseVideos = async (
+  exerciseName: string, 
+  equipment?: string,
+  muscleGroups?: string[],
+  seed?: string
+): Promise<YouTubeVideo[]> => {
   try {
-    // Create a targeted search query for better fitness tutorial results
-    let searchQuery = `${exerciseName} exercise tutorial proper form`;
+    // Create a base targeted search query for better fitness tutorial results
+    let searchQuery = `${exerciseName} exercise tutorial`;
     
     // Add equipment to the search query if specified
     if (equipment && equipment !== 'body weight') {
       searchQuery += ` with ${equipment}`;
+    }
+    
+    // Add a muscle group modifier if available (helps with result variety)
+    if (muscleGroups && muscleGroups.length > 0) {
+      // Randomly select one muscle group to avoid overly specific queries
+      const muscleIndex = seed 
+        ? parseInt(seed.slice(-2), 16) % muscleGroups.length 
+        : Math.floor(Math.random() * muscleGroups.length);
+      
+      const selectedMuscle = muscleGroups[muscleIndex];
+      
+      // Only add if it's not already in the exercise name
+      if (!exerciseName.toLowerCase().includes(selectedMuscle.toLowerCase())) {
+        searchQuery += ` for ${selectedMuscle}`;
+      }
+    }
+    
+    // Add modifiers based on seed to create variety in results
+    // This helps ensure different cards get different video suggestions
+    if (seed) {
+      const modifiers = [
+        "proper form", "technique", "tutorial", "how to", 
+        "best form", "demonstration", "workout", "training",
+        "fitness", "beginner", "advanced"
+      ];
+      
+      // Use the seed to deterministically select a modifier
+      const modifierIndex = parseInt(seed.slice(0, 2), 16) % modifiers.length;
+      searchQuery += ` ${modifiers[modifierIndex]}`;
+    } else {
+      // Default qualifier for better results
+      searchQuery += " proper form";
     }
     
     const response = await apiRequest(

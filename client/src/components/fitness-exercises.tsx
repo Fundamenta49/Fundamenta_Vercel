@@ -310,6 +310,34 @@ export default function FitnessExercises({
       keyword: keywordFilter,
     });
   }, [muscleFilter, equipmentFilter, difficultyFilter, categoryFilter, keywordFilter]);
+  
+  // Auto-load videos for exercises when data is loaded
+  useEffect(() => {
+    // Only run this effect when exercises are loaded and it's in compact view
+    // This ensures videos are preloaded in the ActiveYou exercise cards without user interaction
+    if (compactView && exercisesQuery.data && !exercisesQuery.isPending) {
+      // Limit to a reasonable number to avoid too many API calls
+      const exercises = exercisesQuery.data.slice(0, maxExercises);
+      
+      // Process each exercise with a small delay to avoid rate limiting issues
+      exercises.forEach((exercise, index) => {
+        // Skip if we already have videos for this exercise
+        if (exerciseVideos[exercise.id]?.length > 0) return;
+        
+        // Stagger video loading with a slight delay between each
+        setTimeout(() => {
+          // Pass the muscle groups for better search results
+          loadExerciseVideos(
+            exercise.id, 
+            exercise.name, 
+            exercise.equipment,
+            exercise.muscleGroups,
+            true // auto-loading flag
+          );
+        }, index * 300); // 300ms delay between each request
+      });
+    }
+  }, [compactView, exercisesQuery.data, exercisesQuery.isPending]);
 
   // Load saved workouts from localStorage
   useEffect(() => {
@@ -616,9 +644,40 @@ export default function FitnessExercises({
   };
   
   // Function to load YouTube videos for an exercise
-  const loadExerciseVideos = async (exerciseId: string, exerciseName: string, equipment: string[]) => {
-    // Don't reload if we already have videos
-    if (exerciseVideos[exerciseId]?.length > 0) {
+  // Generate a deterministic but unique seed for each exercise to ensure consistent but varied results
+  const generateExerciseSeed = (exerciseId: string, category?: string, muscleGroup?: string): string => {
+    // Create a seed that is unique to this exercise in this context (muscle/category)
+    let seedBase = exerciseId;
+    
+    // Add category and muscle group for additional variety between cards
+    if (category) seedBase += `-${category}`;
+    if (muscleGroup) seedBase += `-${muscleGroup}`;
+    
+    // Create a simple hash of the string
+    let hash = 0;
+    for (let i = 0; i < seedBase.length; i++) {
+      hash = ((hash << 5) - hash) + seedBase.charCodeAt(i);
+      hash |= 0; // Convert to 32bit integer
+    }
+    
+    // Convert to hex string and ensure it's positive
+    return Math.abs(hash).toString(16).padStart(8, '0');
+  };
+  
+  const loadExerciseVideos = async (
+    exerciseId: string, 
+    exerciseName: string, 
+    equipment: string[],
+    muscleGroups?: string[],
+    autoload: boolean = false
+  ) => {
+    // Don't reload if we already have videos (unless force reload is requested)
+    if (!autoload && exerciseVideos[exerciseId]?.length > 0) {
+      return;
+    }
+    
+    // If autoloading and we're already loading this exercise, don't start another request
+    if (autoload && loadingVideos[exerciseId]) {
       return;
     }
     
@@ -627,7 +686,17 @@ export default function FitnessExercises({
     try {
       // Use the equipment if specified, otherwise don't include it
       const equipmentStr = equipment.length > 0 ? equipment[0] : undefined;
-      const videos = await searchExerciseVideos(exerciseName, equipmentStr);
+      
+      // Generate a seed that is unique to this exercise in this context
+      const seed = generateExerciseSeed(exerciseId, filters.category, filters.muscleGroup);
+      
+      // Use enhanced search with muscle groups and seed for variety
+      const videos = await searchExerciseVideos(
+        exerciseName, 
+        equipmentStr, 
+        muscleGroups,
+        seed
+      );
       
       setExerciseVideos({
         ...exerciseVideos,
@@ -786,7 +855,7 @@ export default function FitnessExercises({
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => loadExerciseVideos(exercise.id, exercise.name, exercise.equipment)}
+                        onClick={() => loadExerciseVideos(exercise.id, exercise.name, exercise.equipment, exercise.muscleGroups)}
                         className="text-xs"
                       >
                         <Video className="h-3 w-3 mr-1" />
@@ -822,8 +891,14 @@ export default function FitnessExercises({
                       ))}
                     </div>
                   ) : (
-                    <div className="py-4 flex justify-center text-muted-foreground text-sm">
-                      Click "Load Videos" to see tutorial videos for this exercise
+                    <div 
+                      className="py-4 flex justify-center"
+                      onClick={() => loadExerciseVideos(exercise.id, exercise.name, exercise.equipment, exercise.muscleGroups)}
+                    >
+                      <div className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
+                        <Video className="h-8 w-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Loading exercise videos...</p>
+                      </div>
                     </div>
                   )}
                 </div>

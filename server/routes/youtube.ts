@@ -21,7 +21,38 @@ function formatSearchQuery(q: string, category?: string): string {
   } else if (category === 'wellness') {
     return `${q} wellness health guide tutorial`;
   } else if (category === 'fitness') {
-    return `${q} proper form technique demonstration`;
+    // Check if the query already contains specific keywords to avoid duplication
+    const lowerQuery = q.toLowerCase();
+    
+    // Dynamically add appropriate modifiers based on what's NOT already in the query
+    const modifiers = [];
+    
+    if (!lowerQuery.includes('form') && !lowerQuery.includes('technique')) {
+      modifiers.push('proper form');
+    }
+    
+    if (!lowerQuery.includes('tutorial') && !lowerQuery.includes('how to')) {
+      modifiers.push('tutorial');
+    }
+    
+    if (!lowerQuery.includes('demonstration') && !lowerQuery.includes('demo')) {
+      modifiers.push('demonstration');
+    }
+    
+    // Add exercise-specific modifiers
+    if (lowerQuery.includes('beginner')) {
+      modifiers.push('for beginners');
+    } else if (lowerQuery.includes('advanced')) {
+      modifiers.push('advanced technique');
+    }
+    
+    // If we have instructional terms, prioritize reputable fitness sources
+    if (lowerQuery.includes('tutorial') || lowerQuery.includes('how to') || lowerQuery.includes('guide')) {
+      modifiers.push('from trainers');
+    }
+    
+    // Join modifiers with spaces
+    return modifiers.length > 0 ? `${q} ${modifiers.join(' ')}` : `${q} proper form technique demonstration`;
   } else {
     // Default enhancement for search query
     return `${q} tutorial guide how-to step by step`;
