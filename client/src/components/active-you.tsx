@@ -1,8 +1,9 @@
-// Import the enhanced version with AI features
-import ActiveYouEnhanced, { StretchingIcon } from "./active-you-enhanced";
+// Import the new flow-based component
+import ActiveYouFlow from "./active-you-flow";
+import { StretchingIcon } from "./active-you-enhanced";
 
 // Re-export the StretchingIcon for backward compatibility
 export { StretchingIcon };
 
-// Export the enhanced component as the default
-export default ActiveYouEnhanced;
+// Export the flow-based component as the default
+export default ActiveYouFlow;
