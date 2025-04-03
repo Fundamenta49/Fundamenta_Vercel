@@ -418,11 +418,11 @@ export default function CookingBasics() {
         {/* Kitchen Skills Learning */}
         <Card 
           className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
-          onClick={() => openDialog('kitchen-skills', 'Kitchen Skills Academy', 'Master essential cooking techniques step by step', <ChefHat className="h-5 w-5" />, 'yellow' as ColorKey)}
+          onClick={() => openDialog('kitchen-skills', 'Kitchen Skills Academy', 'Master essential cooking techniques step by step', <Utensils className="h-5 w-5" />, 'yellow' as ColorKey)}
         >
           <CardHeader className="pb-2 pt-4 text-center">
             <div className="w-16 h-16 mx-auto bg-yellow-100 rounded-full flex items-center justify-center mb-2">
-              <ChefHat className="h-8 w-8 text-yellow-600" />
+              <Utensils className="h-8 w-8 text-yellow-600" />
             </div>
             <CardTitle className="text-base">Kitchen Skills Academy</CardTitle>
             <CardDescription className="text-xs">
@@ -431,7 +431,7 @@ export default function CookingBasics() {
           </CardHeader>
           <CardFooter className="pt-1 pb-4 justify-center">
             <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
-              <ChefHat className="h-3.5 w-3.5 mr-1.5" />
+              <Utensils className="h-3.5 w-3.5 mr-1.5" />
               Start Learning
             </Button>
           </CardFooter>

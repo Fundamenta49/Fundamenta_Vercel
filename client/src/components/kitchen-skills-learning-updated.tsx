@@ -122,7 +122,7 @@ const KitchenSkillsLearning: React.FC = () => {
           level: SkillLevel.Beginner,
           completed: false,
           videoTimestamp: '1:20',
-          image: 'https://images.unsplash.com/photo-1593618998160-e34014e67546?q=80&w=500&auto=format&fit=crop',
+          image: 'https://images.unsplash.com/photo-1570920612833-df6bd6f43f14?q=80&w=500&auto=format&fit=crop',
           quiz: {
             questions: [
               {
@@ -174,7 +174,7 @@ const KitchenSkillsLearning: React.FC = () => {
           level: SkillLevel.Intermediate,
           completed: false,
           videoTimestamp: '3:45',
-          image: 'https://images.unsplash.com/photo-1588967073625-13ad5b395709?q=80&w=500&auto=format&fit=crop',
+          image: 'https://images.unsplash.com/photo-1621952919345-bc9730494dd0?q=80&w=500&auto=format&fit=crop',
           quiz: {
             questions: [
               {
@@ -227,7 +227,7 @@ const KitchenSkillsLearning: React.FC = () => {
           level: SkillLevel.Expert,
           completed: false,
           videoTimestamp: '5:30',
-          image: 'https://images.unsplash.com/photo-1560252829-804f1aedf1be?q=80&w=500&auto=format&fit=crop',
+          image: 'https://images.unsplash.com/photo-1602030638412-bb8dcc0bc8b0?q=80&w=500&auto=format&fit=crop',
           quiz: {
             questions: [
               {
@@ -394,7 +394,7 @@ const KitchenSkillsLearning: React.FC = () => {
           level: SkillLevel.Expert,
           completed: false,
           videoTimestamp: '12:45',
-          image: 'https://images.unsplash.com/photo-1565192259022-0427b058f372?q=80&w=500&auto=format&fit=crop',
+          image: 'https://images.unsplash.com/photo-1567606969209-e28082a6926f?q=80&w=500&auto=format&fit=crop',
           quiz: {
             questions: [
               {
