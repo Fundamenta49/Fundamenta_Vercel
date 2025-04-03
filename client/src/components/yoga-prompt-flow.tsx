@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight } from "lucide-react";
+import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight, Play, PauseCircle } from "lucide-react";
 
 // Define types for the various options
 interface YogaSession {
@@ -30,6 +30,7 @@ interface YogaSession {
   imageUrl: string;
   level: 'beginner' | 'intermediate' | 'advanced';
   moodTags: string[];
+  videoUrl?: string; // Add videoUrl for yoga sessions
 }
 
 interface YogaPromptFlowProps {
@@ -39,7 +40,7 @@ interface YogaPromptFlowProps {
 
 export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowProps) {
   // State for tracking the current prompt
-  const [currentPrompt, setCurrentPrompt] = useState<'welcome' | 'mood' | 'time' | 'sound' | 'results'>('welcome');
+  const [currentPrompt, setCurrentPrompt] = useState<'welcome' | 'mood' | 'time' | 'sound' | 'results' | 'session'>('welcome');
   
   // State for storing user selections
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
@@ -48,6 +49,10 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
   
   // Sample sessions (these would normally come from an API)
   const [recommendedSessions, setRecommendedSessions] = useState<YogaSession[]>([]);
+  
+  // State for the selected session and video player
+  const [selectedSession, setSelectedSession] = useState<YogaSession | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   // Function to handle mood selection
   const handleMoodSelect = (mood: string) => {
@@ -86,7 +91,7 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
     
     const sessionType = moodToSessionType[mood] || 'balanced';
     
-    // Sample yoga sessions
+    // Sample yoga sessions with video URLs
     const allSessions: YogaSession[] = [
       {
         id: '1',
@@ -96,7 +101,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Wake up your body with gentle movements to increase circulation and energy.',
         imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['tired', 'focused']
+        moodTags: ['tired', 'focused'],
+        videoUrl: 'https://www.youtube.com/embed/UEEsdXn8oG8'
       },
       {
         id: '2',
@@ -106,7 +112,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Gentle poses and breathing exercises to help quiet the mind and reduce anxiety.',
         imageUrl: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['anxious', 'reflective']
+        moodTags: ['anxious', 'reflective'],
+        videoUrl: 'https://www.youtube.com/embed/hJbRpHZr_d0'
       },
       {
         id: '3',
@@ -116,7 +123,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Wind down with calming, supported poses to prepare for a restful night.',
         imageUrl: 'https://images.unsplash.com/photo-1510894347713-fc3ed6fdf539?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['tired', 'sore']
+        moodTags: ['tired', 'sore'],
+        videoUrl: 'https://www.youtube.com/embed/BiWDsfZ3zbo'
       },
       {
         id: '4',
@@ -126,7 +134,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Brief stretches you can do at your desk to refresh your body and mind.',
         imageUrl: 'https://images.unsplash.com/photo-1599447292180-45fd84092ef4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['focused', 'energetic', 'sore']
+        moodTags: ['focused', 'energetic', 'sore'],
+        videoUrl: 'https://www.youtube.com/embed/tAUf7aajBWE'
       },
       {
         id: '5',
@@ -136,7 +145,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'A focused practice connecting breath and movement for present-moment awareness.',
         imageUrl: 'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
         level: 'intermediate',
-        moodTags: ['focused', 'reflective']
+        moodTags: ['focused', 'reflective'],
+        videoUrl: 'https://www.youtube.com/embed/sTANio_2E0Q'
       },
       {
         id: '6',
@@ -146,7 +156,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Gentle movements and holds to ease sore muscles and promote recovery.',
         imageUrl: 'https://images.unsplash.com/photo-1573590330099-d6c7355ec595?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['sore', 'tired']
+        moodTags: ['sore', 'tired'],
+        videoUrl: 'https://www.youtube.com/embed/OMu6OKF5Z1k'
       },
       {
         id: '7',
@@ -156,7 +167,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Balance excess energy with grounding poses focusing on the lower body.',
         imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
         level: 'intermediate',
-        moodTags: ['energetic', 'anxious']
+        moodTags: ['energetic', 'anxious'],
+        videoUrl: 'https://www.youtube.com/embed/VpW33Celubg'
       },
       {
         id: '8',
@@ -166,7 +178,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'A slow, thoughtful practice with longer holds to promote deep reflection.',
         imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjJ8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['reflective', 'focused']
+        moodTags: ['reflective', 'focused'],
+        videoUrl: 'https://www.youtube.com/embed/inpok4MKVLM'
       }
     ];
     
@@ -195,6 +208,12 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
 
   // Function to start a session
   const handleStartSession = (session: YogaSession) => {
+    // Set the selected session and show the video player
+    setSelectedSession(session);
+    setCurrentPrompt('session');
+    setIsPlaying(true);
+    
+    // Also notify parent component if needed
     if (onComplete) {
       onComplete(session);
     }
@@ -207,7 +226,7 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
 
   // Function to handle the "Just Browsing" button
   const handleJustBrowsing = () => {
-    // Skip the prompt flow and show all sessions
+    // Skip the prompt flow and show all sessions with video URLs
     const allSessions: YogaSession[] = [
       {
         id: '1',
@@ -217,7 +236,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Wake up your body with gentle movements to increase circulation and energy.',
         imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['tired', 'focused']
+        moodTags: ['tired', 'focused'],
+        videoUrl: 'https://www.youtube.com/embed/UEEsdXn8oG8'
       },
       {
         id: '2',
@@ -227,7 +247,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Gentle poses and breathing exercises to help quiet the mind and reduce anxiety.',
         imageUrl: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['anxious', 'reflective']
+        moodTags: ['anxious', 'reflective'],
+        videoUrl: 'https://www.youtube.com/embed/hJbRpHZr_d0'
       },
       {
         id: '3',
@@ -237,7 +258,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Wind down with calming, supported poses to prepare for a restful night.',
         imageUrl: 'https://images.unsplash.com/photo-1510894347713-fc3ed6fdf539?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8eW9nYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['tired', 'sore']
+        moodTags: ['tired', 'sore'],
+        videoUrl: 'https://www.youtube.com/embed/BiWDsfZ3zbo'
       },
       {
         id: '4',
@@ -247,7 +269,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'Brief stretches you can do at your desk to refresh your body and mind.',
         imageUrl: 'https://images.unsplash.com/photo-1599447292180-45fd84092ef4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
         level: 'beginner',
-        moodTags: ['focused', 'energetic', 'sore']
+        moodTags: ['focused', 'energetic', 'sore'],
+        videoUrl: 'https://www.youtube.com/embed/tAUf7aajBWE'
       },
       {
         id: '5',
@@ -257,7 +280,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         description: 'A focused practice connecting breath and movement for present-moment awareness.',
         imageUrl: 'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHlvZ2F8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
         level: 'intermediate',
-        moodTags: ['focused', 'reflective']
+        moodTags: ['focused', 'reflective'],
+        videoUrl: 'https://www.youtube.com/embed/sTANio_2E0Q'
       },
     ];
     setRecommendedSessions(allSessions);
@@ -274,6 +298,9 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
       setCurrentPrompt('time');
     } else if (currentPrompt === 'results') {
       setCurrentPrompt('sound');
+    } else if (currentPrompt === 'session') {
+      setCurrentPrompt('results');
+      setIsPlaying(false);
     }
   };
 
@@ -534,6 +561,57 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                 onClick={onClose}
               >
                 Close
+              </Button>
+            </div>
+          </div>
+        );
+        
+      case 'session':
+        if (!selectedSession) return null;
+        return (
+          <div className="flex flex-col p-4 space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold">{selectedSession.title}</h2>
+              <Badge>{selectedSession.duration} min</Badge>
+            </div>
+            
+            <div className="aspect-video w-full overflow-hidden border rounded-md">
+              {selectedSession.videoUrl ? (
+                <iframe
+                  src={selectedSession.videoUrl}
+                  className="w-full h-full"
+                  title={selectedSession.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <p className="text-muted-foreground">No video available</p>
+                </div>
+              )}
+            </div>
+            
+            <CardDescription>{selectedSession.description}</CardDescription>
+            
+            <div className="flex flex-wrap gap-2 py-2">
+              <Badge variant="outline">{selectedSession.level}</Badge>
+              <Badge variant="outline">{selectedSession.type}</Badge>
+              {selectedSession.moodTags.map(tag => (
+                <Badge key={tag} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+            
+            <div className="flex justify-between pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setCurrentPrompt('results')}
+              >
+                Back to Sessions
+              </Button>
+              <Button onClick={onClose}>
+                Done
               </Button>
             </div>
           </div>
