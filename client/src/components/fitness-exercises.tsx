@@ -321,10 +321,16 @@ export default function FitnessExercises({
   useEffect(() => {
     // Only run this effect when exercises are loaded and it's in compact view
     // This ensures videos are preloaded in the ActiveYou exercise cards without user interaction
-    if (compactView && exercisesQuery.data && !exercisesQuery.isPending && !apiThrottled) {
+    if (compactView && exercisesQuery.data && !exercisesQuery.isPending) {
       // Get all exercises to display, respecting the maxExercises limit
       const exerciseLimit = maxExercises || 4; 
       const exercises = exercisesQuery.data.slice(0, exerciseLimit);
+      
+      // If API is already throttled, don't try to make more requests
+      if (apiThrottled) {
+        console.log('API is throttled, skipping video loading');
+        return;
+      }
       
       // Check if we have the capacity to load more videos
       const availableSlots = MAX_API_REQUESTS - apiRequestCount;
@@ -333,8 +339,11 @@ export default function FitnessExercises({
         // Load videos for up to MAX_API_REQUESTS exercises, but stagger the requests
         const exercisesToLoad = exercises.filter((ex: Exercise) => !exerciseVideos[ex.id]?.length);
         
+        // If there's nothing to load, exit early
+        if (exercisesToLoad.length === 0) return;
+        
         // Limit to available slots to prevent rate limit issues
-        const exerciseBatch = exercisesToLoad.slice(0, availableSlots);
+        const exerciseBatch = exercisesToLoad.slice(0, Math.min(2, availableSlots)); // Limit to 2 at a time to reduce API load
         
         // Update request counter
         setApiRequestCount(prev => prev + exerciseBatch.length);
@@ -348,7 +357,12 @@ export default function FitnessExercises({
               exercise.equipment,
               exercise.muscleGroups,
               true // auto-loading flag
-            ).finally(() => {
+            )
+            .catch(err => {
+              console.log(`Error loading videos for ${exercise.name}, using fallbacks:`, err.message);
+              // Error already handled in loadExerciseVideos
+            })
+            .finally(() => {
               setApiRequestCount(prev => Math.max(0, prev - 1));
             });
           }, index * STAGGER_DELAY);
@@ -716,15 +730,18 @@ export default function FitnessExercises({
       return;
     }
     
-    // If we're throttled or at our API limit, we can still use the youtube service
-    // as it now has better fallback handling with extensive fallback collections
-    if (apiThrottled || apiRequestCount >= MAX_API_REQUESTS) {
-      console.log('API throttled or at request limit, using enhanced fallback videos');
-    }
-    
+    // For exercises without videos, set loading state
     setLoadingVideos({...loadingVideos, [exerciseId]: true});
     
     try {
+      // If we're already throttled and this is an autoload, don't try to make more API requests
+      if (autoload && (apiThrottled || apiRequestCount >= MAX_API_REQUESTS)) {
+        console.log('API throttled or at request limit, skipping video loading');
+        // Still need to mark as not loading
+        setLoadingVideos({...loadingVideos, [exerciseId]: false});
+        return;
+      }
+      
       // Use the equipment if specified, otherwise don't include it
       const equipmentStr = equipment.length > 0 ? equipment[0] : undefined;
       
