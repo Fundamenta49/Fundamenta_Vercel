@@ -75,7 +75,8 @@ import {
   Loader2,
   ExternalLink,
   Maximize2,
-  Milestone
+  Milestone,
+  Lock
 } from "lucide-react";
 
 // Custom Stretch icon component
@@ -610,25 +611,14 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               AI Yoga Assistant
             </h2>
           </div>
-          <div className="flex gap-2">
-            <Link href="/yoga-progression">
-              <Button 
-                className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200"
-                size="sm"
-              >
-                <Milestone className="h-4 w-4 mr-1" />
-                Yoga Progression
-              </Button>
-            </Link>
-            <Button 
-              onClick={() => setYogaPromptOpen(true)}
-              className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
-              size="sm"
-            >
-              <ArrowRight className="h-4 w-4 mr-1" />
-              Start Guided Flow
-            </Button>
-          </div>
+          <Button 
+            onClick={() => setYogaPromptOpen(true)}
+            className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
+            size="sm"
+          >
+            <ArrowRight className="h-4 w-4 mr-1" />
+            Start Guided Flow
+          </Button>
         </div>
         <p className="text-sm text-muted-foreground mt-1">
           Get real-time form corrections and personalized yoga guidance
@@ -848,12 +838,32 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           </Alert>
           
           <div className="mb-6">
-            <h3 className="font-medium text-lg mb-3">Essential Poses</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-medium text-lg">Yoga Progression Path</h3>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 border-purple-200">
+                  Level 2: Steady Practitioner
+                </Badge>
+                <Badge variant="outline" className="text-xs bg-gray-50">
+                  <Milestone className="h-3 w-3 mr-1" />
+                  5/12 Poses Mastered
+                </Badge>
+              </div>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Pose 1 */}
-              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
-                <div className="font-medium text-lg mb-1">Downward-Facing Dog</div>
-                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">foundation</div>
+              {/* Pose 1 - Beginner (Mastered) */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-green-200">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium text-lg mb-1">Downward-Facing Dog</div>
+                  <Badge className="bg-green-100 text-green-700 border-green-200">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Mastered
+                  </Badge>
+                </div>
+                <div className="flex gap-1 mb-2">
+                  <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block">foundation</div>
+                  <div className="text-xs bg-blue-50 text-blue-600 rounded px-2 py-0.5 inline-block">beginner</div>
+                </div>
                 <p className="text-sm text-muted-foreground mb-2">A foundational pose that stretches and strengthens the entire body</p>
                 <div className="text-sm space-y-1 mb-2">
                   <div><span className="font-medium">Benefits:</span> Stretches hamstrings, calves, shoulders; strengthens arms and legs</div>
@@ -880,10 +890,19 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Pose 2 */}
-              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
-                <div className="font-medium text-lg mb-1">Warrior II</div>
-                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">standing</div>
+              {/* Pose 2 - Beginner (Mastered) */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-green-200">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium text-lg mb-1">Warrior II</div>
+                  <Badge className="bg-green-100 text-green-700 border-green-200">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Mastered
+                  </Badge>
+                </div>
+                <div className="flex gap-1 mb-2">
+                  <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block">standing</div>
+                  <div className="text-xs bg-blue-50 text-blue-600 rounded px-2 py-0.5 inline-block">beginner</div>
+                </div>
                 <p className="text-sm text-muted-foreground mb-2">A powerful standing pose that builds strength and stability</p>
                 <div className="text-sm space-y-1 mb-2">
                   <div><span className="font-medium">Benefits:</span> Strengthens legs, opens hips and chest, improves focus</div>
@@ -910,10 +929,19 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Pose 3 */}
-              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
-                <div className="font-medium text-lg mb-1">Tree Pose</div>
-                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">balance</div>
+              {/* Pose 3 - Beginner (In Progress) */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-yellow-200">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium text-lg mb-1">Tree Pose</div>
+                  <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
+                    <Timer className="h-3 w-3 mr-1" />
+                    In Progress
+                  </Badge>
+                </div>
+                <div className="flex gap-1 mb-2">
+                  <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block">balance</div>
+                  <div className="text-xs bg-blue-50 text-blue-600 rounded px-2 py-0.5 inline-block">beginner</div>
+                </div>
                 <p className="text-sm text-muted-foreground mb-2">A balancing pose that improves focus and stability</p>
                 <div className="text-sm space-y-1 mb-2">
                   <div><span className="font-medium">Benefits:</span> Improves balance, strengthens legs and core, enhances focus</div>
@@ -940,10 +968,19 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Pose 4 */}
-              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
-                <div className="font-medium text-lg mb-1">Child's Pose</div>
-                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">resting</div>
+              {/* Pose 4 - Beginner (Mastered) */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-green-200">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium text-lg mb-1">Child's Pose</div>
+                  <Badge className="bg-green-100 text-green-700 border-green-200">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Mastered
+                  </Badge>
+                </div>
+                <div className="flex gap-1 mb-2">
+                  <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block">resting</div>
+                  <div className="text-xs bg-blue-50 text-blue-600 rounded px-2 py-0.5 inline-block">beginner</div>
+                </div>
                 <p className="text-sm text-muted-foreground mb-2">A restful pose that gently stretches the back and promotes relaxation</p>
                 <div className="text-sm space-y-1 mb-2">
                   <div><span className="font-medium">Benefits:</span> Releases tension, calms mind, stretches hips and thighs</div>
@@ -970,10 +1007,19 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Pose 5 */}
-              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
-                <div className="font-medium text-lg mb-1">Cobra Pose</div>
-                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">backbend</div>
+              {/* Pose 5 - Intermediate (In Progress) */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-yellow-200">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium text-lg mb-1">Cobra Pose</div>
+                  <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
+                    <Timer className="h-3 w-3 mr-1" />
+                    In Progress
+                  </Badge>
+                </div>
+                <div className="flex gap-1 mb-2">
+                  <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block">backbend</div>
+                  <div className="text-xs bg-purple-50 text-purple-600 rounded px-2 py-0.5 inline-block">intermediate</div>
+                </div>
                 <p className="text-sm text-muted-foreground mb-2">A gentle backbend that strengthens the spine and opens the chest</p>
                 <div className="text-sm space-y-1 mb-2">
                   <div><span className="font-medium">Benefits:</span> Strengthens spine, opens chest, improves posture</div>
@@ -1000,10 +1046,19 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Pose 6 */}
-              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
-                <div className="font-medium text-lg mb-1">Warrior I</div>
-                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">standing</div>
+              {/* Pose 6 - Intermediate (Locked) */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-gray-300 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium text-lg mb-1">Warrior I</div>
+                  <Badge className="bg-gray-100 text-gray-500 border-gray-300">
+                    <Lock className="h-3 w-3 mr-1" />
+                    Locked
+                  </Badge>
+                </div>
+                <div className="flex gap-1 mb-2">
+                  <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block">standing</div>
+                  <div className="text-xs bg-purple-50 text-purple-600 rounded px-2 py-0.5 inline-block">intermediate</div>
+                </div>
                 <p className="text-sm text-muted-foreground mb-2">A powerful standing pose that builds strength and improves focus</p>
                 <div className="text-sm space-y-1 mb-2">
                   <div><span className="font-medium">Benefits:</span> Strengthens legs and core, opens chest, builds concentration</div>
@@ -1030,10 +1085,19 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Pose 7 */}
-              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
-                <div className="font-medium text-lg mb-1">Bridge Pose</div>
-                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">backbend</div>
+              {/* Pose 7 - Advanced (Locked) */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-gray-300 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium text-lg mb-1">Bridge Pose</div>
+                  <Badge className="bg-gray-100 text-gray-500 border-gray-300">
+                    <Lock className="h-3 w-3 mr-1" />
+                    Locked
+                  </Badge>
+                </div>
+                <div className="flex gap-1 mb-2">
+                  <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block">backbend</div>
+                  <div className="text-xs bg-red-50 text-red-600 rounded px-2 py-0.5 inline-block">advanced</div>
+                </div>
                 <p className="text-sm text-muted-foreground mb-2">A gentle backbend that opens the chest and strengthens the back</p>
                 <div className="text-sm space-y-1 mb-2">
                   <div><span className="font-medium">Benefits:</span> Stretches chest, strengthens back and glutes, relieves stress</div>
