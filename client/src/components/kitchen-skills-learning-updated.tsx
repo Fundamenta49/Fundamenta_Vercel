@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -856,12 +856,22 @@ const KitchenSkillsLearning: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="overview" onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-4 mb-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="skills">Skills</TabsTrigger>
-              <TabsTrigger value="progress">Progress</TabsTrigger>
-              <TabsTrigger value="badges">Badges</TabsTrigger>
-            </TabsList>
+            <div className="flex flex-wrap gap-2 pb-4 border-b mb-4">
+              {['overview', 'skills', 'progress', 'badges'].map((tab) => (
+                <Button
+                  key={tab}
+                  variant={activeTab === tab ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setActiveTab(tab)}
+                  className={activeTab === tab ? 
+                    "bg-learning-color hover:bg-learning-color/90 text-white" : 
+                    "text-learning-color hover:bg-learning-color/10 hover:text-learning-color/90 border-learning-color/30"
+                  }
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </Button>
+              ))}
+            </div>
             
             {/* Overview Tab - Display the main image instead of video */}
             <TabsContent value="overview" className="space-y-4">
