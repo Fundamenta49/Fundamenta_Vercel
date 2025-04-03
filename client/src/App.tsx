@@ -31,7 +31,7 @@ import TimeManagementCourse from "@/pages/learning/courses/time-management";
 import CopingWithFailureCourse from "@/pages/learning/courses/coping-with-failure";
 import ConversationSkillsCourse from "@/pages/learning/courses/conversation-skills";
 import FormingPositiveHabitsCourse from "@/pages/learning/courses/forming-positive-habits";
-import PublicSpeakingCourse from "@/pages/learning/courses/public-speaking";
+import UtilitiesGuideCourse from "@/pages/learning/courses/utilities-guide";
 
 function Router() {
   return (
@@ -64,7 +64,7 @@ function Router() {
         <Route path="/learning/courses/coping-with-failure" component={CopingWithFailureCourse} />
         <Route path="/learning/courses/conversation-skills" component={ConversationSkillsCourse} />
         <Route path="/learning/courses/forming-positive-habits" component={FormingPositiveHabitsCourse} />
-        <Route path="/learning/courses/public-speaking" component={PublicSpeakingCourse} />
+        <Route path="/learning/courses/utilities-guide" component={UtilitiesGuideCourse} />
         <Route component={NotFound} />
       </Switch>
       <Toaster />

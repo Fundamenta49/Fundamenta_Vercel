@@ -114,12 +114,13 @@ export default function Learning() {
       popular: true
     },
     {
-      id: 'public-speaking',
-      title: 'Public Speaking',
-      description: 'Build confidence and deliver impactful speeches',
-      icon: Icons.PenTool,
-      path: '/learning/courses/public-speaking',
-      level: 'beginner'
+      id: 'utilities-guide',
+      title: 'Utilities Setup',
+      description: 'Set up essential home utilities efficiently in your area',
+      icon: Icons.Lightbulb,
+      path: '/learning/courses/utilities-guide',
+      level: 'beginner',
+      new: true
     },
     {
       id: 'critical-thinking',
