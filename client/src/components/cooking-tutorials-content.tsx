@@ -348,6 +348,137 @@ const cookingTutorials: CookingTutorial[] = [
       'Optional add-ins: tomato, ham, herbs'
     ]
   },
+  {
+    id: 'quick-sandwich-tutorial',
+    name: 'Quick Lunch Sandwich',
+    description: 'Learn how to make a quick, delicious sandwich for lunch that\'s both filling and flavorful.',
+    category: 'lunch',
+    difficulty: 'beginner',
+    videoId: '6KG4ZvMZTlo',
+    thumbnailUrl: 'https://img.youtube.com/vi/6KG4ZvMZTlo/hqdefault.jpg',
+    duration: 8,
+    steps: [
+      'Choose fresh bread - sliced sandwich bread or rolls',
+      'Apply condiments like mayo, mustard, or hummus',
+      'Layer proteins such as deli meats or cheese',
+      'Add vegetables for crunch and flavor',
+      'Season with salt, pepper, and herbs',
+      'Cut in half for easier eating'
+    ],
+    tips: [
+      'Toast the bread for extra crunch',
+      'Pat vegetables dry to prevent soggy sandwiches',
+      'Season each layer for flavor throughout',
+      'Wrap tightly in parchment for on-the-go lunches'
+    ],
+    ingredients: [
+      'Bread of choice',
+      'Protein (deli meat, tuna, etc.)',
+      'Cheese',
+      'Vegetables (lettuce, tomato, etc.)',
+      'Condiments',
+      'Salt and pepper'
+    ]
+  },
+  {
+    id: 'tuna-salad-sandwich',
+    name: 'Classic Tuna Salad Sandwich',
+    description: 'A protein-packed tuna salad sandwich that\'s easy to prepare and perfect for lunch.',
+    category: 'lunch',
+    difficulty: 'beginner',
+    videoId: 'jJNiZHkoQW0',
+    thumbnailUrl: 'https://img.youtube.com/vi/jJNiZHkoQW0/hqdefault.jpg',
+    duration: 10,
+    steps: [
+      'Drain canned tuna well',
+      'Mix tuna with mayo, chopped celery, and onion',
+      'Add a squeeze of lemon juice and seasonings',
+      'Spread on bread and top with lettuce and tomato',
+      'Add second slice of bread and cut diagonally'
+    ],
+    tips: [
+      'Use tuna packed in water for a lighter sandwich',
+      'Add diced apple or halved grapes for sweetness',
+      'Substitute Greek yogurt for some of the mayo',
+      'Try it on whole grain bread for extra nutrition'
+    ],
+    ingredients: [
+      'Canned tuna',
+      'Mayonnaise',
+      'Celery',
+      'Onion',
+      'Lemon juice',
+      'Salt and pepper',
+      'Bread',
+      'Lettuce and tomato'
+    ]
+  },
+  {
+    id: 'healthy-wrap',
+    name: 'Quick & Healthy Lunch Wrap',
+    description: 'A nutritious wrap that comes together in minutes for a satisfying lunch on busy days.',
+    category: 'lunch',
+    difficulty: 'beginner',
+    videoId: 'eXXsfN0tA9c',
+    thumbnailUrl: 'https://img.youtube.com/vi/eXXsfN0tA9c/hqdefault.jpg',
+    duration: 7,
+    steps: [
+      'Warm tortilla or wrap slightly for flexibility',
+      'Spread a thin layer of hummus or other spread',
+      'Layer lean protein in the center',
+      'Add vegetables, greens, and any extras',
+      'Fold in sides, then roll up tightly',
+      'Cut in half diagonally for serving'
+    ],
+    tips: [
+      'Don\'t overfill or it will be hard to roll',
+      'Use large tortillas for easier wrapping',
+      'Toast the wrapped sandwich for extra crunch',
+      'Make several at once and refrigerate for the week'
+    ],
+    ingredients: [
+      'Large flour or whole wheat tortillas',
+      'Hummus or flavored spread',
+      'Protein (chicken, turkey, tofu, etc.)',
+      'Mixed greens',
+      'Colorful vegetables',
+      'Optional: avocado, cheese, nuts, seeds'
+    ]
+  },
+  {
+    id: 'vegetable-soup',
+    name: 'Quick Vegetable Soup',
+    description: 'A warming vegetable soup that\'s perfect for lunch and makes great use of leftover vegetables.',
+    category: 'lunch',
+    difficulty: 'beginner',
+    videoId: 'SE-DptWxDKw',
+    thumbnailUrl: 'https://img.youtube.com/vi/SE-DptWxDKw/hqdefault.jpg',
+    duration: 15,
+    featured: true,
+    steps: [
+      'Sauté onions, carrots, and celery in olive oil',
+      'Add garlic and cook until fragrant',
+      'Pour in vegetable broth and bring to a simmer',
+      'Add diced vegetables and season with herbs',
+      'Simmer until vegetables are tender',
+      'Taste and adjust seasonings before serving'
+    ],
+    tips: [
+      'Use whatever vegetables you have on hand',
+      'Add leftovers like rice or pasta for a heartier soup',
+      'Blend some of the soup for a creamy texture',
+      'Garnish with fresh herbs and a drizzle of olive oil'
+    ],
+    ingredients: [
+      'Olive oil',
+      'Onion, carrots, celery',
+      'Garlic',
+      'Vegetable broth',
+      'Assorted vegetables',
+      'Herbs and seasonings',
+      'Salt and pepper'
+    ]
+  },
   
   // DINNER RECIPES
   {
@@ -383,6 +514,107 @@ const cookingTutorials: CookingTutorial[] = [
       'Soy sauce',
       'Optional: cornstarch, broth, other sauces',
       'Rice or noodles for serving'
+    ]
+  },
+  {
+    id: 'easy-pasta-dinner',
+    name: 'Simple Pasta Dinner',
+    description: 'An easy pasta dinner that\'s perfect for weeknights and can be customized with what you have on hand.',
+    category: 'dinner',
+    difficulty: 'beginner',
+    videoId: 'J0KG7NMg50o',
+    thumbnailUrl: 'https://img.youtube.com/vi/J0KG7NMg50o/hqdefault.jpg',
+    duration: 20,
+    featured: true,
+    steps: [
+      'Bring a large pot of water to a boil and salt generously',
+      'Cook pasta according to package directions',
+      'While pasta cooks, prepare your sauce in a separate pan',
+      'Reserve some pasta water before draining',
+      'Add drained pasta to your sauce and toss to combine',
+      'Add a splash of pasta water if needed to loosen the sauce',
+      'Garnish with herbs, cheese, or other toppings as desired'
+    ],
+    tips: [
+      'Salt your pasta water until it tastes like the sea',
+      'Cook pasta just until al dente - it will continue cooking slightly when combined with the sauce',
+      'Always save some pasta water - the starchy water helps sauce adhere to pasta',
+      'Simple is often better: good olive oil, garlic, and red pepper flakes make a great quick sauce'
+    ],
+    ingredients: [
+      'Pasta of your choice',
+      'Olive oil',
+      'Garlic',
+      'Optional: Canned tomatoes, vegetables, protein',
+      'Salt and pepper',
+      'Grated cheese (like Parmesan)',
+      'Fresh herbs (like basil, parsley)'
+    ]
+  },
+  {
+    id: 'simple-chicken-dinner',
+    name: 'Easy Baked Chicken Dinner',
+    description: 'A straightforward baked chicken dinner that\'s perfect for beginners and endlessly customizable.',
+    category: 'dinner',
+    difficulty: 'beginner',
+    videoId: 'cFukdTKPBTk',
+    thumbnailUrl: 'https://img.youtube.com/vi/cFukdTKPBTk/hqdefault.jpg',
+    duration: 45,
+    steps: [
+      'Preheat oven to 425°F (220°C)',
+      'Pat chicken pieces dry with paper towels',
+      'Season chicken generously with salt, pepper, and desired herbs/spices',
+      'Arrange chicken in a baking dish with vegetables around it',
+      'Drizzle everything with olive oil',
+      'Bake until chicken reaches 165°F (74°C) internally, about 30-45 minutes',
+      'Let rest for 5-10 minutes before serving'
+    ],
+    tips: [
+      'Use a meat thermometer to ensure chicken is properly cooked',
+      'Choose vegetables that cook in similar time to the chicken pieces',
+      'For crispier skin, start with a hot oven and don\'t crowd the baking dish',
+      'Season under the skin for maximum flavor'
+    ],
+    ingredients: [
+      'Chicken pieces (breast, thighs, or whole cut-up chicken)',
+      'Root vegetables (potatoes, carrots, etc.)',
+      'Aromatics (onion, garlic, herbs)',
+      'Olive oil',
+      'Salt and pepper',
+      'Optional herbs and spices'
+    ]
+  },
+  {
+    id: 'vegetarian-dinner',
+    name: 'Quick Vegetarian Dinner Bowl',
+    description: 'A nutritious, protein-packed vegetarian dinner bowl that comes together quickly and satisfies.',
+    category: 'dinner',
+    difficulty: 'beginner',
+    videoId: 'SYKwfB8LRhc',
+    thumbnailUrl: 'https://img.youtube.com/vi/SYKwfB8LRhc/hqdefault.jpg',
+    duration: 25,
+    steps: [
+      'Cook grain of choice according to package directions',
+      'Prepare protein (beans, tofu, etc.) and season well',
+      'Roast or sauté a variety of vegetables',
+      'Prepare a simple sauce or dressing',
+      'Arrange grain, protein, and vegetables in a bowl',
+      'Drizzle with sauce and add toppings',
+      'Mix just before eating'
+    ],
+    tips: [
+      'Cook grains in vegetable broth for extra flavor',
+      'Keep pre-cooked grains in the freezer for quick meals',
+      'Roast vegetables at high heat for better caramelization and flavor',
+      'Add something crunchy, creamy, and acidic for a balanced bowl'
+    ],
+    ingredients: [
+      'Grain (rice, quinoa, farro, etc.)',
+      'Plant protein (beans, lentils, tofu, tempeh)',
+      'Variety of vegetables',
+      'Sauce or dressing',
+      'Toppings (seeds, nuts, herbs, hot sauce)',
+      'Optional: avocado, cheese, pickled vegetables'
     ]
   }
 ];
