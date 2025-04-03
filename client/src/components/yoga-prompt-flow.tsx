@@ -21,7 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight, Play, PauseCircle } from "lucide-react";
 
 // Define types for the various options
-interface YogaSession {
+export interface YogaSession {
   id: string;
   title: string;
   duration: number;
@@ -213,7 +213,8 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
     setCurrentPrompt('session');
     setIsPlaying(true);
     
-    // Also notify parent component if needed
+    // Notify parent component but don't close the dialog
+    // Pass the session to prevent the parent from closing the dialog
     if (onComplete) {
       onComplete(session);
     }

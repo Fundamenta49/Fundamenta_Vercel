@@ -46,7 +46,7 @@ import FitnessProgress from "./fitness-progress";
 import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
 import ChatInterface from "./chat-interface";
-import YogaPromptFlow from "./yoga-prompt-flow";
+import YogaPromptFlow, { YogaSession } from "./yoga-prompt-flow";
 import { FITNESS_CATEGORY } from "./chat-interface";
 import {
   Dumbbell,
@@ -586,8 +586,12 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   };
   
   // Function to handle completion of yoga prompt flow
-  const handleYogaPromptComplete = () => {
-    setYogaPromptOpen(false);
+  const handleYogaPromptComplete = (session?: YogaSession) => {
+    // Only close if no session was selected (user manually closed it)
+    if (!session) {
+      setYogaPromptOpen(false);
+    }
+    // If a session was selected, keep the dialog open to show the video
   };
 
   // Create a variable to hold the content based on the tab
