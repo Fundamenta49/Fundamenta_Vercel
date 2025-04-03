@@ -15,7 +15,7 @@ import ChatInterface, { FITNESS_CATEGORY } from "@/components/chat-interface";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import ProfileManager from "@/components/profile-manager";
-import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, X as CloseIcon } from "lucide-react";
+import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, X as CloseIcon, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -33,29 +33,118 @@ type FullScreenDialogContentProps = React.ComponentPropsWithoutRef<typeof Dialog
 const FullScreenDialogContent = React.forwardRef<
   React.ElementRef<typeof Dialog.Content>,
   FullScreenDialogContentProps
->(({ className, themeColor = "#ec4899", children, ...props }, ref) => (
-  <Dialog.Portal>
-    <Dialog.Overlay className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-    <Dialog.Content
-      ref={ref}
-      className={cn(
-        "fixed inset-0 z-50 w-full h-full overflow-auto bg-white shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-        className
-      )}
-      {...props}
-    >
-      {children}
+>(({ className, themeColor = "#ec4899", children, ...props }, ref) => {
+  // Add swipe-down-to-close functionality
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const closeButtonRef = React.useRef<HTMLButtonElement>(null);
+  const swipeIndicatorRef = React.useRef<HTMLDivElement>(null);
+  const startY = React.useRef<number | null>(null);
+  const currentY = React.useRef<number>(0);
+  const [isDragging, setIsDragging] = React.useState(false);
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // Only initiate swipe if touch starts at the top 100px of the dialog
+    if (e.touches[0].clientY < 100) {
+      startY.current = e.touches[0].clientY;
+      setIsDragging(true);
+    }
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (startY.current !== null && contentRef.current && swipeIndicatorRef.current) {
+      currentY.current = e.touches[0].clientY - startY.current;
       
-      <Dialog.Close 
-        className="absolute right-4 top-4 rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
-        style={{ backgroundColor: `${themeColor}20` }}
+      // Only allow downward swipe (positive delta)
+      if (currentY.current > 0) {
+        // Apply transform to the content
+        contentRef.current.style.transform = `translateY(${currentY.current}px)`;
+        contentRef.current.style.transition = 'none';
+        
+        // Calculate opacity based on swipe distance
+        const opacity = Math.max(0, 1 - currentY.current / 400);
+        contentRef.current.style.opacity = opacity.toString();
+        
+        // Make swipe indicator more visible during swipe
+        if (swipeIndicatorRef.current) {
+          swipeIndicatorRef.current.style.opacity = '1';
+          swipeIndicatorRef.current.style.width = '3rem';
+        }
+      }
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    if (contentRef.current && startY.current !== null && swipeIndicatorRef.current) {
+      // If swiped down more than 150px, close the dialog
+      if (currentY.current > 150 && closeButtonRef.current) {
+        closeButtonRef.current.click();
+      } else {
+        // Otherwise, snap back
+        contentRef.current.style.transform = 'translateY(0)';
+        contentRef.current.style.opacity = '1';
+        contentRef.current.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+        
+        // Reset swipe indicator
+        if (swipeIndicatorRef.current) {
+          swipeIndicatorRef.current.style.opacity = '0.5';
+          swipeIndicatorRef.current.style.width = '2rem';
+        }
+      }
+      
+      // Reset values
+      startY.current = null;
+      currentY.current = 0;
+      setIsDragging(false);
+    }
+  };
+  
+  return (
+    <Dialog.Portal>
+      <Dialog.Overlay className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+      <Dialog.Content
+        ref={ref}
+        className={cn(
+          "fixed inset-0 z-50 w-full h-full overflow-auto bg-white shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          className
+        )}
+        {...props}
       >
-        <CloseIcon className="h-6 w-6" style={{ color: themeColor }} />
-        <span className="sr-only">Close</span>
-      </Dialog.Close>
-    </Dialog.Content>
-  </Dialog.Portal>
-));
+        <div 
+          ref={contentRef}
+          className="min-h-full"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* Swipe indicator */}
+          <div className="absolute top-2 left-0 right-0 flex justify-center items-center pointer-events-none">
+            <div 
+              ref={swipeIndicatorRef}
+              className="h-1 w-8 bg-gray-400 rounded-full opacity-50 transition-all duration-200"
+              style={{ backgroundColor: themeColor }}
+            ></div>
+          </div>
+          
+          {/* Swipe down hint */}
+          <div className="absolute top-12 left-0 right-0 flex justify-center items-center pointer-events-none opacity-30">
+            <ChevronDown className="w-6 h-6" style={{ color: themeColor }} />
+          </div>
+          
+          {children}
+        </div>
+        
+        <Dialog.Close 
+          ref={closeButtonRef}
+          className="absolute right-4 top-4 rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
+          style={{ backgroundColor: `${themeColor}20` }}
+        >
+          <CloseIcon className="h-6 w-6" style={{ color: themeColor }} />
+          <span className="sr-only">Close</span>
+        </Dialog.Close>
+      </Dialog.Content>
+    </Dialog.Portal>
+  );
+});
 FullScreenDialogContent.displayName = "FullScreenDialogContent";
 
 // Simple styled components
@@ -285,31 +374,33 @@ export default function Active() {
                   </FullScreenDialogTrigger>
                   
                   <FullScreenDialogContent themeColor="#ec4899">
-                    <FullScreenDialogHeader>
-                      <FullScreenDialogTitle className="flex items-center gap-2">
-                        <section.icon className="h-6 w-6 text-pink-500" />
-                        {section.title}
-                      </FullScreenDialogTitle>
-                      <FullScreenDialogDescription>
-                        {section.description}
-                      </FullScreenDialogDescription>
+                    <div className="pt-16 relative">
+                      <FullScreenDialogHeader>
+                        <FullScreenDialogTitle className="flex items-center gap-2">
+                          <section.icon className="h-6 w-6 text-pink-500" />
+                          {section.title}
+                        </FullScreenDialogTitle>
+                        <FullScreenDialogDescription>
+                          {section.description}
+                        </FullScreenDialogDescription>
+                        
+                        {section.alert && (
+                          <div className="mt-2">{section.alert}</div>
+                        )}
+                      </FullScreenDialogHeader>
                       
-                      {section.alert && (
-                        <div className="mt-2">{section.alert}</div>
-                      )}
-                    </FullScreenDialogHeader>
-                    
-                    <FullScreenDialogBody>
-                      {(() => {
-                        if (section.id === 'coach') {
-                          // Use the component's required "category" prop
-                          return <ChatInterface category={FITNESS_CATEGORY} />;
-                        } else {
-                          // For regular components
-                          return <section.component {...section.props} />;
-                        }
-                      })()}
-                    </FullScreenDialogBody>
+                      <FullScreenDialogBody>
+                        {(() => {
+                          if (section.id === 'coach') {
+                            // Use the component's required "category" prop
+                            return <ChatInterface category={FITNESS_CATEGORY} />;
+                          } else {
+                            // For regular components
+                            return <section.component {...section.props} />;
+                          }
+                        })()}
+                      </FullScreenDialogBody>
+                    </div>
                   </FullScreenDialogContent>
                 </FullScreenDialog>
               );
