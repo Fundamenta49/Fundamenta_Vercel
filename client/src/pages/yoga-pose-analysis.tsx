@@ -1,5 +1,5 @@
 import React from 'react';
-import YogaFormAnalysis from '@/components/yoga-form-analysis';
+import YogaVision from '@/components/yoga-vision';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import YogaPromptFlow from '@/components/yoga-prompt-flow';
@@ -22,20 +22,20 @@ export default function YogaPoseAnalysisPage() {
       
       <Tabs defaultValue="form-analysis" className="space-y-4">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="form-analysis">Form Analysis</TabsTrigger>
+          <TabsTrigger value="form-analysis">YogaVision</TabsTrigger>
           <TabsTrigger value="guided-sessions">Guided Sessions</TabsTrigger>
         </TabsList>
         
         <TabsContent value="form-analysis" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>AI Yoga Form Analysis</CardTitle>
+              <CardTitle>YogaVision</CardTitle>
               <CardDescription>
                 Upload a photo of your yoga pose and receive real-time form feedback from our AI assistant
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <YogaFormAnalysis />
+              <YogaVision />
             </CardContent>
           </Card>
         </TabsContent>

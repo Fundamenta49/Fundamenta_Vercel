@@ -133,7 +133,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   const [videoFullscreen, setVideoFullscreen] = useState(false);
   const [yogaPromptOpen, setYogaPromptOpen] = useState(false);
 
-  // Camera and AI Form Analysis States
+  // Camera and YogaVision States
   const [cameraEnabled, setCameraEnabled] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasWebcamPermission, setHasWebcamPermission] = useState<boolean | null>(null);
@@ -627,13 +627,13 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2">
             <Camera className="h-5 w-5 text-blue-500" />
-            <span>AI Form Analysis</span>
+            <span>YogaVision</span>
             <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-700 border-blue-200">
               Beta
             </Badge>
           </CardTitle>
           <CardDescription>
-            Get real-time feedback on your yoga poses using AI analysis
+            Get real-time feedback on your yoga poses with YogaVision AI
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 space-y-4">
@@ -641,9 +641,9 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           {hasWebcamPermission === false && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Camera Access Required</AlertTitle>
+              <AlertTitle>Camera Access Required for YogaVision</AlertTitle>
               <AlertDescription>
-                Please enable camera access in your browser settings to use the AI form analysis feature.
+                Please enable camera access in your browser settings to use the YogaVision feature.
               </AlertDescription>
             </Alert>
           )}
@@ -661,7 +661,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
             ) : (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
                 <Camera className="h-12 w-12 mb-3 opacity-60" />
-                <h3 className="text-lg font-medium mb-1">Enable Camera for AI Form Analysis</h3>
+                <h3 className="text-lg font-medium mb-1">Enable Camera for YogaVision</h3>
                 <p className="text-sm opacity-80 max-w-md mb-4">
                   Our AI can analyze your yoga poses in real-time and provide personalized guidance to improve your form.
                 </p>
@@ -1127,7 +1127,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2">
             <Camera className="h-5 w-5 text-blue-500" />
-            <span>AI Form Analysis</span>
+            <span>YogaVision</span>
             <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-700 border-blue-200">
               Beta
             </Badge>
@@ -1150,7 +1150,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
             ) : (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
                 <Camera className="h-12 w-12 mb-3 opacity-60" />
-                <h3 className="text-lg font-medium mb-1">Enable Camera for AI Form Analysis</h3>
+                <h3 className="text-lg font-medium mb-1">Enable Camera for YogaVision</h3>
                 <p className="text-sm opacity-80 max-w-md mb-4">
                   Our AI can analyze your stretching form in real-time and provide personalized guidance for safe and effective stretching.
                 </p>
