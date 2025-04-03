@@ -336,6 +336,90 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       imageUrl: "https://www.yogajournal.com/wp-content/uploads/2022/04/Tree-Pose_Andrew-Clark.jpg",
       videoUrl: "https://www.youtube.com/watch?v=wdln9qWYloU"
     },
+    "childsPose": {
+      name: "Child's Pose (Balasana)",
+      category: "yoga",
+      description: "A restful pose that gently stretches the back and promotes relaxation.",
+      instructions: [
+        "Kneel on the floor with knees hip-width apart, big toes touching",
+        "Sit back on heels and fold forward, extending arms in front of you",
+        "Rest forehead on the mat and relax shoulders toward floor",
+        "Breathe deeply, feeling the expansion in the back with each inhale",
+        "Hold for 1-3 minutes, focusing on relaxation"
+      ],
+      benefits: [
+        "Releases tension in back, shoulders, and chest",
+        "Calms the mind and reduces stress",
+        "Gently stretches hips, thighs, and ankles",
+        "Relieves back and neck pain",
+        "Promotes relaxation and restoration"
+      ],
+      tips: [
+        "Place a cushion under your sit bones if uncomfortable",
+        "Widen knees for more space if belly or chest feels compressed",
+        "Arms can rest alongside body for deeper relaxation",
+        "Focus on deep, steady breathing"
+      ],
+      imageUrl: "https://www.yogajournal.com/wp-content/uploads/2021/12/childs-pose_Andrew-Clark.jpg",
+      videoUrl: "https://www.youtube.com/watch?v=eqVMAPM00DM"
+    },
+    "cobrasPose": {
+      name: "Cobra Pose (Bhujangasana)",
+      category: "yoga",
+      description: "A gentle backbend that strengthens the spine and opens the chest.",
+      instructions: [
+        "Lie on stomach with legs extended, tops of feet on floor",
+        "Place hands under shoulders, elbows close to sides of body",
+        "Press into hands and lift chest off floor, keeping lower ribs on mat",
+        "Roll shoulders back and down, away from ears",
+        "Gaze forward or slightly upward without straining neck",
+        "Hold for 15-30 seconds, then slowly release"
+      ],
+      benefits: [
+        "Strengthens spine and back muscles",
+        "Opens chest and shoulders",
+        "Stimulates abdominal organs",
+        "Improves posture and counteracts slouching",
+        "Relieves stress and fatigue"
+      ],
+      tips: [
+        "Only lift as high as comfortable without pain",
+        "Keep elbows slightly bent, not locked",
+        "Focus on using back muscles rather than arm strength",
+        "Keep legs engaged with tops of feet pressing into floor"
+      ],
+      imageUrl: "https://www.yogajournal.com/wp-content/uploads/2021/12/cobra-pose_Andrew-Clark.jpg",
+      videoUrl: "https://www.youtube.com/watch?v=zgvolZs7y_8"
+    },
+    "warriorI": {
+      name: "Warrior I (Virabhadrasana I)",
+      category: "yoga",
+      description: "A powerful standing pose that builds strength and improves focus.",
+      instructions: [
+        "Start in a lunge position with right foot forward",
+        "Turn left heel down at 45-degree angle, grounding through outer edge",
+        "Square hips to front of mat as much as possible",
+        "Raise arms overhead, palms facing each other or touching",
+        "Bend right knee to 90 degrees, keeping knee over ankle",
+        "Gaze forward or up at hands",
+        "Hold for 5 breaths, then switch sides"
+      ],
+      benefits: [
+        "Strengthens shoulders, arms, legs, ankles, and back",
+        "Stretches chest, lungs, shoulders, neck, belly, and groin",
+        "Opens hips and improves balance and stability",
+        "Develops concentration and core strength",
+        "Improves circulation and respiration"
+      ],
+      tips: [
+        "Keep back heel firmly grounded",
+        "Draw tailbone down toward floor to protect lower back",
+        "Widen stance if balance is difficult",
+        "Engage core muscles throughout the pose"
+      ],
+      imageUrl: "https://www.yogajournal.com/wp-content/uploads/2021/12/warrior-1_Andrew-Clark.jpg",
+      videoUrl: "https://www.youtube.com/watch?v=k2xC2F2qzXs"
+    },
     "bridgePose": {
       name: "Bridge Pose (Setu Bandhasana)",
       category: "yoga",
@@ -728,7 +812,7 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           
           <div className="mb-6">
             <h3 className="font-medium text-lg mb-3">Essential Poses</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Pose 1 */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
                 <div className="font-medium text-lg mb-1">Downward-Facing Dog</div>
@@ -820,6 +904,96 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </div>
               
               {/* Pose 4 */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                <div className="font-medium text-lg mb-1">Child's Pose</div>
+                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">resting</div>
+                <p className="text-sm text-muted-foreground mb-2">A restful pose that gently stretches the back and promotes relaxation</p>
+                <div className="text-sm space-y-1 mb-2">
+                  <div><span className="font-medium">Benefits:</span> Releases tension, calms mind, stretches hips and thighs</div>
+                  <div><span className="font-medium">Focus on:</span> Deep breathing, relaxing shoulders, gentle hip opening</div>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                    onClick={() => handleShowDetails('yoga', 'childsPose')}
+                  >
+                    <Info size={14} />
+                    <span className="ml-1">Show Details</span>
+                  </button>
+                  
+                  {cameraEnabled && (
+                    <button 
+                      className="text-sm text-green-600 hover:text-green-800 flex items-center"
+                      onClick={analyzeUserPose}
+                    >
+                      <Camera size={14} />
+                      <span className="ml-1">Analyze My Form</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+              
+              {/* Pose 5 */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                <div className="font-medium text-lg mb-1">Cobra Pose</div>
+                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">backbend</div>
+                <p className="text-sm text-muted-foreground mb-2">A gentle backbend that strengthens the spine and opens the chest</p>
+                <div className="text-sm space-y-1 mb-2">
+                  <div><span className="font-medium">Benefits:</span> Strengthens spine, opens chest, improves posture</div>
+                  <div><span className="font-medium">Focus on:</span> Using back muscles not arms, keeping shoulders relaxed</div>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                    onClick={() => handleShowDetails('yoga', 'cobrasPose')}
+                  >
+                    <Info size={14} />
+                    <span className="ml-1">Show Details</span>
+                  </button>
+                  
+                  {cameraEnabled && (
+                    <button 
+                      className="text-sm text-green-600 hover:text-green-800 flex items-center"
+                      onClick={analyzeUserPose}
+                    >
+                      <Camera size={14} />
+                      <span className="ml-1">Analyze My Form</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+              
+              {/* Pose 6 */}
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                <div className="font-medium text-lg mb-1">Warrior I</div>
+                <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">standing</div>
+                <p className="text-sm text-muted-foreground mb-2">A powerful standing pose that builds strength and improves focus</p>
+                <div className="text-sm space-y-1 mb-2">
+                  <div><span className="font-medium">Benefits:</span> Strengthens legs and core, opens chest, builds concentration</div>
+                  <div><span className="font-medium">Focus on:</span> Square hips, grounded back heel, upward energy</div>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                    onClick={() => handleShowDetails('yoga', 'warriorI')}
+                  >
+                    <Info size={14} />
+                    <span className="ml-1">Show Details</span>
+                  </button>
+                  
+                  {cameraEnabled && (
+                    <button 
+                      className="text-sm text-green-600 hover:text-green-800 flex items-center"
+                      onClick={analyzeUserPose}
+                    >
+                      <Camera size={14} />
+                      <span className="ml-1">Analyze My Form</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+              
+              {/* Pose 7 */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
                 <div className="font-medium text-lg mb-1">Bridge Pose</div>
                 <div className="text-xs bg-gray-100 text-gray-500 rounded px-2 py-0.5 inline-block mb-2">backbend</div>
@@ -1637,15 +1811,26 @@ export default function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     {selectedExercise?.videoUrl && (
                       <div className="p-4 rounded-lg border">
                         <h3 className="text-lg font-medium mb-2">Video Tutorial</h3>
-                        <div className="flex items-center justify-center gap-2 mt-2">
-                          <Button className="w-full flex items-center justify-center gap-2">
-                            <Video className="h-4 w-4" />
-                            Watch Tutorial
-                          </Button>
+                        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                          <iframe 
+                            className="absolute inset-0 w-full h-full"
+                            src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
+                            title={`${selectedExercise.name} tutorial video`}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowFullScreen
+                          ></iframe>
                         </div>
-                        <p className="text-xs text-gray-500 mt-2 text-center">
-                          Opens in a new window
-                        </p>
+                        <div className="flex items-center justify-start gap-2 mt-3">
+                          <a 
+                            href={selectedExercise.videoUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                            Open on YouTube
+                          </a>
+                        </div>
                       </div>
                     )}
                     

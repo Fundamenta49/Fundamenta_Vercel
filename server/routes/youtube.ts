@@ -37,6 +37,42 @@ function formatSearchQuery(q: string, category?: string): string {
     return `${q} personal finance education tutorial`;
   } else if (category === 'wellness') {
     return `${q} wellness health guide tutorial`;
+  } else if (category === 'yoga') {
+    // Special handling for yoga content
+    const lowerQuery = q.toLowerCase();
+    
+    // Create an array to store modifiers
+    const modifiers = [];
+    
+    // Add yoga-specific instruction terms if not already in query
+    if (!lowerQuery.includes('pose') && !lowerQuery.includes('asana')) {
+      modifiers.push('pose'); 
+    }
+    
+    if (!lowerQuery.includes('tutorial') && !lowerQuery.includes('instruction')) {
+      modifiers.push('tutorial'); 
+    }
+    
+    // Add specificity based on content
+    if (lowerQuery.includes('warrior') || lowerQuery.includes('tree') || lowerQuery.includes('downward dog')) {
+      modifiers.push('yoga alignment');
+    }
+    
+    if (lowerQuery.includes('child') || lowerQuery.includes('bridge') || lowerQuery.includes('corpse')) {
+      modifiers.push('yoga relaxation technique');
+    }
+    
+    if (lowerQuery.includes('cobra') || lowerQuery.includes('backbend')) {
+      modifiers.push('spine safety alignment');
+    }
+    
+    // Add instructor qualification for better quality videos
+    modifiers.push('certified yoga instructor');
+    
+    // Join modifiers with spaces
+    return modifiers.length > 0 ? 
+      `${q} ${modifiers.join(' ')}` : 
+      `${q} yoga pose tutorial proper alignment instruction`;
   } else if (category === 'fitness') {
     // Check if the query already contains specific keywords to avoid duplication
     const lowerQuery = q.toLowerCase();
