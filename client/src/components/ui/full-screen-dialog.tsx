@@ -102,7 +102,7 @@ const FullScreenDialogContent = React.forwardRef<
             {...props}
           >
             {/* Swipe handle indicator */}
-            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-1 pb-2 bg-white dark:bg-gray-950">
+            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-6 bg-white dark:bg-gray-950">
               <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
               <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
             </div>
@@ -154,7 +154,7 @@ const FullScreenDialogHeader = ({
     <div
       className={cn(
         "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b",
-        isMobile ? "top-5" : "top-0 pt-6", // Adjust top position for mobile to account for swipe indicator
+        isMobile ? "top-14 mt-2" : "top-0 pt-6", // Increased top value to avoid overlap with the swipe indicator
         className
       )}
       {...props}
