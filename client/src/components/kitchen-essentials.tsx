@@ -54,117 +54,187 @@ const KitchenToolIcons: Record<string, () => JSX.Element> = {
     </svg>
   ),
   "Cutting Board": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <rect x="4" y="4" width="16" height="16" rx="1" />
-      <line x1="9" y1="4" x2="9" y2="20" />
-      <line x1="15" y1="4" x2="15" y2="20" />
-      <line x1="4" y1="9" x2="20" y2="9" />
-      <line x1="4" y1="15" x2="20" y2="15" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(20,20) scale(0.6)">
+        <path d="M8 5c-4.4 0-8 3.6-8 8v74c0 4.4 3.6 8 8 8h84c4.4 0 8-3.6 8-8V13c0-4.4-3.6-8-8-8H8z" />
+        <rect x="15" y="10" width="70" height="70" rx="3" fill="none" stroke="white" strokeWidth="2" />
+        <text x="50" y="95" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Cutting Board</text>
+      </g>
     </svg>
   ),
   
   // Tools category
   "Measuring Cups & Spoons": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M6 9v9c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V9M6 9h7M6 12h7M3 7h12v2H3zM17 5c.55 0 1 .45 1 1v1h-2V6c0-.55.45-1 1-1zM17 10c.55 0 1 .45 1 1v1h-2v-1c0-.55.45-1 1-1zM17 15c.55 0 1 .45 1 1v1h-2v-1c0-.55.45-1 1-1z" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(5,5) scale(0.9)">
+        <path d="M20 20c-2 0-3 1-3 2v30c0 2 1 3 3 3h15c2 0 3-1 3-3V22c0-1-1-2-3-2H20z" />
+        <path d="M45 15c-1.5 0-2 .5-2 2v20c0 1.5.5 2 2 2h10c1.5 0 2-.5 2-2V17c0-1.5-.5-2-2-2H45z" />
+        <path d="M65 25c-1 0-2 1-2 2v10c0 1 1 2 2 2h10c1 0 2-1 2-2V27c0-1-1-2-2-2H65z" />
+        <ellipse cx="72" cy="20" rx="7" ry="3" />
+        <text x="50" y="80" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="currentColor">Measuring Cups & Spoons</text>
+      </g>
     </svg>
   ),
   "Mixing Bowls": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <ellipse cx="12" cy="7" rx="7" ry="3" />
-      <path d="M5 7v7c0 1.66 3.13 3 7 3s7-1.34 7-3V7" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(10,10) scale(0.8)">
+        <ellipse cx="50" cy="30" rx="40" ry="15" />
+        <path d="M10 30c0 20 18 40 40 40s40-20 40-40" />
+        <text x="50" y="85" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Mixing Bowls</text>
+      </g>
     </svg>
   ),
   
   // Cookware category
   "Skillet (Cast Iron or Nonstick)": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <circle cx="12" cy="12" r="8" />
-      <path d="M19 12h5" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(10,20) scale(0.8)">
+        <circle cx="40" cy="40" r="35" />
+        <path d="M75 40h25" strokeWidth="5" />
+        <text x="50" y="95" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="currentColor">Skillet</text>
+      </g>
     </svg>
   ),
   "Saucepan": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M4 10a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4z" />
-      <path d="M18 8V5a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v3" />
-      <path d="M20 10h2" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(10,20) scale(0.8)">
+        <path d="M10 30h60v20c0 5-5 10-10 10H20c-5 0-10-5-10-10V30z" />
+        <path d="M70 30h20" strokeWidth="5" />
+        <text x="50" y="80" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Saucepan</text>
+      </g>
     </svg>
   ),
   "Stockpot": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M5 10h14v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-8z" />
-      <path d="M5 10V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4" />
-      <path d="M5 14h14" />
-      <path d="M19 10h3" />
-      <path d="M2 10h3" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(15,10) scale(0.7)">
+        <path d="M20 20h60v60c0 5-5 10-10 10H30c-5 0-10-5-10-10V20z" />
+        <path d="M20 20v-5c0-3 2-5 5-5h50c3 0 5 2 5 5v5" />
+        <path d="M15 20h70" />
+        <path d="M15 40h70" />
+        <text x="50" y="100" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Stockpot</text>
+      </g>
     </svg>
   ),
   
   // Bakeware category
   "Sheet Pan": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <rect x="3" y="8" width="18" height="12" rx="2" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="16" x2="21" y2="16" />
-      <line x1="12" y1="8" x2="12" y2="20" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(10,20) scale(0.8)">
+        <rect x="5" y="20" width="90" height="50" rx="5" />
+        <line x1="5" y1="35" x2="95" y2="35" stroke="white" strokeWidth="2" />
+        <line x1="5" y1="50" x2="95" y2="50" stroke="white" strokeWidth="2" />
+        <text x="50" y="85" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Sheet Pan</text>
+      </g>
     </svg>
   ),
   
   // More tools 
   "Rubber Spatula": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M6 20l12-16" />
-      <path d="M9 17l3 3h3a2 2 0 0 0 2-2v-3l-3-3" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(20,10) scale(0.6)">
+        <path d="M30 20L60 80c2 3 5 5 9 5h10c3 0 5-2 5-5V70c0-3-2-6-5-9L40 20c-2-2-8-2-10 0z" />
+        <rect x="25" y="5" width="10" height="20" rx="5" />
+        <text x="55" y="95" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="currentColor">Rubber Spatula</text>
+      </g>
     </svg>
   ),
   "Metal Spatula": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M5 20l9-9" />
-      <path d="M14 11l5-5" />
-      <path d="M19 6h-4v-4" />
-      <path d="M5 20v-3h3l3-3 4 4-3 3v3z" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(15,10) scale(0.7)">
+        <path d="M20 20L80 80" strokeWidth="8" stroke="currentColor" fill="none" />
+        <path d="M75 85h15c3 0 5-2 5-5V65L75 45 55 65l20 20z" />
+        <text x="50" y="100" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="currentColor">Metal Spatula</text>
+      </g>
     </svg>
   ),
   "Tongs": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M8 4V2M16 4V2M12 18v-5M9 15l-3-3 4-4M15 15l3-3-4-4M12 13V3" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(25,5) scale(0.5)">
+        <path d="M30 20c-5 0-10 5-10 10v30c0 10 5 20 15 25 5 2 15 2 20 0 10-5 15-15 15-25V30c0-5-5-10-10-10" />
+        <path d="M30 20v-10c0-3 3-5 5-5h30c2 0 5 2 5 5v10" />
+        <path d="M50 80V30" strokeWidth="5" stroke="white" />
+        <text x="50" y="100" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Tongs</text>
+      </g>
     </svg>
   ),
   "Whisk": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M5 16a4 4 0 0 0 4 4h.5M16 10c0-3.5-4-3.5-4-7C15 3 17 3 18 6c2 6-9 11-11 10" />
-      <path d="M17.68 8.32C19.5 10.5 19 13 16 14c-3 1-5.5-.5-8-3.5C8 8 10 4.5 12 3c.5 1 1 1.5 3 2" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(20,10) scale(0.6)">
+        <path d="M40 10c10 0 20 10 20 20 0 15-15 20-30 25-15 5-25 15-25 30" fill="none" stroke="currentColor" strokeWidth="5" />
+        <path d="M35 15c5 0 10 5 10 10 0 10-10 12-20 15-10 3-15 10-15 20" fill="none" stroke="currentColor" strokeWidth="5" />
+        <path d="M45 15c5 0 10 5 10 10 0 10-10 12-20 15-10 3-15 10-15 20" fill="none" stroke="currentColor" strokeWidth="5" />
+        <rect x="30" y="90" width="10" height="20" rx="5" />
+        <text x="50" y="125" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Whisk</text>
+      </g>
     </svg>
   ),
   "Colander or Strainer": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M6 8l1 10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-10" />
-      <path d="M4 8h16M9 8V6c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v2" />
-      <path d="M8 12v.01M12 12v.01M16 12v.01M8 16v.01M12 16v.01M16 16v.01" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(15,10) scale(0.7)">
+        <ellipse cx="50" cy="35" rx="40" ry="15" />
+        <path d="M10 35c0 20 18 30 40 30s40-10 40-30" />
+        <circle cx="30" cy="45" r="2" fill="white" />
+        <circle cx="40" cy="50" r="2" fill="white" />
+        <circle cx="50" cy="55" r="2" fill="white" />
+        <circle cx="60" cy="50" r="2" fill="white" />
+        <circle cx="70" cy="45" r="2" fill="white" />
+        <circle cx="20" cy="40" r="2" fill="white" />
+        <circle cx="80" cy="40" r="2" fill="white" />
+        <text x="50" y="85" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="currentColor">Colander or Strainer</text>
+      </g>
     </svg>
   ),
   "Peeler": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M9 12l6-6M15 6l3 3-3 3-3-3zM9 12l-6 6 3 3 6-6" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(30,10) scale(0.4)">
+        <path d="M30 20l40 40" strokeWidth="8" stroke="currentColor" fill="none" />
+        <path d="M30 20c-2-2-5-2-7 0l-10 10c-2 2-2 5 0 7l10 10 17-17-10-10z" />
+        <path d="M70 60c2 2 5 2 7 0l10-10c2-2 2-5 0-7l-10-10-17 17 10 10z" />
+        <rect x="40" y="120" width="20" height="40" rx="5" />
+        <text x="50" y="180" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Peeler</text>
+      </g>
     </svg>
   ),
   "Grater (Box or Microplane)": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <rect x="6" y="4" width="12" height="16" rx="1" />
-      <line x1="8" y1="8" x2="8" y2="16" />
-      <line x1="12" y1="8" x2="12" y2="16" />
-      <line x1="16" y1="8" x2="16" y2="16" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(30,10) scale(0.4)">
+        <rect x="20" y="20" width="60" height="100" rx="5" />
+        <circle cx="40" cy="40" r="3" fill="white" />
+        <circle cx="40" cy="50" r="3" fill="white" />
+        <circle cx="40" cy="60" r="3" fill="white" />
+        <circle cx="40" cy="70" r="3" fill="white" />
+        <circle cx="40" cy="80" r="3" fill="white" />
+        <circle cx="60" cy="40" r="3" fill="white" />
+        <circle cx="60" cy="50" r="3" fill="white" />
+        <circle cx="60" cy="60" r="3" fill="white" />
+        <circle cx="60" cy="70" r="3" fill="white" />
+        <circle cx="60" cy="80" r="3" fill="white" />
+        <rect x="30" y="90" width="40" height="5" fill="white" />
+        <rect x="30" cy="100" width="40" height="5" fill="white" />
+        <text x="50" y="140" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="currentColor">Grater</text>
+      </g>
     </svg>
   ),
   "Can Opener": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <circle cx="7" cy="12" r="5" />
-      <path d="M7 7v5M15 9l3 3M18 12l3 3M15 15h6" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(10,10) scale(0.8)">
+        <circle cx="30" cy="50" r="20" />
+        <path d="M30 30v20" strokeWidth="3" stroke="white" />
+        <path d="M50 40l20 20" strokeWidth="3" stroke="currentColor" fill="none" />
+        <path d="M70 60l10 10" strokeWidth="3" stroke="currentColor" fill="none" />
+        <path d="M50 70h30" strokeWidth="3" stroke="currentColor" fill="none" />
+        <text x="50" y="100" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Can Opener</text>
+      </g>
     </svg>
   ),
   "Thermometer": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M14 4v10.54c-1.19.69-2 1.99-2 3.46 0 2.21 1.79 4 4 4s4-1.79 4-4c0-1.47-.81-2.77-2-3.46V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2zM12 9H7.5a2.5 2.5 0 0 1 0-5H12" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(35,5) scale(0.3)">
+        <rect x="40" y="20" width="20" height="100" rx="10" />
+        <circle cx="50" cy="140" r="20" />
+        <rect x="45" y="30" width="10" height="50" fill="white" />
+        <text x="50" y="180" fontFamily="Arial" fontSize="14" textAnchor="middle" fill="currentColor">Thermometer</text>
+      </g>
     </svg>
   ),
   
