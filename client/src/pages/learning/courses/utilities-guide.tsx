@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Lightbulb, WifiIcon, Smartphone, Activity, Droplets, X, MapPin, Search } from 'lucide-react';
+import { ArrowLeft, Lightbulb, WifiIcon, Smartphone, Activity, Droplets, X, MapPin, Search, Navigation, Locate } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import SimpleResourceLinks from '@/components/simple-resource-links';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import FloatingChat from '@/components/floating-chat';
@@ -34,7 +35,11 @@ export default function UtilitiesGuideCourse() {
   const [selectedState, setSelectedState] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [cityInput, setCityInput] = useState<string>("");
+  const [zipCode, setZipCode] = useState<string>("");
+  const [isLocating, setIsLocating] = useState<boolean>(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [showLocalResources, setShowLocalResources] = useState<boolean>(false);
+  const [locationMethod, setLocationMethod] = useState<'manual' | 'gps' | 'zip'>('manual');
 
   // Course modules as cards
   const COURSE_MODULES = [
@@ -450,6 +455,105 @@ export default function UtilitiesGuideCourse() {
     }
     return null;
   };
+  
+  // ZIP code to state mapping (simplified - in a real app would use a more comprehensive database)
+  const ZIP_TO_STATE: Record<string, { state: string, city?: string }> = {
+    // California
+    "90001": { state: "California", city: "Los Angeles" },
+    "90210": { state: "California", city: "Beverly Hills" },
+    "94016": { state: "California", city: "San Francisco" },
+    "95814": { state: "California", city: "Sacramento" },
+    // Texas
+    "75001": { state: "Texas", city: "Dallas" },
+    "77001": { state: "Texas", city: "Houston" },
+    "78701": { state: "Texas", city: "Austin" },
+    // New York
+    "10001": { state: "New York", city: "New York City" },
+    "14201": { state: "New York", city: "Buffalo" },
+    // Florida
+    "33101": { state: "Florida", city: "Miami" },
+    "32801": { state: "Florida", city: "Orlando" },
+    // Illinois
+    "60601": { state: "Illinois", city: "Chicago" },
+    "60505": { state: "Illinois", city: "Aurora" }
+  };
+  
+  // Look up a location by ZIP code
+  const lookupZipCode = (zip: string) => {
+    setLocationError(null);
+    
+    if (zip.length !== 5 || !/^\d+$/.test(zip)) {
+      setLocationError("Please enter a valid 5-digit ZIP code");
+      return;
+    }
+    
+    const location = ZIP_TO_STATE[zip];
+    if (location) {
+      setSelectedState(location.state);
+      if (location.city) {
+        setSelectedCity(location.city);
+        setCityInput(location.city);
+      } else {
+        setSelectedCity("");
+        setCityInput("");
+      }
+      setShowLocalResources(!!getStateUtilities(location.state));
+    } else {
+      setLocationError("ZIP code not found in our database");
+    }
+  };
+  
+  // Use geolocation to detect user's location
+  const detectLocation = () => {
+    setIsLocating(true);
+    setLocationError(null);
+    
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      setIsLocating(false);
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // In a real app, you would use a geocoding service to convert coordinates to address
+        // For this demo, we'll simulate a location in San Francisco
+        setSelectedState("California");
+        setSelectedCity("San Francisco");
+        setCityInput("San Francisco");
+        setShowLocalResources(true);
+        setIsLocating(false);
+      },
+      (error) => {
+        let errorMessage = "Failed to detect location";
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location access was denied. Please allow location access or enter your location manually.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable. Please enter your location manually.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out. Please try again or enter your location manually.";
+            break;
+        }
+        setLocationError(errorMessage);
+        setIsLocating(false);
+      },
+      { maximumAge: 60000, timeout: 10000, enableHighAccuracy: true }
+    );
+  };
+  
+  // Reset all location states
+  const resetLocation = () => {
+    setSelectedState("");
+    setSelectedCity("");
+    setCityInput("");
+    setZipCode("");
+    setLocationError(null);
+    setShowLocalResources(false);
+    setLocationMethod('manual');
+  };
 
   // Handler for state selection
   const handleStateChange = (value: string) => {
@@ -625,59 +729,146 @@ export default function UtilitiesGuideCourse() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-6 mb-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="state">Select Your State</Label>
-                  <Select
-                    value={selectedState}
-                    onValueChange={handleStateChange}
-                  >
-                    <SelectTrigger id="state" className="w-full">
-                      <SelectValue placeholder="Select state..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {US_STATES.map((state) => (
-                        <SelectItem key={state} value={state}>
-                          {state}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <Tabs value={locationMethod} onValueChange={(value) => setLocationMethod(value as any)} className="mb-6">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="manual">Manual Entry</TabsTrigger>
+                  <TabsTrigger value="zip">ZIP Code</TabsTrigger>
+                  <TabsTrigger value="gps">GPS Location</TabsTrigger>
+                </TabsList>
                 
-                {selectedState && (
-                  <div className="grid gap-2">
-                    <Label htmlFor="city">City (Optional)</Label>
-                    <div className="relative">
-                      <Input
-                        id="city"
-                        placeholder="Enter your city..."
-                        value={cityInput}
-                        onChange={(e) => setCityInput(e.target.value)}
-                        className="w-full"
-                      />
-                      {cityInput && getCitySuggestions(selectedState).filter(city => 
-                        city.toLowerCase().includes(cityInput.toLowerCase()) && city.toLowerCase() !== cityInput.toLowerCase()
-                      ).length > 0 && (
-                        <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-md mt-1 border z-10">
-                          {getCitySuggestions(selectedState)
-                            .filter(city => city.toLowerCase().includes(cityInput.toLowerCase()))
-                            .map(city => (
-                              <div 
-                                key={city} 
-                                className="p-2 hover:bg-gray-100 cursor-pointer"
-                                onClick={() => handleCitySelect(city)}
-                              >
-                                {city}
-                              </div>
-                            ))
-                          }
+                <TabsContent value="manual" className="mt-4">
+                  <div className="grid gap-6">
+                    <div className="grid gap-2">
+                      <Label htmlFor="state">Select Your State</Label>
+                      <Select
+                        value={selectedState}
+                        onValueChange={handleStateChange}
+                      >
+                        <SelectTrigger id="state" className="w-full">
+                          <SelectValue placeholder="Select state..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {US_STATES.map((state) => (
+                            <SelectItem key={state} value={state}>
+                              {state}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {selectedState && (
+                      <div className="grid gap-2">
+                        <Label htmlFor="city">City (Optional)</Label>
+                        <div className="relative">
+                          <Input
+                            id="city"
+                            placeholder="Enter your city..."
+                            value={cityInput}
+                            onChange={(e) => setCityInput(e.target.value)}
+                            className="w-full"
+                          />
+                          {cityInput && getCitySuggestions(selectedState).filter(city => 
+                            city.toLowerCase().includes(cityInput.toLowerCase()) && city.toLowerCase() !== cityInput.toLowerCase()
+                          ).length > 0 && (
+                            <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded-md mt-1 border z-10">
+                              {getCitySuggestions(selectedState)
+                                .filter(city => city.toLowerCase().includes(cityInput.toLowerCase()))
+                                .map(city => (
+                                  <div 
+                                    key={city} 
+                                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => handleCitySelect(city)}
+                                  >
+                                    {city}
+                                  </div>
+                                ))
+                              }
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="zip" className="mt-4">
+                  <div className="grid gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="zipCode">Enter ZIP Code</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="zipCode"
+                          placeholder="e.g. 90210"
+                          value={zipCode}
+                          onChange={(e) => setZipCode(e.target.value)}
+                          className="flex-1"
+                          maxLength={5}
+                        />
+                        <Button 
+                          onClick={() => lookupZipCode(zipCode)}
+                          disabled={!zipCode || zipCode.length !== 5}
+                        >
+                          <Search className="h-4 w-4 mr-2" />
+                          Look Up
+                        </Button>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        Enter a 5-digit ZIP code to find utilities in your area
+                      </p>
                     </div>
                   </div>
-                )}
-              </div>
+                </TabsContent>
+                
+                <TabsContent value="gps" className="mt-4">
+                  <div className="grid gap-4">
+                    <div className="flex flex-col items-center justify-center p-6 border rounded-md bg-gray-50">
+                      <Locate className="h-8 w-8 text-orange-500 mb-3" />
+                      <h3 className="text-lg font-medium mb-2">Use Your Current Location</h3>
+                      <p className="text-sm text-gray-500 text-center mb-4">
+                        We'll detect your location to show relevant utility providers in your area
+                      </p>
+                      <Button
+                        onClick={detectLocation}
+                        disabled={isLocating}
+                        className="w-full sm:w-auto"
+                      >
+                        {isLocating ? (
+                          <>
+                            <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin mr-2"></div>
+                            Detecting...
+                          </>
+                        ) : (
+                          <>
+                            <Navigation className="h-4 w-4 mr-2" />
+                            Detect My Location
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+              
+              {locationError && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertDescription>{locationError}</AlertDescription>
+                </Alert>
+              )}
+              
+              {selectedState && (
+                <div className="flex justify-between items-center">
+                  <div>
+                    <Badge variant="outline" className="mb-2">
+                      {selectedState}{selectedCity ? `, ${selectedCity}` : ''}
+                    </Badge>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={resetLocation}>
+                    <X className="h-4 w-4 mr-1" />
+                    Reset
+                  </Button>
+                </div>
+              )}
               
               {showLocalResources && getStateUtilities(selectedState) && (
                 <div className="mt-6">
