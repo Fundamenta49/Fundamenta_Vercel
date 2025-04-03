@@ -30,6 +30,24 @@
   --primary-rgb: 99, 102, 241;
 }
 
+/* Design System Colors */
+:root {
+  /* Section-Specific Colors */
+  --emergency-color: #b91c1c;
+  --financial-color: #3b82f6;
+  --wellness-color: #10b981;
+  --career-color: #8b5cf6;
+  --learning-color: #f59e0b;
+  
+  /* For backward compatibility */
+  --emergency-rgb: 185, 28, 28;
+  --financial-rgb: 59, 130, 246;
+  --wellness-rgb: 16, 185, 129;
+  --career-rgb: 139, 92, 246;
+  --learning-rgb: 245, 158, 11;
+}
+
+/* Legacy category colors for backward compatibility */
 [data-category="finance"] {
   --primary-rgb: 34, 197, 94;
 }
