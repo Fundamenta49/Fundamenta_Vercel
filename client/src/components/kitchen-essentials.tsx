@@ -41,13 +41,16 @@ interface KitchenToolProps {
   tool: KitchenTool;
 }
 
-// Kitchen tool SVG icons
-const KitchenToolIcons = {
+// Kitchen tool SVG icons - with index signature
+const KitchenToolIcons: Record<string, () => JSX.Element> = {
   // Cutting category
   "Chef's Knife": () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-24 h-24">
-      <path d="M3 21h18M17.5 3l-11 11c-.5.5-1 1.5-1 2v.5c0 1 .5 1.5 1 2s1 1 2 1h.5c.5 0 1.5-.5 2-1l7.5-9.5" />
-      <path d="M17.5 3c.5-.5 1.5-.5 2 0s.5 1.5 0 2L13 11" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="currentColor" className="w-24 h-24">
+      <g transform="translate(20,5) scale(0.6)">
+        <path d="M35 10c-1.5 0-3 0.5-4.2 1.5l-0.3 0.2-20 35c-1.7 3-1.7 6.5-0.1 9.5 1.6 3 4.6 4.8 7.9 4.8h0.2l25-45c-0.3-0.3-0.5-0.5-0.8-0.8-2.2-2.9-5-5.2-7.7-5.2z" />
+        <rect x="30" y="5" width="12" height="25" rx="1" ry="1" />
+        <text x="40" y="92" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="currentColor">Chef's knife</text>
+      </g>
     </svg>
   ),
   "Cutting Board": () => (
