@@ -213,6 +213,19 @@ const CookingTutorials = () => {
   
   // Play a video from tutorial content
   const playTutorialVideo = (videoId: string, title: string, description?: string) => {
+    console.log('playTutorialVideo called with:', { videoId, title, description });
+    
+    // Validate videoId
+    if (!videoId) {
+      console.error('Error: Attempted to play a video without a videoId');
+      toast({
+        title: "Video Error",
+        description: "Could not play this video. Invalid video ID.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     // Create a CookingVideo object from the tutorial data
     const tutorialVideo: CookingVideo = {
       id: videoId,
@@ -226,10 +239,12 @@ const CookingTutorials = () => {
     };
     
     // Log the video data to help with debugging
-    console.log('Playing tutorial video:', { videoId, title, description });
+    console.log('Created tutorial video object:', tutorialVideo);
     
     setSelectedVideo(tutorialVideo);
     setVideoDialogOpen(true);
+    
+    console.log('Video dialog should now be open with video ID:', videoId);
   };
 
   // Handle category selection
@@ -271,15 +286,15 @@ const CookingTutorials = () => {
               className="bg-learning-color hover:bg-learning-color/90"
             >
               {isSearching ? (
-                <>
+                <React.Fragment>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Searching
-                </>
+                </React.Fragment>
               ) : (
-                <>
+                <React.Fragment>
                   <SearchIcon className="mr-2 h-4 w-4" />
                   Search
-                </>
+                </React.Fragment>
               )}
             </Button>
           </form>
@@ -287,7 +302,7 @@ const CookingTutorials = () => {
       </Card>
 
       {/* Main Content Area - conditionally render search results, category, or categories list */}
-      {showSearchResults ? (
+      {showSearchResults === true ? (
         // SEARCH RESULTS
         <div className="space-y-6">
           <Card className="shadow-sm border-t-4 border-t-learning-color">
@@ -614,7 +629,7 @@ const CookingTutorials = () => {
 
       {/* Video Player Dialog */}
       {/* Log the selected video object to help debugging */}
-      {selectedVideo ? console.log('Sending to VideoPlayerDialog:', selectedVideo) : null}
+      {selectedVideo && <React.Fragment>{console.log('Sending to VideoPlayerDialog:', selectedVideo)}</React.Fragment>}
       <VideoPlayerDialog
         open={videoDialogOpen}
         onOpenChange={setVideoDialogOpen}
