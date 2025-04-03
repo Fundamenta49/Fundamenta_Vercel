@@ -88,10 +88,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
               </Alert>
               <FitnessExercises 
                 muscleFilter="strength" 
-                equipmentFilter="dumbbell" 
+                equipmentFilter="barbell" 
                 difficultyFilter="intermediate"
                 categoryFilter="weightlifting" 
-                keywordFilter="curl"
+                keywordFilter="press"
                 showFilters={false}
                 compactView={true}
                 maxExercises={4}
@@ -132,9 +132,9 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
               <FitnessExercises 
                 muscleFilter="flexibility" 
                 equipmentFilter="body weight" 
-                difficultyFilter="intermediate"
+                difficultyFilter="beginner"
                 categoryFilter="yoga"
-                keywordFilter="pose"
+                keywordFilter="stretch"
                 showFilters={false} 
                 compactView={true}
                 maxExercises={4}
@@ -160,6 +160,30 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
             </p>
           </div>
           <RunningTracker />
+          <Card className="overflow-hidden mt-4">
+            <CardHeader className="pb-0">
+              <CardTitle>Running Support Exercises</CardTitle>
+              <CardDescription>
+                Strengthen key muscle groups to improve running performance and prevent injuries
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <Alert className="bg-blue-50 border-blue-200 mb-4">
+                <AlertDescription className="text-blue-800">
+                  Exercises to enhance running performance and prevent common injuries
+                </AlertDescription>
+              </Alert>
+              <FitnessExercises 
+                muscleFilter="legs" 
+                equipmentFilter="body weight"
+                difficultyFilter="beginner"
+                keywordFilter="lunge"
+                showFilters={false}
+                compactView={true}
+                maxExercises={4}
+              />
+            </CardContent>
+          </Card>
         </div>
       );
       
@@ -219,12 +243,13 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 <h3 className="font-medium text-lg mb-3">HIIT Exercises</h3>
                 <FitnessExercises 
                   muscleFilter="full body" 
+                  equipmentFilter="body weight"
                   difficultyFilter="intermediate"
                   categoryFilter="hiit"
-                  keywordFilter="burpee" 
+                  keywordFilter="jump" 
                   showFilters={false} 
                   compactView={true}
-                  maxExercises={3}
+                  maxExercises={4}
                 />
               </div>
             </CardContent>
@@ -299,8 +324,9 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 <h3 className="font-medium text-lg mb-3">Exercise Library</h3>
                 <FitnessExercises 
                   muscleFilter="flexibility" 
+                  equipmentFilter="body weight"
                   categoryFilter="stretching"
-                  keywordFilter="hamstring"
+                  keywordFilter="stretch"
                   difficultyFilter="beginner"
                   showFilters={false} 
                   compactView={true}
