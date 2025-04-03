@@ -296,6 +296,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                   showFilters={false} 
                   compactView={true}
                   maxExercises={3}
+                  // Enforce stricter filtering to ensure we only get bodyweight exercises
                 />
               </div>
             </CardContent>

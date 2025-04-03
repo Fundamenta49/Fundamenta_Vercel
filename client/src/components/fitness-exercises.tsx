@@ -697,33 +697,7 @@ export default function FitnessExercises({
     return Math.abs(hash).toString(16).padStart(8, '0');
   };
   
-  // Default fallback videos - used when API is rate limited
-  const fallbackVideos: Record<string, {id: string, title: string}[]> = {
-    "weightlifting": [
-      { id: "IODxDxX7oi4", title: "Dumbbell Exercises for Beginners" },
-      { id: "CfMKG2nIf6I", title: "Upper Body Dumbbell Workout" }
-    ],
-    "yoga": [
-      { id: "v7AYKMP6rOE", title: "Yoga For Complete Beginners" },
-      { id: "b1H3xO3x_Js", title: "Yoga Poses for Flexibility" }
-    ],
-    "hiit": [
-      { id: "ml6cT4AZdqI", title: "30-Minute HIIT Workout" },
-      { id: "5qCjyxUj6DQ", title: "Tabata HIIT Training" }
-    ],
-    "plyometrics": [
-      { id: "ltuLMm5NUM8", title: "Plyometric Training for Beginners" },
-      { id: "QG8Ts_RgaEo", title: "Jump Training Exercises" }
-    ],
-    "stretching": [
-      { id: "qULTwquOuT4", title: "Full Body Stretching Routine" },
-      { id: "g_tea8ZNk5A", title: "Hamstring Stretches for Flexibility" }
-    ],
-    "calisthenics": [
-      { id: "kIVxdW9aS8k", title: "Beginner Calisthenics Workout" },
-      { id: "31GlECfj9Rg", title: "Push-Up Variations for Beginners" }
-    ]
-  };
+  // Our fallback videos are now handled by the YouTube service
 
   const loadExerciseVideos = async (
     exerciseId: string, 
@@ -742,33 +716,10 @@ export default function FitnessExercises({
       return;
     }
     
-    // If we're throttled or at our API limit, use fallback videos
+    // If we're throttled or at our API limit, we can still use the youtube service
+    // as it now has better fallback handling with extensive fallback collections
     if (apiThrottled || apiRequestCount >= MAX_API_REQUESTS) {
-      // Try to find relevant category based on filters
-      const category = filters.category || 
-                      (filters.muscleGroup === 'flexibility' ? 'yoga' : 'weightlifting');
-      
-      // Get fallback videos for the category if available
-      const fallbacks = fallbackVideos[category] || fallbackVideos.weightlifting;
-      
-      if (fallbacks) {
-        // Create video objects with the fallback data
-        const staticVideos = fallbacks.map(video => ({
-          id: video.id,
-          title: video.title,
-          description: `Exercise demonstration for ${exerciseName}`,
-          thumbnailUrl: `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`,
-          channelTitle: "Fitness Instructor",
-          publishedAt: new Date().toISOString()
-        }));
-        
-        setExerciseVideos({
-          ...exerciseVideos,
-          [exerciseId]: staticVideos
-        });
-        
-        return;
-      }
+      console.log('API throttled or at request limit, using enhanced fallback videos');
     }
     
     setLoadingVideos({...loadingVideos, [exerciseId]: true});
@@ -795,26 +746,25 @@ export default function FitnessExercises({
           [exerciseId]: videos
         });
       } else {
-        // If API returned empty, use fallbacks based on category
-        const category = filters.category || 
-                        (filters.muscleGroup === 'flexibility' ? 'yoga' : 'weightlifting');
-        
-        const fallbacks = fallbackVideos[category] || fallbackVideos.weightlifting;
-        
-        if (fallbacks) {
-          const staticVideos = fallbacks.map(video => ({
-            id: video.id,
-            title: video.title,
-            description: `Exercise demonstration for ${exerciseName}`,
-            thumbnailUrl: `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`,
-            channelTitle: "Fitness Instructor",
-            publishedAt: new Date().toISOString()
-          }));
+        console.error('No videos returned from API, will use fallbacks via enhanced YouTube service');
+        // The searchExerciseVideos function in youtube-service.ts now handles fallbacks internally
+        // So we shouldn't reach this code, but if we do, try again with more generalized search terms
+        try {
+          const generalizedVideos = await searchExerciseVideos(
+            exerciseName.split(' ')[0], // Just use the first word of exercise name for broader results
+            'bodyweight', 
+            ['full body'],
+            seed + '1' // Change seed slightly for different results
+          );
           
-          setExerciseVideos({
-            ...exerciseVideos,
-            [exerciseId]: staticVideos
-          });
+          if (generalizedVideos && generalizedVideos.length > 0) {
+            setExerciseVideos({
+              ...exerciseVideos,
+              [exerciseId]: generalizedVideos
+            });
+          }
+        } catch (innerError) {
+          console.error('Secondary search also failed:', innerError);
         }
       }
     } catch (error) {

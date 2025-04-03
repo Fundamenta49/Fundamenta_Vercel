@@ -468,9 +468,22 @@ export const fitnessApiService = {
       
       if (category) {
         const categoryLower = category.toLowerCase();
-        filteredExercises = filteredExercises.filter(ex => 
-          ex.category.toLowerCase().includes(categoryLower)
-        );
+        
+        // Special case for plyometrics to strictly enforce bodyweight only exercises
+        if (categoryLower === 'plyometrics') {
+          filteredExercises = filteredExercises.filter(ex => 
+            ex.category.toLowerCase().includes(categoryLower) && 
+            ex.equipment.toLowerCase() === 'body weight' && 
+            !ex.equipment.toLowerCase().includes('machine') &&
+            !ex.equipment.toLowerCase().includes('bench') &&
+            !ex.equipment.toLowerCase().includes('barbell') &&
+            !ex.equipment.toLowerCase().includes('cable')
+          );
+        } else {
+          filteredExercises = filteredExercises.filter(ex => 
+            ex.category.toLowerCase().includes(categoryLower)
+          );
+        }
       }
       
       if (keyword) {

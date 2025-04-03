@@ -127,40 +127,218 @@ const clientCache: Record<string, { videos: YouTubeVideo[], timestamp: number }>
 const CACHE_TTL = 1000 * 60 * 60 * 2; // 2 hours
 
 // Default fallback videos for when the API fails or is rate-limited
-const fallbackFitnessVideos: YouTubeVideo[] = [
-  {
-    id: "ml6cT4AZdqI",
-    title: "30-Minute HIIT Workout - No Equipment with Modifications",
-    description: "Full body HIIT workout that's apartment-friendly with no equipment required.",
-    thumbnailUrl: "https://img.youtube.com/vi/ml6cT4AZdqI/maxresdefault.jpg",
-    channelTitle: "SELF",
-    publishedAt: "2020-03-15T00:00:00Z"
-  },
-  {
-    id: "ltuLMm5NUM8",
-    title: "Plyometric Training for Beginners - Power Exercises",
-    description: "Learn the fundamentals of plyometric training with these bodyweight exercises.",
-    thumbnailUrl: "https://img.youtube.com/vi/ltuLMm5NUM8/maxresdefault.jpg",
-    channelTitle: "Fitness Blender",
-    publishedAt: "2020-01-20T00:00:00Z"
-  },
-  {
-    id: "qULTwquOuT4",
-    title: "Full Body Stretching Routine - 15 Minutes for Flexibility",
-    description: "Follow along with this full body stretching routine to improve your flexibility.",
-    thumbnailUrl: "https://img.youtube.com/vi/qULTwquOuT4/maxresdefault.jpg",
-    channelTitle: "MadFit",
-    publishedAt: "2019-11-05T00:00:00Z"
-  },
-  {
-    id: "kIVxdW9aS8k",
-    title: "Beginner Calisthenics Workout - Build Strength with Bodyweight",
-    description: "Start your calisthenics journey with these fundamental bodyweight exercises.",
-    thumbnailUrl: "https://img.youtube.com/vi/kIVxdW9aS8k/maxresdefault.jpg",
-    channelTitle: "THENX",
-    publishedAt: "2018-09-22T00:00:00Z"
-  }
-];
+const fallbackFitnessVideos: {[key: string]: YouTubeVideo[]} = {
+  // General fallbacks
+  'general': [
+    {
+      id: "ml6cT4AZdqI",
+      title: "30-Minute HIIT Workout - No Equipment with Modifications",
+      description: "Full body HIIT workout that's apartment-friendly with no equipment required.",
+      thumbnailUrl: "https://img.youtube.com/vi/ml6cT4AZdqI/maxresdefault.jpg",
+      channelTitle: "SELF",
+      publishedAt: "2020-03-15T00:00:00Z"
+    },
+    {
+      id: "ltuLMm5NUM8",
+      title: "Plyometric Training for Beginners - Power Exercises",
+      description: "Learn the fundamentals of plyometric training with these bodyweight exercises.",
+      thumbnailUrl: "https://img.youtube.com/vi/ltuLMm5NUM8/maxresdefault.jpg",
+      channelTitle: "Fitness Blender",
+      publishedAt: "2020-01-20T00:00:00Z"
+    },
+    {
+      id: "qULTwquOuT4",
+      title: "Full Body Stretching Routine - 15 Minutes for Flexibility",
+      description: "Follow along with this full body stretching routine to improve your flexibility.",
+      thumbnailUrl: "https://img.youtube.com/vi/qULTwquOuT4/maxresdefault.jpg",
+      channelTitle: "MadFit",
+      publishedAt: "2019-11-05T00:00:00Z"
+    },
+    {
+      id: "kIVxdW9aS8k",
+      title: "Beginner Calisthenics Workout - Build Strength with Bodyweight",
+      description: "Start your calisthenics journey with these fundamental bodyweight exercises.",
+      thumbnailUrl: "https://img.youtube.com/vi/kIVxdW9aS8k/maxresdefault.jpg",
+      channelTitle: "THENX",
+      publishedAt: "2018-09-22T00:00:00Z"
+    }
+  ],
+  // Plyometrics specific fallbacks
+  'plyometrics': [
+    {
+      id: "8wKmWQBWeiQ",
+      title: "Bodyweight Plyometric Workout - No Equipment",
+      description: "Advanced bodyweight plyometric exercises for explosive power",
+      thumbnailUrl: "https://img.youtube.com/vi/8wKmWQBWeiQ/maxresdefault.jpg",
+      channelTitle: "FitnessBlender",
+      publishedAt: "2020-06-15T00:00:00Z"
+    },
+    {
+      id: "Mvo2snJGhtM",
+      title: "Explosive Jumps Workout - Plyometrics Training",
+      description: "HIIT bodyweight jumping exercises for athletic performance",
+      thumbnailUrl: "https://img.youtube.com/vi/Mvo2snJGhtM/maxresdefault.jpg",
+      channelTitle: "THENX",
+      publishedAt: "2020-07-22T00:00:00Z"
+    },
+    {
+      id: "IODxDxX7oi4",
+      title: "Box Jumps and Plyo Jumps Tutorial",
+      description: "Learn proper form for explosive jumping exercises",
+      thumbnailUrl: "https://img.youtube.com/vi/IODxDxX7oi4/maxresdefault.jpg",
+      channelTitle: "Jump Rope Dudes",
+      publishedAt: "2019-11-05T00:00:00Z"
+    },
+    {
+      id: "DHOPWvO3ZcI",
+      title: "Bodyweight Plyometric Legs Workout",
+      description: "Build power and explosiveness with these jumping exercises",
+      thumbnailUrl: "https://img.youtube.com/vi/DHOPWvO3ZcI/maxresdefault.jpg",
+      channelTitle: "MadFit",
+      publishedAt: "2019-05-12T00:00:00Z"
+    }
+  ],
+  // Stretching specific fallbacks
+  'stretching': [
+    {
+      id: "sTxC3J3gQEU",
+      title: "Full Body Flexibility Routine - 15 Minutes",
+      description: "Follow along stretching routine for whole body mobility",
+      thumbnailUrl: "https://img.youtube.com/vi/sTxC3J3gQEU/maxresdefault.jpg",
+      channelTitle: "MadFit",
+      publishedAt: "2020-04-18T00:00:00Z"
+    },
+    {
+      id: "g_tea8ZNk5A",
+      title: "Hamstring Stretches for Tight Hamstrings",
+      description: "Increase flexibility in your hamstrings with these stretches",
+      thumbnailUrl: "https://img.youtube.com/vi/g_tea8ZNk5A/maxresdefault.jpg",
+      channelTitle: "Tom Merrick",
+      publishedAt: "2019-02-15T00:00:00Z"
+    },
+    {
+      id: "L_xrDAtykMI",
+      title: "Post-Workout Stretching Routine",
+      description: "Cool down properly with this post-workout stretching sequence",
+      thumbnailUrl: "https://img.youtube.com/vi/L_xrDAtykMI/maxresdefault.jpg",
+      channelTitle: "FitnessBlender",
+      publishedAt: "2018-06-20T00:00:00Z"
+    },
+    {
+      id: "qULTwquOuT4",
+      title: "Morning Stretching Routine - Wake Up and Stretch",
+      description: "Start your day with this energizing stretching sequence",
+      thumbnailUrl: "https://img.youtube.com/vi/qULTwquOuT4/maxresdefault.jpg",
+      channelTitle: "Yoga With Adriene",
+      publishedAt: "2019-08-10T00:00:00Z"
+    }
+  ],
+  // HIIT specific fallbacks
+  'hiit': [
+    {
+      id: "ml6cT4AZdqI",
+      title: "30-Minute HIIT Workout - No Equipment",
+      description: "Full body HIIT workout that's apartment-friendly with no equipment required.",
+      thumbnailUrl: "https://img.youtube.com/vi/ml6cT4AZdqI/maxresdefault.jpg",
+      channelTitle: "SELF",
+      publishedAt: "2020-03-15T00:00:00Z"
+    },
+    {
+      id: "50kH47ZFHrs",
+      title: "20-Minute HIIT Cardio Workout - No Equipment",
+      description: "Burn calories with this high intensity interval training session",
+      thumbnailUrl: "https://img.youtube.com/vi/50kH47ZFHrs/maxresdefault.jpg",
+      channelTitle: "FitnessBlender",
+      publishedAt: "2019-11-27T00:00:00Z"
+    },
+    {
+      id: "TkaYafQ-XC4",
+      title: "HIIT Workout for Fat Loss - 15 Minutes",
+      description: "High intensity bodyweight exercises to boost metabolism",
+      thumbnailUrl: "https://img.youtube.com/vi/TkaYafQ-XC4/maxresdefault.jpg",
+      channelTitle: "MadFit",
+      publishedAt: "2020-01-03T00:00:00Z"
+    },
+    {
+      id: "OWoSE0WK4eE",
+      title: "Tabata Workout - 4-Minute Intervals",
+      description: "High intensity Tabata intervals for maximum effort training",
+      thumbnailUrl: "https://img.youtube.com/vi/OWoSE0WK4eE/maxresdefault.jpg",
+      channelTitle: "Heather Robertson",
+      publishedAt: "2019-05-25T00:00:00Z"
+    }
+  ],
+  // Calisthenics specific fallbacks
+  'calisthenics': [
+    {
+      id: "kIVxdW9aS8k",
+      title: "Beginner Calisthenics Workout - Build Strength with Bodyweight",
+      description: "Start your calisthenics journey with these fundamental bodyweight exercises.",
+      thumbnailUrl: "https://img.youtube.com/vi/kIVxdW9aS8k/maxresdefault.jpg",
+      channelTitle: "THENX",
+      publishedAt: "2018-09-22T00:00:00Z"
+    },
+    {
+      id: "sWj819Id_O0",
+      title: "Push Up Progressions - From Beginner to Advanced",
+      description: "Master various push up variations for upper body strength",
+      thumbnailUrl: "https://img.youtube.com/vi/sWj819Id_O0/maxresdefault.jpg",
+      channelTitle: "FitnessFAQs",
+      publishedAt: "2019-03-12T00:00:00Z"
+    },
+    {
+      id: "fO_Hc2Y27O0",
+      title: "Full Body Calisthenics Workout - No Equipment Needed",
+      description: "Complete bodyweight workout targeting all major muscle groups",
+      thumbnailUrl: "https://img.youtube.com/vi/fO_Hc2Y27O0/maxresdefault.jpg",
+      channelTitle: "THENX",
+      publishedAt: "2018-11-18T00:00:00Z"
+    },
+    {
+      id: "8GL73mrsvJ8",
+      title: "Core Strength Workout - Bodyweight Only",
+      description: "Build a strong core with these calisthenics exercises",
+      thumbnailUrl: "https://img.youtube.com/vi/8GL73mrsvJ8/maxresdefault.jpg",
+      channelTitle: "Calisthenicmovement",
+      publishedAt: "2019-10-05T00:00:00Z"
+    }
+  ],
+  // Weightlifting specific fallbacks
+  'weightlifting': [
+    {
+      id: "rMsaGRMNvrA",
+      title: "Dumbbell Workout for Beginners - Full Body",
+      description: "Complete dumbbell workout for building muscle and strength",
+      thumbnailUrl: "https://img.youtube.com/vi/rMsaGRMNvrA/maxresdefault.jpg",
+      channelTitle: "FitnessBlender",
+      publishedAt: "2020-02-13T00:00:00Z"
+    },
+    {
+      id: "U8Li9TlR3Sk",
+      title: "Proper Form for Basic Barbell Exercises",
+      description: "Learn correct technique for fundamental barbell lifts",
+      thumbnailUrl: "https://img.youtube.com/vi/U8Li9TlR3Sk/maxresdefault.jpg",
+      channelTitle: "Jeff Nippard",
+      publishedAt: "2019-04-22T00:00:00Z"
+    },
+    {
+      id: "6JX40FZk7oE",
+      title: "Kettlebell Training for Beginners",
+      description: "Essential kettlebell exercises and proper form tutorial",
+      thumbnailUrl: "https://img.youtube.com/vi/6JX40FZk7oE/maxresdefault.jpg",
+      channelTitle: "Bodybuilding.com",
+      publishedAt: "2018-08-30T00:00:00Z"
+    },
+    {
+      id: "nhoikoUEI8U",
+      title: "Home Workout with Dumbbells - Upper Body Focus",
+      description: "Build strength and muscle with this dumbbell workout",
+      thumbnailUrl: "https://img.youtube.com/vi/nhoikoUEI8U/maxresdefault.jpg",
+      channelTitle: "ATHLEAN-X",
+      publishedAt: "2019-09-10T00:00:00Z"
+    }
+  ]
+};
 
 export const searchExerciseVideos = async (
   exerciseName: string, 
@@ -258,31 +436,38 @@ export const searchExerciseVideos = async (
 
 // Helper function to get fallback videos based on exercise context
 function getFallbackVideos(exerciseName: string, equipment?: string): YouTubeVideo[] {
-  // Filter fallbacks to try to match the exercise type if possible
+  // Determine which category of videos to use based on exercise name and equipment
   const lowerName = exerciseName.toLowerCase();
-  const isCardio = lowerName.includes('cardio') || lowerName.includes('hiit');
-  const isStrength = lowerName.includes('strength') || lowerName.includes('weight');
-  const isYoga = lowerName.includes('yoga') || lowerName.includes('pose');
-  const isPlyo = lowerName.includes('jump') || lowerName.includes('plyo');
-  const isStretch = lowerName.includes('stretch') || lowerName.includes('mobility');
   
-  // Try to match one video that's relevant to the exercise type
-  let matchedVideo = fallbackFitnessVideos[0]; // Default to first
+  // Match exercise type to our fallback categories
+  let categoryKey = 'general';
   
-  if (isCardio) {
-    matchedVideo = fallbackFitnessVideos[0]; // HIIT video
-  } else if (isPlyo) {
-    matchedVideo = fallbackFitnessVideos[1]; // Plyometrics video
-  } else if (isStretch) {
-    matchedVideo = fallbackFitnessVideos[2]; // Stretching video
-  } else if (isYoga) {
-    matchedVideo = fallbackFitnessVideos[2]; // Stretching video (close to yoga)
-  } else {
-    matchedVideo = fallbackFitnessVideos[3]; // Calisthenics/strength
+  if (lowerName.includes('jump') || lowerName.includes('plyo') || lowerName.includes('explosive')) {
+    categoryKey = 'plyometrics';
+  } else if (lowerName.includes('cardio') || lowerName.includes('hiit') || lowerName.includes('interval')) {
+    categoryKey = 'hiit';
+  } else if (lowerName.includes('stretch') || lowerName.includes('mobility') || lowerName.includes('flexibility')) {
+    categoryKey = 'stretching';
+  } else if (lowerName.includes('calisthenics') || lowerName.includes('bodyweight') || lowerName.includes('push up')) {
+    categoryKey = 'calisthenics';
+  } else if (equipment && (equipment.includes('dumbbell') || equipment.includes('barbell') || equipment.includes('weight'))) {
+    categoryKey = 'weightlifting';
   }
   
-  // Return a mix of matched video and others to provide variety
-  return [matchedVideo, ...fallbackFitnessVideos.filter(v => v.id !== matchedVideo.id).slice(0, 3)];
+  // If we don't have a specific category for this exercise type, use general
+  const videosForCategory = fallbackFitnessVideos[categoryKey] || fallbackFitnessVideos['general'];
+  
+  // Shuffle the videos to provide variety
+  // We use a deterministic shuffle based on the exercise name to ensure consistent results
+  const hash = exerciseName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const shuffledVideos = [...videosForCategory].sort((a: YouTubeVideo, b: YouTubeVideo) => {
+    const numA = a.id.charCodeAt(0) + hash;
+    const numB = b.id.charCodeAt(0) + hash;
+    return numA - numB;
+  });
+  
+  // Return 4 videos for this category
+  return shuffledVideos.slice(0, 4);
 };
 
 /**
