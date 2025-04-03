@@ -42,7 +42,7 @@ export function StretchingIcon(props: any) {
   );
 }
 
-type TabType = "meditation" | "weightlifting" | "yoga" | "running" | "hiit" | "plyometrics" | "stretch" | "calisthenics";
+type TabType = "meditation" | "weightlifting" | "yoga" | "running" | "hiit" | "stretch";
 
 // Wellness green from design system
 const WELLNESS_COLOR = "#10b981";
@@ -233,77 +233,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
         </div>
       );
     
-    case "plyometrics":
-      return (
-        <div className="space-y-4">
-          <div className="pb-4 mb-4 border-b" style={{ borderColor: WELLNESS_COLOR }}>
-            <div className="flex items-center">
-              <Activity className="h-6 w-6 mr-2" style={{ color: WELLNESS_COLOR }} />
-              <h2 className="text-xl font-bold" style={{ color: WELLNESS_COLOR }}>
-                Plyometrics
-              </h2>
-            </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              Explosive movement training to build power and athleticism
-            </p>
-          </div>
-          <Card className="overflow-hidden">
-            <CardHeader className="pb-0">
-              <CardTitle>Plyometric Training</CardTitle>
-              <CardDescription>
-                Use explosive movements to increase power, speed, and athletic performance
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-4">
-              <Alert className="bg-amber-50 border-amber-200">
-                <AlertDescription className="text-amber-800 flex flex-col space-y-2">
-                  <p className="font-medium">Safety First</p>
-                  <p>Plyometric training involves high-impact exercises. Ensure proper form, use appropriate footwear, and land softly with bent knees.</p>
-                </AlertDescription>
-              </Alert>
-              
-              <div className="mb-6">
-                <h3 className="font-medium text-lg my-3">Plyometric Programs</h3>
-                <div className="grid gap-4">
-                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">Lower Body Power</div>
-                    <p className="text-sm text-muted-foreground mb-2">3 sets of 8-12 reps with full recovery between sets</p>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-wellness-600 font-medium">Exercises:</span>
-                      <span>Box Jumps, Broad Jumps, Jump Squats, Lateral Bounds</span>
-                    </div>
-                  </div>
-                  
-                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">Upper Body Power</div>
-                    <p className="text-sm text-muted-foreground mb-2">3 sets of 6-10 reps with full recovery between sets</p>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-wellness-600 font-medium">Exercises:</span>
-                      <span>Plyo Push-ups, Medicine Ball Chest Passes, Clap Push-ups</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-lg mb-3">Plyometric Exercises</h3>
-                <FitnessExercises 
-                  muscleFilter="legs" 
-                  equipmentFilter="body weight"
-                  difficultyFilter="intermediate"
-                  categoryFilter="plyometrics"
-                  keywordFilter="jump"
-                  showFilters={false} 
-                  compactView={true}
-                  maxExercises={3}
-                  // Enforce stricter filtering to ensure we only get bodyweight exercises
-                />
-              </div>
-            </CardContent>
-          </Card>
-          <FitnessProgress />
-        </div>
-      );
+    // Plyometrics section has been removed
       
     case "stretch":
       return (
@@ -383,50 +313,7 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
         </div>
       );
       
-    case "calisthenics":
-      return (
-        <div className="space-y-4">
-          <div className="pb-4 mb-4 border-b" style={{ borderColor: WELLNESS_COLOR }}>
-            <div className="flex items-center">
-              <Waypoints className="h-6 w-6 mr-2" style={{ color: WELLNESS_COLOR }} />
-              <h2 className="text-xl font-bold" style={{ color: WELLNESS_COLOR }}>
-                Calisthenics
-              </h2>
-            </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              Bodyweight exercises for strength, flexibility, and skill development
-            </p>
-          </div>
-          <Card className="overflow-hidden">
-            <CardHeader className="pb-0">
-              <CardTitle>Calisthenics Fundamentals</CardTitle>
-              <CardDescription>
-                Novice-level bodyweight exercises to build foundational strength
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-4">
-              <Alert className="bg-green-50 border-green-200">
-                <AlertDescription className="text-green-800 flex flex-col space-y-2">
-                  <p className="font-medium">Perfect Form First</p>
-                  <p>Focus on mastering the basics with perfect form before progressing to more advanced movements.</p>
-                </AlertDescription>
-              </Alert>
-              
-              <FitnessExercises 
-                muscleFilter="full body" 
-                equipmentFilter="body weight" 
-                difficultyFilter="beginner"
-                categoryFilter="calisthenics"
-                keywordFilter="push up"
-                showFilters={false}
-                compactView={true}
-                maxExercises={4}
-              />
-            </CardContent>
-          </Card>
-          <FitnessProgress />
-        </div>
-      );
+    // Calisthenics section has been removed
       
     default:
       return null;
