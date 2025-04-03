@@ -86,6 +86,25 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                   Find exercises that match your equipment and experience level
                 </AlertDescription>
               </Alert>
+              
+              <div className="mb-6">
+                <h3 className="font-medium text-lg my-3">Sample Routine</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Full Body Strength</div>
+                    <p className="text-sm text-muted-foreground mb-2">Target all major muscle groups with compound movements</p>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">1.</span> Barbell Squat: 3 sets of 8-10 reps</div>
+                      <div><span className="font-medium">2.</span> Deadlift: 3 sets of 6-8 reps</div>
+                      <div><span className="font-medium">3.</span> Bench Press: 3 sets of 8-10 reps</div>
+                      <div><span className="font-medium">4.</span> Bent-over Rows: 3 sets of 10-12 reps</div>
+                      <div><span className="font-medium">5.</span> Overhead Press: 3 sets of 8-10 reps</div>
+                      <div><span className="font-medium">6.</span> Bicep Curls: 3 sets of 12-15 reps</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               <FitnessExercises 
                 muscleFilter="strength" 
                 equipmentFilter="barbell" 
@@ -123,12 +142,31 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 Improve flexibility, balance, and mindfulness with these yoga poses
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent className="pt-4 space-y-4">
               <Alert className="bg-blue-50 border-blue-200 mb-4">
                 <AlertDescription className="text-blue-800">
                   Find yoga poses suitable for your experience level
                 </AlertDescription>
               </Alert>
+              
+              <div className="mb-6">
+                <h3 className="font-medium text-lg my-3">Sample Routine</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Beginner Yoga Flow</div>
+                    <p className="text-sm text-muted-foreground mb-2">Hold each pose for 30-60 seconds, focusing on breath and form</p>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">1.</span> Downward Dog: Opens shoulders and stretches hamstrings</div>
+                      <div><span className="font-medium">2.</span> Child's Pose: Relaxes the spine and shoulders</div>
+                      <div><span className="font-medium">3.</span> Cobra Pose: Strengthens the spine and opens the chest</div>
+                      <div><span className="font-medium">4.</span> Seated Forward Bend: Stretches lower back and hamstrings</div>
+                      <div><span className="font-medium">5.</span> Cat-Cow Stretch: Improves spinal flexibility</div>
+                      <div><span className="font-medium">6.</span> Lying Spinal Twist: Releases tension in the back</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               <FitnessExercises 
                 muscleFilter="flexibility" 
                 equipmentFilter="body weight" 
@@ -167,12 +205,31 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 Strengthen key muscle groups to improve running performance and prevent injuries
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent className="pt-4 space-y-4">
               <Alert className="bg-blue-50 border-blue-200 mb-4">
                 <AlertDescription className="text-blue-800">
                   Exercises to enhance running performance and prevent common injuries
                 </AlertDescription>
               </Alert>
+              
+              <div className="mb-6">
+                <h3 className="font-medium text-lg my-3">Runner's Strength Routine</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Lower Body Support</div>
+                    <p className="text-sm text-muted-foreground mb-2">Perform 2-3 times per week to support running performance</p>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">1.</span> Lunges: Strengthens quadriceps and glutes</div>
+                      <div><span className="font-medium">2.</span> Calf Raises: Targets calf muscles for push-off power</div>
+                      <div><span className="font-medium">3.</span> Hamstring Curls: Focuses on hamstrings for injury prevention</div>
+                      <div><span className="font-medium">4.</span> Planks: Strengthens core for better running posture</div>
+                      <div><span className="font-medium">5.</span> Leg Swings: Enhances hip flexibility for stride length</div>
+                      <div><span className="font-medium">6.</span> Ankle Circles: Improves ankle mobility for varied terrain</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               <FitnessExercises 
                 muscleFilter="legs" 
                 equipmentFilter="body weight"
@@ -222,18 +279,24 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                   <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
                     <div className="font-medium text-lg mb-1">Tabata Protocol</div>
                     <p className="text-sm text-muted-foreground mb-2">20 seconds work, 10 seconds rest for 8 rounds (4 minutes total)</p>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-wellness-600 font-medium">Suggested exercises:</span>
-                      <span>Burpees, High Knees, Mountain Climbers, Jump Squats</span>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">Exercise 1:</span> Jump Squats (engages lower body, elevates heart rate)</div>
+                      <div><span className="font-medium">Exercise 2:</span> Burpees (full-body exercise for cardiovascular fitness)</div>
+                      <div><span className="font-medium">Exercise 3:</span> Mountain Climbers (targets core and legs)</div>
+                      <div><span className="font-medium">Exercise 4:</span> Push-ups (strengthens chest and triceps)</div>
+                      <div><span className="font-medium">Exercise 5:</span> High Knees (improves cardiovascular endurance)</div>
+                      <div><span className="font-medium">Exercise 6:</span> Plank to Shoulder Tap (engages core and shoulders)</div>
                     </div>
                   </div>
                   
                   <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
                     <div className="font-medium text-lg mb-1">30-30 Intervals</div>
                     <p className="text-sm text-muted-foreground mb-2">30 seconds work, 30 seconds rest for 10-20 minutes</p>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-wellness-600 font-medium">Suggested exercises:</span>
-                      <span>Kettlebell Swings, Battle Ropes, Box Jumps, Sprints</span>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">Exercise 1:</span> Kettlebell Swings (builds posterior chain power)</div>
+                      <div><span className="font-medium">Exercise 2:</span> Box Jumps (develops explosive leg strength)</div>
+                      <div><span className="font-medium">Exercise 3:</span> Battle Ropes (challenges upper body endurance)</div>
+                      <div><span className="font-medium">Exercise 4:</span> Sprints (maximizes calorie burn)</div>
                     </div>
                   </div>
                 </div>
@@ -292,20 +355,24 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                 <h3 className="font-medium text-lg mb-3">Recommended Routines</h3>
                 <div className="grid gap-4">
                   <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Full Body Flexibility Routine</div>
+                    <p className="text-sm text-muted-foreground mb-2">Hold each stretch for 30 seconds, 2-3 rounds</p>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">1.</span> Standing Hamstring Stretch: Targets back of legs</div>
+                      <div><span className="font-medium">2.</span> Quadriceps Stretch: Focuses on front of thighs</div>
+                      <div><span className="font-medium">3.</span> Chest Opener Stretch: Opens chest and shoulders</div>
+                      <div><span className="font-medium">4.</span> Seated Spinal Twist: Enhances spinal flexibility</div>
+                      <div><span className="font-medium">5.</span> Butterfly Stretch: Targets inner thighs and hips</div>
+                      <div><span className="font-medium">6.</span> Triceps Stretch: Stretches back of upper arms</div>
+                    </div>
+                  </div>
+                  
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
                     <div className="font-medium text-lg mb-1">Dynamic Warm-Up Routine</div>
                     <p className="text-sm text-muted-foreground mb-2">Perform before workouts to prepare muscles and joints</p>
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-wellness-600 font-medium">Duration:</span>
                       <span>5-10 minutes</span>
-                    </div>
-                  </div>
-                  
-                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">Full Body Flexibility</div>
-                    <p className="text-sm text-muted-foreground mb-2">Hold each stretch for 30 seconds, 2-3 rounds</p>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-wellness-600 font-medium">Target areas:</span>
-                      <span>Hamstrings, Hip Flexors, Shoulders, Lower Back</span>
                     </div>
                   </div>
                   
