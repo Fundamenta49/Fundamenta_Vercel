@@ -4,10 +4,14 @@ This document outlines the design system and UI/UX protocol for the application 
 
 ## Color Palette
 
-### Primary Colors
-- **Primary Red:** `#b91c1c` - Used for emergency sections, warnings, and critical information
-- **Primary Blue:** `#3b82f6` - Used for informational elements, learning resources, and navigation
-- **Primary Green:** `#10b981` - Used for success states, confirmation, and positive actions
+### Section-Specific Colors
+- **Emergency Red:** `#b91c1c` - Used for emergency sections
+- **Financial Blue:** `#3b82f6` - Used for financial guidance sections
+- **Wellness Green:** `#10b981` - Used for wellness and nutrition sections
+- **Career Purple:** `#8b5cf6` - Used for career development sections
+- **Learning Yellow:** `#f59e0b` - Used for learning and educational sections
+
+Each section maintains its unique color identity while sharing common structural elements.
 
 ### Neutral Colors
 - **Background:** `#ffffff` (Light mode), `#1f2937` (Dark mode)
@@ -67,16 +71,17 @@ We use a consistent spacing scale throughout the application:
 - **Active State:** Slightly darker background
 - **Transition:** 0.2s ease-in-out for all transitions
 
-### Emergency Card
+### Section Cards
 - Same as Standard Card, plus:
-- **Border:** 1px solid Primary Red
-- **Icon Color:** Primary Red
-- **Heading Color:** Primary Red
+- **Border:** 1px solid section color (Emergency Red, Financial Blue, etc.)
+- **Icon Color:** Section color
+- **Heading Color:** Section color
+- Each section maintains its unique color while following the same structure
 
 ### Resource Card
 - Same as Standard Card, plus:
-- **Icon Background:** Light primary color (blue/10%)
-- **Icon Color:** Primary Blue
+- **Icon Background:** Light section color (at 10% opacity)
+- **Icon Color:** Section color
 
 ## Dialog Components
 
@@ -196,30 +201,32 @@ We use a consistent spacing scale throughout the application:
 - **Large Size:** 2rem (32px)
 - **Color:** Inherit from text color, or specified semantic color
 
-## Emergency Module Standards
+## Section-Specific Module Standards
 
-### Emergency Section Header
-- **Color:** Primary Red
-- **Icon:** Alert or Emergency-related icon from Lucide
-- **Border:** Bottom border 1px solid Primary Red
+### Section Headers
+- **Color:** Section-specific color (Emergency Red, Financial Blue, etc.)
+- **Icon:** Section-relevant icon from Lucide
+- **Border:** Bottom border 1px solid section color
 
-### Warning/Alert Box
-- **Background:** Primary Red at 10% opacity
-- **Border:** 1px solid Primary Red
-- **Icon Color:** Primary Red
-- **Text Color:** Primary Red
+### Alert Boxes (Only for Emergency Sections)
+- **Background:** Emergency Red at 10% opacity
+- **Border:** 1px solid Emergency Red
+- **Icon Color:** Emergency Red
+- **Text Color:** Emergency Red
 - **Border Radius:** md (0.5rem)
 - **Padding:** md (1rem)
+- **Note:** Alert boxes should only be used for actual warnings/critical information
 
 ### Instruction Lists
 - **Item Spacing:** md (1rem)
 - **Icon:** Check or numbered bullets
-- **Icon Color:** Primary color
+- **Icon Color:** Section-specific color
+- **List Style:** Consistent within each section (either bullets, numbers, or check marks)
 
-### Before/During/After Tabs
-- **Background:** Primary Red
+### TabGroup Navigation
+- **Background:** Section-specific color
 - **Text Color:** White
-- **Active Tab:** Slightly darker shade of Primary Red
+- **Active Tab:** Slightly darker shade of section color
 - **Border Radius:** md (0.5rem) md (0.5rem) 0 0
 - **Padding:** sm (0.75rem) md (1rem)
 
@@ -254,3 +261,38 @@ We use a consistent spacing scale throughout the application:
 - Use Shadcn UI components as the foundation
 - Custom components should follow these standards and extend Shadcn UI patterns
 - Use CSS variables where appropriate to ensure theme consistency
+
+## UI/UX Protocol Quick Reference
+
+### Dialog Implementation Flow
+1. Create a primary entry component (Card or Button)
+2. Link to FullScreenDialog for expanded content
+3. Use consistent header structure with proper spacing
+4. Ensure menu button remains accessible
+5. Implement proper swipe handle with adequate spacing
+
+### Component Structure Pattern
+- Keep a consistent pattern within each section
+- Maintain unique section color identity
+- Follow standard spacing and layout guidelines
+- Use the same component pattern for similar functionality across sections
+- Modals and dialogs should share common markup structure
+
+### Dialog Nesting Best Practices
+- Limit nesting to 2 levels (main dialog → sub-dialog)
+- Ensure consistent back navigation
+- Maintain animation consistency
+- Keep z-index management consistent
+- All dialogs must have a clear way to return/close
+
+### Checkbox Implementation
+- Use ShadcnUI Checkbox component when possible
+- Ensure consistent behavior and styling within sections
+- Maintain proper focus and hover states
+- Ensure adequate touch target size on mobile
+
+### Video Player Implementation
+- Use VideoPlayerDialog component consistently
+- Maintain 16:9 aspect ratio for video containers
+- Ensure proper YouTube embedding parameters
+- Provide loading states for video content
