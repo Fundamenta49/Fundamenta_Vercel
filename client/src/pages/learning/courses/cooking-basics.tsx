@@ -185,7 +185,7 @@ const introContent = (
 
 export default function CookingBasics() {
   const [activeDialogContent, setActiveDialogContent] = useState<{
-    type: 'intro' | 'kitchen-tools' | 'cooking-tutorials' | 'recipe-explorer';
+    type: 'intro' | 'kitchen-tools' | 'cooking-tutorials' | 'recipe-explorer' | 'kitchen-skills';
     title: string;
     description: string;
     icon: React.ReactNode;
@@ -196,7 +196,7 @@ export default function CookingBasics() {
   
   // Opens a dialog with the corresponding content
   const openDialog = (
-    type: 'intro' | 'kitchen-tools' | 'cooking-tutorials' | 'recipe-explorer',
+    type: 'intro' | 'kitchen-tools' | 'cooking-tutorials' | 'recipe-explorer' | 'kitchen-skills',
     title: string,
     description: string,
     icon: React.ReactNode,
@@ -224,11 +224,13 @@ export default function CookingBasics() {
       case 'intro':
         return introContent;
       case 'kitchen-tools':
-        return <KitchenSkillsLearning />;
+        return <KitchenEssentials />;
       case 'cooking-tutorials':
         return <CookingTutorialsNew />;
       case 'recipe-explorer':
         return <RecipeExplorer />;
+      case 'kitchen-skills':
+        return <KitchenSkillsLearning />;
       default:
         return null;
     }
@@ -409,6 +411,28 @@ export default function CookingBasics() {
             <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
               <Cookie className="h-3.5 w-3.5 mr-1.5" />
               Discover Desserts
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        {/* Kitchen Skills Learning */}
+        <Card 
+          className="cursor-pointer transition-all duration-200 hover:scale-[1.02] border-learning-color shadow-sm overflow-hidden"
+          onClick={() => openDialog('kitchen-skills', 'Kitchen Skills Academy', 'Master essential cooking techniques step by step', <ChefHat className="h-5 w-5" />, 'yellow' as ColorKey)}
+        >
+          <CardHeader className="pb-2 pt-4 text-center">
+            <div className="w-16 h-16 mx-auto bg-yellow-100 rounded-full flex items-center justify-center mb-2">
+              <ChefHat className="h-8 w-8 text-yellow-600" />
+            </div>
+            <CardTitle className="text-base">Kitchen Skills Academy</CardTitle>
+            <CardDescription className="text-xs">
+              Master essential cooking techniques
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-1 pb-4 justify-center">
+            <Button variant="ghost" size="sm" className="text-xs h-8 flex items-center">
+              <ChefHat className="h-3.5 w-3.5 mr-1.5" />
+              Start Learning
             </Button>
           </CardFooter>
         </Card>
