@@ -319,33 +319,36 @@ const cookingTutorials: CookingTutorial[] = [
   
   // LUNCH RECIPES
   {
-    id: 'grilled-cheese',
-    name: 'Perfect Grilled Cheese',
-    description: 'Master this classic sandwich - crispy outside, gooey melted cheese inside.',
+    id: 'lunch-box-recipes',
+    name: 'Gordon Ramsay\'s Lunch Box Recipes',
+    description: 'Learn how to prepare three delicious and portable lunch recipes from chef Gordon Ramsay.',
     category: 'lunch',
     difficulty: 'beginner',
-    videoId: 'OMPr7YP4fd8',
-    thumbnailUrl: 'https://img.youtube.com/vi/OMPr7YP4fd8/hqdefault.jpg',
-    duration: 10,
+    videoId: 'AKJVidl9s_0',
+    thumbnailUrl: 'https://img.youtube.com/vi/AKJVidl9s_0/hqdefault.jpg',
+    duration: 12,
+    featured: true,
     steps: [
-      'Butter one side of each bread slice',
-      'Place bread butter-side down in pan over medium-low heat',
-      'Add cheese on top of bread in pan',
-      'Place second slice of bread on top, butter-side up',
-      'Cook until golden brown on bottom (2-3 minutes)',
-      'Flip sandwich and cook until second side is golden and cheese is melted'
+      'Choose which of the three recipes you want to prepare',
+      'Gather all ingredients and prep them as directed',
+      'Cook components according to instructions',
+      'Assemble your lunch in a portable container',
+      'Allow to cool before sealing if needed',
+      'Pack with appropriate silverware and napkins'
     ],
     tips: [
-      'Use butter at room temperature for easy spreading',
-      'Cook on medium-low heat for even browning and melting',
-      'Cover with a lid to help the cheese melt completely',
-      'Add extras like tomato or ham for variations'
+      'Prepare components the night before to save time',
+      'Use containers that won\'t leak or spill',
+      'Keep hot and cold items separate',
+      'Include a variety of textures and flavors for a satisfying lunch'
     ],
     ingredients: [
-      'Bread (white, sourdough, etc.)',
-      'Cheese (American, cheddar, gruyere, etc.)',
-      'Butter',
-      'Optional add-ins: tomato, ham, herbs'
+      'Varies by recipe - see video for specific ingredients',
+      'Fresh vegetables',
+      'Protein sources',
+      'Grains or bread',
+      'Herbs and spices',
+      'Dressings or sauces'
     ]
   },
   {
