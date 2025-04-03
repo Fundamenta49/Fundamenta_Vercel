@@ -11,6 +11,7 @@ import MeditationGuide from "./meditation-guide";
 import FitnessProgress from "./fitness-progress";
 import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Dumbbell,
   Bird as YogaIcon,
@@ -20,6 +21,7 @@ import {
   Activity,
   Waypoints,
   Info,
+  X,
 } from "lucide-react";
 
 // Custom Stretch icon component
@@ -43,6 +45,18 @@ export function StretchingIcon(props: any) {
   );
 }
 
+// Define interfaces for exercise details
+interface ExerciseDetails {
+  name: string;
+  category: string;
+  description: string;
+  instructions: string[];
+  benefits: string[];
+  tips: string[];
+  imageUrl?: string;
+  videoUrl?: string;
+}
+
 type TabType = "meditation" | "weightlifting" | "yoga" | "running" | "hiit" | "stretch";
 
 // Wellness green from design system
@@ -53,8 +67,235 @@ interface ActiveYouProps {
 }
 
 export default function ActiveYou({ defaultTab }: ActiveYouProps) {
-  // Simplified implementation that follows the design system but without full-screen dialogs
-  // The parent component should handle the dialog wrapping
+  // State for managing the exercise detail dialog
+  const [selectedExercise, setSelectedExercise] = useState<ExerciseDetails | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Sample exercise details for yoga poses
+  const yogaExercises: Record<string, ExerciseDetails> = {
+    "downwardDog": {
+      name: "Downward Dog (Adho Mukha Svanasana)",
+      category: "yoga",
+      description: "A foundational yoga pose that stretches and strengthens the entire body.",
+      instructions: [
+        "Start on hands and knees with wrists under shoulders and knees under hips",
+        "Lift knees off the floor and push hips up and back",
+        "Straighten legs as much as comfortable, press heels toward the floor",
+        "Create an inverted V-shape with your body",
+        "Keep arms straight and shoulders away from ears",
+        "Hold for 5-10 breaths"
+      ],
+      benefits: [
+        "Stretches hamstrings, calves, and shoulders",
+        "Strengthens arms, shoulders, and legs",
+        "Relieves back pain and improves posture",
+        "Increases blood flow to the brain",
+        "Calms the nervous system"
+      ],
+      tips: [
+        "Bend knees slightly if hamstrings are tight",
+        "Press firmly through hands to protect wrists",
+        "Keep hips high and back straight",
+        "Distribute weight evenly between hands and feet"
+      ]
+    },
+    "warriorII": {
+      name: "Warrior II (Virabhadrasana II)",
+      category: "yoga",
+      description: "A powerful standing pose that builds strength and improves focus.",
+      instructions: [
+        "Stand with feet wide apart (3-4 feet)",
+        "Turn right foot out 90 degrees and left foot in slightly",
+        "Extend arms parallel to floor, palms down",
+        "Bend right knee to 90 degrees over ankle",
+        "Look over right fingertips",
+        "Keep shoulders relaxed and torso centered",
+        "Hold for 5-8 breaths, then switch sides"
+      ],
+      benefits: [
+        "Strengthens legs, ankles, and feet",
+        "Opens hips and chest",
+        "Improves focus and concentration",
+        "Builds stamina and endurance",
+        "Stimulates abdominal organs"
+      ],
+      tips: [
+        "Keep front knee aligned with ankle, not pushing beyond",
+        "Sink hips low for a deeper stretch",
+        "Keep torso upright, not leaning forward",
+        "Gaze softly over front hand to maintain balance"
+      ]
+    },
+    "treePose": {
+      name: "Tree Pose (Vrikshasana)",
+      category: "yoga",
+      description: "A balancing pose that improves focus, stability, and concentration.",
+      instructions: [
+        "Begin standing with feet hip-width apart",
+        "Shift weight to left foot and lift right foot",
+        "Place right foot on inner left thigh or calf (not on knee)",
+        "Press foot and leg against each other",
+        "Bring hands to heart center or extend overhead",
+        "Fix gaze on a non-moving point",
+        "Hold for 30-60 seconds, then switch sides"
+      ],
+      benefits: [
+        "Improves balance and focus",
+        "Strengthens ankles, calves, and thighs",
+        "Stretches inner thighs, chest, and shoulders",
+        "Develops concentration and mental clarity",
+        "Enhances posture and alignment"
+      ],
+      tips: [
+        "Start with foot lower on leg if balance is challenging",
+        "Use a wall for support if needed",
+        "Engage core muscles to maintain stability",
+        "Keep breathing steady and smooth"
+      ]
+    },
+    "bridgePose": {
+      name: "Bridge Pose (Setu Bandhasana)",
+      category: "yoga",
+      description: "A gentle backbend that opens the chest and strengthens the back.",
+      instructions: [
+        "Lie on back with knees bent, feet flat on floor hip-width apart",
+        "Place arms alongside body, palms down",
+        "Press feet into floor and lift hips up",
+        "Roll shoulders under and clasp hands below pelvis",
+        "Keep thighs and feet parallel",
+        "Hold for 30-60 seconds",
+        "Release by slowly rolling spine back to floor"
+      ],
+      benefits: [
+        "Stretches chest, neck, and spine",
+        "Strengthens back, glutes, and hamstrings",
+        "Calms the mind and reduces anxiety",
+        "Stimulates abdominal organs and thyroid",
+        "Relieves back pain"
+      ],
+      tips: [
+        "Keep knees hip-width apart throughout the pose",
+        "Press shoulders down to open chest more",
+        "Engage glutes to support the lower back",
+        "Place a block under sacrum for supported version"
+      ]
+    }
+  };
+
+  // Sample exercise details for stretching
+  const stretchExercises: Record<string, ExerciseDetails> = {
+    "hamstringStretch": {
+      name: "Standing Hamstring Stretch",
+      category: "stretching",
+      description: "An effective stretch for the back of the legs that improves flexibility and prevents injury.",
+      instructions: [
+        "Stand tall with feet hip-width apart",
+        "Place right heel on ground in front with toes pointing up",
+        "Keep left leg slightly bent for stability",
+        "Hinge forward at the hips while maintaining a straight back",
+        "Reach hands toward right foot or rest on right leg",
+        "Hold for 20-30 seconds, then switch sides"
+      ],
+      benefits: [
+        "Lengthens and releases tight hamstrings",
+        "Reduces lower back tension",
+        "Improves range of motion in hips",
+        "Enhances athletic performance",
+        "Prevents hamstring injuries"
+      ],
+      tips: [
+        "Focus on hinging at hips rather than rounding back",
+        "Keep the stretching leg straight but not locked",
+        "For deeper stretch, place foot on elevated surface",
+        "Maintain steady breathing throughout"
+      ]
+    },
+    "figureFourStretch": {
+      name: "Figure Four Stretch",
+      category: "stretching",
+      description: "A deep hip stretch that targets the piriformis and glutes to relieve tension.",
+      instructions: [
+        "Lie on back with knees bent, feet flat on floor",
+        "Cross right ankle over left thigh near knee",
+        "Reach hands through the gap and pull left thigh toward chest",
+        "Keep right foot flexed to protect knee",
+        "Hold for 30-60 seconds, then switch sides"
+      ],
+      benefits: [
+        "Opens hip rotators and relieves glute tension",
+        "Alleviates sciatic nerve pressure",
+        "Improves hip mobility and flexibility",
+        "Reduces lower back pain",
+        "Enhances posture and alignment"
+      ],
+      tips: [
+        "Keep both feet flexed throughout the stretch",
+        "Pull thigh closer for deeper stretch",
+        "Keep lower back pressed into floor",
+        "Can also be done seated in a chair"
+      ]
+    },
+    "chestStretch": {
+      name: "Doorway Chest Stretch",
+      category: "stretching",
+      description: "An effective stretch that opens the chest and counteracts rounded shoulders from sitting.",
+      instructions: [
+        "Stand in a doorway with feet staggered for balance",
+        "Raise arms to sides at 90-degree angles, forearms on doorframe",
+        "Step forward with one foot until you feel a stretch across chest",
+        "Keep posture tall, avoid arching lower back",
+        "Hold for 20-30 seconds, repeat 2-3 times"
+      ],
+      benefits: [
+        "Opens chest and stretches pectoral muscles",
+        "Counteracts rounded shoulders from desk work",
+        "Improves posture and spinal alignment",
+        "Enhances breathing capacity",
+        "Reduces upper back and shoulder tension"
+      ],
+      tips: [
+        "Adjust arm height to target different parts of chest",
+        "Keep core engaged to protect lower back",
+        "Start with less pressure and gradually increase",
+        "Take slow, deep breaths to enhance stretch"
+      ]
+    },
+    "catCowStretch": {
+      name: "Cat-Cow Stretch",
+      category: "stretching",
+      description: "A gentle flowing movement that improves spinal mobility and relieves back tension.",
+      instructions: [
+        "Start on hands and knees with wrists under shoulders and knees under hips",
+        "For cow pose: Inhale, drop belly toward floor, lift chest and tailbone up",
+        "For cat pose: Exhale, round spine toward ceiling, tuck chin and tailbone",
+        "Move smoothly between positions with breath",
+        "Repeat for 10-15 cycles"
+      ],
+      benefits: [
+        "Improves spinal flexibility and mobility",
+        "Relieves back and neck tension",
+        "Coordinates breath with movement",
+        "Massages and stimulates organs in abdomen",
+        "Calms the mind and reduces stress"
+      ],
+      tips: [
+        "Focus on initiating movement from tailbone",
+        "Keep wrists directly under shoulders to protect joints",
+        "Move slowly and mindfully with each breath",
+        "For sensitive wrists, make fists or use yoga wedges"
+      ]
+    }
+  };
+
+  // Function to handle opening the detail dialog
+  const handleShowDetails = (exerciseType: string, exerciseKey: string) => {
+    if (exerciseType === 'yoga') {
+      setSelectedExercise(yogaExercises[exerciseKey]);
+    } else if (exerciseType === 'stretch') {
+      setSelectedExercise(stretchExercises[exerciseKey]);
+    }
+    setDialogOpen(true);
+  };
 
   switch (defaultTab) {
     case "meditation":
@@ -182,7 +423,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       <div><span className="font-medium">Benefits:</span> Stretches the hamstrings, calves, and shoulders while strengthening the arms and legs</div>
                       <div><span className="font-medium">Focus on:</span> Creating an inverted V-shape with your body, pressing heels down</div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                      onClick={() => handleShowDetails('yoga', 'downwardDog')}
+                    >
                       <Info size={14} />
                       <span>Show Details</span>
                     </button>
@@ -197,7 +441,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       <div><span className="font-medium">Benefits:</span> Strengthens legs, opens hips and chest, improves concentration</div>
                       <div><span className="font-medium">Focus on:</span> Keeping the front knee aligned with ankle, extending arms fully</div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                      onClick={() => handleShowDetails('yoga', 'warriorII')}
+                    >
                       <Info size={14} />
                       <span>Show Details</span>
                     </button>
@@ -212,7 +459,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       <div><span className="font-medium">Benefits:</span> Improves balance, strengthens legs and core, enhances concentration</div>
                       <div><span className="font-medium">Focus on:</span> Keeping your standing leg strong and hips level</div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                      onClick={() => handleShowDetails('yoga', 'treePose')}
+                    >
                       <Info size={14} />
                       <span>Show Details</span>
                     </button>
@@ -227,7 +477,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       <div><span className="font-medium">Benefits:</span> Stretches chest, strengthens back and glutes, relieves stress</div>
                       <div><span className="font-medium">Focus on:</span> Keeping knees hip-width apart, engaging glutes and core</div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                      onClick={() => handleShowDetails('yoga', 'bridgePose')}
+                    >
                       <Info size={14} />
                       <span>Show Details</span>
                     </button>
@@ -469,7 +722,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       <div><span className="font-medium">How to:</span> Stand tall, place one foot in front with heel on ground, toe up. Hinge forward at the hips while maintaining straight back.</div>
                       <div><span className="font-medium">Feel it:</span> Along the back of the extended leg and possibly the lower back</div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                      onClick={() => handleShowDetails('stretch', 'hamstringStretch')}
+                    >
                       <Info size={14} />
                       <span>Show Details</span>
                     </button>
@@ -484,7 +740,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       <div><span className="font-medium">How to:</span> Lie on back, cross right ankle over left thigh, reach through legs and pull left thigh toward chest.</div>
                       <div><span className="font-medium">Feel it:</span> In the outer hip and glute of the crossed leg</div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                      onClick={() => handleShowDetails('stretch', 'figureFourStretch')}
+                    >
                       <Info size={14} />
                       <span>Show Details</span>
                     </button>
@@ -499,7 +758,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       <div><span className="font-medium">How to:</span> Stand in doorway, place forearms on door frame at 90° angles, lean forward gently.</div>
                       <div><span className="font-medium">Feel it:</span> Across chest and front of shoulders</div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                      onClick={() => handleShowDetails('stretch', 'chestStretch')}
+                    >
                       <Info size={14} />
                       <span>Show Details</span>
                     </button>
@@ -514,7 +776,10 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
                       <div><span className="font-medium">How to:</span> Start on hands and knees, alternate between arching (cow) and rounding (cat) your back.</div>
                       <div><span className="font-medium">Feel it:</span> Throughout the entire spine and core</div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                      onClick={() => handleShowDetails('stretch', 'catCowStretch')}
+                    >
                       <Info size={14} />
                       <span>Show Details</span>
                     </button>
@@ -546,4 +811,82 @@ export default function ActiveYou({ defaultTab }: ActiveYouProps) {
     default:
       return null;
   }
+  
+  // Exercise detail dialog component
+  return (
+    <>
+      {/* The component returned above based on the tab */}
+      
+      {/* Exercise Details Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          {selectedExercise && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center justify-between">
+                  <DialogTitle className="text-xl font-bold">{selectedExercise.name}</DialogTitle>
+                  <button 
+                    className="rounded-full p-1 hover:bg-gray-100" 
+                    onClick={() => setDialogOpen(false)}
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+                <DialogDescription>
+                  {selectedExercise.category === 'yoga' ? 'Yoga Pose' : 'Stretching Exercise'}
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="mt-4 space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Description</h3>
+                  <p className="text-gray-700">{selectedExercise.description}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-2">How to Perform</h3>
+                  <ol className="list-decimal pl-5 space-y-1">
+                    {selectedExercise.instructions.map((instruction, index) => (
+                      <li key={index} className="text-gray-700">{instruction}</li>
+                    ))}
+                  </ol>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Benefits</h3>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {selectedExercise.benefits.map((benefit, index) => (
+                      <li key={index} className="text-gray-700">{benefit}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Tips for Best Results</h3>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {selectedExercise.tips.map((tip, index) => (
+                      <li key={index} className="text-gray-700">{tip}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                {selectedExercise.imageUrl && (
+                  <div>
+                    <h3 className="text-lg font-medium mb-2">Visual Guide</h3>
+                    <div className="rounded-lg overflow-hidden">
+                      <img 
+                        src={selectedExercise.imageUrl} 
+                        alt={`${selectedExercise.name} demonstration`} 
+                        className="w-full object-cover" 
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
