@@ -26,9 +26,31 @@ interface RunningSession {
   }>;
 }
 
-function RouteMap({ route }: { route: RunningSession["route"] }) {
+// Component to center the map on current position and set appropriate zoom level
+function MapUpdater({ center, isTracking }: { center: [number, number], isTracking: boolean }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    map.setView(center, 16); // Higher zoom level (16) for better detail
+  }, [map, center]);
+  
+  // If tracking is active, keep centering the map on current position
+  useEffect(() => {
+    if (isTracking) {
+      const interval = setInterval(() => {
+        map.setView(center, 16);
+      }, 3000); // Re-center every 3 seconds during active tracking
+      
+      return () => clearInterval(interval);
+    }
+  }, [map, center, isTracking]);
+  
+  return null;
+}
+
+function RouteMap({ route, isTracking }: { route: RunningSession["route"], isTracking: boolean }) {
   const mapCenter = route.length > 0 
-    ? [route[0].latitude, route[0].longitude] as [number, number]
+    ? [route[route.length - 1].latitude, route[route.length - 1].longitude] as [number, number]
     : [51.505, -0.09] as [number, number]; // Default center
 
   const positions = route.map(point => [point.latitude, point.longitude] as [number, number]);
@@ -36,21 +58,26 @@ function RouteMap({ route }: { route: RunningSession["route"] }) {
   return (
     <MapContainer 
       center={mapCenter} 
-      zoom={13} 
+      zoom={16} // Higher zoom level for better detail
       style={{ height: "400px", width: "100%" }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
+      
+      {/* Only show route line if we have multiple points */}
       {positions.length > 1 && (
         <Polyline 
           positions={positions} 
-          color="blue" 
-          weight={3} 
-          opacity={0.7} 
+          color="#2563eb" // More visible blue color
+          weight={4} 
+          opacity={0.8} 
         />
       )}
+      
+      {/* Add map updater to keep the view centered on current position */}
+      <MapUpdater center={mapCenter} isTracking={isTracking} />
     </MapContainer>
   );
 }
@@ -316,11 +343,31 @@ export default function RunningTracker() {
                 </Card>
               </div>
 
-              {currentSession && currentSession.route.length > 0 && (
-                <div className="h-[400px] rounded-lg overflow-hidden border">
-                  <RouteMap route={currentSession.route} />
-                </div>
-              )}
+              <div className="h-[400px] rounded-lg overflow-hidden border relative">
+                {currentSession && currentSession.route.length > 0 ? (
+                  <>
+                    <RouteMap route={currentSession.route} isTracking={isTracking} />
+                    
+                    {/* Real-time tracking indicator overlay */}
+                    {isTracking && (
+                      <div className="absolute top-3 right-3 bg-white/90 rounded-md shadow-md px-3 py-2 flex items-center z-[1000] text-sm">
+                        <div className="h-3 w-3 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                        <span>Live GPS Tracking</span>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-4 bg-slate-50">
+                    <MapPin className="h-12 w-12 text-slate-400 mb-4" />
+                    <h3 className="text-lg font-medium text-slate-700">GPS Map</h3>
+                    <p className="text-sm text-slate-500 max-w-xs">
+                      {isTracking 
+                        ? "Waiting for GPS signal. Please make sure you're outside with clear sky view."
+                        : "Press start to begin tracking your route. Map will appear when GPS data is available."}
+                    </p>
+                  </div>
+                )}
+              </div>
 
               <div className="flex justify-center gap-4">
                 {!isTracking ? (
