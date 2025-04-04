@@ -50,10 +50,21 @@ export default function RobotFundi({
   };
   
   const handleClick = (e: React.MouseEvent) => {
-    // Only open if the robot hasn't been dragged at all during this interaction
-    if (onOpen && interactive && !wasDragged && !isDragging) {
+    // Ensure we're not in the middle of a drag
+    if (!interactive || isDragging) {
+      e.stopPropagation();
+      return;
+    }
+    
+    // Check if there was significant dragging since mousedown
+    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+    
+    // If the movement is less than our threshold (3px) or it wasn't dragged at all, treat as a click
+    if (onOpen && (dragDistance <= 3 || !wasDragged)) {
       onOpen();
-      console.log("Opening Fundi chat!");
+      console.log("Opening Fundi chat - click detected! Distance:", dragDistance);
+    } else if (wasDragged) {
+      console.log("Click ignored - recent drag detected");
     }
     
     // Don't reset wasDragged here - let the timeout handle it
@@ -82,10 +93,16 @@ export default function RobotFundi({
   };
 
   const handleMouseUp = () => {
-    // If there was any movement at all, mark as dragged
-    // This prevents accidental openings when just adjusting Fundi slightly
-    if (Math.abs(position.x) > 0 || Math.abs(position.y) > 0) {
+    // Calculate the total movement distance using a proper distance formula
+    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+    
+    // Use a small threshold (3px) to determine if this was a real drag
+    // This allows for tiny movements that are just hand tremors or accidental movements
+    if (dragDistance > 3) {
       setWasDragged(true);
+      console.log(`Drag detected on mouseUp: ${dragDistance.toFixed(2)}px`);
+    } else {
+      console.log(`Small movement not counted as drag: ${dragDistance.toFixed(2)}px`);
     }
     
     // Set isDragging to false immediately
@@ -93,10 +110,16 @@ export default function RobotFundi({
   };
 
   const handleTouchEnd = () => {
-    // If there was any movement at all, mark as dragged
-    // This prevents accidental openings when just adjusting Fundi slightly
-    if (Math.abs(position.x) > 0 || Math.abs(position.y) > 0) {
+    // Calculate the total movement distance using a proper distance formula
+    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+    
+    // Use a small threshold (3px) to determine if this was a real drag
+    // This allows for tiny movements that are just hand tremors or accidental movements
+    if (dragDistance > 3) {
       setWasDragged(true);
+      console.log(`Drag detected on touchEnd: ${dragDistance.toFixed(2)}px`);
+    } else {
+      console.log(`Small movement not counted as drag: ${dragDistance.toFixed(2)}px`);
     }
     
     // Set isDragging to false immediately
