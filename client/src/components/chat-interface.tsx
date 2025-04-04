@@ -519,8 +519,8 @@ export default function ChatInterface({
             style={{
               fontSize: window.innerWidth < 768 ? '14px' : '16px',
               height: window.innerWidth < 768 ? '40px' : 'auto',
-              paddingRight: window.innerWidth < 768 ? '8px' : null,
-              paddingLeft: window.innerWidth < 768 ? '8px' : null,
+              paddingRight: window.innerWidth < 768 ? '8px' : undefined,
+              paddingLeft: window.innerWidth < 768 ? '8px' : undefined,
             }}
           />
           <Button 

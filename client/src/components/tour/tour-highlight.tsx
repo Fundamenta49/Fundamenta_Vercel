@@ -64,7 +64,7 @@ const TourHighlight = () => {
         }
         
         /* Make sure tour modal stays above highlighted elements */
-        [role="dialog"][data-state="open"].tour-dialog {
+        [role="dialog"][data-state="open"] [data-tour-dialog] {
           z-index: 60 !important;
         }
         

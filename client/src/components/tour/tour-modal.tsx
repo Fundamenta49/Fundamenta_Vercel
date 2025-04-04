@@ -110,8 +110,10 @@ const TourModal = () => {
       return ""; // Default centered position
     }
     
-    // After step 2, position to bottom right
-    return "fixed bottom-8 right-8 translate-x-0 translate-y-0 max-h-[380px] overflow-y-auto";
+    // After step 2, position to bottom right - Adjusted for mobile
+    return window.innerWidth < 768 
+      ? "fixed bottom-4 left-4 right-4 translate-x-0 translate-y-0 max-h-[380px] overflow-y-auto" 
+      : "fixed bottom-8 right-8 translate-x-0 translate-y-0 max-h-[380px] overflow-y-auto";
   };
   
   // Make sure we have aria-attributes to avoid warnings
@@ -124,9 +126,8 @@ const TourModal = () => {
     <Dialog 
       open={isTourActive} 
       onOpenChange={(open) => !open && endTour()} 
-      modal={isInitialStep}
-      className="tour-dialog">
-      <DialogContent {...dialogContentProps}>
+      modal={isInitialStep}>
+      <DialogContent {...dialogContentProps} data-tour-dialog>
         <DialogHeader className={isInitialStep ? "" : "pb-2"}>
           <DialogTitle className="flex items-center gap-2 text-base">
             <HelpCircle className="h-4 w-4 text-primary" />
