@@ -101,6 +101,7 @@ export default function RobotFundi({
     if (dragDistance > 3) {
       setWasDragged(true);
       console.log(`Drag detected on mouseUp: ${dragDistance.toFixed(2)}px`);
+      console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     } else {
       console.log(`Small movement not counted as drag: ${dragDistance.toFixed(2)}px`);
     }
@@ -118,6 +119,7 @@ export default function RobotFundi({
     if (dragDistance > 3) {
       setWasDragged(true);
       console.log(`Drag detected on touchEnd: ${dragDistance.toFixed(2)}px`);
+      console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     } else {
       console.log(`Small movement not counted as drag: ${dragDistance.toFixed(2)}px`);
     }
@@ -153,6 +155,11 @@ export default function RobotFundi({
       return () => clearTimeout(timer);
     }
   }, [wasDragged]);
+  
+  // Log initial position when component mounts
+  useEffect(() => {
+    console.log(`Fundi initial position - Default style: top=8px, right=24px, translate(${position.x}px, ${position.y}px)`);
+  }, []);
 
   // Much smaller size variants
   const sizeVariants = {
