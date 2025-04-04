@@ -54,13 +54,16 @@ const TourModal = () => {
 
   return (
     <Dialog open={isTourActive} onOpenChange={(open) => !open && endTour()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent 
+        className="sm:max-w-[500px]"
+        aria-describedby="tour-description"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <HelpCircle className="h-5 w-5 text-primary" />
             {currentStep?.title}
           </DialogTitle>
-          <DialogDescription className="pt-2">
+          <DialogDescription id="tour-description" className="pt-2">
             {currentStep?.content}
           </DialogDescription>
         </DialogHeader>

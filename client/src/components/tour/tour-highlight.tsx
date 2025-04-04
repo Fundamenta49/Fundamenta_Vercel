@@ -5,11 +5,13 @@ const TourHighlight = () => {
   return (
     <style dangerouslySetInnerHTML={{
       __html: `
-        .tour-highlight {
+        /* Ensure we don't apply highlight effects to Dialog elements */
+        .tour-highlight:not([role="dialog"]):not([role="alertdialog"]):not(.DialogOverlay):not(.DialogContent) {
           position: relative;
           z-index: 50;
           animation: pulse 1.5s infinite;
           box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.4);
+          pointer-events: auto;
         }
         
         @keyframes pulse {
