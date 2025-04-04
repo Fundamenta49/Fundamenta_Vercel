@@ -281,8 +281,8 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
 
       {/* Robot avatar with dynamic color glow */}
       <svg
-        width="200"
-        height="200"
+        width="300"
+        height="300"
         viewBox="0 0 200 200"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"

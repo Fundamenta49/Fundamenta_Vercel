@@ -352,5 +352,8 @@
     z-index: 99999 !important;
     visibility: visible !important;
     pointer-events: auto !important;
+    transform: scale(1.5) !important;
+    min-width: 120px !important;
+    min-height: 120px !important;
   }
 }
