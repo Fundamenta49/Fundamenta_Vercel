@@ -222,10 +222,8 @@ export default function Navigation() {
             
             {/* Separator and Calendar */}
             <div className="mt-4 mb-2">
-              <div className="flex items-center gap-2 px-3">
-                <Separator className={cn("flex-grow", borderColor)} />
-                <span className="text-xs text-gray-500 whitespace-nowrap">Your Schedule</span>
-                <Separator className={cn("flex-grow", borderColor)} />
+              <div className="px-3">
+                <Separator className={cn(borderColor)} />
               </div>
               
               <div className="mt-2">
@@ -313,10 +311,8 @@ export default function Navigation() {
         {/* Separator and Calendar */}
         <div className="mt-4 mb-2">
           {!isMinimized && (
-            <div className="flex items-center gap-2 px-3 py-2">
-              <Separator className="flex-grow h-px bg-gray-200" />
-              <span className="text-xs text-gray-500 whitespace-nowrap font-medium">Your Schedule</span>
-              <Separator className="flex-grow h-px bg-gray-200" />
+            <div className="px-3 py-2">
+              <Separator className="h-px bg-gray-200" />
             </div>
           )}
           
