@@ -57,7 +57,7 @@ export function VideoPlayerDialog({
         </div>
         
         <div className="w-full h-full flex flex-col md:flex-row">
-          <div className="w-full md:w-3/4 h-full bg-black flex-shrink-0 flex items-center justify-center">
+          <div className="w-full md:w-3/4 h-[40vh] md:h-full bg-black flex-shrink-0">
             {playerError ? (
               <div className="flex flex-col items-center justify-center text-white p-6 text-center h-full">
                 <AlertCircle className="h-12 w-12 mb-4 text-red-500" />
@@ -73,7 +73,7 @@ export function VideoPlayerDialog({
                 </Button>
               </div>
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
+              <div className="relative w-full h-full">
                 <EmbeddedYouTubePlayer
                   videoId={videoId}
                   title={title}
@@ -81,16 +81,16 @@ export function VideoPlayerDialog({
                   onError={handlePlayerError}
                   width="100%"
                   height="100%"
-                  className="w-full h-full"
+                  className="absolute inset-0"
                 />
               </div>
             )}
           </div>
           
           {description && (
-            <div className="bg-white p-4 md:p-6 w-full md:w-1/4 border-t md:border-t-0 md:border-l shadow-sm flex flex-col h-auto md:h-full overflow-auto">
+            <div className="bg-white p-4 md:p-6 w-full md:w-1/4 border-t md:border-t-0 md:border-l shadow-sm flex flex-col h-auto md:h-full overflow-hidden">
               <h2 className="text-xl font-semibold pb-2 border-l-4 border-learning-color pl-3">{title}</h2>
-              <ScrollArea className="flex-grow mb-4 max-h-[120px] md:max-h-none">
+              <ScrollArea className="flex-grow mb-4 h-[120px] md:h-[calc(100%-120px)]">
                 <p className="text-sm text-gray-700 leading-relaxed">{description}</p>
               </ScrollArea>
               <div className="pt-2 flex justify-between items-center mt-auto">

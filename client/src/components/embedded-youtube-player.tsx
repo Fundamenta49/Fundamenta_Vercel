@@ -108,7 +108,7 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
 
   return (
     <div 
-      className={`relative ${className}`}
+      className={`relative w-full h-full ${className}`}
       style={{ width, height }}
     >
       {loading && (
