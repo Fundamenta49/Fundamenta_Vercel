@@ -636,7 +636,7 @@ export const TechniqueTutorials: React.FC<CookingTutorialsSectionProps> = ({ onP
   
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {techniques.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={handlePlayVideo} />
         ))}
@@ -663,7 +663,7 @@ export const KitchenSafetyTutorials: React.FC<CookingTutorialsSectionProps> = ({
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {safetyTutorials.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
         ))}
@@ -690,7 +690,7 @@ export const BasicRecipesTutorials: React.FC<CookingTutorialsSectionProps> = ({ 
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {basicRecipes.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
         ))}
@@ -733,7 +733,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </div>
       
       <TabsContent value="breakfast" className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {breakfastTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
@@ -741,7 +741,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </TabsContent>
       
       <TabsContent value="lunch" className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {lunchTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
@@ -749,7 +749,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </TabsContent>
       
       <TabsContent value="dinner" className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {dinnerTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
