@@ -223,7 +223,19 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const element = document.querySelector(selector);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          element.classList.add('tour-highlight');
+          
+          // Don't add highlight class to dialog or dialog content elements
+          const isDialog = 
+            element.hasAttribute('role') && 
+            (element.getAttribute('role') === 'dialog' || element.getAttribute('role') === 'alertdialog');
+          
+          const isDialogContent = 
+            element.classList.contains('DialogContent') || 
+            element.classList.contains('DialogOverlay');
+            
+          if (!isDialog && !isDialogContent) {
+            element.classList.add('tour-highlight');
+          }
         }
       }, 500);
 
