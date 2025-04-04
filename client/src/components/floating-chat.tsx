@@ -87,7 +87,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed right-6 bottom-0 z-[9999] flex flex-col items-center"
+            className="fixed right-6 bottom-4 z-[9999] flex flex-col items-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
               opacity: 1, 

@@ -114,9 +114,10 @@ export default function RobotFundiEnhanced({
         style={{ 
           backgroundColor: glowColor,
           opacity: 0.6,
-          width: '120%',
-          height: '120%',
+          width: '150%',
+          height: '150%',
         }}
+        initial={{ opacity: 0.6, scale: 1 }}
         animate={{
           scale: pulsing ? [1, 1.3, 1] : 1,
           opacity: pulsing ? [0.6, 0.8, 0.6] : 0.6,
@@ -126,7 +127,6 @@ export default function RobotFundiEnhanced({
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        initial={false}
       />
       
       {/* Outer Glow */}
@@ -134,20 +134,21 @@ export default function RobotFundiEnhanced({
         className="absolute rounded-full z-0"
         style={{ 
           backgroundColor: glowColor,
-          width: '100%',
-          height: '100%',
+          width: '130%',
+          height: '130%',
           filter: `blur(${glowSize}px)`,
           opacity: isHovered || thinking || speaking ? 0.8 : 0.6,
         }}
+        initial={{ opacity: 0.6, scale: 1 }}
         animate={{
           scale: (speaking || thinking) ? [1, 1.1, 1] : isHovered ? 1.1 : 1,
+          opacity: isHovered || thinking || speaking ? 0.8 : 0.6,
         }}
         transition={{
           duration: thinking ? 1.5 : speaking ? 0.8 : 0.3,
           repeat: (speaking || thinking) ? Infinity : 0,
           ease: "easeInOut"
         }}
-        initial={false}
       />
       
       {/* Robot SVG */}
@@ -181,6 +182,7 @@ export default function RobotFundiEnhanced({
             rx="10" 
             ry={eyeBlink ? "1" : "6"} 
             fill={glowColor} 
+            initial={{ opacity: 1, scale: 1 }}
             animate={{
               opacity: speaking ? [1, 0.7, 1] : 1,
               scale: thinking ? [1, 1.1, 1] : 1
@@ -198,6 +200,7 @@ export default function RobotFundiEnhanced({
             rx="10" 
             ry={eyeBlink ? "1" : "6"} 
             fill={glowColor}
+            initial={{ opacity: 1, scale: 1 }}
             animate={{
               opacity: speaking ? [1, 0.7, 1] : 1,
               scale: thinking ? [1, 1.1, 1] : 1
@@ -219,6 +222,7 @@ export default function RobotFundiEnhanced({
             cy="15" 
             r="5"
             fill={glowColor}
+            initial={{ opacity: 0.8 }}
             animate={{
               opacity: (speaking || thinking) ? [1, 0.6, 1] : 0.8
             }}
@@ -242,6 +246,7 @@ export default function RobotFundiEnhanced({
             cy="130" 
             r="10" 
             fill={glowColor}
+            initial={{ opacity: 0.7, scale: 1 }}
             animate={{
               opacity: speaking ? [0.9, 0.5, 0.9] : thinking ? [0.6, 0.9, 0.6] : 0.7,
               scale: speaking ? [1, 1.1, 1] : thinking ? [1, 1.2, 1] : 1
