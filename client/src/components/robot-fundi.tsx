@@ -42,7 +42,7 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [clickStartTime, setClickStartTime] = useState(0);
-  const [dragDistance, setDragDistance] = useState(0);
+  const [hasMoved, setHasMoved] = useState(false);
   
   // We'll ignore size variants and use direct SVG scaling
   const scaleMap = {
@@ -60,7 +60,8 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
-    setDragDistance(0);
+    // Reset movement tracking on mouse down
+    setHasMoved(false);
     setClickStartTime(Date.now());
     setDragStart({ x: e.clientX, y: e.clientY });
     setInitialPosition({ ...position });
@@ -72,7 +73,8 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
       e.preventDefault();
       e.stopPropagation();
       setIsDragging(true);
-      setDragDistance(0);
+      // Reset movement tracking on touch start
+      setHasMoved(false);
       setClickStartTime(Date.now());
       const touch = e.touches[0];
       setDragStart({ x: touch.clientX, y: touch.clientY });
@@ -92,7 +94,11 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
       Math.pow(e.clientX - dragStart.x, 2) + 
       Math.pow(e.clientY - dragStart.y, 2)
     );
-    setDragDistance(distance);
+    
+    // If moved more than 5 pixels, consider it a drag not a click
+    if (distance > 5) {
+      setHasMoved(true);
+    }
     
     setPosition({
       x: position.x + deltaX,
@@ -117,7 +123,11 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
       Math.pow(touch.clientX - dragStart.x, 2) + 
       Math.pow(touch.clientY - dragStart.y, 2)
     );
-    setDragDistance(distance);
+    
+    // If moved more than 3 pixels, consider it a drag not a click (stricter for touch)
+    if (distance > 3) {
+      setHasMoved(true);
+    }
     
     setPosition({
       x: position.x + deltaX,
@@ -143,15 +153,13 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
       Math.pow(position.y - initialPosition.y, 2)
     );
     
-    // We consider it a click ONLY if:
-    // 1. Total movement is less than 5 pixels (very strict)
-    // 2. Duration was under 200ms (typical click)
     const clickDuration = Date.now() - clickStartTime;
-    const isClick = totalDragDistance < 5 && clickDuration < 200;
     
-    console.log('Drag distance:', totalDragDistance, 'Click duration:', clickDuration, 'Is click?', isClick);
+    console.log('Drag distance:', totalDragDistance, 'Click duration:', clickDuration, 'Has moved?', hasMoved);
     
-    if (isClick && onOpen) {
+    // Only open if it was a true click (not a drag)
+    // We check both our tracking state and the movement distance as a fallback
+    if (!hasMoved && totalDragDistance < 5 && onOpen) {
       onOpen();
     }
     
@@ -174,13 +182,13 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
       Math.pow(position.y - initialPosition.y, 2)
     );
     
-    // For touch devices, we need very strict conditions to prevent accidental chat opening
     const clickDuration = Date.now() - clickStartTime;
-    const isClick = clickDuration < 200 && totalDragDistance < 3; // Even stricter for touch
     
-    console.log('Touch: Drag distance:', totalDragDistance, 'Click duration:', clickDuration, 'Is click?', isClick);
+    console.log('Touch: Drag distance:', totalDragDistance, 'Click duration:', clickDuration, 'Has moved?', hasMoved);
     
-    if (isClick && onOpen) {
+    // Only open if it was a true tap (not a drag)
+    // We check both our tracking state and the movement distance as a fallback
+    if (!hasMoved && totalDragDistance < 3 && onOpen) {
       onOpen();
     }
     
