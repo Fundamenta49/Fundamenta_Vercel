@@ -504,42 +504,54 @@ export default function ChatInterface({
   const handleResizeMove = (e: MouseEvent) => {
     if (!isResizing) return;
     
-    const chatElement = document.querySelector('.resizable-chat');
+    const chatElement = document.querySelector('.resizable-chat') as HTMLElement;
     if (!chatElement) return;
     
+    // Get the initial position of the chat
     const rect = chatElement.getBoundingClientRect();
-    const newWidth = e.clientX - rect.left + 10; // +10 for padding
-    const newHeight = e.clientY - rect.top + 10; // +10 for padding
     
-    // Set minimum size constraints
-    const width = Math.max(newWidth, 300);
-    const height = Math.max(newHeight, 300);
+    // Calculate new width and height based on mouse position
+    const newWidth = Math.max(e.clientX - rect.left, 300);
+    const newHeight = Math.max(e.clientY - rect.top, 300);
     
+    // Apply the new dimensions directly to the element for immediate feedback
+    chatElement.style.width = `${newWidth}px`;
+    chatElement.style.height = `${newHeight}px`;
+    
+    // Also update state for persistence
     setChatSize({
-      width: `${width}px`,
-      height: `${height}px`
+      width: `${newWidth}px`,
+      height: `${newHeight}px`
     });
+    
+    console.log('Resize to:', newWidth, newHeight);
   };
   
   // Handle resize move with touch
   const handleResizeTouchMove = (e: TouchEvent) => {
     if (!isResizing || !e.touches[0]) return;
     
-    const chatElement = document.querySelector('.resizable-chat');
+    const chatElement = document.querySelector('.resizable-chat') as HTMLElement;
     if (!chatElement) return;
     
+    // Get the initial position of the chat
     const rect = chatElement.getBoundingClientRect();
-    const newWidth = e.touches[0].clientX - rect.left + 10;
-    const newHeight = e.touches[0].clientY - rect.top + 10;
     
-    // Set minimum size constraints
-    const width = Math.max(newWidth, 300);
-    const height = Math.max(newHeight, 300);
+    // Calculate new width and height based on touch position
+    const newWidth = Math.max(e.touches[0].clientX - rect.left, 300);
+    const newHeight = Math.max(e.touches[0].clientY - rect.top, 300);
     
+    // Apply the new dimensions directly to the element for immediate feedback
+    chatElement.style.width = `${newWidth}px`;
+    chatElement.style.height = `${newHeight}px`;
+    
+    // Also update state for persistence
     setChatSize({
-      width: `${width}px`,
-      height: `${height}px`
+      width: `${newWidth}px`,
+      height: `${newHeight}px`
     });
+    
+    console.log('Touch resize to:', newWidth, newHeight);
   };
   
   // Handle resize end
@@ -837,11 +849,10 @@ export default function ChatInterface({
       
       {/* Resize handle in the bottom-right corner */}
       <div 
-        className="absolute bottom-0 right-0 w-5 h-5 cursor-se-resize opacity-70 hover:opacity-100 transition-opacity"
+        className="resize-handle w-10 h-10 opacity-70 hover:opacity-100 transition-opacity"
         style={{ 
           backgroundImage: `linear-gradient(135deg, transparent 50%, ${categoryColors[category]} 50%)`,
-          borderBottomRightRadius: '0.375rem',
-          touchAction: 'none'
+          borderBottomRightRadius: '0.5rem'
         }}
         onMouseDown={(e) => handleResizeStart(e)}
         onTouchStart={(e) => handleResizeStart(e)}
