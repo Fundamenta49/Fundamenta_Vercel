@@ -89,14 +89,20 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     const deltaX = e.clientX - dragStart.x;
     const deltaY = e.clientY - dragStart.y;
     
-    // Calculate total drag distance
-    const distance = Math.sqrt(
-      Math.pow(e.clientX - dragStart.x, 2) + 
-      Math.pow(e.clientY - dragStart.y, 2)
+    // Any movement at all should set hasMoved to true immediately
+    if (deltaX !== 0 || deltaY !== 0) {
+      setHasMoved(true);
+    }
+    
+    // Also calculate total movement from starting position
+    // This is a more reliable check than the delta
+    const totalMovement = Math.sqrt(
+      Math.pow(e.clientX - initialPosition.x, 2) + 
+      Math.pow(e.clientY - initialPosition.y, 2)
     );
     
-    // If moved more than 5 pixels, consider it a drag not a click
-    if (distance > 5) {
+    // If we've moved more than 2 pixels in total, definitely mark as moved
+    if (totalMovement > 2) {
       setHasMoved(true);
     }
     
@@ -118,14 +124,20 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     const deltaX = touch.clientX - dragStart.x;
     const deltaY = touch.clientY - dragStart.y;
     
-    // Calculate total drag distance
-    const distance = Math.sqrt(
+    // Any movement at all should set hasMoved to true immediately
+    if (deltaX !== 0 || deltaY !== 0) {
+      setHasMoved(true);
+    }
+    
+    // Also calculate total movement from starting position
+    // This is a more reliable check than the delta
+    const totalMovement = Math.sqrt(
       Math.pow(touch.clientX - dragStart.x, 2) + 
       Math.pow(touch.clientY - dragStart.y, 2)
     );
     
-    // If moved more than 3 pixels, consider it a drag not a click (stricter for touch)
-    if (distance > 3) {
+    // If we've moved more than 2 pixels in total, definitely mark as moved
+    if (totalMovement > 2) {
       setHasMoved(true);
     }
     
@@ -231,7 +243,14 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
       document.removeEventListener('touchmove', touchMoveHandler);
       document.removeEventListener('touchend', touchEndHandler);
     };
-  }, [isDragging]);
+  }, [
+    isDragging, 
+    position, 
+    initialPosition, 
+    hasMoved, 
+    dragStart, 
+    onOpen
+  ]);
   
   return (
     <div 
