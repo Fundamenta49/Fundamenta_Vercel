@@ -309,78 +309,49 @@ export default function ChatInterface({
               <MessageSquare className="h-10 w-10 mb-2 opacity-50" />
               {category === 'general' ? (
                 <>
-                  <p className="font-medium text-lg">What would you like help with today?</p>
-                  <div className="text-base space-y-3">
-                    <p>• "I need to create a budget for my first apartment"</p>
-                    <p>• "What skills should I develop for my career?"</p>
-                    <p>• "How do I maintain a work-life balance?"</p>
-                  </div>
+                  <p className="font-medium text-lg">Hi there! I'm Fundi. What's your name?</p>
+                  <p className="text-base">I'd love to get to know you and help with anything you need today.</p>
                 </>
               ) : category === 'finance' ? (
                 <>
-                  <p className="font-medium text-lg">What financial questions can I help with?</p>
-                  <div className="text-base space-y-3">
-                    <p>• "How should I budget for my monthly expenses?"</p>
-                    <p>• "What's the difference between a 401(k) and Roth IRA?"</p>
-                    <p>• "How can I start investing with limited funds?"</p>
-                  </div>
+                  <p className="font-medium text-lg">Hi there! I'm your Financial Coach. What's your name?</p>
+                  <p className="text-base">I'm here to help with your financial questions and goals.</p>
                 </>
               ) : category === 'career' ? (
                 <>
-                  <p className="font-medium text-lg">How can I assist with your career development?</p>
-                  <div className="text-base space-y-3">
-                    <p>• "What skills are most valuable in tech right now?"</p>
-                    <p>• "How do I negotiate a salary increase?"</p>
-                    <p>• "Should I include a cover letter with my application?"</p>
-                  </div>
+                  <p className="font-medium text-lg">Hello! I'm your Career Mentor. What's your name?</p>
+                  <p className="text-base">I'm here to help with your professional development journey.</p>
                 </>
               ) : category === 'wellness' ? (
                 <>
-                  <p className="font-medium text-lg">What wellness goals are you focusing on?</p>
-                  <div className="text-base space-y-3">
-                    <p>• "How can I improve my sleep quality?"</p>
-                    <p>• "What meditation techniques help with anxiety?"</p>
-                    <p>• "How can I build a sustainable self-care routine?"</p>
-                  </div>
+                  <p className="font-medium text-lg">Hi there! I'm your Wellness Guide. What's your name?</p>
+                  <p className="text-base">I'm here to support your mental health and wellness goals.</p>
                 </>
               ) : category === 'learning' ? (
                 <>
-                  <p className="font-medium text-lg">What would you like to learn about?</p>
-                  <div className="text-base space-y-3">
-                    <p>• "What's the best way to learn a new language?"</p>
-                    <p>• "How can I improve my critical thinking skills?"</p>
-                    <p>• "What books would help me understand economics?"</p>
-                  </div>
+                  <p className="font-medium text-lg">Hello! I'm your Learning Facilitator. What's your name?</p>
+                  <p className="text-base">I'm here to help you learn and grow in any area you're interested in.</p>
                 </>
               ) : category === 'cooking' ? (
                 <>
-                  <p className="font-medium text-lg">What cooking advice do you need?</p>
-                  <div className="text-base space-y-3">
-                    <p>• "What meals can I make with minimal ingredients?"</p>
-                    <p>• "How do I meal prep for a busy week?"</p>
-                    <p>• "What basic cooking skills should I learn first?"</p>
-                  </div>
+                  <p className="font-medium text-lg">Hi there! I'm your Cooking Expert. What's your name?</p>
+                  <p className="text-base">I'm here to help with all your cooking questions and culinary adventures.</p>
                 </>
               ) : category === 'fitness' ? (
                 <>
-                  <p className="font-medium text-lg">How can I help with your fitness journey?</p>
-                  <div className="text-base space-y-3">
-                    <p>• "What exercises are best for beginners?"</p>
-                    <p>• "How often should I work out each week?"</p>
-                    <p>• "What's a good balance of cardio and strength training?"</p>
-                  </div>
+                  <p className="font-medium text-lg">Hello! I'm your Fitness Coach. What's your name?</p>
+                  <p className="text-base">I'm here to help you reach your fitness and health goals.</p>
                 </>
               ) : category === 'emergency' ? (
                 <>
-                  <p className="font-medium text-lg">How can I assist with your urgent situation?</p>
-                  <div className="text-base space-y-3">
-                    <p>• "What should I do about a minor kitchen fire?"</p>
-                    <p>• "How do I handle a power outage in my apartment?"</p>
-                    <p>• "What steps should I take after a minor car accident?"</p>
-                  </div>
+                  <p className="font-medium text-lg">Hi there. I'm your Emergency Assistant. What's your name?</p>
+                  <p className="text-base">I'm here to help with your urgent situation. How can I assist you?</p>
                 </>
               ) : (
-                <p className="text-lg">How can I help with {category} today?</p>
+                <>
+                  <p className="font-medium text-lg">Hi there! I'm Fundi. What's your name?</p>
+                  <p className="text-base">I'd love to get to know you better and help with your {category} needs.</p>
+                </>
               )}
             </div>
           ) : (
@@ -455,32 +426,16 @@ export default function ChatInterface({
           <div ref={messagesEndRef} />
         </div>
         
-        {showSuggestions && (followUpQuestions.length > 0 || suggestedActions.length > 0) && (
-          <div className="mt-4 sm:mt-6">
-            <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-2 sm:mb-3">Suggestions:</p>
+        {/* Only show action suggestions, not followUpQuestions, and only after at least one message exchange */}
+        {showSuggestions && messages.length >= 2 && suggestedActions.length > 0 && (
+          <div className="mt-3 sm:mt-4 opacity-80 hover:opacity-100 transition-opacity">
             <div className="flex flex-wrap gap-2 sm:gap-3">
-              {followUpQuestions.length > 0 && followUpQuestions.slice(0, 3).map((question, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs sm:text-sm justify-start text-left py-1.5 px-2.5 sm:py-2 sm:px-3"
-                  style={{
-                    borderColor: `${categoryColors[category]}30`,
-                    color: categoryColors[category]
-                  }}
-                  onClick={() => handleSuggestionClick(question)}
-                >
-                  {question.length > 30 ? question.substring(0, 30) + '...' : question}
-                </Button>
-              ))}
-              
               {suggestedActions.length > 0 && suggestedActions.slice(0, 2).map((suggestion, index) => (
                 <Button
                   key={`action-${index}`}
                   variant="outline"
                   size="sm"
-                  className="text-xs sm:text-sm justify-start text-left py-1.5 px-2.5 sm:py-2 sm:px-3"
+                  className="text-xs sm:text-sm justify-start text-left py-1 px-2 sm:py-1.5 sm:px-2.5"
                   style={{
                     borderColor: `${categoryColors[category]}30`,
                     color: categoryColors[category]
