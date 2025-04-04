@@ -10,8 +10,13 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { HelpCircle } from 'lucide-react';
 
+import { useTour } from '@/contexts/tour-context';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 export function TourSettings() {
   const [open, setOpen] = React.useState(false);
+  const { restartTour } = useTour();
+  const isMobile = useIsMobile();
   
   // Check if we're in a minimized state
   const isMinimized = () => {
@@ -19,7 +24,12 @@ export function TourSettings() {
   };
   
   const handleOpenHelp = () => {
-    setOpen(true);
+    // On mobile, directly start the tour instead of showing dialog
+    if (isMobile) {
+      restartTour();
+    } else {
+      setOpen(true);
+    }
   };
   
   return (

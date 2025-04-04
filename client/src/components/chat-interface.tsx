@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, Loader2, MessageSquare, ArrowRight } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { AIResponse, useAIEventStore, useAIContext, processPendingActions, AppSuggestion } from '@/lib/ai-event-system';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -204,10 +205,13 @@ export default function ChatInterface({
   // Determine if showing a specialized advisor or general AI assistant
   const isSpecialist = (currentCategory || category) !== 'general';
 
+  // Use our custom hook for responsive detection
+  const isMobile = useIsMobile();
+  
   return (
     <Card className={`flex flex-col border shadow-lg ${className}`} style={{ 
-      height: expanded ? '85vh' : 'min(500px, 70vh)',
-      maxWidth: expanded ? '95vw' : '800px',
+      height: isMobile ? 'min(90vh, 600px)' : (expanded ? '85vh' : 'min(500px, 70vh)'),
+      maxWidth: isMobile ? '100%' : (expanded ? '95vw' : '800px'),
       width: '100%'
     }}>
       <CardHeader className="px-4 py-2.5 sm:px-5 sm:py-3 border-b">
