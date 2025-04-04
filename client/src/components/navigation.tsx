@@ -16,7 +16,8 @@ import {
   AlertCircle,
   Home,
   Sparkles,
-  HelpCircle
+  HelpCircle,
+  CalendarDays
 } from "lucide-react";
 import {
   Sheet,
@@ -27,6 +28,8 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { TourSettings } from "@/components/tour-settings";
+import { Separator } from "@/components/ui/separator";
+import SchedulerCalendar from "@/components/scheduler-calendar";
 
 const defaultNavItems = [
   { href: "/", label: "Home", icon: Home },
@@ -217,6 +220,19 @@ export default function Navigation() {
               </button>
             ))}
             
+            {/* Separator and Calendar */}
+            <div className="mt-4 mb-2">
+              <div className="flex items-center gap-2 px-3">
+                <Separator className={cn("flex-grow", borderColor)} />
+                <span className="text-xs text-gray-500 whitespace-nowrap">Your Schedule</span>
+                <Separator className={cn("flex-grow", borderColor)} />
+              </div>
+              
+              <div className="mt-2">
+                <SchedulerCalendar />
+              </div>
+            </div>
+            
             {/* Help & Support Button */}
             <div className="mt-4 mx-2">
               <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
@@ -293,6 +309,34 @@ export default function Navigation() {
             {!isMinimized && <span className="font-medium">{label}</span>}
           </button>
         ))}
+        
+        {/* Separator and Calendar */}
+        <div className="mt-4 mb-2">
+          {!isMinimized && (
+            <div className="flex items-center gap-2 px-3">
+              <Separator className={cn("flex-grow", borderColor)} />
+              <span className="text-xs text-gray-500 whitespace-nowrap">Your Schedule</span>
+              <Separator className={cn("flex-grow", borderColor)} />
+            </div>
+          )}
+          
+          {/* Calendar as a minimizable component */}
+          {!isMinimized ? (
+            <div className="mt-2">
+              <SchedulerCalendar />
+            </div>
+          ) : (
+            <div className="mt-3 flex justify-center">
+              <button
+                onClick={() => setIsMinimized(false)}
+                className="p-2 rounded-md hover:bg-gray-100"
+                title="Open Calendar"
+              >
+                <CalendarDays className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
+          )}
+        </div>
         
         {/* Help & Support */}
         <div className={cn("mt-auto pt-6", isMinimized ? "absolute bottom-4 left-0 right-0 flex justify-center" : "mt-auto pt-6")}>
