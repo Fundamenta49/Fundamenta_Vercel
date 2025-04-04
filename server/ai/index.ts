@@ -139,19 +139,74 @@ export function constructSystemPrompt(category: string, context: AIContext): str
 }
 
 /**
+ * Contains the valid frontend routes for client-side navigation
+ */
+export const validClientRoutes: string[] = [
+  "/", 
+  "/why-fundamenta", 
+  "/partner", 
+  "/privacy", 
+  "/invite", 
+  "/emergency", 
+  "/finance", 
+  "/finance/mortgage", 
+  "/career", 
+  "/wellness", 
+  "/active", 
+  "/yoga-test", 
+  "/yoga-pose-analysis", 
+  "/yoga-progression", 
+  "/fundi-showcase", 
+  "/learning", 
+  "/learning/courses/vehicle-maintenance", 
+  "/learning/courses/home-maintenance", 
+  "/learning/courses/cooking-basics", 
+  "/learning/courses/health-wellness", 
+  "/learning/courses/economics",
+  "/learning/courses/critical-thinking",
+  "/learning/courses/conflict-resolution",
+  "/learning/courses/decision-making",
+  "/learning/courses/time-management",
+  "/learning/courses/coping-with-failure",
+  "/learning/courses/conversation-skills",
+  "/learning/courses/forming-positive-habits",
+  "/learning/courses/utilities-guide",
+  "/learning/courses/shopping-buddy",
+  "/learning/courses/repair-assistant"
+];
+
+/**
  * Processes potential actions based on the AI response and context.
  */
 export function processActions(aiResponse: any, category: string, context: AIContext): any[] {
-  const actions = [];
+  const actions: any[] = [];
   
   // Check for navigation intent
   if (aiResponse.suggestions && Array.isArray(aiResponse.suggestions)) {
+    // Filter and modify suggestions to ensure they only use valid client-side routes
+    const validSuggestions = aiResponse.suggestions.filter((suggestion: any) => {
+      if (!suggestion.path) return true;
+      return validClientRoutes.includes(suggestion.path);
+    });
+    
+    // If invalid suggestions were filtered out, replace them with valid ones
+    if (validSuggestions.length < aiResponse.suggestions.length) {
+      // Add home as a safe fallback suggestion
+      if (!validSuggestions.some((s: any) => s.path === "/")) {
+        validSuggestions.push({
+          text: "Return to home page",
+          path: "/"
+        });
+      }
+      
+      // Update the original suggestions array with only valid ones
+      aiResponse.suggestions = validSuggestions;
+    }
+    
     for (const suggestion of aiResponse.suggestions) {
       if (suggestion.path) {
-        // Find the matching route
-        const route = Object.entries(applicationRoutes).find(([path]) => path === suggestion.path);
-        
-        if (route) {
+        // Verify the path is in our valid client routes list
+        if (validClientRoutes.includes(suggestion.path)) {
           actions.push({
             type: "navigate",
             payload: {
@@ -171,11 +226,16 @@ export function processActions(aiResponse: any, category: string, context: AICon
   
   // For emergency category, always prioritize emergency routes
   if (category === "emergency" && actions.length === 0) {
-    const emergencyRoutes = Object.entries(applicationRoutes)
-      .filter(([_, routeInfo]) => routeInfo.categories.includes("emergency"));
+    // Only use valid client-side routes that are also categorized as emergency routes
+    const validEmergencyRoutes = Object.entries(applicationRoutes)
+      .filter(([path, routeInfo]) => {
+        // Check if route is both for emergency category and exists in valid client routes
+        return routeInfo.categories.includes("emergency") && 
+               validClientRoutes.includes(path);
+      });
     
-    if (emergencyRoutes.length > 0) {
-      const [path, routeInfo] = emergencyRoutes[0];
+    if (validEmergencyRoutes.length > 0) {
+      const [path, routeInfo] = validEmergencyRoutes[0];
       actions.push({
         type: "navigate",
         payload: {
@@ -183,6 +243,17 @@ export function processActions(aiResponse: any, category: string, context: AICon
           reason: `I'm redirecting you to our ${routeInfo.name} for immediate assistance.`
         }
       });
+    } else {
+      // Fallback to the main emergency route if it exists in valid routes
+      if (validClientRoutes.includes("/emergency")) {
+        actions.push({
+          type: "navigate",
+          payload: {
+            route: "/emergency",
+            reason: "I'm redirecting you to our Emergency section for assistance."
+          }
+        });
+      }
     }
   }
   
