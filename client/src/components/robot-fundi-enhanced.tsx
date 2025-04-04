@@ -68,13 +68,13 @@ export default function RobotFundiEnhanced({
   
   const glowSize = glowIntensitySettings[glowIntensity];
   
-  // Size variants - significantly increased all sizes
+  // Size variants - moderately increased sizes
   const sizeVariants = {
-    xs: "w-28 h-28",
-    sm: "w-40 h-40", 
-    md: "w-56 h-56",
-    lg: "w-72 h-72",
-    xl: "w-96 h-96"
+    xs: "w-12 h-12",
+    sm: "w-16 h-16", 
+    md: "w-24 h-24",
+    lg: "w-32 h-32",
+    xl: "w-40 h-40"
   };
 
   // Random eye blink effect
@@ -108,41 +108,23 @@ export default function RobotFundiEnhanced({
       onMouseLeave={() => interactive && setIsHovered(false)}
       onClick={handleClick}
     >
-      {/* Radiating Glow Effect */}
-      <motion.div
-        className="absolute rounded-full z-0"
-        style={{ 
-          backgroundColor: glowColor,
-          opacity: 0.6,
-          width: '150%',
-          height: '150%',
-        }}
-        initial={{ opacity: 0.6, scale: 1 }}
-        animate={{
-          scale: pulsing ? [1, 1.3, 1] : 1,
-          opacity: pulsing ? [0.6, 0.8, 0.6] : 0.6,
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
+      {/* No radiating glow effect - removed */}
       
-      {/* Outer Glow */}
+      {/* Subtle indicator dot instead of glow */}
       <motion.div
         className="absolute rounded-full z-0"
         style={{ 
           backgroundColor: glowColor,
-          width: '130%',
-          height: '130%',
-          filter: `blur(${glowSize}px)`,
-          opacity: isHovered || thinking || speaking ? 0.8 : 0.6,
+          width: '15%',
+          height: '15%',
+          top: '-5%',
+          right: '-5%',
+          border: '2px solid white',
         }}
-        initial={{ opacity: 0.6, scale: 1 }}
+        initial={{ opacity: 0.8, scale: 1 }}
         animate={{
-          scale: (speaking || thinking) ? [1, 1.1, 1] : isHovered ? 1.1 : 1,
-          opacity: isHovered || thinking || speaking ? 0.8 : 0.6,
+          scale: (speaking || thinking) ? [1, 1.2, 1] : isHovered ? 1.1 : 1,
+          opacity: isHovered || thinking || speaking ? 1 : 0.8,
         }}
         transition={{
           duration: thinking ? 1.5 : speaking ? 0.8 : 0.3,
