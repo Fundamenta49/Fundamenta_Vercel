@@ -257,9 +257,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Master these fundamental techniques to build a strong foundation for all your cooking.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  <TechniqueTutorials onPlayVideo={handlePlayVideo} />
-                </div>
+                <TechniqueTutorials onPlayVideo={handlePlayVideo} />
               </TabsContent>
               
               <TabsContent value="safety" className="mt-0">
@@ -271,9 +269,7 @@ const CookingTutorialPopup: React.FC = () => {
                   Proper technique and safety practices help prevent injury and foodborne illness. 
                   These fundamentals should be mastered before attempting complex recipes.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  <KitchenSafetyTutorials onPlayVideo={handlePlayVideo} />
-                </div>
+                <KitchenSafetyTutorials onPlayVideo={handlePlayVideo} />
               </TabsContent>
               
               <TabsContent value="recipes" className="mt-0">
