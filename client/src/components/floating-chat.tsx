@@ -95,7 +95,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed right-12 bottom-12 z-[9999] flex flex-col items-center"
+            className="fixed right-16 bottom-16 z-[9999] flex flex-col items-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
               opacity: 1, 
@@ -109,26 +109,18 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             }}
           >
             <Button
-              className="p-0 bg-transparent hover:bg-transparent border-none shadow-xl flex items-center justify-center w-56 h-56 rounded-full transition-all duration-300"
+              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center w-52 h-52 transition-all duration-300"
               style={{
-                transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: isHovered 
-                  ? `0 0 25px ${getCategoryColor(category)}80` 
-                  : '0 10px 25px rgba(0, 0, 0, 0.1)'
+                transform: isHovered ? 'scale(1.05)' : 'scale(1)'
               }}
               onClick={() => setIsExpanded(true)}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               title="Chat with Fundi"
             >
-              <RobotFundiEnhanced
+              <RobotFundi
                 speaking={isSpeaking}
-                thinking={isThinking}
-                size="xl"
-                category={category}
-                pulsing={true}
-                glowIntensity="high"
-                interactive={true}
+                size="lg"
               />
             </Button>
           </motion.div>

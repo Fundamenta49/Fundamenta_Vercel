@@ -8,9 +8,9 @@ interface RobotFundiProps {
 
 export default function RobotFundi({ speaking = false, size = "md" }: RobotFundiProps) {
   const sizeVariants = {
-    sm: "w-12 h-12",
-    md: "w-20 h-20",
-    lg: "w-32 h-32"
+    sm: "w-16 h-16",
+    md: "w-28 h-28",
+    lg: "w-48 h-48"
   };
 
   return (
