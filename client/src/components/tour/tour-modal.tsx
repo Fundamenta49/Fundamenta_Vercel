@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { useTour } from '@/contexts/tour-context';
 import {
   Dialog,
@@ -42,6 +42,30 @@ const TourModal = () => {
     // Reset transitioning state when step changes
     setIsTransitioning(false);
   }, [isTourActive, currentStepIndex, userName]);
+  
+  // Force dialog positioning before render to ensure proper mobile display
+  useLayoutEffect(() => {
+    if (isTourActive) {
+      // Add a class to body to indicate we're in tour mode
+      document.body.classList.add('tour-active');
+      
+      // Force any existing modals to have proper mobile positioning
+      const dialogs = document.querySelectorAll('[data-tour-dialog]');
+      dialogs.forEach(dialog => {
+        if (window.innerWidth <= 640) {
+          dialog.classList.add('mobile-tour-dialog');
+        } else {
+          dialog.classList.remove('mobile-tour-dialog');
+        }
+      });
+    } else {
+      document.body.classList.remove('tour-active');
+    }
+    
+    return () => {
+      document.body.classList.remove('tour-active');
+    };
+  }, [isTourActive]);
 
   // Debounced navigation to prevent rapid transitions
   const handleNextStep = useCallback(() => {
@@ -110,15 +134,15 @@ const TourModal = () => {
       return ""; // Default centered position
     }
     
-    // After step 2, position to bottom right - Adjusted for mobile
-    return window.innerWidth < 768 
-      ? "fixed bottom-4 left-4 right-4 translate-x-0 translate-y-0 max-h-[380px] overflow-y-auto" 
-      : "fixed bottom-8 right-8 translate-x-0 translate-y-0 max-h-[380px] overflow-y-auto";
+    // After step 2, position to bottom with special mobile styling
+    return "fixed tour-modal-position max-h-[380px] overflow-y-auto";
   };
   
   // Make sure we have aria-attributes to avoid warnings
   const dialogContentProps = {
-    className: `${isInitialStep ? "sm:max-w-[500px]" : "sm:max-w-[320px] shadow-2xl"} ${getPosition()}`,
+    className: `${isInitialStep 
+      ? "sm:max-w-[500px] max-w-[95vw]" 
+      : "sm:max-w-[320px] max-w-[95vw] shadow-2xl"} ${getPosition()}`,
     "aria-describedby": "tour-description"
   };
 
