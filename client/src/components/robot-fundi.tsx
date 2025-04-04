@@ -25,8 +25,18 @@ const getCategoryColor = (category: string = 'general') => {
 };
 
 export default function RobotFundi({ speaking = false, size = "md", category = 'general' }: RobotFundiProps) {
+  // Load saved position from localStorage if available, otherwise use default
+  const getSavedPosition = () => {
+    try {
+      const savedPosition = localStorage.getItem('fundiPosition');
+      return savedPosition ? JSON.parse(savedPosition) : { x: 0, y: 0 };
+    } catch (e) {
+      return { x: 0, y: 0 };
+    }
+  };
+  
   // State for dragging
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState(getSavedPosition());
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   
@@ -42,7 +52,9 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   
   // Mouse event handlers for dragging
   const handleMouseDown = (e: React.MouseEvent) => {
+    // Prevent default browser behavior
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
     setDragStart({ x: e.clientX, y: e.clientY });
   };
@@ -63,8 +75,21 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     setDragStart({ x: e.clientX, y: e.clientY });
   };
   
-  const handleMouseUp = () => {
+  const handleMouseUp = (e?: MouseEvent) => {
+    if (e) {
+      // Prevent default browser behavior
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     setIsDragging(false);
+    
+    // Save position to localStorage when dragging ends
+    try {
+      localStorage.setItem('fundiPosition', JSON.stringify(position));
+    } catch (e) {
+      console.error('Failed to save Fundi position:', e);
+    }
   };
   
   // Set up global event listeners for dragging
@@ -84,6 +109,13 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     };
   }, [isDragging, dragStart.x, dragStart.y, position.x, position.y]);
   
+  // Handler to prevent click events from propagating
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  };
+  
   return (
     <div 
       className="fixed z-[9999] cursor-move" 
@@ -91,9 +123,11 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
         transform: `scale(${scaleMap[size]})`,
         right: `calc(20px - ${position.x}px)`,
         top: `calc(20px + ${position.y}px)`,
-        touchAction: 'none' // Prevent touch actions for better mobile drag
+        touchAction: 'none', // Prevent touch actions for better mobile drag
+        pointerEvents: 'auto' // Ensure we capture all pointer events
       }}
       onMouseDown={handleMouseDown}
+      onClick={handleClick}
     >
       {/* Define the glow filter */}
       <svg width="0" height="0">
@@ -114,7 +148,8 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
         viewBox="0 0 200 200"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
-        style={{ filter: 'url(#glow)' }}
+        style={{ filter: 'url(#glow)', pointerEvents: 'none' }}
+        onClick={handleClick}
       >
         {/* Head */}
         <rect x="60" y="40" width="80" height="70" rx="20" fill="#e6e6e6" />
