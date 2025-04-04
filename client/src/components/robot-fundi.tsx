@@ -44,11 +44,11 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   const [clickStartTime, setClickStartTime] = useState(0);
   const [hasMoved, setHasMoved] = useState(false);
   
-  // We'll ignore size variants and use direct SVG scaling
+  // Size variants scaling (adjusted to be visible on small devices)
   const scaleMap = {
     sm: 0.5,
     md: 1,
-    lg: 5
+    lg: 1.5 // Reduced from 5 to make it more appropriate for mobile
   };
   
   // Get the appropriate color for the current category

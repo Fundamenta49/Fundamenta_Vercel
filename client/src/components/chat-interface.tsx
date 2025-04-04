@@ -110,12 +110,31 @@ export default function ChatInterface({
   // Auto-scroll to bottom of messages
   useEffect(() => {
     if (messagesEndRef.current) {
+      // First try to use scrollIntoView
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
       
       // Also try to scroll the parent scroll area if available
       const scrollArea = document.querySelector('[data-radix-scroll-area-viewport]');
       if (scrollArea && scrollArea instanceof HTMLElement) {
-        scrollArea.scrollTop = scrollArea.scrollHeight;
+        setTimeout(() => {
+          // Set a small delay to ensure DOM has updated
+          scrollArea.scrollTop = scrollArea.scrollHeight;
+        }, 100);
+      }
+      
+      // For mobile devices, ensure we have a backup scrolling method
+      if (window.innerWidth < 768) {
+        setTimeout(() => {
+          // Extra timeout for mobile rendering
+          if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          }
+          
+          // Force scroll to bottom for mobile
+          if (scrollArea && scrollArea instanceof HTMLElement) {
+            scrollArea.scrollTop = scrollArea.scrollHeight;
+          }
+        }, 300);
       }
     }
   }, [messages]);
@@ -215,11 +234,11 @@ export default function ChatInterface({
 
   return (
     <Card className={`flex flex-col border shadow-lg ${className}`} style={{ 
-      height: expanded ? '85vh' : 'min(500px, 85vh)',
+      height: expanded ? '85vh' : window.innerWidth < 768 ? '100vh' : 'min(500px, 85vh)',
       maxWidth: expanded ? '95vw' : '800px',
       width: '100%',
       margin: !expanded ? '0 auto' : undefined,
-      maxHeight: !expanded && window.innerWidth < 768 ? '90vh' : undefined
+      maxHeight: !expanded && window.innerWidth < 768 ? '100%' : undefined
     }}>
       <CardHeader className="px-4 py-2.5 sm:px-5 sm:py-3 border-b">
         <div className="flex items-center justify-between">
@@ -278,8 +297,9 @@ export default function ChatInterface({
         ref={scrollAreaRef} 
         className="flex-1 px-4 py-5 overflow-y-auto touch-auto" 
         style={{ 
-          height: 'calc(100% - 130px)',
-          WebkitOverflowScrolling: 'touch'
+          height: window.innerWidth < 768 ? 'calc(100% - 140px)' : 'calc(100% - 130px)',
+          WebkitOverflowScrolling: 'touch',
+          touchAction: 'pan-y'
         }}
         onTouchStart={(e) => e.stopPropagation()}
       >
@@ -498,6 +518,9 @@ export default function ChatInterface({
             disabled={isProcessing}
             style={{
               fontSize: window.innerWidth < 768 ? '14px' : '16px',
+              height: window.innerWidth < 768 ? '40px' : 'auto',
+              paddingRight: window.innerWidth < 768 ? '8px' : null,
+              paddingLeft: window.innerWidth < 768 ? '8px' : null,
             }}
           />
           <Button 
