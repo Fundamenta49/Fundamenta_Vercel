@@ -39,9 +39,10 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   // State for dragging
   const [position, setPosition] = useState(getSavedPosition());
   const [isDragging, setIsDragging] = useState(false);
-  const [hasMoved, setHasMoved] = useState(false);
+  const [initialPosition, setInitialPosition] = useState({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [clickStartTime, setClickStartTime] = useState(0);
+  const [dragDistance, setDragDistance] = useState(0);
   
   // We'll ignore size variants and use direct SVG scaling
   const scaleMap = {
@@ -53,22 +54,16 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   // Get the appropriate color for the current category
   const color = getCategoryColor(category);
   
-  // Handler for single click (not drag)
-  const handleClick = () => {
-    if (onOpen && !hasMoved) {
-      onOpen();
-    }
-  };
-  
   // Mouse event handlers for dragging
   const handleMouseDown = (e: React.MouseEvent) => {
     // Prevent default browser behavior
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
-    setHasMoved(false);
-    setClickStartTime(Date.now()); // Record start time
+    setDragDistance(0);
+    setClickStartTime(Date.now());
     setDragStart({ x: e.clientX, y: e.clientY });
+    setInitialPosition({ ...position });
   };
   
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -77,10 +72,11 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
       e.preventDefault();
       e.stopPropagation();
       setIsDragging(true);
-      setHasMoved(false);
-      setClickStartTime(Date.now()); // Record start time
+      setDragDistance(0);
+      setClickStartTime(Date.now());
       const touch = e.touches[0];
       setDragStart({ x: touch.clientX, y: touch.clientY });
+      setInitialPosition({ ...position });
     }
   };
   
@@ -91,11 +87,12 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     const deltaX = e.clientX - dragStart.x;
     const deltaY = e.clientY - dragStart.y;
     
-    // Only consider it moved if it moved more than a few pixels
-    // This prevents small accidental movements during clicking
-    if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
-      setHasMoved(true);
-    }
+    // Calculate total drag distance
+    const distance = Math.sqrt(
+      Math.pow(e.clientX - dragStart.x, 2) + 
+      Math.pow(e.clientY - dragStart.y, 2)
+    );
+    setDragDistance(distance);
     
     setPosition({
       x: position.x + deltaX,
@@ -115,11 +112,12 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     const deltaX = touch.clientX - dragStart.x;
     const deltaY = touch.clientY - dragStart.y;
     
-    // Only consider it moved if it moved more than a few pixels
-    // This prevents small accidental movements during touching
-    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-      setHasMoved(true);
-    }
+    // Calculate total drag distance
+    const distance = Math.sqrt(
+      Math.pow(touch.clientX - dragStart.x, 2) + 
+      Math.pow(touch.clientY - dragStart.y, 2)
+    );
+    setDragDistance(distance);
     
     setPosition({
       x: position.x + deltaX,
@@ -139,11 +137,22 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
       e.stopPropagation();
     }
     
-    const clickDuration = Date.now() - clickStartTime;
+    // Calculate total movement from initial position
+    const totalDragDistance = Math.sqrt(
+      Math.pow(position.x - initialPosition.x, 2) + 
+      Math.pow(position.y - initialPosition.y, 2)
+    );
     
-    // If it's a quick click (less than 200ms) and hasn't moved, trigger click
-    if (clickDuration < 200 && !hasMoved && onOpen) {
-      handleClick();
+    // We consider it a click ONLY if:
+    // 1. Total movement is less than 5 pixels (very strict)
+    // 2. Duration was under 200ms (typical click)
+    const clickDuration = Date.now() - clickStartTime;
+    const isClick = totalDragDistance < 5 && clickDuration < 200;
+    
+    console.log('Drag distance:', totalDragDistance, 'Click duration:', clickDuration, 'Is click?', isClick);
+    
+    if (isClick && onOpen) {
+      onOpen();
     }
     
     setIsDragging(false);
@@ -159,11 +168,20 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   const handleTouchEnd = (e: TouchEvent) => {
     if (!isDragging) return;
     
-    const clickDuration = Date.now() - clickStartTime;
+    // Calculate total movement from initial position
+    const totalDragDistance = Math.sqrt(
+      Math.pow(position.x - initialPosition.x, 2) + 
+      Math.pow(position.y - initialPosition.y, 2)
+    );
     
-    // For touch, be a bit more lenient with the timing
-    if (clickDuration < 300 && !hasMoved && onOpen) {
-      handleClick();
+    // For touch devices, we need very strict conditions to prevent accidental chat opening
+    const clickDuration = Date.now() - clickStartTime;
+    const isClick = clickDuration < 200 && totalDragDistance < 3; // Even stricter for touch
+    
+    console.log('Touch: Drag distance:', totalDragDistance, 'Click duration:', clickDuration, 'Is click?', isClick);
+    
+    if (isClick && onOpen) {
+      onOpen();
     }
     
     setIsDragging(false);
@@ -178,26 +196,34 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   
   // Set up global event listeners for dragging
   useEffect(() => {
+    // Create memoized event handlers that close over the current state
+    const mouseMoveHandler = (e: MouseEvent) => handleMouseMove(e);
+    const mouseUpHandler = (e: MouseEvent) => handleMouseUp(e);
+    const touchMoveHandler = (e: TouchEvent) => handleTouchMove(e);
+    const touchEndHandler = (e: TouchEvent) => handleTouchEnd(e);
+    
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
-      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', mouseUpHandler);
+      document.addEventListener('touchmove', touchMoveHandler, { passive: false });
+      document.addEventListener('touchend', touchEndHandler);
+      
+      console.log('Started dragging from position:', initialPosition);
     } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+      document.removeEventListener('touchmove', touchMoveHandler);
+      document.removeEventListener('touchend', touchEndHandler);
     }
     
-    // Cleanup event listeners on component unmount
+    // Cleanup event listeners on component unmount or when dependencies change
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+      document.removeEventListener('touchmove', touchMoveHandler);
+      document.removeEventListener('touchend', touchEndHandler);
     };
-  }, [isDragging, position, hasMoved, onOpen]);
+  }, [isDragging]);
   
   return (
     <div 
