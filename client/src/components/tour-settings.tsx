@@ -36,7 +36,7 @@ export function TourSettings() {
         </Button>
       ) : (
         <Button variant="outline" size="sm" onClick={handleOpenHelp}>
-          Help & Support
+          Help
         </Button>
       )}
       

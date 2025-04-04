@@ -1,10 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, HelpCircle, User, Settings, Bell } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, HelpCircle } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { MoodSelector } from "@/components/mood-selector";
 
 const features = [
   {
@@ -59,25 +56,7 @@ export default function Home() {
 
   return (
     <div className="px-4 py-8">
-      <div className="flex items-center justify-end mb-2 gap-3">
-        <MoodSelector />
-        <Separator orientation="vertical" className="h-8" />
-        
-        <Button variant="ghost" size="icon" className="text-text-muted hover:text-text-primary hover:bg-muted">
-          <Bell className="h-5 w-5" />
-        </Button>
-        
-        <Button variant="ghost" size="icon" className="text-text-muted hover:text-text-primary hover:bg-muted">
-          <Settings className="h-5 w-5" />
-        </Button>
-        
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="" />
-          <AvatarFallback className="bg-primary/10 text-primary">
-            <User className="h-5 w-5" />
-          </AvatarFallback>
-        </Avatar>
-      </div>
+      {/* Removed the header with Mood, Bell, and Settings buttons */}
 
       <div className="text-center mb-12 relative">
         <Button

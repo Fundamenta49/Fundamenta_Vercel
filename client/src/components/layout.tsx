@@ -3,11 +3,6 @@ import FloatingChat from "@/components/floating-chat";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { User, Settings, Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { MoodSelector } from "@/components/mood-selector";
 import { ReactNode } from "react";
 
 interface LayoutProps {

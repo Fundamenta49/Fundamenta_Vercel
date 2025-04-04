@@ -890,7 +890,7 @@ export default function SchedulerCalendar() {
       <div className="flex flex-col h-full">
         <header className="mb-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold">My Calendar</h2>
+            <h2 className="text-2xl font-bold">Calendar</h2>
             <Button 
               onClick={() => {
                 setShowNewEventForm(true);
@@ -935,7 +935,7 @@ export default function SchedulerCalendar() {
         <DialogTrigger asChild>
           <button className="flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left text-gray-700 hover:bg-gray-50">
             <CalendarDays className="h-5 w-5 text-gray-600" />
-            <span className="font-medium">My Calendar</span>
+            <span className="font-medium">Calendar</span>
           </button>
         </DialogTrigger>
         
