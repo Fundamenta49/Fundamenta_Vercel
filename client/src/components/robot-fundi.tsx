@@ -58,24 +58,32 @@ export default function RobotFundi({
       return;
     }
     
-    // If it wasn't recently dragged, treat as a click
-    if (onOpen && !wasDragged) {
+    // Check if this was a true small movement vs. a drag
+    // A small movement (less than 5px) should still open the chat
+    const movementThreshold = 5;
+    const hasMovedSlightly = wasDragged && 
+      Math.abs(position.x - 63) < movementThreshold && 
+      Math.abs(position.y - 8) < movementThreshold;
+    
+    // Handle detection based on movement distance and time
+    if (onOpen && (!wasDragged || hasMovedSlightly)) {
+      // Normal click or tiny movement
       onOpen();
       console.log("Opening Fundi chat - click detected!");
     } else if (wasDragged) {
-      // Override the drag detection if it's been more than 1 second since last drag
-      // This makes the chat more accessible even after dragging
+      // If it was dragged significantly, check time since last drag
       const lastDragTime = (window as any).lastDragTime || 0;
       const timeSinceLastDrag = Date.now() - lastDragTime;
-      if (timeSinceLastDrag > 1000 && onOpen) {
+      
+      // After 500ms consider it a click, not a drag completion
+      if (timeSinceLastDrag > 500 && onOpen) {
         onOpen();
         console.log("Opening Fundi chat - override drag detection");
       } else {
-        console.log("Click ignored - recent drag detected");
+        console.log("Click ignored - recent significant drag detected");
       }
     }
     
-    // Don't reset wasDragged here - let the timeout handle it
     e.stopPropagation();
   };
 
@@ -145,12 +153,12 @@ export default function RobotFundi({
     };
   }, [isDragging, dragStart]);
   
-  // Reset wasDragged after a delay to ensure Fundi remains clickable
+  // Reset wasDragged after a shorter delay to make Fundi more responsive
   useEffect(() => {
     if (wasDragged) {
       const timer = setTimeout(() => {
         setWasDragged(false);
-      }, 3000); // Reset after 3 seconds - gives user more time between interactions
+      }, 800); // Reduced from 3000ms to 800ms for more responsive interactions
       
       return () => clearTimeout(timer);
     }

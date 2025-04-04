@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import '../styles/resize-handler.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { ChevronRight, MessageSquarePlus, X, Send, Sparkles, ChevronDown, ArrowUpRightFromCircle } from 'lucide-react';
@@ -40,15 +41,19 @@ export default function FundiInteractiveAssistant({
   const [thinking, setThinking] = useState(false);
   const [category, setCategory] = useState(initialCategory);
   const [emotion, setEmotion] = useState<'neutral' | 'happy' | 'curious' | 'surprised' | 'concerned'>('neutral');
-  const [messages, setMessages] = useState<{ text: string; isUser: boolean; timestamp: Date }[]>([
+  const [chatSize, setChatSize] = useState<{width: string, height: string}>({width: '350px', height: '450px'});
+  // Initialize with a welcome message but connect to real API for subsequent messages
+  const [messages, setMessages] = useState<{ text: string; isUser: boolean; timestamp: Date; id?: string }[]>([
     { 
       text: "Hi there! I'm Fundi, your life skills assistant. How can I help you today?", 
       isUser: false, 
-      timestamp: new Date() 
+      timestamp: new Date(),
+      id: 'welcome-message'
     }
   ]);
   const inputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatCardRef = useRef<HTMLDivElement>(null);
 
   // Suggestions based on category
   const getSuggestions = (): SuggestionItem[] => {
@@ -164,6 +169,30 @@ export default function FundiInteractiveAssistant({
     }
   }, [isOpen]);
 
+  // Handle resize observer for the chat window
+  useEffect(() => {
+    if (!chatCardRef.current) return;
+    
+    // Create a resize observer to track the chat window size changes
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        setChatSize({
+          width: `${width}px`,
+          height: `${height}px`
+        });
+      }
+    });
+    
+    // Start observing the chat card
+    resizeObserver.observe(chatCardRef.current);
+    
+    // Clean up
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [chatCardRef.current]);
+
   // Handle emotion changes based on conversation
   useEffect(() => {
     if (messages.length > 0) {
@@ -218,7 +247,7 @@ export default function FundiInteractiveAssistant({
     setInputValue(e.target.value);
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     
     // Add user message
@@ -226,28 +255,85 @@ export default function FundiInteractiveAssistant({
       text: inputValue,
       isUser: true,
       timestamp: new Date(),
+      id: `user-${Date.now()}`
     };
     
+    // Update UI immediately with user message
     setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
     
     // Detect category from message
     detectCategory(inputValue);
     
-    // Simulate response after a delay
-    setTimeout(() => {
+    // Show thinking state
+    setThinking(true);
+    
+    try {
+      // Format previous messages for API
+      const previousMessages = messages.map(msg => ({
+        role: msg.isUser ? "user" : "assistant",
+        content: msg.text,
+        timestamp: msg.timestamp,
+        category: category
+      }));
+      
+      // Get context from the current page/state
+      const context = {
+        currentPage: window.location.pathname,
+        currentSection: category,
+        availableActions: ['navigate', 'search', 'recommend']
+      };
+      
+      // Make API request
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: inputValue,
+          category: category,
+          previousMessages: previousMessages,
+          context: context
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const responseData = await response.json();
+      
+      // Update UI with AI response
       const responseMessage = {
-        text: generateResponse(inputValue),
+        text: responseData.response || responseData.message || generateResponse(inputValue), // Fallback to generated response
         isUser: false,
         timestamp: new Date(),
+        id: `assistant-${Date.now()}`
       };
+      
       setMessages((prev) => [...prev, responseMessage]);
       
       // Call onRequestHelp callback if provided
       if (onRequestHelp) {
         onRequestHelp(category, inputValue);
       }
-    }, 2000);
+    } catch (error) {
+      console.error('Error calling chat API:', error);
+      
+      // Fallback to generated response if API fails
+      const fallbackMessage = {
+        text: generateResponse(inputValue),
+        isUser: false,
+        timestamp: new Date(),
+        id: `fallback-${Date.now()}`
+      };
+      
+      setMessages((prev) => [...prev, fallbackMessage]);
+    } finally {
+      // Always end thinking state
+      setThinking(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -256,7 +342,7 @@ export default function FundiInteractiveAssistant({
     }
   };
 
-  const handleSuggestionClick = (suggestion: SuggestionItem) => {
+  const handleSuggestionClick = async (suggestion: SuggestionItem) => {
     // Update category if different
     if (suggestion.category !== category) {
       setCategory(suggestion.category);
@@ -267,17 +353,58 @@ export default function FundiInteractiveAssistant({
       text: suggestion.text,
       isUser: true,
       timestamp: new Date(),
+      id: `suggestion-${Date.now()}`
     };
     
     setMessages((prev) => [...prev, userMessage]);
     
-    // Simulate response after a delay
-    setTimeout(() => {
+    // Show thinking state
+    setThinking(true);
+    
+    try {
+      // Format previous messages for API
+      const previousMessages = messages.map(msg => ({
+        role: msg.isUser ? "user" : "assistant",
+        content: msg.text,
+        timestamp: msg.timestamp,
+        category: category
+      }));
+      
+      // Get context from the current page/state
+      const context = {
+        currentPage: window.location.pathname,
+        currentSection: suggestion.category || category,
+        availableActions: ['navigate', 'search', 'recommend']
+      };
+      
+      // Make API request
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: suggestion.text,
+          category: suggestion.category || category,
+          previousMessages: previousMessages,
+          context: context
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const responseData = await response.json();
+      
+      // Update UI with AI response
       const responseMessage = {
-        text: generateResponse(suggestion.text),
+        text: responseData.response || responseData.message || generateResponse(suggestion.text), // Fallback to generated response
         isUser: false,
         timestamp: new Date(),
+        id: `assistant-suggestion-${Date.now()}`
       };
+      
       setMessages((prev) => [...prev, responseMessage]);
       
       // Call action if provided
@@ -289,7 +416,22 @@ export default function FundiInteractiveAssistant({
       if (onRequestHelp) {
         onRequestHelp(suggestion.category, suggestion.text);
       }
-    }, 2000);
+    } catch (error) {
+      console.error('Error calling chat API for suggestion:', error);
+      
+      // Fallback to generated response if API fails
+      const fallbackMessage = {
+        text: generateResponse(suggestion.text),
+        isUser: false,
+        timestamp: new Date(),
+        id: `fallback-suggestion-${Date.now()}`
+      };
+      
+      setMessages((prev) => [...prev, fallbackMessage]);
+    } finally {
+      // Always end thinking state
+      setThinking(false);
+    }
   };
 
   const handleCategoryChange = (newCategory: string) => {
@@ -430,8 +572,17 @@ export default function FundiInteractiveAssistant({
           >
             {isChatOpen ? (
               // Chat interface
-              <Card className="w-80 md:w-96 shadow-xl border-t-4" 
-                style={{ borderTopColor: `var(--${category}-500, var(--primary))` }}
+              <Card 
+                ref={chatCardRef}
+                className="shadow-xl border-t-4 resize-handler overflow-hidden" 
+                style={{ 
+                  borderTopColor: `var(--${category}-500, var(--primary))`,
+                  minWidth: '300px', 
+                  maxWidth: '450px',
+                  width: chatSize.width,
+                  height: chatSize.height,
+                  resize: 'both' 
+                }}
               >
                 <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
                   <div className="flex items-center space-x-2">
@@ -462,26 +613,36 @@ export default function FundiInteractiveAssistant({
                     </Button>
                   </div>
                 </CardHeader>
-                <ScrollArea className="h-72">
+                <ScrollArea className="h-80">
                   <CardContent className="p-4 pt-0">
                     <div className="space-y-4">
                       {messages.map((message, index) => (
                         <div 
-                          key={index} 
+                          key={message.id || index} 
                           className={cn(
                             "flex",
                             message.isUser ? "justify-end" : "justify-start"
                           )}
                         >
+                          {!message.isUser && (
+                            <div className="flex-shrink-0 mr-2 mt-1">
+                              <FundiAvatarEnhanced
+                                size="xs"
+                                category={category}
+                                speaking={false}
+                                emotion="neutral"
+                              />
+                            </div>
+                          )}
                           <div 
                             className={cn(
-                              "max-w-[80%] rounded-lg px-3 py-2 text-sm",
+                              "max-w-[80%] rounded-lg px-3 py-2 text-sm shadow-sm",
                               message.isUser ? 
-                                "bg-primary text-primary-foreground" : 
-                                `bg-muted text-muted-foreground`
+                                "bg-primary text-primary-foreground font-medium" : 
+                                `bg-muted/85 text-foreground border border-border/40`
                             )}
                           >
-                            <div>{message.text}</div>
+                            <div className="leading-relaxed">{message.text}</div>
                             <div className={cn(
                               "text-xs mt-1 opacity-70",
                               message.isUser ? "text-right" : ""
@@ -491,6 +652,26 @@ export default function FundiInteractiveAssistant({
                           </div>
                         </div>
                       ))}
+                      {thinking && (
+                        <div className="flex justify-start">
+                          <div className="flex-shrink-0 mr-2 mt-1">
+                            <FundiAvatarEnhanced
+                              size="xs"
+                              category={category}
+                              speaking={false}
+                              thinking={true}
+                              emotion="curious"
+                            />
+                          </div>
+                          <div className="bg-muted/85 border border-border/40 rounded-lg px-3 py-2 text-sm shadow-sm animate-pulse">
+                            <div className="flex items-center space-x-2">
+                              <span className="inline-block w-2 h-2 bg-foreground/30 rounded-full"></span>
+                              <span className="inline-block w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                              <span className="inline-block w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <div ref={chatEndRef} />
                     </div>
                   </CardContent>
