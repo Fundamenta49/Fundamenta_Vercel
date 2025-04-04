@@ -108,8 +108,8 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
 
   return (
     <div 
-      className={`relative w-full h-full ${className}`}
-      style={{ width, height }}
+      className={`relative w-full h-full overflow-hidden ${className}`}
+      style={{ width, height, aspectRatio: '16/9' }}
     >
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
@@ -143,7 +143,8 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           loading="lazy"
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectFit: 'cover' }}
           onLoad={handleIframeLoad}
           onError={handleIframeError}
         />

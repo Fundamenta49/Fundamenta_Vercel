@@ -636,7 +636,7 @@ export const TechniqueTutorials: React.FC<CookingTutorialsSectionProps> = ({ onP
   
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {techniques.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={handlePlayVideo} />
         ))}
@@ -663,7 +663,7 @@ export const KitchenSafetyTutorials: React.FC<CookingTutorialsSectionProps> = ({
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {safetyTutorials.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
         ))}
@@ -690,7 +690,7 @@ export const BasicRecipesTutorials: React.FC<CookingTutorialsSectionProps> = ({ 
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {basicRecipes.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
         ))}
@@ -733,7 +733,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </div>
       
       <TabsContent value="breakfast" className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {breakfastTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
@@ -741,7 +741,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </TabsContent>
       
       <TabsContent value="lunch" className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {lunchTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
@@ -749,7 +749,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
       </TabsContent>
       
       <TabsContent value="dinner" className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {dinnerTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
@@ -818,6 +818,7 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
         <div 
           className="relative aspect-video cursor-pointer overflow-hidden bg-gray-100 w-full"
           onClick={handlePlayVideo}
+          style={{ minHeight: '240px' }}
         >
           {tutorial.thumbnailUrl ? (
             <img 
@@ -938,7 +939,7 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
         </div>
         
         <div className="p-5 bg-white">
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-lg font-medium mb-2 text-learning-color flex items-center gap-2">
                 <DollarSign className="h-5 w-5" />

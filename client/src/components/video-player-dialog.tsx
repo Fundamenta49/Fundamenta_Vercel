@@ -57,7 +57,7 @@ export function VideoPlayerDialog({
         </div>
         
         <div className="w-full h-full flex flex-col md:flex-row">
-          <div className="w-full md:w-3/4 h-[40vh] md:h-full bg-black flex-shrink-0">
+          <div className="w-full md:w-3/4 h-[50vh] md:h-full bg-black flex-shrink-0">
             {playerError ? (
               <div className="flex flex-col items-center justify-center text-white p-6 text-center h-full">
                 <AlertCircle className="h-12 w-12 mb-4 text-red-500" />
@@ -73,7 +73,7 @@ export function VideoPlayerDialog({
                 </Button>
               </div>
             ) : (
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full overflow-hidden">
                 <EmbeddedYouTubePlayer
                   videoId={videoId}
                   title={title}
@@ -90,10 +90,42 @@ export function VideoPlayerDialog({
           {description && (
             <div className="bg-white p-4 md:p-6 w-full md:w-1/4 border-t md:border-t-0 md:border-l shadow-sm flex flex-col h-auto md:h-full overflow-hidden">
               <h2 className="text-xl font-semibold pb-2 border-l-4 border-learning-color pl-3">{title}</h2>
-              <ScrollArea className="flex-grow mb-4 h-[120px] md:h-[calc(100%-120px)]">
-                <p className="text-sm text-gray-700 leading-relaxed">{description}</p>
+              <ScrollArea className="flex-grow mb-4 h-[130px] md:h-[calc(100%-120px)]">
+                <div className="pr-4">
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{description}</p>
+                  
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <h3 className="text-sm font-medium text-learning-color mb-2">What you'll learn</h3>
+                    <ul className="space-y-1">
+                      <li className="flex items-start text-xs text-gray-600">
+                        <div className="bg-learning-color/10 text-learning-color p-0.5 rounded-full mt-0.5 mr-1.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        Proper technique and application
+                      </li>
+                      <li className="flex items-start text-xs text-gray-600">
+                        <div className="bg-learning-color/10 text-learning-color p-0.5 rounded-full mt-0.5 mr-1.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        Common mistakes to avoid
+                      </li>
+                      <li className="flex items-start text-xs text-gray-600">
+                        <div className="bg-learning-color/10 text-learning-color p-0.5 rounded-full mt-0.5 mr-1.5">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        Practical applications for daily cooking
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </ScrollArea>
-              <div className="pt-2 flex justify-between items-center mt-auto">
+              <div className="pt-2 flex justify-between items-center mt-auto border-t border-gray-100">
                 <p className="text-xs text-gray-500 hidden md:block">
                   This content is provided for educational purposes
                 </p>

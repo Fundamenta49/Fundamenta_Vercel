@@ -5,7 +5,9 @@ import {
   Search,
   PlayCircle,
   Info,
-  AlertTriangle
+  AlertTriangle,
+  Utensils,
+  UtensilsCrossed
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -145,7 +147,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-learning-color"></div>
               </div>
             ) : searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 {searchResults.map((video) => (
                   <Card key={video.id} className="overflow-hidden hover:shadow-md transition-shadow border border-t-4 border-t-learning-color group">
                     <div 
@@ -197,30 +199,50 @@ const CookingTutorialPopup: React.FC = () => {
         {/* Main Tabs for Categories */}
         {!showSearchResults && (
           <Tabs defaultValue="techniques" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="sticky top-0 bg-white z-10 pb-2">
-              <div className="grid grid-cols-4 w-full gap-1">
+            <div className="sticky top-0 bg-white z-10 pb-4">
+              <div className="flex space-x-2 overflow-x-auto pb-1 no-scrollbar">
                 <button 
                   onClick={() => setActiveTab('techniques')} 
-                  className={`py-2 px-1 text-center rounded font-medium text-sm ${activeTab === 'techniques' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm ${
+                    activeTab === 'techniques' 
+                      ? 'bg-blue-100 text-blue-700 border border-blue-300' 
+                      : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
+                  <Utensils className="h-4 w-4 mr-2" />
                   Techniques
                 </button>
                 <button 
                   onClick={() => setActiveTab('safety')} 
-                  className={`py-2 px-1 text-center rounded font-medium text-sm ${activeTab === 'safety' ? 'bg-yellow-50 text-yellow-700 border-b-2 border-yellow-500' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm ${
+                    activeTab === 'safety' 
+                      ? 'bg-yellow-100 text-yellow-700 border border-yellow-300' 
+                      : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
+                  <AlertTriangle className="h-4 w-4 mr-2" />
                   Safety
                 </button>
                 <button 
                   onClick={() => setActiveTab('recipes')} 
-                  className={`py-2 px-1 text-center rounded font-medium text-sm ${activeTab === 'recipes' ? 'bg-green-50 text-green-700 border-b-2 border-green-500' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm ${
+                    activeTab === 'recipes' 
+                      ? 'bg-green-100 text-green-700 border border-green-300' 
+                      : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
+                  <ChefHat className="h-4 w-4 mr-2" />
                   Recipes
                 </button>
                 <button 
                   onClick={() => setActiveTab('meals')} 
-                  className={`py-2 px-1 text-center rounded font-medium text-sm ${activeTab === 'meals' ? 'bg-orange-50 text-orange-700 border-b-2 border-orange-500' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm ${
+                    activeTab === 'meals' 
+                      ? 'bg-orange-100 text-orange-700 border border-orange-300' 
+                      : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
+                  <PlayCircle className="h-4 w-4 mr-2" />
                   Meals
                 </button>
               </div>
@@ -235,7 +257,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Master these fundamental techniques to build a strong foundation for all your cooking.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                   <TechniqueTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
@@ -249,7 +271,7 @@ const CookingTutorialPopup: React.FC = () => {
                   Proper technique and safety practices help prevent injury and foodborne illness. 
                   These fundamentals should be mastered before attempting complex recipes.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                   <KitchenSafetyTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
@@ -262,7 +284,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Simple, foundational recipes that every home cook should know. Perfect for beginners.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                   <BasicRecipesTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
@@ -275,7 +297,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Learn how to prepare complete meals for breakfast, lunch, and dinner.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                   <MealTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>

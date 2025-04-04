@@ -329,7 +329,7 @@ const CookingTutorials = () => {
                   <p className="mt-4 text-gray-500">Searching for videos...</p>
                 </div>
               ) : searchResults.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {searchResults.map((video) => (
                     <Card key={video.id} className="overflow-hidden h-full flex flex-col">
                       <div 
@@ -469,7 +469,7 @@ const CookingTutorials = () => {
                       }
                       
                       return (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                           {filteredVideos.map((video) => (
                             <Card key={video.id} className="overflow-hidden h-full flex flex-col border-learning-color shadow-sm transition-all duration-200 hover:shadow-md">
                               <div 
