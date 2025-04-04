@@ -126,7 +126,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             >
               <RobotFundi
                 speaking={isSpeaking}
-                size="md"
+                size="lg"
                 category={category}
                 onOpen={() => setIsExpanded(true)}
               />
