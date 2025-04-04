@@ -11,11 +11,11 @@ export default function RobotFundi({ speaking = false, size = "md" }: RobotFundi
   const scaleMap = {
     sm: 0.5,
     md: 1,
-    lg: 3
+    lg: 5
   };
   
   return (
-    <div className="fixed right-8 bottom-16 z-[9999]" style={{ transform: `scale(${scaleMap[size]})` }}>
+    <div className="fixed right-20 bottom-24 z-[9999]" style={{ transform: `scale(${scaleMap[size]})` }}>
       {/* Simple robot avatar with no animations */}
       <svg
         width="200"
