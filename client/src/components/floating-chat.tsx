@@ -76,13 +76,14 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       <AnimatePresence>
         {isExpanded ? (
           <motion.div 
-            className="fixed inset-0 md:inset-auto md:top-8 md:right-8 z-[999999] w-full max-w-full md:max-w-md flex items-center justify-center md:block"
+            className="fixed md:absolute right-6 sm:right-8 md:right-10 top-2 sm:top-2 md:top-2 z-[999999] flex items-end justify-end"
             initial={{ opacity: 0, scale: 0.8, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
             transition={{ duration: 0.3 }}
             style={{ 
-              height: window.innerWidth < 768 ? '100%' : 'auto'
+              width: window.innerWidth < 768 ? '90%' : '350px',
+              maxHeight: '450px'
             }}
           >
             <ChatInterface 
