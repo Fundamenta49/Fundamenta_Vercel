@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTour } from '@/contexts/tour-context';
 import {
   Dialog,
@@ -29,6 +29,7 @@ const TourModal = () => {
 
   const [userNameInput, setUserNameInput] = useState('');
   const [showUserNameInput, setShowUserNameInput] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
   // Check if we're on the first step and need to collect the user's name
   useEffect(() => {
@@ -37,27 +38,77 @@ const TourModal = () => {
     } else {
       setShowUserNameInput(false);
     }
+    
+    // Reset transitioning state when step changes
+    setIsTransitioning(false);
   }, [isTourActive, currentStepIndex, userName]);
 
-  // Handle user name submission
-  const handleUserNameSubmit = () => {
-    if (userNameInput.trim()) {
-      setUserName(userNameInput.trim());
-      setUserNameInput('');
-      setShowUserNameInput(false);
+  // Debounced navigation to prevent rapid transitions
+  const handleNextStep = useCallback(() => {
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    
+    // Force remove any lingering highlights before transitioning
+    document.querySelectorAll('.tour-highlight').forEach(el => {
+      el.classList.remove('tour-highlight');
+    });
+    
+    // Small delay to ensure proper cleanup before transition
+    setTimeout(() => {
       nextStep();
-    }
-  };
+    }, 100);
+  }, [nextStep, isTransitioning]);
+  
+  const handlePrevStep = useCallback(() => {
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    
+    // Force remove any lingering highlights before transitioning
+    document.querySelectorAll('.tour-highlight').forEach(el => {
+      el.classList.remove('tour-highlight');
+    });
+    
+    // Small delay to ensure proper cleanup before transition
+    setTimeout(() => {
+      prevStep();
+    }, 100);
+  }, [prevStep, isTransitioning]);
+  
+  // Handle user name submission
+  const handleUserNameSubmit = useCallback(() => {
+    if (!userNameInput.trim()) return;
+    
+    // Set name and add a small timeout before advancing to allow state to update
+    setUserName(userNameInput.trim());
+    setUserNameInput('');
+    setShowUserNameInput(false);
+    setIsTransitioning(true);
+    
+    // Clean any highlights and move to next step
+    document.querySelectorAll('.tour-highlight').forEach(el => {
+      el.classList.remove('tour-highlight');
+    });
+    
+    // Delay moving to the next step slightly to ensure name is set properly
+    setTimeout(() => {
+      nextStep();
+    }, 100);
+  }, [userNameInput, setUserName, nextStep]);
 
   // Progress percentage calculation
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
 
+  // Make sure we have aria-attributes to avoid warnings
+  const dialogContentProps = {
+    className: "sm:max-w-[500px]",
+    "aria-describedby": "tour-description"
+  };
+
   return (
     <Dialog open={isTourActive} onOpenChange={(open) => !open && endTour()}>
-      <DialogContent 
-        className="sm:max-w-[500px]"
-        aria-describedby="tour-description"
-      >
+      <DialogContent {...dialogContentProps}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <HelpCircle className="h-5 w-5 text-primary" />
@@ -78,8 +129,13 @@ const TourModal = () => {
               onKeyDown={(e) => e.key === 'Enter' && handleUserNameSubmit()}
               autoFocus
               className="mb-2"
+              aria-label="Enter your name"
             />
-            <Button onClick={handleUserNameSubmit} className="w-full">
+            <Button 
+              onClick={handleUserNameSubmit} 
+              className="w-full"
+              disabled={!userNameInput.trim() || isTransitioning}
+            >
               Continue
             </Button>
           </div>
@@ -110,8 +166,8 @@ const TourModal = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={prevStep}
-              disabled={currentStepIndex === 0 || showUserNameInput}
+              onClick={handlePrevStep}
+              disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
               Back
@@ -121,7 +177,7 @@ const TourModal = () => {
               variant="outline" 
               size="sm" 
               onClick={skipTour}
-              disabled={showUserNameInput}
+              disabled={showUserNameInput || isTransitioning}
             >
               <X className="h-4 w-4 mr-1" />
               Skip
@@ -131,8 +187,8 @@ const TourModal = () => {
           {!showUserNameInput && (
             <Button 
               size="sm" 
-              onClick={nextStep}
-              disabled={showUserNameInput}
+              onClick={handleNextStep}
+              disabled={showUserNameInput || isTransitioning}
             >
               {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
               {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-1" />}

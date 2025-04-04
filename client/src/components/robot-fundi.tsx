@@ -254,7 +254,7 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   
   return (
     <div 
-      className="fixed z-[9999]" 
+      className="fixed z-[9999] robot-fundi" 
       style={{ 
         transform: `scale(${scaleMap[size]})`,
         right: `calc(20px - ${position.x}px)`,

@@ -191,8 +191,9 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [userName, setUserName] = useState('');
   const [hasSeenTour, setHasSeenTour] = useState(false);
 
-  // Check if the user has seen the tour before
+  // Check if the user has seen the tour before and load user name
   useEffect(() => {
+    // Check if tour has been seen
     const tourSeen = localStorage.getItem('hasSeenTour');
     if (tourSeen) {
       setHasSeenTour(true);
@@ -200,7 +201,20 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Start tour automatically on first visit
       startTour();
     }
+    
+    // Check if user name is stored
+    const savedUserName = localStorage.getItem('tourUserName');
+    if (savedUserName) {
+      setUserName(savedUserName);
+    }
   }, []);
+  
+  // Save user name to localStorage when it changes
+  useEffect(() => {
+    if (userName) {
+      localStorage.setItem('tourUserName', userName);
+    }
+  }, [userName]);
 
   // Get current step data
   const currentStep = isTourActive && currentStepIndex < tourSteps.length 
@@ -216,32 +230,37 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Highlight the relevant element if specified
   useEffect(() => {
-    if (isTourActive && currentStep && typeof currentStep.highlightSelector === 'string') {
+    // Clean up any existing highlights first to avoid stale highlights
+    document.querySelectorAll('.tour-highlight').forEach(el => {
+      el.classList.remove('tour-highlight');
+    });
+    
+    // Don't add highlights for steps 0 and 1 (welcome and fundi intro)
+    if (isTourActive && currentStep && typeof currentStep.highlightSelector === 'string' && currentStepIndex > 1) {
       // Small delay to ensure the element is rendered
       const timeout = setTimeout(() => {
         const selector = currentStep.highlightSelector as string;
         const element = document.querySelector(selector);
+        
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          
-          // Don't add highlight class to dialog or dialog content elements
-          const isDialog = 
-            element.hasAttribute('role') && 
-            (element.getAttribute('role') === 'dialog' || element.getAttribute('role') === 'alertdialog');
-          
-          const isDialogContent = 
-            element.classList.contains('DialogContent') || 
-            element.classList.contains('DialogOverlay');
+          // Check if element is visible and exists in the DOM
+          if (element.getBoundingClientRect().height > 0) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-          if (!isDialog && !isDialogContent) {
-            element.classList.add('tour-highlight');
+            // Explicitly check that we're not highlighting a dialog
+            if (!element.closest('[role="dialog"]') && 
+                !element.closest('[role="alertdialog"]') && 
+                !element.closest('.DialogContent') && 
+                !element.closest('.DialogOverlay')) {
+              element.classList.add('tour-highlight');
+            }
           }
         }
-      }, 500);
+      }, 300);
 
       return () => {
         clearTimeout(timeout);
-        // Remove highlight from all elements
+        // Remove highlight from all elements on cleanup
         document.querySelectorAll('.tour-highlight').forEach(el => {
           el.classList.remove('tour-highlight');
         });
@@ -305,7 +324,9 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     ? {
         ...currentStep,
         content: processStepContent(currentStep.content),
-        title: processStepContent(currentStep.title)
+        title: processStepContent(currentStep.title),
+        // Ensure we don't include highlightSelector for step 0 (welcome) and step 1 (Fundi intro)
+        highlightSelector: currentStepIndex <= 1 ? undefined : currentStep.highlightSelector
       }
     : null;
 
