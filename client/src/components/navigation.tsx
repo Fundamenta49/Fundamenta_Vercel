@@ -46,6 +46,7 @@ const featureNavItems = [
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
   { href: "/active", label: "Active You", icon: Activity },
   { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
+  { href: "/fundi-showcase", label: "Fundi Showcase", icon: Sparkles },
 ];
 
 export default function Navigation() {
@@ -68,6 +69,7 @@ export default function Navigation() {
     if (href === '/wellness' && location.includes('/wellness')) return true;
     if (href === '/active' && (location.includes('/active') || location.includes('/fitness'))) return true;
     if (href === '/emergency' && location.includes('/emergency')) return true;
+    if (href === '/fundi-showcase' && location.includes('/fundi-showcase')) return true;
     
     return false;
   };
@@ -147,6 +149,15 @@ export default function Navigation() {
         hoverBg: "hover:bg-red-50",
         iconColor: "text-red-700",
         borderColor: "border-red-300"
+      };
+    } else if (location.includes('/fundi-showcase')) {
+      // Indigo for Fundi Showcase
+      return {
+        activeItemBg: "bg-indigo-100",
+        activeItemText: "text-indigo-700",
+        hoverBg: "hover:bg-indigo-50",
+        iconColor: "text-indigo-700",
+        borderColor: "border-indigo-300"
       };
     }
     

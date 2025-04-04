@@ -19,6 +19,7 @@ import Learning from "@/pages/learning";
 import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";
 import YogaProgressionPage from "@/pages/yoga-progression";
+import FundiShowcase from "@/pages/fundi-showcase";
 import EconomicsCourse from "@/pages/learning/courses/economics";
 import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
 import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
@@ -53,6 +54,7 @@ function Router() {
         <Route path="/yoga-test" component={YogaTest} />
         <Route path="/yoga-pose-analysis" component={YogaPoseAnalysis} />
         <Route path="/yoga-progression" component={YogaProgressionPage} />
+        <Route path="/fundi-showcase" component={FundiShowcase} />
         <Route path="/learning" component={Learning} />
         <Route path="/learning/courses/vehicle-maintenance" component={VehicleMaintenanceCourse} />
         <Route path="/learning/courses/home-maintenance" component={HomeMaintenanceCourse} />
