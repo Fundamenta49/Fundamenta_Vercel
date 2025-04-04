@@ -36,7 +36,7 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   const color = getCategoryColor(category);
   
   return (
-    <div className="fixed right-20 bottom-24 z-[9999]" style={{ transform: `scale(${scaleMap[size]})` }}>
+    <div className="fixed right-20 top-20 z-[9999]" style={{ transform: `scale(${scaleMap[size]})` }}>
       {/* Define the glow filter */}
       <svg width="0" height="0">
         <defs>
