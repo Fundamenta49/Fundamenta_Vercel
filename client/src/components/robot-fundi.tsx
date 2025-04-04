@@ -46,9 +46,9 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   
   // Size variants scaling (adjusted to be visible on small devices)
   const scaleMap = {
-    sm: 0.7,
-    md: 1.0,
-    lg: 1.3 // Moderate size suitable for all devices
+    sm: 1.0,
+    md: 1.2,
+    lg: 1.4 // Moderate size suitable for all devices
   };
   
   // Get the appropriate color for the current category
@@ -281,8 +281,8 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
 
       {/* Robot avatar with dynamic color glow */}
       <svg
-        width="300"
-        height="300"
+        width="200"
+        height="200"
         viewBox="0 0 200 200"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
