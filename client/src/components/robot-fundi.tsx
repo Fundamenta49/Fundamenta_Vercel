@@ -121,7 +121,7 @@ export default function RobotFundi({
         zIndex: 9999,
         touchAction: 'none',
         userSelect: 'none',
-        top: position.y === 0 ? '32px' : 'auto',
+        top: position.y === 0 ? '56px' : 'auto',
         right: position.x === 0 ? '24px' : 'auto',
         width: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         height: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
