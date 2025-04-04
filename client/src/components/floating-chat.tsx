@@ -76,7 +76,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       <AnimatePresence>
         {isExpanded ? (
           <motion.div 
-            className="fixed top-0 right-0 z-50 w-full h-full sm:top-8 sm:right-8 sm:w-auto sm:h-auto sm:max-w-md"
+            className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 w-full max-w-md"
             initial={{ opacity: 0, scale: 0.8, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -95,7 +95,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed right-0 top-0 z-[9999] flex flex-col items-center"
+            className="fixed right-24 bottom-24 z-[9999] flex flex-col items-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
               opacity: 1, 
@@ -118,13 +118,10 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               onMouseLeave={() => setIsHovered(false)}
               title="Chat with Fundi"
             >
-              <RobotFundiEnhanced
+              <RobotFundi
                 speaking={isSpeaking}
-                thinking={isThinking}
                 size="lg"
                 category={category}
-                glowIntensity="high"
-                pulsing={true}
               />
             </Button>
           </motion.div>

@@ -208,8 +208,7 @@ export default function ChatInterface({
     <Card className={`flex flex-col border shadow-lg ${className}`} style={{ 
       height: expanded ? '85vh' : 'min(500px, 70vh)',
       maxWidth: expanded ? '95vw' : '800px',
-      width: '100%',
-      marginTop: '4rem' // Add space at the top for the robot avatar
+      width: '100%'
     }}>
       <CardHeader className="px-4 py-2.5 sm:px-5 sm:py-3 border-b">
         <div className="flex items-center justify-between">
