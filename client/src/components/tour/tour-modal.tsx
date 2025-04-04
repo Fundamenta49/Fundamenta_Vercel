@@ -100,28 +100,46 @@ const TourModal = () => {
   // Progress percentage calculation
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
 
+  // Determine if we should position the modal differently based on step
+  const isInitialStep = currentStepIndex < 2; // First two steps use center positioning
+  
+  // Adjust position based on which step we're on
+  const getPosition = () => {
+    // First two steps are centered (welcome and intro)
+    if (isInitialStep) {
+      return ""; // Default centered position
+    }
+    
+    // After step 2, position to bottom right
+    return "fixed bottom-8 right-8 translate-x-0 translate-y-0 max-h-[380px] overflow-y-auto";
+  };
+  
   // Make sure we have aria-attributes to avoid warnings
   const dialogContentProps = {
-    className: "sm:max-w-[500px]",
+    className: `${isInitialStep ? "sm:max-w-[500px]" : "sm:max-w-[320px] shadow-2xl"} ${getPosition()}`,
     "aria-describedby": "tour-description"
   };
 
   return (
-    <Dialog open={isTourActive} onOpenChange={(open) => !open && endTour()}>
+    <Dialog 
+      open={isTourActive} 
+      onOpenChange={(open) => !open && endTour()} 
+      modal={isInitialStep}
+      className="tour-dialog">
       <DialogContent {...dialogContentProps}>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <HelpCircle className="h-5 w-5 text-primary" />
+        <DialogHeader className={isInitialStep ? "" : "pb-2"}>
+          <DialogTitle className="flex items-center gap-2 text-base">
+            <HelpCircle className="h-4 w-4 text-primary" />
             {currentStep?.title}
           </DialogTitle>
-          <DialogDescription id="tour-description" className="pt-2">
+          <DialogDescription id="tour-description" className={`${isInitialStep ? "pt-2" : "pt-1 text-sm"}`}>
             {currentStep?.content}
           </DialogDescription>
         </DialogHeader>
 
         {/* User name input (first step) */}
         {showUserNameInput && (
-          <div className="py-4">
+          <div className="py-3">
             <Input
               placeholder="Your name"
               value={userNameInput}
@@ -143,7 +161,7 @@ const TourModal = () => {
 
         {/* Tour image if available */}
         {currentStep?.image && (
-          <div className="py-2">
+          <div className={isInitialStep ? "py-2" : "py-1"}>
             <img 
               src={currentStep.image} 
               alt={currentStep.title} 
@@ -153,46 +171,84 @@ const TourModal = () => {
         )}
 
         {/* Progress bar */}
-        <div className="py-2">
+        <div className={isInitialStep ? "py-2" : "py-1"}>
           <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>Step {currentStepIndex + 1} of {totalSteps}</span>
-            <span>{Math.round(progressPercentage)}% Complete</span>
+            <span>{currentStepIndex + 1}/{totalSteps}</span>
+            <span>{Math.round(progressPercentage)}%</span>
           </div>
-          <Progress value={progressPercentage} className="h-2" />
+          <Progress value={progressPercentage} className="h-1" />
         </div>
 
-        <DialogFooter className="flex justify-between items-center">
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handlePrevStep}
-              disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Back
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={skipTour}
-              disabled={showUserNameInput || isTransitioning}
-            >
-              <X className="h-4 w-4 mr-1" />
-              Skip
-            </Button>
-          </div>
+        <DialogFooter className={`flex justify-between items-center ${isInitialStep ? "" : "pt-2"}`}>
+          {/* Simpler controls when not in initial steps */}
+          {!isInitialStep ? (
+            <>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handlePrevStep}
+                disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              
+              <div className="flex gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={skipTour}
+                  disabled={showUserNameInput || isTransitioning}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+                
+                <Button 
+                  size="sm" 
+                  onClick={handleNextStep}
+                  disabled={showUserNameInput || isTransitioning}
+                  className="h-8"
+                >
+                  {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handlePrevStep}
+                  disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={skipTour}
+                  disabled={showUserNameInput || isTransitioning}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Skip
+                </Button>
+              </div>
 
-          {!showUserNameInput && (
-            <Button 
-              size="sm" 
-              onClick={handleNextStep}
-              disabled={showUserNameInput || isTransitioning}
-            >
-              {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
-              {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-1" />}
-            </Button>
+              {!showUserNameInput && (
+                <Button 
+                  size="sm" 
+                  onClick={handleNextStep}
+                  disabled={showUserNameInput || isTransitioning}
+                >
+                  {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
+                  {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-1" />}
+                </Button>
+              )}
+            </>
           )}
         </DialogFooter>
       </DialogContent>
