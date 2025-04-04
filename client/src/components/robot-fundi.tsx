@@ -43,11 +43,11 @@ export default function RobotFundi({
   };
 
   const sizeVariants = {
-    xs: 'w-16 h-16',
-    sm: 'w-24 h-24',
-    md: 'w-32 h-32',
-    lg: 'w-40 h-40',
-    xl: 'w-48 h-48'
+    xs: 'w-24 h-24',
+    sm: 'w-32 h-32',
+    md: 'w-40 h-40',
+    lg: 'w-48 h-48',
+    xl: 'w-64 h-64'
   };
 
   const categoryColors: Record<string, string> = {
@@ -74,10 +74,13 @@ export default function RobotFundi({
         isDragging && "pointer-events-none"
       )}
       style={{
-        left: position.x,
-        top: position.y,
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        transform: `translate(${position.x}px, ${position.y}px)`,
         zIndex: 50,
-        touchAction: 'none'
+        touchAction: 'none',
+        userSelect: 'none'
       }}
       onMouseDown={handleMouseDown}
       onMouseEnter={() => interactive && setIsHovered(true)}
