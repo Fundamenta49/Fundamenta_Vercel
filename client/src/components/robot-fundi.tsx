@@ -118,13 +118,14 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   
   return (
     <div 
-      className="fixed z-[9999] cursor-move" 
+      className="fixed z-[9999] cursor-grab" 
       style={{ 
         transform: `scale(${scaleMap[size]})`,
         right: `calc(20px - ${position.x}px)`,
         top: `calc(20px + ${position.y}px)`,
         touchAction: 'none', // Prevent touch actions for better mobile drag
-        pointerEvents: 'auto' // Ensure we capture all pointer events
+        pointerEvents: 'auto', // Ensure we capture all pointer events
+        cursor: isDragging ? 'grabbing' : 'grab' // Show grabbing cursor while dragging
       }}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
