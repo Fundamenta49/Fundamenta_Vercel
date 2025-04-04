@@ -16,13 +16,38 @@ export default function RobotFundi({
 }: RobotFundiProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!interactive) return;
+    setIsDragging(true);
+    const startX = e.pageX - position.x;
+    const startY = e.pageY - position.y;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      setPosition({
+        x: e.pageX - startX,
+        y: e.pageY - startY
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
 
   const sizeVariants = {
-    xs: 'w-8 h-8',
-    sm: 'w-12 h-12',
-    md: 'w-16 h-16',
-    lg: 'w-24 h-24',
-    xl: 'w-32 h-32'
+    xs: 'w-16 h-16',
+    sm: 'w-24 h-24',
+    md: 'w-32 h-32',
+    lg: 'w-40 h-40',
+    xl: 'w-48 h-48'
   };
 
   const categoryColors: Record<string, string> = {
@@ -43,10 +68,18 @@ export default function RobotFundi({
   return (
     <div 
       className={cn(
-        "relative flex items-center justify-center",
+        "fixed flex items-center justify-center",
         sizeVariants[size],
-        interactive && "cursor-pointer hover:scale-105 transition-transform"
+        interactive && "cursor-move hover:scale-105 transition-transform",
+        isDragging && "pointer-events-none"
       )}
+      style={{
+        left: position.x,
+        top: position.y,
+        zIndex: 50,
+        touchAction: 'none'
+      }}
+      onMouseDown={handleMouseDown}
       onMouseEnter={() => interactive && setIsHovered(true)}
       onMouseLeave={() => interactive && setIsHovered(false)}
       onClick={() => {
