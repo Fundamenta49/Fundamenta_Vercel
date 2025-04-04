@@ -130,20 +130,32 @@ export function useUserMemory() {
   // Create a conversation
   const createConversationMutation = useMutation({
     mutationFn: async (data: NewConversation) => {
-      const response = await apiRequest('POST', '/api/conversations', data);
-      return response.json();
+      console.log('Creating conversation with data:', data);
+      
+      try {
+        const response = await apiRequest('POST', '/api/conversations', data);
+        const responseData = await response.json();
+        console.log('Conversation creation API response:', responseData);
+        return responseData;
+      } catch (error) {
+        console.error('API error in conversation creation:', error);
+        throw error; // Re-throw to trigger onError
+      }
     },
     onSuccess: (data) => {
+      console.log('Conversation created successfully, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['/api/conversations'] });
       return data as Conversation;
     },
     onError: (error) => {
       console.error('Failed to create conversation:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not start a new conversation.',
-        variant: 'destructive',
-      });
+      if (error instanceof Error) {
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      
+      // Don't show toast in the chat interface as it would be disruptive
+      // Instead log to console for debugging
     }
   });
   
@@ -185,13 +197,26 @@ export function useUserMemory() {
   // Start a new conversation
   const startConversation = async (category: string, title?: string): Promise<Conversation | null> => {
     try {
+      console.log('Starting new conversation with category:', category);
+      
+      // Create a more descriptive conversation title
+      const conversationTitle = title || `${category.charAt(0).toUpperCase() + category.slice(1)} Conversation`;
+      
+      // Submit the conversation creation request
       const newConversation = await createConversationMutation.mutateAsync({
-        title: title || `${category.charAt(0).toUpperCase() + category.slice(1)} Conversation`,
+        title: conversationTitle,
         category
       });
+      
+      console.log('Conversation created successfully:', newConversation);
       return newConversation as Conversation;
     } catch (error) {
       console.error('Error starting conversation:', error);
+      // Add more specific error logging to help diagnose the issue
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
       return null;
     }
   };

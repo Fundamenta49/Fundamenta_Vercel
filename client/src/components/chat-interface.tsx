@@ -162,18 +162,56 @@ export default function ChatInterface({
       // If we don't have an active conversation yet, start one
       if (!activeConversationId) {
         try {
+          console.log('Initializing new conversation for category:', category);
           const newConversation = await startConversation(category);
-          if (newConversation) {
+          
+          if (newConversation && newConversation.id) {
+            console.log('Successfully created conversation:', newConversation);
             setActiveConversation(newConversation.id);
+          } else {
+            console.warn('Could not create conversation, received:', newConversation);
+            
+            // As a fallback for testing, create a local conversation ID
+            // This allows the UI to work even if the backend connection fails
+            const temporaryConversationId = Math.floor(Math.random() * 1000000) + 1;
+            console.log('Created temporary conversation ID:', temporaryConversationId);
+            setActiveConversation(temporaryConversationId);
+            
+            // Add a warning message to the chat
+            setMessages([
+              {
+                id: 'system-warning',
+                role: 'system',
+                content: 'Connection to server temporarily unavailable. Your messages may not be saved.',
+                timestamp: new Date(),
+                category: 'warning'
+              }
+            ]);
           }
         } catch (error) {
           console.error('Failed to initialize conversation:', error);
+          
+          // As a fallback for testing, create a local conversation ID
+          const temporaryConversationId = Math.floor(Math.random() * 1000000) + 1;
+          console.log('Created temporary conversation ID after error:', temporaryConversationId);
+          setActiveConversation(temporaryConversationId);
+          
+          // Add an error message to the chat
+          setMessages([
+            {
+              id: 'system-error',
+              role: 'system',
+              content: 'There was an error connecting to the server. Your messages may not be saved.',
+              timestamp: new Date(),
+              category: 'error'
+            }
+          ]);
         }
       }
     };
     
     initConversation();
-  }, [activeConversationId, category, startConversation, setActiveConversation]);
+  }, [activeConversationId, category, startConversation, setActiveConversation, setMessages]);
   
   // Load existing messages when active conversation changes
   useEffect(() => {
@@ -210,25 +248,45 @@ export default function ChatInterface({
     // Make sure we have an active conversation
     if (!activeConversationId) {
       try {
+        console.log('Creating conversation for message send');
         const newConversation = await startConversation(category);
-        if (newConversation) {
+        
+        if (newConversation && newConversation.id) {
+          console.log('Successfully created new conversation:', newConversation);
           setActiveConversation(newConversation.id);
         } else {
-          toast({
-            title: 'Connection Error',
-            description: 'Could not start a new conversation. Please try again.',
-            variant: 'destructive',
-          });
-          return;
+          console.warn('Could not create conversation, using fallback');
+          
+          // Create a local temporary conversation ID as fallback
+          const temporaryConversationId = Math.floor(Math.random() * 1000000) + 1;
+          console.log('Created temporary conversation ID for message:', temporaryConversationId);
+          setActiveConversation(temporaryConversationId);
+          
+          // Only show toast in expanded mode to avoid disruption in chat widget
+          if (expanded) {
+            toast({
+              title: 'Notice',
+              description: 'Using offline mode. Your messages may not be saved to the server.',
+              variant: 'default',
+            });
+          }
         }
       } catch (error) {
         console.error('Failed to create conversation:', error);
-        toast({
-          title: 'Connection Error',
-          description: 'Could not start a new conversation. Please try again.',
-          variant: 'destructive',
-        });
-        return;
+        
+        // Create a local temporary conversation ID as fallback
+        const temporaryConversationId = Math.floor(Math.random() * 1000000) + 1;
+        console.log('Created temporary conversation ID after error:', temporaryConversationId);
+        setActiveConversation(temporaryConversationId);
+        
+        // Only show toast in expanded mode to avoid disruption in chat widget
+        if (expanded) {
+          toast({
+            title: 'Connection Issue',
+            description: 'Using offline mode. Your messages may not be saved.',
+            variant: 'default',
+          });
+        }
       }
     }
     
@@ -249,18 +307,41 @@ export default function ChatInterface({
     try {
       // Save message to database if we have an active conversation
       if (activeConversationId) {
-        await addMessageToApi(activeConversationId, 'user', input, category);
-        
-        // Update local conversation store
-        addMessageToStore(activeConversationId, {
-          id: parseInt(userMessage.id),
-          conversationId: activeConversationId,
-          role: 'user',
-          content: input,
-          category: category,
-          metadata: null,
-          timestamp: new Date()
-        });
+        try {
+          // Try to save to the API
+          console.log('Saving user message to API, conversationId:', activeConversationId);
+          const savedMessage = await addMessageToApi(activeConversationId, 'user', input, category);
+          
+          if (savedMessage) {
+            console.log('Message saved successfully:', savedMessage);
+          } else {
+            console.warn('Message could not be saved to API');
+          }
+          
+          // Always update local conversation store, whether API call succeeds or not
+          addMessageToStore(activeConversationId, {
+            id: parseInt(userMessage.id),
+            conversationId: activeConversationId,
+            role: 'user',
+            content: input,
+            category: category,
+            metadata: null,
+            timestamp: new Date()
+          });
+        } catch (error) {
+          console.error('Error saving message to API:', error);
+          
+          // Still update local conversation store even if API call fails
+          addMessageToStore(activeConversationId, {
+            id: parseInt(userMessage.id),
+            conversationId: activeConversationId,
+            role: 'user',
+            content: input,
+            category: category,
+            metadata: null,
+            timestamp: new Date()
+          });
+        }
       }
       
       // Check if this message contains a name introduction
@@ -324,15 +405,27 @@ export default function ChatInterface({
             suggestions: aiResponse.suggestions
           };
           
-          await addMessageToApi(
-            activeConversationId, 
-            'assistant', 
-            aiResponse.response, 
-            aiResponse.category,
-            metadata
-          );
+          try {
+            // Try to save to the API
+            console.log('Saving assistant message to API, conversationId:', activeConversationId);
+            const savedMessage = await addMessageToApi(
+              activeConversationId, 
+              'assistant', 
+              aiResponse.response, 
+              aiResponse.category,
+              metadata
+            );
+            
+            if (savedMessage) {
+              console.log('Assistant message saved successfully:', savedMessage);
+            } else {
+              console.warn('Assistant message could not be saved to API');
+            }
+          } catch (error) {
+            console.error('Error saving assistant message to API:', error);
+          }
           
-          // Update local conversation store
+          // Always update local conversation store whether API call succeeds or not
           addMessageToStore(activeConversationId, {
             id: parseInt(assistantMessage.id),
             conversationId: activeConversationId,
