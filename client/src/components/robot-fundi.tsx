@@ -86,13 +86,13 @@ export default function RobotFundi({
     };
   }, [isDragging, dragStart]);
 
-  // More moderate size variants
+  // Much smaller size variants
   const sizeVariants = {
-    xs: 'w-32 h-32',  // 128px
-    sm: 'w-40 h-40',  // 160px
-    md: 'w-48 h-48',  // 192px
-    lg: 'w-56 h-56',  // 224px
-    xl: 'w-64 h-64'   // 256px
+    xs: 'w-16 h-16',  // 64px
+    sm: 'w-20 h-20',  // 80px
+    md: 'w-24 h-24',  // 96px
+    lg: 'w-28 h-28',  // 112px
+    xl: 'w-32 h-32'   // 128px
   };
 
   const categoryColors: Record<string, string> = {
@@ -123,10 +123,10 @@ export default function RobotFundi({
         userSelect: 'none',
         bottom: position.y === 0 ? '20px' : 'auto',
         right: position.x === 0 ? '20px' : 'auto',
-        width: size === 'xl' ? '256px' : size === 'lg' ? '224px' : size === 'md' ? '192px' : size === 'sm' ? '160px' : '128px',
-        height: size === 'xl' ? '256px' : size === 'lg' ? '224px' : size === 'md' ? '192px' : size === 'sm' ? '160px' : '128px',
-        minWidth: size === 'xl' ? '256px' : size === 'lg' ? '224px' : size === 'md' ? '192px' : size === 'sm' ? '160px' : '128px',
-        minHeight: size === 'xl' ? '256px' : size === 'lg' ? '224px' : size === 'md' ? '192px' : size === 'sm' ? '160px' : '128px'
+        width: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
+        height: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
+        minWidth: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
+        minHeight: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px'
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
