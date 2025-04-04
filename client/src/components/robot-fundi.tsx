@@ -14,40 +14,48 @@ export default function RobotFundi({
   category = 'general',
   interactive = true
 }: RobotFundiProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!interactive) return;
     setIsDragging(true);
-    const startX = e.pageX - position.x;
-    const startY = e.pageY - position.y;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setPosition({
-        x: e.pageX - startX,
-        y: e.pageY - startY
-      });
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
   };
 
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, dragStart]);
+
   const sizeVariants = {
-    xs: 'w-24 h-24',
-    sm: 'w-32 h-32',
-    md: 'w-40 h-40',
-    lg: 'w-48 h-48',
-    xl: 'w-64 h-64'
+    xs: 'w-32 h-32',  // 128px
+    sm: 'w-40 h-40',  // 160px
+    md: 'w-48 h-48',  // 192px
+    lg: 'w-56 h-56',  // 224px
+    xl: 'w-64 h-64'   // 256px
   };
 
   const categoryColors: Record<string, string> = {
@@ -63,62 +71,31 @@ export default function RobotFundi({
   };
 
   const color = categoryColors[category] || categoryColors.general;
-  const glowColor = color;
 
   return (
     <div 
       className={cn(
-        "fixed flex items-center justify-center",
+        "fixed cursor-move",
         sizeVariants[size],
-        interactive && "cursor-move hover:scale-105 transition-transform",
-        isDragging && "pointer-events-none"
+        interactive && "hover:scale-105 transition-transform"
       )}
       style={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
         transform: `translate(${position.x}px, ${position.y}px)`,
-        zIndex: 50,
+        zIndex: 9999,
         touchAction: 'none',
-        userSelect: 'none'
+        userSelect: 'none',
+        bottom: '20px',
+        right: '20px'
       }}
       onMouseDown={handleMouseDown}
-      onMouseEnter={() => interactive && setIsHovered(true)}
-      onMouseLeave={() => interactive && setIsHovered(false)}
-      onClick={() => {
-        if (interactive) {
-          setIsClicked(true);
-          setTimeout(() => setIsClicked(false), 200);
-        }
-      }}
     >
       <svg
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
-        style={{
-          filter: isHovered ? 'drop-shadow(0 0 4px rgba(99, 102, 241, 0.4))' : 'none',
-          transform: isClicked ? 'scale(0.95)' : 'scale(1)',
-          transition: 'all 0.2s ease-in-out'
-        }}
       >
-        <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* Head */}
         <rect x="25" y="20" width="50" height="40" rx="10" fill="#e6e6e6" />
-
-        {/* Face screen */}
         <rect x="30" y="30" width="40" height="20" rx="5" fill="#222" />
-
-        {/* Eyes */}
         <circle 
           cx="40" 
           cy="40" 
@@ -133,18 +110,12 @@ export default function RobotFundi({
           fill={color}
           className={speaking ? "animate-pulse" : ""}
         />
-
-        {/* Antenna */}
         <rect x="45" y="15" width="10" height="5" rx="2.5" fill={color} />
         <rect x="47.5" y="10" width="5" height="5" rx="2.5" fill="#e6e6e6" />
-
-        {/* Body */}
         <path 
           d="M30,60 C30,80 30,90 50,90 C70,90 70,80 70,60 Z" 
           fill="#f5f5f5" 
         />
-
-        {/* Status light */}
         <circle 
           cx="50" 
           cy="75" 
