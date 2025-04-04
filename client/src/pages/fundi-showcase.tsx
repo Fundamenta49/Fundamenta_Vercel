@@ -15,6 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import FundiAvatar from '@/components/fundi-avatar';
 import FundiAvatarNew from '@/components/fundi-avatar-new';
 import RobotFundi from '@/components/robot-fundi';
+import RobotFundiEnhanced from '@/components/robot-fundi-enhanced';
 import SimpleButtonFundi from '@/components/simple-button-fundi';
 import FundiAvatarEnhanced from '@/components/fundi-avatar-enhanced';
 import FundiInteractiveAssistant from '@/components/fundi-interactive-assistant';
@@ -69,9 +70,10 @@ export default function FundiShowcase() {
       </header>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-        <TabsList className="grid grid-cols-3 w-full max-w-2xl mx-auto">
+        <TabsList className="grid grid-cols-4 w-full max-w-2xl mx-auto">
           <TabsTrigger value="showcase">All Versions</TabsTrigger>
           <TabsTrigger value="enhanced">Enhanced Controls</TabsTrigger>
+          <TabsTrigger value="robot">Robot Fundi</TabsTrigger>
           <TabsTrigger value="interactive">Interactive Assistant</TabsTrigger>
         </TabsList>
 
@@ -116,6 +118,22 @@ export default function FundiShowcase() {
                   <h3 className="text-sm font-semibold">Simple Button Fundi</h3>
                   <div className="flex justify-center">
                     <SimpleButtonFundi speaking={speaking} category={category} size={size === 'xs' ? 'sm' : size === 'xl' ? 'lg' : size} />
+                  </div>
+                </div>
+                
+                <Separator />
+                
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold">Enhanced Robot Fundi</h3>
+                  <div className="flex justify-center">
+                    <RobotFundiEnhanced 
+                      speaking={speaking}
+                      thinking={thinking}
+                      size={size}
+                      pulsing={pulseEffect}
+                      category={category}
+                      interactive={interactive}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -292,6 +310,271 @@ export default function FundiShowcase() {
                     >
                       Random Emotion
                     </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Robot Fundi Tab */}
+        <TabsContent value="robot" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Main Robot Display */}
+            <Card className="flex flex-col items-center justify-center">
+              <CardHeader className="text-center">
+                <CardTitle>Enhanced Robot Fundi</CardTitle>
+                <CardDescription>With dynamic radiating glow based on context</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center justify-center">
+                <div className="mb-8">
+                  <RobotFundiEnhanced 
+                    speaking={speaking}
+                    thinking={thinking}
+                    size="xl"
+                    pulsing={pulseEffect}
+                    category={category}
+                    interactive={interactive}
+                    glowIntensity="high"
+                  />
+                </div>
+                
+                <div className="space-y-4 w-full max-w-sm">
+                  <h3 className="text-sm font-semibold text-center">Quick Controls</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setSpeaking(!speaking)}
+                    >
+                      {speaking ? "Stop Speaking" : "Start Speaking"}
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setThinking(!thinking)}
+                    >
+                      {thinking ? "Stop Thinking" : "Start Thinking"}
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={cycleCategory}
+                    >
+                      Change Category
+                    </Button>
+                    
+                    <Select value={category} onValueChange={setCategory}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">General</SelectItem>
+                        <SelectItem value="finance">Finance</SelectItem>
+                        <SelectItem value="career">Career</SelectItem>
+                        <SelectItem value="wellness">Wellness</SelectItem>
+                        <SelectItem value="learning">Learning</SelectItem>
+                        <SelectItem value="emergency">Emergency</SelectItem>
+                        <SelectItem value="cooking">Cooking</SelectItem>
+                        <SelectItem value="fitness">Fitness</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Context Colors Showcase */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Context-Sensitive Colors</CardTitle>
+                <CardDescription>Different glowing colors based on app section</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                  <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                      <RobotFundiEnhanced 
+                        size="sm" 
+                        category="finance" 
+                        glowIntensity="medium" 
+                        pulsing={true} 
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-center">Finance</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                      <RobotFundiEnhanced 
+                        size="sm" 
+                        category="career" 
+                        glowIntensity="medium" 
+                        pulsing={true} 
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-center">Career</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                      <RobotFundiEnhanced 
+                        size="sm" 
+                        category="wellness" 
+                        glowIntensity="medium" 
+                        pulsing={true} 
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-center">Wellness</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                      <RobotFundiEnhanced 
+                        size="sm" 
+                        category="learning" 
+                        glowIntensity="medium" 
+                        pulsing={true} 
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-center">Learning</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                      <RobotFundiEnhanced 
+                        size="sm" 
+                        category="emergency" 
+                        glowIntensity="medium" 
+                        pulsing={true} 
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-center">Emergency</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                      <RobotFundiEnhanced 
+                        size="sm" 
+                        category="cooking" 
+                        glowIntensity="medium" 
+                        pulsing={true} 
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-center">Cooking</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                      <RobotFundiEnhanced 
+                        size="sm" 
+                        category="fitness" 
+                        glowIntensity="medium" 
+                        pulsing={true} 
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-center">Fitness</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="mb-2">
+                      <RobotFundiEnhanced 
+                        size="sm" 
+                        category="general" 
+                        glowIntensity="medium" 
+                        pulsing={true} 
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-center">General</span>
+                  </div>
+                </div>
+                
+                <Separator className="my-6" />
+                
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold">Glow Intensity</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="mb-2">
+                        <RobotFundiEnhanced 
+                          size="sm" 
+                          category={category} 
+                          glowIntensity="low" 
+                          pulsing={true}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-center">Low</span>
+                    </div>
+                    
+                    <div className="flex flex-col items-center">
+                      <div className="mb-2">
+                        <RobotFundiEnhanced 
+                          size="sm" 
+                          category={category} 
+                          glowIntensity="medium" 
+                          pulsing={true}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-center">Medium</span>
+                    </div>
+                    
+                    <div className="flex flex-col items-center">
+                      <div className="mb-2">
+                        <RobotFundiEnhanced 
+                          size="sm" 
+                          category={category} 
+                          glowIntensity="high" 
+                          pulsing={true}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-center">High</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <Separator className="my-6" />
+                
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold">States</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="mb-2">
+                        <RobotFundiEnhanced 
+                          size="sm" 
+                          category={category}
+                          speaking={true}
+                          thinking={false}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-center">Speaking</span>
+                    </div>
+                    
+                    <div className="flex flex-col items-center">
+                      <div className="mb-2">
+                        <RobotFundiEnhanced 
+                          size="sm" 
+                          category={category}
+                          speaking={false}
+                          thinking={true}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-center">Thinking</span>
+                    </div>
+                    
+                    <div className="flex flex-col items-center">
+                      <div className="mb-2">
+                        <RobotFundiEnhanced 
+                          size="sm" 
+                          category={category}
+                          speaking={false}
+                          thinking={false}
+                          pulsing={false}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-center">Idle</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>

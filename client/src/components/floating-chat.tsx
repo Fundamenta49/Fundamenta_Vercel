@@ -3,7 +3,8 @@ import { Bot, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ChatInterface from '@/components/chat-interface';
-
+import RobotFundiEnhanced from '@/components/robot-fundi-enhanced';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface FloatingChatProps {
   category?: string;
@@ -12,6 +13,8 @@ interface FloatingChatProps {
 export default function FloatingChat({ category = 'general' }: FloatingChatProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
 
   const categoryColors: Record<string, string> = {
     finance: '#22c55e', 
@@ -24,15 +27,36 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     general: '#6366f1',
   };
 
-  // Add a pulsing animation effect to draw attention
+  // Add random animations to make the robot feel more alive
   useEffect(() => {
-    const animationInterval = setInterval(() => {
+    // Speaking animation
+    const speakingInterval = setInterval(() => {
+      if (Math.random() > 0.7 && !isThinking) {
+        setIsSpeaking(true);
+        setTimeout(() => setIsSpeaking(false), 2000);
+      }
+    }, 8000);
+    
+    // Thinking animation
+    const thinkingInterval = setInterval(() => {
+      if (Math.random() > 0.85 && !isSpeaking) {
+        setIsThinking(true);
+        setTimeout(() => setIsThinking(false), 3000);
+      }
+    }, 15000);
+    
+    // Attention-grabbing animation
+    const attentionInterval = setInterval(() => {
       setIsAnimating(true);
       setTimeout(() => setIsAnimating(false), 1000);
-    }, 5000);
+    }, 20000);
     
-    return () => clearInterval(animationInterval);
-  }, []);
+    return () => {
+      clearInterval(speakingInterval);
+      clearInterval(thinkingInterval);
+      clearInterval(attentionInterval);
+    };
+  }, [isSpeaking, isThinking]);
 
   // Get the color for the current category
   const getCategoryColor = (category: string) => {
@@ -41,43 +65,55 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   
   return (
     <>
-      {isExpanded ? (
-        <div className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 w-full max-w-md">
-          <ChatInterface 
-            category={category}
-            expanded={false}
-            onToggleExpand={() => setIsExpanded(false)}
-            initialContext={{
-              currentPage: category,
-              availableActions: [`/${category}`]
-            }}
-            className="shadow-xl rounded-2xl overflow-hidden"
-          />
-        </div>
-      ) : (
-        <Button
-          className={`fixed top-6 right-2 z-50 h-9 w-9 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ease-in-out border ${
-            isAnimating ? 'scale-110' : 'scale-100'
-          }`}
-          style={{
-            backgroundColor: 'white',
-            borderColor: getCategoryColor(category),
-          }}
-          onClick={() => setIsExpanded(true)}
-          title="Chat with Fundi"
-        >
-          {/* Chat icon */}
-          <div className="flex items-center justify-center w-full h-full relative">
-            <MessageSquare 
-              className="h-5 w-5" 
-              style={{ color: getCategoryColor(category) }}
+      <AnimatePresence>
+        {isExpanded ? (
+          <motion.div 
+            className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 w-full max-w-md"
+            initial={{ opacity: 0, scale: 0.8, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ChatInterface 
+              category={category}
+              expanded={false}
+              onToggleExpand={() => setIsExpanded(false)}
+              initialContext={{
+                currentPage: category,
+                availableActions: [`/${category}`]
+              }}
+              className="shadow-xl rounded-2xl overflow-hidden"
             />
-            {/* Animation dot to indicate Fundi is available */}
-            <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 animate-ping opacity-75"></span>
-            <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500"></span>
-          </div>
-        </Button>
-      )}
+          </motion.div>
+        ) : (
+          <motion.div
+            className="fixed right-6 top-16 z-50 flex flex-col items-center"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ 
+              opacity: 1, 
+              scale: isAnimating ? [1, 1.1, 1] : 1,
+              y: isAnimating ? [0, -5, 0] : 0
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <Button
+              className="p-0 bg-transparent hover:bg-transparent border-none shadow-none flex items-center justify-center"
+              onClick={() => setIsExpanded(true)}
+              title="Chat with Fundi"
+            >
+              <RobotFundiEnhanced 
+                speaking={isSpeaking}
+                thinking={isThinking}
+                size="md"
+                glowIntensity="medium"
+                pulsing={true}
+                interactive={true}
+                category={category}
+              />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
