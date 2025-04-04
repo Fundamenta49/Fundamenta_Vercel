@@ -6,13 +6,15 @@ interface RobotFundiProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   category?: string;
   interactive?: boolean;
+  onOpen?: () => void;
 }
 
 export default function RobotFundi({
   speaking = false,
   size = 'md',
   category = 'general',
-  interactive = true
+  interactive = true,
+  onOpen
 }: RobotFundiProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -26,6 +28,21 @@ export default function RobotFundi({
       y: e.clientY - position.y
     });
   };
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!interactive) return;
+    setIsDragging(true);
+    setDragStart({
+      x: e.touches[0].clientX - position.x,
+      y: e.touches[0].clientY - position.y
+    });
+  };
+  
+  const handleClick = () => {
+    if (onOpen && interactive) {
+      onOpen();
+    }
+  };
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging) return;
@@ -35,7 +52,20 @@ export default function RobotFundi({
     });
   };
 
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    setPosition({
+      x: e.touches[0].clientX - dragStart.x,
+      y: e.touches[0].clientY - dragStart.y
+    });
+  };
+
   const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchEnd = () => {
     setIsDragging(false);
   };
 
@@ -43,19 +73,25 @@ export default function RobotFundi({
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleTouchEnd);
+      window.addEventListener('touchcancel', handleTouchEnd);
     }
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchcancel', handleTouchEnd);
     };
   }, [isDragging, dragStart]);
 
   const sizeVariants = {
-    xs: 'w-32 h-32',  // 128px
-    sm: 'w-40 h-40',  // 160px
-    md: 'w-48 h-48',  // 192px
-    lg: 'w-56 h-56',  // 224px
-    xl: 'w-64 h-64'   // 256px
+    xs: 'w-40 h-40',  // 160px
+    sm: 'w-48 h-48',  // 192px
+    md: 'w-56 h-56',  // 224px
+    lg: 'w-64 h-64',  // 256px
+    xl: 'w-72 h-72'   // 288px
   };
 
   const categoryColors: Record<string, string> = {
@@ -84,10 +120,12 @@ export default function RobotFundi({
         zIndex: 9999,
         touchAction: 'none',
         userSelect: 'none',
-        bottom: '20px',
-        right: '20px'
+        bottom: position.y === 0 ? '20px' : 'auto',
+        right: position.x === 0 ? '20px' : 'auto'
       }}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      onClick={handleClick}
     >
       <svg
         viewBox="0 0 100 100"
