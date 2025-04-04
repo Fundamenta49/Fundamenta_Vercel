@@ -112,15 +112,15 @@ export default function RobotFundi({
   return (
     <div 
       className={cn(
-        "fixed cursor-move",
+        "cursor-move",
         sizeVariants[size],
         interactive && "hover:scale-105 transition-transform"
       )}
       style={{
-        position: 'fixed',
-        top: '8px',
-        right: '24px',
-        transform: `translate(${position.x}px, ${position.y}px)`,
+        position: onOpen ? 'relative' : 'fixed', // Only use fixed when standalone
+        top: onOpen ? 'auto' : '8px',           // Only position when standalone
+        right: onOpen ? 'auto' : '24px',        // Only position when standalone
+        transform: onOpen ? 'none' : `translate(${position.x}px, ${position.y}px)`,
         zIndex: 9999,
         touchAction: 'none',
         userSelect: 'none',
