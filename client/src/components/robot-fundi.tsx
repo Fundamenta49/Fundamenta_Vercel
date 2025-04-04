@@ -5,6 +5,7 @@ interface RobotFundiProps {
   speaking?: boolean;
   size?: "sm" | "md" | "lg";
   category?: string;
+  onOpen?: () => void; // Callback function when the robot is clicked (not dragged)
 }
 
 // Function to determine the glow color based on category
@@ -24,7 +25,7 @@ const getCategoryColor = (category: string = 'general') => {
   return colorMap[category] || colorMap.general;
 };
 
-export default function RobotFundi({ speaking = false, size = "md", category = 'general' }: RobotFundiProps) {
+export default function RobotFundi({ speaking = false, size = "md", category = 'general', onOpen }: RobotFundiProps) {
   // Load saved position from localStorage if available, otherwise use default
   const getSavedPosition = () => {
     try {
@@ -39,6 +40,7 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   const [position, setPosition] = useState(getSavedPosition());
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragDistance, setDragDistance] = useState(0); // Track total distance dragged
   
   // We'll ignore size variants and use direct SVG scaling
   const scaleMap = {
@@ -57,6 +59,19 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     e.stopPropagation();
     setIsDragging(true);
     setDragStart({ x: e.clientX, y: e.clientY });
+    setDragDistance(0); // Reset drag distance on new drag start
+  };
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // For touch devices
+    if (e.touches.length === 1) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(true);
+      const touch = e.touches[0];
+      setDragStart({ x: touch.clientX, y: touch.clientY });
+      setDragDistance(0); // Reset drag distance on new drag start
+    }
   };
   
   const handleMouseMove = (e: MouseEvent) => {
@@ -65,6 +80,9 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     // Calculate the new position based on mouse movement
     const deltaX = e.clientX - dragStart.x;
     const deltaY = e.clientY - dragStart.y;
+    
+    // Update drag distance
+    setDragDistance(prev => prev + Math.sqrt(deltaX * deltaX + deltaY * deltaY));
     
     setPosition({
       x: position.x + deltaX,
@@ -75,11 +93,57 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     setDragStart({ x: e.clientX, y: e.clientY });
   };
   
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    
+    const touch = e.touches[0];
+    
+    // Calculate the new position based on touch movement
+    const deltaX = touch.clientX - dragStart.x;
+    const deltaY = touch.clientY - dragStart.y;
+    
+    // Update drag distance
+    setDragDistance(prev => prev + Math.sqrt(deltaX * deltaX + deltaY * deltaY));
+    
+    setPosition({
+      x: position.x + deltaX,
+      y: position.y + deltaY
+    });
+    
+    // Update drag start for the next move
+    setDragStart({ x: touch.clientX, y: touch.clientY });
+  };
+  
   const handleMouseUp = (e?: MouseEvent) => {
+    if (!isDragging) return;
+    
     if (e) {
       // Prevent default browser behavior
       e.preventDefault();
       e.stopPropagation();
+    }
+    
+    // If the drag distance is small, consider it a click
+    if (dragDistance < 5 && onOpen) {
+      onOpen();
+    }
+    
+    setIsDragging(false);
+    
+    // Save position to localStorage when dragging ends
+    try {
+      localStorage.setItem('fundiPosition', JSON.stringify(position));
+    } catch (e) {
+      console.error('Failed to save Fundi position:', e);
+    }
+  };
+  
+  const handleTouchEnd = (e: TouchEvent) => {
+    if (!isDragging) return;
+    
+    // If the drag distance is small, consider it a click
+    if (dragDistance < 5 && onOpen) {
+      onOpen();
     }
     
     setIsDragging(false);
@@ -97,28 +161,27 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
     } else {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
     }
     
     // Cleanup event listeners on component unmount
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isDragging, dragStart.x, dragStart.y, position.x, position.y]);
-  
-  // Handler to prevent click events from propagating
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  };
+  }, [isDragging, dragStart.x, dragStart.y, position.x, position.y, dragDistance]);
   
   return (
     <div 
-      className="fixed z-[9999] cursor-grab" 
+      className="fixed z-[9999]" 
       style={{ 
         transform: `scale(${scaleMap[size]})`,
         right: `calc(20px - ${position.x}px)`,
@@ -128,7 +191,7 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
         cursor: isDragging ? 'grabbing' : 'grab' // Show grabbing cursor while dragging
       }}
       onMouseDown={handleMouseDown}
-      onClick={handleClick}
+      onTouchStart={handleTouchStart}
     >
       {/* Define the glow filter */}
       <svg width="0" height="0">
@@ -150,7 +213,6 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
         style={{ filter: 'url(#glow)', pointerEvents: 'none' }}
-        onClick={handleClick}
       >
         {/* Head */}
         <rect x="60" y="40" width="80" height="70" rx="20" fill="#e6e6e6" />

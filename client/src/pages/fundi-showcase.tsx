@@ -112,6 +112,7 @@ export default function FundiShowcase() {
                       speaking={speaking} 
                       size={size === 'xs' ? 'sm' : size === 'xl' ? 'lg' : size} 
                       category={category}
+                      onOpen={() => {}} // Empty function for showcase
                     />
                   </div>
                 </div>

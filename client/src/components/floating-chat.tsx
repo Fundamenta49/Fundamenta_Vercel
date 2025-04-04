@@ -122,6 +122,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
                 speaking={isSpeaking}
                 size="lg"
                 category={category}
+                onOpen={() => setIsExpanded(true)}
               />
             </Button>
           </motion.div>
