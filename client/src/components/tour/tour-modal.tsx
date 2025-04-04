@@ -11,8 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { ChevronLeft, ChevronRight, X, HelpCircle, RotateCcw } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { ChevronLeft, ChevronRight, X, HelpCircle } from 'lucide-react';
 
 const TourModal = () => {
   const {
@@ -26,7 +25,6 @@ const TourModal = () => {
     prevStep,
     skipTour,
     endTour,
-    restartTour,
   } = useTour();
 
   const [userNameInput, setUserNameInput] = useState('');
@@ -104,9 +102,8 @@ const TourModal = () => {
 
   // Determine if we should position the modal differently based on step
   const isInitialStep = currentStepIndex < 2; // First two steps use center positioning
-  const isMobile = useIsMobile();
   
-  // Adjust position based on which step we're on and device type
+  // Adjust position based on which step we're on
   const getPosition = () => {
     // First two steps are centered (welcome and intro)
     if (isInitialStep) {
@@ -114,19 +111,12 @@ const TourModal = () => {
     }
     
     // After step 2, position to bottom right
-    // For mobile, use bottom center
-    return isMobile
-      ? "fixed bottom-4 left-1/2 transform -translate-x-1/2 translate-y-0 max-h-[350px] w-[92%] overflow-y-auto"
-      : "fixed bottom-8 right-8 translate-x-0 translate-y-0 max-h-[380px] overflow-y-auto";
+    return "fixed bottom-8 right-8 translate-x-0 translate-y-0 max-h-[380px] overflow-y-auto";
   };
   
   // Make sure we have aria-attributes to avoid warnings
   const dialogContentProps = {
-    className: `${
-      isInitialStep 
-        ? isMobile ? "max-w-[95%] w-[95%]" : "sm:max-w-[500px]" 
-        : isMobile ? "max-w-[92%] w-[92%] shadow-2xl" : "sm:max-w-[320px] shadow-2xl"
-    } ${getPosition()}`,
+    className: `${isInitialStep ? "sm:max-w-[500px]" : "sm:max-w-[320px] shadow-2xl"} ${getPosition()}`,
     "aria-describedby": "tour-description"
   };
 
@@ -134,7 +124,8 @@ const TourModal = () => {
     <Dialog 
       open={isTourActive} 
       onOpenChange={(open) => !open && endTour()} 
-      modal={isInitialStep}>
+      modal={isInitialStep}
+      className="tour-dialog">
       <DialogContent {...dialogContentProps}>
         <DialogHeader className={isInitialStep ? "" : "pb-2"}>
           <DialogTitle className="flex items-center gap-2 text-base">
@@ -192,53 +183,34 @@ const TourModal = () => {
           {/* Simpler controls when not in initial steps */}
           {!isInitialStep ? (
             <>
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant="ghost" 
-                  size={isMobile ? "sm" : "icon"} 
-                  onClick={handlePrevStep}
-                  disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
-                  className={isMobile ? "h-9 px-3" : "h-8 w-8 p-0"}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  {isMobile && <span className="ml-1">Back</span>}
-                </Button>
-                
-                {/* Restart tour button - more visible on mobile */}
-                {isMobile && currentStepIndex > 2 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => restartTour()}
-                    className="h-9 flex gap-1 items-center px-2"
-                    title="Restart tour"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                    <span className="text-xs">Restart</span>
-                  </Button>
-                )}
-              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handlePrevStep}
+                disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
               
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Button 
                   variant="ghost" 
-                  size={isMobile ? "sm" : "icon"} 
+                  size="icon" 
                   onClick={skipTour}
                   disabled={showUserNameInput || isTransitioning}
-                  className={isMobile ? "h-9 px-3" : "h-8 w-8 p-0"}
+                  className="h-8 w-8 p-0"
                 >
                   <X className="h-4 w-4" />
-                  {isMobile && <span className="ml-1">Skip</span>}
                 </Button>
                 
                 <Button 
                   size="sm" 
                   onClick={handleNextStep}
                   disabled={showUserNameInput || isTransitioning}
-                  className={isMobile ? "h-9 px-4" : "h-8"}
+                  className="h-8"
                 >
                   {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
-                  {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-1" />}
                 </Button>
               </div>
             </>
@@ -250,7 +222,6 @@ const TourModal = () => {
                   size="sm" 
                   onClick={handlePrevStep}
                   disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
-                  className={isMobile ? "h-10 px-3" : ""}
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Back
@@ -261,25 +232,10 @@ const TourModal = () => {
                   size="sm" 
                   onClick={skipTour}
                   disabled={showUserNameInput || isTransitioning}
-                  className={isMobile ? "h-10 px-3" : ""}
                 >
                   <X className="h-4 w-4 mr-1" />
                   Skip
                 </Button>
-                
-                {/* Restart tour button in the welcome screen */}
-                {!showUserNameInput && currentStepIndex === 0 && userName && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => restartTour()}
-                    title="Restart tour"
-                    className="h-10"
-                  >
-                    <RotateCcw className="h-4 w-4 mr-1" />
-                    Restart
-                  </Button>
-                )}
               </div>
 
               {!showUserNameInput && (
@@ -287,7 +243,6 @@ const TourModal = () => {
                   size="sm" 
                   onClick={handleNextStep}
                   disabled={showUserNameInput || isTransitioning}
-                  className={isMobile ? "h-10 px-4" : ""}
                 >
                   {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
                   {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-1" />}

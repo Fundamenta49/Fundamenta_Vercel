@@ -6,7 +6,6 @@ import ChatInterface from '@/components/chat-interface';
 import RobotFundi from '@/components/robot-fundi';
 import RobotFundiEnhanced from '@/components/robot-fundi-enhanced';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface FloatingChatProps {
   category?: string;
@@ -72,19 +71,12 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     return categoryColors[category] || categoryColors.general;
   };
   
-  // Use our custom hook for better mobile detection
-  const isMobile = useIsMobile();
-
   return (
     <>
       <AnimatePresence>
         {isExpanded ? (
           <motion.div 
-            className="fixed top-2 right-2 sm:top-6 sm:right-6 md:top-8 md:right-8 z-50 w-full"
-            style={{
-              maxWidth: isMobile ? 'calc(100% - 16px)' : '450px',
-              maxHeight: isMobile ? 'calc(100vh - 32px)' : '650px'
-            }}
+            className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 w-full max-w-md"
             initial={{ opacity: 0, scale: 0.8, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -103,7 +95,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 flex flex-col items-center"
+            className="fixed right-24 bottom-24 z-[9999] flex flex-col items-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
               opacity: 1, 
@@ -117,11 +109,9 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             }}
           >
             <Button
-              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center transition-all duration-300 robot-fundi"
+              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center w-96 h-96 transition-all duration-300 robot-fundi"
               style={{
-                transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-                width: isMobile ? '80px' : '96px',
-                height: isMobile ? '80px' : '96px'
+                transform: isHovered ? 'scale(1.05)' : 'scale(1)'
               }}
               onClick={() => setIsExpanded(true)}
               onMouseEnter={() => setIsHovered(true)}
@@ -130,7 +120,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             >
               <RobotFundi
                 speaking={isSpeaking}
-                size={isMobile ? "md" : "lg"}
+                size="lg"
                 category={category}
                 onOpen={() => setIsExpanded(true)}
               />
