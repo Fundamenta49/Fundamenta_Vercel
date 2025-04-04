@@ -136,52 +136,33 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               title="Chat with Fundi"
             >
               {/* Glowing effect in the background */}
+              {/* Multi-layered glowing effect */}
               <div 
-                className="relative flex items-center justify-center" 
-                style={{ 
-                  width: "100%", 
-                  height: "100%", 
-                  position: "relative", 
-                  zIndex: 1 
+                className="absolute inset-0 rounded-full animate-pulse-slow"
+                style={{
+                  backgroundColor: 'transparent',
+                  boxShadow: `0 0 15px 5px ${getCategoryColor(category)}40, 0 0 30px 10px ${getCategoryColor(category)}20, 0 0 45px 15px ${getCategoryColor(category)}10`,
+                  zIndex: -1,
+                  transform: 'scale(1.3)'
                 }}
-              >
-                {/* Outer glow layer */}
-                <div 
-                  className="absolute rounded-full animate-pulse-slow"
-                  style={{
-                    width: '96px', // Same as md size (96px)
-                    height: '96px', // Same as md size (96px)
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%) scale(1.3)',
-                    backgroundColor: 'transparent',
-                    boxShadow: `0 0 15px 5px ${getCategoryColor(category)}40, 0 0 30px 10px ${getCategoryColor(category)}20, 0 0 45px 15px ${getCategoryColor(category)}10`,
-                    zIndex: -1
-                  }}
+              />
+              {/* Second inner glow for more intensity */}
+              <div 
+                className="absolute inset-0 rounded-full"
+                style={{
+                  backgroundColor: 'transparent',
+                  boxShadow: `0 0 8px 2px ${getCategoryColor(category)}60`,
+                  zIndex: -1,
+                  transform: 'scale(1.1)'
+                }}
+              />
+              <div style={{ width: "100%", height: "100%", position: "relative", zIndex: 1 }}>
+                <RobotFundi
+                  speaking={isSpeaking}
+                  size="md"
+                  category={category}
+                  onOpen={() => setIsExpanded(true)}
                 />
-                {/* Inner glow layer */}
-                <div 
-                  className="absolute rounded-full"
-                  style={{
-                    width: '96px', // Same as md size (96px)
-                    height: '96px', // Same as md size (96px)
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%) scale(1.1)',
-                    backgroundColor: 'transparent',
-                    boxShadow: `0 0 8px 2px ${getCategoryColor(category)}60`,
-                    zIndex: -1
-                  }}
-                />
-                {/* Robot component with centering */}
-                <div className="flex items-center justify-center w-full h-full">
-                  <RobotFundi
-                    speaking={isSpeaking}
-                    size="md"
-                    category={category}
-                    onOpen={() => setIsExpanded(true)}
-                  />
-                </div>
               </div>
             </Button>
           </motion.div>
