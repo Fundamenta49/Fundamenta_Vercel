@@ -68,13 +68,13 @@ export default function RobotFundiEnhanced({
   
   const glowSize = glowIntensitySettings[glowIntensity];
   
-  // Size variants - moderately increased sizes
+  // Size variants - larger sizes for better visibility
   const sizeVariants = {
-    xs: "w-12 h-12",
-    sm: "w-16 h-16", 
-    md: "w-24 h-24",
-    lg: "w-32 h-32",
-    xl: "w-40 h-40"
+    xs: "w-16 h-16",
+    sm: "w-20 h-20", 
+    md: "w-32 h-32",
+    lg: "w-40 h-40",
+    xl: "w-48 h-48"
   };
 
   // Random eye blink effect
@@ -108,11 +108,9 @@ export default function RobotFundiEnhanced({
       onMouseLeave={() => interactive && setIsHovered(false)}
       onClick={handleClick}
     >
-      {/* No radiating glow effect - removed */}
-      
-      {/* Subtle indicator dot instead of glow */}
+      {/* Status indicator dot */}
       <motion.div
-        className="absolute rounded-full z-0"
+        className="absolute rounded-full z-20"
         style={{ 
           backgroundColor: glowColor,
           width: '15%',
