@@ -200,52 +200,44 @@ const CookingTutorialPopup: React.FC = () => {
         {!showSearchResults && (
           <Tabs defaultValue="techniques" value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="sticky top-0 bg-white z-10 pb-4">
-              <div className="flex space-x-2 overflow-x-auto pb-1 no-scrollbar">
-                <button 
-                  onClick={() => setActiveTab('techniques')} 
-                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm ${
-                    activeTab === 'techniques' 
-                      ? 'bg-blue-100 text-blue-700 border border-blue-300' 
-                      : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+              <TabsList className="flex w-full bg-transparent p-0 h-auto space-x-2 mb-1 overflow-visible">
+                <TabsTrigger 
+                  value="techniques" 
+                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 data-[state=active]:border-blue-300 data-[state=active]:shadow-none border ${
+                    activeTab !== 'techniques' ? 'border-gray-200 text-gray-700 hover:bg-gray-100' : 'border-blue-300'
                   }`}
                 >
                   <Utensils className="h-4 w-4 mr-2" />
                   Techniques
-                </button>
-                <button 
-                  onClick={() => setActiveTab('safety')} 
-                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm ${
-                    activeTab === 'safety' 
-                      ? 'bg-yellow-100 text-yellow-700 border border-yellow-300' 
-                      : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="safety" 
+                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm data-[state=active]:bg-yellow-100 data-[state=active]:text-yellow-700 data-[state=active]:border-yellow-300 data-[state=active]:shadow-none border ${
+                    activeTab !== 'safety' ? 'border-gray-200 text-gray-700 hover:bg-gray-100' : 'border-yellow-300'
                   }`}
                 >
                   <AlertTriangle className="h-4 w-4 mr-2" />
                   Safety
-                </button>
-                <button 
-                  onClick={() => setActiveTab('recipes')} 
-                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm ${
-                    activeTab === 'recipes' 
-                      ? 'bg-green-100 text-green-700 border border-green-300' 
-                      : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="recipes" 
+                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm data-[state=active]:bg-green-100 data-[state=active]:text-green-700 data-[state=active]:border-green-300 data-[state=active]:shadow-none border ${
+                    activeTab !== 'recipes' ? 'border-gray-200 text-gray-700 hover:bg-gray-100' : 'border-green-300'
                   }`}
                 >
                   <ChefHat className="h-4 w-4 mr-2" />
                   Recipes
-                </button>
-                <button 
-                  onClick={() => setActiveTab('meals')} 
-                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm ${
-                    activeTab === 'meals' 
-                      ? 'bg-orange-100 text-orange-700 border border-orange-300' 
-                      : 'border border-gray-200 text-gray-700 hover:bg-gray-100'
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="meals" 
+                  className={`px-4 py-2 rounded-full flex items-center whitespace-nowrap text-sm data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700 data-[state=active]:border-orange-300 data-[state=active]:shadow-none border ${
+                    activeTab !== 'meals' ? 'border-gray-200 text-gray-700 hover:bg-gray-100' : 'border-orange-300'
                   }`}
                 >
                   <PlayCircle className="h-4 w-4 mr-2" />
                   Meals
-                </button>
-              </div>
+                </TabsTrigger>
+              </TabsList>
             </div>
             
             <div className="mt-4">
