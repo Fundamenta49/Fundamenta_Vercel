@@ -3,7 +3,7 @@ import { Bot, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ChatInterface from '@/components/chat-interface';
-import RobotFundiEnhanced from '@/components/robot-fundi-enhanced';
+import RobotFundi from '@/components/robot-fundi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface FloatingChatProps {
@@ -101,14 +101,9 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               onClick={() => setIsExpanded(true)}
               title="Chat with Fundi"
             >
-              <RobotFundiEnhanced 
+              <RobotFundi
                 speaking={isSpeaking}
-                thinking={isThinking}
-                size="xl"
-                glowIntensity="high"
-                pulsing={true}
-                interactive={true}
-                category={category}
+                size="lg"
               />
             </Button>
           </motion.div>
