@@ -135,28 +135,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               onMouseLeave={() => setIsHovered(false)}
               title="Chat with Fundi"
             >
-              {/* Glowing effect in the background */}
-              {/* Multi-layered glowing effect */}
-              <div 
-                className="absolute inset-0 rounded-full animate-pulse-slow"
-                style={{
-                  backgroundColor: 'transparent',
-                  boxShadow: `0 0 15px 5px ${getCategoryColor(category)}40, 0 0 30px 10px ${getCategoryColor(category)}20, 0 0 45px 15px ${getCategoryColor(category)}10`,
-                  zIndex: -1,
-                  transform: 'scale(1.3)'
-                }}
-              />
-              {/* Second inner glow for more intensity */}
-              <div 
-                className="absolute inset-0 rounded-full"
-                style={{
-                  backgroundColor: 'transparent',
-                  boxShadow: `0 0 8px 2px ${getCategoryColor(category)}60`,
-                  zIndex: -1,
-                  transform: 'scale(1.1)'
-                }}
-              />
-              <div style={{ width: "100%", height: "100%", position: "relative", zIndex: 1 }}>
+              <div style={{ width: "100%", height: "100%" }}>
                 <RobotFundi
                   speaking={isSpeaking}
                   size="md"
