@@ -90,6 +90,11 @@ export default function ChatInterface({
   const [, navigate] = useLocation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [isResizing, setIsResizing] = useState(false);
+  const [chatSize, setChatSize] = useState({
+    width: window.innerWidth < 768 ? '90%' : '350px',
+    height: window.innerWidth < 768 ? '380px' : '350px'
+  });
   
   // User memory and conversation hooks
   const { 
@@ -478,15 +483,94 @@ export default function ChatInterface({
   // Determine if showing a specialized advisor or general AI assistant
   const isSpecialist = (currentCategory || category) !== 'general';
 
+  // Handle resize start for mouse events
+  const handleResizeStart = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    
+    // Add event listeners based on event type
+    if ('touches' in e) {
+      // Touch event
+      document.addEventListener('touchmove', handleResizeTouchMove);
+      document.addEventListener('touchend', handleResizeEnd);
+    } else {
+      // Mouse event
+      document.addEventListener('mousemove', handleResizeMove);
+      document.addEventListener('mouseup', handleResizeEnd);
+    }
+  };
+
+  // Handle resize move with mouse
+  const handleResizeMove = (e: MouseEvent) => {
+    if (!isResizing) return;
+    
+    const chatElement = document.querySelector('.resizable-chat');
+    if (!chatElement) return;
+    
+    const rect = chatElement.getBoundingClientRect();
+    const newWidth = e.clientX - rect.left + 10; // +10 for padding
+    const newHeight = e.clientY - rect.top + 10; // +10 for padding
+    
+    // Set minimum size constraints
+    const width = Math.max(newWidth, 300);
+    const height = Math.max(newHeight, 300);
+    
+    setChatSize({
+      width: `${width}px`,
+      height: `${height}px`
+    });
+  };
+  
+  // Handle resize move with touch
+  const handleResizeTouchMove = (e: TouchEvent) => {
+    if (!isResizing || !e.touches[0]) return;
+    
+    const chatElement = document.querySelector('.resizable-chat');
+    if (!chatElement) return;
+    
+    const rect = chatElement.getBoundingClientRect();
+    const newWidth = e.touches[0].clientX - rect.left + 10;
+    const newHeight = e.touches[0].clientY - rect.top + 10;
+    
+    // Set minimum size constraints
+    const width = Math.max(newWidth, 300);
+    const height = Math.max(newHeight, 300);
+    
+    setChatSize({
+      width: `${width}px`,
+      height: `${height}px`
+    });
+  };
+  
+  // Handle resize end
+  const handleResizeEnd = () => {
+    setIsResizing(false);
+    document.removeEventListener('mousemove', handleResizeMove);
+    document.removeEventListener('mouseup', handleResizeEnd);
+    document.removeEventListener('touchmove', handleResizeTouchMove);
+    document.removeEventListener('touchend', handleResizeEnd);
+  };
+
+  // Cleanup resize listeners on unmount
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleResizeMove);
+      document.removeEventListener('mouseup', handleResizeEnd);
+      document.removeEventListener('touchmove', handleResizeTouchMove);
+      document.removeEventListener('touchend', handleResizeEnd);
+    };
+  }, [isResizing]);
+
   return (
-    <Card className={`flex flex-col border shadow-lg ${className}`} style={{ 
-      height: expanded ? '85vh' : window.innerWidth < 768 ? '380px' : '350px',
-      maxWidth: expanded ? '95vw' : window.innerWidth < 768 ? '95%' : '350px',
-      width: '100%',
-      margin: !expanded ? '0 auto' : undefined,
-      maxHeight: !expanded && window.innerWidth < 768 ? '400px' : '350px',
-      borderRadius: window.innerWidth < 768 ? '0.75rem' : undefined
-    }}>
+    <Card className={`flex flex-col border shadow-lg resizable-chat ${className} ${isResizing ? 'user-select-none' : ''}`} 
+      style={{ 
+        height: expanded ? '85vh' : chatSize.height,
+        width: chatSize.width,
+        maxWidth: expanded ? '95vw' : window.innerWidth < 768 ? '95%' : 'none',
+        margin: !expanded ? '0 auto' : undefined,
+        borderRadius: window.innerWidth < 768 ? '0.75rem' : undefined,
+        position: 'relative'
+      }}>
       <CardHeader className="px-3 py-2 sm:px-4 sm:py-2.5 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -750,6 +834,18 @@ export default function ChatInterface({
           </Button>
         </div>
       </CardFooter>
+      
+      {/* Resize handle in the bottom-right corner */}
+      <div 
+        className="absolute bottom-0 right-0 w-5 h-5 cursor-se-resize opacity-70 hover:opacity-100 transition-opacity"
+        style={{ 
+          backgroundImage: `linear-gradient(135deg, transparent 50%, ${categoryColors[category]} 50%)`,
+          borderBottomRightRadius: '0.375rem',
+          touchAction: 'none'
+        }}
+        onMouseDown={(e) => handleResizeStart(e)}
+        onTouchStart={(e) => handleResizeStart(e)}
+      ></div>
     </Card>
   );
 }

@@ -353,4 +353,21 @@
     visibility: visible !important;
     pointer-events: auto !important;
   }
+  
+  /* Chat resizing styles */
+  .user-select-none {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+  }
+  
+  .resizable-chat {
+    transition: width 0.05s ease, height 0.05s ease;
+  }
+  
+  .resizable-chat.user-select-none {
+    transition: none;
+    cursor: se-resize;
+  }
 }
