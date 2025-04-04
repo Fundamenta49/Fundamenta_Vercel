@@ -53,12 +53,28 @@ export default function Navigation() {
 
   const isHomePage = location === "/" || location === "/home";
   
+  // Function to check if a navigation item should be active based on the current location
+  const isNavItemActive = (href: string) => {
+    // Exact match
+    if (location === href) return true;
+    
+    // Special cases for sub-paths
+    if (href === '/learning' && (location.includes('/learning') || location.includes('/cooking'))) return true;
+    if (href === '/finance' && location.includes('/finance')) return true;
+    if (href === '/career' && location.includes('/career')) return true;
+    if (href === '/wellness' && location.includes('/wellness')) return true;
+    if (href === '/active' && (location.includes('/active') || location.includes('/fitness'))) return true;
+    if (href === '/emergency' && location.includes('/emergency')) return true;
+    
+    return false;
+  };
+  
   // On home page, show only default items (Why Fundamenta, Partner, Privacy, Invite)
   // On other pages, show feature items (Life Skills, Financial Literacy, etc.)
-  // Filter out the current page from navigation items
+  // Always include the current page in navigation items and highlight it
   const displayedNavItems = isHomePage
     ? [...defaultNavItems.filter(item => item.href !== "/")] 
-    : [...featureNavItems].filter(item => item.href !== location);
+    : [...featureNavItems];
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -111,12 +127,12 @@ export default function Navigation() {
                 onClick={() => handleNavigation(href)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
-                  location === href
+                  isNavItemActive(href)
                     ? `${activeItemBg} ${activeItemText}`
                     : `${navTextColor} ${hoverBg}`
                 )}
               >
-                <Icon className={cn("h-5 w-5", location === href ? "text-rose-700" : "text-gray-600")} />
+                <Icon className={cn("h-5 w-5", isNavItemActive(href) ? "text-rose-700" : "text-gray-600")} />
                 <span className="font-medium">{label}</span>
               </button>
             ))}
@@ -178,13 +194,13 @@ export default function Navigation() {
             onClick={() => handleNavigation(href)}
             className={cn(
               "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
-              location === href
+              isNavItemActive(href)
                 ? `${activeItemBg} ${activeItemText}`
                 : `${navTextColor} ${hoverBg}`
             )}
             title={isMinimized ? label : undefined}
           >
-            <Icon className={cn("h-5 w-5", location === href ? "text-rose-700" : "text-gray-600")} />
+            <Icon className={cn("h-5 w-5", isNavItemActive(href) ? "text-rose-700" : "text-gray-600")} />
             {!isMinimized && <span className="font-medium">{label}</span>}
           </button>
         ))}
