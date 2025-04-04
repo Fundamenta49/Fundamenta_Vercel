@@ -111,10 +111,10 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               ease: "easeInOut"
             }}
             style={{
-              width: "180px",
-              height: "180px",
-              minWidth: "180px", 
-              minHeight: "180px"
+              width: "120px",
+              height: "120px",
+              minWidth: "120px", 
+              minHeight: "120px"
             }}
           >
             <Button
@@ -126,15 +126,15 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
                 pointerEvents: 'auto',
                 width: "100%",
                 height: "100%",
-                minWidth: "180px", 
-                minHeight: "180px"
+                minWidth: "120px", 
+                minHeight: "120px"
               }}
               onClick={() => setIsExpanded(true)}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               title="Chat with Fundi"
             >
-              <div style={{ width: "100%", height: "100%", minWidth: "300px", minHeight: "300px" }}>
+              <div style={{ width: "100%", height: "100%" }}>
                 <RobotFundi
                   speaking={isSpeaking}
                   size="xl"
