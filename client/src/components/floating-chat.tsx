@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ChatInterface from '@/components/chat-interface';
 import RobotFundi from '@/components/robot-fundi';
-import RobotFundiEnhanced from '@/components/robot-fundi-enhanced';
+
+import FundiPersonalityAdapter from '@/components/fundi-personality-adapter';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAIEventStore } from '@/lib/ai-event-system';
 
 interface FloatingChatProps {
   category?: string;
@@ -17,6 +19,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { lastResponse, currentCategory } = useAIEventStore();
 
   const categoryColors: Record<string, string> = {
     finance: '#22c55e', 
@@ -137,12 +140,16 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               title="Chat with Fundi"
             >
               <div style={{ width: "100%", height: "100%" }}>
-                <RobotFundi
-                  speaking={isSpeaking}
-                  size="md"
-                  category={category}
-                  onOpen={() => setIsExpanded(true)}
-                />
+                <FundiPersonalityAdapter>
+                  <RobotFundi
+                    speaking={isSpeaking}
+                    thinking={isThinking}
+                    size="md"
+                    category={currentCategory || category}
+                    emotion={lastResponse?.sentiment || "neutral"}
+                    onOpen={() => setIsExpanded(true)}
+                  />
+                </FundiPersonalityAdapter>
               </div>
             </Button>
           </motion.div>

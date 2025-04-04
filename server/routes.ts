@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { orchestrateAIResponse } from "./ai";
+import { orchestrateAIResponse } from "./ai/index";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import OpenAI from 'openai';
