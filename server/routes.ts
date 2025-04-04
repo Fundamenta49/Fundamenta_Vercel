@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { orchestrateAIResponse } from "./ai/index";
+import { fallbackAIService } from "./ai/ai-fallback-strategy";
 import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import OpenAI from 'openai';
@@ -828,6 +829,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/yoga', yogaRoutes);
   // Register the repair routes
   app.use('/api/repair', repairRoutes);
+  
+  // Dual AI API endpoints - admin controls for fallback mode
+  app.post("/api/ai/toggle-fallback", (req, res) => {
+    try {
+      const schema = z.object({
+        useFallback: z.boolean().optional()
+      });
+      
+      const { useFallback } = schema.parse(req.body);
+      const result = fallbackAIService.toggleFallbackMode(useFallback);
+      
+      res.json({
+        success: true,
+        useFallback: result.useFallback,
+        message: `AI provider ${result.useFallback ? 'switched to fallback mode (HuggingFace)' : 'switched to primary mode (OpenAI)'}`
+      });
+    } catch (error) {
+      console.error("Error toggling AI fallback mode:", error);
+      res.status(400).json({
+        success: false,
+        error: "Failed to toggle AI fallback mode",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+  
+  app.get("/api/ai/fallback-status", (req, res) => {
+    try {
+      const status = fallbackAIService.getFallbackStatus();
+      res.json({
+        success: true,
+        status
+      });
+    } catch (error) {
+      console.error("Error getting AI fallback status:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to get AI fallback status"
+      });
+    }
+  });
 
   // Return an HTTP server
   return createServer(app);
