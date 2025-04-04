@@ -79,6 +79,37 @@ class HuggingFaceAPI {
           await new Promise(resolve => setTimeout(resolve, backoffTime));
         }
         
+        // Special handling for zero-shot classification models
+        const isZeroShotModel = currentModel.includes('bart-large-mnli') || 
+                               currentModel.includes('xnli-multilingual') ||
+                               currentModel.includes('distilbart-mnli');
+        
+        // Format the data correctly depending on model type
+        let requestData: any;
+        
+        if (isZeroShotModel && typeof inputs === 'string' && options?.parameters?.candidate_labels) {
+          // Handle zero-shot classification format
+          requestData = {
+            inputs: inputs,
+            parameters: options.parameters
+          };
+        } else if (typeof inputs === 'string') {
+          // Simple text input format
+          requestData = {
+            inputs: inputs,
+            ...options
+          };
+        } else {
+          // Default format with inputs and options
+          requestData = {
+            inputs,
+            ...options
+          };
+        }
+        
+        // Log the request for debugging (without API key)
+        console.log(`Request to ${currentModel}:`, JSON.stringify(requestData, null, 2));
+        
         const response = await axios({
           url: `${this.baseURL}/${currentModel}`,
           method: 'POST',
@@ -86,10 +117,7 @@ class HuggingFaceAPI {
             'Authorization': `Bearer ${this.apiKey}`,
             'Content-Type': 'application/json'
           },
-          data: {
-            inputs,
-            options
-          },
+          data: requestData,
           timeout: 30000 // 30 second timeout
         });
         
@@ -217,18 +245,29 @@ export class TextClassifier extends HuggingFaceAPI {
    * @returns Analysis result with category label and confidence score
    */
   async classifyCareerContent(text: string): Promise<HuggingFaceTextClassificationResponse[]> {
-    // This is a placeholder - in a real implementation, we would use a specific career classification model
-    // For now, we'll use a general purpose text classifier
-    return this.query<HuggingFaceTextClassificationResponse[]>(
+    // Using the correct format for the bart-large-mnli model
+    const response = await this.query<{
+      sequence: string;
+      labels: string[];
+      scores: number[];
+    }>(
       'facebook/bart-large-mnli',
+      text,
       {
-        text,
-        candidate_labels: [
-          'job search', 'career development', 'skills', 'resume', 'interview',
-          'promotion', 'networking', 'professional growth', 'leadership', 'workplace'
-        ]
+        parameters: {
+          candidate_labels: [
+            'job search', 'career development', 'skills', 'resume', 'interview',
+            'promotion', 'networking', 'professional growth', 'leadership', 'workplace'
+          ]
+        }
       }
     );
+    
+    // Convert the response to the expected format
+    return response.labels.map((label, index) => ({
+      label,
+      score: response.scores[index]
+    }));
   }
 
   /**
@@ -237,18 +276,29 @@ export class TextClassifier extends HuggingFaceAPI {
    * @returns Analysis result with category label and confidence score  
    */
   async classifyFinancialContent(text: string): Promise<HuggingFaceTextClassificationResponse[]> {
-    // This is a placeholder - in a real implementation, we would use a specific financial classification model
-    // For now, we'll use a general purpose text classifier
-    return this.query<HuggingFaceTextClassificationResponse[]>(
+    // Using the correct format for the bart-large-mnli model
+    const response = await this.query<{
+      sequence: string;
+      labels: string[];
+      scores: number[];
+    }>(
       'facebook/bart-large-mnli',
+      text,
       {
-        text,
-        candidate_labels: [
-          'budgeting', 'saving', 'investing', 'debt', 'taxes',
-          'insurance', 'retirement', 'financial planning', 'banking', 'credit'
-        ]
+        parameters: {
+          candidate_labels: [
+            'budgeting', 'saving', 'investing', 'debt', 'taxes',
+            'insurance', 'retirement', 'financial planning', 'banking', 'credit'
+          ]
+        }
       }
     );
+    
+    // Convert the response to the expected format
+    return response.labels.map((label, index) => ({
+      label,
+      score: response.scores[index]
+    }));
   }
 }
 
@@ -362,6 +412,103 @@ export const textGenerator = new TextGenerator();
  */
 export async function getContentCategory(text: string): Promise<string> {
   try {
+    // Check for specific keywords in lowercase text
+    const lowerText = text.toLowerCase();
+    
+    // Finance terms
+    if (lowerText.includes('crypto') || 
+        lowerText.includes('bitcoin') || 
+        lowerText.includes('ethereum') ||
+        lowerText.includes('blockchain') ||
+        lowerText.includes('investment strategy') ||
+        lowerText.includes('investing') ||
+        lowerText.includes('budget') ||
+        lowerText.includes('401k') ||
+        lowerText.includes('ira') ||
+        lowerText.includes('credit score')) {
+      console.log('Early detection: Finance term detected, categorizing as finance');
+      return 'finance';
+    }
+    
+    // Career terms
+    if (lowerText.includes('resume') || 
+        lowerText.includes('job interview') || 
+        lowerText.includes('career') ||
+        lowerText.includes('promotion') ||
+        lowerText.includes('job search') ||
+        lowerText.includes('linkedin') ||
+        lowerText.includes('networking') ||
+        lowerText.includes('job application')) {
+      console.log('Early detection: Career term detected, categorizing as career');
+      return 'career';
+    }
+    
+    // Mental health and wellness terms
+    if ((lowerText.includes('mental health') ||
+         lowerText.includes('meditation') ||
+         lowerText.includes('anxiety') ||
+         lowerText.includes('self-care') ||
+         lowerText.includes('mindfulness') ||
+         (lowerText.includes('stress') && !lowerText.includes('job stress'))) &&
+        !lowerText.includes('finance')) {
+      console.log('Early detection: Mental health term detected, categorizing as wellness');
+      return 'wellness';  
+    }
+    
+    // Emergency terms
+    if (lowerText.includes('choking') || 
+        lowerText.includes('heart attack') || 
+        lowerText.includes('first aid') ||
+        lowerText.includes('emergency') ||
+        lowerText.includes('cpr') ||
+        lowerText.includes('ambulance') ||
+        lowerText.includes('911') ||
+        lowerText.includes('heimlich')) {
+      console.log('Early detection: Emergency term detected, categorizing as emergency');
+      return 'emergency';
+    }
+    
+    // Cooking terms
+    if ((lowerText.includes('recipe') || 
+         lowerText.includes('cook') ||
+         lowerText.includes('bake') ||
+         lowerText.includes('food preparation') ||
+         lowerText.includes('meal') ||
+         lowerText.includes('kitchen') ||
+         lowerText.includes('pasta') ||
+         lowerText.includes('carbonara') ||
+         lowerText.includes('ingredient')) &&
+        !lowerText.includes('fitness')) {
+      console.log('Early detection: Cooking term detected, categorizing as cooking');
+      return 'cooking';
+    }
+    
+    // Learning terms - handle books specifically 
+    if (lowerText.includes('books on') || 
+        lowerText.includes('learn') ||
+        lowerText.includes('study') ||
+        lowerText.includes('course') ||
+        lowerText.includes('education') ||
+        (lowerText.includes('books') && !lowerText.includes('career'))) {
+      console.log('Early detection: Learning term detected, categorizing as learning');
+      return 'learning';
+    }
+    
+    // Fitness terms
+    if (lowerText.includes('exercise') || 
+        lowerText.includes('workout') || 
+        lowerText.includes('gym') ||
+        lowerText.includes('cardio') ||
+        lowerText.includes('strength training') ||
+        lowerText.includes('fitness') ||
+        lowerText.includes('muscle') ||
+        lowerText.includes('weight lifting') ||
+        lowerText.includes('stretching') ||
+        lowerText.includes('physical training')) {
+      console.log('Early detection: Fitness term detected, categorizing as fitness');
+      return 'fitness';
+    }
+    
     // List of alternative models for category classification
     const alternativeModels = [
       'MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7', // Alternative zero-shot model
@@ -369,46 +516,122 @@ export async function getContentCategory(text: string): Promise<string> {
       'valhalla/distilbart-mnli-12-1' // Smaller, faster alternative
     ];
     
-    // Try to classify into high-level categories first
-    const categoryResponse = await textClassifier.query<HuggingFaceTextClassificationResponse[]>(
+    // Try to classify into high-level categories first using the correct format for the model
+    // Note: facebook/bart-large-mnli requires parameters.candidate_labels format
+    const categoryResponse = await textClassifier.query<{
+      sequence: string;
+      labels: string[];
+      scores: number[];
+    }>(
       'facebook/bart-large-mnli', // Primary zero-shot model
+      text, // The input text goes directly here
       {
-        text,
-        candidate_labels: [
-          'finance', 'career', 'wellness', 'learning', 'emergency', 'cooking', 'fitness', 'general'
-        ]
-      },
-      {}, // Default options
+        parameters: {
+          candidate_labels: [
+            'finance and money management',
+            'career and professional development',
+            'wellness, mental health and relaxation',
+            'learning and education',
+            'emergency and urgent situations',
+            'cooking and food preparation',
+            'fitness and physical health',
+            'general information'
+          ]
+        }
+      }, // Options with parameters structure
       2,  // 2 retries
       alternativeModels
     );
     
-    // Return the highest scoring category
-    const topCategory = categoryResponse.sort((a, b) => b.score - a.score)[0];
+    // Define a mapping for the detailed labels to our simple category names
+    const categoryMapping: Record<string, string> = {
+      'finance and money management': 'finance',
+      'career and professional development': 'career',
+      'wellness, mental health and relaxation': 'wellness',
+      'learning and education': 'learning',
+      'emergency and urgent situations': 'emergency',
+      'cooking and food preparation': 'cooking',
+      'fitness and physical health': 'fitness',
+      'general information': 'general'
+    };
     
-    // If confidence is low, do more specific classification based on initial guess
-    if (topCategory.score < 0.6) {
-      try {
-        switch (topCategory.label) {
-          case 'finance':
-            const financialResults = await textClassifier.classifyFinancialContent(text);
-            if (financialResults[0].score > 0.7) return 'finance';
-            break;
-          case 'career':
-            const careerResults = await textClassifier.classifyCareerContent(text);
-            if (careerResults[0].score > 0.7) return 'career';
-            break;
-        }
-      } catch (specificError) {
-        console.error('Error in specific category classification:', specificError);
-        // If specific classification fails, still return the top-level category
-        return topCategory.label;
+    // Map the response to our expected format with simplified labels
+    const mappedCategories = categoryResponse.labels.map((label, index) => ({
+      label: categoryMapping[label] || label, // Use the mapped category or the original if not found
+      score: categoryResponse.scores[index]
+    }));
+    
+    // Return the highest scoring category - already sorted by the API, but let's ensure it
+    const sortedCategories = [...mappedCategories].sort((a, b) => b.score - a.score);
+    const topCategory = sortedCategories[0];
+    
+    // Log the top categories for debugging
+    console.log('Top categories:', sortedCategories.slice(0, 3).map(c => `${c.label} (${c.score.toFixed(3)})`));
+    
+    // If confidence is high enough, return the top category right away
+    if (topCategory.score > 0.7) {
+      return topCategory.label;
+    }
+    
+    // For borderline cases, try more specific classification
+    try {
+      // Handle crypto-related queries explicitly - these often get misclassified as learning
+      if (text.toLowerCase().includes('crypto') || 
+          text.toLowerCase().includes('bitcoin') || 
+          text.toLowerCase().includes('ethereum') ||
+          text.toLowerCase().includes('investing') ||
+          text.toLowerCase().includes('investment')) {
+        console.log('Cryptocurrency/investment term detected, categorizing as finance');
+        return 'finance';
       }
       
-      // Only return general if confidence is very low
-      if (topCategory.score < 0.3) {
-        return 'general';
+      // Enhanced categorization for finance topics that might be classified as learning
+      if ((topCategory.label === 'finance' || 
+           (topCategory.label === 'learning' && 
+            (text.toLowerCase().includes('money') ||
+             text.toLowerCase().includes('budget') ||
+             text.toLowerCase().includes('saving') ||
+             text.toLowerCase().includes('finance')))) && 
+           topCategory.score < 0.7) {
+        try {
+          const financialResults = await textClassifier.classifyFinancialContent(text);
+          if (financialResults[0].score > 0.6) return 'finance';
+        } catch (err) {
+          console.error('Error in financial classification, using heuristics instead:', err);
+          // If the API call fails, make a best guess based on keywords
+          if (text.toLowerCase().includes('money') || 
+              text.toLowerCase().includes('budget') ||
+              text.toLowerCase().includes('saving') ||
+              text.toLowerCase().includes('finance')) {
+            return 'finance';
+          }
+        }
       }
+      
+      // Enhanced handling for career topics
+      if (topCategory.label === 'career' && topCategory.score < 0.7) {
+        const careerResults = await textClassifier.classifyCareerContent(text);
+        if (careerResults[0].score > 0.6) return 'career';
+      }
+      
+      // Enhanced handling for wellness topics
+      if ((topCategory.label === 'wellness' || 
+          text.toLowerCase().includes('stress') || 
+          text.toLowerCase().includes('anxiety') ||
+          text.toLowerCase().includes('mental health') ||
+          text.toLowerCase().includes('meditation')) && 
+          topCategory.score < 0.7) {
+        return 'wellness';
+      }
+    } catch (specificError) {
+      console.error('Error in specific category classification:', specificError);
+      // If specific classification fails, still return the top-level category
+      return topCategory.label;
+    }
+    
+    // Only return general if confidence is very low
+    if (topCategory.score < 0.3) {
+      return 'general';
     }
     
     return topCategory.label;
