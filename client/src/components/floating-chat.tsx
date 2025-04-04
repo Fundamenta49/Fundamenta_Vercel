@@ -134,7 +134,6 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
                 minHeight: "60px",
                 position: "relative"
               }}
-              onClick={() => setIsExpanded(true)}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               title="Chat with Fundi"

@@ -23,6 +23,7 @@ export default function RobotFundi({
 }: RobotFundiProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [wasDragged, setWasDragged] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const { lastResponse } = useAIEventStore();
 
@@ -33,6 +34,8 @@ export default function RobotFundi({
       x: e.clientX - position.x,
       y: e.clientY - position.y
     });
+    // Prevent event propagation to avoid triggering onClick
+    e.stopPropagation();
   };
   
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -42,16 +45,23 @@ export default function RobotFundi({
       x: e.touches[0].clientX - position.x,
       y: e.touches[0].clientY - position.y
     });
+    // Prevent event propagation
+    e.stopPropagation();
   };
   
-  const handleClick = () => {
-    if (onOpen && interactive) {
+  const handleClick = (e: React.MouseEvent) => {
+    // Only open if we weren't dragging
+    if (onOpen && interactive && !isDragging && !wasDragged) {
       onOpen();
     }
+    // Reset the wasDragged flag so future clicks can work
+    setWasDragged(false);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging) return;
+    // Mark that we've actually moved (dragged)
+    setWasDragged(true);
     setPosition({
       x: e.clientX - dragStart.x,
       y: e.clientY - dragStart.y
@@ -61,6 +71,8 @@ export default function RobotFundi({
   const handleTouchMove = (e: TouchEvent) => {
     if (!isDragging) return;
     e.preventDefault();
+    // Mark that we've actually moved (dragged)
+    setWasDragged(true);
     setPosition({
       x: e.touches[0].clientX - dragStart.x,
       y: e.touches[0].clientY - dragStart.y
@@ -68,11 +80,27 @@ export default function RobotFundi({
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    // Add a small delay before setting isDragging to false to prevent click event from triggering
+    setTimeout(() => {
+      setIsDragging(false);
+      
+      // Reset wasDragged after a longer delay to ensure click handler has already run
+      setTimeout(() => {
+        setWasDragged(false);
+      }, 200);
+    }, 100);
   };
 
   const handleTouchEnd = () => {
-    setIsDragging(false);
+    // Add a small delay before setting isDragging to false to prevent tap event from triggering
+    setTimeout(() => {
+      setIsDragging(false);
+      
+      // Reset wasDragged after a longer delay to ensure tap handler has already run
+      setTimeout(() => {
+        setWasDragged(false);
+      }, 200);
+    }, 100);
   };
 
   useEffect(() => {
