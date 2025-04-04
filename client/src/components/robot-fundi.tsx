@@ -254,15 +254,17 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   
   return (
     <div 
-      className="fixed z-[99999] robot-fundi" 
+      className="fixed z-[99999] robot-fundi"
       style={{ 
         transform: `scale(${scaleMap[size]})`,
-        right: `calc(20px - ${position.x}px)`,
-        top: `calc(20px + ${position.y}px)`,
+        right: `calc(50px - ${position.x}px)`,
+        bottom: `calc(50px + ${position.y}px)`,
         touchAction: 'none', // Prevent touch actions for better mobile drag
         pointerEvents: 'auto', // Ensure we capture all pointer events
         cursor: isDragging ? 'grabbing' : 'grab', // Show grabbing cursor while dragging
-        visibility: 'visible'  // Force visibility
+        visibility: 'visible', // Force visibility
+        width: '140px',
+        height: '140px'
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
@@ -281,8 +283,8 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
 
       {/* Robot avatar with dynamic color glow */}
       <svg
-        width="200"
-        height="200"
+        width="160"
+        height="160"
         viewBox="0 0 200 200"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
