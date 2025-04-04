@@ -118,7 +118,7 @@ export default function RobotFundi({
       )}
       style={{
         position: 'fixed',
-        top: '56px',
+        top: '8px',
         right: '24px',
         transform: `translate(${position.x}px, ${position.y}px)`,
         zIndex: 9999,

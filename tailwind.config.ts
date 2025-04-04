@@ -73,9 +73,17 @@ export default {
           "0%, 100%": { transform: "translateX(0)" },
           "50%": { transform: "translateX(5px)" },
         },
+        "pulse-slow": {
+          "0%": { opacity: "0.3", transform: "scale(1.2)" },
+          "25%": { opacity: "0.5", transform: "scale(1.25)" },
+          "50%": { opacity: "0.7", transform: "scale(1.3)" },
+          "75%": { opacity: "0.5", transform: "scale(1.25)" },
+          "100%": { opacity: "0.3", transform: "scale(1.2)" },
+        },
       },
       animation: {
         "swipe-hint": "swipe-hint 1.5s ease-in-out infinite",
+        "pulse-slow": "pulse-slow 3s ease-in-out infinite",
       },
     },
   },
