@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ChatInterface from '@/components/chat-interface';
 import RobotFundi from '@/components/robot-fundi';
+import RobotFundiEnhanced from '@/components/robot-fundi-enhanced';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface FloatingChatProps {
@@ -15,6 +16,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   const [isAnimating, setIsAnimating] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const categoryColors: Record<string, string> = {
     finance: '#22c55e', 
@@ -29,6 +31,12 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
 
   // Add random animations to make the robot feel more alive
   useEffect(() => {
+    // Initial attention animation
+    setTimeout(() => {
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 1500);
+    }, 1000);
+
     // Speaking animation
     const speakingInterval = setInterval(() => {
       if (Math.random() > 0.7 && !isThinking) {
@@ -45,11 +53,11 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       }
     }, 15000);
     
-    // Attention-grabbing animation
+    // Attention-grabbing animation - more frequent for better visibility
     const attentionInterval = setInterval(() => {
       setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 1000);
-    }, 20000);
+      setTimeout(() => setIsAnimating(false), 1500);
+    }, 10000);
     
     return () => {
       clearInterval(speakingInterval);
@@ -87,23 +95,40 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed right-6 bottom-6 z-[9999] flex flex-col items-center"
+            className="fixed right-12 bottom-12 z-[9999] flex flex-col items-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
               opacity: 1, 
               scale: isAnimating ? [1, 1.1, 1] : 1,
-              y: isAnimating ? [0, -5, 0] : 0
+              y: isAnimating ? [0, -8, 0] : 0,
+              rotate: isAnimating ? [-2, 2, -2, 0] : 0
             }}
-            transition={{ duration: 0.5 }}
+            transition={{ 
+              duration: 0.7,
+              ease: "easeInOut"
+            }}
           >
             <Button
-              className="p-0 bg-transparent hover:bg-transparent border-none shadow-none flex items-center justify-center"
+              className="p-0 bg-transparent hover:bg-transparent border-none shadow-xl flex items-center justify-center w-56 h-56 rounded-full transition-all duration-300"
+              style={{
+                transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: isHovered 
+                  ? `0 0 25px ${getCategoryColor(category)}80` 
+                  : '0 10px 25px rgba(0, 0, 0, 0.1)'
+              }}
               onClick={() => setIsExpanded(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
               title="Chat with Fundi"
             >
-              <RobotFundi
+              <RobotFundiEnhanced
                 speaking={isSpeaking}
-                size="lg"
+                thinking={isThinking}
+                size="xl"
+                category={category}
+                pulsing={true}
+                glowIntensity="high"
+                interactive={true}
               />
             </Button>
           </motion.div>
