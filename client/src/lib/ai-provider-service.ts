@@ -1,5 +1,12 @@
 import { create } from 'zustand';
 
+/**
+ * NOTE: This service is for internal use only by administrators.
+ * It should not be exposed to end users as part of the regular UI.
+ * The dual API approach (OpenAI and HuggingFace) is designed to work
+ * seamlessly in the background without user awareness or intervention.
+ */
+
 // Types for AI provider status
 export interface AIProviderStatus {
   useFallback: boolean;
@@ -11,12 +18,13 @@ export interface AIProviderStatus {
   fallbackProvider: string;
 }
 
-// Store for AI provider preference and status
+// Store for AI provider monitoring
 interface AIProviderState {
   isLoading: boolean;
   status: AIProviderStatus | null;
   error: string | null;
   
+  // Admin-only methods
   fetchStatus: () => Promise<void>;
   toggleFallbackMode: (useFallback?: boolean) => Promise<void>;
 }
@@ -27,6 +35,7 @@ export const useAIProviderStore = create<AIProviderState>((set) => ({
   status: null,
   error: null,
   
+  // Admin-only: Fetch the current status of the AI providers
   fetchStatus: async () => {
     try {
       set({ isLoading: true, error: null });
@@ -52,6 +61,7 @@ export const useAIProviderStore = create<AIProviderState>((set) => ({
     }
   },
   
+  // Admin-only: Force a specific provider mode
   toggleFallbackMode: async (useFallback?: boolean) => {
     try {
       set({ isLoading: true, error: null });
@@ -93,7 +103,7 @@ export const useAIProviderStore = create<AIProviderState>((set) => ({
   }
 }));
 
-// Utility function to get a human-readable status message
+// Utility function to get a human-readable status message (for admin use only)
 export function getProviderStatusMessage(status: AIProviderStatus | null): string {
   if (!status) {
     return 'AI provider status unknown';
@@ -107,7 +117,7 @@ export function getProviderStatusMessage(status: AIProviderStatus | null): strin
     ''}`;
 }
 
-// Hook for easily accessing the status message
+// Hook for monitoring AI provider status (admin use only)
 export function useAIProviderStatus() {
   const { status, isLoading, error, fetchStatus, toggleFallbackMode } = useAIProviderStore();
   

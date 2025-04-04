@@ -403,15 +403,22 @@ export class FallbackAIService {
     systemPrompt: string,
     previousMessages: Message[]
   ): Promise<AIResponse> {
-    // Determine which provider to use
+    // Determine which provider to use based on our fallback strategy
     if (this.shouldUseFallback()) {
       console.log("Using fallback AI provider due to recent failures");
+      
+      // Forced fallback mode - only use the fallback provider
       try {
-        return await this.fallbackProvider.generateResponse(message, systemPrompt, previousMessages);
+        const result = await this.fallbackProvider.generateResponse(
+          message, 
+          systemPrompt, 
+          previousMessages
+        );
+        return result;
       } catch (error) {
-        console.error("Both primary and fallback AI providers failed:", error);
+        console.error("Fallback AI provider failed in fallback mode:", error);
         return {
-          response: "I'm experiencing technical difficulties with both AI systems. Please try again with a simpler question or check back later.",
+          response: "I'm experiencing technical difficulties with the AI system. Please try again with a simpler question or check back later.",
           sentiment: "apologetic",
           suggestions: [],
           followUpQuestions: []
@@ -419,46 +426,213 @@ export class FallbackAIService {
       }
     }
     
-    // Try primary provider first
-    try {
-      const result = await this.primaryProvider.generateResponse(message, systemPrompt, previousMessages);
-      this.recordSuccess();
-      return result;
-    } catch (error) {
-      console.error("Primary AI provider failed, falling back:", error);
-      this.recordFailure();
+    // Enhanced race strategy with timeouts and fallbacks
+    let primaryPromise: Promise<AIResponse> | null = null;
+    let fallbackPromise: Promise<AIResponse> | null = null;
+    let primaryTimeout: NodeJS.Timeout | null = null;
+    let fallbackStartTimeout: NodeJS.Timeout | null = null;
+    let isResolved = false;
+    
+    // Create a promise that resolves with the first successful response
+    // or rejects if both providers fail
+    return new Promise<AIResponse>((resolve, reject) => {
+      // Start the primary provider request immediately
+      primaryPromise = this.primaryProvider.generateResponse(
+        message, 
+        systemPrompt, 
+        previousMessages
+      );
       
-      // Try fallback provider
-      try {
-        return await this.fallbackProvider.generateResponse(message, systemPrompt, previousMessages);
-      } catch (fallbackError) {
-        console.error("Fallback AI provider also failed:", fallbackError);
-        return {
-          response: "I'm experiencing technical difficulties with both AI systems. Please try again with a simpler question or check back later.",
-          sentiment: "apologetic",
-          suggestions: [],
-          followUpQuestions: []
-        };
-      }
-    }
+      // Set up a timeout to start the fallback provider after a short delay
+      // This gives the primary provider a head start but ensures we don't wait too long
+      const FALLBACK_START_DELAY = 300; // ms - give primary provider a head start
+      
+      fallbackStartTimeout = setTimeout(() => {
+        if (!isResolved) {
+          console.log("Starting fallback AI provider as backup");
+          
+          // Start the fallback provider
+          fallbackPromise = this.fallbackProvider.generateResponse(
+            message, 
+            systemPrompt, 
+            previousMessages
+          );
+          
+          // Handle fallback provider result
+          fallbackPromise
+            .then(result => {
+              if (!isResolved) {
+                isResolved = true;
+                console.log("Fallback AI provider responded first");
+                this.recordFailure(); // Record that primary was too slow or failed
+                clearTimeout(primaryTimeout!);
+                resolve(result);
+              }
+            })
+            .catch(fallbackError => {
+              console.error("Fallback AI provider failed:", fallbackError);
+              // Only reject if primary has also failed/timed out
+              if (!isResolved && !primaryPromise) {
+                isResolved = true;
+                reject(fallbackError);
+              }
+            });
+        }
+      }, FALLBACK_START_DELAY);
+      
+      // Set a timeout for the primary provider
+      const PRIMARY_TIMEOUT = 10000; // 10 seconds
+      primaryTimeout = setTimeout(() => {
+        if (!isResolved) {
+          console.log("Primary AI provider timed out after", PRIMARY_TIMEOUT, "ms");
+          this.recordFailure();
+          // We won't reject here since the fallback might still be pending
+        }
+      }, PRIMARY_TIMEOUT);
+      
+      // Handle primary provider result
+      primaryPromise
+        .then(result => {
+          if (!isResolved) {
+            isResolved = true;
+            console.log("Primary AI provider responded successfully");
+            this.recordSuccess();
+            
+            // Clean up timeouts
+            clearTimeout(fallbackStartTimeout!);
+            clearTimeout(primaryTimeout!);
+            
+            resolve(result);
+          }
+        })
+        .catch(primaryError => {
+          console.error("Primary AI provider failed:", primaryError);
+          this.recordFailure();
+          
+          // If fallback hasn't started yet, clear its startup timeout and reject
+          if (!fallbackPromise && fallbackStartTimeout) {
+            clearTimeout(fallbackStartTimeout);
+            
+            // Start fallback immediately since primary failed
+            this.fallbackProvider.generateResponse(message, systemPrompt, previousMessages)
+              .then(result => {
+                if (!isResolved) {
+                  isResolved = true;
+                  console.log("Fallback AI provider succeeded after primary failure");
+                  resolve(result);
+                }
+              })
+              .catch(fallbackError => {
+                if (!isResolved) {
+                  isResolved = true;
+                  console.error("Both AI providers failed:", fallbackError);
+                  reject(new Error("Both AI providers failed"));
+                }
+              });
+          }
+          // If fallback is already running, let it continue
+        });
+    })
+    .catch(error => {
+      // Ultimate fallback if both providers fail
+      console.error("All AI providers failed:", error);
+      return {
+        response: "I'm experiencing technical difficulties with both AI systems. Please try again with a simpler question or check back later.",
+        sentiment: "apologetic",
+        suggestions: [],
+        followUpQuestions: []
+      };
+    });
   }
   
   async determineCategory(
     message: string, 
     preferredCategory?: string
   ): Promise<{ category: string; confidence: number }> {
+    // Determine which provider to use based on our fallback strategy
     if (this.shouldUseFallback()) {
+      console.log("Using fallback AI provider for category determination due to recent failures");
       return this.fallbackProvider.determineCategory(message, preferredCategory);
     }
     
-    try {
-      const result = await this.primaryProvider.determineCategory(message, preferredCategory);
-      this.recordSuccess();
-      return result;
-    } catch (error) {
-      this.recordFailure();
-      return this.fallbackProvider.determineCategory(message, preferredCategory);
-    }
+    // Use a similar race approach as generateResponse but simpler since this is a faster operation
+    let primaryPromise: Promise<{ category: string; confidence: number }> | null = null;
+    let fallbackPromise: Promise<{ category: string; confidence: number }> | null = null;
+    let isResolved = false;
+    
+    // Create a promise that resolves with the first successful response
+    // or rejects if both providers fail
+    return new Promise<{ category: string; confidence: number }>((resolve, reject) => {
+      // Start the primary provider immediately
+      primaryPromise = this.primaryProvider.determineCategory(message, preferredCategory);
+      
+      // Start fallback with a short delay
+      setTimeout(() => {
+        if (!isResolved) {
+          console.log("Starting fallback for category determination as backup");
+          fallbackPromise = this.fallbackProvider.determineCategory(message, preferredCategory);
+          
+          fallbackPromise
+            .then(result => {
+              if (!isResolved) {
+                isResolved = true;
+                console.log("Fallback provider determined category first");
+                this.recordFailure(); // Primary was too slow
+                resolve(result);
+              }
+            })
+            .catch(error => {
+              console.error("Fallback category determination failed:", error);
+              // Only reject if primary has already failed
+              if (!isResolved && !primaryPromise) {
+                isResolved = true;
+                reject(error);
+              }
+            });
+        }
+      }, 200); // 200ms delay
+      
+      // Handle primary provider result
+      primaryPromise
+        .then(result => {
+          if (!isResolved) {
+            isResolved = true;
+            console.log("Primary provider determined category successfully");
+            this.recordSuccess();
+            resolve(result);
+          }
+        })
+        .catch(error => {
+          console.error("Primary category determination failed:", error);
+          this.recordFailure();
+          
+          // If fallback is not yet running, start it immediately
+          if (!fallbackPromise) {
+            this.fallbackProvider.determineCategory(message, preferredCategory)
+              .then(result => {
+                if (!isResolved) {
+                  isResolved = true;
+                  resolve(result);
+                }
+              })
+              .catch(fallbackError => {
+                if (!isResolved) {
+                  isResolved = true;
+                  reject(new Error("Both category determination providers failed"));
+                }
+              });
+          }
+          // If fallback is already running, let it continue
+        });
+    })
+    .catch(error => {
+      // Ultimate fallback if both providers fail
+      console.error("All category providers failed:", error);
+      return { 
+        category: preferredCategory || "general",
+        confidence: 0.5
+      };
+    });
   }
   
   async analyzeEmotion(message: string): Promise<{
@@ -466,12 +640,56 @@ export class FallbackAIService {
     emotionScore: number;
     emotions?: Array<{emotion: string, score: number}>;
   }> {
-    // For emotion analysis, prefer HuggingFace as it's specialized for this
+    // For emotion analysis, try both providers with timing optimization
+    // We'll use a Promise.race approach to get the fastest result
+    // while also ensuring we have a fallback if one fails
+    
+    let fallbackPromise: Promise<any> | null = null;
+    
     try {
-      return await this.fallbackProvider.analyzeEmotion(message);
+      // Start both providers in parallel but prioritize the specialized one
+      const primaryPromise = this.fallbackProvider.analyzeEmotion(message)
+        .catch(error => {
+          console.log("HuggingFace emotion analysis failed, using OpenAI fallback");
+          // If this fails, we need to ensure the fallback is running
+          if (!fallbackPromise) {
+            fallbackPromise = this.primaryProvider.analyzeEmotion(message);
+          }
+          // Rethrow to let Promise.race know this one failed
+          throw error;
+        });
+      
+      // Start the fallback with a slight delay to give priority to the specialized service
+      fallbackPromise = new Promise(resolve => {
+        setTimeout(() => {
+          // Only run this if we haven't already gotten a result
+          this.primaryProvider.analyzeEmotion(message)
+            .then(resolve)
+            .catch(error => {
+              console.error("Both emotion analysis providers failed:", error);
+              // Return a neutral default if both fail
+              resolve({
+                primaryEmotion: "neutral",
+                emotionScore: 0.5
+              });
+            });
+        }, 500); // 500ms delay gives the specialized service a head start
+      });
+      
+      // Race between the two, with preference for the specialized one
+      return await Promise.race([primaryPromise, fallbackPromise]);
     } catch (error) {
-      console.log("HuggingFace emotion analysis failed, using OpenAI instead");
-      return this.primaryProvider.analyzeEmotion(message);
+      // If the primary (specialized) provider fails, wait for the fallback
+      if (fallbackPromise) {
+        return await fallbackPromise;
+      }
+      
+      // Ultimate fallback if everything fails
+      console.error("All emotion analysis providers failed:", error);
+      return {
+        primaryEmotion: "neutral",
+        emotionScore: 0.5
+      };
     }
   }
 }

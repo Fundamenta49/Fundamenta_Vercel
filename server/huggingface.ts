@@ -46,53 +46,106 @@ class HuggingFaceAPI {
   }
 
   /**
-   * Make a request to the Hugging Face Inference API
+   * Make a request to the Hugging Face Inference API with retries
    * @param model The model identifier to use
    * @param inputs The inputs to send to the model
    * @param options Additional options for the request
+   * @param retries Number of retry attempts if request fails (default: 2)
    * @returns Promise with the model's response
    */
-  async query<T>(model: string, inputs: any, options: any = {}): Promise<T> {
+  async query<T>(
+    model: string, 
+    inputs: any, 
+    options: any = {}, 
+    retries: number = 2,
+    alternativeModels?: string[]
+  ): Promise<T> {
     // Check for API key first and warn if missing
     if (!this.apiKey || this.apiKey.trim() === '') {
       console.error(`HuggingFace API key is missing or empty. Cannot make request to model: ${model}`);
       throw new Error('HuggingFace API key is required. Please set the HUGGINGFACE_API_KEY environment variable.');
     }
     
-    try {
-      const response = await axios({
-        url: `${this.baseURL}/${model}`,
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        data: {
-          inputs,
-          options
-        },
-        timeout: 30000 // 30 second timeout
-      });
-      
-      return response.data;
-    } catch (error) {
-      console.error(`HuggingFace API Error (${model}):`, error);
-      
-      // Enhanced error logging with request details for better debugging
-      const requestDetails = {
-        model,
-        inputType: typeof inputs === 'string' ? 'string' : (Array.isArray(inputs) ? 'array' : 'object'),
-        inputLength: typeof inputs === 'string' ? inputs.length : 
-                    (Array.isArray(inputs) ? inputs.length : Object.keys(inputs).length),
-        options: options
-      };
-      console.error('Request details:', requestDetails);
-      
+    let lastError: Error | null = null;
+    let currentModel = model;
+    
+    // Try the main model and retry logic
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        // Add exponential backoff for retries
+        if (attempt > 0) {
+          const backoffTime = Math.min(100 * Math.pow(2, attempt), 3000); // Max 3 seconds
+          console.log(`Retry attempt ${attempt} for model ${currentModel} (backoff: ${backoffTime}ms)`);
+          await new Promise(resolve => setTimeout(resolve, backoffTime));
+        }
+        
+        const response = await axios({
+          url: `${this.baseURL}/${currentModel}`,
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          data: {
+            inputs,
+            options
+          },
+          timeout: 30000 // 30 second timeout
+        });
+        
+        return response.data;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        
+        // Enhanced error logging with request details for better debugging
+        const requestDetails = {
+          model: currentModel,
+          inputType: typeof inputs === 'string' ? 'string' : (Array.isArray(inputs) ? 'array' : 'object'),
+          inputLength: typeof inputs === 'string' ? inputs.length : 
+                      (Array.isArray(inputs) ? inputs.length : Object.keys(inputs).length),
+          options: options
+        };
+        console.error(`HuggingFace API Error (${currentModel}):`, error);
+        console.error('Request details:', requestDetails);
+        
+        // Determine if we should try an alternative model
+        if (
+          axios.isAxiosError(error) && 
+          error.response && 
+          (error.response.status === 503 || error.response.status >= 500) && 
+          alternativeModels && 
+          alternativeModels.length > 0
+        ) {
+          // Try an alternative model before giving up completely
+          const alternativeModel = alternativeModels.shift(); // Get and remove first alternative
+          if (alternativeModel) {
+            console.log(`Switching to alternative model: ${alternativeModel}`);
+            currentModel = alternativeModel;
+            attempt--; // Don't count this as a retry for the same model
+            continue;
+          }
+        }
+        
+        // For rate limiting, always retry
+        if (axios.isAxiosError(error) && error.response && error.response.status === 429) {
+          console.log(`Rate limited on attempt ${attempt}, will retry...`);
+          continue;
+        }
+        
+        // For other errors, only continue retrying if we have attempts left
+        if (attempt < retries) {
+          continue;
+        }
+      }
+    }
+    
+    // If we get here, all retries failed
+    if (lastError) {
       // Provide specific error messages based on error type
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          const statusCode = error.response.status;
-          const errorMessage = error.response.data.error || 'Unknown error';
+      if (axios.isAxiosError(lastError)) {
+        if (lastError.response) {
+          const statusCode = lastError.response.status;
+          const errorMessage = lastError.response.data.error || 'Unknown error';
           
           if (statusCode === 401 || statusCode === 403) {
             console.error('Authentication failed. Check your API key.');
@@ -103,17 +156,20 @@ class HuggingFaceAPI {
           }
           
           throw new Error(`HuggingFace API error (${statusCode}): ${errorMessage}`);
-        } else if (error.request) {
+        } else if (lastError.request) {
           console.error('No response received. Check your network connection.');
           throw new Error(`HuggingFace API request failed: No response received`);
         } else {
-          console.error('Request setup failed:', error.message);
-          throw new Error(`HuggingFace API request setup failed: ${error.message}`);
+          console.error('Request setup failed:', lastError.message);
+          throw new Error(`HuggingFace API request setup failed: ${lastError.message}`);
         }
       }
       
-      throw new Error(`HuggingFace API unknown error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`HuggingFace API unknown error: ${lastError.message || 'Unknown error'}`);
     }
+    
+    // Generic error if we somehow get here
+    throw new Error(`Failed to get response from HuggingFace API after ${retries} retries`);
   }
 }
 
@@ -138,9 +194,20 @@ export class TextClassifier extends HuggingFaceAPI {
    * @returns Analysis result with emotion label and confidence score
    */
   async classifyEmotion(text: string): Promise<HuggingFaceTextClassificationResponse[]> {
+    // List of alternative emotion classification models to try if the primary one fails
+    const alternativeModels = [
+      'SamLowe/roberta-base-go_emotions', // Alternative emotion model
+      'bhadresh-savani/distilbert-base-uncased-emotion', // Another emotion model
+      'arpanghoshal/EmoRoBERTa' // Yet another emotion model
+    ];
+    
+    // Use primary model with alternatives as fallbacks
     return this.query<HuggingFaceTextClassificationResponse[]>(
       'j-hartmann/emotion-english-distilroberta-base',
-      text
+      text,
+      {},
+      2, // 2 retries
+      alternativeModels
     );
   }
 
@@ -295,15 +362,25 @@ export const textGenerator = new TextGenerator();
  */
 export async function getContentCategory(text: string): Promise<string> {
   try {
+    // List of alternative models for category classification
+    const alternativeModels = [
+      'MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7', // Alternative zero-shot model
+      'facebook/bart-large-mnli', // Fallback to original model with retries
+      'valhalla/distilbart-mnli-12-1' // Smaller, faster alternative
+    ];
+    
     // Try to classify into high-level categories first
     const categoryResponse = await textClassifier.query<HuggingFaceTextClassificationResponse[]>(
-      'facebook/bart-large-mnli',
+      'facebook/bart-large-mnli', // Primary zero-shot model
       {
         text,
         candidate_labels: [
           'finance', 'career', 'wellness', 'learning', 'emergency', 'cooking', 'fitness', 'general'
         ]
-      }
+      },
+      {}, // Default options
+      2,  // 2 retries
+      alternativeModels
     );
     
     // Return the highest scoring category
@@ -311,22 +388,33 @@ export async function getContentCategory(text: string): Promise<string> {
     
     // If confidence is low, do more specific classification based on initial guess
     if (topCategory.score < 0.6) {
-      switch (topCategory.label) {
-        case 'finance':
-          const financialResults = await textClassifier.classifyFinancialContent(text);
-          if (financialResults[0].score > 0.7) return 'finance';
-          break;
-        case 'career':
-          const careerResults = await textClassifier.classifyCareerContent(text);
-          if (careerResults[0].score > 0.7) return 'career';
-          break;
+      try {
+        switch (topCategory.label) {
+          case 'finance':
+            const financialResults = await textClassifier.classifyFinancialContent(text);
+            if (financialResults[0].score > 0.7) return 'finance';
+            break;
+          case 'career':
+            const careerResults = await textClassifier.classifyCareerContent(text);
+            if (careerResults[0].score > 0.7) return 'career';
+            break;
+        }
+      } catch (specificError) {
+        console.error('Error in specific category classification:', specificError);
+        // If specific classification fails, still return the top-level category
+        return topCategory.label;
       }
-      return 'general';
+      
+      // Only return general if confidence is very low
+      if (topCategory.score < 0.3) {
+        return 'general';
+      }
     }
     
     return topCategory.label;
   } catch (error) {
     console.error('Error determining content category:', error);
+    // Safe fallback to general in case of complete failure
     return 'general';
   }
 }
