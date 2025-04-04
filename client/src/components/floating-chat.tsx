@@ -112,7 +112,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             }}
           >
             <Button
-              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 transition-all duration-300 robot-fundi"
+              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 transition-all duration-300 robot-fundi"
               style={{
                 transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                 zIndex: 99999,
