@@ -83,25 +83,10 @@ function Router() {
 }
 
 function App() {
-  const handleRobotClick = () => {
-    // Open a simple chat or dialog when clicked
-    alert("Hello! I'm Fundi, your assistant. How can I help you today?");
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <TourProvider>
         <Router />
-        {/* Add Fundi robot as a floating element outside of all components */}
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 999999 }}>
-          <div style={{ pointerEvents: 'auto' }}>
-            <RobotFundi 
-              size="md" 
-              category="general" 
-              onOpen={handleRobotClick}
-            />
-          </div>
-        </div>
       </TourProvider>
     </QueryClientProvider>
   );

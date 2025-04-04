@@ -47,8 +47,8 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   // Size variants scaling (adjusted to be visible on small devices)
   const scaleMap = {
     sm: 0.5,
-    md: 1,
-    lg: 1.5 // Reduced from 5 to make it more appropriate for mobile
+    md: 0.7,
+    lg: 0.9 // Reduced significantly to make it more appropriate for mobile
   };
   
   // Get the appropriate color for the current category
