@@ -110,26 +110,38 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               duration: 0.7,
               ease: "easeInOut"
             }}
+            style={{
+              width: "180px",
+              height: "180px",
+              minWidth: "180px", 
+              minHeight: "180px"
+            }}
           >
             <Button
-              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 transition-all duration-300 robot-fundi"
+              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center w-full h-full transition-all duration-300 robot-fundi"
               style={{
                 transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                 zIndex: 99999,
                 visibility: 'visible',
-                pointerEvents: 'auto'
+                pointerEvents: 'auto',
+                width: "100%",
+                height: "100%",
+                minWidth: "180px", 
+                minHeight: "180px"
               }}
               onClick={() => setIsExpanded(true)}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               title="Chat with Fundi"
             >
-              <RobotFundi
-                speaking={isSpeaking}
-                size="lg"
-                category={category}
-                onOpen={() => setIsExpanded(true)}
-              />
+              <div style={{ width: "100%", height: "100%", minWidth: "300px", minHeight: "300px" }}>
+                <RobotFundi
+                  speaking={isSpeaking}
+                  size="xl"
+                  category={category}
+                  onOpen={() => setIsExpanded(true)}
+                />
+              </div>
             </Button>
           </motion.div>
         )}

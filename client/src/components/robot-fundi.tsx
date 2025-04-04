@@ -86,12 +86,13 @@ export default function RobotFundi({
     };
   }, [isDragging, dragStart]);
 
+  // Much larger size variants
   const sizeVariants = {
-    xs: 'w-40 h-40',  // 160px
-    sm: 'w-48 h-48',  // 192px
-    md: 'w-56 h-56',  // 224px
-    lg: 'w-64 h-64',  // 256px
-    xl: 'w-72 h-72'   // 288px
+    xs: 'w-48 h-48',  // 192px
+    sm: 'w-56 h-56',  // 224px
+    md: 'w-64 h-64',  // 256px
+    lg: 'w-80 h-80',  // 320px
+    xl: 'w-96 h-96'   // 384px
   };
 
   const categoryColors: Record<string, string> = {
@@ -121,7 +122,11 @@ export default function RobotFundi({
         touchAction: 'none',
         userSelect: 'none',
         bottom: position.y === 0 ? '20px' : 'auto',
-        right: position.x === 0 ? '20px' : 'auto'
+        right: position.x === 0 ? '20px' : 'auto',
+        width: size === 'xl' ? '384px' : size === 'lg' ? '320px' : size === 'md' ? '256px' : size === 'sm' ? '224px' : '192px',
+        height: size === 'xl' ? '384px' : size === 'lg' ? '320px' : size === 'md' ? '256px' : size === 'sm' ? '224px' : '192px',
+        minWidth: size === 'xl' ? '384px' : size === 'lg' ? '320px' : size === 'md' ? '256px' : size === 'sm' ? '224px' : '192px',
+        minHeight: size === 'xl' ? '384px' : size === 'lg' ? '320px' : size === 'md' ? '256px' : size === 'sm' ? '224px' : '192px'
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
@@ -131,6 +136,12 @@ export default function RobotFundi({
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
+        style={{
+          width: '100%',
+          height: '100%',
+          minWidth: '100%',
+          minHeight: '100%'
+        }}
       >
         <rect x="25" y="20" width="50" height="40" rx="10" fill="#e6e6e6" />
         <rect x="30" y="30" width="40" height="20" rx="5" fill="#222" />
