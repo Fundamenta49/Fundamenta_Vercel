@@ -108,7 +108,11 @@ export default function FundiShowcase() {
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold">Robot Fundi</h3>
                   <div className="flex justify-center">
-                    <RobotFundi speaking={speaking} size={size === 'xs' ? 'sm' : size === 'xl' ? 'lg' : size} />
+                    <RobotFundi 
+                      speaking={speaking} 
+                      size={size === 'xs' ? 'sm' : size === 'xl' ? 'lg' : size} 
+                      category={category}
+                    />
                   </div>
                 </div>
                 

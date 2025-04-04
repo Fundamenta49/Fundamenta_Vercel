@@ -121,6 +121,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               <RobotFundi
                 speaking={isSpeaking}
                 size="lg"
+                category={category}
               />
             </Button>
           </motion.div>
