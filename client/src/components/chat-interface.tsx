@@ -209,8 +209,8 @@ export default function ChatInterface({
   const isMobile = useIsMobile();
   
   return (
-    <Card className={`flex flex-col border shadow-lg ${className}`} style={{ 
-      height: isMobile ? 'min(90vh, 600px)' : (expanded ? '85vh' : 'min(500px, 70vh)'),
+    <Card className={`flex flex-col border shadow-lg overflow-hidden ${className}`} style={{ 
+      height: isMobile ? 'min(80vh, 550px)' : (expanded ? '85vh' : 'min(500px, 70vh)'),
       maxWidth: isMobile ? '100%' : (expanded ? '95vw' : '800px'),
       width: '100%'
     }}>
@@ -267,7 +267,7 @@ export default function ChatInterface({
         </div>
       </CardHeader>
       
-      <ScrollArea className="flex-1 px-4 py-5">
+      <ScrollArea className="flex-1 px-4 py-5" style={{ touchAction: 'pan-y' }}>
         <div className="space-y-5">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground px-4 space-y-4">

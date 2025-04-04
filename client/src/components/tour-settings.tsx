@@ -24,12 +24,9 @@ export function TourSettings() {
   };
   
   const handleOpenHelp = () => {
-    // On mobile, directly start the tour instead of showing dialog
-    if (isMobile) {
-      restartTour();
-    } else {
-      setOpen(true);
-    }
+    // Always start the tour when clicking the help button in the navigation bar
+    // This ensures consistency with user expectations for the help/question mark button
+    restartTour();
   };
   
   return (
