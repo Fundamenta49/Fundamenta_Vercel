@@ -87,7 +87,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed right-6 top-16 z-50 flex flex-col items-center"
+            className="fixed right-6 bottom-10 z-[9999] flex flex-col items-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
               opacity: 1, 
@@ -104,8 +104,8 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               <RobotFundiEnhanced 
                 speaking={isSpeaking}
                 thinking={isThinking}
-                size="md"
-                glowIntensity="medium"
+                size="xl"
+                glowIntensity="high"
                 pulsing={true}
                 interactive={true}
                 category={category}

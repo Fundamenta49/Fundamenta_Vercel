@@ -16,8 +16,8 @@ interface RobotFundiEnhancedProps {
 export default function RobotFundiEnhanced({ 
   speaking = false, 
   thinking = false, 
-  size = "md", 
-  glowIntensity = "medium",
+  size = "lg", 
+  glowIntensity = "high",
   pulsing = true,
   interactive = true,
   category: propCategory,
@@ -36,7 +36,7 @@ export default function RobotFundiEnhanced({
     if (location.includes('/emergency')) return 'emergency';
     if (location.includes('/cooking')) return 'cooking';
     if (location.includes('/fitness') || location.includes('/active')) return 'fitness';
-    if (location.includes('/showcase')) return 'showcase';
+    if (location.includes('/fundi-showcase')) return 'showcase';
     return 'general';
   };
 
@@ -61,20 +61,20 @@ export default function RobotFundiEnhanced({
   
   // Glow intensity settings
   const glowIntensitySettings = {
-    low: 15,
-    medium: 25,
-    high: 40
+    low: 20,
+    medium: 35, 
+    high: 60
   };
   
   const glowSize = glowIntensitySettings[glowIntensity];
   
   // Size variants
   const sizeVariants = {
-    xs: "w-10 h-10",
-    sm: "w-14 h-14", 
-    md: "w-20 h-20",
-    lg: "w-28 h-28",
-    xl: "w-36 h-36"
+    xs: "w-16 h-16",
+    sm: "w-20 h-20", 
+    md: "w-28 h-28",
+    lg: "w-40 h-40",
+    xl: "w-52 h-52"
   };
 
   // Random eye blink effect
@@ -113,11 +113,11 @@ export default function RobotFundiEnhanced({
         className="absolute rounded-full z-0"
         style={{ 
           backgroundColor: glowColor,
-          opacity: 0.2,
+          opacity: 0.4,
         }}
         animate={{
           scale: pulsing ? [1, 1.2, 1] : 1,
-          opacity: pulsing ? [0.2, 0.3, 0.2] : 0.2,
+          opacity: pulsing ? [0.4, 0.6, 0.4] : 0.4,
         }}
         transition={{
           duration: 2,
@@ -135,7 +135,7 @@ export default function RobotFundiEnhanced({
           width: '100%',
           height: '100%',
           filter: `blur(${glowSize}px)`,
-          opacity: isHovered || thinking || speaking ? 0.4 : 0.2,
+          opacity: isHovered || thinking || speaking ? 0.6 : 0.4,
         }}
         animate={{
           scale: (speaking || thinking) ? [1, 1.1, 1] : isHovered ? 1.1 : 1,
