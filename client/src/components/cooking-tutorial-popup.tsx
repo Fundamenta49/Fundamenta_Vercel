@@ -147,7 +147,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-learning-color"></div>
               </div>
             ) : searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {searchResults.map((video) => (
                   <Card key={video.id} className="overflow-hidden hover:shadow-md transition-shadow border border-t-4 border-t-learning-color group">
                     <div 
@@ -257,7 +257,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Master these fundamental techniques to build a strong foundation for all your cooking.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   <TechniqueTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
@@ -271,7 +271,7 @@ const CookingTutorialPopup: React.FC = () => {
                   Proper technique and safety practices help prevent injury and foodborne illness. 
                   These fundamentals should be mastered before attempting complex recipes.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   <KitchenSafetyTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
@@ -284,7 +284,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Simple, foundational recipes that every home cook should know. Perfect for beginners.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   <BasicRecipesTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
@@ -297,7 +297,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Learn how to prepare complete meals for breakfast, lunch, and dinner.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   <MealTutorials onPlayVideo={handlePlayVideo} />
                 </div>
               </TabsContent>
