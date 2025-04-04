@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface RobotFundiProps {
@@ -25,6 +25,11 @@ const getCategoryColor = (category: string = 'general') => {
 };
 
 export default function RobotFundi({ speaking = false, size = "md", category = 'general' }: RobotFundiProps) {
+  // State for dragging
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  
   // We'll ignore size variants and use direct SVG scaling
   const scaleMap = {
     sm: 0.5,
@@ -35,8 +40,61 @@ export default function RobotFundi({ speaking = false, size = "md", category = '
   // Get the appropriate color for the current category
   const color = getCategoryColor(category);
   
+  // Mouse event handlers for dragging
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+  
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    
+    // Calculate the new position based on mouse movement
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+    
+    setPosition({
+      x: position.x + deltaX,
+      y: position.y + deltaY
+    });
+    
+    // Update drag start for the next move
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+  
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+  
+  // Set up global event listeners for dragging
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    }
+    
+    // Cleanup event listeners on component unmount
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, dragStart.x, dragStart.y, position.x, position.y]);
+  
   return (
-    <div className="fixed right-20 top-20 z-[9999]" style={{ transform: `scale(${scaleMap[size]})` }}>
+    <div 
+      className="fixed z-[9999] cursor-move" 
+      style={{ 
+        transform: `scale(${scaleMap[size]})`,
+        right: `calc(20px - ${position.x}px)`,
+        top: `calc(20px + ${position.y}px)`,
+        touchAction: 'none' // Prevent touch actions for better mobile drag
+      }}
+      onMouseDown={handleMouseDown}
+    >
       {/* Define the glow filter */}
       <svg width="0" height="0">
         <defs>
