@@ -511,20 +511,21 @@ export default function ChatInterface({
     const rect = chatElement.getBoundingClientRect();
     
     // Calculate new width and height based on mouse position
-    const newWidth = Math.max(e.clientX - rect.left, 300);
-    const newHeight = Math.max(e.clientY - rect.top, 300);
+    // We only want to expand right and down from the corner
+    const width = Math.max(e.clientX - rect.left, 280);
+    const height = Math.max(e.clientY - rect.top, 300);
     
     // Apply the new dimensions directly to the element for immediate feedback
-    chatElement.style.width = `${newWidth}px`;
-    chatElement.style.height = `${newHeight}px`;
+    // and ensure we maintain the right position
+    chatElement.style.width = `${width}px`;
+    chatElement.style.height = `${height}px`;
+    chatElement.style.maxWidth = `${width}px`;
     
     // Also update state for persistence
     setChatSize({
-      width: `${newWidth}px`,
-      height: `${newHeight}px`
+      width: `${width}px`,
+      height: `${height}px`
     });
-    
-    console.log('Resize to:', newWidth, newHeight);
   };
   
   // Handle resize move with touch
@@ -538,20 +539,21 @@ export default function ChatInterface({
     const rect = chatElement.getBoundingClientRect();
     
     // Calculate new width and height based on touch position
-    const newWidth = Math.max(e.touches[0].clientX - rect.left, 300);
-    const newHeight = Math.max(e.touches[0].clientY - rect.top, 300);
+    // We only want to expand right and down from the corner
+    const width = Math.max(e.touches[0].clientX - rect.left, 280);
+    const height = Math.max(e.touches[0].clientY - rect.top, 300);
     
     // Apply the new dimensions directly to the element for immediate feedback
-    chatElement.style.width = `${newWidth}px`;
-    chatElement.style.height = `${newHeight}px`;
+    // and ensure we maintain the right position
+    chatElement.style.width = `${width}px`;
+    chatElement.style.height = `${height}px`;
+    chatElement.style.maxWidth = `${width}px`;
     
     // Also update state for persistence
     setChatSize({
-      width: `${newWidth}px`,
-      height: `${newHeight}px`
+      width: `${width}px`,
+      height: `${height}px`
     });
-    
-    console.log('Touch resize to:', newWidth, newHeight);
   };
   
   // Handle resize end
