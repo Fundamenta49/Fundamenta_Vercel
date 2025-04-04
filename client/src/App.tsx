@@ -35,10 +35,13 @@ import FormingPositiveHabitsCourse from "@/pages/learning/courses/forming-positi
 import UtilitiesGuideCourse from "@/pages/learning/courses/utilities-guide";
 import ShoppingBuddyCourse from "@/pages/learning/courses/shopping-buddy";
 import RepairAssistantCourse from "@/pages/learning/courses/repair-assistant";
+import { TourProvider } from "./contexts/tour-context";
+import Tour from "./components/tour";
 
 function Router() {
   return (
     <Layout>
+      <Tour />
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/why-fundamenta" component={WhyFundamenta} />
@@ -81,7 +84,9 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
+      <TourProvider>
+        <Router />
+      </TourProvider>
     </QueryClientProvider>
   );
 }
