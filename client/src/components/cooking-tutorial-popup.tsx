@@ -280,9 +280,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Simple, foundational recipes that every home cook should know. Perfect for beginners.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  <BasicRecipesTutorials onPlayVideo={handlePlayVideo} />
-                </div>
+                <BasicRecipesTutorials onPlayVideo={handlePlayVideo} />
               </TabsContent>
               
               <TabsContent value="meals" className="mt-0">
@@ -293,9 +291,7 @@ const CookingTutorialPopup: React.FC = () => {
                 <p className="mb-4 text-sm px-2 text-gray-600">
                   Learn how to prepare complete meals for breakfast, lunch, and dinner.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  <MealTutorials onPlayVideo={handlePlayVideo} />
-                </div>
+                <MealTutorials onPlayVideo={handlePlayVideo} />
               </TabsContent>
             </div>
           </Tabs>
