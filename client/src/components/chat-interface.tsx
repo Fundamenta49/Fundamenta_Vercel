@@ -480,11 +480,12 @@ export default function ChatInterface({
 
   return (
     <Card className={`flex flex-col border shadow-lg ${className}`} style={{ 
-      height: expanded ? '85vh' : window.innerWidth < 768 ? '400px' : '350px',
-      maxWidth: expanded ? '95vw' : '350px',
+      height: expanded ? '85vh' : window.innerWidth < 768 ? '380px' : '350px',
+      maxWidth: expanded ? '95vw' : window.innerWidth < 768 ? '95%' : '350px',
       width: '100%',
       margin: !expanded ? '0 auto' : undefined,
-      maxHeight: !expanded && window.innerWidth < 768 ? '450px' : '350px'
+      maxHeight: !expanded && window.innerWidth < 768 ? '400px' : '350px',
+      borderRadius: window.innerWidth < 768 ? '0.75rem' : undefined
     }}>
       <CardHeader className="px-3 py-2 sm:px-4 sm:py-2.5 border-b">
         <div className="flex items-center justify-between">
@@ -541,15 +542,17 @@ export default function ChatInterface({
       
       <ScrollArea 
         ref={scrollAreaRef} 
-        className="flex-1 px-3 py-3 overflow-y-auto touch-auto" 
+        className="flex-1 px-2 sm:px-3 py-2 sm:py-3 overflow-y-auto touch-auto" 
         style={{ 
-          height: window.innerWidth < 768 ? 'calc(100% - 100px)' : 'calc(100% - 90px)',
+          height: window.innerWidth < 768 ? 'calc(100% - 90px)' : 'calc(100% - 90px)',
           WebkitOverflowScrolling: 'touch',
-          touchAction: 'pan-y'
+          touchAction: 'pan-y',
+          overflowY: 'auto',
+          overscrollBehavior: 'contain'
         }}
         onTouchStart={(e) => e.stopPropagation()}
       >
-        <div className="space-y-5">
+        <div className="space-y-3 sm:space-y-4">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground px-4 space-y-4">
               <MessageSquare className="h-10 w-10 mb-2 opacity-50" />
@@ -608,7 +611,7 @@ export default function ChatInterface({
               >
                 <div 
                   className={`
-                    max-w-[90%] sm:max-w-[85%] rounded-lg px-3 py-2 sm:px-4 sm:py-3 shadow-sm
+                    max-w-[80%] sm:max-w-[85%] rounded-lg px-2.5 py-1.5 sm:px-4 sm:py-3 shadow-sm
                     ${msg.role === 'user' 
                       ? 'bg-primary text-white' 
                       : 'bg-primary/10 border border-primary/20'
@@ -621,7 +624,9 @@ export default function ChatInterface({
                     borderColor: msg.role === 'user' 
                       ? undefined 
                       : `${categoryColors[msg.category || category]}30`, // 30% opacity
-                    color: msg.role === 'user' ? 'white' : ''
+                    color: msg.role === 'user' ? 'white' : '',
+                    width: 'auto',
+                    maxWidth: window.innerWidth < 768 ? '80%' : '85%'
                   }}
                 >
                   {msg.role === 'assistant' && (
@@ -661,8 +666,8 @@ export default function ChatInterface({
                       )}
                     </div>
                   )}
-                  <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
-                  <p className="text-[10px] sm:text-xs opacity-70 text-right mt-1.5 sm:mt-2">
+                  <p className="text-xs sm:text-sm md:text-base leading-tight sm:leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
+                  <p className="text-[9px] sm:text-xs opacity-70 text-right mt-1 sm:mt-2">
                     {msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                   </p>
                 </div>
@@ -707,11 +712,11 @@ export default function ChatInterface({
         )}
       </ScrollArea>
       
-      <CardFooter className="p-1.5 sm:p-2.5 border-t">
+      <CardFooter className="p-1 sm:p-2.5 border-t">
         <div className="flex w-full items-center gap-1.5 sm:gap-2">
           <Textarea
             id="chat-input"
-            className="min-h-8 sm:min-h-10 max-h-20 sm:max-h-28 resize-none py-1.5 px-2.5 sm:py-2 sm:px-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs sm:text-sm rounded-xl flex-1"
+            className="min-h-8 sm:min-h-10 max-h-16 sm:max-h-28 resize-none py-1.5 px-2 sm:py-2 sm:px-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs sm:text-sm rounded-xl flex-1"
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -719,9 +724,10 @@ export default function ChatInterface({
             disabled={isProcessing}
             style={{
               fontSize: window.innerWidth < 768 ? '14px' : '16px',
-              height: window.innerWidth < 768 ? '40px' : 'auto',
-              paddingRight: window.innerWidth < 768 ? '8px' : undefined,
-              paddingLeft: window.innerWidth < 768 ? '8px' : undefined,
+              height: window.innerWidth < 768 ? '36px' : 'auto',
+              paddingRight: window.innerWidth < 768 ? '6px' : undefined,
+              paddingLeft: window.innerWidth < 768 ? '6px' : undefined,
+              lineHeight: window.innerWidth < 768 ? '1.2' : undefined,
             }}
           />
           <Button 
