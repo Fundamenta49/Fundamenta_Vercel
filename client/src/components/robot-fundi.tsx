@@ -117,12 +117,13 @@ export default function RobotFundi({
         interactive && "hover:scale-105 transition-transform"
       )}
       style={{
+        position: 'fixed',
+        top: '56px',
+        right: '24px',
         transform: `translate(${position.x}px, ${position.y}px)`,
         zIndex: 9999,
         touchAction: 'none',
         userSelect: 'none',
-        top: position.y === 0 ? '56px' : 'auto',
-        right: position.x === 0 ? '24px' : 'auto',
         width: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         height: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         minWidth: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
