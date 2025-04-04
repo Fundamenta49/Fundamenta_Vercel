@@ -21,7 +21,7 @@ export default function RobotFundi({
   emotion = 'neutral',
   onOpen
 }: RobotFundiProps) {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: 63, y: 8 });
   const [isDragging, setIsDragging] = useState(false);
   const [wasDragged, setWasDragged] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -156,10 +156,10 @@ export default function RobotFundi({
     }
   }, [wasDragged]);
   
-  // Log initial position when component mounts
+  // Log initial position when component mounts and update when position changes
   useEffect(() => {
-    console.log(`Fundi initial position - Default style: top=8px, right=24px, translate(${position.x}px, ${position.y}px)`);
-  }, []);
+    console.log(`Fundi position: top=8px, right=24px, translate(${position.x}px, ${position.y}px)`);
+  }, [position.x, position.y]);
 
   // Much smaller size variants
   const sizeVariants = {
