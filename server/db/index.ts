@@ -1,16 +1,18 @@
 import { drizzle } from 'drizzle-orm/neon-serverless';
-import { Pool } from '@neondatabase/serverless';
+import { Pool, neonConfig } from '@neondatabase/serverless';
 import * as schema from '../../shared/schema';
-import ws from 'ws'; // Add WebSocket library import
+import ws from 'ws'; // WebSocket library for Node.js
+
+// Configure Neon to use WebSocket in Node.js environment
+// This must be set before creating any Pool instances
+neonConfig.webSocketConstructor = ws;
 
 // Database connection string from environment variables
 const connectionString = process.env.DATABASE_URL;
 
-// Create a Neon connection pool with WebSocket configuration for Node.js environment
+// Create a Neon connection pool
 const pool = new Pool({ 
-  connectionString: connectionString as string,
-  // Add WebSocket constructor for Node.js environment
-  webSocketConstructor: ws
+  connectionString: connectionString as string
 });
 
 // Create drizzle instance for queries
