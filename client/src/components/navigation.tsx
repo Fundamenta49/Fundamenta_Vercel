@@ -89,12 +89,82 @@ export default function Navigation() {
     setIsOpen(false);
   };
 
-  // Modern styling with our new theme colors
+  // Get theme colors based on current location
+  const getThemeColors = () => {
+    if (location.includes('/learning') || location.includes('/cooking')) {
+      // Orange for Life Skills
+      return {
+        activeItemBg: "bg-orange-100",
+        activeItemText: "text-orange-700",
+        hoverBg: "hover:bg-orange-50",
+        iconColor: "text-orange-700",
+        borderColor: "border-orange-300"
+      };
+    } else if (location.includes('/finance')) {
+      // Green for Financial Literacy
+      return {
+        activeItemBg: "bg-green-100",
+        activeItemText: "text-green-700",
+        hoverBg: "hover:bg-green-50",
+        iconColor: "text-green-700",
+        borderColor: "border-green-300"
+      };
+    } else if (location.includes('/career')) {
+      // Blue for Career Development
+      return {
+        activeItemBg: "bg-blue-100",
+        activeItemText: "text-blue-700",
+        hoverBg: "hover:bg-blue-50",
+        iconColor: "text-blue-700",
+        borderColor: "border-blue-300"
+      };
+    } else if (location.includes('/wellness')) {
+      // Purple for Wellness & Nutrition
+      return {
+        activeItemBg: "bg-purple-100",
+        activeItemText: "text-purple-700",
+        hoverBg: "hover:bg-purple-50",
+        iconColor: "text-purple-700",
+        borderColor: "border-purple-300"
+      };
+    } else if (location.includes('/active')) {
+      // Cyan for Active You
+      return {
+        activeItemBg: "bg-cyan-100",
+        activeItemText: "text-cyan-700",
+        hoverBg: "hover:bg-cyan-50",
+        iconColor: "text-cyan-700",
+        borderColor: "border-cyan-300"
+      };
+    } else if (location.includes('/emergency')) {
+      // Red for Emergency Guidance
+      return {
+        activeItemBg: "bg-red-100",
+        activeItemText: "text-red-700",
+        hoverBg: "hover:bg-red-50",
+        iconColor: "text-red-700",
+        borderColor: "border-red-300"
+      };
+    }
+    
+    // Default rose theme
+    return {
+      activeItemBg: "bg-rose-100",
+      activeItemText: "text-rose-700",
+      hoverBg: "hover:bg-rose-50",
+      iconColor: "text-rose-700",
+      borderColor: "border-rose-300"
+    };
+  };
+
+  // Modern styling with our theme colors
+  const themeColors = getThemeColors();
   const navBgColor = "bg-white";
   const navTextColor = "text-gray-700";
-  const activeItemBg = "bg-rose-100";
-  const activeItemText = "text-rose-700";
-  const hoverBg = "hover:bg-rose-50";
+  const activeItemBg = themeColors.activeItemBg;
+  const activeItemText = themeColors.activeItemText;
+  const hoverBg = themeColors.hoverBg;
+  const borderColor = themeColors.borderColor;
   const logoText = "text-gray-800";
 
   if (isMobile) {
@@ -103,17 +173,27 @@ export default function Navigation() {
         <SheetTrigger asChild>
           <Button
             variant="outline"
-            className="fixed top-4 left-4 z-50 bg-white border-rose-300 text-gray-700 hover:bg-rose-50"
+            className={cn(
+              "fixed top-4 left-4 z-50 bg-white text-gray-700",
+              borderColor,
+              hoverBg
+            )}
           >
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className={`${navBgColor} border-r border-rose-300 shadow-md`}>
+        <SheetContent side="left" className={`${navBgColor} border-r ${borderColor} shadow-md`}>
           <button 
             onClick={() => handleNavigation("/")}
-            className="flex items-center gap-2 px-2 py-6 mb-6 w-full hover:bg-rose-50 rounded-md transition-colors"
+            className={cn(
+              "flex items-center gap-2 px-2 py-6 mb-6 w-full rounded-md transition-colors",
+              hoverBg
+            )}
           >
-            <div className="h-8 w-8 bg-rose-500 rounded-md flex items-center justify-center">
+            <div className={cn(
+              "h-8 w-8 rounded-md flex items-center justify-center",
+              location === "/" ? "bg-rose-500" : themeColors.activeItemText.replace('text', 'bg')
+            )}>
               <Sparkles className="h-5 w-5 text-white" />
             </div>
             <span className={`text-xl font-bold ${logoText}`}>Fundamenta</span>
@@ -132,7 +212,7 @@ export default function Navigation() {
                     : `${navTextColor} ${hoverBg}`
                 )}
               >
-                <Icon className={cn("h-5 w-5", isNavItemActive(href) ? "text-rose-700" : "text-gray-600")} />
+                <Icon className={cn("h-5 w-5", isNavItemActive(href) ? themeColors.iconColor : "text-gray-600")} />
                 <span className="font-medium">{label}</span>
               </button>
             ))}
@@ -153,8 +233,9 @@ export default function Navigation() {
 
   return (
     <nav className={cn(
-      "fixed left-0 top-0 h-screen border-r border-rose-300 p-4 transition-all duration-300 z-50 shadow-lg",
+      "fixed left-0 top-0 h-screen border-r p-4 transition-all duration-300 z-50 shadow-lg",
       navBgColor,
+      borderColor,
       isMinimized ? "w-16" : "w-64"
     )}>
       <div className="relative mb-8">
@@ -163,10 +244,14 @@ export default function Navigation() {
           className={cn(
             "flex items-center gap-3 px-2 py-4 w-full text-left rounded-md transition-colors",
             logoText,
-            "hover:bg-rose-50 cursor-pointer"
+            hoverBg,
+            "cursor-pointer"
           )}
         >
-          <div className="h-8 w-8 bg-rose-500 rounded-md flex items-center justify-center">
+          <div className={cn(
+            "h-8 w-8 rounded-md flex items-center justify-center",
+            location === "/" ? "bg-rose-500" : themeColors.activeItemText.replace('text', 'bg')
+          )}>
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           {!isMinimized && <span className="text-lg font-bold">Fundamenta</span>}
@@ -176,7 +261,11 @@ export default function Navigation() {
           variant="outline"
           size="icon"
           onClick={() => setIsMinimized(!isMinimized)}
-          className="absolute top-3 -right-2 text-gray-700 hover:text-gray-800 hover:bg-rose-50 bg-white border border-rose-300"
+          className={cn(
+            "absolute top-3 -right-2 text-gray-700 hover:text-gray-800 bg-white border",
+            borderColor,
+            hoverBg
+          )}
         >
           {isMinimized ? (
             <ChevronRight className="h-4 w-4" />
@@ -200,7 +289,7 @@ export default function Navigation() {
             )}
             title={isMinimized ? label : undefined}
           >
-            <Icon className={cn("h-5 w-5", isNavItemActive(href) ? "text-rose-700" : "text-gray-600")} />
+            <Icon className={cn("h-5 w-5", isNavItemActive(href) ? themeColors.iconColor : "text-gray-600")} />
             {!isMinimized && <span className="font-medium">{label}</span>}
           </button>
         ))}
