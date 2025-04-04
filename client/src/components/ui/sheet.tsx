@@ -2,8 +2,9 @@ import * as React from "react"
 import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
-
 import { cn } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion"
 
 const Sheet = SheetPrimitive.Root
 
@@ -54,22 +55,142 @@ interface SheetContentProps
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <SheetPrimitive.Content
-      ref={ref}
-      className={cn(sheetVariants({ side }), className)}
-      {...props}
-    >
-      {children}
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </SheetPrimitive.Close>
-    </SheetPrimitive.Content>
-  </SheetPortal>
-))
+>(({ side = "right", className, children, ...props }, ref) => {
+  const isMobile = useIsMobile();
+  const closeRef = React.useRef<HTMLButtonElement>(null);
+  
+  // For swipe gesture
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  // Set up opacity and scale based on swipe direction
+  const getOpacity = () => {
+    switch (side) {
+      case "left": return useTransform(x, [0, -100], [1, 0.5]);
+      case "right": return useTransform(x, [0, 100], [1, 0.5]);
+      case "top": return useTransform(y, [0, -100], [1, 0.5]);
+      case "bottom": return useTransform(y, [0, 100], [1, 0.5]);
+      default: return useTransform(x, [0, 100], [1, 0.5]);
+    }
+  };
+  
+  const getScale = () => {
+    switch (side) {
+      case "left": 
+      case "right": return useTransform(x, [0, 100], [1, 0.95]);
+      case "top":
+      case "bottom": return useTransform(y, [0, 100], [1, 0.95]);
+      default: return useTransform(x, [0, 100], [1, 0.95]);
+    }
+  };
+  
+  const opacity = getOpacity();
+  const scale = getScale();
+  
+  // Configure drag directions based on sheet position
+  const getDragDirection = () => {
+    switch (side) {
+      case "left": return "x";
+      case "right": return "x";
+      case "top": return "y";
+      case "bottom": return "y";
+      default: return "x";
+    }
+  };
+  
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    // Determine threshold for closing based on side
+    let shouldClose = false;
+    
+    switch (side) {
+      case "left":
+        shouldClose = info.offset.x < -100;
+        break;
+      case "right":
+        shouldClose = info.offset.x > 100;
+        break;
+      case "top":
+        shouldClose = info.offset.y < -100;
+        break;
+      case "bottom":
+        shouldClose = info.offset.y > 100;
+        break;
+      default:
+        shouldClose = info.offset.x > 100;
+    }
+    
+    // If swiped enough, trigger the close button
+    if (shouldClose && isMobile && closeRef.current) {
+      closeRef.current.click();
+    } else {
+      // Otherwise, animate back to original position
+      x.set(0);
+      y.set(0);
+    }
+  };
+  
+  return (
+    <SheetPortal>
+      <SheetOverlay />
+      {isMobile ? (
+        <motion.div
+          style={{ 
+            x,
+            y,
+            opacity,
+            scale,
+            position: 'fixed',
+            zIndex: 50
+          }}
+          className={cn(sheetVariants({ side }), className)}
+          drag={getDragDirection()}
+          dragConstraints={side === "left" || side === "right" ? { left: 0, right: 0 } : { top: 0, bottom: 0 }}
+          dragElastic={0.2}
+          onDragEnd={handleDragEnd}
+        >
+          {/* Swipe handle indicator */}
+          <div className="w-full flex flex-col items-center mb-4">
+            <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
+            <p className="text-xs text-gray-400 mt-1">
+              {side === "left" ? "Swipe left to close" : 
+               side === "right" ? "Swipe right to close" :
+               side === "top" ? "Swipe up to close" :
+               "Swipe down to close"}
+            </p>
+          </div>
+          
+          {children}
+          
+          {/* Hidden close button for programmatic clicking */}
+          <SheetPrimitive.Close 
+            ref={closeRef}
+            className="sr-only"
+          >
+            <span className="sr-only">Close</span>
+          </SheetPrimitive.Close>
+          
+          {/* Visible close button */}
+          <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </SheetPrimitive.Close>
+        </motion.div>
+      ) : (
+        <SheetPrimitive.Content
+          ref={ref}
+          className={cn(sheetVariants({ side }), className)}
+          {...props}
+        >
+          {children}
+          <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </SheetPrimitive.Close>
+        </SheetPrimitive.Content>
+      )}
+    </SheetPortal>
+  );
+})
 SheetContent.displayName = SheetPrimitive.Content.displayName
 
 const SheetHeader = ({

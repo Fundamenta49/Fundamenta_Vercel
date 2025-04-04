@@ -105,6 +105,14 @@ const FullScreenDialogContent = React.forwardRef<
             <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-6 bg-white dark:bg-gray-950">
               <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
               <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
+              
+              {/* Visible close button for mobile */}
+              <DialogPrimitive.Close 
+                className="absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-100"
+              >
+                <X className="h-5 w-5 text-gray-700" />
+                <span className="sr-only">Close</span>
+              </DialogPrimitive.Close>
             </div>
             
             {children}
