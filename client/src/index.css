@@ -325,7 +325,7 @@
       margin: 0 auto !important;
       transform: none !important;
       top: auto !important;
-      z-index: 9999 !important;
+      z-index: 999 !important; /* Lowered from 9999 to stay below robot-fundi */
       background-color: white !important;
       border: 1px solid rgba(0, 0, 0, 0.1) !important;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
@@ -345,5 +345,12 @@
         align-items: center;
       }
     }
+  }
+  
+  /* Ensure robot-fundi is always visible and above all other elements */
+  .robot-fundi {
+    z-index: 99999 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
   }
 }
