@@ -59,22 +59,22 @@ export default function RobotFundiEnhanced({
   
   const glowColor = getCategoryColor(category);
   
-  // Glow intensity settings
+  // Glow intensity settings - increased for better visibility
   const glowIntensitySettings = {
-    low: 20,
-    medium: 35, 
-    high: 60
+    low: 30,
+    medium: 50, 
+    high: 80
   };
   
   const glowSize = glowIntensitySettings[glowIntensity];
   
-  // Size variants
+  // Size variants - increased all sizes
   const sizeVariants = {
-    xs: "w-16 h-16",
-    sm: "w-20 h-20", 
-    md: "w-28 h-28",
-    lg: "w-40 h-40",
-    xl: "w-52 h-52"
+    xs: "w-20 h-20",
+    sm: "w-28 h-28", 
+    md: "w-36 h-36",
+    lg: "w-48 h-48",
+    xl: "w-64 h-64"
   };
 
   // Random eye blink effect
@@ -113,11 +113,13 @@ export default function RobotFundiEnhanced({
         className="absolute rounded-full z-0"
         style={{ 
           backgroundColor: glowColor,
-          opacity: 0.4,
+          opacity: 0.6,
+          width: '120%',
+          height: '120%',
         }}
         animate={{
-          scale: pulsing ? [1, 1.2, 1] : 1,
-          opacity: pulsing ? [0.4, 0.6, 0.4] : 0.4,
+          scale: pulsing ? [1, 1.3, 1] : 1,
+          opacity: pulsing ? [0.6, 0.8, 0.6] : 0.6,
         }}
         transition={{
           duration: 2,
@@ -135,7 +137,7 @@ export default function RobotFundiEnhanced({
           width: '100%',
           height: '100%',
           filter: `blur(${glowSize}px)`,
-          opacity: isHovered || thinking || speaking ? 0.6 : 0.4,
+          opacity: isHovered || thinking || speaking ? 0.8 : 0.6,
         }}
         animate={{
           scale: (speaking || thinking) ? [1, 1.1, 1] : isHovered ? 1.1 : 1,

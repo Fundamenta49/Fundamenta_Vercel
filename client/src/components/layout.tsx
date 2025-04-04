@@ -50,11 +50,9 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </main>
       
-      {!isShowcasePage && (
-        <div data-tour="fundi-assistant">
-          <FloatingChat category={currentCategory} />
-        </div>
-      )}
+      <div data-tour="fundi-assistant">
+        <FloatingChat category={currentCategory} />
+      </div>
     </div>
   );
 }

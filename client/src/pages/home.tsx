@@ -68,11 +68,6 @@ export default function Home() {
           >
             <HelpCircle className="h-5 w-5" />
           </Button>
-          <Link href="/fundi-showcase">
-            <Button variant="outline" size="sm" className="text-primary hover:text-primary-foreground">
-              Fundi Showcase
-            </Button>
-          </Link>
         </div>
         <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
           Welcome to Fundamenta
