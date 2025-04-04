@@ -91,6 +91,25 @@ Size prop:
 
 Choose the appropriate size from the available options.
 
+### 6. Position Fundi on the Screen
+
+In floating-chat.tsx:
+```
+className="fixed right-6 sm:right-8 md:right-10 top-8 sm:top-8 md:top-8 z-[99999] flex flex-col items-center"
+```
+
+Position values:
+- top-8: 32px from top (just under the question mark)
+- right-6: 24px from right on mobile
+- right-8: 32px from right on tablet
+- right-10: 40px from right on desktop
+
+In robot-fundi.tsx (for initial position):
+```
+top: position.y === 0 ? '32px' : 'auto',
+right: position.x === 0 ? '24px' : 'auto',
+```
+
 ## Troubleshooting Size Issues
 
 If Fundi appears too large or too small:
@@ -118,5 +137,7 @@ The current configuration (as of April 4, 2025) uses:
 - Size variants: xs=64px, sm=80px, md=96px, lg=112px, xl=128px
 - Container dimensions: 60px × 60px
 - Size prop: "md" (96px)
+- Position: top-8 (32px from top of screen)
+- Right position: right-6, sm:right-8, md:right-10 (responsive)
 
-This configuration provides a balanced size that's visible without being overwhelming across device sizes.
+This configuration provides a balanced size that's visible without being overwhelming across device sizes and positions Fundi just below the question mark in the top right corner.
