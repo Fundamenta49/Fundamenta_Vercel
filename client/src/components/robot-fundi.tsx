@@ -25,7 +25,7 @@ export default function RobotFundi({
   const [isDragging, setIsDragging] = useState(false);
   const [wasDragged, setWasDragged] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [showClickIndicator, setShowClickIndicator] = useState(true);
+  const [showClickIndicator, setShowClickIndicator] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { lastResponse } = useAIEventStore();
 
@@ -220,19 +220,7 @@ export default function RobotFundi({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Click indicator - appears below Fundi when first loaded or on hover */}
-      {(showClickIndicator || isHovered) && (
-        <div 
-          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full bg-white/90 text-xs font-bold px-2 py-1 rounded-full shadow-md animate-bounce text-center mt-2"
-          style={{ 
-            color: color,
-            width: 'auto',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          Click to chat
-        </div>
-      )}
+      {/* Removed "Click to chat" indicator as requested by the user */}
       <svg
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
