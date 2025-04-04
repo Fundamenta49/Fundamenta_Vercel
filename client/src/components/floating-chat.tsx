@@ -134,6 +134,11 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
                 minHeight: "60px",
                 position: "relative"
               }}
+              onClick={() => {
+                // We still need this onClick handler but the actual 
+                // open/close logic happens in the RobotFundi component
+                console.log("Button clicked, delegating to RobotFundi handler");
+              }}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               title="Chat with Fundi"

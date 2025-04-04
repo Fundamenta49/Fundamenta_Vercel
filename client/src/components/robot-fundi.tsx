@@ -50,12 +50,17 @@ export default function RobotFundi({
   };
   
   const handleClick = (e: React.MouseEvent) => {
-    // Only open if we weren't dragging
-    if (onOpen && interactive && !isDragging && !wasDragged) {
+    // Check if this was an actual click vs. the end of a drag
+    // Only open if not dragged more than a small threshold
+    if (onOpen && interactive && !wasDragged) {
       onOpen();
+      console.log("Opening Fundi chat!");
     }
-    // Reset the wasDragged flag so future clicks can work
-    setWasDragged(false);
+
+    // If it was a short/quick drag, don't consider it a real drag
+    if (wasDragged && Math.abs(position.x) < 5 && Math.abs(position.y) < 5) {
+      setWasDragged(false);
+    }
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -80,27 +85,23 @@ export default function RobotFundi({
   };
 
   const handleMouseUp = () => {
-    // Add a small delay before setting isDragging to false to prevent click event from triggering
-    setTimeout(() => {
-      setIsDragging(false);
-      
-      // Reset wasDragged after a longer delay to ensure click handler has already run
-      setTimeout(() => {
-        setWasDragged(false);
-      }, 200);
-    }, 100);
+    // If there was significant movement, mark as dragged
+    if (Math.abs(position.x) > 5 || Math.abs(position.y) > 5) {
+      setWasDragged(true);
+    }
+    
+    // Set isDragging to false immediately
+    setIsDragging(false);
   };
 
   const handleTouchEnd = () => {
-    // Add a small delay before setting isDragging to false to prevent tap event from triggering
-    setTimeout(() => {
-      setIsDragging(false);
-      
-      // Reset wasDragged after a longer delay to ensure tap handler has already run
-      setTimeout(() => {
-        setWasDragged(false);
-      }, 200);
-    }, 100);
+    // If there was significant movement, mark as dragged
+    if (Math.abs(position.x) > 5 || Math.abs(position.y) > 5) {
+      setWasDragged(true);
+    }
+    
+    // Set isDragging to false immediately
+    setIsDragging(false);
   };
 
   useEffect(() => {
@@ -119,6 +120,17 @@ export default function RobotFundi({
       window.removeEventListener('touchcancel', handleTouchEnd);
     };
   }, [isDragging, dragStart]);
+  
+  // Reset wasDragged after a delay to ensure Fundi remains clickable
+  useEffect(() => {
+    if (wasDragged) {
+      const timer = setTimeout(() => {
+        setWasDragged(false);
+      }, 1000); // Reset after 1 second
+      
+      return () => clearTimeout(timer);
+    }
+  }, [wasDragged]);
 
   // Much smaller size variants
   const sizeVariants = {
