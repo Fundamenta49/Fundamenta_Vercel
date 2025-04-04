@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { toast } from '@/hooks/use-toast';
+import { useUserMemory } from '@/hooks/use-user-memory';
+import useConversationStore from '@/hooks/use-conversation-store';
 
 
 // Category constants 
@@ -89,6 +91,21 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
+  // User memory and conversation hooks
+  const { 
+    userInfo, 
+    setUserName, 
+    startConversation, 
+    addMessage: addMessageToApi 
+  } = useUserMemory();
+  
+  const {
+    activeConversationId,
+    setActiveConversation,
+    addMessage: addMessageToStore,
+    messagesByConversation
+  } = useConversationStore();
+  
   // AI state from store
   const { 
     isProcessing, 
@@ -139,28 +156,136 @@ export default function ChatInterface({
     }
   }, [messages]);
 
+  // Initialize conversation when component mounts
+  useEffect(() => {
+    const initConversation = async () => {
+      // If we don't have an active conversation yet, start one
+      if (!activeConversationId) {
+        try {
+          const newConversation = await startConversation(category);
+          if (newConversation) {
+            setActiveConversation(newConversation.id);
+          }
+        } catch (error) {
+          console.error('Failed to initialize conversation:', error);
+        }
+      }
+    };
+    
+    initConversation();
+  }, [activeConversationId, category, startConversation, setActiveConversation]);
+  
+  // Load existing messages when active conversation changes
+  useEffect(() => {
+    if (activeConversationId) {
+      // Check if we already have messages in the store
+      const cachedMessages = messagesByConversation[activeConversationId];
+      
+      if (cachedMessages && cachedMessages.length > 0) {
+        // Format messages for our local state
+        const formattedMessages: Message[] = cachedMessages.map(msg => ({
+          id: msg.id.toString(),
+          role: msg.role,
+          content: msg.content,
+          timestamp: new Date(msg.timestamp),
+          category: msg.category || category
+        }));
+        
+        setMessages(formattedMessages);
+      } else {
+        // Fetch messages from API using react-query (handled by useUserMemory hook)
+        // This will be updated in the messagesByConversation store,
+        // and then we'll catch it in the next useEffect
+        
+        // For now, just start with an empty conversation
+        setMessages([]);
+      }
+    }
+  }, [activeConversationId, messagesByConversation, category]);
+
   // Handle sending a message
   const handleSendMessage = async () => {
     if (!input.trim() || isProcessing) return;
     
-    // Add user message to chat
+    // Make sure we have an active conversation
+    if (!activeConversationId) {
+      try {
+        const newConversation = await startConversation(category);
+        if (newConversation) {
+          setActiveConversation(newConversation.id);
+        } else {
+          toast({
+            title: 'Connection Error',
+            description: 'Could not start a new conversation. Please try again.',
+            variant: 'destructive',
+          });
+          return;
+        }
+      } catch (error) {
+        console.error('Failed to create conversation:', error);
+        toast({
+          title: 'Connection Error',
+          description: 'Could not start a new conversation. Please try again.',
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
+    
+    // Create user message
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: input,
-      timestamp: new Date()
+      timestamp: new Date(),
+      category: category
     };
     
+    // Update UI immediately
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setProcessing(true);
     
     try {
+      // Save message to database if we have an active conversation
+      if (activeConversationId) {
+        await addMessageToApi(activeConversationId, 'user', input, category);
+        
+        // Update local conversation store
+        addMessageToStore(activeConversationId, {
+          id: parseInt(userMessage.id),
+          conversationId: activeConversationId,
+          role: 'user',
+          content: input,
+          category: category,
+          metadata: null,
+          timestamp: new Date()
+        });
+      }
+      
+      // Check if this message contains a name introduction
+      const nameMatcher = /(?:(?:i['']?m|my name is|call me|i go by|they call me)\s+)([a-z0-9]+(?:\s+[a-z0-9]+)?)/i;
+      const nameMatch = input.match(nameMatcher);
+      
+      if (nameMatch && nameMatch[1] && !userInfo?.name) {
+        const userName = nameMatch[1].trim();
+        // Don't process names that are too short or common stop words
+        if (userName.length > 1 && !['the', 'a', 'an', 'just', 'also'].includes(userName.toLowerCase())) {
+          await setUserName(userName);
+        }
+      }
+      
       // Prepare conversation history for context
       const conversationHistory = messages.map(msg => ({
         role: msg.role,
         content: msg.content
       }));
+      
+      // Add the current user message
+      conversationHistory.push({
+        role: 'user',
+        content: input
+      });
       
       // Make API request to AI backend
       const response = await apiRequest(
@@ -191,6 +316,34 @@ export default function ChatInterface({
         
         setMessages(prev => [...prev, assistantMessage]);
         
+        // Save assistant message to database
+        if (activeConversationId) {
+          const metadata = {
+            sentiment: aiResponse.sentiment,
+            actions: aiResponse.actions,
+            suggestions: aiResponse.suggestions
+          };
+          
+          await addMessageToApi(
+            activeConversationId, 
+            'assistant', 
+            aiResponse.response, 
+            aiResponse.category,
+            metadata
+          );
+          
+          // Update local conversation store
+          addMessageToStore(activeConversationId, {
+            id: parseInt(assistantMessage.id),
+            conversationId: activeConversationId,
+            role: 'assistant',
+            content: aiResponse.response,
+            category: aiResponse.category || null,
+            metadata,
+            timestamp: new Date()
+          });
+        }
+        
         // Set full AI response in store
         setResponse({
           ...aiResponse,
@@ -207,7 +360,7 @@ export default function ChatInterface({
         description: 'Failed to get a response. Please try again.',
         variant: 'destructive',
       });
-      
+    } finally {
       setProcessing(false);
     }
   };

@@ -3,8 +3,9 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { orchestrateAIResponse } from "./ai/index";
 import { fallbackAIService } from "./ai/ai-fallback-strategy";
-import { insertUserSchema } from "@shared/schema";
+import { insertUserSchema, insertUserInfoSchema } from "@shared/schema";
 import { z } from "zod";
+import { userService, userInfoService, conversationService, messageService } from './db/services';
 import OpenAI from 'openai';
 import multer from 'multer';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -455,13 +456,229 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User account endpoints
   app.post("/api/users", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
-      const user = await storage.createUser(userData);
+      // Use DB service instead of memory storage
+      const user = await userService.create(userData);
       res.json(user);
     } catch (error: any) {
-      res.status(400).json({ error: "Invalid user data" });
+      console.error("Error creating user:", error);
+      res.status(400).json({ error: "Invalid user data", details: error.message });
+    }
+  });
+  
+  app.get("/api/users/:id", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ error: "Invalid user ID" });
+      }
+      const user = await userService.getById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json(user);
+    } catch (error: any) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: "Failed to fetch user" });
+    }
+  });
+  
+  // User session info endpoints - for users without accounts
+  app.post("/api/user-info", async (req, res) => {
+    try {
+      if (!req.session.id) {
+        return res.status(400).json({ error: "No session available" });
+      }
+      
+      // Parse request data
+      const userData = insertUserInfoSchema.parse({
+        ...req.body,
+        sessionId: req.session.id
+      });
+      
+      // Check if user info already exists for this session
+      const existingUserInfo = await userInfoService.getBySessionId(req.session.id);
+      
+      let userInfo;
+      if (existingUserInfo) {
+        // Update existing user info
+        userInfo = await userInfoService.updateBySessionId(req.session.id, userData);
+      } else {
+        // Create new user info
+        userInfo = await userInfoService.create(userData);
+      }
+      
+      res.json(userInfo);
+    } catch (error: any) {
+      console.error("Error saving user info:", error);
+      res.status(400).json({ error: "Invalid user info data", details: error.message });
+    }
+  });
+  
+  app.get("/api/user-info", async (req, res) => {
+    try {
+      if (!req.session.id) {
+        return res.status(400).json({ error: "No session available" });
+      }
+      
+      const userInfo = await userInfoService.getBySessionId(req.session.id);
+      if (!userInfo) {
+        return res.status(404).json({ 
+          error: false, 
+          userInfo: null,
+          message: "No user info found for this session"
+        });
+      }
+      
+      res.json({
+        error: false,
+        userInfo
+      });
+    } catch (error: any) {
+      console.error("Error fetching user info:", error);
+      res.status(500).json({ error: "Failed to fetch user info" });
+    }
+  });
+  
+  app.patch("/api/user-info", async (req, res) => {
+    try {
+      if (!req.session.id) {
+        return res.status(400).json({ error: "No session available" });
+      }
+      
+      const userInfo = await userInfoService.getBySessionId(req.session.id);
+      if (!userInfo) {
+        return res.status(404).json({ error: "User info not found" });
+      }
+      
+      // Update user info
+      const updatedUserInfo = await userInfoService.updateBySessionId(req.session.id, req.body);
+      res.json(updatedUserInfo);
+    } catch (error: any) {
+      console.error("Error updating user info:", error);
+      res.status(400).json({ error: "Invalid user info data", details: error.message });
+    }
+  });
+  
+  // Conversation endpoints for persistent chat history
+  app.post("/api/conversations", async (req, res) => {
+    try {
+      const userId = req.body.userId; // Can be null for anonymous users
+      
+      if (!userId && !req.session.id) {
+        return res.status(400).json({ error: "No user or session ID available" });
+      }
+      
+      // Create a conversation based on available user info
+      const conversationData = {
+        userId: userId || null,
+        title: req.body.title || "New Conversation",
+        category: req.body.category || "general",
+      };
+      
+      // Store the session ID in the title field temporarily if no user ID
+      // This is a workaround until we add a sessionId field to the conversations table
+      if (!userId && req.session.id) {
+        conversationData.title = `${conversationData.title} (${req.session.id})`;
+      }
+      
+      const conversation = await conversationService.create(conversationData);
+      res.json(conversation);
+    } catch (error: any) {
+      console.error("Error creating conversation:", error);
+      res.status(400).json({ error: "Failed to create conversation", details: error.message });
+    }
+  });
+  
+  app.get("/api/conversations", async (req, res) => {
+    try {
+      const userId = req.query.userId ? parseInt(req.query.userId as string) : null;
+      
+      if (!userId && !req.session.id) {
+        return res.status(400).json({ error: "No user or session ID provided" });
+      }
+      
+      let conversations = [];
+      
+      if (userId) {
+        // Get conversations for logged-in user
+        conversations = await conversationService.getByUserId(userId);
+      } else {
+        // For anonymous users, we'll need to filter by session ID in the title
+        // This is temporary until we add a sessionId field to the conversations table
+        const allConversations = await conversationService.getAll();
+        conversations = allConversations.filter(conv => 
+          conv.title && conv.title.includes(req.session.id)
+        );
+      }
+      
+      res.json(conversations);
+    } catch (error: any) {
+      console.error("Error fetching conversations:", error);
+      res.status(500).json({ error: "Failed to fetch conversations" });
+    }
+  });
+  
+  app.get("/api/conversations/:id", async (req, res) => {
+    try {
+      const conversationId = parseInt(req.params.id);
+      if (isNaN(conversationId)) {
+        return res.status(400).json({ error: "Invalid conversation ID" });
+      }
+      
+      const conversation = await conversationService.getById(conversationId);
+      if (!conversation) {
+        return res.status(404).json({ error: "Conversation not found" });
+      }
+      
+      // Get messages for this conversation
+      const messages = await messageService.getByConversationId(conversationId);
+      
+      res.json({
+        ...conversation,
+        messages
+      });
+    } catch (error: any) {
+      console.error("Error fetching conversation:", error);
+      res.status(500).json({ error: "Failed to fetch conversation" });
+    }
+  });
+  
+  // Message endpoints for chat history
+  app.post("/api/messages", async (req, res) => {
+    try {
+      const messageData = {
+        conversationId: req.body.conversationId,
+        role: req.body.role,
+        content: req.body.content,
+        category: req.body.category || null,
+        metadata: req.body.metadata || {}
+      };
+      
+      const message = await messageService.create(messageData);
+      res.json(message);
+    } catch (error: any) {
+      console.error("Error creating message:", error);
+      res.status(400).json({ error: "Failed to save message", details: error.message });
+    }
+  });
+  
+  app.get("/api/messages", async (req, res) => {
+    try {
+      const conversationId = req.query.conversationId ? parseInt(req.query.conversationId as string) : null;
+      
+      if (!conversationId) {
+        return res.status(400).json({ error: "Conversation ID is required" });
+      }
+      
+      const messages = await messageService.getByConversationId(conversationId);
+      res.json(messages);
+    } catch (error: any) {
+      console.error("Error fetching messages:", error);
+      res.status(500).json({ error: "Failed to fetch messages" });
     }
   });
 

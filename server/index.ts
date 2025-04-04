@@ -2,6 +2,9 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import multer from "multer";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
+import { runMigrations } from "./db/index";
 
 const startTime = Date.now();
 log("Starting server...");
@@ -17,6 +20,26 @@ log(`Express initialized (${Date.now() - startTime}ms)`);
 // Basic middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Configure session store with PostgreSQL
+const PgSession = connectPgSimple(session);
+app.use(
+  session({
+    store: new PgSession({
+      conString: process.env.DATABASE_URL,
+      tableName: 'sessions', // Use the table name we defined in our schema
+      createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET || 'fundi-ai-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    },
+  })
+);
 
 // Serve static files from the public directory
 app.use(express.static('public'));
@@ -52,6 +75,18 @@ app.get("/api/health", (_req, res) => {
 (async () => {
   try {
     log("Starting core server setup...");
+    
+    // Run database migrations
+    log("Running database migrations...");
+    try {
+      await runMigrations();
+      log(`Database migrations completed (${Date.now() - startTime}ms)`);
+    } catch (error) {
+      log(`Database migration error: ${error instanceof Error ? error.message : String(error)}`);
+      // Continue with server startup even if migrations fail
+      // This is to prevent the server from crashing during development
+    }
+    
     const server = await registerRoutes(app);
     log(`Routes registered (${Date.now() - startTime}ms)`);
 
