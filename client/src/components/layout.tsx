@@ -1,5 +1,6 @@
 import Navigation from "@/components/navigation";
 import FloatingChat from "@/components/floating-chat";
+import RestartTourButton from "@/components/tour/restart-tour-button";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -52,6 +53,14 @@ export default function Layout({ children }: LayoutProps) {
       
       <div data-tour="fundi-assistant">
         <FloatingChat category={currentCategory} />
+      </div>
+      
+      {/* Help button to restart tour */}
+      <div data-tour="restart-tour">
+        <RestartTourButton 
+          position="fixed"
+          tooltipText="Restart guided tour" 
+        />
       </div>
     </div>
   );

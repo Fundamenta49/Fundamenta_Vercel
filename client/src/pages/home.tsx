@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, HelpCircle } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
+import RestartTourButton from "@/components/tour/restart-tour-button";
 
 const features = [
   {
@@ -49,26 +49,10 @@ const features = [
 ];
 
 export default function Home() {
-  const restartTour = () => {
-    localStorage.removeItem("hasSeenTour");
-    window.location.reload();
-  };
-
   return (
     <div className="px-4 py-8">
-      {/* Removed the header with Mood, Bell, and Settings buttons */}
 
       <div className="text-center mb-12 relative">
-        <div className="flex justify-end gap-2 mb-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={restartTour}
-            className="text-muted-foreground hover:text-primary"
-          >
-            <HelpCircle className="h-5 w-5" />
-          </Button>
-        </div>
         <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
           Welcome to Fundamenta
         </h1>

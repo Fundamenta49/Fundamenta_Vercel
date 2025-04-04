@@ -309,9 +309,22 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const restartTour = () => {
+    // Remove all highlights first to ensure a clean state
+    document.querySelectorAll('.tour-highlight').forEach(el => {
+      el.classList.remove('tour-highlight');
+    });
+    
+    // Clear any stored tour state
     localStorage.removeItem('hasSeenTour');
     setHasSeenTour(false);
-    startTour();
+    
+    // Ensure we go back to the home page
+    setLocation('/');
+    
+    // Use a small delay to ensure navigation completes before starting the tour
+    setTimeout(() => {
+      startTour();
+    }, 100);
   };
 
   // Process template strings in content to include user name
