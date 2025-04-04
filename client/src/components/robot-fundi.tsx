@@ -25,6 +25,8 @@ export default function RobotFundi({
   const [isDragging, setIsDragging] = useState(false);
   const [wasDragged, setWasDragged] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [showClickIndicator, setShowClickIndicator] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
   const { lastResponse } = useAIEventStore();
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -56,15 +58,21 @@ export default function RobotFundi({
       return;
     }
     
-    // Check if there was significant dragging since mousedown
-    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-    
-    // If the movement is less than our threshold (3px) or it wasn't dragged at all, treat as a click
-    if (onOpen && (dragDistance <= 3 || !wasDragged)) {
+    // If it wasn't recently dragged, treat as a click
+    if (onOpen && !wasDragged) {
       onOpen();
-      console.log("Opening Fundi chat - click detected! Distance:", dragDistance);
+      console.log("Opening Fundi chat - click detected!");
     } else if (wasDragged) {
-      console.log("Click ignored - recent drag detected");
+      // Override the drag detection if it's been more than 1 second since last drag
+      // This makes the chat more accessible even after dragging
+      const lastDragTime = (window as any).lastDragTime || 0;
+      const timeSinceLastDrag = Date.now() - lastDragTime;
+      if (timeSinceLastDrag > 1000 && onOpen) {
+        onOpen();
+        console.log("Opening Fundi chat - override drag detection");
+      } else {
+        console.log("Click ignored - recent drag detected");
+      }
     }
     
     // Don't reset wasDragged here - let the timeout handle it
@@ -93,39 +101,31 @@ export default function RobotFundi({
   };
 
   const handleMouseUp = () => {
-    // Calculate the total movement distance using a proper distance formula
-    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-    
-    // Use a small threshold (3px) to determine if this was a real drag
-    // This allows for tiny movements that are just hand tremors or accidental movements
-    if (dragDistance > 3) {
-      setWasDragged(true);
-      console.log(`Drag detected on mouseUp: ${dragDistance.toFixed(2)}px`);
-      console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
-    } else {
-      console.log(`Small movement not counted as drag: ${dragDistance.toFixed(2)}px`);
-    }
-    
     // Set isDragging to false immediately
     setIsDragging(false);
+    
+    // We'll always treat it as a regular click unless the wasDragged state is already true
+    // This makes the chat more accessible by ensuring clicking works, while still
+    // allowing dragging for positioning
+    if (wasDragged) {
+      // Store the last drag time on the window object for reference
+      (window as any).lastDragTime = Date.now();
+      console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
+    }
   };
 
   const handleTouchEnd = () => {
-    // Calculate the total movement distance using a proper distance formula
-    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-    
-    // Use a small threshold (3px) to determine if this was a real drag
-    // This allows for tiny movements that are just hand tremors or accidental movements
-    if (dragDistance > 3) {
-      setWasDragged(true);
-      console.log(`Drag detected on touchEnd: ${dragDistance.toFixed(2)}px`);
-      console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
-    } else {
-      console.log(`Small movement not counted as drag: ${dragDistance.toFixed(2)}px`);
-    }
-    
     // Set isDragging to false immediately
     setIsDragging(false);
+    
+    // We'll always treat it as a regular click unless the wasDragged state is already true
+    // This makes the chat more accessible by ensuring clicking works, while still
+    // allowing dragging for positioning
+    if (wasDragged) {
+      // Store the last drag time on the window object for reference
+      (window as any).lastDragTime = Date.now();
+      console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
+    }
   };
 
   useEffect(() => {
@@ -160,6 +160,15 @@ export default function RobotFundi({
   useEffect(() => {
     console.log(`Fundi position: top=8px, right=24px, translate(${position.x}px, ${position.y}px)`);
   }, [position.x, position.y]);
+  
+  // Hide the "Click to chat" indicator after 6 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowClickIndicator(false);
+    }, 6000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Much smaller size variants
   const sizeVariants = {
@@ -187,7 +196,7 @@ export default function RobotFundi({
   return (
     <div 
       className={cn(
-        "fixed cursor-move",
+        "fixed cursor-pointer",
         sizeVariants[size],
         interactive && "hover:scale-105 transition-transform"
       )}
@@ -204,10 +213,26 @@ export default function RobotFundi({
         minWidth: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         minHeight: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px'
       }}
+      title="Click to chat with Fundi (drag to reposition)"
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Click indicator - appears below Fundi when first loaded or on hover */}
+      {(showClickIndicator || isHovered) && (
+        <div 
+          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full bg-white/90 text-xs font-bold px-2 py-1 rounded-full shadow-md animate-bounce text-center mt-2"
+          style={{ 
+            color: color,
+            width: 'auto',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          Click to chat
+        </div>
+      )}
       <svg
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
