@@ -50,17 +50,14 @@ export default function RobotFundi({
   };
   
   const handleClick = (e: React.MouseEvent) => {
-    // Check if this was an actual click vs. the end of a drag
-    // Only open if not dragged more than a small threshold
-    if (onOpen && interactive && !wasDragged) {
+    // Only open if the robot hasn't been dragged at all during this interaction
+    if (onOpen && interactive && !wasDragged && !isDragging) {
       onOpen();
       console.log("Opening Fundi chat!");
     }
-
-    // If it was a short/quick drag, don't consider it a real drag
-    if (wasDragged && Math.abs(position.x) < 5 && Math.abs(position.y) < 5) {
-      setWasDragged(false);
-    }
+    
+    // Don't reset wasDragged here - let the timeout handle it
+    e.stopPropagation();
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -85,8 +82,9 @@ export default function RobotFundi({
   };
 
   const handleMouseUp = () => {
-    // If there was significant movement, mark as dragged
-    if (Math.abs(position.x) > 5 || Math.abs(position.y) > 5) {
+    // If there was any movement at all, mark as dragged
+    // This prevents accidental openings when just adjusting Fundi slightly
+    if (Math.abs(position.x) > 0 || Math.abs(position.y) > 0) {
       setWasDragged(true);
     }
     
@@ -95,8 +93,9 @@ export default function RobotFundi({
   };
 
   const handleTouchEnd = () => {
-    // If there was significant movement, mark as dragged
-    if (Math.abs(position.x) > 5 || Math.abs(position.y) > 5) {
+    // If there was any movement at all, mark as dragged
+    // This prevents accidental openings when just adjusting Fundi slightly
+    if (Math.abs(position.x) > 0 || Math.abs(position.y) > 0) {
       setWasDragged(true);
     }
     
@@ -126,7 +125,7 @@ export default function RobotFundi({
     if (wasDragged) {
       const timer = setTimeout(() => {
         setWasDragged(false);
-      }, 1000); // Reset after 1 second
+      }, 3000); // Reset after 3 seconds - gives user more time between interactions
       
       return () => clearTimeout(timer);
     }

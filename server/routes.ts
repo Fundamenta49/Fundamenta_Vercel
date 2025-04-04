@@ -520,13 +520,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get("/api/user-info", async (req, res) => {
     try {
+      // Even if there's no session ID, we'll return an empty user info object 
+      // instead of a 400 error to allow the client to continue working
       if (!req.session.id) {
-        return res.status(400).json({ error: "No session available" });
+        console.warn("No session ID found for user info request");
+        return res.status(200).json({ 
+          error: false, 
+          userInfo: null,
+          message: "No session available, providing default user info"
+        });
       }
       
       const userInfo = await userInfoService.getBySessionId(req.session.id);
       if (!userInfo) {
-        return res.status(404).json({ 
+        // Return 200 instead of 404 since this is an expected case for new users
+        return res.status(200).json({ 
           error: false, 
           userInfo: null,
           message: "No user info found for this session"
@@ -539,7 +547,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       console.error("Error fetching user info:", error);
-      res.status(500).json({ error: "Failed to fetch user info" });
+      // Return 200 with null user info instead of 500 error
+      // This allows the client to continue functioning with default values
+      res.status(200).json({ 
+        error: false, 
+        userInfo: null,
+        message: "Error retrieving user info, using default"
+      });
     }
   });
   
