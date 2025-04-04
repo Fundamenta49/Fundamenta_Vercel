@@ -127,23 +127,35 @@ const TourModal = () => {
   // Determine if we should position the modal differently based on step
   const isInitialStep = currentStepIndex < 2; // First two steps use center positioning
   
-  // Adjust position based on which step we're on
+  // Adjust position based on which step we're on and device size
   const getPosition = () => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    
     // First two steps are centered (welcome and intro)
     if (isInitialStep) {
-      return ""; // Default centered position
+      return isMobile 
+        ? "max-w-[95vw] max-h-[80vh] overflow-y-auto" 
+        : ""; // Default centered position
     }
     
     // After step 2, position to bottom with special mobile styling
-    return "fixed tour-modal-position max-h-[380px] overflow-y-auto";
+    return isMobile
+      ? "fixed bottom-4 left-0 right-0 mx-2 max-h-[65vh] overflow-y-auto"
+      : "fixed tour-modal-position max-h-[380px] overflow-y-auto";
   };
   
   // Make sure we have aria-attributes to avoid warnings
   const dialogContentProps = {
     className: `${isInitialStep 
       ? "sm:max-w-[500px] max-w-[95vw]" 
-      : "sm:max-w-[320px] max-w-[95vw] shadow-2xl"} ${getPosition()}`,
-    "aria-describedby": "tour-description"
+      : "sm:max-w-[320px] max-w-[95vw] max-h-[65vh] shadow-2xl"} ${getPosition()}`,
+    "aria-describedby": "tour-description",
+    style: {
+      backgroundColor: 'white',
+      borderRadius: '0.5rem',
+      border: '1px solid rgba(0, 0, 0, 0.1)',
+      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)'
+    }
   };
 
   return (
@@ -151,7 +163,10 @@ const TourModal = () => {
       open={isTourActive} 
       onOpenChange={(open) => !open && endTour()} 
       modal={isInitialStep}>
-      <DialogContent {...dialogContentProps} data-tour-dialog>
+      <DialogContent 
+        {...dialogContentProps} 
+        data-tour-dialog 
+        className={`${dialogContentProps.className} bg-white border rounded-md shadow-md`}>
         <DialogHeader className={isInitialStep ? "" : "pb-2"}>
           <DialogTitle className="flex items-center gap-2 text-base">
             <HelpCircle className="h-4 w-4 text-primary" />
