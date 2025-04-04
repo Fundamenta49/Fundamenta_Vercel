@@ -192,15 +192,15 @@ export default function MeditationGuide() {
                   }}
                 >
                   <CardHeader>
-                    <CardTitle className="text-lg">{session.title}</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-lg text-balance">{session.title}</CardTitle>
+                    <CardDescription className="text-wrap break-words">
                       {session.duration} minutes - {session.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <ol className="list-decimal list-inside space-y-1">
                       {session.guide.map((step, index) => (
-                        <li key={index} className="text-sm text-muted-foreground">
+                        <li key={index} className="text-sm text-muted-foreground text-pretty break-words">
                           {step}
                         </li>
                       ))}

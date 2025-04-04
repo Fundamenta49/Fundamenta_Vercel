@@ -203,18 +203,22 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
           </div>
 
           {expenses.map((expense) => (
-            <div key={expense.id} className="flex items-center gap-2">
-              <Label className="min-w-[150px]">{expense.category}</Label>
-              <Input
-                type="number"
-                value={expense.amount || ""}
-                onChange={(e) => handleExpenseChange(expense.id, e.target.value)}
-                placeholder={`Enter ${expense.category.toLowerCase()} expenses`}
-              />
+            <div key={expense.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <Label className="min-w-[120px] sm:min-w-[150px] text-wrap break-words mb-1 sm:mb-0">{expense.category}</Label>
+              <div className="flex-1 w-full">
+                <Input
+                  type="number"
+                  value={expense.amount || ""}
+                  onChange={(e) => handleExpenseChange(expense.id, e.target.value)}
+                  placeholder={`Enter amount`}
+                  className="w-full"
+                />
+              </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => removeCategory(expense.id)}
+                className="mt-1 sm:mt-0"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -228,17 +232,19 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
           <CardTitle>Savings Goals</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               value={newGoalName}
               onChange={(e) => setNewGoalName(e.target.value)}
               placeholder="Goal name (e.g., Car, House)"
+              className="w-full"
             />
             <Input
               type="number"
               value={newGoalAmount || ""}
               onChange={(e) => setNewGoalAmount(parseFloat(e.target.value) || 0)}
               placeholder="Target amount"
+              className="w-full"
             />
           </div>
           <Button
@@ -263,21 +269,27 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
                 </Button>
               </div>
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label>Current Amount:</Label>
-                  <Input
-                    type="number"
-                    value={goal.currentAmount || ""}
-                    onChange={(e) => updateSavingsGoal(goal.id, "currentAmount", parseFloat(e.target.value) || 0)}
-                  />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <Label className="min-w-[120px] text-wrap break-words mb-1 sm:mb-0">Current Amount:</Label>
+                  <div className="flex-1 w-full">
+                    <Input
+                      type="number"
+                      value={goal.currentAmount || ""}
+                      onChange={(e) => updateSavingsGoal(goal.id, "currentAmount", parseFloat(e.target.value) || 0)}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Label>Target Amount:</Label>
-                  <Input
-                    type="number"
-                    value={goal.targetAmount || ""}
-                    onChange={(e) => updateSavingsGoal(goal.id, "targetAmount", parseFloat(e.target.value) || 0)}
-                  />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <Label className="min-w-[120px] text-wrap break-words mb-1 sm:mb-0">Target Amount:</Label>
+                  <div className="flex-1 w-full">
+                    <Input
+                      type="number"
+                      value={goal.targetAmount || ""}
+                      onChange={(e) => updateSavingsGoal(goal.id, "targetAmount", parseFloat(e.target.value) || 0)}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
                 <Progress 
                   value={(goal.currentAmount / goal.targetAmount) * 100} 
@@ -297,14 +309,17 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
           <CardTitle>Monthly Savings Allocation</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Label className="min-w-[150px]">Retirement Savings</Label>
-            <Input
-              type="number"
-              value={retirementSavings || ""}
-              onChange={(e) => setRetirementSavings(parseFloat(e.target.value) || 0)}
-              placeholder="Enter monthly retirement savings"
-            />
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <Label className="min-w-[120px] sm:min-w-[150px] text-wrap break-words mb-1 sm:mb-0">Retirement Savings</Label>
+            <div className="flex-1 w-full">
+              <Input
+                type="number"
+                value={retirementSavings || ""}
+                onChange={(e) => setRetirementSavings(parseFloat(e.target.value) || 0)}
+                placeholder="Enter monthly retirement savings"
+                className="w-full"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -324,17 +339,17 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
             <Progress value={expensePercentage} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">Total Expenses</p>
-              <p className="text-2xl font-bold text-destructive">
+              <p className="text-sm text-muted-foreground text-wrap break-words">Total Expenses</p>
+              <p className="text-xl sm:text-2xl font-bold text-destructive text-wrap break-words">
                 ${totalExpenses.toFixed(2)}
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Remaining</p>
+              <p className="text-sm text-muted-foreground text-wrap break-words">Remaining</p>
               <p
-                className={`text-2xl font-bold ${
+                className={`text-xl sm:text-2xl font-bold text-wrap break-words ${
                   remaining >= 0 ? "text-green-500" : "text-destructive"
                 }`}
               >
@@ -343,16 +358,16 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
             <div>
-              <p className="text-sm text-muted-foreground">Total Savings</p>
-              <p className="text-2xl font-bold text-blue-500">
+              <p className="text-sm text-muted-foreground text-wrap break-words">Total Savings</p>
+              <p className="text-xl sm:text-2xl font-bold text-blue-500 text-wrap break-words">
                 ${retirementSavings.toFixed(2)}
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Retirement Savings</p>
-              <p className="text-2xl font-bold text-purple-500">
+              <p className="text-sm text-muted-foreground text-wrap break-words">Retirement Savings</p>
+              <p className="text-xl sm:text-2xl font-bold text-purple-500 text-wrap break-words">
                 ${retirementSavings.toFixed(2)}
               </p>
             </div>

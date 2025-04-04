@@ -81,10 +81,10 @@ export default function Home() {
             <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200">
               <CardHeader>
                 <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
-                <CardTitle className="text-[#1C3D5A]">{feature.title}</CardTitle>
+                <CardTitle className="text-[#1C3D5A] text-balance">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">{feature.description}</p>
+                <p className="text-gray-600 text-pretty line-clamp-3 sm:line-clamp-none">{feature.description}</p>
               </CardContent>
             </Card>
           </Link>
