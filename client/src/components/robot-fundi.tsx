@@ -7,19 +7,19 @@ interface RobotFundiProps {
 }
 
 export default function RobotFundi({ speaking = false, size = "md" }: RobotFundiProps) {
-  const sizeVariants = {
-    sm: "w-24 h-24",
-    md: "w-48 h-48",
-    lg: "w-96 h-96"
+  // We'll ignore size variants and use direct SVG scaling
+  const scaleMap = {
+    sm: 0.5,
+    md: 1,
+    lg: 3
   };
-
+  
   return (
-    <div className={cn(
-      "flex items-center justify-center relative",
-      sizeVariants[size]
-    )}>
+    <div className="fixed right-8 bottom-16 z-[9999]" style={{ transform: `scale(${scaleMap[size]})` }}>
       {/* Simple robot avatar with no animations */}
       <svg
+        width="200"
+        height="200"
         viewBox="0 0 200 200"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
