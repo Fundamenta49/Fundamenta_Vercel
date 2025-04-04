@@ -76,7 +76,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       <AnimatePresence>
         {isExpanded ? (
           <motion.div 
-            className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 w-full max-w-md"
+            className="fixed inset-0 md:inset-auto md:top-8 md:right-8 z-50 w-full max-w-full md:max-w-md flex items-center justify-center md:block"
             initial={{ opacity: 0, scale: 0.8, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -95,7 +95,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed right-24 bottom-24 z-[9999] flex flex-col items-center"
+            className="fixed right-6 sm:right-12 md:right-24 bottom-6 sm:bottom-12 md:bottom-24 z-[9999] flex flex-col items-center"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
               opacity: 1, 
@@ -109,7 +109,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             }}
           >
             <Button
-              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center w-96 h-96 transition-all duration-300 robot-fundi"
+              className="p-0 bg-transparent hover:bg-transparent border-none flex items-center justify-center w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 transition-all duration-300 robot-fundi"
               style={{
                 transform: isHovered ? 'scale(1.05)' : 'scale(1)'
               }}
