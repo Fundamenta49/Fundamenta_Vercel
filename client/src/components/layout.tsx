@@ -13,6 +13,7 @@ export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const isMobile = useIsMobile();
   const isHomePage = location === "/" || location === "/home";
+  const isShowcasePage = location === "/fundi-showcase";
   
   // Determine current category based on the URL path
   const getCurrentCategory = () => {
@@ -49,9 +50,11 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </main>
       
-      <div data-tour="fundi-assistant">
-        <FloatingChat category={currentCategory} />
-      </div>
+      {!isShowcasePage && (
+        <div data-tour="fundi-assistant">
+          <FloatingChat category={currentCategory} />
+        </div>
+      )}
     </div>
   );
 }
