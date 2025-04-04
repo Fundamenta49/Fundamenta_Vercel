@@ -13,7 +13,10 @@ import {
   Clock,
   Check,
   DollarSign,
-  ShieldAlert
+  ShieldAlert,
+  Coffee,
+  Salad,
+  UtensilsCrossed
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -703,11 +706,31 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
   
   return (
     <Tabs defaultValue="breakfast" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="breakfast">Breakfast</TabsTrigger>
-        <TabsTrigger value="lunch">Lunch</TabsTrigger>
-        <TabsTrigger value="dinner">Dinner</TabsTrigger>
-      </TabsList>
+      <div className="flex space-x-1 mb-4">
+        <TabsList className="h-9 bg-transparent p-0 w-auto">
+          <TabsTrigger 
+            value="breakfast" 
+            className="px-4 rounded-full data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700 data-[state=active]:shadow-none border border-orange-200 text-gray-600 hover:text-orange-600"
+          >
+            <Coffee className="h-4 w-4 mr-2" />
+            Breakfast
+          </TabsTrigger>
+          <TabsTrigger 
+            value="lunch" 
+            className="px-4 rounded-full data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700 data-[state=active]:shadow-none border border-orange-200 text-gray-600 hover:text-orange-600"
+          >
+            <Salad className="h-4 w-4 mr-2" />
+            Lunch
+          </TabsTrigger>
+          <TabsTrigger 
+            value="dinner" 
+            className="px-4 rounded-full data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700 data-[state=active]:shadow-none border border-orange-200 text-gray-600 hover:text-orange-600"
+          >
+            <UtensilsCrossed className="h-4 w-4 mr-2" />
+            Dinner
+          </TabsTrigger>
+        </TabsList>
+      </div>
       
       <TabsContent value="breakfast" className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -784,16 +807,16 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
   return (
     <Card className={`overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow border-t-4 ${getBorderColorClass()} border group`}>
       {showEmbedded ? (
-        <div className="aspect-video overflow-hidden">
+        <div className="aspect-video overflow-hidden w-full">
           <EmbeddedYouTubePlayer
             videoId={tutorial.videoId}
             title={tutorial.name}
-            className="w-full"
+            className="w-full h-full"
           />
         </div>
       ) : (
         <div 
-          className="relative aspect-video cursor-pointer overflow-hidden bg-gray-100"
+          className="relative aspect-video cursor-pointer overflow-hidden bg-gray-100 w-full"
           onClick={handlePlayVideo}
         >
           {tutorial.thumbnailUrl ? (

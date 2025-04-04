@@ -57,9 +57,9 @@ export function VideoPlayerDialog({
         </div>
         
         <div className="w-full h-full flex flex-col">
-          <div className="flex-1 w-full bg-black flex items-center justify-center">
+          <div className="flex-1 w-full bg-black">
             {playerError ? (
-              <div className="flex flex-col items-center justify-center text-white p-6 text-center">
+              <div className="flex flex-col items-center justify-center text-white p-6 text-center h-full">
                 <AlertCircle className="h-12 w-12 mb-4 text-red-500" />
                 <h3 className="text-xl font-medium mb-2">Video Playback Error</h3>
                 <p className="mb-4">We couldn't load this video. It might be unavailable or there could be a connection issue.</p>
@@ -73,14 +73,17 @@ export function VideoPlayerDialog({
                 </Button>
               </div>
             ) : (
-              <EmbeddedYouTubePlayer
-                videoId={videoId}
-                title={title}
-                autoplay={true}
-                onError={handlePlayerError}
-                width="100%"
-                height="100%"
-              />
+              <div className="w-full h-full">
+                <EmbeddedYouTubePlayer
+                  videoId={videoId}
+                  title={title}
+                  autoplay={true}
+                  onError={handlePlayerError}
+                  width="100%"
+                  height="100%"
+                  className="w-full h-full"
+                />
+              </div>
             )}
           </div>
           
