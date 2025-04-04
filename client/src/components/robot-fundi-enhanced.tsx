@@ -68,13 +68,13 @@ export default function RobotFundiEnhanced({
   
   const glowSize = glowIntensitySettings[glowIntensity];
   
-  // Size variants - increased all sizes
+  // Size variants - significantly increased all sizes
   const sizeVariants = {
-    xs: "w-20 h-20",
-    sm: "w-28 h-28", 
-    md: "w-36 h-36",
-    lg: "w-48 h-48",
-    xl: "w-64 h-64"
+    xs: "w-28 h-28",
+    sm: "w-40 h-40", 
+    md: "w-56 h-56",
+    lg: "w-72 h-72",
+    xl: "w-96 h-96"
   };
 
   // Random eye blink effect
