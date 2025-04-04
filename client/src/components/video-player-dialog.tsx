@@ -56,8 +56,8 @@ export function VideoPlayerDialog({
           </Button>
         </div>
         
-        <div className="w-full h-full flex flex-col">
-          <div className="flex-1 w-full bg-black">
+        <div className="w-full h-full flex flex-col md:flex-row">
+          <div className="w-full md:w-3/4 h-full bg-black flex-shrink-0 flex items-center justify-center">
             {playerError ? (
               <div className="flex flex-col items-center justify-center text-white p-6 text-center h-full">
                 <AlertCircle className="h-12 w-12 mb-4 text-red-500" />
@@ -73,7 +73,7 @@ export function VideoPlayerDialog({
                 </Button>
               </div>
             ) : (
-              <div className="w-full h-full">
+              <div className="w-full h-full flex items-center justify-center">
                 <EmbeddedYouTubePlayer
                   videoId={videoId}
                   title={title}
@@ -88,19 +88,19 @@ export function VideoPlayerDialog({
           </div>
           
           {description && (
-            <div className="bg-white p-4 w-full border-t shadow-sm">
+            <div className="bg-white p-4 md:p-6 w-full md:w-1/4 border-t md:border-t-0 md:border-l shadow-sm flex flex-col h-auto md:h-full overflow-auto">
               <h2 className="text-xl font-semibold pb-2 border-l-4 border-learning-color pl-3">{title}</h2>
-              <ScrollArea className="max-h-[120px] mb-4">
+              <ScrollArea className="flex-grow mb-4 max-h-[120px] md:max-h-none">
                 <p className="text-sm text-gray-700 leading-relaxed">{description}</p>
               </ScrollArea>
-              <div className="pt-2 flex justify-between items-center">
-                <p className="text-xs text-gray-500">
+              <div className="pt-2 flex justify-between items-center mt-auto">
+                <p className="text-xs text-gray-500 hidden md:block">
                   This content is provided for educational purposes
                 </p>
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="text-learning-color border-learning-color/30 hover:bg-learning-color hover:text-white"
+                  className="text-learning-color border-learning-color/30 hover:bg-learning-color hover:text-white ml-auto"
                   onClick={() => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />

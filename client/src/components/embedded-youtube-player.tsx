@@ -108,8 +108,8 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
 
   return (
     <div 
-      className={`relative aspect-video ${className}`}
-      style={{ width, height: 'auto' }}
+      className={`relative ${className}`}
+      style={{ width, height }}
     >
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
