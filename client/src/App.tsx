@@ -1,9 +1,8 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import Layout from "@/components/layout";
-import MobileOptimizedChat from "@/components/mobile-optimized-chat";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
@@ -24,8 +23,7 @@ import FundiShowcase from "@/pages/fundi-showcase";
 import EconomicsCourse from "@/pages/learning/courses/economics";
 import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
 import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
-// Temporarily comment out this import to fix build issue
-// import CookingBasicsCourse from "./pages/learning/courses/cooking-basics";
+import CookingBasicsCourse from "@/pages/learning/courses/cooking-basics";
 import HealthWellnessCourse from "@/pages/learning/courses/health-wellness";
 import CriticalThinkingCourse from "@/pages/learning/courses/critical-thinking";
 import ConflictResolutionCourse from "@/pages/learning/courses/conflict-resolution";
@@ -39,24 +37,6 @@ import ShoppingBuddyCourse from "@/pages/learning/courses/shopping-buddy";
 import RepairAssistantCourse from "@/pages/learning/courses/repair-assistant";
 
 function Router() {
-  const [location] = useLocation();
-  
-  // Determine category based on the current route
-  let category = "general";
-  if (location.includes("/finance")) {
-    category = "finance";
-  } else if (location.includes("/career")) {
-    category = "career";
-  } else if (location.includes("/wellness") || location.includes("/yoga")) {
-    category = "wellness";
-  } else if (location.includes("/active")) {
-    category = "fitness";
-  } else if (location.includes("/learning") || location.includes("/courses")) {
-    category = "learning";
-  } else if (location.includes("/emergency")) {
-    category = "emergency";
-  }
-  
   return (
     <Layout>
       <Switch>
@@ -78,8 +58,7 @@ function Router() {
         <Route path="/learning" component={Learning} />
         <Route path="/learning/courses/vehicle-maintenance" component={VehicleMaintenanceCourse} />
         <Route path="/learning/courses/home-maintenance" component={HomeMaintenanceCourse} />
-        {/* Temporarily commented out cooking basics route to fix build issue */}
-        {/* <Route path="/learning/courses/cooking-basics" component={() => <div>Cooking Basics</div>} /> */}
+        <Route path="/learning/courses/cooking-basics" component={CookingBasicsCourse} />
         <Route path="/learning/courses/health-wellness" component={HealthWellnessCourse} />
         <Route path="/learning/courses/economics" component={EconomicsCourse} />
         <Route path="/learning/courses/critical-thinking" component={CriticalThinkingCourse} />
@@ -94,14 +73,6 @@ function Router() {
         <Route path="/learning/courses/repair-assistant" component={RepairAssistantCourse} />
         <Route component={NotFound} />
       </Switch>
-      
-      {/* Mobile optimized chat component with category based on current route */}
-      <MobileOptimizedChat 
-        initialCategory={category}
-        position="top-right"
-        initiallyOpen={false}
-      />
-      
       <Toaster />
     </Layout>
   );

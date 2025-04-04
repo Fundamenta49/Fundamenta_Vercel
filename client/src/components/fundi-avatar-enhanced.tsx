@@ -17,29 +17,26 @@ interface FundiAvatarEnhancedProps {
   withShadow?: boolean;
   withBounce?: boolean;
   onInteraction?: () => void;
-  onClick?: () => void;
   animationSpeed?: 'slow' | 'normal' | 'fast';
 }
 
-export default function FundiAvatarEnhanced(props: FundiAvatarEnhancedProps) {
-  const {
-    speaking = false,
-    thinking = false,
-    emotion = 'neutral',
-    size = 'md',
-    category = 'general',
-    className = '',
-    interactive = true,
-    pulseEffect = true,
-    glowEffect = false,
-    wink = false,
-    rotate = false,
-    withShadow = true,
-    withBounce = false,
-    onInteraction,
-    onClick,
-    animationSpeed = 'normal',
-  } = props;
+export default function FundiAvatarEnhanced({
+  speaking = false,
+  thinking = false,
+  emotion = 'neutral',
+  size = 'md',
+  category = 'general',
+  className = '',
+  interactive = true,
+  pulseEffect = true,
+  glowEffect = false,
+  wink = false,
+  rotate = false,
+  withShadow = true,
+  withBounce = false,
+  onInteraction,
+  animationSpeed = 'normal',
+}: FundiAvatarEnhancedProps) {
   const [isWinking, setIsWinking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
@@ -237,17 +234,8 @@ export default function FundiAvatarEnhanced(props: FundiAvatarEnhancedProps) {
 
   // Handle interaction
   const handleClick = () => {
-    if (interactive) {
-      // Call the onInteraction prop if provided
-      if (onInteraction) {
-        onInteraction();
-      }
-      
-      // Call the onClick prop if provided
-      if (onClick) {
-        onClick();
-      }
-      
+    if (interactive && onInteraction) {
+      onInteraction();
       setIsPressed(true);
       setTimeout(() => setIsPressed(false), 200);
     }
