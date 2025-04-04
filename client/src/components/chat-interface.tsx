@@ -91,6 +91,8 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
+  const [resizeDirection, setResizeDirection] = useState<'br' | 'bl' | 'b' | 'r' | 'l' | null>(null);
+  const [initialPosition, setInitialPosition] = useState({ left: 0, top: 0, width: 0, height: 0 });
   const [chatSize, setChatSize] = useState({
     width: window.innerWidth < 768 ? '90%' : '350px',
     height: window.innerWidth < 768 ? '380px' : '350px'
@@ -484,9 +486,25 @@ export default function ChatInterface({
   const isSpecialist = (currentCategory || category) !== 'general';
 
   // Handle resize start for mouse events
-  const handleResizeStart = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleResizeStart = (
+    e: React.MouseEvent | React.TouchEvent, 
+    direction: 'br' | 'bl' | 'b' | 'r' | 'l' = 'br'
+  ) => {
     e.preventDefault();
     setIsResizing(true);
+    setResizeDirection(direction);
+    
+    // Get initial position for reference during resize
+    const chatElement = document.querySelector('.resizable-chat') as HTMLElement;
+    if (chatElement) {
+      const rect = chatElement.getBoundingClientRect();
+      setInitialPosition({ 
+        left: rect.left, 
+        top: rect.top, 
+        width: rect.width, 
+        height: rect.height 
+      });
+    }
     
     // Add event listeners based on event type
     if ('touches' in e) {
@@ -507,21 +525,43 @@ export default function ChatInterface({
     const chatElement = document.querySelector('.resizable-chat') as HTMLElement;
     if (!chatElement) return;
     
-    // Get the initial position of the chat
     const rect = chatElement.getBoundingClientRect();
+    let width = parseInt(chatSize.width as string, 10);
+    let height = parseInt(chatSize.height as string, 10);
     
-    // Calculate new width and height based on mouse position
-    // We only want to expand right and down from the corner
-    const width = Math.max(e.clientX - rect.left, 280);
-    const height = Math.max(e.clientY - rect.top, 300);
+    // Calculate new dimensions based on resize direction
+    switch (resizeDirection) {
+      case 'br': // Bottom-right corner
+        width = Math.max(e.clientX - rect.left, 280);
+        height = Math.max(e.clientY - rect.top, 300);
+        break;
+      case 'bl': // Bottom-left corner
+        width = Math.max(rect.right - e.clientX, 280);
+        height = Math.max(e.clientY - rect.top, 300);
+        chatElement.style.right = 'auto'; 
+        chatElement.style.left = `${e.clientX}px`;
+        break;
+      case 'b': // Bottom edge
+        height = Math.max(e.clientY - rect.top, 300);
+        break;
+      case 'r': // Right edge
+        width = Math.max(e.clientX - rect.left, 280);
+        break;
+      case 'l': // Left edge
+        width = Math.max(rect.right - e.clientX, 280);
+        chatElement.style.right = 'auto';
+        chatElement.style.left = `${e.clientX}px`;
+        break;
+      default:
+        break;
+    }
     
     // Apply the new dimensions directly to the element for immediate feedback
-    // and ensure we maintain the right position
     chatElement.style.width = `${width}px`;
     chatElement.style.height = `${height}px`;
     chatElement.style.maxWidth = `${width}px`;
     
-    // Also update state for persistence
+    // Update state for persistence
     setChatSize({
       width: `${width}px`,
       height: `${height}px`
@@ -535,21 +575,43 @@ export default function ChatInterface({
     const chatElement = document.querySelector('.resizable-chat') as HTMLElement;
     if (!chatElement) return;
     
-    // Get the initial position of the chat
     const rect = chatElement.getBoundingClientRect();
+    let width = parseInt(chatSize.width as string, 10);
+    let height = parseInt(chatSize.height as string, 10);
     
-    // Calculate new width and height based on touch position
-    // We only want to expand right and down from the corner
-    const width = Math.max(e.touches[0].clientX - rect.left, 280);
-    const height = Math.max(e.touches[0].clientY - rect.top, 300);
+    // Calculate new dimensions based on resize direction
+    switch (resizeDirection) {
+      case 'br': // Bottom-right corner
+        width = Math.max(e.touches[0].clientX - rect.left, 280);
+        height = Math.max(e.touches[0].clientY - rect.top, 300);
+        break;
+      case 'bl': // Bottom-left corner
+        width = Math.max(rect.right - e.touches[0].clientX, 280);
+        height = Math.max(e.touches[0].clientY - rect.top, 300);
+        chatElement.style.right = 'auto'; 
+        chatElement.style.left = `${e.touches[0].clientX}px`;
+        break;
+      case 'b': // Bottom edge
+        height = Math.max(e.touches[0].clientY - rect.top, 300);
+        break;
+      case 'r': // Right edge
+        width = Math.max(e.touches[0].clientX - rect.left, 280);
+        break;
+      case 'l': // Left edge
+        width = Math.max(rect.right - e.touches[0].clientX, 280);
+        chatElement.style.right = 'auto';
+        chatElement.style.left = `${e.touches[0].clientX}px`;
+        break;
+      default:
+        break;
+    }
     
     // Apply the new dimensions directly to the element for immediate feedback
-    // and ensure we maintain the right position
     chatElement.style.width = `${width}px`;
     chatElement.style.height = `${height}px`;
     chatElement.style.maxWidth = `${width}px`;
     
-    // Also update state for persistence
+    // Update state for persistence
     setChatSize({
       width: `${width}px`,
       height: `${height}px`
@@ -559,6 +621,7 @@ export default function ChatInterface({
   // Handle resize end
   const handleResizeEnd = () => {
     setIsResizing(false);
+    setResizeDirection(null);
     document.removeEventListener('mousemove', handleResizeMove);
     document.removeEventListener('mouseup', handleResizeEnd);
     document.removeEventListener('touchmove', handleResizeTouchMove);
@@ -849,15 +912,83 @@ export default function ChatInterface({
         </div>
       </CardFooter>
       
-      {/* Resize handle in the bottom-right corner */}
+      {/* Resize handles on multiple sides */}
+      {/* Bottom-right corner handle */}
       <div 
-        className="resize-handle w-10 h-10 opacity-70 hover:opacity-100 transition-opacity"
+        className="resize-handle resize-handle-br w-10 h-10 opacity-70 hover:opacity-100 transition-opacity"
         style={{ 
           backgroundImage: `linear-gradient(135deg, transparent 50%, ${categoryColors[category]} 50%)`,
-          borderBottomRightRadius: '0.5rem'
+          borderBottomRightRadius: '0.5rem',
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          cursor: 'nwse-resize'
         }}
-        onMouseDown={(e) => handleResizeStart(e)}
-        onTouchStart={(e) => handleResizeStart(e)}
+        onMouseDown={(e) => handleResizeStart(e, 'br')}
+        onTouchStart={(e) => handleResizeStart(e, 'br')}
+      ></div>
+      
+      {/* Bottom-left corner handle */}
+      <div 
+        className="resize-handle resize-handle-bl w-10 h-10 opacity-70 hover:opacity-100 transition-opacity"
+        style={{ 
+          backgroundImage: `linear-gradient(225deg, transparent 50%, ${categoryColors[category]} 50%)`,
+          borderBottomLeftRadius: '0.5rem',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          cursor: 'nesw-resize'
+        }}
+        onMouseDown={(e) => handleResizeStart(e, 'bl')}
+        onTouchStart={(e) => handleResizeStart(e, 'bl')}
+      ></div>
+      
+      {/* Bottom edge handle */}
+      <div 
+        className="resize-handle resize-handle-b opacity-70 hover:opacity-100 transition-opacity"
+        style={{ 
+          background: `${categoryColors[category]}50`,
+          position: 'absolute',
+          bottom: 0,
+          left: '20px',
+          right: '20px',
+          height: '6px',
+          cursor: 'ns-resize'
+        }}
+        onMouseDown={(e) => handleResizeStart(e, 'b')}
+        onTouchStart={(e) => handleResizeStart(e, 'b')}
+      ></div>
+      
+      {/* Right edge handle */}
+      <div 
+        className="resize-handle resize-handle-r opacity-70 hover:opacity-100 transition-opacity"
+        style={{ 
+          background: `${categoryColors[category]}50`,
+          position: 'absolute',
+          right: 0,
+          top: '40px',
+          bottom: '20px',
+          width: '6px',
+          cursor: 'ew-resize'
+        }}
+        onMouseDown={(e) => handleResizeStart(e, 'r')}
+        onTouchStart={(e) => handleResizeStart(e, 'r')}
+      ></div>
+      
+      {/* Left edge handle */}
+      <div 
+        className="resize-handle resize-handle-l opacity-70 hover:opacity-100 transition-opacity"
+        style={{ 
+          background: `${categoryColors[category]}50`,
+          position: 'absolute',
+          left: 0,
+          top: '40px',
+          bottom: '20px',
+          width: '6px',
+          cursor: 'ew-resize'
+        }}
+        onMouseDown={(e) => handleResizeStart(e, 'l')}
+        onTouchStart={(e) => handleResizeStart(e, 'l')}
       ></div>
     </Card>
   );
