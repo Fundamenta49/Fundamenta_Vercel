@@ -623,35 +623,8 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
 
   return (
     <div className="w-full">
-      {/* Horizontal Tab Bar - scrollable on mobile */}
-      <div className="w-full overflow-auto pb-1 no-scrollbar">
-        <div className="inline-flex mx-auto border-2 border-rose-100 rounded-md bg-white" style={{width: "90%"}}>
-          <div className="flex space-x-1 p-1 w-full">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  className={cn(
-                    "flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-2 text-sm font-medium flex-1 min-w-[120px]",
-                    "transition-all duration-200 ease-in-out",
-                    activeTab === tab.id
-                      ? "bg-rose-50 text-primary shadow-sm"
-                      : "text-muted-foreground hover:bg-muted/20"
-                  )}
-                  onClick={() => setActiveTab(tab.id as LifeSkillsTabId)}
-                >
-                  <Icon className="h-4 w-4 mr-2" />
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Tab Content */}
-      <div className="mt-4 px-2">
+      <div className="px-2">
         {tabContent[activeTab as keyof typeof tabContent]}
       </div>
     </div>
