@@ -255,7 +255,7 @@ export default function CalendarRedesigned() {
                 <div 
                   key={i} 
                   className={cn(
-                    "h-[60px] sm:h-[90px] border-t border-r relative",
+                    "h-[80px] sm:h-[120px] border-t border-r relative",
                     !isCurrentMonth && "opacity-50",
                     isCurrentDay && "bg-gray-50",
                     isWeekend && !isCurrentDay && "bg-gray-50/30",
@@ -341,11 +341,11 @@ export default function CalendarRedesigned() {
     
     return (
       <Dialog open={showEventDetails} onOpenChange={setShowEventDetails}>
-        <DialogContent className="w-full max-w-md">
+        <DialogContent className="w-full max-w-md" aria-labelledby="event-dialog-title">
           <div className="space-y-4">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <h3 className="text-xl font-semibold">{selectedEvent.title}</h3>
+                <h2 id="event-dialog-title" className="text-xl font-semibold">{selectedEvent.title}</h2>
                 <div className="flex items-center text-sm text-gray-600">
                   <CalendarIcon className="h-4 w-4 mr-2" />
                   <span>
