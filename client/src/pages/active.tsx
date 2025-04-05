@@ -302,7 +302,39 @@ export default function Active() {
     }
   };
 
+  // Create refs for dialog buttons
+  const sectionButtonRefs = useRef<Record<string, HTMLElement | null>>({});
+  
+  // Check URL params for section to automatically open
   useEffect(() => {
+    // Get URL search params to check for section param
+    const urlParams = new URLSearchParams(window.location.search);
+    const sectionParam = urlParams.get('section');
+    
+    // Parse URL parameters to auto-open a specific section
+    if (sectionParam) {
+      const matchedSection = SECTIONS.find(section => 
+        section.id.toLowerCase() === sectionParam.toLowerCase()
+      );
+      
+      if (matchedSection) {
+        // Store the section ID to be opened
+        setExpandedSection(matchedSection.id);
+        
+        // Use setTimeout to ensure the component has fully mounted
+        setTimeout(() => {
+          // Get the button reference for this section
+          const buttonElement = document.querySelector(`[aria-label="Open ${matchedSection.title}"]`) as HTMLElement;
+          
+          // If we found the button, click it to open the dialog
+          if (buttonElement) {
+            buttonElement.click();
+          }
+        }, 300);
+      }
+    }
+    
+    // Load saved profile data
     const savedProfile = localStorage.getItem('fitnessProfile');
     if (savedProfile) {
       try {

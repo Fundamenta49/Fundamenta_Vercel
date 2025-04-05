@@ -162,7 +162,7 @@ Our mental and emotional wellness tools provide support, guidance, and resources
 ### 4. Fitness Coach
 Our physical wellness tools help users stay active, build strength, and maintain healthy habits:
 
-- **Workout Planner** (/fitness/workout-planner): A personalized exercise platform that:
+- **Workout Planner** (/active?section=coach): A personalized exercise platform that:
   * Creates custom workout routines based on goals
   * Adapts plans to available equipment
   * Provides proper form guidance with videos
@@ -171,7 +171,7 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Features recovery and rest day guidance
   * Provides workout scheduling and reminders
 
-- **Exercise Library** (/fitness/exercise-library): A comprehensive movement database that:
+- **Exercise Library** (/active?section=coach): A comprehensive movement database that:
   * Contains over 1,000 exercises with video demonstrations
   * Categorizes movements by muscle group and equipment
   * Provides form cues and safety guidance
@@ -180,7 +180,7 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Offers alternative exercise suggestions
   * Includes specialized sections for rehabilitation
 
-- **Nutrition Tracker** (/fitness/nutrition-tracker): A nutritional guidance system that:
+- **Nutrition Tracker** (/active?section=coach): A nutritional guidance system that:
   * Tracks macro and micronutrient intake
   * Provides meal timing recommendations
   * Offers hydration monitoring
@@ -189,7 +189,7 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Provides supplement information
   * Offers personalized eating plans
 
-- **Progress Tracking** (/fitness/progress-tracking): A comprehensive measurement system that:
+- **Progress Tracking** (/active?section=activeyou): A comprehensive measurement system that:
   * Tracks body measurements and composition
   * Records strength and endurance improvements
   * Provides visual progress with charts and graphs
@@ -197,6 +197,33 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Offers plateau-breaking suggestions
   * Features comparative analysis over time
   * Provides goal recalibration guidance
+  
+- **Yoga Practice** (/active?section=yoga): A complete yoga instruction platform that:
+  * Offers yoga poses for all levels from beginner to advanced
+  * Provides detailed instructions and video demonstrations
+  * Features guided yoga sequences and flows
+  * Includes breathing exercises and meditation components
+  * Offers specialized yoga for stress relief, flexibility, and strength
+  * Tracks yoga practice progress 
+  * Provides pose modifications for different abilities
+
+- **Meditation Sessions** (/active?section=meditation): A guided meditation platform that:
+  * Provides various meditation styles and techniques
+  * Features sessions of different durations
+  * Includes specialized meditations for focus, sleep, and anxiety
+  * Offers breathing exercises and relaxation techniques
+  * Provides progress tracking for meditation practice
+  * Features calming background sounds and music
+  * Offers voice-guided sessions for different experience levels
+
+- **Weight Training** (/active?section=weightlifting): A strength-building system that:
+  * Provides weightlifting routines based on goals and experience
+  * Features proper form demonstrations and safety guidance
+  * Includes progressive overload principles
+  * Offers equipment-based workout variations
+  * Tracks strength gains and progress
+  * Provides rest and recovery recommendations
+  * Features specialized programs for different goals
 
 - **Active Fitness Tracker** (/active): A real-time activity platform that:
   * Connects with wearable devices
@@ -207,14 +234,14 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Features recovery tracking
   * Provides weekly activity reports
 
-- **Yoga Practice** (/yoga-test, /yoga-pose-analysis, /yoga-progression): A comprehensive yoga system that:
+- **Advanced Yoga Analysis** (/yoga-test, /yoga-pose-analysis, /yoga-progression): A specialized yoga tool that:
   * Analyzes and provides feedback on yoga poses
-  * Offers progressive yoga sequences
-  * Provides modification guidance
-  * Includes specialized yoga for different goals
-  * Features breathing technique instruction
+  * Offers detailed progression tracking
+  * Provides advanced pose analysis
+  * Includes specialized yoga for experienced practitioners
+  * Features comprehensive breathing technique instruction
   * Offers yoga philosophy education
-  * Provides practice tracking and advancement
+  * Provides advanced practice tracking for serious yoga students
 
 ### 5. Cooking Coach
 Our culinary tools help users develop cooking skills, plan meals, and enjoy healthier food choices:

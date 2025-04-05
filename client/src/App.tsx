@@ -68,6 +68,36 @@ function WellnessRedirect() {
   return null;
 }
 
+// Component to handle redirects from /yoga to /active?section=yoga
+function YogaRedirect() {
+  const [, navigate] = useLocation();
+  
+  useEffect(() => {
+    // Redirect to active page with yoga section parameter
+    navigate('/active?section=yoga');
+  }, [navigate]);
+  
+  return null;
+}
+
+// Component to handle redirects from /fitness/* to /active?section=*
+function FitnessRedirect() {
+  const [, navigate] = useLocation();
+  const section = window.location.pathname.split('/').pop();
+  
+  useEffect(() => {
+    // Redirect to active page with section parameter
+    if (section) {
+      navigate(`/active?section=${section}`);
+    } else {
+      // Default to active page if no section
+      navigate('/active');
+    }
+  }, [navigate, section]);
+  
+  return null;
+}
+
 function Router() {
   return (
     <Switch>
@@ -116,6 +146,26 @@ function Router() {
             <Route path="/active">
               <ProtectedRoute>
                 <Active />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/active/:section">
+              <ProtectedRoute>
+                <Active />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/yoga">
+              <ProtectedRoute>
+                <YogaRedirect />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/fitness/:section">
+              <ProtectedRoute>
+                <FitnessRedirect />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/fitness">
+              <ProtectedRoute>
+                <FitnessRedirect />
               </ProtectedRoute>
             </Route>
             <Route path="/yoga-test">
