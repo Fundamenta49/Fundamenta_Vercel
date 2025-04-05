@@ -12,6 +12,32 @@
   text-align: center !important;
 }
 
+/* Standalone calendar modal positioning fixes */
+div[class*="fixed"][class*="inset-0"][class*="bg-black"][class*="bg-opacity-50"][class*="flex"][class*="items-center"][class*="justify-center"][class*="z-50"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 50 !important;
+}
+
+/* Modal content positioning */
+div[class*="fixed"][class*="inset-0"][class*="bg-black"][class*="bg-opacity-50"][class*="flex"][class*="items-center"][class*="justify-center"][class*="z-50"] > div {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: auto !important;
+  max-height: 90vh !important;
+  max-width: 500px !important;
+  width: 90% !important;
+  overflow-y: auto !important;
+  background-color: white !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
 /* Desktop specific fixes */
 @media (min-width: 640px) {
   /* Fixes for tabs container to be left-aligned with more specific selectors */

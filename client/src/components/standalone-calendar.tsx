@@ -161,8 +161,18 @@ export default function StandaloneCalendar({ isOpen, onClose }: { isOpen: boolea
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full relative">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]" id="standalone-calendar-modal">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full relative" style={{
+        position: "relative",
+        top: "auto",
+        left: "auto",
+        transform: "none",
+        margin: "auto",
+        maxHeight: "90vh",
+        maxWidth: "450px",
+        width: "90%",
+        overflowY: "auto"
+      }}>
         <button 
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -174,8 +184,13 @@ export default function StandaloneCalendar({ isOpen, onClose }: { isOpen: boolea
         {cells()}
 
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-[60]">
-            <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
+          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-[9999]" id="calendar-event-modal">
+            <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full" style={{
+              position: "relative",
+              margin: "auto",
+              maxWidth: "400px",
+              width: "90%"
+            }}>
               <h3 className="text-lg font-semibold mb-4">Add Event - {format(selectedDate, "PPP")}</h3>
               <input
                 type="text"
