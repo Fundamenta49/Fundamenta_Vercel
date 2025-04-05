@@ -589,7 +589,24 @@ export default function FundiInteractiveAssistant({
                   resize: 'both' 
                 }}
               >
-                <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
+                <CardHeader 
+                  className="p-4 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing" 
+                  onMouseDown={(e) => {
+                    // This makes the entire header a drag handle
+                    // The parent motion.div will handle the actual dragging
+                    e.preventDefault();
+                    // Add a visual cue that the element is being dragged
+                    if (e.currentTarget) {
+                      e.currentTarget.style.cursor = 'grabbing';
+                    }
+                  }}
+                  onMouseUp={(e) => {
+                    // Restore the cursor when mouse is released
+                    if (e.currentTarget) {
+                      e.currentTarget.style.cursor = 'grab';
+                    }
+                  }}
+                >
                   <div className="flex items-center space-x-2">
                     <FundiAvatarEnhanced
                       size="sm"
@@ -723,7 +740,24 @@ export default function FundiInteractiveAssistant({
               </Card>
             ) : (
               <Card className="w-72 shadow-xl">
-                <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
+                <CardHeader 
+                  className="p-4 pb-2 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing"
+                  onMouseDown={(e) => {
+                    // This makes the entire header a drag handle
+                    // The parent motion.div will handle the actual dragging
+                    e.preventDefault();
+                    // Add a visual cue that the element is being dragged
+                    if (e.currentTarget) {
+                      e.currentTarget.style.cursor = 'grabbing';
+                    }
+                  }}
+                  onMouseUp={(e) => {
+                    // Restore the cursor when mouse is released
+                    if (e.currentTarget) {
+                      e.currentTarget.style.cursor = 'grab';
+                    }
+                  }}
+                >
                   <div className="flex flex-col">
                     <CardTitle className="text-base">Fundi Assistant</CardTitle>
                     <p className="text-xs text-muted-foreground">
