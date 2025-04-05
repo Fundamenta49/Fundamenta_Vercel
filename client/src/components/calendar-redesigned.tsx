@@ -1098,7 +1098,8 @@ export default function CalendarRedesigned() {
         width: "100%",
         overflow: "visible",
         padding: "0.5rem",
-        margin: "0 auto"
+        margin: "0 auto",
+        position: "relative"
       }}>
         {/* Fullscreen Toggle Header */}
         {isFullscreen && (

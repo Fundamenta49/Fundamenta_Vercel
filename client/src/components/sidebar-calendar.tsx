@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { CalendarDays } from "lucide-react";
 import CalendarRedesigned from "@/components/calendar-redesigned";
 import WeatherWidget from "@/components/weather-widget";
@@ -21,11 +21,22 @@ export default function SidebarCalendar() {
           </button>
         </DialogTrigger>
         
-        <DialogContent className="w-full max-w-5xl h-auto max-h-[90vh] p-0 flex flex-col overflow-auto top-[5vh] left-1/2 translate-x-[-50%] fixed sm:fixed md:fixed">
-          <div className="p-2 sm:p-3 pb-0">
+        <DialogContent 
+          className="w-[95vw] sm:w-[90vw] md:max-w-5xl p-0 flex flex-col overflow-auto" 
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            height: 'auto',
+            maxHeight: '90vh'
+          }}
+        >
+          <DialogTitle className="sr-only">Calendar</DialogTitle>
+          <div className="p-2 sm:p-3 pb-0 border-b">
             <WeatherWidget compact={true} className="shadow-sm" />
           </div>
-          <div className="p-2 sm:p-3 flex-1 overflow-auto">
+          <div className="p-2 sm:p-3 flex-1 overflow-auto" style={{ maxHeight: 'calc(80vh - 100px)' }}>
             <CalendarRedesigned />
           </div>
         </DialogContent>
