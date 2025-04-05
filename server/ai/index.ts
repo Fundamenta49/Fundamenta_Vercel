@@ -5,6 +5,7 @@ import {
   Message, 
   AIResponseSchema
 } from "./ai-fallback-strategy";
+import { getAppFeaturesKnowledge } from "./app-features-knowledge";
 
 // Context interface 
 export interface AIContext {
@@ -133,6 +134,9 @@ export function constructSystemPrompt(category: string, context: AIContext): str
     - End responses with a friendly invitation to continue the conversation
   `;
   
+  // Get comprehensive app features knowledge
+  const appFeatures = getAppFeaturesKnowledge();
+  
   // Response format guidelines
   const formatGuidelines = `
     Response format:
@@ -152,7 +156,7 @@ export function constructSystemPrompt(category: string, context: AIContext): str
     - "personality": How you're adapting to match user's communication style (formal, casual, technical, simple)
   `;
   
-  return `${basePrompt}\n\n${contextInfo}\n\n${personalityGuidelines}\n\n${formatGuidelines}`;
+  return `${basePrompt}\n\n${contextInfo}\n\n${personalityGuidelines}\n\n${appFeatures}\n\n${formatGuidelines}`;
 }
 
 /**

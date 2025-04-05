@@ -41,7 +41,7 @@ export default function FundiInteractiveAssistant({
   const [thinking, setThinking] = useState(false);
   const [category, setCategory] = useState(initialCategory);
   const [emotion, setEmotion] = useState<'neutral' | 'happy' | 'curious' | 'surprised' | 'concerned'>('neutral');
-  const [chatSize, setChatSize] = useState<{width: string, height: string}>({width: '350px', height: '450px'});
+  const [chatSize, setChatSize] = useState<{width: string, height: string}>({width: '360px', height: '580px'});
   const [fundiPosition, setFundiPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
   // Initialize with a welcome message but connect to real API for subsequent messages
   const [messages, setMessages] = useState<{ text: string; isUser: boolean; timestamp: Date; id?: string }[]>([
@@ -179,9 +179,12 @@ export default function FundiInteractiveAssistant({
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const { width, height } = entry.contentRect;
+        // Constrain width and height to reasonable ranges
+        const constrainedWidth = Math.max(320, Math.min(width, 600));
+        const constrainedHeight = Math.max(450, Math.min(height, 800));
         setChatSize({
-          width: `${width}px`,
-          height: `${height}px`
+          width: `${constrainedWidth}px`,
+          height: `${constrainedHeight}px`
         });
       }
     });
@@ -579,19 +582,23 @@ export default function FundiInteractiveAssistant({
               // Chat interface
               <Card 
                 ref={chatCardRef}
-                className="shadow-xl border-t-4 resize-handler overflow-hidden flex flex-col" 
+                className="shadow-xl border resize-handler overflow-hidden flex flex-col rounded-xl" 
                 style={{ 
-                  borderTopColor: `var(--${category}-500, var(--primary))`,
-                  minWidth: '300px', 
-                  minHeight: '400px',
+                  borderColor: 'rgba(0,0,0,0.1)',
+                  minWidth: '320px', 
+                  minHeight: '450px',
                   maxWidth: '600px',
                   width: chatSize.width,
                   height: chatSize.height,
-                  resize: 'both' 
+                  resize: 'both',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  background: 'rgba(255, 255, 255, 0.85)'
                 }}
               >
                 <CardHeader 
-                  className="p-4 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing" 
+                  className="p-3 pb-2 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing border-b" 
+                  style={{ borderColor: 'rgba(0,0,0,0.05)' }}
                   onMouseDown={(e) => {
                     // This makes the entire header a drag handle
                     // The parent motion.div will handle the actual dragging
@@ -657,12 +664,24 @@ export default function FundiInteractiveAssistant({
                           <div 
                             key={message.id || index} 
                             className={cn(
-                              "flex my-0.5",
-                              message.isUser ? "justify-end" : "justify-start"
+                              "flex my-1",
+                              message.isUser ? "justify-end" : "justify-start",
+                              // Add timestamp above message if needed
+                              showTimestamp && index !== 0 ? "mt-3" : ""
                             )}
                           >
+                            {/* Message time indicator - Apple-style */}
+                            {showTimestamp && index !== 0 && (
+                              <div className="absolute -mt-2.5 left-1/2 transform -translate-x-1/2">
+                                <div className="text-[9px] text-muted-foreground px-2 py-0.5 bg-muted/20 rounded-full">
+                                  {formatTime(message.timestamp)}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Fundi avatar for the first message in a series */}
                             {!message.isUser && isFirstInSeries && (
-                              <div className="flex-shrink-0 mr-1.5 mt-1 mb-auto">
+                              <div className="flex-shrink-0 mr-1 mt-0.5 mb-auto">
                                 <FundiAvatarEnhanced
                                   size="xs"
                                   category={category}
@@ -671,21 +690,26 @@ export default function FundiInteractiveAssistant({
                                 />
                               </div>
                             )}
+                            
+                            {/* Spacer to align follow-up messages with the first one */}
                             {!message.isUser && !isFirstInSeries && (
-                              <div className="w-6 mr-1.5"></div>
+                              <div className="w-6 mr-1"></div>
                             )}
+                            
+                            {/* The actual message bubble - Apple iMessage style */}
                             <div 
                               className={cn(
-                                "max-w-[75%] px-3 py-1.5 text-xs shadow-sm",
+                                "max-w-[80%] px-3 py-2 leading-snug text-xs",
                                 message.isUser ? 
-                                  "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm" : 
-                                  "bg-muted/70 text-foreground rounded-2xl rounded-tl-sm",
+                                  "bg-primary text-primary-foreground rounded-2xl rounded-tr-lg shadow-sm" : 
+                                  "bg-muted/40 text-foreground rounded-2xl rounded-tl-lg border border-muted/20",
+                                // Apple-style rounded bubbles with specific corners based on position in sequence
                                 isFirstInSeries && !isLastInSeries ? 
                                   message.isUser ? "rounded-tr-2xl" : "rounded-tl-2xl" : "",
                                 !isFirstInSeries && isLastInSeries ? 
-                                  message.isUser ? "rounded-tr-sm" : "rounded-tl-sm" : "",
+                                  message.isUser ? "rounded-tr-lg" : "rounded-tl-lg" : "",
                                 !isFirstInSeries && !isLastInSeries ? 
-                                  message.isUser ? "rounded-tr-sm rounded-br-2xl" : "rounded-tl-sm rounded-bl-2xl" : ""
+                                  message.isUser ? "rounded-tr-lg rounded-br-2xl" : "rounded-tl-lg rounded-bl-2xl" : ""
                               )}
                             >
                               <div className="leading-relaxed">{message.text}</div>
@@ -712,11 +736,11 @@ export default function FundiInteractiveAssistant({
                               emotion="curious"
                             />
                           </div>
-                          <div className="bg-muted/70 rounded-2xl px-3 py-1.5 text-xs shadow-sm">
-                            <div className="flex items-center h-4 space-x-1">
-                              <span className="inline-block w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce"></span>
-                              <span className="inline-block w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                              <span className="inline-block w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                          <div className="bg-muted/40 rounded-2xl px-3 py-2 text-xs border border-muted/20">
+                            <div className="flex items-center h-4 space-x-1.5">
+                              <span className="inline-block w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce"></span>
+                              <span className="inline-block w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                              <span className="inline-block w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
                             </div>
                           </div>
                         </div>
@@ -725,24 +749,37 @@ export default function FundiInteractiveAssistant({
                     </div>
                   </CardContent>
                 </ScrollArea>
-                <CardFooter className="p-3 border-t flex space-x-2">
-                  <Input
-                    placeholder="Type your message..."
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    ref={inputRef}
-                    className="flex-1"
-                  />
-                  <Button size="icon" onClick={handleSendMessage}>
-                    <Send className="h-4 w-4" />
-                  </Button>
+                <CardFooter className="p-3 pt-2 border-t flex space-x-2" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
+                  <div className="flex w-full items-center space-x-2 rounded-full border bg-background px-3 focus-within:ring-1 focus-within:ring-ring" style={{ borderColor: 'rgba(0,0,0,0.1)' }}>
+                    <Input
+                      placeholder="Type your message..."
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      ref={inputRef}
+                      className="flex-1 border-0 bg-transparent p-2 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                    <Button 
+                      size="icon" 
+                      onClick={handleSendMessage} 
+                      className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
+                    >
+                      <Send className="h-4 w-4 text-primary-foreground" />
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             ) : (
-              <Card className="w-72 shadow-xl">
+              <Card className="w-72 shadow-xl border rounded-xl" 
+                style={{
+                  borderColor: 'rgba(0,0,0,0.1)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  background: 'rgba(255, 255, 255, 0.85)'
+                }}>
                 <CardHeader 
-                  className="p-4 pb-2 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing"
+                  className="p-3 pb-2 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing border-b"
+                  style={{ borderColor: 'rgba(0,0,0,0.05)' }}
                   onMouseDown={(e) => {
                     // This makes the entire header a drag handle
                     // The parent motion.div will handle the actual dragging
@@ -858,15 +895,17 @@ export default function FundiInteractiveAssistant({
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="border-t p-3">
-                  <Button 
-                    className="w-full gap-2 h-8" 
-                    size="sm"
-                    onClick={toggleChat}
-                  >
-                    <MessageSquarePlus className="h-4 w-4" />
-                    Start chat
-                  </Button>
+                <CardFooter className="border-t p-3" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
+                  <div className="flex w-full rounded-full">
+                    <Button 
+                      className="w-full gap-2 h-9 rounded-full" 
+                      size="sm"
+                      onClick={toggleChat}
+                    >
+                      <MessageSquarePlus className="h-4 w-4" />
+                      Start chat
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             )}
