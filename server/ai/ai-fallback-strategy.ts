@@ -77,15 +77,31 @@ export class OpenAIProvider implements AIProvider {
     previousMessages: Message[]
   ): Promise<AIResponse> {
     try {
-      // Check if this is a simple greeting
+      // Enhanced greeting detection with more patterns and casual phrases
       const lowerMessage = message.toLowerCase().trim();
+      
+      // Simple greeting patterns
+      const greetingPatterns = [
+        'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up",
+        'hi there', 'hey there', 'hello there', 'how are you', 'how are ya',
+        'how you doing', 'how you doin', 'how is it going', "how's it going", 'hows it going',
+        'good morning', 'good afternoon', 'good evening', 'morning', 'afternoon', 'evening'
+      ];
+      
+      // Check for common buddy/friend terms that indicate casual conversation
+      const buddyTerms = ['buddy', 'friend', 'pal', 'mate', 'dude', 'my friend', 'my buddy', 'bot buddy'];
+      
+      // Check if this is a simple greeting
       const isSimpleGreeting = 
-        ['hi', 'hey', 'hello', 'howdy', 'hi there', 'hey there', 'hello there', 'hiya', 'yo'].some(greeting => 
+        // Direct greeting match
+        greetingPatterns.some(greeting => 
           lowerMessage === greeting || 
           lowerMessage.startsWith(greeting + ' ') || 
           lowerMessage.endsWith(' ' + greeting) ||
           lowerMessage.includes(greeting + '!')
-        );
+        ) ||
+        // Or contains buddy terms which almost always indicate casual conversation
+        buddyTerms.some(term => lowerMessage.includes(term));
       
       // For simple greetings, we can return a friendly response directly
       // This avoids the more formal AI patterns for basic interactions
@@ -315,15 +331,31 @@ export class HuggingFaceProvider implements AIProvider {
       // Get personality elements from JSON file
       const personalityElements = getFundiPersonalityElements();
       
-      // First, check if this is a simple greeting
+      // Enhanced greeting detection with more patterns and casual phrases
       const lowerMessage = mainIntent.toLowerCase().trim();
+      
+      // Simple greeting patterns
+      const greetingPatterns = [
+        'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up",
+        'hi there', 'hey there', 'hello there', 'how are you', 'how are ya',
+        'how you doing', 'how you doin', 'how is it going', "how's it going", 'hows it going',
+        'good morning', 'good afternoon', 'good evening', 'morning', 'afternoon', 'evening'
+      ];
+      
+      // Check for common buddy/friend terms that indicate casual conversation
+      const buddyTerms = ['buddy', 'friend', 'pal', 'mate', 'dude', 'my friend', 'my buddy', 'bot buddy'];
+      
+      // Check if this is a simple greeting
       const isSimpleGreeting = 
-        ['hi', 'hey', 'hello', 'howdy', 'hi there', 'hey there', 'hello there', 'hiya', 'yo'].some(greeting => 
+        // Direct greeting match
+        greetingPatterns.some(greeting => 
           lowerMessage === greeting || 
           lowerMessage.startsWith(greeting + ' ') || 
           lowerMessage.endsWith(' ' + greeting) ||
           lowerMessage.includes(greeting + '!')
-        );
+        ) ||
+        // Or contains buddy terms which almost always indicate casual conversation
+        buddyTerms.some(term => lowerMessage.includes(term));
       
       // Get personalized greeting responses from personality data
       const greetingResponses = personalityElements.greetingResponses;
@@ -344,7 +376,26 @@ export class HuggingFaceProvider implements AIProvider {
         })
       ];
       
-      // Choose appropriate response type based on message
+      // For simple greetings, we can return a friendly response directly without additional context
+      if (isSimpleGreeting && previousMessages.length === 0) {
+        const selectedGreeting = greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
+        
+        return {
+          response: selectedGreeting,
+          sentiment: "friendly",
+          suggestions: [{
+            text: "Would you like to see what I can help you with?",
+            path: "/"
+          }],
+          followUpQuestions: [
+            "Is there a specific feature of the app you'd like to explore?",
+            "What skills are you interested in developing today?"
+          ],
+          personality: "friendly-casual"
+        };
+      }
+      
+      // Choose appropriate response type based on message (for non-greetings)
       const personalTouchIntro = isSimpleGreeting 
         ? greetingResponses[Math.floor(Math.random() * greetingResponses.length)]
         : conversationStarters[Math.floor(Math.random() * conversationStarters.length)];
