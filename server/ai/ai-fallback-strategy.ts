@@ -77,6 +77,41 @@ export class OpenAIProvider implements AIProvider {
     previousMessages: Message[]
   ): Promise<AIResponse> {
     try {
+      // Check if this is a simple greeting
+      const lowerMessage = message.toLowerCase().trim();
+      const isSimpleGreeting = 
+        ['hi', 'hey', 'hello', 'howdy', 'hi there', 'hey there', 'hello there', 'hiya', 'yo'].some(greeting => 
+          lowerMessage === greeting || 
+          lowerMessage.startsWith(greeting + ' ') || 
+          lowerMessage.endsWith(' ' + greeting) ||
+          lowerMessage.includes(greeting + '!')
+        );
+      
+      // For simple greetings, we can return a friendly response directly
+      // This avoids the more formal AI patterns for basic interactions
+      if (isSimpleGreeting && previousMessages.length === 0) {
+        // Get personalized greeting responses from personality data
+        const personalityElements = getFundiPersonalityElements();
+        const greetingResponses = personalityElements.greetingResponses.map(response => 
+          // Make sure responses end with a complete thought - if needed, add a second sentence
+          response.endsWith("?") || response.endsWith("!") ? response : response + " What can I help with today?"
+        );
+        
+        return {
+          response: greetingResponses[Math.floor(Math.random() * greetingResponses.length)],
+          sentiment: "friendly",
+          suggestions: [{
+            text: "Would you like to see what I can help you with?",
+            path: "/"
+          }],
+          followUpQuestions: [
+            "Is there a specific feature of the app you'd like to explore?",
+            "Are you interested in any particular life skills today?"
+          ]
+        };
+      }
+      
+      // For normal requests, proceed with OpenAI
       // Create the messages array
       const messages: ChatCompletionMessageParam[] = [
         { role: "system", content: systemPrompt },
@@ -280,7 +315,20 @@ export class HuggingFaceProvider implements AIProvider {
       // Get personality elements from JSON file
       const personalityElements = getFundiPersonalityElements();
       
-      // Combine default starters with any examples from the personality file
+      // First, check if this is a simple greeting
+      const lowerMessage = mainIntent.toLowerCase().trim();
+      const isSimpleGreeting = 
+        ['hi', 'hey', 'hello', 'howdy', 'hi there', 'hey there', 'hello there', 'hiya', 'yo'].some(greeting => 
+          lowerMessage === greeting || 
+          lowerMessage.startsWith(greeting + ' ') || 
+          lowerMessage.endsWith(' ' + greeting) ||
+          lowerMessage.includes(greeting + '!')
+        );
+      
+      // Get personalized greeting responses from personality data
+      const greetingResponses = personalityElements.greetingResponses;
+      
+      // For normal responses - combine default starters with examples from the personality file
       const conversationStarters = [
         "Absolutely! I'd love to help with that. ",
         "Great question! This is actually something I'm passionate about. ",
@@ -296,8 +344,10 @@ export class HuggingFaceProvider implements AIProvider {
         })
       ];
       
-      // Random personal touch to start the response
-      const personalTouchIntro = conversationStarters[Math.floor(Math.random() * conversationStarters.length)];
+      // Choose appropriate response type based on message
+      const personalTouchIntro = isSimpleGreeting 
+        ? greetingResponses[Math.floor(Math.random() * greetingResponses.length)]
+        : conversationStarters[Math.floor(Math.random() * conversationStarters.length)];
       
       // Special handling for financial education queries - redirect to finance
       const lowerIntent = mainIntent.toLowerCase();

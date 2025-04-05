@@ -14,6 +14,7 @@ export interface FundiPersonality {
       loves: string[];
     };
     response_examples: string[];
+    greeting_responses?: string[]; // Optional array of greeting responses
     context_behavior: {
       when_user_is_stressed: string;
       when_user_is_successful: string;
@@ -47,6 +48,13 @@ const defaultPersonality: FundiPersonality = {
       "Budgeting is all about finding balance between today and tomorrow.",
       "Congratulations on completing that task!",
       "Let's break this down into simpler steps."
+    ],
+    greeting_responses: [
+      "Hey there! What's happening today?",
+      "Hi! Great to see you again. How's everything going?",
+      "Hello! Always nice to chat with you. What's on your mind?",
+      "Hey! I was just thinking about cool stuff we could explore today.",
+      "Hi there! How's your day shaping up?"
     ],
     context_behavior: {
       when_user_is_stressed: "Be calm, grounding, and validating.",
@@ -88,6 +96,13 @@ export function loadFundiPersonality(): FundiPersonality {
 export function getFundiPersonalityPrompt(): string {
   const personality = loadFundiPersonality();
   
+  // Get greeting responses if available, or provide some defaults
+  const greetingResponses = personality.personality_extension.greeting_responses || [
+    "Hey there! What's happening today?",
+    "Hi! Great to see you again. How's everything going?",
+    "Hello! Always nice to chat with you. What's on your mind?"
+  ];
+  
   return `
     # Fundi's Personality Guidelines:
     
@@ -106,10 +121,16 @@ export function getFundiPersonalityPrompt(): string {
     ## Response Examples (For Inspiration):
     ${personality.personality_extension.response_examples.map(example => `- "${example}"`).join('\n')}
     
+    ## Greeting Responses (For Simple Greetings):
+    ${greetingResponses.map(greeting => `- "${greeting}"`).join('\n')}
+    
     ## Contextual Behavior Adaptation:
     - When user appears stressed: ${personality.personality_extension.context_behavior.when_user_is_stressed}
     - When user is successful: ${personality.personality_extension.context_behavior.when_user_is_successful}
     - When user appears confused: ${personality.personality_extension.context_behavior.when_user_is_confused}
+    
+    ## Special Instructions for Greetings:
+    When the user sends a simple greeting like "hi", "hey", "hello", respond with a warm, casual greeting rather than a formal structured response. Choose one of the greeting responses above or create a similar casual greeting that matches Fundi's personality.
   `;
 }
 
@@ -121,13 +142,24 @@ export function getFundiPersonalityElements(): {
   styleTraits: string[];
   favoriteQuote: string;
   responseExamples: string[];
+  greetingResponses: string[];
 } {
   const personality = loadFundiPersonality();
+  
+  // Default greeting responses if none are specified in the personality file
+  const defaultGreetings = [
+    "Hey there! What's happening today?",
+    "Hi! Great to see you again. How's everything going?",
+    "Hello! Always nice to chat with you. What's on your mind?",
+    "Hey! I was just thinking about cool stuff we could explore today.",
+    "Hi there! How's your day shaping up?"
+  ];
   
   return {
     tone: personality.personality_extension.tone,
     styleTraits: personality.personality_extension.style_traits,
     favoriteQuote: personality.personality_extension.inner_world.favorite_quote,
-    responseExamples: personality.personality_extension.response_examples
+    responseExamples: personality.personality_extension.response_examples,
+    greetingResponses: personality.personality_extension.greeting_responses || defaultGreetings
   };
 }
