@@ -422,7 +422,10 @@ export class HuggingFaceProvider implements AIProvider {
       const greetingResponses = personalityElements.greetingResponses;
       const whatsUpResponses = personalityElements.whatsUpResponses || [];
       
-      // For normal responses - combine default starters with examples from the personality file
+      // For normal responses - use a standard set of conversation starters
+      // Use fixed conversation starters with the right tone and enthusiasm
+      // We intentionally avoid using responseExamples here as they contain specific content examples
+      // that should not be mixed with every response
       const conversationStarters = [
         "Absolutely! I'd love to help with that. ",
         "Great question! This is actually something I'm passionate about. ",
@@ -430,12 +433,10 @@ export class HuggingFaceProvider implements AIProvider {
         "I'm really excited to talk about this with you! ",
         "This is one of my favorite topics! ",
         "I'd be thrilled to help with that! ",
-        // Add starters adapted from the personality file's response examples
-        ...(personalityElements.responseExamples || []).map(example => {
-          // Transform longer response examples into conversation starters
-          const shortenedExample = example.split('.')[0] + '. ';
-          return shortenedExample;
-        })
+        "Let me share some insights on this. ",
+        "I've got some great information about this. ",
+        "That's something I can definitely help with. ",
+        "Thanks for asking about this topic! "
       ];
       
       // For greetings at the start of a conversation,
@@ -1007,15 +1008,10 @@ export class FallbackAIService {
       // Get personality elements from the user's custom settings
       const personalityElements = getFundiPersonalityElements();
       
-      // Get a random favorite quote or response example from the personality data
+      // Use Fundi's favorite quote rather than mixing in random examples which can create confusing responses
       let personalizedTouch = "";
       if (personalityElements.favoriteQuote) {
         personalizedTouch = `As I like to say, "${personalityElements.favoriteQuote}" `;
-      } else if (personalityElements.responseExamples && personalityElements.responseExamples.length > 0) {
-        const randomExample = personalityElements.responseExamples[
-          Math.floor(Math.random() * personalityElements.responseExamples.length)
-        ];
-        personalizedTouch = `${randomExample} `;
       }
       
       return {
