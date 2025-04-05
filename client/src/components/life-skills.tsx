@@ -18,6 +18,7 @@ import {
   Lightbulb,
   AlertCircle,
   ShoppingBag,
+  FileText
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +27,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import ShoppingBuddy from "@/components/shopping-buddy";
+import IdentityDocumentsGuide from "@/components/identity-documents-guide";
 
 // Define user profile interface for personalization
 interface UserProfile {
@@ -51,7 +53,7 @@ interface SmartPrompt {
   createdAt: Date;
 }
 
-type LifeSkillsTabId = "dashboard" | "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping";
+type LifeSkillsTabId = "dashboard" | "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping" | "identity";
 
 // Complete implementation of Life Skills component with horizontal tabs and search functionality
 export const LifeSkillsComponent = () => {
@@ -124,7 +126,8 @@ export const LifeSkillsComponent = () => {
     { id: "home", label: "Home Care", icon: Home },
     { id: "time", label: "Time Management", icon: Clock },
     { id: "communication", label: "Communication", icon: MessageSquare },
-    { id: "shopping", label: "Shopping Buddy", icon: ShoppingBag }
+    { id: "shopping", label: "Shopping Buddy", icon: ShoppingBag },
+    { id: "identity", label: "Identity Documents", icon: FileText }
   ];
 
   // Function to handle search
