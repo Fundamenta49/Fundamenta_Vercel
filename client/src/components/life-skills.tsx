@@ -516,7 +516,7 @@ export const LifeSkillsComponent = ({ initialTab = "dashboard" }: LifeSkillsComp
   const tabContent: Record<LifeSkillsTabId, React.ReactNode> = {
     dashboard: showOnboarding ? <OnboardingForm /> : <DashboardContent />,
     identity: (
-      <div className="pt-4">
+      <div className="w-full h-full">
         <IdentityDocumentsGuide />
       </div>
     ),
