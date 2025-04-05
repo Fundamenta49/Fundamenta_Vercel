@@ -14,15 +14,18 @@ export interface AIContext {
 }
 
 // Response interface
+// Define a type for the suggestion structure
+export interface AppSuggestion {
+  text: string;
+  path?: string;
+  description?: string;
+  action?: any;
+}
+
 export interface AIOrchestrationResponse {
   response: string;
   actions: any[];
-  suggestions: Array<{
-    text: string;
-    path?: string;
-    description?: string;
-    action?: any;
-  }>;
+  suggestions: AppSuggestion[];
   category: string;
   sentiment: string;
   confidence: number;
@@ -130,7 +133,15 @@ export function constructSystemPrompt(category: string, context: AIContext): str
     Return a JSON object with:
     - "response": Your helpful answer (plain text, no markdown). NEVER automatically navigate users to another section without asking permission first.
     - "sentiment": The emotional tone of your response (encouraging, neutral, cautious, etc.)
-    - "suggestions": Array of follow-up actions, each with text and optional path. IMPORTANT: Always phrase navigation suggestions as questions seeking permission, like "Would you like me to take you to the Finance section?" rather than statements like "Let me take you to the Finance section."
+    - "suggestions": Array of follow-up actions, each with text and optional path. 
+    
+    CRITICAL NAVIGATION RULES:
+    1. ALWAYS phrase navigation suggestions as questions seeking permission, like "Would you like me to take you to the Finance section?" rather than statements
+    2. NEVER navigate users automatically without explicit permission
+    3. When users ask about features in other sections, suggest navigation but don't automatically redirect
+    4. Always respect the user's current context and explain why another section might be helpful
+    5. For financial questions specifically, suggest the finance section with relevant subsection
+    
     - "followUpQuestions": Array of 2-3 logical follow-up questions
     - "personality": How you're adapting to match user's communication style (formal, casual, technical, simple)
   `;
@@ -142,22 +153,60 @@ export function constructSystemPrompt(category: string, context: AIContext): str
  * Contains the valid frontend routes for client-side navigation
  */
 export const validClientRoutes: string[] = [
+  // Main pages
   "/", 
   "/why-fundamenta", 
   "/partner", 
   "/privacy", 
-  "/invite", 
+  "/invite",
+  "/settings",
+  "/help",
+  
+  // Core category pages
   "/emergency", 
   "/finance", 
-  "/finance/mortgage", 
   "/career", 
   "/wellness", 
-  "/active", 
-  "/yoga-test", 
-  "/yoga-pose-analysis", 
-  "/yoga-progression", 
-  "/fundi-showcase", 
-  "/learning", 
+  "/learning",
+  "/cooking",
+  "/fitness",
+  
+  // Finance section
+  "/finance/mortgage", 
+  "/finance/budget",
+  "/finance/investments",
+  "/finance/calculator",
+  
+  // Career section
+  "/career/resume",
+  "/career/interview",
+  "/career/skills",
+  
+  // Wellness section
+  "/wellness/meditation",
+  "/wellness/journal",
+  "/wellness/assessment",
+  
+  // Learning section
+  "/learning/courses",
+  "/learning/study",
+  "/learning/progress",
+  
+  // Emergency section
+  "/emergency/first-aid",
+  "/emergency/contacts",
+  
+  // Cooking section
+  "/cooking/recipes",
+  "/cooking/meal-plan",
+  "/cooking/techniques",
+  
+  // Fitness section
+  "/fitness/workouts",
+  "/fitness/nutrition",
+  "/fitness/progress",
+  
+  // Specific learning courses
   "/learning/courses/vehicle-maintenance", 
   "/learning/courses/home-maintenance", 
   "/learning/courses/cooking-basics", 
@@ -172,7 +221,47 @@ export const validClientRoutes: string[] = [
   "/learning/courses/forming-positive-habits",
   "/learning/courses/utilities-guide",
   "/learning/courses/shopping-buddy",
-  "/learning/courses/repair-assistant"
+  "/learning/courses/repair-assistant",
+  
+  // Special features
+  "/active", 
+  "/yoga-test", 
+  "/yoga-pose-analysis", 
+  "/yoga-progression", 
+  "/fundi-showcase",
+  
+  // Home buying and finance tools
+  "/finance/mortgage-calculator",
+  "/finance/budget-planner",
+  "/finance/investment-tracker",
+  "/finance/loan-comparison",
+  "/finance/retirement-calculator",
+  "/finance/debt-payoff-planner",
+  
+  // Career development tools
+  "/career/resume-builder",
+  "/career/interview-prep",
+  "/career/job-search",
+  "/career/networking",
+  "/career/professional-development",
+  
+  // Wellness enhancement tools
+  "/wellness/stress-management",
+  "/wellness/sleep-tracker",
+  "/wellness/mindfulness",
+  "/wellness/mental-health-resources",
+  
+  // Fitness tools
+  "/fitness/workout-planner",
+  "/fitness/exercise-library",
+  "/fitness/nutrition-tracker",
+  "/fitness/progress-tracking",
+  
+  // Cooking tools
+  "/cooking/recipe-finder",
+  "/cooking/meal-planner",
+  "/cooking/grocery-list",
+  "/cooking/nutrition-calculator"
 ];
 
 /**
@@ -184,7 +273,7 @@ export function processActions(aiResponse: any, category: string, context: AICon
   // Check for navigation intent
   if (aiResponse.suggestions && Array.isArray(aiResponse.suggestions)) {
     // Filter and modify suggestions to ensure they only use valid client-side routes
-    const validSuggestions = aiResponse.suggestions.filter((suggestion: any) => {
+    const validSuggestions = aiResponse.suggestions.filter((suggestion: AppSuggestion) => {
       if (!suggestion.path) return true;
       return validClientRoutes.includes(suggestion.path);
     });
@@ -192,9 +281,9 @@ export function processActions(aiResponse: any, category: string, context: AICon
     // If invalid suggestions were filtered out, replace them with valid ones
     if (validSuggestions.length < aiResponse.suggestions.length) {
       // Add home as a safe fallback suggestion
-      if (!validSuggestions.some((s: any) => s.path === "/")) {
+      if (!validSuggestions.some((s: AppSuggestion) => s.path === "/")) {
         validSuggestions.push({
-          text: "Return to home page",
+          text: "Would you like to return to the home page?",
           path: "/"
         });
       }
@@ -207,11 +296,50 @@ export function processActions(aiResponse: any, category: string, context: AICon
       if (suggestion.path) {
         // Verify the path is in our valid client routes list
         if (validClientRoutes.includes(suggestion.path)) {
+          // Ensure the suggestion text is phrased as a question seeking permission
+          let suggestionText = suggestion.text || '';
+          
+          try {
+            // If the suggestion doesn't seem to be asking for permission, reformat it
+            if (!suggestionText.includes("?") && 
+                !suggestionText.toLowerCase().includes("would you like") &&
+                !suggestionText.toLowerCase().includes("should i") &&
+                !suggestionText.toLowerCase().includes("do you want")) {
+              
+              const routeInfo = Object.entries(applicationRoutes).find(([path, _]) => path === suggestion.path);
+              
+              // Get a meaningful section name - either from route info or from the path
+              let sectionName;
+              if (routeInfo && routeInfo[1] && routeInfo[1].name) {
+                sectionName = routeInfo[1].name;
+              } else {
+                const pathParts = suggestion.path.split("/").filter(Boolean);
+                sectionName = pathParts.length > 0 
+                  ? pathParts[pathParts.length - 1].replace(/-/g, ' ') 
+                  : 'Home';
+                // Function to capitalize the first letter of each word
+                const capitalize = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+                
+                // Capitalize each word in the section name
+                sectionName = sectionName
+                  .split(' ')
+                  .map(capitalize)
+                  .join(' ');
+              }
+              
+              suggestionText = `Would you like me to take you to the ${sectionName} section?`;
+            }
+          } catch (error) {
+            console.error("Error reformatting suggestion text:", error);
+            // Fallback to a safe default
+            suggestionText = `Would you like to go to ${suggestion.path}?`;
+          }
+          
           actions.push({
             type: "navigate",
             payload: {
               route: suggestion.path,
-              reason: suggestion.text
+              reason: suggestionText
             }
           });
         }
@@ -224,7 +352,7 @@ export function processActions(aiResponse: any, category: string, context: AICon
     }
   }
   
-  // For emergency category, always prioritize emergency routes
+  // For emergency category, prioritize emergency routes - but still ask for permission
   if (category === "emergency" && actions.length === 0) {
     // Only use valid client-side routes that are also categorized as emergency routes
     const validEmergencyRoutes = Object.entries(applicationRoutes)
@@ -236,22 +364,30 @@ export function processActions(aiResponse: any, category: string, context: AICon
     
     if (validEmergencyRoutes.length > 0) {
       const [path, routeInfo] = validEmergencyRoutes[0];
-      actions.push({
-        type: "navigate",
-        payload: {
-          route: path,
-          reason: `I'm redirecting you to our ${routeInfo.name} for immediate assistance.`
-        }
+      
+      // Even for emergency, we now ask permission
+      if (!aiResponse.suggestions) {
+        aiResponse.suggestions = [];
+      }
+      
+      // Add the suggestion to navigate to the emergency section
+      aiResponse.suggestions.unshift({
+        text: `Would you like me to show you our ${routeInfo.name} for assistance?`,
+        path: path,
+        description: routeInfo.description
       });
     } else {
       // Fallback to the main emergency route if it exists in valid routes
-      if (validClientRoutes.includes("/emergency")) {
-        actions.push({
-          type: "navigate",
-          payload: {
-            route: "/emergency",
-            reason: "I'm redirecting you to our Emergency section for assistance."
-          }
+      if (validClientRoutes.includes("/emergency") && !aiResponse.suggestions?.some((s: AppSuggestion) => s.path === "/emergency")) {
+        if (!aiResponse.suggestions) {
+          aiResponse.suggestions = [];
+        }
+        
+        // Add the suggestion to navigate to the main emergency section
+        aiResponse.suggestions.unshift({
+          text: "Would you like me to take you to our Emergency Guide for assistance?",
+          path: "/emergency",
+          description: "Critical information and resources for emergency situations"
         });
       }
     }

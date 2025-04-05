@@ -219,5 +219,214 @@ export const applicationRoutes: Record<string, RouteInfo> = {
     description: "Support resources and application guidance",
     categories: ["all"],
     keywords: ["help", "support", "guide", "tutorial", "assistance", "documentation", "faq"]
+  },
+  
+  // Special feature routes
+  "/finance/mortgage": {
+    name: "Mortgage Calculator",
+    description: "Calculate and compare mortgage options with detailed payment breakdowns",
+    categories: ["finance"],
+    keywords: ["mortgage", "loan", "home loan", "house", "payment", "interest", "principal", "down payment", "closing costs"]
+  },
+  
+  "/active": {
+    name: "Active Fitness Tracker",
+    description: "Track and analyze your physical activities and exercises",
+    categories: ["fitness", "wellness"],
+    keywords: ["active", "fitness", "exercise", "tracking", "activity", "workout", "movement", "progress"]
+  },
+  
+  "/yoga-test": {
+    name: "Yoga Pose Assessment",
+    description: "Test and improve your yoga poses with AI guidance",
+    categories: ["fitness", "wellness"],
+    keywords: ["yoga", "pose", "assessment", "flexibility", "strength", "balance", "form"]
+  },
+  
+  "/yoga-pose-analysis": {
+    name: "Yoga Pose Analysis",
+    description: "Get detailed analysis and feedback on your yoga pose form",
+    categories: ["fitness", "wellness"],
+    keywords: ["yoga", "pose", "analysis", "feedback", "form", "technique", "improvement"]
+  },
+  
+  "/yoga-progression": {
+    name: "Yoga Progression Tracker",
+    description: "Track your progress and development in yoga practice over time",
+    categories: ["fitness", "wellness"],
+    keywords: ["yoga", "progression", "improvement", "journey", "practice", "development", "tracking"]
+  },
+  
+  "/fundi-showcase": {
+    name: "Fundi Features Showcase",
+    description: "Explore and test the full range of Fundi's capabilities",
+    categories: ["all"],
+    keywords: ["fundi", "showcase", "features", "capabilities", "assistant", "demo", "tour", "introduction"]
+  },
+  
+  // Home buying and finance tools
+  "/finance/mortgage-calculator": {
+    name: "Mortgage Calculator",
+    description: "Advanced mortgage calculation with amortization and payment breakdowns",
+    categories: ["finance"],
+    keywords: ["mortgage", "calculator", "loan", "home buying", "real estate", "amortization", "interest", "principal"]
+  },
+  
+  "/finance/budget-planner": {
+    name: "Budget Planner",
+    description: "Create and manage personal or household budgets with category-based tracking",
+    categories: ["finance"],
+    keywords: ["budget", "planner", "spending", "expenses", "income", "financial planning", "money management"]
+  },
+  
+  "/finance/investment-tracker": {
+    name: "Investment Portfolio Tracker",
+    description: "Monitor and analyze investment performance across different assets",
+    categories: ["finance"],
+    keywords: ["investment", "tracker", "portfolio", "stocks", "bonds", "mutual funds", "returns", "performance"]
+  },
+  
+  "/finance/loan-comparison": {
+    name: "Loan Comparison Tool",
+    description: "Compare different loan options with detailed cost breakdowns",
+    categories: ["finance"],
+    keywords: ["loan", "comparison", "interest rates", "terms", "financing", "debt", "borrowing"]
+  },
+  
+  "/finance/retirement-calculator": {
+    name: "Retirement Calculator",
+    description: "Plan for retirement by projecting savings, expenses, and income",
+    categories: ["finance"],
+    keywords: ["retirement", "calculator", "savings", "401k", "IRA", "pension", "future planning"]
+  },
+  
+  "/finance/debt-payoff-planner": {
+    name: "Debt Payoff Planner",
+    description: "Create strategies to eliminate debt using snowball or avalanche methods",
+    categories: ["finance"],
+    keywords: ["debt", "payoff", "planner", "credit card", "loan", "interest", "snowball", "avalanche"]
+  },
+  
+  // Career development tools
+  "/career/resume-builder": {
+    name: "Resume Builder",
+    description: "Create professional resumes with customizable templates and AI assistance",
+    categories: ["career"],
+    keywords: ["resume", "builder", "CV", "job application", "career", "employment", "hiring"]
+  },
+  
+  "/career/interview-prep": {
+    name: "Interview Preparation",
+    description: "Practice common interview questions with feedback and guidance",
+    categories: ["career"],
+    keywords: ["interview", "preparation", "questions", "answers", "job", "hiring", "practice"]
+  },
+  
+  "/career/job-search": {
+    name: "Job Search Strategies",
+    description: "Tools and resources for effective job hunting and applications",
+    categories: ["career"],
+    keywords: ["job", "search", "employment", "application", "career", "hiring", "recruitment"]
+  },
+  
+  "/career/networking": {
+    name: "Professional Networking Guide",
+    description: "Strategies and templates for building professional connections",
+    categories: ["career"],
+    keywords: ["networking", "professional", "connections", "career", "LinkedIn", "contacts", "relationships"]
+  },
+  
+  "/career/professional-development": {
+    name: "Professional Development Plan",
+    description: "Create personalized plans for career advancement and skill acquisition",
+    categories: ["career"],
+    keywords: ["professional", "development", "career growth", "skills", "advancement", "training", "education"]
+  },
+  
+  // Wellness enhancement tools
+  "/wellness/stress-management": {
+    name: "Stress Management Techniques",
+    description: "Practical strategies for reducing and managing stress",
+    categories: ["wellness", "mental health"],
+    keywords: ["stress", "management", "anxiety", "relaxation", "techniques", "coping", "mindfulness"]
+  },
+  
+  "/wellness/sleep-tracker": {
+    name: "Sleep Improvement Tracker",
+    description: "Track and optimize sleep patterns for better rest",
+    categories: ["wellness", "health"],
+    keywords: ["sleep", "tracker", "rest", "insomnia", "habits", "bedtime", "schedule"]
+  },
+  
+  "/wellness/mindfulness": {
+    name: "Mindfulness Practices",
+    description: "Guided mindfulness exercises and meditation techniques",
+    categories: ["wellness", "mental health"],
+    keywords: ["mindfulness", "meditation", "awareness", "present", "focus", "calm", "centered"]
+  },
+  
+  "/wellness/mental-health-resources": {
+    name: "Mental Health Resources",
+    description: "Information and support options for mental wellbeing",
+    categories: ["wellness", "mental health", "resources"],
+    keywords: ["mental health", "resources", "support", "therapy", "counseling", "wellbeing", "psychology"]
+  },
+  
+  // Fitness tools
+  "/fitness/workout-planner": {
+    name: "Workout Planner",
+    description: "Create customized workout routines based on goals and equipment",
+    categories: ["fitness", "health"],
+    keywords: ["workout", "planner", "exercise", "routine", "fitness", "training", "program"]
+  },
+  
+  "/fitness/exercise-library": {
+    name: "Exercise Library",
+    description: "Comprehensive database of exercises with instructions and videos",
+    categories: ["fitness", "reference"],
+    keywords: ["exercise", "library", "database", "movements", "techniques", "instructions", "demonstrations"]
+  },
+  
+  "/fitness/nutrition-tracker": {
+    name: "Fitness Nutrition Tracker",
+    description: "Track macronutrients and calories aligned with fitness goals",
+    categories: ["fitness", "nutrition", "health"],
+    keywords: ["nutrition", "tracker", "macros", "calories", "protein", "diet", "fitness"]
+  },
+  
+  "/fitness/progress-tracking": {
+    name: "Fitness Progress Tracking",
+    description: "Monitor and visualize improvements in strength, endurance, and measurements",
+    categories: ["fitness", "health"],
+    keywords: ["progress", "tracking", "measurements", "improvements", "goals", "metrics", "results"]
+  },
+  
+  // Cooking tools
+  "/cooking/recipe-finder": {
+    name: "Recipe Finder",
+    description: "Search for recipes based on ingredients, dietary preferences, or cuisine",
+    categories: ["cooking", "nutrition"],
+    keywords: ["recipe", "finder", "search", "meals", "cooking", "dishes", "ingredients"]
+  },
+  
+  "/cooking/meal-planner": {
+    name: "Meal Planner",
+    description: "Plan balanced meals for days or weeks with nutritional information",
+    categories: ["cooking", "nutrition", "organization"],
+    keywords: ["meal", "planner", "menu", "weekly", "preparation", "organization", "nutrition"]
+  },
+  
+  "/cooking/grocery-list": {
+    name: "Smart Grocery List",
+    description: "Generate organized shopping lists based on planned meals",
+    categories: ["cooking", "organization"],
+    keywords: ["grocery", "list", "shopping", "ingredients", "food", "supermarket", "planning"]
+  },
+  
+  "/cooking/nutrition-calculator": {
+    name: "Recipe Nutrition Calculator",
+    description: "Calculate nutritional information for homemade recipes and meals",
+    categories: ["cooking", "nutrition", "health"],
+    keywords: ["nutrition", "calculator", "recipe", "calories", "macronutrients", "homemade", "meals"]
   }
 };
