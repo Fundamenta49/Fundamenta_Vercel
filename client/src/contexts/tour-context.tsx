@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useLocation } from 'wouter';
+import { useAuth } from '@/lib/auth-context';
 
 // Types for our tour steps
 export interface TourStep {
@@ -191,83 +192,9 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [userName, setUserName] = useState('');
   const [hasSeenTour, setHasSeenTour] = useState(false);
 
-  // Check if the user has seen the tour before and load user name
-  useEffect(() => {
-    // Check if tour has been seen
-    const tourSeen = localStorage.getItem('hasSeenTour');
-    if (tourSeen) {
-      setHasSeenTour(true);
-    } else {
-      // Start tour automatically on first visit
-      startTour();
-    }
-    
-    // Check if user name is stored
-    const savedUserName = localStorage.getItem('tourUserName');
-    if (savedUserName) {
-      setUserName(savedUserName);
-    }
-  }, []);
+  // Import auth context to check authentication status
+  const { isAuthenticated, loading: authLoading } = useAuth();
   
-  // Save user name to localStorage when it changes
-  useEffect(() => {
-    if (userName) {
-      localStorage.setItem('tourUserName', userName);
-    }
-  }, [userName]);
-
-  // Get current step data
-  const currentStep = isTourActive && currentStepIndex < tourSteps.length 
-    ? tourSteps[currentStepIndex] 
-    : null;
-
-  // Navigate to the correct route when step changes
-  useEffect(() => {
-    if (isTourActive && currentStep?.route) {
-      setLocation(currentStep.route);
-    }
-  }, [currentStepIndex, isTourActive, currentStep, setLocation]);
-
-  // Highlight the relevant element if specified
-  useEffect(() => {
-    // Clean up any existing highlights first to avoid stale highlights
-    document.querySelectorAll('.tour-highlight').forEach(el => {
-      el.classList.remove('tour-highlight');
-    });
-    
-    // Don't add highlights for steps 0 and 1 (welcome and fundi intro)
-    if (isTourActive && currentStep && typeof currentStep.highlightSelector === 'string' && currentStepIndex > 1) {
-      // Small delay to ensure the element is rendered
-      const timeout = setTimeout(() => {
-        const selector = currentStep.highlightSelector as string;
-        const element = document.querySelector(selector);
-        
-        if (element) {
-          // Check if element is visible and exists in the DOM
-          if (element.getBoundingClientRect().height > 0) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Explicitly check that we're not highlighting a dialog
-            if (!element.closest('[role="dialog"]') && 
-                !element.closest('[role="alertdialog"]') && 
-                !element.closest('.DialogContent') && 
-                !element.closest('.DialogOverlay')) {
-              element.classList.add('tour-highlight');
-            }
-          }
-        }
-      }, 300);
-
-      return () => {
-        clearTimeout(timeout);
-        // Remove highlight from all elements on cleanup
-        document.querySelectorAll('.tour-highlight').forEach(el => {
-          el.classList.remove('tour-highlight');
-        });
-      };
-    }
-  }, [currentStepIndex, isTourActive, currentStep]);
-
   // Tour control functions
   const startTour = () => {
     setIsTourActive(true);
@@ -342,6 +269,92 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       startTour();
     }, 100);
   };
+
+  // Check if the user has seen the tour before and load user name,
+  // but only after authentication is checked and user is authenticated
+  useEffect(() => {
+    // Wait until auth is no longer loading
+    if (authLoading) {
+      return; // Exit early if auth is still loading
+    }
+    
+    // Only check tour state if the user is authenticated
+    if (isAuthenticated) {
+      // Check if tour has been seen
+      const tourSeen = localStorage.getItem('hasSeenTour');
+      if (tourSeen) {
+        setHasSeenTour(true);
+      } else {
+        // Start tour automatically on first visit, but only for authenticated users
+        startTour();
+      }
+      
+      // Check if user name is stored
+      const savedUserName = localStorage.getItem('tourUserName');
+      if (savedUserName) {
+        setUserName(savedUserName);
+      }
+    }
+  }, [isAuthenticated, authLoading]); // startTour is defined in the component so we don't need it in deps
+  
+  // Save user name to localStorage when it changes
+  useEffect(() => {
+    if (userName) {
+      localStorage.setItem('tourUserName', userName);
+    }
+  }, [userName]);
+
+  // Get current step data
+  const currentStep = isTourActive && currentStepIndex < tourSteps.length 
+    ? tourSteps[currentStepIndex] 
+    : null;
+
+  // Navigate to the correct route when step changes
+  useEffect(() => {
+    if (isTourActive && currentStep?.route) {
+      setLocation(currentStep.route);
+    }
+  }, [currentStepIndex, isTourActive, currentStep, setLocation]);
+
+  // Highlight the relevant element if specified
+  useEffect(() => {
+    // Clean up any existing highlights first to avoid stale highlights
+    document.querySelectorAll('.tour-highlight').forEach(el => {
+      el.classList.remove('tour-highlight');
+    });
+    
+    // Don't add highlights for steps 0 and 1 (welcome and fundi intro)
+    if (isTourActive && currentStep && typeof currentStep.highlightSelector === 'string' && currentStepIndex > 1) {
+      // Small delay to ensure the element is rendered
+      const timeout = setTimeout(() => {
+        const selector = currentStep.highlightSelector as string;
+        const element = document.querySelector(selector);
+        
+        if (element) {
+          // Check if element is visible and exists in the DOM
+          if (element.getBoundingClientRect().height > 0) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Explicitly check that we're not highlighting a dialog
+            if (!element.closest('[role="dialog"]') && 
+                !element.closest('[role="alertdialog"]') && 
+                !element.closest('.DialogContent') && 
+                !element.closest('.DialogOverlay')) {
+              element.classList.add('tour-highlight');
+            }
+          }
+        }
+      }, 300);
+
+      return () => {
+        clearTimeout(timeout);
+        // Remove highlight from all elements on cleanup
+        document.querySelectorAll('.tour-highlight').forEach(el => {
+          el.classList.remove('tour-highlight');
+        });
+      };
+    }
+  }, [currentStepIndex, isTourActive, currentStep]);
 
   // Process template strings in content to include user name
   const processStepContent = (content: string) => {
