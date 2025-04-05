@@ -1,5 +1,31 @@
 /* Global fixes for calendar layout */
 
+/* Fix the overall dialog content positioning and sizing */
+.DialogContent[class*="max-w-5xl"],
+[class*="DialogContent"][class*="max-w-5xl"],
+div[class*="DialogContent"][class*="max-w-5xl"],
+div[role="dialog"] > div[class*="max-w-5xl"] {
+  height: 90vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Improve dialog content vertical spacing */
+.DialogContent[class*="max-w-5xl"] > div,
+[class*="DialogContent"][class*="max-w-5xl"] > div,
+div[class*="DialogContent"][class*="max-w-5xl"] > div {
+  padding: 1rem !important;
+}
+
+/* Ensure calendar container has proper height and padding */
+#calendar-redesigned,
+.calendar-desktop-layout {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0.5rem !important;
+}
+
 /* Force left alignment for tab containers on desktop */
 @media (min-width: 640px) {
   /* General tab container */
