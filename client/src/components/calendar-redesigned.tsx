@@ -300,7 +300,7 @@ export default function CalendarRedesigned() {
           </div>
         </div>
         
-        <ScrollArea className="flex-1 px-4 py-2">
+        <div className="flex-1 px-4 py-2 overflow-y-auto calendar-scroll-container" style={{ scrollbarWidth: 'thin' }}>
           <div className="grid grid-cols-7 h-full calendar-day-cells">
             {/* Day headers - mobile optimized */}
             {daysOfWeek.map((day, index) => (
@@ -390,7 +390,7 @@ export default function CalendarRedesigned() {
               );
             })}
           </div>
-        </ScrollArea>
+        </div>
         
         {/* Action Button - Fixed at bottom right */}
         <div className="fixed bottom-6 right-6">
