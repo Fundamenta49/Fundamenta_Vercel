@@ -27,6 +27,7 @@ import yogaRoutes from './routes/yoga';
 import repairRoutes from './routes/repair';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
+import { userGuideService } from './services/user-guide-service';
 import { 
   getEmergencyGuidance,
   optimizeResume,
@@ -1098,6 +1099,119 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         error: "Failed to get AI fallback status"
+      });
+    }
+  });
+
+  // User Guide API Routes
+  app.get('/api/user-guide/feature/:featureId', (req, res) => {
+    try {
+      const { featureId } = req.params;
+      const guidance = userGuideService.getFeatureGuidance(featureId);
+      res.json({ 
+        success: true, 
+        guidance 
+      });
+    } catch (error) {
+      console.error('Error getting feature guidance:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to retrieve guidance for this feature' 
+      });
+    }
+  });
+
+  app.get('/api/user-guide/context/:context', (req, res) => {
+    try {
+      const { context } = req.params;
+      const guidance = userGuideService.getContextualGuidance(context);
+      res.json({ 
+        success: true, 
+        guidance 
+      });
+    } catch (error) {
+      console.error('Error getting contextual guidance:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to retrieve contextual guidance' 
+      });
+    }
+  });
+
+  app.get('/api/user-guide/tour/:sectionId', (req, res) => {
+    try {
+      const { sectionId } = req.params;
+      const tourSteps = userGuideService.generateSectionTour(sectionId);
+      res.json({ 
+        success: true, 
+        tourSteps 
+      });
+    } catch (error) {
+      console.error('Error generating section tour:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to generate tour for this section' 
+      });
+    }
+  });
+
+  app.post('/api/user-guide/how-to', (req, res) => {
+    try {
+      const questionSchema = z.object({
+        question: z.string(),
+        currentSection: z.string()
+      });
+      
+      const { question, currentSection } = questionSchema.parse(req.body);
+      const answer = userGuideService.answerHowToQuestion(question, currentSection);
+      
+      res.json({ 
+        success: true, 
+        answer 
+      });
+    } catch (error) {
+      console.error('Error answering how-to question:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to answer your question' 
+      });
+    }
+  });
+
+  app.post('/api/user-guide/simplify', (req, res) => {
+    try {
+      const simplifySchema = z.object({
+        complexInfo: z.string()
+      });
+      
+      const { complexInfo } = simplifySchema.parse(req.body);
+      const simplified = userGuideService.simplifyForUser(complexInfo);
+      
+      res.json({ 
+        success: true, 
+        simplified 
+      });
+    } catch (error) {
+      console.error('Error simplifying information:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to simplify this information' 
+      });
+    }
+  });
+
+  app.get('/api/user-guide/content', (_req, res) => {
+    try {
+      const content = userGuideService.getFullGuideContent();
+      res.json({ 
+        success: true, 
+        content 
+      });
+    } catch (error) {
+      console.error('Error getting full guide content:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to retrieve the user guide content' 
       });
     }
   });

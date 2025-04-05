@@ -7,6 +7,8 @@ import {
 } from "./ai-fallback-strategy";
 import { getAppFeaturesKnowledge } from "./app-features-knowledge";
 import { getFundiPersonalityPrompt } from "./fundi-personality-integration";
+import { userGuidePrompt, quickGuideInstructions, contextualGuidance, userGuideContent } from "./user-guide-content";
+import { userGuideService } from "../services/user-guide-service";
 
 // Context interface 
 export interface AIContext {
@@ -49,6 +51,39 @@ export async function orchestrateAIResponse(
     // First, determine the user's intent and what category/advisor would be best
     const categoryResult = await fallbackAIService.determineCategory(message, category);
     
+    // Check if this is a user guide or help-related question
+    const isGuideQuestion = 
+      message.toLowerCase().includes("how do i") || 
+      message.toLowerCase().includes("help me") ||
+      message.toLowerCase().includes("show me how") ||
+      message.toLowerCase().includes("guide") ||
+      message.toLowerCase().includes("tutorial") ||
+      message.toLowerCase().includes("instructions");
+    
+    // If it's a help question and we have context about the current section, 
+    // add contextual guidance from the user guide service
+    if (isGuideQuestion && context.currentSection) {
+      // Get contextual guidance for the current section
+      const contextualGuidance = userGuideService.getContextualGuidance(context.currentSection);
+      
+      // If it appears to be a how-to question and we have a current section
+      if (message.toLowerCase().includes("how") && context.currentSection) {
+        const howToAnswer = userGuideService.answerHowToQuestion(message, context.currentSection);
+        
+        // Add this answer to the previous messages so the AI can build on it
+        previousMessages.push({
+          role: "assistant",
+          content: howToAnswer
+        });
+      }
+      
+      // Add the contextual guidance to the previous messages
+      previousMessages.push({
+        role: "system",
+        content: `User is currently in the ${context.currentSection} section. Relevant guidance: ${contextualGuidance}`
+      });
+    }
+    
     // Use the determined category to select the right system prompt
     const systemPrompt = constructSystemPrompt(categoryResult.category, context);
     
@@ -60,6 +95,21 @@ export async function orchestrateAIResponse(
     
     // Analyze emotion for more detailed sentiment
     const emotionAnalysis = await fallbackAIService.analyzeEmotion(message);
+    
+    // Add tour guide suggestions if this seems to be a guidance request
+    if (isGuideQuestion && context.currentSection && !aiResponse.suggestions) {
+      aiResponse.suggestions = [
+        { 
+          text: "Would you like me to give you a quick tour of this section?", 
+          action: {
+            type: "startTour",
+            payload: {
+              section: context.currentSection
+            }
+          }
+        }
+      ];
+    }
     
     // Construct final response
     return {
@@ -122,6 +172,9 @@ export function constructSystemPrompt(category: string, context: AIContext): str
   // Get comprehensive app features knowledge
   const appFeatures = getAppFeaturesKnowledge();
   
+  // Add user-friendly guidance approach
+  const userGuidanceApproach = userGuidePrompt;
+  
   // Response format guidelines
   const formatGuidelines = `
     Response format:
@@ -141,7 +194,7 @@ export function constructSystemPrompt(category: string, context: AIContext): str
     - "personality": How you're adapting to match user's communication style (formal, casual, technical, simple)
   `;
   
-  return `${basePrompt}\n\n${contextInfo}\n\n${personalityGuidelines}\n\n${appFeatures}\n\n${formatGuidelines}`;
+  return `${basePrompt}\n\n${contextInfo}\n\n${personalityGuidelines}\n\n${appFeatures}\n\n${userGuidanceApproach}\n\n${formatGuidelines}`;
 }
 
 /**
