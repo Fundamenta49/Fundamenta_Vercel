@@ -325,11 +325,15 @@ export default function CalendarRedesigned() {
                 <div 
                   key={i} 
                   className={cn(
-                    "h-[80px] sm:h-[120px] border-t border-r relative",
+                    "h-[80px] sm:h-[120px] border-t border-r relative cursor-pointer",
                     !isCurrentMonth && "opacity-50",
                     isCurrentDay && "bg-gray-50",
                     isWeekend && !isCurrentDay && "bg-gray-50/30",
                   )}
+                  onClick={() => {
+                    setSelectedDay(day);
+                    setShowEventForm(true);
+                  }}
                 >
                   {/* Date number with indicator for current day - mobile optimized */}
                   <div className="h-6 sm:h-8 flex justify-between items-center px-1">
@@ -392,8 +396,9 @@ export default function CalendarRedesigned() {
         <div className="fixed bottom-6 right-6">
           <Button 
             onClick={() => {
-              // Handle new event creation
-              console.log('Create new event');
+              // Set current day as selected day and open event form
+              setSelectedDay(new Date());
+              setShowEventForm(true);
             }}
             className="h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white p-0 calendar-add-button"
           >
@@ -455,6 +460,50 @@ export default function CalendarRedesigned() {
                   )}
                 />
                 <span className="text-sm capitalize">{selectedEvent.category}</span>
+              </div>
+              
+              {/* Description */}
+              {selectedEvent.description && (
+                <div className="mt-3 text-sm text-gray-600">
+                  {selectedEvent.description}
+                </div>
+              )}
+              
+              {/* Action buttons */}
+              <div className="mt-4 pt-3 border-t flex justify-between">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="text-red-600 border-red-200 hover:bg-red-50"
+                  onClick={() => handleDeleteEvent(selectedEvent.id)}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete
+                </Button>
+                
+                <div className="space-x-2">
+                  {selectedEvent.learningResourceId && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleAccessLearningContent}
+                    >
+                      Access Content
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    size="sm"
+                    onClick={() => {
+                      setSelectedDay(selectedEvent.date);
+                      setShowEventDetails(false);
+                      // Pass the selected event to the form for editing
+                      setShowEventForm(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -531,6 +580,16 @@ export default function CalendarRedesigned() {
       
       {/* Event Details Dialog */}
       <EventDetailsDialog />
+      
+      {/* Event Form Dialog */}
+      <EventForm 
+        isOpen={showEventForm}
+        onClose={() => setShowEventForm(false)}
+        onSave={handleSaveEvent}
+        selectedDate={selectedDay || undefined}
+        editEvent={selectedEvent && selectedDay && isSameDay(selectedEvent.date, selectedDay) ? selectedEvent : null}
+        learningResources={[]}
+      />
     </>
   );
 }
