@@ -510,7 +510,24 @@ export const LifeSkillsComponent = () => {
   // Tab content components
   const tabContent: Record<LifeSkillsTabId, React.ReactNode> = {
     dashboard: showOnboarding ? <OnboardingForm /> : <DashboardContent />,
-    identity: <IdentityDocumentsGuide />,
+    identity: (
+      <div className="pt-4">
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center">
+              <FileText className="h-5 w-5 mr-2 text-primary" />
+              Identity Documents Guide
+            </CardTitle>
+            <CardDescription>
+              Comprehensive guide to obtaining and managing important identity documents
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <IdentityDocumentsGuide />
+          </CardContent>
+        </Card>
+      </div>
+    ),
     search: (
       <div className="space-y-4 pt-4">
         <form onSubmit={handleSearch}>
