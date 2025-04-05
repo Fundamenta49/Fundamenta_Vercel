@@ -416,7 +416,7 @@ export default function CalendarRedesigned() {
     
     return (
       <Dialog open={showEventDetails} onOpenChange={setShowEventDetails}>
-        <DialogContent className="w-[95%] max-w-md max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed" aria-labelledby="event-dialog-title">
+        <DialogContent className="bg-white dark:bg-gray-900 w-[95%] max-w-md max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed sm:rounded-lg shadow-lg" aria-labelledby="event-dialog-title">
           <div className="space-y-4">
             <div className="flex justify-between items-start">
               <div className="space-y-1">

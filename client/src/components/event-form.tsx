@@ -197,7 +197,7 @@ const EventForm = ({ isOpen, onClose, onSave, selectedDate, editEvent, learningR
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] w-[95%] max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed">
+      <DialogContent className="bg-white dark:bg-gray-900 sm:max-w-[500px] w-[95%] max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed sm:rounded-lg shadow-lg">
         <DialogHeader>
           <DialogTitle>{editEvent ? 'Edit Event' : 'Add New Event'}</DialogTitle>
         </DialogHeader>
