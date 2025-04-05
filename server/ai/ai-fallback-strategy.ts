@@ -153,14 +153,20 @@ export class OpenAIProvider implements AIProvider {
     try {
       // Check for home maintenance related queries
       const lowerMessage = message.toLowerCase();
-      if (lowerMessage.includes('picfix') || lowerMessage.includes('pic fix') || 
+      if (lowerMessage.includes('picfix') || 
+          lowerMessage.includes('pic fix') || 
+          lowerMessage.includes('utilities') ||
+          lowerMessage.includes('utility') ||
+          lowerMessage.includes('hook up') ||
+          lowerMessage.includes('home maintenance') ||
+          (lowerMessage.includes('house') && lowerMessage.includes('project')) ||
           (lowerMessage.includes('photo') && (lowerMessage.includes('repair') || lowerMessage.includes('fix') || lowerMessage.includes('diagnose'))) ||
           (lowerMessage.includes('broken') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('fixture'))) ||
           (lowerMessage.includes('repair') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('toilet') || lowerMessage.includes('sink') || lowerMessage.includes('door'))) ||
           (lowerMessage.includes('fix') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('fixture') || lowerMessage.includes('toilet') || lowerMessage.includes('sink'))) ||
           (lowerMessage.includes('diagnose') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('problem'))) ||
           (lowerMessage.includes('camera') && lowerMessage.includes('repair')) ||
-          (lowerMessage.includes('leaking') || lowerMessage.includes('water damage') || lowerMessage.includes('plumbing issue'))) {
+          (lowerMessage.includes('leaking') || lowerMessage.includes('water damage') || lowerMessage.includes('plumbing') || lowerMessage.includes('electrical'))) {
         console.log('OpenAI provider - early detection: Home maintenance or PicFix query, categorizing as homeMaintenance');
         return { category: "homeMaintenance", confidence: 0.95 };
       }
@@ -362,6 +368,25 @@ export class HuggingFaceProvider implements AIProvider {
         lowerMessage.includes('meditation')) {
       console.log('HuggingFace provider - early detection: Mental health/wellness query, categorizing as wellness');
       return { category: "wellness", confidence: 0.9 };
+    }
+    
+    // Check for home maintenance and utilities related queries
+    if (lowerMessage.includes('picfix') || 
+        lowerMessage.includes('pic fix') || 
+        lowerMessage.includes('utilities') ||
+        lowerMessage.includes('utility') ||
+        lowerMessage.includes('hook up') ||
+        lowerMessage.includes('home maintenance') ||
+        (lowerMessage.includes('house') && lowerMessage.includes('project')) ||
+        (lowerMessage.includes('photo') && (lowerMessage.includes('repair') || lowerMessage.includes('fix'))) ||
+        (lowerMessage.includes('broken') && (lowerMessage.includes('house') || lowerMessage.includes('home'))) ||
+        (lowerMessage.includes('repair') && (lowerMessage.includes('house') || lowerMessage.includes('home'))) ||
+        (lowerMessage.includes('fix') && (lowerMessage.includes('house') || lowerMessage.includes('home'))) ||
+        lowerMessage.includes('leaking') || 
+        lowerMessage.includes('plumbing') || 
+        lowerMessage.includes('electrical')) {
+      console.log('HuggingFace provider - early detection: Home maintenance query, categorizing as homeMaintenance');
+      return { category: "homeMaintenance", confidence: 0.9 };
     }
     
     // Only use preferred category if it's not overridden by content-specific categorization

@@ -415,6 +415,57 @@ export async function getContentCategory(text: string): Promise<string> {
     // Check for specific keywords in lowercase text
     const lowerText = text.toLowerCase();
     
+    // Wellness and mental health terms - highest priority
+    if (lowerText.includes('anxiety') || 
+        lowerText.includes('worried') || 
+        lowerText.includes('stressed') ||
+        lowerText.includes('feeling') ||
+        lowerText.includes('mental health') || 
+        lowerText.includes('overwhelmed') ||
+        lowerText.includes('scared') ||
+        lowerText.includes('nervous') ||
+        lowerText.includes('afraid') || 
+        lowerText.includes('panic') ||
+        lowerText.includes('meditation') ||
+        lowerText.includes('relaxation') ||
+        lowerText.includes('mindfulness')) {
+      console.log('Early detection: Mental health/wellness term detected, categorizing as wellness');
+      return 'wellness';
+    }
+    
+    // Fitness terms
+    if (lowerText.includes('yoga') || 
+        lowerText.includes('workout') || 
+        lowerText.includes('exercise') ||
+        lowerText.includes('running') ||
+        lowerText.includes('fitness') || 
+        lowerText.includes('gym') ||
+        lowerText.includes('cardio') ||
+        lowerText.includes('strength training') ||
+        lowerText.includes('physical health') ||
+        lowerText.includes('calories') ||
+        lowerText.includes('weight loss') ||
+        lowerText.includes('muscle')) {
+      console.log('Early detection: Fitness term detected, categorizing as fitness');
+      return 'fitness';
+    }
+    
+    // Home maintenance terms
+    if (lowerText.includes('repair') || 
+        lowerText.includes('fix') || 
+        lowerText.includes('broken') ||
+        lowerText.includes('picfix') ||
+        lowerText.includes('pic fix') || 
+        lowerText.includes('leaking') ||
+        lowerText.includes('utilities') ||
+        lowerText.includes('house maintenance') ||
+        lowerText.includes('plumbing') ||
+        lowerText.includes('electrical') ||
+        lowerText.includes('home project')) {
+      console.log('Early detection: Home maintenance term detected, categorizing as homeMaintenance');
+      return 'homeMaintenance';
+    }
+    
     // Finance terms
     if (lowerText.includes('crypto') || 
         lowerText.includes('bitcoin') || 
