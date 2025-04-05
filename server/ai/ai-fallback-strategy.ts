@@ -82,7 +82,7 @@ export class OpenAIProvider implements AIProvider {
       
       // Simple greeting patterns
       const greetingPatterns = [
-        'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up",
+        'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up", 'whats good', "what's good",
         'hi there', 'hey there', 'hello there', 'how are you', 'how are ya',
         'how you doing', 'how you doin', 'how is it going', "how's it going", 'hows it going',
         'good morning', 'good afternoon', 'good evening', 'morning', 'afternoon', 'evening'
@@ -105,9 +105,9 @@ export class OpenAIProvider implements AIProvider {
       
       // For special "what's up" pattern detection 
       const whatsUpPatterns = [
-        'whats up', "what's up", 'wassup', 'sup', 'hows it going', "how's it going", 
+        'whats up', "what's up", 'whats good', "what's good", 'wassup', 'sup', 'hows it going', "how's it going", 
         'how are you', 'how are ya', 'how you doing', 'how you doin', 'how are things',
-        'how have you been', 'how is everything'
+        'how have you been', 'how is everything', 'whats good', "what's good"
       ];
       
       // Check if this is a "what's up" type greeting
@@ -381,7 +381,7 @@ export class HuggingFaceProvider implements AIProvider {
       
       // Simple greeting patterns
       const greetingPatterns = [
-        'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up",
+        'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up", 'whats good', "what's good",
         'hi there', 'hey there', 'hello there', 'how are you', 'how are ya',
         'how you doing', 'how you doin', 'how is it going', "how's it going", 'hows it going',
         'good morning', 'good afternoon', 'good evening', 'morning', 'afternoon', 'evening'
@@ -404,9 +404,9 @@ export class HuggingFaceProvider implements AIProvider {
       
       // For special "what's up" pattern detection 
       const whatsUpPatterns = [
-        'whats up', "what's up", 'wassup', 'sup', 'hows it going', "how's it going", 
+        'whats up', "what's up", 'whats good', "what's good", 'wassup', 'sup', 'hows it going', "how's it going", 
         'how are you', 'how are ya', 'how you doing', 'how you doin', 'how are things',
-        'how have you been', 'how is everything'
+        'how have you been', 'how is everything', 'whats good', "what's good"
       ];
       
       // Check if this is a "what's up" type greeting
@@ -747,7 +747,7 @@ export class FallbackAIService {
     
     // Simple greeting patterns
     const greetingPatterns = [
-      'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up",
+      'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up", 'whats good', "what's good",
       'hi there', 'hey there', 'hello there', 'how are you', 'how are ya',
       'how you doing', 'how you doin', 'how is it going', "how's it going", 'hows it going',
       'good morning', 'good afternoon', 'good evening', 'morning', 'afternoon', 'evening'
@@ -758,9 +758,9 @@ export class FallbackAIService {
     
     // For special "what's up" pattern detection 
     const whatsUpPatterns = [
-      'whats up', "what's up", 'wassup', 'sup', 'hows it going', "how's it going", 
+      'whats up', "what's up", 'whats good', "what's good", 'wassup', 'sup', 'hows it going', "how's it going", 
       'how are you', 'how are ya', 'how you doing', 'how you doin', 'how are things',
-      'how have you been', 'how is everything'
+      'how have you been', 'how is everything', 'whats good', "what's good"
     ];
     
     // Check if this is a "what's up" type greeting
