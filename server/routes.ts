@@ -1102,6 +1102,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Route to reset the fallback system and clear failure counters
+  app.post("/api/ai/reset-fallback", (req, res) => {
+    try {
+      const status = fallbackAIService.resetFailures();
+      res.json({
+        success: true,
+        message: "Fallback system reset successfully",
+        status
+      });
+    } catch (error) {
+      console.error("Error resetting fallback system:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to reset fallback system"
+      });
+    }
+  });
 
   // User Guide API Routes
   app.get('/api/user-guide/feature/:featureId', (req, res) => {

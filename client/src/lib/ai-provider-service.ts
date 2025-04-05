@@ -27,6 +27,7 @@ interface AIProviderState {
   // Admin-only methods
   fetchStatus: () => Promise<void>;
   toggleFallbackMode: (useFallback?: boolean) => Promise<void>;
+  resetFallbackSystem: () => Promise<void>;
 }
 
 // Create the store with Zustand
@@ -100,6 +101,42 @@ export const useAIProviderStore = create<AIProviderState>((set) => ({
         isLoading: false 
       });
     }
+  },
+  
+  // Admin-only: Reset the fallback system and clear any failure counters
+  resetFallbackSystem: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      
+      const response = await fetch('/api/ai/reset-fallback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to reset fallback system: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Unknown error resetting fallback system');
+      }
+      
+      // Update the status with the response from the reset
+      set({ 
+        status: data.status, 
+        isLoading: false 
+      });
+    } catch (error) {
+      console.error('Error resetting fallback system:', error);
+      set({ 
+        error: error instanceof Error ? error.message : 'Failed to reset fallback system', 
+        isLoading: false 
+      });
+    }
   }
 }));
 
@@ -119,7 +156,7 @@ export function getProviderStatusMessage(status: AIProviderStatus | null): strin
 
 // Hook for monitoring AI provider status (admin use only)
 export function useAIProviderStatus() {
-  const { status, isLoading, error, fetchStatus, toggleFallbackMode } = useAIProviderStore();
+  const { status, isLoading, error, fetchStatus, toggleFallbackMode, resetFallbackSystem } = useAIProviderStore();
   
   return {
     status,
@@ -127,6 +164,7 @@ export function useAIProviderStatus() {
     error,
     fetchStatus,
     toggleFallbackMode,
+    resetFallbackSystem,
     statusMessage: getProviderStatusMessage(status)
   };
 }

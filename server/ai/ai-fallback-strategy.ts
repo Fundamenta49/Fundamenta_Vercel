@@ -815,6 +815,7 @@ export class FallbackAIService {
   private shouldUseFallback(): boolean {
     // If we're forcing fallback mode, always use fallback
     if (this.forceUseFallback) {
+      console.log("Using fallback provider (forced via toggle)");
       return true;
     }
     
@@ -823,14 +824,30 @@ export class FallbackAIService {
       // Check if cooldown period has passed
       const timeSinceLastFailure = Date.now() - this.lastFailureTime;
       if (timeSinceLastFailure < this.COOLDOWN_PERIOD * this.failureCount) {
+        console.log(`Using fallback provider (automatic due to ${this.failureCount} failures in the last ${timeSinceLastFailure/1000}s)`);
         return true;
       } else {
         // Reset failure count after cooldown
+        console.log("Cooldown period passed, resetting failure count");
         this.failureCount = 0;
       }
     }
     
     return false;
+  }
+  
+  /**
+   * Manually reset the failure counter and fallback status
+   * @returns The complete fallback status after reset
+   */
+  public resetFailures() {
+    this.failureCount = 0;
+    this.lastFailureTime = 0;
+    this.forceUseFallback = false;
+    console.log("Manually reset failure counter and fallback status");
+    
+    // Return the complete status object for consistency with the API
+    return this.getFallbackStatus();
   }
   
   private recordFailure() {

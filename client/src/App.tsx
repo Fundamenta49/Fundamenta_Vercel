@@ -48,6 +48,7 @@ import { TourProvider } from "./contexts/tour-context";
 import Tour from "./components/tour";
 import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/lib/auth-context";
+import AdminPage from "@/pages/admin";
 import ProtectedRoute from "@/components/protected-route";
 import TestNotification from "@/components/test-notification";
 
@@ -185,6 +186,7 @@ function Router() {
               </ProtectedRoute>
             </Route>
             <Route path="/fundi-showcase" component={FundiShowcase} />
+            <Route path="/admin" component={AdminPage} />
             <Route path="/learning">
               <ProtectedRoute>
                 <Learning />
