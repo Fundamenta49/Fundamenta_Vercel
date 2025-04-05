@@ -264,7 +264,7 @@ export class HuggingFaceProvider implements AIProvider {
   ): Promise<AIResponse> {
     try {
       // HuggingFace doesn't have a direct equivalent to OpenAI's chat completions
-      // We'll use a simplified approach that combines the available models
+      // We'll use a personality-rich approach with pre-crafted responses
       
       // Extract the main question/intent from the message
       const mainIntent = message.trim();
@@ -272,8 +272,21 @@ export class HuggingFaceProvider implements AIProvider {
       // Determine the best category for routing
       const category = await this.determineCategory(message);
       
-      // Construct a basic response based on the category
+      // Construct a response with strong personality based on the category
       let response = "";
+      
+      // Engaging conversation starters that show Fundi's personality
+      const conversationStarters = [
+        "Absolutely! I'd love to help with that. ",
+        "Great question! This is actually something I'm passionate about. ",
+        "Oh, I'm so glad you asked about this! ",
+        "I'm really excited to talk about this with you! ",
+        "This is one of my favorite topics! ",
+        "I'd be thrilled to help with that! "
+      ];
+      
+      // Random personal touch to start the response
+      const personalTouchIntro = conversationStarters[Math.floor(Math.random() * conversationStarters.length)];
       
       // Special handling for financial education queries - redirect to finance
       const lowerIntent = mainIntent.toLowerCase();
@@ -283,58 +296,70 @@ export class HuggingFaceProvider implements AIProvider {
           (lowerIntent.includes('learn') && lowerIntent.includes('finance')) ||
           (lowerIntent.includes('schedule') && lowerIntent.includes('financial'))) {
           
-        response = `Great question about financial education! Our Finance section has everything you need - from financial literacy basics to advanced investing strategies and budget planning tools.`;
+        response = `${personalTouchIntro}Financial education is actually something I'm really passionate about! Our Finance section has everything from basics to advanced concepts. I love how our tools make complicated financial topics so much more approachable. What specific part of financial education are you most interested in learning about?`;
         // Override category to ensure proper navigation
         category.category = "finance";
       } else {
         switch (category.category) {
           case "finance":
-            response = `Money matters can be tricky! I'd be happy to help with budgeting strategies, investment options, or any other financial planning questions you have.`;
+            response = `${personalTouchIntro}Money matters can sometimes feel overwhelming, but I'm here to make it simpler! I personally love our Budget Planner tool - it's made such a difference for so many users. What specific financial question can I help with today?`;
             break;
           case "career":
-            response = `Let's boost your career! I've got tools for impressive resumes, job search strategies, and interview prep that'll help you stand out from the crowd.`;
+            response = `${personalTouchIntro}I'm super excited to help with your career journey! Our Resume Builder is one of my favorite features - it's amazing to see the transformations. What specific career challenge are you tackling right now?`;
             break;
           case "wellness":
-            response = `Your wellbeing matters! I can suggest some great stress management techniques, mental health resources, or self-care routines that fit your lifestyle.`;
+            response = `${personalTouchIntro}Taking care of your wellbeing is so important. I find our Mindfulness Practice module incredibly calming when things get hectic. What aspect of wellness would you like to focus on today?`;
             break;
           case "learning":
-            response = `Always excited to help with learning! Let me share some effective study techniques, learning resources, or skill-building strategies to help you grow.`;
+            response = `${personalTouchIntro}Learning new things is what keeps life interesting! I'm particularly fond of our specialized courses - they're designed to be practical and immediately useful. What specific skill are you hoping to develop?`;
             break;
           case "emergency":
-            response = `This sounds urgent. For immediate assistance, please contact emergency services right away. Your safety is the top priority.`;
+            response = `This sounds urgent. Your safety is my absolute top priority right now. For immediate assistance, please contact emergency services right away. Is there anything I can help you with while you do that?`;
             break;
           case "homeMaintenance":
-            response = `Home fix-it time! I can help with maintenance tips, repair guidance, or you can try our PicFix Smart Repair Assistant - just snap a photo of what's broken, and I'll diagnose the issue, provide repair instructions, and even price out parts for you.`;
+            response = `${personalTouchIntro}Home repairs can be tricky! Have you tried our PicFix feature yet? It's honestly one of our coolest tools - just snap a photo of what's broken, and I'll help diagnose the issue, walk you through the repair, and even tell you what parts you'll need. What's giving you trouble around the house?`;
             break;
           default:
-            response = `Absolutely! I'm here for you. What specific details would make my answer most helpful for you?`;
+            response = `${personalTouchIntro}I'd love to help make your day a bit better. What's on your mind? I'm here to chat about anything from finances to fitness, or just be a friendly digital face if you need one!`;
         }
       }
       
-      // Do not add backup mode message - this creates a poor UX
-      // We'll let the UI gracefully handle limitations without explicitly mentioning "backup mode"
+      // Enhanced suggestion that feels more personalized
+      const suggestedText = category.category === "homeMaintenance" 
+        ? "Would you like to check out our amazing PicFix tool? I think you'd love it!" 
+        : `Would you like to explore our ${category.category} section? I think you might find exactly what you need there!`;
       
       return {
         response,
-        sentiment: "helpful",
+        sentiment: "enthusiastic",
         suggestions: [
           {
-            text: "Visit related section",
+            text: suggestedText,
             path: `/${category.category}`
           }
         ],
         followUpQuestions: [
-          "Would you like to try a different question?",
-          "Can I help you with something more specific?"
-        ]
+          "What specific part of this would you like me to explain in more detail?",
+          "Is there a particular feature you'd like to know more about?"
+        ],
+        personality: "friendly-enthusiastic"
       };
     } catch (error) {
       console.error("HuggingFace generateResponse error:", error);
       return {
-        response: "Looks like I'm having a moment! Let me reset and come back stronger. Could you try asking that again in a slightly different way?",
-        sentiment: "apologetic",
-        suggestions: [],
-        followUpQuestions: ["Could you rephrase that?", "Want to try a different question?"]
+        response: "Oh! Looks like my digital brain is having a moment of inspiration overload! I'd love to help with your question - maybe we could try approaching it from a slightly different angle? I'm really excited to get this conversation back on track!",
+        sentiment: "enthusiastic",
+        suggestions: [
+          {
+            text: "Would you like to explore our most popular features instead?",
+            path: "/"
+          }
+        ],
+        followUpQuestions: [
+          "Is there a specific app feature you'd like to learn more about?", 
+          "Would you like me to tell you about one of my favorite tools in the app?"
+        ],
+        personality: "friendly-enthusiastic"
       };
     }
   }
@@ -534,10 +559,19 @@ export class FallbackAIService {
       } catch (error) {
         console.error("Fallback AI provider failed in fallback mode:", error);
         return {
-          response: "Hmm, I seem to be having a bit of a brain freeze! Could we try that question again, maybe phrased differently?",
-          sentiment: "apologetic",
-          suggestions: [],
-          followUpQuestions: ["Would you like to try another topic?", "How about we explore something else?"]
+          response: "Oh! I got so excited thinking about all the ways I could help with that, my digital circuits got a little overloaded! I'd love to try a different approach - what specific aspect of this topic interests you most?",
+          sentiment: "enthusiastic",
+          suggestions: [
+            {
+              text: "Would you like to explore one of our popular features instead?",
+              path: "/"
+            }
+          ],
+          followUpQuestions: [
+            "Is there a different feature you'd like to learn about?", 
+            "What's something else you've been curious about in the app?"
+          ],
+          personality: "friendly-enthusiastic"
         };
       }
     }
@@ -653,10 +687,14 @@ export class FallbackAIService {
       // Ultimate fallback if both providers fail
       console.error("All AI providers failed:", error);
       return {
-        response: "My digital neurons seem to be taking a coffee break! Let's try a different approach or topic - I'd love to help with something else.",
-        sentiment: "apologetic",
-        suggestions: [{ text: "Try the Dashboard", path: "/" }],
-        followUpQuestions: ["Is there something else I can help with?", "Would you like to explore a different topic?"]
+        response: "Wow, I just had a flash of inspiration about how to help you better! Let's take a fresh approach. What are you most excited to learn about today? I'd love to show you some of my favorite features in the app!",
+        sentiment: "enthusiastic",
+        suggestions: [{ text: "Would you like to explore our dashboard for inspiration?", path: "/" }],
+        followUpQuestions: [
+          "Is there a particular area of the app you're curious about?", 
+          "Would you like me to recommend a feature I think you might enjoy?"
+        ],
+        personality: "friendly-enthusiastic"
       };
     });
   }
