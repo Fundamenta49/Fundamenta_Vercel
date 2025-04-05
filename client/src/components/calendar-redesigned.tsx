@@ -273,12 +273,12 @@ export default function CalendarRedesigned() {
             </div>
           </div>
           
-          {/* View selector tabs - compacted for mobile */}
-          <div className="flex justify-center mb-2">
+          {/* View selector tabs - compacted for mobile, fixed for desktop */}
+          <div className="flex justify-center sm:justify-start mb-2">
             <div className="bg-gray-100 rounded-lg p-1 inline-flex">
               <button 
                 className={cn(
-                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
                   currentView === 'day' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('day')}
@@ -287,7 +287,7 @@ export default function CalendarRedesigned() {
               </button>
               <button 
                 className={cn(
-                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
                   currentView === 'week' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('week')}
@@ -296,7 +296,7 @@ export default function CalendarRedesigned() {
               </button>
               <button 
                 className={cn(
-                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
                   currentView === 'month' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('month')}
@@ -305,7 +305,7 @@ export default function CalendarRedesigned() {
               </button>
               <button 
                 className={cn(
-                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
                   currentView === 'year' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('year')}
@@ -1051,7 +1051,7 @@ export default function CalendarRedesigned() {
   return (
     <>
       {/* Main Calendar View */}
-      <div className={cn(
+      <div id="calendar-redesigned" className={cn(
         "bg-white rounded-lg flex flex-col calendar-widget",
         isFullscreen ? "fixed inset-0 z-50" : "h-full"
       )}>

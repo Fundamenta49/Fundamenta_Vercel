@@ -1,0 +1,52 @@
+/* Calendar view desktop fixes */
+
+/* Make the view selector tabs left-aligned on desktop */
+@media (min-width: 640px) {
+  /* Fixes for tabs to be left-aligned */
+  #calendar-redesigned .flex.justify-center.mb-2,
+  #calendar-redesigned div[class*="justify-center"][class*="mb-2"] {
+    justify-content: flex-start !important;
+  }
+  
+  /* Increase the padding for better spacing */
+  #calendar-redesigned .bg-gray-100.rounded-lg button,
+  #calendar-redesigned button[class*="rounded-md"] {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+  
+  /* Make the calendar container scroll properly */
+  #calendar-redesigned .calendar-scroll-container,
+  #calendar-redesigned [class*="overflow-y-auto"] {
+    height: calc(100vh - 250px) !important;
+    overflow-y: auto !important;
+  }
+  
+  /* Enhance category sidebar on desktop */
+  #calendar-redesigned .calendar-categories {
+    padding: 1rem !important;
+  }
+  
+  /* Weather widget container size and positioning */
+  #calendar-redesigned .calendar-header,
+  #calendar-redesigned [class*="px-3"][class*="border-b"] {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+  
+  /* Specific weather widget styling */
+  #calendar-redesigned .calendar-header .weather-widget,
+  #calendar-redesigned [class*="px-3"][class*="border-b"] .weather-widget {
+    max-width: 350px !important;
+    margin-left: auto !important;
+  }
+  
+  /* View selector tabs */
+  #calendar-redesigned [role="tablist"],
+  #calendar-redesigned div[class*="bg-gray-100"][class*="rounded-lg"] {
+    justify-content: flex-start !important;
+    margin-bottom: 0.75rem !important;
+  }
+}
