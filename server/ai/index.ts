@@ -128,9 +128,9 @@ export function constructSystemPrompt(category: string, context: AIContext): str
   const formatGuidelines = `
     Response format:
     Return a JSON object with:
-    - "response": Your helpful answer (plain text, no markdown)
+    - "response": Your helpful answer (plain text, no markdown). NEVER automatically navigate users to another section without asking permission first.
     - "sentiment": The emotional tone of your response (encouraging, neutral, cautious, etc.)
-    - "suggestions": Array of follow-up actions, each with text and optional path
+    - "suggestions": Array of follow-up actions, each with text and optional path. IMPORTANT: Always phrase navigation suggestions as questions seeking permission, like "Would you like me to take you to the Finance section?" rather than statements like "Let me take you to the Finance section."
     - "followUpQuestions": Array of 2-3 logical follow-up questions
     - "personality": How you're adapting to match user's communication style (formal, casual, technical, simple)
   `;

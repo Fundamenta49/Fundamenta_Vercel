@@ -58,55 +58,56 @@ export default function FundiInteractiveAssistant({
 
   // Suggestions based on category
   const getSuggestions = (): SuggestionItem[] => {
+    // The permissions approach - all suggestions should be phrased as questions or requests that require user consent
     switch (category) {
       case 'finance':
         return [
-          { text: 'Help me create a budget', category: 'finance' },
-          { text: 'Explain mortgage terms', category: 'finance' },
-          { text: 'How do I improve my credit score?', category: 'finance' },
+          { text: 'Can you help me create a budget?', category: 'finance' },
+          { text: 'Could you explain mortgage terms?', category: 'finance' },
+          { text: 'How can I improve my credit score?', category: 'finance' },
         ];
       case 'career':
         return [
-          { text: 'Review my resume', category: 'career' },
-          { text: 'Interview preparation tips', category: 'career' },
-          { text: 'How to negotiate salary', category: 'career' },
+          { text: 'Could you give me resume tips?', category: 'career' },
+          { text: 'Do you have interview preparation advice?', category: 'career' },
+          { text: 'Can you help with salary negotiation?', category: 'career' },
         ];
       case 'wellness':
         return [
-          { text: 'Guided meditation', category: 'wellness' },
-          { text: 'Healthy meal planning', category: 'wellness' },
-          { text: 'Sleep improvement tips', category: 'wellness' },
+          { text: 'Can you guide me through meditation?', category: 'wellness' },
+          { text: 'Any advice for healthy meal planning?', category: 'wellness' },
+          { text: 'How can I improve my sleep?', category: 'wellness' },
         ];
       case 'learning':
         return [
-          { text: 'Recommend courses', category: 'learning' },
-          { text: 'Study techniques', category: 'learning' },
-          { text: 'Help me learn a new skill', category: 'learning' },
+          { text: 'Could you recommend some courses?', category: 'learning' },
+          { text: 'What study techniques do you suggest?', category: 'learning' },
+          { text: 'Can you help me learn a new skill?', category: 'learning' },
         ];
       case 'emergency':
         return [
-          { text: 'First aid basics', category: 'emergency' },
-          { text: 'Emergency preparedness', category: 'emergency' },
-          { text: 'Help with crisis situation', category: 'emergency' },
+          { text: 'Can you explain first aid basics?', category: 'emergency' },
+          { text: 'How should I prepare for emergencies?', category: 'emergency' },
+          { text: 'Can you help with a crisis situation?', category: 'emergency' },
         ];
       case 'cooking':
         return [
-          { text: 'Recipe ideas', category: 'cooking' },
-          { text: 'Cooking techniques', category: 'cooking' },
-          { text: 'Meal prep tips', category: 'cooking' },
+          { text: 'Do you have recipe ideas to share?', category: 'cooking' },
+          { text: 'Can you teach me cooking techniques?', category: 'cooking' },
+          { text: 'Any meal prep tips you recommend?', category: 'cooking' },
         ];
       case 'fitness':
         return [
-          { text: 'Workout suggestions', category: 'fitness' },
-          { text: 'Exercise form check', category: 'fitness' },
-          { text: 'Track my progress', category: 'fitness' },
+          { text: 'Could you suggest some workouts?', category: 'fitness' },
+          { text: 'Can you help check my exercise form?', category: 'fitness' },
+          { text: 'How do I track my fitness progress?', category: 'fitness' },
         ];
       default:
         return [
-          { text: 'Help me with finances', category: 'finance' },
-          { text: 'Career advice needed', category: 'career' },
-          { text: 'Wellness tips', category: 'wellness' },
-          { text: 'Learning resources', category: 'learning' },
+          { text: 'Can you help with financial questions?', category: 'finance' },
+          { text: 'Do you offer career advice?', category: 'career' },
+          { text: 'Can you share wellness tips?', category: 'wellness' },
+          { text: 'Where can I find learning resources?', category: 'learning' },
         ];
     }
   };
