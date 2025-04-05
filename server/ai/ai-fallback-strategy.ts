@@ -103,11 +103,56 @@ export class OpenAIProvider implements AIProvider {
         // Or contains buddy terms which almost always indicate casual conversation
         buddyTerms.some(term => lowerMessage.includes(term));
       
-      // For simple greetings, we can return a friendly response directly
+      // For special "what's up" pattern detection 
+      const whatsUpPatterns = [
+        'whats up', "what's up", 'wassup', 'sup', 'hows it going', "how's it going", 
+        'how are you', 'how are ya', 'how you doing', 'how you doin', 'how are things',
+        'how have you been', 'how is everything'
+      ];
+      
+      // Check if this is a "what's up" type greeting
+      const isWhatsUpGreeting = whatsUpPatterns.some(pattern => 
+        lowerMessage === pattern || 
+        lowerMessage.startsWith(pattern + ' ') || 
+        lowerMessage.endsWith(' ' + pattern) ||
+        lowerMessage.includes(pattern + '!') ||
+        lowerMessage.includes(pattern + '?')
+      );
+      
+      // For greetings, we can return a friendly response directly
       // This avoids the more formal AI patterns for basic interactions
-      if (isSimpleGreeting && previousMessages.length === 0) {
+      if ((isSimpleGreeting || isWhatsUpGreeting) && previousMessages.length === 0) {
         // Get personalized greeting responses from personality data
         const personalityElements = getFundiPersonalityElements();
+        
+        // Choose the right type of response based on the greeting type
+        if (isWhatsUpGreeting) {
+          console.log("OpenAI detected 'what's up' greeting, using witty response");
+          
+          // Get the special "what's up" responses
+          const whatsUpResponses = personalityElements.whatsUpResponses || [];
+          
+          // If we have custom responses, use them
+          if (whatsUpResponses.length > 0) {
+            const selectedResponse = whatsUpResponses[Math.floor(Math.random() * whatsUpResponses.length)];
+            
+            return {
+              response: selectedResponse,
+              sentiment: "enthusiastic",
+              suggestions: [{
+                text: "Would you like to see what I can help you with?",
+                path: "/"
+              }],
+              followUpQuestions: [
+                "Is there a specific feature of the app you'd like to explore?",
+                "What skills are you interested in developing today?"
+              ]
+            };
+          }
+        }
+        
+        // For regular greetings or fallback
+        console.log("OpenAI detected simple greeting, using direct greeting response");
         const greetingResponses = personalityElements.greetingResponses.map(response => 
           // Make sure responses end with a complete thought - if needed, add a second sentence
           response.endsWith("?") || response.endsWith("!") ? response : response + " What can I help with today?"
@@ -357,8 +402,25 @@ export class HuggingFaceProvider implements AIProvider {
         // Or contains buddy terms which almost always indicate casual conversation
         buddyTerms.some(term => lowerMessage.includes(term));
       
+      // For special "what's up" pattern detection 
+      const whatsUpPatterns = [
+        'whats up', "what's up", 'wassup', 'sup', 'hows it going', "how's it going", 
+        'how are you', 'how are ya', 'how you doing', 'how you doin', 'how are things',
+        'how have you been', 'how is everything'
+      ];
+      
+      // Check if this is a "what's up" type greeting
+      const isWhatsUpGreeting = whatsUpPatterns.some(pattern => 
+        lowerMessage === pattern || 
+        lowerMessage.startsWith(pattern + ' ') || 
+        lowerMessage.endsWith(' ' + pattern) ||
+        lowerMessage.includes(pattern + '!') ||
+        lowerMessage.includes(pattern + '?')
+      );
+      
       // Get personalized greeting responses from personality data
       const greetingResponses = personalityElements.greetingResponses;
+      const whatsUpResponses = personalityElements.whatsUpResponses || [];
       
       // For normal responses - combine default starters with examples from the personality file
       const conversationStarters = [
@@ -376,8 +438,31 @@ export class HuggingFaceProvider implements AIProvider {
         })
       ];
       
-      // For simple greetings, we can return a friendly response directly without additional context
-      if (isSimpleGreeting && previousMessages.length === 0) {
+      // For greetings at the start of a conversation,
+      // respond with a friendly greeting directly bypassing AI
+      if ((isSimpleGreeting || isWhatsUpGreeting) && previousMessages.length === 0) {
+        // For "what's up" style greetings
+        if (isWhatsUpGreeting && whatsUpResponses.length > 0) {
+          console.log("HuggingFace detected 'what's up' greeting, using witty response");
+          const selectedResponse = whatsUpResponses[Math.floor(Math.random() * whatsUpResponses.length)];
+          
+          return {
+            response: selectedResponse,
+            sentiment: "enthusiastic",
+            suggestions: [{
+              text: "Would you like to see what I can help you with?",
+              path: "/"
+            }],
+            followUpQuestions: [
+              "Is there a specific feature of the app you'd like to explore?",
+              "What skills are you interested in developing today?"
+            ],
+            personality: "witty-enthusiastic"
+          };
+        }
+        
+        // For regular greetings
+        console.log("HuggingFace detected simple greeting, using direct greeting response");
         const selectedGreeting = greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
         
         return {
@@ -671,7 +756,23 @@ export class FallbackAIService {
     // Check for common buddy/friend terms that indicate casual conversation
     const buddyTerms = ['buddy', 'friend', 'pal', 'mate', 'dude', 'my friend', 'my buddy', 'bot buddy'];
     
-    // Check if this is a simple greeting
+    // For special "what's up" pattern detection 
+    const whatsUpPatterns = [
+      'whats up', "what's up", 'wassup', 'sup', 'hows it going', "how's it going", 
+      'how are you', 'how are ya', 'how you doing', 'how you doin', 'how are things',
+      'how have you been', 'how is everything'
+    ];
+    
+    // Check if this is a "what's up" type greeting
+    const isWhatsUpGreeting = whatsUpPatterns.some(pattern => 
+      lowerMessage === pattern || 
+      lowerMessage.startsWith(pattern + ' ') || 
+      lowerMessage.endsWith(' ' + pattern) ||
+      lowerMessage.includes(pattern + '!') ||
+      lowerMessage.includes(pattern + '?')
+    );
+    
+    // Check if this is a simple greeting (but not a "what's up" greeting)
     const isSimpleGreeting = 
       // Direct greeting match
       greetingPatterns.some(greeting => 
@@ -684,14 +785,42 @@ export class FallbackAIService {
       // Or contains buddy terms which almost always indicate casual conversation
       buddyTerms.some(term => lowerMessage.includes(term));
     
-    // If this is a simple greeting and it's at the start of a conversation,
+    // If this is a greeting at the start of a conversation,
     // respond with a friendly greeting directly, bypassing the AI providers
-    if (isSimpleGreeting && previousMessages.length === 0) {
-      console.log("Detected simple greeting, using direct greeting response");
-      
+    if ((isSimpleGreeting || isWhatsUpGreeting) && previousMessages.length === 0) {
       try {
         // Get personalized greeting responses from personality data
         const personalityElements = getFundiPersonalityElements();
+        
+        // Choose the right type of response based on the greeting type
+        if (isWhatsUpGreeting) {
+          console.log("Detected 'what's up' greeting, using witty response");
+          
+          // Get the special "what's up" responses
+          const whatsUpResponses = personalityElements.whatsUpResponses || [];
+          
+          // If we have custom responses, use them
+          if (whatsUpResponses.length > 0) {
+            const selectedResponse = whatsUpResponses[Math.floor(Math.random() * whatsUpResponses.length)];
+            
+            return {
+              response: selectedResponse,
+              sentiment: "enthusiastic",
+              suggestions: [{
+                text: "Would you like to see what I can help you with?",
+                path: "/"
+              }],
+              followUpQuestions: [
+                "Is there a specific feature of the app you'd like to explore?",
+                "What skills are you interested in developing today?"
+              ],
+              personality: "witty-enthusiastic"
+            };
+          }
+        }
+        
+        // For regular greetings or if no what's up responses are available
+        console.log("Detected simple greeting, using direct greeting response");
         const greetingResponses = personalityElements.greetingResponses.map(response => 
           // Make sure responses end with a complete thought
           response.endsWith("?") || response.endsWith("!") ? response : response + " What can I help with today?"

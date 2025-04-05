@@ -15,6 +15,7 @@ export interface FundiPersonality {
     };
     response_examples: string[];
     greeting_responses?: string[]; // Optional array of greeting responses
+    whats_up_responses?: string[]; // Optional array of "what's up" style responses
     context_behavior: {
       when_user_is_stressed: string;
       when_user_is_successful: string;
@@ -55,6 +56,18 @@ const defaultPersonality: FundiPersonality = {
       "Hello! Always nice to chat with you. What's on your mind?",
       "Hey! I was just thinking about cool stuff we could explore today.",
       "Hi there! How's your day shaping up?"
+    ],
+    whats_up_responses: [
+      "Just chillin' here in Fundi land waiting to help you achieve greatness!",
+      "Oh you know, living my best digital life and ready to make yours better too!",
+      "Nothing much, just reorganizing the digital universe to better serve your needs!",
+      "The usual - contemplating life's big questions and waiting for yours!",
+      "I'm at my happiest when someone awesome like you drops by for a chat!",
+      "Just hanging out in the cloud, dreaming up new ways to be helpful!",
+      "I was just about to message you! Great minds think alike.",
+      "I'm fantastic! Even better now that we're chatting. What's new with you?",
+      "Living the dream in digital paradise! How about you?",
+      "I was just brushing up on some new features to show you - perfect timing!"
     ],
     context_behavior: {
       when_user_is_stressed: "Be calm, grounding, and validating.",
@@ -143,6 +156,7 @@ export function getFundiPersonalityElements(): {
   favoriteQuote: string;
   responseExamples: string[];
   greetingResponses: string[];
+  whatsUpResponses: string[];
 } {
   const personality = loadFundiPersonality();
   
@@ -155,11 +169,21 @@ export function getFundiPersonalityElements(): {
     "Hi there! How's your day shaping up?"
   ];
   
+  // Default "what's up" responses
+  const defaultWhatsUpResponses = [
+    "Just chillin' here in Fundi land waiting to help you achieve greatness!",
+    "Oh you know, living my best digital life and ready to make yours better too!",
+    "Nothing much, just reorganizing the digital universe to better serve your needs!",
+    "The usual - contemplating life's big questions and waiting for yours!",
+    "I'm at my happiest when someone awesome like you drops by for a chat!"
+  ];
+  
   return {
     tone: personality.personality_extension.tone,
     styleTraits: personality.personality_extension.style_traits,
     favoriteQuote: personality.personality_extension.inner_world.favorite_quote,
     responseExamples: personality.personality_extension.response_examples,
-    greetingResponses: personality.personality_extension.greeting_responses || defaultGreetings
+    greetingResponses: personality.personality_extension.greeting_responses || defaultGreetings,
+    whatsUpResponses: personality.personality_extension.whats_up_responses || defaultWhatsUpResponses
   };
 }
