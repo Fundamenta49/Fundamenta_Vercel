@@ -29,7 +29,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { TourSettings } from "@/components/tour-settings";
 import { Separator } from "@/components/ui/separator";
-import SidebarCalendar from "@/components/sidebar-calendar";
 import AdminBypass from "@/components/admin-bypass";
 import NotificationPanel from "@/components/notification-panel";
 
@@ -229,7 +228,13 @@ export default function Navigation() {
               </div>
               
               <div className="mt-2">
-                <SidebarCalendar />
+                <button 
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left text-gray-700 hover:bg-gray-50"
+                  onClick={() => handleNavigation("/learning-calendar")}
+                >
+                  <CalendarDays className="h-5 w-5 text-gray-600" />
+                  <span className="font-medium">Learning Calendar</span>
+                </button>
               </div>
             </div>
             
@@ -318,17 +323,23 @@ export default function Navigation() {
             </div>
           )}
           
-          {/* Calendar as a minimizable component */}
+          {/* Learning Calendar Link */}
           {!isMinimized ? (
             <div className="mt-2">
-              <SidebarCalendar />
+              <button 
+                className="flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left text-gray-700 hover:bg-gray-50"
+                onClick={() => handleNavigation("/learning-calendar")}
+              >
+                <CalendarDays className="h-5 w-5 text-gray-600" />
+                <span className="font-medium">Learning Calendar</span>
+              </button>
             </div>
           ) : (
             <div className="mt-3 flex justify-center">
               <button
-                onClick={() => setIsMinimized(false)}
+                onClick={() => handleNavigation("/learning-calendar")}
                 className="p-2 rounded-md hover:bg-gray-100"
-                title="Open Calendar"
+                title="Learning Calendar"
               >
                 <CalendarDays className="h-5 w-5 text-gray-600" />
               </button>
