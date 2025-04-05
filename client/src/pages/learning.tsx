@@ -337,15 +337,15 @@ export default function Learning() {
             
             <div className="flex flex-col h-full">
               <button
-                onClick={() => navigate('/enhanced-calendar')}
+                onClick={() => navigate('/redesigned-calendar')}
                 className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
-                aria-label="Open Enhanced Calendar"
+                aria-label="Open Redesigned Calendar"
               >
                 <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
                   <Icons.Calendar className="w-9 h-9 sm:w-10 sm:h-10 text-blue-500" />
                 </div>
                 
-                <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">Enhanced Calendar</span>
+                <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">Redesigned Calendar</span>
                 
                 <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
                   Advanced scheduling with week view and event management

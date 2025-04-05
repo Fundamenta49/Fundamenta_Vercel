@@ -23,6 +23,7 @@ import YogaProgressionPage from "@/pages/yoga-progression";
 import FundiShowcase from "@/pages/fundi-showcase";
 import LearningCalendar from "@/components/learning-calendar";
 import EnhancedCalendar from "@/components/enhanced-calendar";
+import CalendarRedesigned from "@/components/calendar-redesigned";
 import EconomicsCourse from "@/pages/learning/courses/economics";
 import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
 import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
@@ -64,6 +65,7 @@ function Router() {
         <Route path="/learning" component={Learning} />
         <Route path="/learning-calendar" component={LearningCalendar} />
         <Route path="/enhanced-calendar" component={EnhancedCalendar} />
+        <Route path="/redesigned-calendar" component={CalendarRedesigned} />
         <Route path="/learning/courses/vehicle-maintenance" component={VehicleMaintenanceCourse} />
         <Route path="/learning/courses/home-maintenance" component={HomeMaintenanceCourse} />
         <Route path="/learning/courses/cooking-basics" component={CookingBasicsCourse} />
