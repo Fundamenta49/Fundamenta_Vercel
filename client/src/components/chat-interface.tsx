@@ -33,6 +33,7 @@ const categoryColors: Record<string, string> = {
   emergency: '#ef4444', // red-500
   cooking: '#f59e0b', // amber-500
   fitness: '#06b6d4', // cyan-500
+  homeMaintenance: '#fb923c', // orange-400
   general: '#6366f1', // indigo-500
   error: '#ef4444', // red-500
 };
@@ -46,6 +47,7 @@ const advisorInfo: Record<string, { name: string; image: string }> = {
   emergency: { name: 'Emergency Assistant', image: '/advisors/emergency-advisor.png' },
   cooking: { name: 'Cooking Expert', image: '/advisors/cooking-advisor.png' },
   fitness: { name: 'Fitness Coach', image: '/advisors/fitness-advisor.png' },
+  homeMaintenance: { name: 'Home Repair Expert', image: '/advisors/maintenance-advisor.png' },
   general: { name: 'AI Assistant', image: '/mascot/fundi-avatar.png' },
   error: { name: 'Assistant', image: '/mascot/fundi-avatar.png' },
 };
