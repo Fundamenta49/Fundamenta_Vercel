@@ -31,6 +31,7 @@ import { TourSettings } from "@/components/tour-settings";
 import { Separator } from "@/components/ui/separator";
 import SidebarCalendar from "@/components/sidebar-calendar";
 import AdminBypass from "@/components/admin-bypass";
+import NotificationPanel from "@/components/notification-panel";
 
 const defaultNavItems = [
   { href: "/", label: "Home", icon: Home },
@@ -232,9 +233,12 @@ export default function Navigation() {
               </div>
             </div>
             
-            {/* Admin Bypass & Help Buttons */}
+            {/* Admin Bypass, Notification Panel, & Help Buttons */}
             <div className="mt-4 mx-2 flex flex-col gap-2">
               <AdminBypass />
+              <div className="flex justify-center my-2">
+                <NotificationPanel />
+              </div>
               <TourSettings />
             </div>
           </div>
@@ -342,6 +346,11 @@ export default function Navigation() {
           {/* Admin Bypass */}
           <div className={cn(!isMinimized && "px-3")}>
             <AdminBypass />
+          </div>
+          
+          {/* Notification Panel */}
+          <div className={cn(!isMinimized && "px-3", "flex justify-center")}>
+            <NotificationPanel />
           </div>
           
           {/* Tour Settings */}

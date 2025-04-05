@@ -44,6 +44,7 @@ import Tour from "./components/tour";
 import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/lib/auth-context";
 import ProtectedRoute from "@/components/protected-route";
+import TestNotification from "@/components/test-notification";
 
 function Router() {
   return (
@@ -204,6 +205,7 @@ function Router() {
             <Route component={NotFound} />
           </Switch>
           <Toaster />
+          <TestNotification />
         </Layout>
       </Route>
     </Switch>
