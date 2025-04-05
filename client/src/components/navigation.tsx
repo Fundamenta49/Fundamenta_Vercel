@@ -240,7 +240,9 @@ export default function Navigation() {
             
             {/* Admin Bypass, Notification Panel, & Help Buttons */}
             <div className="mt-4 mx-2 flex flex-col gap-2">
-              <AdminBypass />
+              {localStorage.getItem('admin_bypass') === 'enabled' && (
+                <AdminBypass />
+              )}
               <div className="flex justify-center my-2">
                 <NotificationPanel />
               </div>
@@ -354,10 +356,12 @@ export default function Navigation() {
             ? "absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2" 
             : "mt-auto pt-6 flex flex-col gap-2"
         )}>
-          {/* Admin Bypass */}
-          <div className={cn(!isMinimized && "px-3")}>
-            <AdminBypass />
-          </div>
+          {/* Admin Bypass - Only visible to admins */}
+          {localStorage.getItem('admin_bypass') === 'enabled' && (
+            <div className={cn(!isMinimized && "px-3")}>
+              <AdminBypass />
+            </div>
+          )}
           
           {/* Notification Panel */}
           <div className={cn(!isMinimized && "px-3", "flex justify-center")}>
