@@ -237,27 +237,27 @@ export default function CalendarRedesigned() {
     
     return (
       <div className="flex flex-col h-full">
-        <div className="px-3 sm:px-6 pb-4 border-b calendar-header">
+        <div className="px-3 sm:px-4 pb-2 border-b calendar-header">
           {/* View toggle header - mobile responsive */}
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
-            <div className="space-y-1 mb-2 sm:mb-0">
-              <h2 className="text-xl sm:text-2xl font-semibold">{format(currentDate, 'MMM yyyy')}</h2>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+            <div className="mb-1 sm:mb-0">
+              <h2 className="text-base sm:text-lg font-semibold">{format(currentDate, 'MMM yyyy')}</h2>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={handlePreviousMonth}
-                className="border-gray-200 hover:bg-gray-50 rounded-full h-8 w-8 p-0"
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-6 w-6 p-0"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3 w-3" />
                 <span className="sr-only">Previous</span>
               </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={handleToday}
-                className="border-gray-200 hover:bg-gray-50 text-sm"
+                className="border-gray-200 hover:bg-gray-50 text-xs py-1 px-2 h-6"
               >
                 Today
               </Button>
@@ -265,9 +265,9 @@ export default function CalendarRedesigned() {
                 variant="outline" 
                 size="sm" 
                 onClick={handleNextMonth}
-                className="border-gray-200 hover:bg-gray-50 rounded-full h-8 w-8 p-0"
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-6 w-6 p-0"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3 w-3" />
                 <span className="sr-only">Next</span>
               </Button>
             </div>
@@ -324,18 +324,20 @@ export default function CalendarRedesigned() {
             </div>
           </div>
           
-          {/* Search bar - responsive width */}
-          <div className="relative mt-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input 
-              placeholder="Search" 
-              className="pl-10 pr-4 py-2 w-full max-w-[100%] sm:max-w-xs rounded-full border-gray-300 bg-gray-50"
-            />
-          </div>
-          
-          {/* Weather Widget */}
-          <div className="mt-4 max-w-[100%] sm:max-w-xs">
-            <WeatherWidget />
+          {/* Search bar and weather in a row */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:items-center mt-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+              <Input 
+                placeholder="Search" 
+                className="pl-7 pr-2 py-1 h-7 text-xs w-full sm:max-w-[180px] rounded-full border-gray-300 bg-gray-50"
+              />
+            </div>
+            
+            {/* Weather Widget */}
+            <div className="sm:ml-auto max-w-[180px]">
+              <WeatherWidget compact={true} />
+            </div>
           </div>
         </div>
         
@@ -346,13 +348,13 @@ export default function CalendarRedesigned() {
           marginTop: '0.5rem'
         }}>
           <div className="grid grid-cols-7 h-full calendar-day-cells overflow-y-auto" style={{ 
-            maxHeight: 'calc(100vh - 300px)', 
+            maxHeight: '500px', 
             scrollbarWidth: 'thin',
             display: 'grid',
             gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-            gridTemplateRows: 'auto repeat(5, minmax(70px, 1fr))',
+            gridTemplateRows: 'auto repeat(5, minmax(50px, 1fr))',
             gap: '1px',
-            height: 'auto',
+            height: 'auto', 
             minHeight: 'auto',
             width: '100%',
             marginTop: '0.5rem'
@@ -1089,11 +1091,14 @@ export default function CalendarRedesigned() {
       style={{
         display: "flex", 
         flexDirection: "column",
-        height: "100%",
+        height: "auto",
         width: "100%",
-        overflow: "hidden",
+        overflow: "visible",
         padding: "0.5rem",
-        maxHeight: "calc(100vh - 20px)" // Ensure it fits in viewport with small margin
+        position: "relative",
+        top: "50%",
+        transform: "translateY(-50%)",
+        marginTop: "20px"
       }}>
         {/* Fullscreen Toggle Header */}
         {isFullscreen && (
