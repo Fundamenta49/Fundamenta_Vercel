@@ -47,160 +47,166 @@ import ProtectedRoute from "@/components/protected-route";
 
 function Router() {
   return (
-    <Layout>
-      <Tour />
-      <Switch>
-        <Route path="/login" component={LoginPage} />
-        <Route path="/">
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/why-fundamenta" component={WhyFundamenta} />
-        <Route path="/partner" component={Partner} />
-        <Route path="/privacy" component={Privacy} />
-        <Route path="/invite" component={Invite} />
-        <Route path="/emergency" component={Emergency} />
-        <Route path="/finance">
-          <ProtectedRoute>
-            <Finance />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/finance/mortgage">
-          <ProtectedRoute>
-            <MortgagePage />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/career">
-          <ProtectedRoute>
-            <Career />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/wellness">
-          <ProtectedRoute>
-            <Wellness />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/active">
-          <ProtectedRoute>
-            <Active />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/yoga-test">
-          <ProtectedRoute>
-            <YogaTest />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/yoga-pose-analysis">
-          <ProtectedRoute>
-            <YogaPoseAnalysis />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/yoga-progression">
-          <ProtectedRoute>
-            <YogaProgressionPage />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/fundi-showcase" component={FundiShowcase} />
-        <Route path="/learning">
-          <ProtectedRoute>
-            <Learning />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning-calendar">
-          <ProtectedRoute>
-            <LearningCalendar />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/enhanced-calendar">
-          <ProtectedRoute>
-            <EnhancedCalendar />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/redesigned-calendar">
-          <ProtectedRoute>
-            <CalendarRedesigned />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/vehicle-maintenance">
-          <ProtectedRoute>
-            <VehicleMaintenanceCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/home-maintenance">
-          <ProtectedRoute>
-            <HomeMaintenanceCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/cooking-basics">
-          <ProtectedRoute>
-            <CookingBasicsCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/health-wellness">
-          <ProtectedRoute>
-            <HealthWellnessCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/economics">
-          <ProtectedRoute>
-            <EconomicsCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/critical-thinking">
-          <ProtectedRoute>
-            <CriticalThinkingCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/conflict-resolution">
-          <ProtectedRoute>
-            <ConflictResolutionCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/decision-making">
-          <ProtectedRoute>
-            <DecisionMakingCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/time-management">
-          <ProtectedRoute>
-            <TimeManagementCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/coping-with-failure">
-          <ProtectedRoute>
-            <CopingWithFailureCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/conversation-skills">
-          <ProtectedRoute>
-            <ConversationSkillsCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/forming-positive-habits">
-          <ProtectedRoute>
-            <FormingPositiveHabitsCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/utilities-guide">
-          <ProtectedRoute>
-            <UtilitiesGuideCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/shopping-buddy">
-          <ProtectedRoute>
-            <ShoppingBuddyCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route path="/learning/courses/repair-assistant">
-          <ProtectedRoute>
-            <RepairAssistantCourse />
-          </ProtectedRoute>
-        </Route>
-        <Route component={NotFound} />
-      </Switch>
-      <Toaster />
-    </Layout>
+    <Switch>
+      <Route path="/login">
+        <LoginPage />
+      </Route>
+      <Route>
+        <Layout>
+          <Tour />
+          <Switch>
+            <Route path="/">
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/why-fundamenta" component={WhyFundamenta} />
+            <Route path="/partner" component={Partner} />
+            <Route path="/privacy" component={Privacy} />
+            <Route path="/invite" component={Invite} />
+            <Route path="/emergency" component={Emergency} />
+            <Route path="/finance">
+              <ProtectedRoute>
+                <Finance />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/finance/mortgage">
+              <ProtectedRoute>
+                <MortgagePage />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/career">
+              <ProtectedRoute>
+                <Career />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/wellness">
+              <ProtectedRoute>
+                <Wellness />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/active">
+              <ProtectedRoute>
+                <Active />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/yoga-test">
+              <ProtectedRoute>
+                <YogaTest />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/yoga-pose-analysis">
+              <ProtectedRoute>
+                <YogaPoseAnalysis />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/yoga-progression">
+              <ProtectedRoute>
+                <YogaProgressionPage />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/fundi-showcase" component={FundiShowcase} />
+            <Route path="/learning">
+              <ProtectedRoute>
+                <Learning />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning-calendar">
+              <ProtectedRoute>
+                <LearningCalendar />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/enhanced-calendar">
+              <ProtectedRoute>
+                <EnhancedCalendar />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/redesigned-calendar">
+              <ProtectedRoute>
+                <CalendarRedesigned />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/vehicle-maintenance">
+              <ProtectedRoute>
+                <VehicleMaintenanceCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/home-maintenance">
+              <ProtectedRoute>
+                <HomeMaintenanceCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/cooking-basics">
+              <ProtectedRoute>
+                <CookingBasicsCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/health-wellness">
+              <ProtectedRoute>
+                <HealthWellnessCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/economics">
+              <ProtectedRoute>
+                <EconomicsCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/critical-thinking">
+              <ProtectedRoute>
+                <CriticalThinkingCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/conflict-resolution">
+              <ProtectedRoute>
+                <ConflictResolutionCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/decision-making">
+              <ProtectedRoute>
+                <DecisionMakingCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/time-management">
+              <ProtectedRoute>
+                <TimeManagementCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/coping-with-failure">
+              <ProtectedRoute>
+                <CopingWithFailureCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/conversation-skills">
+              <ProtectedRoute>
+                <ConversationSkillsCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/forming-positive-habits">
+              <ProtectedRoute>
+                <FormingPositiveHabitsCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/utilities-guide">
+              <ProtectedRoute>
+                <UtilitiesGuideCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/shopping-buddy">
+              <ProtectedRoute>
+                <ShoppingBuddyCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/repair-assistant">
+              <ProtectedRoute>
+                <RepairAssistantCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route component={NotFound} />
+          </Switch>
+          <Toaster />
+        </Layout>
+      </Route>
+    </Switch>
   );
 }
 
