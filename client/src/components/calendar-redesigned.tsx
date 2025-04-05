@@ -300,8 +300,8 @@ export default function CalendarRedesigned() {
           </div>
         </div>
         
-        <div className="flex-1 px-4 py-2 overflow-y-auto calendar-scroll-container" style={{ scrollbarWidth: 'thin' }}>
-          <div className="grid grid-cols-7 h-full calendar-day-cells">
+        <div className="flex-1 px-4 py-2 calendar-scroll-container">
+          <div className="grid grid-cols-7 h-full calendar-day-cells overflow-y-auto" style={{ maxHeight: 'calc(100vh - 250px)', scrollbarWidth: 'thin' }}>
             {/* Day headers - mobile optimized */}
             {daysOfWeek.map((day, index) => (
               <div key={day} className={cn(
@@ -517,7 +517,7 @@ export default function CalendarRedesigned() {
     <>
       {/* Main Calendar View */}
       <div className={cn(
-        "bg-white rounded-lg overflow-hidden flex flex-col calendar-widget",
+        "bg-white rounded-lg flex flex-col calendar-widget",
         isFullscreen ? "fixed inset-0 z-50" : "h-full"
       )}>
         {/* Fullscreen Toggle Header */}
@@ -555,7 +555,7 @@ export default function CalendarRedesigned() {
           </div>
           
           {/* Main calendar area */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1">
             {currentView === 'month' && <MonthView />}
             {/* We can add other views like DayView, WeekView and YearView later */}
           </div>
