@@ -314,9 +314,25 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       el.classList.remove('tour-highlight');
     });
     
-    // Clear any stored tour state
+    // Clear any stored tour state and user name
     localStorage.removeItem('hasSeenTour');
+    localStorage.removeItem('tourUserName');
     setHasSeenTour(false);
+    setUserName('');
+    
+    // Also reset any stored chat messages
+    try {
+      // Reset welcome message in chat interface
+      const chatStorage = localStorage.getItem('fundiChatMessages');
+      if (chatStorage) {
+        localStorage.removeItem('fundiChatMessages');
+      }
+    } catch (e) {
+      console.error('Error clearing chat history:', e);
+    }
+    
+    // Dispatch a custom event to notify components of tour reset
+    window.dispatchEvent(new CustomEvent('tour-reset'));
     
     // Ensure we go back to the home page
     setLocation('/');

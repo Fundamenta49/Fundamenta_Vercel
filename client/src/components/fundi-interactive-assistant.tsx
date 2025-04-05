@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import '../styles/resize-handler.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -54,6 +54,9 @@ export default function FundiInteractiveAssistant({
     }
   }, []);
   
+  // State to track if we should clear messages
+  const [shouldResetMessages, setShouldResetMessages] = useState<boolean>(false);
+  
   // Initialize with a welcome message but connect to real API for subsequent messages
   const [messages, setMessages] = useState<{ text: string; isUser: boolean; timestamp: Date; id?: string }[]>([
     { 
@@ -63,6 +66,71 @@ export default function FundiInteractiveAssistant({
       id: 'welcome-message'
     }
   ]);
+  
+  // Custom function to clear chat messages directly
+  const clearMessages = useCallback(() => {
+    // Reset to initial welcome message
+    setMessages([
+      { 
+        text: "Hi there! I'm Fundi, your life skills assistant. How can I help you today?", 
+        isUser: false, 
+        timestamp: new Date(),
+        id: 'welcome-message'
+      }
+    ]);
+    setUserName('');
+  }, []);
+  
+  // Add window event to detect tour resets
+  useEffect(() => {
+    // Define a custom event handler for tour resets
+    const handleTourReset = () => {
+      clearMessages();
+      setShouldResetMessages(true);
+    };
+    
+    // Create custom event listener
+    window.addEventListener('tour-reset', handleTourReset);
+    
+    // Also listen for localStorage changes as fallback
+    const storageListener = (e: StorageEvent) => {
+      if (e.key === 'tourUserName' && !e.newValue) {
+        clearMessages();
+        setShouldResetMessages(true);
+      }
+    };
+    
+    window.addEventListener('storage', storageListener);
+    
+    // Check on component mount
+    if (!localStorage.getItem('tourUserName') && userName) {
+      clearMessages();
+      setShouldResetMessages(true);
+    }
+    
+    return () => {
+      window.removeEventListener('tour-reset', handleTourReset);
+      window.removeEventListener('storage', storageListener);
+    };
+  }, [clearMessages]);
+  
+  // Reset messages when shouldResetMessages is true
+  useEffect(() => {
+    if (shouldResetMessages) {
+      // Reset to initial state
+      setMessages([
+        { 
+          text: "Hi there! I'm Fundi, your life skills assistant. How can I help you today?", 
+          isUser: false, 
+          timestamp: new Date(),
+          id: 'welcome-message'
+        }
+      ]);
+      
+      // Clear flag
+      setShouldResetMessages(false);
+    }
+  }, [shouldResetMessages]);
   
   // Update welcome message when userName changes
   useEffect(() => {
