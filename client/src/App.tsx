@@ -44,6 +44,7 @@ import UtilitiesGuideCourse from "@/pages/learning/courses/utilities-guide";
 import ShoppingBuddyCourse from "@/pages/learning/courses/shopping-buddy";
 import RepairAssistantCourse from "@/pages/learning/courses/repair-assistant";
 import LifeSkillsPage from "@/pages/learning/life-skills";
+import IdentityDocumentsPage from "@/pages/learning/identity-documents";
 import { TourProvider } from "./contexts/tour-context";
 import Tour from "./components/tour";
 import LoginPage from "@/pages/login";
@@ -255,6 +256,11 @@ function Router() {
             <Route path="/learning/life-skills">
               <ProtectedRoute>
                 <LifeSkillsPage />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/identity-documents">
+              <ProtectedRoute>
+                <IdentityDocumentsPage />
               </ProtectedRoute>
             </Route>
             <Route path="/learning/courses/decision-making">

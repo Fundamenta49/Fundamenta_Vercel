@@ -42,6 +42,44 @@ interface StateInfo {
   }[];
 }
 
+interface HowToGetInfo {
+  title: string;
+  steps: {
+    title: string;
+    description: string;
+  }[];
+  nationalLink: string;
+  findLocations?: string;
+}
+
+interface RenewalInfo {
+  title: string;
+  description: string;
+  eligibility?: string[];
+  steps?: string[];
+  link: string;
+}
+
+interface ReplacementInfo {
+  title: string;
+  description: string;
+  steps: string[];
+  link: string;
+}
+
+interface DocumentInfo {
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+  whatIsIt: string;
+  whyItMatters: string;
+  whenToUse: string[];
+  howToGet: HowToGetInfo;
+  renewalInfo?: RenewalInfo;
+  replacementInfo?: ReplacementInfo;
+  stateSpecific?: boolean;
+}
+
 // State information and resources
 const STATES: Record<StateCode, StateInfo> = {
   "AL": {
@@ -415,7 +453,7 @@ const STATES: Record<StateCode, StateInfo> = {
 };
 
 // Usage scenarios and document information
-const DOCUMENT_INFO = {
+const DOCUMENT_INFO: Record<DocumentTab, DocumentInfo> = {
   "state-id": {
     title: "State ID or Driver's License",
     icon: <CreditCard className="h-6 w-6 text-indigo-600" />,
@@ -553,6 +591,7 @@ const DOCUMENT_INFO = {
         "Is undamaged and in your possession",
         "Was issued in your current name (or you can document your name change)"
       ],
+      steps: [],
       link: "https://travel.state.gov/content/travel/en/passports/have-passport/renew.html"
     }
   },
@@ -841,37 +880,39 @@ export default function IdentityDocumentsGuide() {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-blue-500" />
-                Passport Renewal
-              </CardTitle>
-              <CardDescription>
-                Information about renewing your existing passport
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm">{documentInfo.renewalInfo.description}</p>
-              
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium">You can renew by mail if your passport:</h4>
-                <ul className="list-disc pl-6 space-y-1">
-                  {documentInfo.renewalInfo.eligibility.map((item, idx) => (
-                    <li key={idx} className="text-sm">{item}</li>
-                  ))}
-                </ul>
-              </div>
-              
-              <Button variant="outline" className="w-full sm:w-auto mt-2 justify-start" asChild>
-                <a href={documentInfo.renewalInfo.link} target="_blank" rel="noopener noreferrer">
-                  <Globe className="h-4 w-4 mr-2 text-blue-500" />
-                  Official Renewal Information
-                  <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
+          {documentInfo.renewalInfo && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-blue-500" />
+                  Passport Renewal
+                </CardTitle>
+                <CardDescription>
+                  Information about renewing your existing passport
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm">{documentInfo.renewalInfo.description}</p>
+                
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium">You can renew by mail if your passport:</h4>
+                  <ul className="list-disc pl-6 space-y-1">
+                    {documentInfo.renewalInfo.eligibility?.map((item, idx) => (
+                      <li key={idx} className="text-sm">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <Button variant="outline" className="w-full sm:w-auto mt-2 justify-start" asChild>
+                  <a href={documentInfo.renewalInfo.link} target="_blank" rel="noopener noreferrer">
+                    <Globe className="h-4 w-4 mr-2 text-blue-500" />
+                    Official Renewal Information
+                    <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
         
         <TabsContent value="birth-certificate" className="space-y-6">
@@ -1094,43 +1135,45 @@ export default function IdentityDocumentsGuide() {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-amber-500" />
-                Replacing a Lost or Stolen Card
-              </CardTitle>
-              <CardDescription>
-                What to do if your Social Security card is lost or stolen
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm">{documentInfo.replacementInfo.description}</p>
-              
-              <div className="space-y-2">
-                <ul className="list-disc pl-6 space-y-1">
-                  {documentInfo.replacementInfo.steps.map((item, idx) => (
-                    <li key={idx} className="text-sm">{item}</li>
-                  ))}
-                </ul>
-              </div>
-              
-              <Alert className="bg-amber-50 border-amber-200">
-                <AlertCircle className="h-4 w-4 text-amber-500" />
-                <AlertDescription className="text-amber-800 text-sm">
-                  If your Social Security card is lost or stolen, you should monitor your credit reports for signs of identity theft.
-                </AlertDescription>
-              </Alert>
-              
-              <Button variant="outline" className="w-full sm:w-auto mt-2 justify-start" asChild>
-                <a href={documentInfo.replacementInfo.link} target="_blank" rel="noopener noreferrer">
-                  <CreditCard className="h-4 w-4 mr-2 text-rose-500" />
-                  Replace Your Card Online
-                  <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
+          {documentInfo.replacementInfo && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-amber-500" />
+                  Replacing a Lost or Stolen Card
+                </CardTitle>
+                <CardDescription>
+                  What to do if your Social Security card is lost or stolen
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm">{documentInfo.replacementInfo.description}</p>
+                
+                <div className="space-y-2">
+                  <ul className="list-disc pl-6 space-y-1">
+                    {documentInfo.replacementInfo.steps.map((item, idx) => (
+                      <li key={idx} className="text-sm">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <Alert className="bg-amber-50 border-amber-200">
+                  <AlertCircle className="h-4 w-4 text-amber-500" />
+                  <AlertDescription className="text-amber-800 text-sm">
+                    If your Social Security card is lost or stolen, you should monitor your credit reports for signs of identity theft.
+                  </AlertDescription>
+                </Alert>
+                
+                <Button variant="outline" className="w-full sm:w-auto mt-2 justify-start" asChild>
+                  <a href={documentInfo.replacementInfo.link} target="_blank" rel="noopener noreferrer">
+                    <CreditCard className="h-4 w-4 mr-2 text-rose-500" />
+                    Replace Your Card Online
+                    <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="state-id" className="space-y-6">

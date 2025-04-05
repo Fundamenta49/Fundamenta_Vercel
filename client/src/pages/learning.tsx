@@ -83,7 +83,7 @@ export default function Learning() {
       title: 'Identity Documents',
       description: 'Learn how to obtain and manage essential identity documents',
       icon: Icons.BookOpen,
-      path: '/learning/life-skills?tab=identity',
+      path: '/learning/identity-documents',
       level: 'beginner',
       new: true
     },
