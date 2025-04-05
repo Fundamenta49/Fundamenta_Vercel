@@ -58,29 +58,33 @@ export default function RobotFundi({
       return;
     }
     
-    // Check if this was a true small movement vs. a drag
-    // A small movement (less than 5px) should still open the chat
-    const movementThreshold = 5;
-    const hasMovedSlightly = wasDragged && 
-      Math.abs(position.x - 63) < movementThreshold && 
-      Math.abs(position.y - 8) < movementThreshold;
+    // More lenient movement threshold for better mobile support
+    const movementThreshold = 20; // Increased from 5px to 20px
     
-    // Handle detection based on movement distance and time
-    if (onOpen && (!wasDragged || hasMovedSlightly)) {
-      // Normal click or tiny movement
-      onOpen();
-      console.log("Opening Fundi chat - click detected!");
-    } else if (wasDragged) {
-      // If it was dragged significantly, check time since last drag
+    // Check the actual distance the avatar has been moved from its initial position
+    const dragDistance = Math.sqrt(
+      Math.pow(position.x - 63, 2) + 
+      Math.pow(position.y - 8, 2)
+    );
+    
+    // If the drag distance is within the threshold, treat it as a click
+    if (dragDistance < movementThreshold) {
+      if (onOpen) {
+        onOpen();
+        console.log("Opening Fundi chat - click detected!", { dragDistance });
+      }
+    } else {
+      // For substantial movements, we're in drag territory
       const lastDragTime = (window as any).lastDragTime || 0;
       const timeSinceLastDrag = Date.now() - lastDragTime;
       
-      // After 500ms consider it a click, not a drag completion
-      if (timeSinceLastDrag > 500 && onOpen) {
+      // Don't trigger chat on recent drags, but allow after a cool-off period
+      if (timeSinceLastDrag > 300 && onOpen) {
+        // This wasn't a drag but a deliberate click after positioning
         onOpen();
-        console.log("Opening Fundi chat - override drag detection");
+        console.log("Opening Fundi chat - deliberate click after drag");
       } else {
-        console.log("Click ignored - recent significant drag detected");
+        console.log("Click ignored - this was just the end of a drag operation", { dragDistance });
       }
     }
     
@@ -204,7 +208,9 @@ export default function RobotFundi({
   return (
     <div 
       className={cn(
-        "fixed cursor-pointer",
+        "fixed",
+        // Using cursor-grab instead of cursor-pointer to make draggability obvious
+        isDragging ? "cursor-grabbing" : "cursor-grab",
         sizeVariants[size],
         interactive && "hover:scale-105 transition-transform"
       )}

@@ -757,8 +757,11 @@ export default function FundiInteractiveAssistant({
             transition={{ duration: 0.2 }}
             drag
             dragMomentum={false}
-            dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }}
-            className="mb-2 cursor-move"
+            // More generous constraints for dragging around the screen
+            dragConstraints={{ left: -500, right: 500, top: -300, bottom: 300 }}
+            whileDrag={{ cursor: 'grabbing' }}
+            // Immediately update cursor for drag state
+            className={isChatOpen ? "mb-2" : "mb-2 cursor-grab active:cursor-grabbing"}
           >
             {isChatOpen ? (
               // Chat interface
@@ -780,7 +783,12 @@ export default function FundiInteractiveAssistant({
               >
                 <CardHeader 
                   className="p-3 pb-2 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing border-b" 
-                  style={{ borderColor: 'rgba(0,0,0,0.05)' }}
+                  style={{ 
+                    borderColor: 'rgba(0,0,0,0.05)',
+                    // Small visual hint that the header is draggable with tiny dots pattern
+                    backgroundImage: 'radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)',
+                    backgroundSize: '8px 8px'
+                  }}
                   onMouseDown={(e) => {
                     // This makes the entire header a drag handle
                     // The parent motion.div will handle the actual dragging
@@ -961,7 +969,12 @@ export default function FundiInteractiveAssistant({
                 }}>
                 <CardHeader 
                   className="p-3 pb-2 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing border-b"
-                  style={{ borderColor: 'rgba(0,0,0,0.05)' }}
+                  style={{ 
+                    borderColor: 'rgba(0,0,0,0.05)',
+                    // Small visual hint that the header is draggable with tiny dots pattern
+                    backgroundImage: 'radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)',
+                    backgroundSize: '8px 8px'
+                  }}
                   onMouseDown={(e) => {
                     // This makes the entire header a drag handle
                     // The parent motion.div will handle the actual dragging
