@@ -223,26 +223,29 @@ export default function LearningCalendar() {
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="grid lg:grid-cols-3 h-[600px] divide-x">
+          <div className="grid lg:grid-cols-3 h-auto lg:h-[600px] divide-x divide-y lg:divide-y-0">
             {/* Full calendar view */}
-            <div className="lg:col-span-2 p-4">
+            <div className="lg:col-span-2 p-2 sm:p-4">
               <div className="bg-white rounded-lg shadow-sm h-full flex flex-col">
-                <div className="p-2 flex justify-between items-center">
-                  <h3 className="font-medium text-base">
+                <div className="p-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                  <h3 className="font-medium text-base text-center sm:text-left">
                     {format(calendarView, 'MMMM yyyy')}
                   </h3>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button 
                       variant="outline" 
                       size="sm"
                       onClick={() => setCalendarView(prev => addMonths(prev, -1))}
+                      className="flex-1 sm:flex-none"
                     >
-                      Previous
+                      <span className="hidden sm:inline">Previous</span>
+                      <span className="sm:hidden">Prev</span>
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm"
                       onClick={() => setCalendarView(new Date())}
+                      className="flex-1 sm:flex-none"
                     >
                       Today
                     </Button>
@@ -250,6 +253,7 @@ export default function LearningCalendar() {
                       variant="outline" 
                       size="sm"
                       onClick={() => setCalendarView(prev => addMonths(prev, 1))}
+                      className="flex-1 sm:flex-none"
                     >
                       Next
                     </Button>
@@ -278,8 +282,8 @@ export default function LearningCalendar() {
                   />
                 </div>
                 
-                <div className="p-3 border-t flex justify-between items-center text-sm">
-                  <div className="flex gap-4 text-muted-foreground">
+                <div className="p-3 border-t flex flex-col sm:flex-row justify-between items-center text-sm gap-2">
+                  <div className="flex flex-wrap gap-2 sm:gap-4 text-muted-foreground justify-center sm:justify-start w-full sm:w-auto">
                     <div className="flex items-center gap-1">
                       <div className="w-3 h-3 rounded-full bg-blue-500"></div>
                       <span>Skills</span>
@@ -293,7 +297,7 @@ export default function LearningCalendar() {
                       <span>Projects</span>
                     </div>
                   </div>
-                  <div className="text-muted-foreground">
+                  <div className="text-muted-foreground text-center sm:text-right">
                     <Clock className="inline-block h-4 w-4 mr-1" />
                     {format(new Date(), 'PPp')}
                   </div>
@@ -302,7 +306,7 @@ export default function LearningCalendar() {
             </div>
             
             {/* Events panel for selected date */}
-            <div className="p-4 flex flex-col h-full">
+            <div className="p-4 flex flex-col h-[400px] lg:h-full">
               <div className="bg-slate-50 rounded-lg p-3 mb-4">
                 <h3 className="font-medium text-base">
                   {selectedDate ? formatDateWithLocale(selectedDate, 'PPPP') : 'Select a date'}

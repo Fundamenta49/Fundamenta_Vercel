@@ -289,7 +289,7 @@ export default function SchedulerCalendar() {
     
     return (
       <div className={cn(
-        "flex-1 min-w-[120px]",
+        "flex-1 min-w-[90px] sm:min-w-[120px]",
         isCurrentDay ? "bg-blue-50" : "bg-white"
       )}>
         <div className={cn(
@@ -298,7 +298,7 @@ export default function SchedulerCalendar() {
         )}>
           <div className="text-xs uppercase">{format(dayDate, 'EEE')}</div>
           <div className={cn(
-            "inline-flex items-center justify-center w-8 h-8 rounded-full",
+            "inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full",
             isCurrentDay ? "bg-blue-600 text-white" : ""
           )}>
             {format(dayDate, 'd')}
@@ -343,19 +343,22 @@ export default function SchedulerCalendar() {
           )}
         </div>
         
-        <div className="flex space-x-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setSelectedDate(addDays(selectedDate!, -1))}
+            className="flex-1 min-w-[100px]"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous Day
+            <span className="hidden sm:inline">Previous Day</span>
+            <span className="sm:hidden">Prev</span>
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setSelectedDate(new Date())}
+            className="flex-1 min-w-[80px]"
           >
             Today
           </Button>
@@ -363,8 +366,10 @@ export default function SchedulerCalendar() {
             variant="outline" 
             size="sm"
             onClick={() => setSelectedDate(addDays(selectedDate!, 1))}
+            className="flex-1 min-w-[100px]"
           >
-            Next Day
+            <span className="hidden sm:inline">Next Day</span>
+            <span className="sm:hidden">Next</span>
             <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
@@ -437,34 +442,40 @@ export default function SchedulerCalendar() {
           Week of {format(weekStart, 'MMMM d, yyyy')}
         </div>
         
-        <div className="flex space-x-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setSelectedDate(addDays(weekStart, -7))}
+            className="flex-1 min-w-[100px]"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous Week
+            <span className="hidden sm:inline">Previous Week</span>
+            <span className="sm:hidden">Prev</span>
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setSelectedDate(new Date())}
+            className="flex-1 min-w-[80px]"
           >
-            Current Week
+            <span className="hidden sm:inline">Current Week</span>
+            <span className="sm:hidden">This Week</span>
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setSelectedDate(addDays(weekStart, 7))}
+            className="flex-1 min-w-[100px]"
           >
-            Next Week
+            <span className="hidden sm:inline">Next Week</span>
+            <span className="sm:hidden">Next</span>
             <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
         
         <ScrollArea className="flex-1">
-          <div className="flex divide-x border rounded-lg min-w-[800px]">
+          <div className="flex divide-x border rounded-lg min-w-[600px] sm:min-w-[800px]">
             {weekDays.map((day) => (
               <WeekColumn key={day.toISOString()} dayDate={day} />
             ))}
@@ -484,7 +495,7 @@ export default function SchedulerCalendar() {
           {format(selectedDate, 'MMMM yyyy')}
         </div>
         
-        <div className="flex space-x-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <Button 
             variant="outline" 
             size="sm"
@@ -493,16 +504,20 @@ export default function SchedulerCalendar() {
               newDate.setMonth(newDate.getMonth() - 1);
               setSelectedDate(newDate);
             }}
+            className="flex-1 min-w-[100px]"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous Month
+            <span className="hidden sm:inline">Previous Month</span>
+            <span className="sm:hidden">Prev</span>
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setSelectedDate(new Date())}
+            className="flex-1 min-w-[80px]"
           >
-            Current Month
+            <span className="hidden sm:inline">Current Month</span>
+            <span className="sm:hidden">Today</span>
           </Button>
           <Button 
             variant="outline" 
@@ -512,8 +527,10 @@ export default function SchedulerCalendar() {
               newDate.setMonth(newDate.getMonth() + 1);
               setSelectedDate(newDate);
             }}
+            className="flex-1 min-w-[100px]"
           >
-            Next Month
+            <span className="hidden sm:inline">Next Month</span>
+            <span className="sm:hidden">Next</span>
             <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
