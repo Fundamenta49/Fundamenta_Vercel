@@ -134,6 +134,18 @@ export class OpenAIProvider implements AIProvider {
     }
     
     try {
+      // Check for home maintenance related queries
+      const lowerMessage = message.toLowerCase();
+      if ((lowerMessage.includes('broken') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('fixture'))) ||
+          (lowerMessage.includes('repair') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('toilet') || lowerMessage.includes('sink') || lowerMessage.includes('door'))) ||
+          (lowerMessage.includes('fix') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('fixture') || lowerMessage.includes('toilet') || lowerMessage.includes('sink'))) ||
+          (lowerMessage.includes('diagnose') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('problem'))) ||
+          (lowerMessage.includes('camera') && lowerMessage.includes('repair')) ||
+          (lowerMessage.includes('leaking') || lowerMessage.includes('water damage') || lowerMessage.includes('plumbing issue'))) {
+        console.log('OpenAI provider - early detection: Home maintenance query, categorizing as homeMaintenance');
+        return { category: "homeMaintenance", confidence: 0.95 };
+      }
+      
       const prompt = `
         Analyze the following user message and determine which category it belongs to:
         
@@ -147,10 +159,12 @@ export class OpenAIProvider implements AIProvider {
         - emergency: Urgent situations, health emergencies, accidents, immediate help needed
         - cooking: Food preparation, recipes, meal planning, cooking techniques
         - fitness: Exercise, workouts, physical health, nutrition, sports
+        - homeMaintenance: Home repairs, appliance fixes, household maintenance, DIY repairs, property maintenance, repair tools, diagnosing broken items
         - general: General questions that don't fit other categories
         
         Special rules:
         - Messages about financial education, financial literacy, or learning about money should be categorized as "finance", not "learning"
+        - Messages about home repairs, broken appliances, maintenance issues, or camera diagnostics for repair should be categorized as "homeMaintenance"
         
         Respond with a JSON object containing:
         1. "category": The most appropriate category from the list above
@@ -263,6 +277,9 @@ export class HuggingFaceProvider implements AIProvider {
             break;
           case "emergency":
             response = `I notice this might be an emergency situation. Your message: "${mainIntent}" seems urgent. For immediate help, please contact emergency services or visit our emergency section.`;
+            break;
+          case "homeMaintenance":
+            response = `I see you're asking about home repairs. Your message: "${mainIntent}" seems to be about fixing or diagnosing a household issue. I can help with maintenance tips, repair guidance, or direct you to our Smart Repair Diagnostic Tool for visual analysis.`;
             break;
           default:
             response = `I've received your message: "${mainIntent}". While I'm operating in backup mode with limited capabilities, I'll do my best to help you.`;

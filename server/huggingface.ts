@@ -516,6 +516,22 @@ export async function getContentCategory(text: string): Promise<string> {
       return 'fitness';
     }
     
+    // Home maintenance terms
+    if (lowerText.includes('broken') && (lowerText.includes('house') || lowerText.includes('home') || lowerText.includes('appliance') || lowerText.includes('fixture')) ||
+        lowerText.includes('repair') && (lowerText.includes('house') || lowerText.includes('home') || lowerText.includes('appliance') || lowerText.includes('toilet') || lowerText.includes('sink') || lowerText.includes('door')) ||
+        lowerText.includes('fix') && (lowerText.includes('house') || lowerText.includes('home') || lowerText.includes('appliance') || lowerText.includes('fixture') || lowerText.includes('toilet') || lowerText.includes('sink')) ||
+        lowerText.includes('diagnose') && (lowerText.includes('house') || lowerText.includes('home') || lowerText.includes('appliance') || lowerText.includes('problem')) ||
+        lowerText.includes('camera') && lowerText.includes('repair') ||
+        lowerText.includes('leaking') ||
+        lowerText.includes('plumbing') ||
+        lowerText.includes('water damage') ||
+        lowerText.includes('diy repair') ||
+        lowerText.includes('home maintenance') ||
+        lowerText.includes('handyman')) {
+      console.log('Early detection: Home maintenance term detected, categorizing as homeMaintenance');
+      return 'homeMaintenance';
+    }
+    
     // List of alternative models for category classification
     const alternativeModels = [
       'MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7', // Alternative zero-shot model
@@ -542,6 +558,7 @@ export async function getContentCategory(text: string): Promise<string> {
             'emergency and urgent situations',
             'cooking and food preparation',
             'fitness and physical health',
+            'home maintenance and repairs',
             'general information'
           ]
         }
@@ -559,6 +576,7 @@ export async function getContentCategory(text: string): Promise<string> {
       'emergency and urgent situations': 'emergency',
       'cooking and food preparation': 'cooking',
       'fitness and physical health': 'fitness',
+      'home maintenance and repairs': 'homeMaintenance',
       'general information': 'general'
     };
     
@@ -629,6 +647,31 @@ export async function getContentCategory(text: string): Promise<string> {
           text.toLowerCase().includes('meditation')) && 
           topCategory.score < 0.7) {
         return 'wellness';
+      }
+      
+      // Enhanced handling for home maintenance topics
+      if ((topCategory.label === 'homeMaintenance' || 
+          topCategory.label === 'home maintenance and repairs' || 
+          text.toLowerCase().includes('repair') ||
+          text.toLowerCase().includes('fix') ||
+          text.toLowerCase().includes('broken') ||
+          text.toLowerCase().includes('leaking') ||
+          text.toLowerCase().includes('diy') ||
+          text.toLowerCase().includes('home maintenance')) && 
+          topCategory.score < 0.7) {
+        const lowerText = text.toLowerCase();
+        // Check for home-related terms
+        if (lowerText.includes('home') || 
+            lowerText.includes('house') || 
+            lowerText.includes('appliance') || 
+            lowerText.includes('plumbing') || 
+            lowerText.includes('sink') || 
+            lowerText.includes('toilet') ||
+            lowerText.includes('fixture') ||
+            lowerText.includes('leak') ||
+            lowerText.includes('camera')) {
+          return 'homeMaintenance';
+        }
       }
     } catch (specificError) {
       console.error('Error in specific category classification:', specificError);

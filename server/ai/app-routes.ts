@@ -428,5 +428,12 @@ export const applicationRoutes: Record<string, RouteInfo> = {
     description: "Calculate nutritional information for homemade recipes and meals",
     categories: ["cooking", "nutrition", "health"],
     keywords: ["nutrition", "calculator", "recipe", "calories", "macronutrients", "homemade", "meals"]
+  },
+  
+  "/learning/courses/repair-assistant": {
+    name: "Smart Repair Diagnostic Tool",
+    description: "AI-powered camera tool for diagnosing home maintenance issues with repair instructions, tools lists and parts pricing",
+    categories: ["home maintenance", "learning", "tools", "technology"],
+    keywords: ["home", "repair", "maintenance", "diagnosis", "diagnostic", "camera", "ai", "tools", "parts", "pricing", "fix", "broken", "house", "appliance", "instruction"]
   }
 };

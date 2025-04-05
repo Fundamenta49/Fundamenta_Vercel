@@ -393,5 +393,27 @@ export function processActions(aiResponse: any, category: string, context: AICon
     }
   }
   
+  // For home maintenance category, suggest the repair assistant tool when appropriate
+  if (category === "homeMaintenance" && actions.length === 0) {
+    // Check if the repair assistant route exists and is valid
+    const repairAssistantPath = "/learning/courses/repair-assistant";
+    const repairAssistantInfo = applicationRoutes[repairAssistantPath];
+    
+    if (repairAssistantInfo && validClientRoutes.includes(repairAssistantPath) && 
+        !aiResponse.suggestions?.some((s: AppSuggestion) => s.path === repairAssistantPath)) {
+      
+      if (!aiResponse.suggestions) {
+        aiResponse.suggestions = [];
+      }
+      
+      // Add the suggestion to use the Smart Repair Diagnostic Tool
+      aiResponse.suggestions.unshift({
+        text: "Would you like me to take you to our Smart Repair Diagnostic Tool to help diagnose your home issue with the camera?",
+        path: repairAssistantPath,
+        description: repairAssistantInfo.description
+      });
+    }
+  }
+  
   return actions;
 }
