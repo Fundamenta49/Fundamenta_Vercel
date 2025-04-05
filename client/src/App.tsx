@@ -128,6 +128,11 @@ function Router() {
                 <CalendarRedesigned />
               </ProtectedRoute>
             </Route>
+            <Route path="/calendar">
+              <ProtectedRoute>
+                <CalendarRedesigned />
+              </ProtectedRoute>
+            </Route>
             <Route path="/calendar-testing">
               <ProtectedRoute>
                 <CalendarTestingPage />
