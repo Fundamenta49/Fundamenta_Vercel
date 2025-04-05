@@ -122,6 +122,17 @@ export class OpenAIProvider implements AIProvider {
       return { category: preferredCategory, confidence: 1.0 };
     }
     
+    // First, check for special phrases like financial education or financial literacy
+    const lowerMessage = message.toLowerCase();
+    if ((lowerMessage.includes('financial') && lowerMessage.includes('learning')) ||
+        (lowerMessage.includes('financial') && lowerMessage.includes('education')) ||
+        (lowerMessage.includes('financial literacy')) ||
+        (lowerMessage.includes('learn') && lowerMessage.includes('finance')) ||
+        (lowerMessage.includes('schedule') && lowerMessage.includes('financial'))) {
+      console.log('OpenAI provider - early detection: Financial education query, categorizing as finance');
+      return { category: "finance", confidence: 0.95 };
+    }
+    
     try {
       const prompt = `
         Analyze the following user message and determine which category it belongs to:
@@ -129,14 +140,17 @@ export class OpenAIProvider implements AIProvider {
         User message: "${message}"
         
         Categories:
-        - finance: Financial questions, budgeting, investing, money management
+        - finance: Financial questions, budgeting, investing, money management, financial education, financial literacy
         - career: Career development, job search, resume help, interview prep
         - wellness: Mental health, meditation, stress management, sleep, self-care
-        - learning: Educational topics, skill development, knowledge acquisition
+        - learning: Educational topics, skill development, knowledge acquisition (except financial education which belongs in finance)
         - emergency: Urgent situations, health emergencies, accidents, immediate help needed
         - cooking: Food preparation, recipes, meal planning, cooking techniques
         - fitness: Exercise, workouts, physical health, nutrition, sports
         - general: General questions that don't fit other categories
+        
+        Special rules:
+        - Messages about financial education, financial literacy, or learning about money should be categorized as "finance", not "learning"
         
         Respond with a JSON object containing:
         1. "category": The most appropriate category from the list above
@@ -222,24 +236,37 @@ export class HuggingFaceProvider implements AIProvider {
       // Construct a basic response based on the category
       let response = "";
       
-      switch (category.category) {
-        case "finance":
-          response = `I understand you're asking about finances. Your message: "${mainIntent}" seems to be related to financial matters. I can help with budgeting, investing, and financial planning.`;
-          break;
-        case "career":
-          response = `I see you're interested in career development. Your message: "${mainIntent}" appears to be about professional growth. I can help with job searches, resume building, and interview preparation.`;
-          break;
-        case "wellness":
-          response = `I understand you're focused on wellness. Your message: "${mainIntent}" seems to be about well-being. I can help with stress management, mental health tips, and self-care routines.`;
-          break;
-        case "learning":
-          response = `I see you're interested in learning. Your message: "${mainIntent}" appears to be about education or skill development. I can help with study techniques, learning resources, and knowledge acquisition.`;
-          break;
-        case "emergency":
-          response = `I notice this might be an emergency situation. Your message: "${mainIntent}" seems urgent. For immediate help, please contact emergency services or visit our emergency section.`;
-          break;
-        default:
-          response = `I've received your message: "${mainIntent}". While I'm operating in backup mode with limited capabilities, I'll do my best to help you.`;
+      // Special handling for financial education queries - redirect to finance
+      const lowerIntent = mainIntent.toLowerCase();
+      if ((lowerIntent.includes('financial') && lowerIntent.includes('learning')) ||
+          (lowerIntent.includes('financial') && lowerIntent.includes('education')) ||
+          (lowerIntent.includes('financial literacy')) ||
+          (lowerIntent.includes('learn') && lowerIntent.includes('finance')) ||
+          (lowerIntent.includes('schedule') && lowerIntent.includes('financial'))) {
+          
+        response = `I understand you're asking about financial education. Your message: "${mainIntent}" seems to be related to learning about finances. I'll direct you to our Finance section where you can find resources on financial literacy, budgeting, investing, and more.`;
+        // Override category to ensure proper navigation
+        category.category = "finance";
+      } else {
+        switch (category.category) {
+          case "finance":
+            response = `I understand you're asking about finances. Your message: "${mainIntent}" seems to be related to financial matters. I can help with budgeting, investing, and financial planning.`;
+            break;
+          case "career":
+            response = `I see you're interested in career development. Your message: "${mainIntent}" appears to be about professional growth. I can help with job searches, resume building, and interview preparation.`;
+            break;
+          case "wellness":
+            response = `I understand you're focused on wellness. Your message: "${mainIntent}" seems to be about well-being. I can help with stress management, mental health tips, and self-care routines.`;
+            break;
+          case "learning":
+            response = `I see you're interested in learning. Your message: "${mainIntent}" appears to be about education or skill development. I can help with study techniques, learning resources, and knowledge acquisition.`;
+            break;
+          case "emergency":
+            response = `I notice this might be an emergency situation. Your message: "${mainIntent}" seems urgent. For immediate help, please contact emergency services or visit our emergency section.`;
+            break;
+          default:
+            response = `I've received your message: "${mainIntent}". While I'm operating in backup mode with limited capabilities, I'll do my best to help you.`;
+        }
       }
       
       // Add a note about operating in backup mode

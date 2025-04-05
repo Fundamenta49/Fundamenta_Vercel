@@ -20,9 +20,9 @@ export const applicationRoutes: Record<string, RouteInfo> = {
   
   "/finance": {
     name: "Finance Coach",
-    description: "Financial planning, budgeting, and investment guidance",
+    description: "Financial planning, budgeting, investment guidance, and financial literacy",
     categories: ["finance"],
-    keywords: ["money", "budget", "invest", "financial", "savings", "debt", "loan", "mortgage"]
+    keywords: ["money", "budget", "invest", "financial", "savings", "debt", "loan", "mortgage", "financial literacy", "financial education", "learn finance", "financial learning"]
   },
   
   "/finance/budget": {

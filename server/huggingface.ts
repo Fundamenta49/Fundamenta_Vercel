@@ -425,7 +425,14 @@ export async function getContentCategory(text: string): Promise<string> {
         lowerText.includes('budget') ||
         lowerText.includes('401k') ||
         lowerText.includes('ira') ||
-        lowerText.includes('credit score')) {
+        lowerText.includes('credit score') ||
+        lowerText.includes('financial literacy') ||
+        (lowerText.includes('financial') && lowerText.includes('learning')) ||
+        (lowerText.includes('financial') && lowerText.includes('education')) ||
+        (lowerText.includes('financial') && lowerText.includes('planning')) ||
+        (lowerText.includes('finances') && lowerText.includes('lessons')) ||
+        (lowerText.includes('money') && lowerText.includes('learn')) ||
+        (lowerText.includes('schedule') && lowerText.includes('financial'))) {
       console.log('Early detection: Finance term detected, categorizing as finance');
       return 'finance';
     }
