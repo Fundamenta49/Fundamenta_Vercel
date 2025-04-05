@@ -51,7 +51,7 @@ interface SmartPrompt {
   createdAt: Date;
 }
 
-type LifeSkillsTabId = "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping";
+type LifeSkillsTabId = "financial" | "cooking" | "home" | "time" | "communication" | "shopping";
 
 // Interfaces
 interface LifeSkillsComponentProps {
@@ -59,7 +59,7 @@ interface LifeSkillsComponentProps {
 }
 
 // Complete implementation of Life Skills component with horizontal tabs and search functionality
-export const LifeSkillsComponent = ({ initialTab = "search" }: LifeSkillsComponentProps) => {
+export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComponentProps) => {
   const [activeTab, setActiveTab] = useState<LifeSkillsTabId>(initialTab as LifeSkillsTabId);
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
@@ -122,7 +122,6 @@ export const LifeSkillsComponent = ({ initialTab = "search" }: LifeSkillsCompone
 
   // Tab definitions
   const tabs: Array<{id: LifeSkillsTabId, label: string, icon: React.ComponentType<{className?: string}>}> = [
-    { id: "search", label: "Search Skills", icon: Search },
     { id: "financial", label: "Financial", icon: Wallet },
     { id: "cooking", label: "Cooking", icon: ChefHat },
     { id: "home", label: "Home Care", icon: Home },
@@ -509,36 +508,7 @@ export const LifeSkillsComponent = ({ initialTab = "search" }: LifeSkillsCompone
   );
 
   // Tab content components
-  const tabContent: Record<LifeSkillsTabId, React.ReactNode> = {
-    search: (
-      <div className="space-y-4 pt-4">
-        <form onSubmit={handleSearch}>
-          <div className="flex gap-3">
-            <Input
-              type="text"
-              placeholder="Search for life skills..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
-            />
-            <Button type="submit" variant="outline">
-              <Search className="h-4 w-4 mr-2" />
-              Search
-            </Button>
-          </div>
-        </form>
-
-        {isLoading ? (
-          <div className="flex items-center justify-center py-4">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
-        ) : guidance ? (
-          <div className="prose prose-slate max-w-none bg-white p-4 rounded-lg border-2 border-rose-100">
-            <p className="text-base leading-relaxed whitespace-pre-line">{guidance}</p>
-          </div>
-        ) : null}
-      </div>
-    ),
+  const tabContent = {
     financial: (
       <div className="pt-4 prose prose-slate max-w-none">
         <h3>Financial Literacy Basics</h3>
