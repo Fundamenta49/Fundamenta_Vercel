@@ -51,7 +51,7 @@ interface SmartPrompt {
   createdAt: Date;
 }
 
-type LifeSkillsTabId = "dashboard" | "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping";
+type LifeSkillsTabId = "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping";
 
 // Interfaces
 interface LifeSkillsComponentProps {
@@ -59,7 +59,7 @@ interface LifeSkillsComponentProps {
 }
 
 // Complete implementation of Life Skills component with horizontal tabs and search functionality
-export const LifeSkillsComponent = ({ initialTab = "dashboard" }: LifeSkillsComponentProps) => {
+export const LifeSkillsComponent = ({ initialTab = "search" }: LifeSkillsComponentProps) => {
   const [activeTab, setActiveTab] = useState<LifeSkillsTabId>(initialTab as LifeSkillsTabId);
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
@@ -122,7 +122,6 @@ export const LifeSkillsComponent = ({ initialTab = "dashboard" }: LifeSkillsComp
 
   // Tab definitions
   const tabs: Array<{id: LifeSkillsTabId, label: string, icon: React.ComponentType<{className?: string}>}> = [
-    { id: "dashboard", label: "Dashboard", icon: User },
     { id: "search", label: "Search Skills", icon: Search },
     { id: "financial", label: "Financial", icon: Wallet },
     { id: "cooking", label: "Cooking", icon: ChefHat },
@@ -511,7 +510,6 @@ export const LifeSkillsComponent = ({ initialTab = "dashboard" }: LifeSkillsComp
 
   // Tab content components
   const tabContent: Record<LifeSkillsTabId, React.ReactNode> = {
-    dashboard: showOnboarding ? <OnboardingForm /> : <DashboardContent />,
     search: (
       <div className="space-y-4 pt-4">
         <form onSubmit={handleSearch}>
