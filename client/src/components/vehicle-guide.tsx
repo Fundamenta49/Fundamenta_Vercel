@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -19,12 +19,14 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   AlertTriangle, Info, Car, Wrench, Star, Search, 
-  Maximize2, Minimize2, FileText, BarChart4, Calendar, FileCheck 
+  Maximize2, Minimize2, FileText, BarChart4, Calendar, FileCheck,
+  Camera, X, Upload, Eye 
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 import { 
   VehicleDetails, 
@@ -118,6 +120,13 @@ export default function VehicleGuide() {
   const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>(COMMON_TASKS);
   const [isVideoFocused, setIsVideoFocused] = useState(false);
   const [savedVehicles, setSavedVehicles] = useState<VehicleInfo[]>([]);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [vinFromImage, setVinFromImage] = useState<string | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
   // Load saved vehicles from localStorage on component mount
@@ -132,6 +141,60 @@ export default function VehicleGuide() {
       }
     }
   }, []);
+  
+  // Initialize camera when dialog opens
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+    
+    const initCamera = async () => {
+      if (isCameraOpen && videoRef.current && !capturedImage) {
+        try {
+          // Request camera permissions and get stream
+          stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment' } // Use back camera on mobile if available
+          });
+          
+          // Connect the stream to video element
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (err) {
+          console.error('Error accessing camera:', err);
+          setError('Unable to access camera. Please check permissions or try uploading an image instead.');
+        }
+      }
+    };
+    
+    // Watch for changes to Dialog open state
+    const dialogTrigger = document.querySelector('[aria-haspopup="dialog"]');
+    const dialogElement = document.querySelector('[role="dialog"]');
+    
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'aria-expanded' && dialogTrigger) {
+          const isOpen = dialogTrigger.getAttribute('aria-expanded') === 'true';
+          setIsCameraOpen(isOpen);
+          if (isOpen) {
+            initCamera();
+          }
+        }
+      });
+    });
+    
+    if (dialogTrigger) {
+      observer.observe(dialogTrigger, { attributes: true });
+    }
+    
+    // Clean up camera stream when component unmounts or dialog closes
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => {
+          track.stop();
+        });
+      }
+      observer.disconnect();
+    };
+  }, [isCameraOpen, capturedImage]);
 
   // Save vehicle to localStorage
   const saveVehicle = () => {
@@ -528,15 +591,200 @@ export default function VehicleGuide() {
               {/* VIN Input */}
               <div className="relative">
                 <div className="flex flex-col sm:flex-row gap-2">
-                  <Input
-                    type="text"
-                    placeholder="Enter VIN (17 characters)"
-                    value={vehicleInfo.vin || ''}
-                    onChange={(e) => handleVehicleInfoChange('vin', e.target.value.toUpperCase())}
-                    className="w-full font-mono"
-                    maxLength={17}
-                    aria-label="Vehicle Identification Number"
-                  />
+                  <div className="flex-grow flex gap-2">
+                    <Input
+                      type="text"
+                      placeholder="Enter VIN (17 characters)"
+                      value={vehicleInfo.vin || ''}
+                      onChange={(e) => handleVehicleInfoChange('vin', e.target.value.toUpperCase())}
+                      className="w-full font-mono"
+                      maxLength={17}
+                      aria-label="Vehicle Identification Number"
+                    />
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          className="flex-shrink-0"
+                          title="Scan VIN with camera"
+                        >
+                          <Camera className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Scan VIN with Camera</DialogTitle>
+                          <DialogDescription>
+                            Take a photo of your VIN sticker or upload an image
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="flex flex-col gap-4">
+                          {capturedImage ? (
+                            <div className="relative">
+                              <img 
+                                src={capturedImage} 
+                                alt="Captured VIN" 
+                                className="max-w-full rounded-md"
+                              />
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="absolute top-2 right-2"
+                                onClick={() => {
+                                  setCapturedImage(null);
+                                  setVinFromImage(null);
+                                }}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="bg-muted rounded-md aspect-video relative overflow-hidden">
+                              <video 
+                                ref={videoRef} 
+                                className="w-full h-full object-cover"
+                                autoPlay 
+                                playsInline
+                              />
+                              <canvas 
+                                ref={canvasRef} 
+                                className="hidden"
+                              />
+                            </div>
+                          )}
+                          
+                          {vinFromImage && (
+                            <div className="bg-muted/50 p-3 rounded-md">
+                              <p className="text-sm text-muted-foreground mb-1">Detected VIN:</p>
+                              <p className="font-mono text-base">{vinFromImage}</p>
+                              <p className="text-xs text-muted-foreground mt-2">
+                                Please review the VIN for accuracy before using it
+                              </p>
+                            </div>
+                          )}
+                          
+                          <div className="flex space-x-2">
+                            {!capturedImage ? (
+                              <>
+                                <Button
+                                  variant="default"
+                                  onClick={() => {
+                                    // Capture photo from camera
+                                    if (videoRef.current && canvasRef.current) {
+                                      const video = videoRef.current;
+                                      const canvas = canvasRef.current;
+                                      const context = canvas.getContext('2d');
+                                      
+                                      if (context) {
+                                        canvas.width = video.videoWidth;
+                                        canvas.height = video.videoHeight;
+                                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                        
+                                        const imageDataUrl = canvas.toDataURL('image/png');
+                                        setCapturedImage(imageDataUrl);
+                                        
+                                        // In a real app, we would process the image here
+                                        // For now, simulate VIN extraction with a placeholder
+                                        setTimeout(() => {
+                                          setIsProcessingImage(true);
+                                          // Simulate VIN extraction (in a real app this would use OCR)
+                                          setTimeout(() => {
+                                            // This is just a placeholder implementation
+                                            // In a real app, use OCR to extract the VIN from the image
+                                            const mockExtractedVin = "1HGCM82633A123456";
+                                            setVinFromImage(mockExtractedVin);
+                                            setIsProcessingImage(false);
+                                          }, 1500);
+                                        }, 500);
+                                      }
+                                    }
+                                  }}
+                                  className="flex-1"
+                                >
+                                  <Camera className="h-4 w-4 mr-2" />
+                                  Take Photo
+                                </Button>
+                                
+                                <div className="relative">
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                      // Trigger file input click
+                                      if (fileInputRef.current) {
+                                        fileInputRef.current.click();
+                                      }
+                                    }}
+                                    className="flex-1"
+                                  >
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    Upload Image
+                                  </Button>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    ref={fileInputRef}
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = (event) => {
+                                          const imageDataUrl = event.target?.result as string;
+                                          setCapturedImage(imageDataUrl);
+                                          
+                                          // Simulate VIN extraction
+                                          setIsProcessingImage(true);
+                                          setTimeout(() => {
+                                            const mockExtractedVin = "5FNRL38497B021234";
+                                            setVinFromImage(mockExtractedVin);
+                                            setIsProcessingImage(false);
+                                          }, 1500);
+                                        };
+                                        reader.readAsDataURL(file);
+                                      }
+                                    }}
+                                    className="hidden"
+                                  />
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <Button
+                                  variant="default"
+                                  onClick={() => {
+                                    if (vinFromImage) {
+                                      handleVehicleInfoChange('vin', vinFromImage);
+                                      setCapturedImage(null);
+                                      setVinFromImage(null);
+                                      setIsCameraOpen(false);
+                                    }
+                                  }}
+                                  disabled={!vinFromImage || isProcessingImage}
+                                  className="flex-1"
+                                >
+                                  <FileCheck className="h-4 w-4 mr-2" />
+                                  Use This VIN
+                                </Button>
+                                
+                                <Button
+                                  variant="outline"
+                                  onClick={() => {
+                                    setCapturedImage(null);
+                                    setVinFromImage(null);
+                                  }}
+                                  className="flex-1"
+                                >
+                                  <Camera className="h-4 w-4 mr-2" />
+                                  Retake Photo
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                   <Button
                     variant="default"
                     onClick={populateFromVin}
