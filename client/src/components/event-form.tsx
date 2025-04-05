@@ -99,6 +99,15 @@ const EventForm = ({ isOpen, onClose, onSave, selectedDate, editEvent, learningR
   const handleLearningResourceChange = (resourceId: string) => {
     setSelectedLearningResource(resourceId);
     
+    // If none is selected, clear the learning resource
+    if (resourceId === 'none') {
+      setFormData(prev => ({
+        ...prev,
+        learningResourceId: undefined
+      }));
+      return;
+    }
+    
     // Find the selected resource
     const resource = learningResources.find(r => r.id === resourceId);
     
@@ -144,11 +153,11 @@ const EventForm = ({ isOpen, onClose, onSave, selectedDate, editEvent, learningR
         ...formData,
         startTime,
         endTime,
-        learningResourceId: selectedLearningResource,
+        learningResourceId: selectedLearningResource === 'none' ? undefined : selectedLearningResource,
       };
       
       // If it's a learning resource, add information
-      if (selectedLearningResource) {
+      if (selectedLearningResource && selectedLearningResource !== 'none') {
         const resource = learningResources.find(r => r.id === selectedLearningResource);
         if (!formData.location && resource) {
           eventData.location = `Online course: ${resource.title}`;
@@ -159,7 +168,7 @@ const EventForm = ({ isOpen, onClose, onSave, selectedDate, editEvent, learningR
       onClose();
       
       // If it's a learning resource, offer navigation
-      if (selectedLearningResource) {
+      if (selectedLearningResource && selectedLearningResource !== 'none') {
         const resource = learningResources.find(r => r.id === selectedLearningResource);
         if (resource) {
           toast({
@@ -205,7 +214,7 @@ const EventForm = ({ isOpen, onClose, onSave, selectedDate, editEvent, learningR
                 <SelectValue placeholder="Choose learning content (optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None</SelectItem>
+                <SelectItem value="none">None</SelectItem>
                 {learningResources.map((resource) => (
                   <SelectItem key={resource.id} value={resource.id}>
                     {resource.title}
