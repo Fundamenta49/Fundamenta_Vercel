@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
 import { Link } from "wouter";
 import RestartTourButton from "@/components/tour/restart-tour-button";
+import WeatherWidget from "@/components/weather-widget";
 
 const features = [
   {
@@ -52,13 +53,18 @@ export default function Home() {
   return (
     <div className="px-4 py-8">
 
-      <div className="text-center mb-12 relative">
+      <div className="text-center mb-8 relative">
         <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
           Welcome to Fundamenta
         </h1>
         <p className="text-lg text-muted-foreground">
           Your AI-powered assistant for life skills and wellness
         </p>
+      </div>
+      
+      {/* Weather Widget */}
+      <div className="max-w-3xl mx-auto mb-10">
+        <WeatherWidget showForecast={true} />
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

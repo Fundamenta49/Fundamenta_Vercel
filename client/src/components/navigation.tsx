@@ -29,7 +29,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { TourSettings } from "@/components/tour-settings";
 import { Separator } from "@/components/ui/separator";
-import SchedulerCalendar from "@/components/scheduler-calendar";
+import SidebarCalendar from "@/components/sidebar-calendar";
 
 const defaultNavItems = [
   { href: "/", label: "Home", icon: Home },
@@ -227,7 +227,7 @@ export default function Navigation() {
               </div>
               
               <div className="mt-2">
-                <SchedulerCalendar />
+                <SidebarCalendar />
               </div>
             </div>
             
@@ -315,7 +315,7 @@ export default function Navigation() {
           {/* Calendar as a minimizable component */}
           {!isMinimized ? (
             <div className="mt-2">
-              <SchedulerCalendar />
+              <SidebarCalendar />
             </div>
           ) : (
             <div className="mt-3 flex justify-center">
