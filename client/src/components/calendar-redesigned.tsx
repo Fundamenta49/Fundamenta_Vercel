@@ -348,11 +348,11 @@ export default function CalendarRedesigned() {
           marginTop: '0.5rem'
         }}>
           <div className="grid grid-cols-7 h-full calendar-day-cells overflow-y-auto" style={{ 
-            maxHeight: '500px', 
+            maxHeight: '400px', 
             scrollbarWidth: 'thin',
             display: 'grid',
             gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-            gridTemplateRows: 'auto repeat(5, minmax(50px, 1fr))',
+            gridTemplateRows: 'auto repeat(5, minmax(40px, 1fr))',
             gap: '1px',
             height: 'auto', 
             minHeight: 'auto',
@@ -389,9 +389,11 @@ export default function CalendarRedesigned() {
                   )}
                   style={{
                     height: 'auto',
-                    minHeight: '60px',
+                    minHeight: '50px',
+                    maxHeight: '80px',
                     border: '1px solid #e5e7eb',
-                    position: 'relative'
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onClick={() => {
                     setSelectedDay(day);
@@ -417,16 +419,17 @@ export default function CalendarRedesigned() {
                   </div>
                   
                   {/* Events for this day - adapted for mobile */}
-                  <div className="px-1 space-y-1 pb-1 max-h-[calc(100%-1.5rem)] overflow-hidden">
-                    {dayEvents.slice(0, isMobile ? 2 : 4).map((event) => (
+                  <div className="px-1 space-y-0.5 pb-1 max-h-[calc(100%-1.5rem)] overflow-hidden">
+                    {dayEvents.slice(0, isMobile ? 1 : 2).map((event) => (
                       <button
                         key={event.id}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedEvent(event);
                           setShowEventDetails(true);
                         }}
                         className={cn(
-                          "w-full text-left px-1.5 py-0.5 text-xs rounded border-l-2",
+                          "w-full text-left px-1 py-0.5 text-xs rounded border-l-2",
                           categoryColors[event.category]?.bg || "bg-gray-100",
                           categoryColors[event.category]?.text || "text-gray-700",
                           categoryColors[event.category]?.border || "border-gray-300",
@@ -434,13 +437,13 @@ export default function CalendarRedesigned() {
                         )}
                       >
                         {event.startTime && (
-                          <div className="font-medium hidden sm:block">
+                          <span className="inline-block mr-1 font-medium text-[9px]">
                             {formatTime(event.startTime)}
-                          </div>
+                          </span>
                         )}
-                        <div className="truncate">
+                        <span className="truncate inline-block max-w-full">
                           {event.title}
-                        </div>
+                        </span>
                       </button>
                     ))}
                     {dayEvents.length > (isMobile ? 2 : 4) && (
@@ -1095,10 +1098,7 @@ export default function CalendarRedesigned() {
         width: "100%",
         overflow: "visible",
         padding: "0.5rem",
-        position: "relative",
-        top: "50%",
-        transform: "translateY(-50%)",
-        marginTop: "20px"
+        margin: "0 auto"
       }}>
         {/* Fullscreen Toggle Header */}
         {isFullscreen && (
