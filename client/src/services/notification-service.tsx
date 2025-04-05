@@ -1,4 +1,4 @@
-import { CalendarEvent } from './calendar-service';
+import { CalendarEvent, calendarService } from './calendar-service';
 import { toast } from '@/hooks/use-toast';
 import { addMinutes, isBefore, isAfter, isSameDay, format } from 'date-fns';
 import * as React from 'react';
@@ -63,7 +63,7 @@ class NotificationService {
     // Get events from calendar service
     let events: CalendarEvent[] = [];
     try {
-      const calendarService = require('./calendar-service').calendarService;
+      // Use the already imported calendarService
       events = calendarService.getEvents();
     } catch (error) {
       console.error('Error loading events for notifications:', error);
