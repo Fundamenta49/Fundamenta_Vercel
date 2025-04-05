@@ -593,8 +593,23 @@ export class HuggingFaceProvider implements AIProvider {
       return { category: "wellness", confidence: 0.9 };
     }
     
-    // Check for home maintenance and utilities related queries
-    if (lowerMessage.includes('picfix') || 
+    // Check for career-related queries - putting this before home maintenance to prioritize it
+    if (lowerMessage.includes('resume') || 
+        lowerMessage.includes('job interview') || 
+        lowerMessage.includes('career') ||
+        lowerMessage.includes('promotion') ||
+        lowerMessage.includes('job search') ||
+        lowerMessage.includes('linkedin') ||
+        lowerMessage.includes('networking') ||
+        lowerMessage.includes('cv') ||
+        lowerMessage.includes('cover letter') ||
+        lowerMessage.includes('job application')) {
+      console.log('HuggingFace provider - early detection: Career query, categorizing as career');
+      return { category: "career", confidence: 0.95 };
+    }
+    
+    // Check for home maintenance and utilities related queries - exclude resume-related terms
+    if ((lowerMessage.includes('picfix') || 
         lowerMessage.includes('pic fix') || 
         lowerMessage.includes('utilities') ||
         lowerMessage.includes('utility') ||
@@ -607,7 +622,12 @@ export class HuggingFaceProvider implements AIProvider {
         (lowerMessage.includes('fix') && (lowerMessage.includes('house') || lowerMessage.includes('home'))) ||
         lowerMessage.includes('leaking') || 
         lowerMessage.includes('plumbing') || 
-        lowerMessage.includes('electrical')) {
+        lowerMessage.includes('electrical')) &&
+        // Exclude resume and career terms from triggering home maintenance
+        !lowerMessage.includes('resume') &&
+        !lowerMessage.includes('cv') &&
+        !lowerMessage.includes('cover letter') &&
+        !lowerMessage.includes('job')) {
       console.log('HuggingFace provider - early detection: Home maintenance query, categorizing as homeMaintenance');
       return { category: "homeMaintenance", confidence: 0.9 };
     }

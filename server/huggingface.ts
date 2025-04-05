@@ -415,7 +415,22 @@ export async function getContentCategory(text: string): Promise<string> {
     // Check for specific keywords in lowercase text
     const lowerText = text.toLowerCase();
     
-    // Wellness and mental health terms - highest priority
+    // Career terms - now first to ensure resume gets priority over home maintenance "fix"
+    if (lowerText.includes('resume') || 
+        lowerText.includes('job interview') || 
+        lowerText.includes('career') ||
+        lowerText.includes('promotion') ||
+        lowerText.includes('job search') ||
+        lowerText.includes('linkedin') ||
+        lowerText.includes('networking') ||
+        lowerText.includes('job application') ||
+        lowerText.includes('cv') ||
+        lowerText.includes('cover letter')) {
+      console.log('Early detection: Career term detected, categorizing as career');
+      return 'career';
+    }
+    
+    // Wellness and mental health terms - high priority
     if (lowerText.includes('anxiety') || 
         lowerText.includes('worried') || 
         lowerText.includes('stressed') ||
@@ -450,8 +465,8 @@ export async function getContentCategory(text: string): Promise<string> {
       return 'fitness';
     }
     
-    // Home maintenance terms
-    if (lowerText.includes('repair') || 
+    // Home maintenance terms - now check for exclusion of career-related terms
+    if ((lowerText.includes('repair') || 
         lowerText.includes('fix') || 
         lowerText.includes('broken') ||
         lowerText.includes('picfix') ||
@@ -461,7 +476,10 @@ export async function getContentCategory(text: string): Promise<string> {
         lowerText.includes('house maintenance') ||
         lowerText.includes('plumbing') ||
         lowerText.includes('electrical') ||
-        lowerText.includes('home project')) {
+        lowerText.includes('home project')) &&
+        !lowerText.includes('resume') && 
+        !lowerText.includes('cv') && 
+        !lowerText.includes('cover letter')) {
       console.log('Early detection: Home maintenance term detected, categorizing as homeMaintenance');
       return 'homeMaintenance';
     }
