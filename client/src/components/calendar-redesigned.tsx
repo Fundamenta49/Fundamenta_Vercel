@@ -274,7 +274,7 @@ export default function CalendarRedesigned() {
           </div>
           
           {/* View selector tabs - compacted for mobile, fixed for desktop */}
-          <div className="flex justify-center sm:justify-start mb-2">
+          <div className="flex justify-center sm:justify-start mb-2 calendar-view-tabs" style={{ width: '100%' }}>
             <div className="bg-gray-100 rounded-lg p-1 inline-flex">
               <button 
                 className={cn(
@@ -282,6 +282,7 @@ export default function CalendarRedesigned() {
                   currentView === 'day' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('day')}
+                style={{ minWidth: '60px', textAlign: 'center' }}
               >
                 Day
               </button>
@@ -291,6 +292,7 @@ export default function CalendarRedesigned() {
                   currentView === 'week' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('week')}
+                style={{ minWidth: '60px', textAlign: 'center' }}
               >
                 Week
               </button>
@@ -300,6 +302,7 @@ export default function CalendarRedesigned() {
                   currentView === 'month' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('month')}
+                style={{ minWidth: '60px', textAlign: 'center' }}
               >
                 Month
               </button>
@@ -309,6 +312,7 @@ export default function CalendarRedesigned() {
                   currentView === 'year' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('year')}
+                style={{ minWidth: '60px', textAlign: 'center' }}
               >
                 Year
               </button>
@@ -1052,7 +1056,7 @@ export default function CalendarRedesigned() {
     <>
       {/* Main Calendar View */}
       <div id="calendar-redesigned" className={cn(
-        "bg-white rounded-lg flex flex-col calendar-widget",
+        "bg-white rounded-lg flex flex-col calendar-widget calendar-desktop-layout",
         isFullscreen ? "fixed inset-0 z-50" : "h-full"
       )}>
         {/* Fullscreen Toggle Header */}
