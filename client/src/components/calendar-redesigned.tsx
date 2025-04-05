@@ -66,8 +66,9 @@ export default function CalendarRedesigned() {
   const [showEventDetails, setShowEventDetails] = useState(false);
   const isMobile = useIsMobile();
   
-  // Mock data for events with time information
+  // Initialize events array - empty for now until we implement API
   const [events] = useState<Event[]>([
+    // Sample event for demonstration
     {
       id: '1',
       title: 'Team Meeting',
@@ -77,90 +78,6 @@ export default function CalendarRedesigned() {
       location: 'Conference Room A',
       category: 'work',
       color: 'bg-blue-200 text-blue-800'
-    },
-    {
-      id: '2',
-      title: 'Dentist',
-      date: new Date(2025, 3, 7),
-      startTime: setMinutes(setHours(new Date(2025, 3, 7), 11), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 7), 12), 0),
-      location: 'Dental Clinic',
-      category: 'health',
-      color: 'bg-purple-200 text-purple-800'
-    },
-    {
-      id: '3',
-      title: 'Budget Review',
-      date: new Date(2025, 3, 7),
-      startTime: setMinutes(setHours(new Date(2025, 3, 7), 14), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 7), 15), 0),
-      category: 'finance',
-      color: 'bg-green-200 text-green-800'
-    },
-    {
-      id: '4',
-      title: 'Client Call',
-      date: new Date(2025, 3, 6),
-      startTime: setMinutes(setHours(new Date(2025, 3, 6), 16), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 6), 17), 0),
-      category: 'work',
-      color: 'bg-blue-200 text-blue-800'
-    },
-    {
-      id: '5',
-      title: 'Yoga class',
-      date: new Date(2025, 3, 14),
-      startTime: setMinutes(setHours(new Date(2025, 3, 14), 16), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 14), 17), 0),
-      location: 'Yoga Studio',
-      category: 'health',
-      color: 'bg-purple-200 text-purple-800'
-    },
-    {
-      id: '6',
-      title: 'Pick up coffee',
-      date: new Date(2025, 3, 19),
-      startTime: setMinutes(setHours(new Date(2025, 3, 19), 9), 30),
-      endTime: setMinutes(setHours(new Date(2025, 3, 19), 10), 0),
-      category: 'personal',
-      color: 'bg-rose-200 text-rose-800'
-    },
-    {
-      id: '7',
-      title: 'FaceTime with Sarah',
-      date: new Date(2025, 3, 19),
-      startTime: setMinutes(setHours(new Date(2025, 3, 19), 13), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 19), 14), 0),
-      category: 'personal',
-      color: 'bg-rose-200 text-rose-800'
-    },
-    {
-      id: '8',
-      title: 'Portfolio work',
-      date: new Date(2025, 3, 18),
-      startTime: setMinutes(setHours(new Date(2025, 3, 18), 9), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 18), 12), 0),
-      category: 'work',
-      color: 'bg-blue-200 text-blue-800'
-    },
-    {
-      id: '9',
-      title: 'Weekly Status Update',
-      date: new Date(2025, 3, 21),
-      startTime: setMinutes(setHours(new Date(2025, 3, 21), 14), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 21), 15), 0),
-      category: 'work',
-      color: 'bg-blue-200 text-blue-800'
-    },
-    {
-      id: '10',
-      title: 'Hike',
-      date: new Date(2025, 3, 22),
-      startTime: setMinutes(setHours(new Date(2025, 3, 22), 9), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 22), 12), 0),
-      location: 'Mountain Trail',
-      category: 'personal',
-      color: 'bg-green-200 text-green-800'
     }
   ]);
   
@@ -225,7 +142,7 @@ export default function CalendarRedesigned() {
     
     return (
       <div className="flex flex-col h-full">
-        <div className="px-3 sm:px-6 pb-4 border-b">
+        <div className="px-3 sm:px-6 pb-4 border-b calendar-header">
           {/* View toggle header - mobile responsive */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
             <div className="space-y-1 mb-2 sm:mb-0">
@@ -314,7 +231,7 @@ export default function CalendarRedesigned() {
         </div>
         
         <ScrollArea className="flex-1 px-4 py-2">
-          <div className="grid grid-cols-7 h-full">
+          <div className="grid grid-cols-7 h-full calendar-day-cells">
             {/* Day headers - mobile optimized */}
             {daysOfWeek.map((day, index) => (
               <div key={day} className={cn(
@@ -338,7 +255,7 @@ export default function CalendarRedesigned() {
                 <div 
                   key={i} 
                   className={cn(
-                    "min-h-[70px] sm:min-h-[100px] border-t border-r relative",
+                    "h-[60px] sm:h-[90px] border-t border-r relative",
                     !isCurrentMonth && "opacity-50",
                     isCurrentDay && "bg-gray-50",
                     isWeekend && !isCurrentDay && "bg-gray-50/30",
@@ -408,7 +325,7 @@ export default function CalendarRedesigned() {
               // Handle new event creation
               console.log('Create new event');
             }}
-            className="h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white p-0"
+            className="h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white p-0 calendar-add-button"
           >
             <Plus className="h-6 w-6" />
             <span className="sr-only">New Event</span>
@@ -481,7 +398,7 @@ export default function CalendarRedesigned() {
     <>
       {/* Main Calendar View */}
       <div className={cn(
-        "bg-white rounded-lg overflow-hidden flex flex-col",
+        "bg-white rounded-lg overflow-hidden flex flex-col calendar-widget",
         isFullscreen ? "fixed inset-0 z-50" : "h-full"
       )}>
         {/* Fullscreen Toggle Header */}
@@ -504,7 +421,7 @@ export default function CalendarRedesigned() {
         {/* Sidebar/Main Content Layout */}
         <div className="flex flex-1 h-full">
           {/* Left sidebar with categories */}
-          <div className="w-48 border-r bg-gray-50 p-4 hidden md:block">
+          <div className="w-48 border-r bg-gray-50 p-4 hidden md:block calendar-categories">
             <h3 className="font-medium text-gray-500 uppercase text-xs tracking-wider mb-3">Groups</h3>
             <div className="space-y-1">
               {Object.entries(categoryColors).map(([category, colors]) => (
@@ -515,19 +432,7 @@ export default function CalendarRedesigned() {
               ))}
             </div>
             
-            <div className="mt-8">
-              <h3 className="font-medium text-gray-500 uppercase text-xs tracking-wider mb-3">Other</h3>
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2 py-1.5 px-2 rounded-lg hover:bg-gray-100">
-                  <input type="checkbox" defaultChecked className="h-4 w-4" />
-                  <span className="text-sm">Birthdays</span>
-                </div>
-                <div className="flex items-center space-x-2 py-1.5 px-2 rounded-lg hover:bg-gray-100">
-                  <input type="checkbox" defaultChecked className="h-4 w-4" />
-                  <span className="text-sm">US Holidays</span>
-                </div>
-              </div>
-            </div>
+
           </div>
           
           {/* Main calendar area */}

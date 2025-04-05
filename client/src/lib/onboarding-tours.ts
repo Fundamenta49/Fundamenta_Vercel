@@ -26,6 +26,12 @@ export const initialTour: Tour = {
       placement: 'top',
     },
     {
+      targetSelector: '.calendar-widget',
+      title: 'Calendar',
+      content: 'Stay organized with our calendar feature. Track appointments, set reminders, and manage your schedule.',
+      placement: 'right',
+    },
+    {
       targetSelector: '.fundi-button',
       title: 'Meet Fundi',
       content: 'This is Fundi, your personal AI assistant. Click here anytime you need help or have questions about the app.',
@@ -267,6 +273,46 @@ export const emergencyTour: Tour = {
   ]
 };
 
+/**
+ * Calendar feature tour
+ */
+export const calendarTour: Tour = {
+  id: 'calendar-tour',
+  title: 'Calendar Tour',
+  steps: [
+    {
+      targetSelector: '.calendar-widget',
+      title: 'Calendar Overview',
+      content: 'Welcome to your personal calendar! Keep track of events, meetings, and important dates all in one place.',
+      placement: 'top',
+    },
+    {
+      targetSelector: '.calendar-header',
+      title: 'Calendar Navigation',
+      content: 'Use these controls to navigate between months and change the calendar view.',
+      placement: 'bottom',
+    },
+    {
+      targetSelector: '.calendar-day-cells',
+      title: 'View Events',
+      content: 'Each day cell shows events scheduled for that day. Click on a day to see more details.',
+      placement: 'top',
+    },
+    {
+      targetSelector: '.calendar-add-button',
+      title: 'Add Events',
+      content: 'Click this button to add new events to your calendar.',
+      placement: 'left',
+    },
+    {
+      targetSelector: '.calendar-categories',
+      title: 'Event Categories',
+      content: 'Events are color-coded by category to help you organize your schedule.',
+      placement: 'right',
+    }
+  ]
+};
+
 // Export all tours in a single object for easy access
 export const tours: Record<string, Tour> = {
   'initial-tour': initialTour,
@@ -275,5 +321,6 @@ export const tours: Record<string, Tour> = {
   'wellness-tour': wellnessTour,
   'learning-tour': learningTour,
   'active-tour': activeTour,
-  'emergency-tour': emergencyTour
+  'emergency-tour': emergencyTour,
+  'calendar-tour': calendarTour
 };
