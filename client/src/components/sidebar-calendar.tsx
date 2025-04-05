@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CalendarDays } from "lucide-react";
-import CalendarRedesigned from "@/components/calendar-redesigned";
-import WeatherWidget from "@/components/weather-widget";
+import { Calendar as CalendarPrimitive } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
 
 /**
  * Sidebar Calendar component
- * Wraps the redesigned calendar in a dialog for use in the sidebar
+ * Uses the simple Calendar primitive instead of the complex calendar
  */
 export default function SidebarCalendar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   return (
     <>
@@ -21,22 +22,23 @@ export default function SidebarCalendar() {
           </button>
         </DialogTrigger>
         
-        <DialogContent 
-          className="w-[95vw] max-w-md p-0 flex flex-col overflow-auto"
-          style={{
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            height: 'auto',
-            maxHeight: '85vh',
-            minHeight: '450px',
-            borderRadius: '0.75rem'
-          }}
-        >
-          <DialogTitle className="sr-only">Calendar</DialogTitle>
-          <div className="flex-1 overflow-auto" style={{ height: 'auto' }}>
-            <CalendarRedesigned />
+        <DialogContent className="max-w-md p-6">
+          <DialogTitle>Calendar</DialogTitle>
+          <DialogDescription>
+            View and select dates on the calendar.
+          </DialogDescription>
+          <div className="flex justify-center py-4">
+            <CalendarPrimitive
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="rounded-md border"
+            />
+          </div>
+          <div className="flex justify-end mt-2">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              Close
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
