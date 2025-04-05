@@ -346,14 +346,14 @@ export default function CalendarRedesigned() {
           marginTop: '0.5rem'
         }}>
           <div className="grid grid-cols-7 h-full calendar-day-cells overflow-y-auto" style={{ 
-            maxHeight: 'calc(100vh - 250px)', 
+            maxHeight: 'calc(100vh - 300px)', 
             scrollbarWidth: 'thin',
             display: 'grid',
             gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-            gridTemplateRows: 'auto repeat(5, minmax(90px, 1fr))',
+            gridTemplateRows: 'auto repeat(5, minmax(70px, 1fr))',
             gap: '1px',
-            height: '650px',
-            minHeight: '600px', 
+            height: 'auto',
+            minHeight: 'auto',
             width: '100%',
             marginTop: '0.5rem'
           }}>
@@ -386,8 +386,8 @@ export default function CalendarRedesigned() {
                     isWeekend && !isCurrentDay && "bg-gray-50/30",
                   )}
                   style={{
-                    height: '110px',
-                    minHeight: '90px',
+                    height: 'auto',
+                    minHeight: '60px',
                     border: '1px solid #e5e7eb',
                     position: 'relative'
                   }}
@@ -1092,7 +1092,8 @@ export default function CalendarRedesigned() {
         height: "100%",
         width: "100%",
         overflow: "hidden",
-        padding: "0.5rem"
+        padding: "0.5rem",
+        maxHeight: "calc(100vh - 20px)" // Ensure it fits in viewport with small margin
       }}>
         {/* Fullscreen Toggle Header */}
         {isFullscreen && (
