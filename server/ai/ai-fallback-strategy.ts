@@ -3,6 +3,8 @@ import { textClassifier, analyzeUserEmotion, getContentCategory } from "../huggi
 import type { ChatCompletionMessageParam } from "openai/resources";
 import { z } from "zod";
 import { getFundiPersonalityElements } from "./fundi-personality-integration";
+import { userGuideService } from "../services/user-guide-service";
+import { userGuideContent, quickGuideInstructions } from "./user-guide-content";
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -201,12 +203,57 @@ export class OpenAIProvider implements AIProvider {
       return AIResponseSchema.parse(parsedResponse);
     } catch (error) {
       console.error("OpenAI error:", error);
-      // Return a fallback response
+      
+      // Try to provide helpful content from our user guide based on message content
+      const lowerMessage = message.toLowerCase();
+      
+      // Check for specific topics we have defined in our user guide
+      if (lowerMessage.includes('mortgage') || 
+          (lowerMessage.includes('home') && (lowerMessage.includes('loan') || lowerMessage.includes('buy'))) ||
+          (lowerMessage.includes('house') && (lowerMessage.includes('loan') || lowerMessage.includes('buy')))) {
+        return {
+          response: quickGuideInstructions["fundamenta-mortgage"] || 
+                   "Fundamenta Mortgage offers tools to help with home buying, including mortgage calculators, affordability analysis, and guides to the home buying process.",
+          sentiment: "helpful",
+          suggestions: [
+            { text: "Would you like to explore our mortgage calculator?", path: "/finance/mortgage-calculator" },
+            { text: "Would you like to learn more about the home buying process?", path: "/finance/mortgage" }
+          ],
+          followUpQuestions: [
+            "Are you looking to calculate a specific mortgage scenario?",
+            "Would you like me to explain any mortgage terms that might be confusing?"
+          ]
+        };
+      }
+      
+      // Check for other topics that match our quick guides
+      for (const [featureId, content] of Object.entries(quickGuideInstructions)) {
+        if (lowerMessage.includes(featureId.replace('-', ' '))) {
+          return {
+            response: content,
+            sentiment: "helpful",
+            suggestions: [
+              { text: `Would you like to explore the ${featureId.replace('-', ' ')}?`, path: `/finance/${featureId}` }
+            ],
+            followUpQuestions: [
+              "Is there a specific aspect of this you'd like me to explain further?",
+              "Do you have any questions about how to use this feature?"
+            ]
+          };
+        }
+      }
+      
+      // Generic fallback if no matching content found
       return {
         response: "I'm sorry, I couldn't process your request through our primary AI system. I've switched to a backup system that might not be as comprehensive.",
         sentiment: "apologetic",
-        suggestions: [],
-        followUpQuestions: []
+        suggestions: [
+          { text: "Would you like to explore our available features?", path: "/" }
+        ],
+        followUpQuestions: [
+          "Is there a specific topic you're interested in learning about?",
+          "Would you like me to tell you about our financial tools?"
+        ]
       };
     }
   }
@@ -544,6 +591,47 @@ export class HuggingFaceProvider implements AIProvider {
       };
     } catch (error) {
       console.error("HuggingFace generateResponse error:", error);
+      
+      // Try to provide helpful content from our user guide based on message content
+      const lowerMessage = message.toLowerCase();
+      
+      // Check for mortgage-related questions
+      if (lowerMessage.includes('mortgage') || 
+          (lowerMessage.includes('home') && (lowerMessage.includes('loan') || lowerMessage.includes('buy'))) ||
+          (lowerMessage.includes('house') && (lowerMessage.includes('loan') || lowerMessage.includes('buy')))) {
+        return {
+          response: quickGuideInstructions["fundamenta-mortgage"] || 
+                   "Fundamenta Mortgage offers tools to help with home buying, including mortgage calculators, affordability analysis, and guides to the home buying process.",
+          sentiment: "helpful",
+          suggestions: [
+            { text: "Would you like to explore our mortgage calculator?", path: "/finance/mortgage-calculator" },
+            { text: "Would you like to learn more about the home buying process?", path: "/finance/mortgage" }
+          ],
+          followUpQuestions: [
+            "Are you looking to calculate a specific mortgage scenario?",
+            "Would you like me to explain any mortgage terms that might be confusing?"
+          ]
+        };
+      }
+      
+      // Check for other topics that match our quick guides
+      for (const [featureId, content] of Object.entries(quickGuideInstructions)) {
+        if (lowerMessage.includes(featureId.replace('-', ' '))) {
+          return {
+            response: content,
+            sentiment: "helpful",
+            suggestions: [
+              { text: `Would you like to explore the ${featureId.replace('-', ' ')}?`, path: `/finance/${featureId}` }
+            ],
+            followUpQuestions: [
+              "Is there a specific aspect of this you'd like me to explain further?",
+              "Do you have any questions about how to use this feature?"
+            ]
+          };
+        }
+      }
+      
+      // Generic fallback if no matching content found
       return {
         response: "Oh! Looks like my digital brain is having a moment of inspiration overload! I'd love to help with your question - maybe we could try approaching it from a slightly different angle? I'm really excited to get this conversation back on track!",
         sentiment: "enthusiastic",
@@ -1027,6 +1115,48 @@ export class FallbackAIService {
       console.error("All AI providers failed:", error);
       // Get personality elements from the user's custom settings
       const personalityElements = getFundiPersonalityElements();
+      
+      // Let's check message for keywords that might match our user guide content
+      const lowerMessage = message.toLowerCase();
+      
+      // First, check for specific topic keywords
+      if (lowerMessage.includes('mortgage') || 
+          (lowerMessage.includes('home') && (lowerMessage.includes('loan') || lowerMessage.includes('buy'))) ||
+          (lowerMessage.includes('house') && (lowerMessage.includes('loan') || lowerMessage.includes('buy')))) {
+        // If it's about mortgages, serve our comprehensive mortgage guide content
+        return {
+          response: quickGuideInstructions["fundamenta-mortgage"] || 
+                    "Fundamenta Mortgage offers tools to help with home buying, including mortgage calculators, affordability analysis, and guides to the home buying process.",
+          sentiment: "helpful",
+          suggestions: [
+            { text: "Would you like to explore our mortgage calculator?", path: "/finance/mortgage-calculator" },
+            { text: "Would you like to learn more about the home buying process?", path: "/finance/mortgage" }
+          ],
+          followUpQuestions: [
+            "Are you looking to calculate a specific mortgage scenario?",
+            "Would you like me to explain any mortgage terms that might be confusing?"
+          ],
+          personality: "knowledgeable-helpful"
+        };
+      }
+      
+      // Check for other keywords that match our quick guides
+      for (const [featureId, content] of Object.entries(quickGuideInstructions)) {
+        if (lowerMessage.includes(featureId.replace('-', ' '))) {
+          return {
+            response: content,
+            sentiment: "helpful",
+            suggestions: [
+              { text: `Would you like to explore the ${featureId.replace('-', ' ')}?`, path: `/finance/${featureId}` }
+            ],
+            followUpQuestions: [
+              "Is there a specific aspect of this you'd like me to explain further?",
+              "Do you have any questions about how to use this feature?"
+            ],
+            personality: "knowledgeable-helpful"
+          };
+        }
+      }
       
       // Use Fundi's favorite quote rather than mixing in random examples which can create confusing responses
       let personalizedTouch = "";
