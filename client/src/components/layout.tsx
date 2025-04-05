@@ -1,6 +1,7 @@
 import Navigation from "@/components/navigation";
 import FloatingChat from "@/components/floating-chat";
 import RestartTourButton from "@/components/tour/restart-tour-button";
+import { AIFallbackNotice } from "@/components/ai-fallback-notice";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -47,6 +48,8 @@ export default function Layout({ children }: LayoutProps) {
           "pb-24", // Add padding at bottom to accommodate floating chat
           isHomePage ? "mt-0" : "mt-4"
         )}>
+          {/* Display notice when in fallback mode */}
+          <AIFallbackNotice />
           {children}
         </div>
       </main>
