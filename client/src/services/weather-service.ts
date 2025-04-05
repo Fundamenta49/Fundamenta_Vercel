@@ -78,24 +78,25 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
     // Transform API response to our format
     const data = response.data;
     
-    // Apply temperature correction for the offset issue (approximately 4°F)
-    const correctedTemp = Math.round((data.current.temp_f - 4) * 10) / 10;
-    const correctedFeelsLike = Math.round((data.current.feelslike_f - 4) * 10) / 10;
+    // Get temperature values directly without the 4°F correction 
+    // that was previously causing temperatures to appear too cold
+    const temp = Math.round(data.current.temp_f * 10) / 10;
+    const feelsLike = Math.round(data.current.feelslike_f * 10) / 10;
     
     return {
       location: `${data.location.name}, ${data.location.region}`,
-      temperature: correctedTemp,
+      temperature: temp,
       condition: data.current.condition.text,
       icon: mapWeatherIcon(data.current.condition.code, data.current.is_day),
-      feelsLike: correctedFeelsLike,
+      feelsLike: feelsLike,
       humidity: data.current.humidity,
       windSpeed: data.current.wind_mph,
       forecast: data.forecast.forecastday.map((day: any, index: number) => ({
         date: index === 0 ? 'Today' : 
               index === 1 ? 'Tomorrow' : 
               new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' }),
-        maxTemp: Math.round((day.day.maxtemp_f - 4) * 10) / 10,
-        minTemp: Math.round((day.day.mintemp_f - 4) * 10) / 10,
+        maxTemp: Math.round(day.day.maxtemp_f * 10) / 10,
+        minTemp: Math.round(day.day.mintemp_f * 10) / 10,
         condition: day.day.condition.text,
         icon: mapWeatherIcon(day.day.condition.code, 1)
       }))
