@@ -47,15 +47,57 @@ interface Event {
   color?: string;
 }
 
-// Category colors
-const categoryColors: Record<string, { bg: string, text: string, border: string, light: string }> = {
-  work: { bg: "bg-red-100", text: "text-red-700", border: "border-red-300", light: "bg-red-50" },
-  learning: { bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-300", light: "bg-blue-50" },
-  health: { bg: "bg-purple-100", text: "text-purple-700", border: "border-purple-300", light: "bg-purple-50" },
-  fitness: { bg: "bg-cyan-100", text: "text-cyan-700", border: "border-cyan-300", light: "bg-cyan-50" },
-  finance: { bg: "bg-green-100", text: "text-green-700", border: "border-green-300", light: "bg-green-50" },
-  personal: { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-300", light: "bg-yellow-50" },
-  other: { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-300", light: "bg-gray-50" }
+// Category colors - updated to match the reference design
+const categoryColors: Record<string, { bg: string, text: string, border: string, light: string, borderLeft: string }> = {
+  work: { 
+    bg: "bg-red-100", 
+    text: "text-red-700", 
+    border: "border-red-300", 
+    light: "bg-red-50", 
+    borderLeft: "border-l-4 border-red-500" 
+  },
+  learning: { 
+    bg: "bg-blue-100", 
+    text: "text-blue-700", 
+    border: "border-blue-300", 
+    light: "bg-blue-50", 
+    borderLeft: "border-l-4 border-blue-500" 
+  },
+  health: { 
+    bg: "bg-green-100", 
+    text: "text-green-700", 
+    border: "border-green-300", 
+    light: "bg-green-50", 
+    borderLeft: "border-l-4 border-green-500" 
+  },
+  fitness: { 
+    bg: "bg-cyan-100", 
+    text: "text-cyan-700", 
+    border: "border-cyan-300", 
+    light: "bg-cyan-50", 
+    borderLeft: "border-l-4 border-cyan-500" 
+  },
+  finance: { 
+    bg: "bg-green-100", 
+    text: "text-green-700", 
+    border: "border-green-300", 
+    light: "bg-green-50", 
+    borderLeft: "border-l-4 border-green-500" 
+  },
+  personal: { 
+    bg: "bg-yellow-100", 
+    text: "text-yellow-700", 
+    border: "border-yellow-300", 
+    light: "bg-yellow-50", 
+    borderLeft: "border-l-4 border-yellow-500" 
+  },
+  other: { 
+    bg: "bg-gray-100", 
+    text: "text-gray-700", 
+    border: "border-gray-300", 
+    light: "bg-gray-50", 
+    borderLeft: "border-l-4 border-gray-500" 
+  }
 };
 
 // Mock data for events
@@ -369,37 +411,52 @@ export default function EnhancedCalendar() {
           </div>
           <div>
             <div className="bg-gray-100 rounded-full p-1 flex space-x-1">
-              <button className="px-3 py-1 rounded-full">Day</button>
-              <button className="px-3 py-1 rounded-full bg-white shadow-sm">Week</button>
-              <button className="px-3 py-1 rounded-full">Month</button>
+              <button 
+                onClick={() => setSelectedView("day")}
+                className={`px-3 py-1 rounded-full ${selectedView === "day" ? "bg-white shadow-sm" : ""}`}
+              >
+                Day
+              </button>
+              <button 
+                onClick={() => setSelectedView("week")}
+                className={`px-3 py-1 rounded-full ${selectedView === "week" ? "bg-white shadow-sm" : ""}`}
+              >
+                Week
+              </button>
+              <button 
+                onClick={() => setSelectedView("month")}
+                className={`px-3 py-1 rounded-full ${selectedView === "month" ? "bg-white shadow-sm" : ""}`}
+              >
+                Month
+              </button>
             </div>
           </div>
         </div>
         
-        <div className="grid grid-cols-[auto,1fr,1fr,1fr] gap-0 border rounded-md overflow-hidden bg-white">
+        <div className="grid grid-cols-[80px,1fr,1fr,1fr] gap-0 border rounded-md overflow-hidden bg-white">
           {/* Time column */}
-          <div className="border-r">
+          <div className="border-r bg-gray-50">
             <div className="h-20 border-b flex items-center justify-center">
-              <div className="text-gray-500 text-sm">UTC +1</div>
+              <div className="text-gray-500 text-sm font-medium">UTC +1</div>
             </div>
             <div className="h-24 border-b flex items-center justify-center">
-              <div className="text-gray-500 text-sm">09 AM</div>
+              <div className="text-gray-500 text-sm font-medium">09 AM</div>
             </div>
             <div className="h-24 border-b flex items-center justify-center">
-              <div className="text-gray-500 text-sm">10 AM</div>
+              <div className="text-gray-500 text-sm font-medium">10 AM</div>
             </div>
             <div className="h-24 border-b flex items-center justify-center">
-              <div className="text-gray-500 text-sm">11 AM</div>
+              <div className="text-gray-500 text-sm font-medium">11 AM</div>
             </div>
             <div className="h-24 border-b flex items-center justify-center">
-              <div className="text-gray-500 text-sm">12 PM</div>
+              <div className="text-gray-500 text-sm font-medium">12 PM</div>
             </div>
           </div>
           
           {/* Day columns */}
           {daysOfWeek.slice(1, 4).map((day, idx) => (
             <div key={idx} className="border-r">
-              <div className="h-20 border-b p-3 text-center">
+              <div className="h-20 border-b p-3 text-center bg-white">
                 <div className="flex flex-col items-center">
                   <div className="text-2xl font-semibold">{format(day, 'd')}</div>
                   <div className="text-gray-500">{format(day, 'EEEE')}</div>
@@ -413,15 +470,13 @@ export default function EnhancedCalendar() {
                   <div 
                     key={i}
                     className={cn(
-                      "rounded-md p-2 h-full flex flex-col",
+                      "rounded-md p-3 h-full flex flex-col shadow-sm",
                       categoryColors[event.category]?.light || "bg-gray-50",
-                      event.category === "work" ? "border-l-4 border-red-500" : 
-                      event.category === "health" ? "border-l-4 border-green-500" : 
-                      "border-l-4 border-blue-500"
+                      categoryColors[event.category]?.borderLeft || "border-l-4 border-blue-500"
                     )}
                   >
                     <div className="font-medium text-sm">{event.title}</div>
-                    <div className="text-xs text-gray-500 flex items-center mt-1">
+                    <div className="text-xs text-gray-500 flex items-center mt-1.5">
                       <Clock className="w-3 h-3 mr-1" />
                       09 AM - 10 AM
                     </div>
@@ -457,15 +512,13 @@ export default function EnhancedCalendar() {
                   <div 
                     key={i}
                     className={cn(
-                      "rounded-md p-2 h-full flex flex-col",
+                      "rounded-md p-3 h-full flex flex-col shadow-sm",
                       categoryColors[event.category]?.light || "bg-gray-50",
-                      event.category === "work" ? "border-l-4 border-red-500" : 
-                      event.category === "health" ? "border-l-4 border-green-500" : 
-                      "border-l-4 border-blue-500"
+                      categoryColors[event.category]?.borderLeft || "border-l-4 border-blue-500"
                     )}
                   >
                     <div className="font-medium text-sm">{event.title}</div>
-                    <div className="text-xs text-gray-500 flex items-center mt-1">
+                    <div className="text-xs text-gray-500 flex items-center mt-1.5">
                       <Clock className="w-3 h-3 mr-1" />
                       10 AM - 12 PM
                     </div>
@@ -501,15 +554,13 @@ export default function EnhancedCalendar() {
                   <div 
                     key={i}
                     className={cn(
-                      "rounded-md p-2 h-full flex flex-col",
+                      "rounded-md p-3 h-full flex flex-col shadow-sm",
                       categoryColors[event.category]?.light || "bg-gray-50",
-                      event.category === "work" ? "border-l-4 border-red-500" : 
-                      event.category === "health" ? "border-l-4 border-green-500" : 
-                      "border-l-4 border-blue-500"
+                      categoryColors[event.category]?.borderLeft || "border-l-4 border-blue-500"
                     )}
                   >
                     <div className="font-medium text-sm">{event.title}</div>
-                    <div className="text-xs text-gray-500 flex items-center mt-1">
+                    <div className="text-xs text-gray-500 flex items-center mt-1.5">
                       <Clock className="w-3 h-3 mr-1" />
                       11 AM - 01 PM
                     </div>
@@ -545,16 +596,13 @@ export default function EnhancedCalendar() {
                   <div 
                     key={i}
                     className={cn(
-                      "rounded-md p-2 h-full flex flex-col",
+                      "rounded-md p-3 h-full flex flex-col shadow-sm",
                       categoryColors[event.category]?.light || "bg-gray-50",
-                      event.category === "work" ? "border-l-4 border-red-500" : 
-                      event.category === "health" ? "border-l-4 border-green-500" : 
-                      event.category === "personal" ? "border-l-4 border-yellow-500" : 
-                      "border-l-4 border-blue-500"
+                      categoryColors[event.category]?.borderLeft || "border-l-4 border-blue-500"
                     )}
                   >
                     <div className="font-medium text-sm">{event.title}</div>
-                    <div className="text-xs text-gray-500 flex items-center mt-1">
+                    <div className="text-xs text-gray-500 flex items-center mt-1.5">
                       <Clock className="w-3 h-3 mr-1" />
                       12 PM - 01 PM
                     </div>
@@ -636,13 +684,41 @@ export default function EnhancedCalendar() {
           <h3 className="font-medium">Categories</h3>
           <ChevronDown className="h-4 w-4" />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="w-3 h-3 rounded-full bg-red-500 mr-3"></div>
               <span>Work</span>
             </div>
             <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">18</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-blue-500 mr-3"></div>
+              <span>Learning</span>
+            </div>
+            <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">5</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-green-500 mr-3"></div>
+              <span>Health</span>
+            </div>
+            <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">7</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-yellow-500 mr-3"></div>
+              <span>Personal</span>
+            </div>
+            <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">12</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-gray-500 mr-3"></div>
+              <span>Other</span>
+            </div>
+            <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">3</span>
           </div>
         </div>
       </div>
