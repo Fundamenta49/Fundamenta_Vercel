@@ -17,8 +17,7 @@ import {
   Zap,
   Lightbulb,
   AlertCircle,
-  ShoppingBag,
-  FileText
+  ShoppingBag
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +26,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import ShoppingBuddy from "@/components/shopping-buddy";
-import IdentityDocumentsGuide from "@/components/identity-documents-guide";
 
 // Define user profile interface for personalization
 interface UserProfile {
@@ -53,7 +51,7 @@ interface SmartPrompt {
   createdAt: Date;
 }
 
-type LifeSkillsTabId = "dashboard" | "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping" | "identity";
+type LifeSkillsTabId = "dashboard" | "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping";
 
 // Interfaces
 interface LifeSkillsComponentProps {
@@ -131,8 +129,7 @@ export const LifeSkillsComponent = ({ initialTab = "dashboard" }: LifeSkillsComp
     { id: "home", label: "Home Care", icon: Home },
     { id: "time", label: "Time Management", icon: Clock },
     { id: "communication", label: "Communication", icon: MessageSquare },
-    { id: "shopping", label: "Shopping Buddy", icon: ShoppingBag },
-    { id: "identity", label: "Identity Documents", icon: FileText }
+    { id: "shopping", label: "Shopping Buddy", icon: ShoppingBag }
   ];
 
   // Function to handle search
@@ -515,11 +512,6 @@ export const LifeSkillsComponent = ({ initialTab = "dashboard" }: LifeSkillsComp
   // Tab content components
   const tabContent: Record<LifeSkillsTabId, React.ReactNode> = {
     dashboard: showOnboarding ? <OnboardingForm /> : <DashboardContent />,
-    identity: (
-      <div className="w-full h-full">
-        <IdentityDocumentsGuide />
-      </div>
-    ),
     search: (
       <div className="space-y-4 pt-4">
         <form onSubmit={handleSearch}>
