@@ -21,7 +21,7 @@ export default function SidebarCalendar() {
           </button>
         </DialogTrigger>
         
-        <DialogContent className="w-full max-w-5xl h-[90vh] p-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full max-w-5xl h-[90vh] p-0 flex flex-col overflow-hidden top-[5vh] left-1/2 translate-x-[-50%] fixed sm:fixed md:fixed">
           <div className="p-2 sm:p-4 pb-0">
             <WeatherWidget compact={true} className="shadow-sm" />
           </div>

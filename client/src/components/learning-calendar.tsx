@@ -412,7 +412,7 @@ export default function LearningCalendar() {
       </Card>
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="sm:max-w-[500px] top-[10vh] left-1/2 translate-x-[-50%]">
+        <DialogContent className="sm:max-w-[500px] top-[10vh] left-1/2 translate-x-[-50%] fixed sm:fixed md:fixed">
           <DialogHeader>
             <DialogTitle>Calendar Settings</DialogTitle>
             <DialogDescription>

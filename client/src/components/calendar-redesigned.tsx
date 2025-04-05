@@ -411,7 +411,7 @@ export default function CalendarRedesigned() {
     
     return (
       <Dialog open={showEventDetails} onOpenChange={setShowEventDetails}>
-        <DialogContent className="w-full max-w-md" aria-labelledby="event-dialog-title">
+        <DialogContent className="w-full max-w-md top-[50%] left-1/2 translate-x-[-50%] translate-y-[-50%] fixed sm:fixed md:fixed" aria-labelledby="event-dialog-title">
           <div className="space-y-4">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
