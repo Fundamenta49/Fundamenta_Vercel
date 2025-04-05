@@ -650,34 +650,34 @@ export default function ChatInterface({
         borderRadius: window.innerWidth < 768 ? '0.75rem' : undefined,
         position: 'relative'
       }}>
-      <CardHeader className="px-3 py-2 sm:px-4 sm:py-2.5 border-b">
+      <CardHeader className="px-2 py-1.5 sm:px-3 sm:py-2 border-b">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3">
-            {(currentCategory || category) === 'general' ? (
-              <div className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center">
-                <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" />
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {(currentCategory || category) === 'general' || !advisorInfo[currentCategory || category] ? (
+              <div className="h-6 w-6 sm:h-8 sm:w-8 flex items-center justify-center">
+                <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
               </div>
             ) : (
-              <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+              <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
                 <AvatarImage 
-                  src={advisorInfo[currentCategory || category].image} 
-                  alt={advisorInfo[currentCategory || category].name} 
+                  src={advisorInfo[currentCategory || category]?.image} 
+                  alt={advisorInfo[currentCategory || category]?.name || "Advisor"} 
                 />
-                <AvatarFallback>
-                  {advisorInfo[currentCategory || category].name.charAt(0)}
+                <AvatarFallback className="text-[10px] sm:text-xs">
+                  {advisorInfo[currentCategory || category]?.name?.charAt(0) || "A"}
                 </AvatarFallback>
               </Avatar>
             )}
             
             {/* Only show name and badge for specialized advisors */}
-            {isSpecialist && (
+            {isSpecialist && advisorInfo[currentCategory || category] && (
               <>
-                <CardTitle className="text-sm md:text-lg font-medium">
-                  {advisorInfo[currentCategory || category].name}
+                <CardTitle className="text-xs sm:text-sm font-medium">
+                  {advisorInfo[currentCategory || category]?.name || "Advisor"}
                 </CardTitle>
                 <Badge 
                   variant="outline" 
-                  className="text-xs sm:text-sm px-2 py-0.5 sm:px-3 sm:py-1"
+                  className="text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 sm:py-0.5"
                   style={{
                     backgroundColor: `${categoryColors[currentCategory || category]}15`, 
                     color: categoryColors[currentCategory || category],
@@ -694,10 +694,11 @@ export default function ChatInterface({
             <Button 
               variant="ghost" 
               size="icon" 
+              className="h-6 w-6 sm:h-7 sm:w-7"
               onClick={onToggleExpand}
               aria-label={expanded ? "Minimize chat" : "Expand chat"}
             >
-              <ArrowRight className={`h-5 w-5 ${expanded ? 'rotate-90' : '-rotate-90'}`} />
+              <ArrowRight className={`h-4 w-4 sm:h-5 sm:w-5 ${expanded ? 'rotate-90' : '-rotate-90'}`} />
             </Button>
           )}
         </div>
@@ -705,9 +706,9 @@ export default function ChatInterface({
       
       <ScrollArea 
         ref={scrollAreaRef} 
-        className="flex-1 px-2 sm:px-3 py-2 sm:py-3 overflow-y-auto touch-auto" 
+        className="flex-1 px-1.5 sm:px-2 py-1.5 sm:py-2 overflow-y-auto touch-auto" 
         style={{ 
-          height: window.innerWidth < 768 ? 'calc(100% - 90px)' : 'calc(100% - 90px)',
+          height: window.innerWidth < 768 ? 'calc(100% - 80px)' : 'calc(100% - 80px)',
           WebkitOverflowScrolling: 'touch',
           touchAction: 'pan-y',
           overflowY: 'auto',
@@ -715,54 +716,54 @@ export default function ChatInterface({
         }}
         onTouchStart={(e) => e.stopPropagation()}
       >
-        <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-2 sm:space-y-3">
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground px-4 space-y-4">
-              <MessageSquare className="h-10 w-10 mb-2 opacity-50" />
+            <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground px-3 space-y-3">
+              <MessageSquare className="h-8 w-8 mb-1 opacity-50" />
               {category === 'general' ? (
                 <>
-                  <p className="font-medium text-lg">Hi there! I'm Fundi. What's your name?</p>
-                  <p className="text-base">I'd love to get to know you and help with anything you need today.</p>
+                  <p className="font-medium text-base sm:text-lg">Hi! I'm Fundi. What's your name?</p>
+                  <p className="text-sm sm:text-base">I'm here to help with anything you need today.</p>
                 </>
               ) : category === 'finance' ? (
                 <>
-                  <p className="font-medium text-lg">Hi there! I'm your Financial Coach. What's your name?</p>
-                  <p className="text-base">I'm here to help with your financial questions and goals.</p>
+                  <p className="font-medium text-base sm:text-lg">Hi! I'm your Financial Coach.</p>
+                  <p className="text-sm sm:text-base">I can help with budgeting, saving, and financial goals.</p>
                 </>
               ) : category === 'career' ? (
                 <>
-                  <p className="font-medium text-lg">Hello! I'm your Career Mentor. What's your name?</p>
-                  <p className="text-base">I'm here to help with your professional development journey.</p>
+                  <p className="font-medium text-base sm:text-lg">Hello! I'm your Career Mentor.</p>
+                  <p className="text-sm sm:text-base">Let's work on your professional development journey.</p>
                 </>
               ) : category === 'wellness' ? (
                 <>
-                  <p className="font-medium text-lg">Hi there! I'm your Wellness Guide. What's your name?</p>
-                  <p className="text-base">I'm here to support your mental health and wellness goals.</p>
+                  <p className="font-medium text-base sm:text-lg">Hi! I'm your Wellness Guide.</p>
+                  <p className="text-sm sm:text-base">I'm here to support your mental health and wellness.</p>
                 </>
               ) : category === 'learning' ? (
                 <>
-                  <p className="font-medium text-lg">Hello! I'm your Learning Facilitator. What's your name?</p>
-                  <p className="text-base">I'm here to help you learn and grow in any area you're interested in.</p>
+                  <p className="font-medium text-base sm:text-lg">Hello! I'm your Learning Facilitator.</p>
+                  <p className="text-sm sm:text-base">How can I help you learn and grow today?</p>
                 </>
               ) : category === 'cooking' ? (
                 <>
-                  <p className="font-medium text-lg">Hi there! I'm your Cooking Expert. What's your name?</p>
-                  <p className="text-base">I'm here to help with all your cooking questions and culinary adventures.</p>
+                  <p className="font-medium text-base sm:text-lg">Hi! I'm your Cooking Expert.</p>
+                  <p className="text-sm sm:text-base">Ready to help with recipes and culinary questions.</p>
                 </>
               ) : category === 'fitness' ? (
                 <>
-                  <p className="font-medium text-lg">Hello! I'm your Fitness Coach. What's your name?</p>
-                  <p className="text-base">I'm here to help you reach your fitness and health goals.</p>
+                  <p className="font-medium text-base sm:text-lg">Hello! I'm your Fitness Coach.</p>
+                  <p className="text-sm sm:text-base">Let's work on your health and fitness goals.</p>
                 </>
               ) : category === 'emergency' ? (
                 <>
-                  <p className="font-medium text-lg">Hi there. I'm your Emergency Assistant. What's your name?</p>
-                  <p className="text-base">I'm here to help with your urgent situation. How can I assist you?</p>
+                  <p className="font-medium text-base sm:text-lg">Hi. I'm your Emergency Assistant.</p>
+                  <p className="text-sm sm:text-base">How can I help with your urgent situation?</p>
                 </>
               ) : (
                 <>
-                  <p className="font-medium text-lg">Hi there! I'm Fundi. What's your name?</p>
-                  <p className="text-base">I'd love to get to know you better and help with your {category} needs.</p>
+                  <p className="font-medium text-base sm:text-lg">Hi! I'm Fundi.</p>
+                  <p className="text-sm sm:text-base">How can I help with your {category} needs today?</p>
                 </>
               )}
             </div>
@@ -774,7 +775,7 @@ export default function ChatInterface({
               >
                 <div 
                   className={`
-                    max-w-[80%] sm:max-w-[85%] rounded-lg px-2.5 py-1.5 sm:px-4 sm:py-3 shadow-sm
+                    max-w-[85%] sm:max-w-[90%] rounded-lg px-2 py-1 sm:px-3 sm:py-2 shadow-sm
                     ${msg.role === 'user' 
                       ? 'bg-primary text-white' 
                       : 'bg-primary/10 border border-primary/20'
@@ -793,30 +794,30 @@ export default function ChatInterface({
                   }}
                 >
                   {msg.role === 'assistant' && (
-                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                      {(msg.category || category) === 'general' ? (
-                        <div className="h-5 w-5 sm:h-6 sm:w-6 flex items-center justify-center">
-                          <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-700" />
+                    <div className="flex items-center gap-1 sm:gap-1.5 mb-1 sm:mb-1.5">
+                      {(msg.category || category) === 'general' || !advisorInfo[msg.category || category] ? (
+                        <div className="h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center">
+                          <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-gray-700" />
                         </div>
                       ) : (
-                        <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
+                        <Avatar className="h-4 w-4 sm:h-5 sm:w-5">
                           <AvatarImage 
-                            src={advisorInfo[msg.category || category].image} 
-                            alt={advisorInfo[msg.category || category].name} 
+                            src={advisorInfo[msg.category || category]?.image} 
+                            alt={advisorInfo[msg.category || category]?.name || "Advisor"} 
                           />
-                          <AvatarFallback className="text-[10px] sm:text-xs">
-                            {advisorInfo[msg.category || category].name.charAt(0)}
+                          <AvatarFallback className="text-[8px] sm:text-[10px]">
+                            {advisorInfo[msg.category || category]?.name?.charAt(0) || "A"}
                           </AvatarFallback>
                         </Avatar>
                       )}
                       
                       {/* Only show name for specialized advisors, not for general AI */}
-                      {(msg.category || category) !== 'general' && (
+                      {(msg.category || category) !== 'general' && advisorInfo[msg.category || category] && (
                         <>
-                          <span className="text-xs sm:text-sm font-medium">
-                            {advisorInfo[msg.category || category].name}
+                          <span className="text-[10px] sm:text-xs font-medium">
+                            {advisorInfo[msg.category || category]?.name || "Advisor"}
                           </span>
-                          <span className="text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 rounded"
+                          <span className="text-[8px] sm:text-[10px] px-1 py-0.5 sm:px-1.5 rounded"
                             style={{
                               backgroundColor: `${categoryColors[msg.category || category]}15`,
                               color: categoryColors[msg.category || category],
@@ -829,8 +830,8 @@ export default function ChatInterface({
                       )}
                     </div>
                   )}
-                  <p className="text-xs sm:text-sm md:text-base leading-tight sm:leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
-                  <p className="text-[9px] sm:text-xs opacity-70 text-right mt-1 sm:mt-2">
+                  <p className="text-[11px] sm:text-xs md:text-sm leading-tight whitespace-pre-wrap break-words">{msg.content}</p>
+                  <p className="text-[7px] sm:text-[8px] opacity-60 text-right mt-0.5">
                     {msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                   </p>
                 </div>
@@ -842,14 +843,14 @@ export default function ChatInterface({
         
         {/* Only show action suggestions, not followUpQuestions, and only after at least one message exchange */}
         {showSuggestions && messages.length >= 2 && suggestedActions.length > 0 && (
-          <div className="mt-3 sm:mt-4 opacity-80 hover:opacity-100 transition-opacity">
-            <div className="flex flex-wrap gap-2 sm:gap-3">
+          <div className="mt-2 sm:mt-3 opacity-80 hover:opacity-100 transition-opacity">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {suggestedActions.length > 0 && suggestedActions.slice(0, 2).map((suggestion, index) => (
                 <Button
                   key={`action-${index}`}
                   variant="outline"
                   size="sm"
-                  className="text-xs sm:text-sm justify-start text-left py-1 px-2 sm:py-1.5 sm:px-2.5"
+                  className="text-[10px] sm:text-xs justify-start text-left py-0.5 px-1.5 sm:py-1 sm:px-2 h-auto"
                   style={{
                     borderColor: `${categoryColors[category]}30`,
                     color: categoryColors[category]
@@ -875,19 +876,19 @@ export default function ChatInterface({
         )}
       </ScrollArea>
       
-      <CardFooter className="p-1 sm:p-2.5 border-t">
-        <div className="flex w-full items-center gap-1.5 sm:gap-2">
+      <CardFooter className="p-1 sm:p-2 border-t">
+        <div className="flex w-full items-center gap-1 sm:gap-1.5">
           <Textarea
             id="chat-input"
-            className="min-h-8 sm:min-h-10 max-h-16 sm:max-h-28 resize-none py-1.5 px-2 sm:py-2 sm:px-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs sm:text-sm rounded-xl flex-1"
-            placeholder="Type your message..."
+            className="min-h-7 sm:min-h-9 max-h-14 sm:max-h-24 resize-none py-1 px-2 sm:py-1.5 sm:px-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs sm:text-sm rounded-xl flex-1"
+            placeholder="Ask Fundi a question..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isProcessing}
             style={{
-              fontSize: window.innerWidth < 768 ? '14px' : '16px',
-              height: window.innerWidth < 768 ? '36px' : 'auto',
+              fontSize: window.innerWidth < 768 ? '12px' : '14px',
+              height: window.innerWidth < 768 ? '32px' : 'auto',
               paddingRight: window.innerWidth < 768 ? '6px' : undefined,
               paddingLeft: window.innerWidth < 768 ? '6px' : undefined,
               lineHeight: window.innerWidth < 768 ? '1.2' : undefined,
@@ -898,7 +899,7 @@ export default function ChatInterface({
             size="icon" 
             disabled={!input.trim() || isProcessing}
             onClick={handleSendMessage}
-            className="h-8 w-8 sm:h-10 sm:w-10 shrink-0 rounded-full"
+            className="h-7 w-7 sm:h-9 sm:w-9 shrink-0 rounded-full"
             style={{
               backgroundColor: categoryColors[category],
               color: 'white',
@@ -906,9 +907,9 @@ export default function ChatInterface({
             }}
           >
             {isProcessing ? (
-              <Loader2 className="h-4 w-4 sm:h-6 sm:w-6 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 sm:h-5 sm:w-5 animate-spin" />
             ) : (
-              <Send className="h-4 w-4 sm:h-6 sm:w-6" />
+              <Send className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             )}
           </Button>
         </div>
@@ -917,7 +918,7 @@ export default function ChatInterface({
       {/* Resize handles on multiple sides */}
       {/* Bottom-right corner handle */}
       <div 
-        className="resize-handle resize-handle-br w-10 h-10 opacity-70 hover:opacity-100 transition-opacity"
+        className="resize-handle resize-handle-br w-8 h-8 opacity-50 hover:opacity-90 transition-opacity"
         style={{ 
           backgroundImage: `linear-gradient(135deg, transparent 50%, ${categoryColors[category]} 50%)`,
           borderBottomRightRadius: '0.5rem',
@@ -932,7 +933,7 @@ export default function ChatInterface({
       
       {/* Bottom-left corner handle */}
       <div 
-        className="resize-handle resize-handle-bl w-10 h-10 opacity-70 hover:opacity-100 transition-opacity"
+        className="resize-handle resize-handle-bl w-8 h-8 opacity-50 hover:opacity-90 transition-opacity"
         style={{ 
           backgroundImage: `linear-gradient(225deg, transparent 50%, ${categoryColors[category]} 50%)`,
           borderBottomLeftRadius: '0.5rem',
@@ -947,14 +948,14 @@ export default function ChatInterface({
       
       {/* Bottom edge handle */}
       <div 
-        className="resize-handle resize-handle-b opacity-70 hover:opacity-100 transition-opacity"
+        className="resize-handle resize-handle-b opacity-40 hover:opacity-80 transition-opacity"
         style={{ 
-          background: `${categoryColors[category]}50`,
+          background: `${categoryColors[category]}40`,
           position: 'absolute',
           bottom: 0,
-          left: '20px',
-          right: '20px',
-          height: '6px',
+          left: '16px',
+          right: '16px',
+          height: '4px',
           cursor: 'ns-resize'
         }}
         onMouseDown={(e) => handleResizeStart(e, 'b')}
@@ -963,14 +964,14 @@ export default function ChatInterface({
       
       {/* Right edge handle */}
       <div 
-        className="resize-handle resize-handle-r opacity-70 hover:opacity-100 transition-opacity"
+        className="resize-handle resize-handle-r opacity-40 hover:opacity-80 transition-opacity"
         style={{ 
-          background: `${categoryColors[category]}50`,
+          background: `${categoryColors[category]}40`,
           position: 'absolute',
           right: 0,
-          top: '40px',
-          bottom: '20px',
-          width: '6px',
+          top: '36px',
+          bottom: '16px',
+          width: '4px',
           cursor: 'ew-resize'
         }}
         onMouseDown={(e) => handleResizeStart(e, 'r')}
@@ -979,14 +980,14 @@ export default function ChatInterface({
       
       {/* Left edge handle */}
       <div 
-        className="resize-handle resize-handle-l opacity-70 hover:opacity-100 transition-opacity"
+        className="resize-handle resize-handle-l opacity-40 hover:opacity-80 transition-opacity"
         style={{ 
-          background: `${categoryColors[category]}50`,
+          background: `${categoryColors[category]}40`,
           position: 'absolute',
           left: 0,
-          top: '40px',
-          bottom: '20px',
-          width: '6px',
+          top: '36px',
+          bottom: '16px',
+          width: '4px',
           cursor: 'ew-resize'
         }}
         onMouseDown={(e) => handleResizeStart(e, 'l')}
