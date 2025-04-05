@@ -23,20 +23,30 @@ interface RepairAnalysis {
   partsNeeded: RepairPart[];
   toolsNeeded: string[];
   difficultyLevel: string;
+  safetyConsiderations?: string[];
+  estimatedTime?: string;
   repairInstructions: string[];
+  alternativeSolutions?: string[];
 }
 
 interface StorePartAvailability {
   name: string;
+  partNumber?: string;
   price: number;
   inStock: boolean;
+  quantity?: string;
+  aisle?: string;
   deal: string | null;
+  alternativeParts?: string[];
+  warranty?: string;
 }
 
 interface Store {
   storeName: string;
   distance: string;
   address: string;
+  phoneNumber?: string;
+  storeHours?: string;
   partsAvailability: StorePartAvailability[];
 }
 
@@ -339,10 +349,17 @@ export function RepairAssistant() {
                 </div>
               </div>
               
+              {repairAnalysis.estimatedTime && (
+                <div className="mt-2">
+                  <Label className="text-muted-foreground">Estimated Repair Time:</Label>
+                  <p className="text-sm">{repairAnalysis.estimatedTime}</p>
+                </div>
+              )}
+              
               <Separator />
               
-              {/* Repair Instructions */}
-              <Accordion type="single" collapsible className="w-full">
+              {/* Repair Instructions and Safety Information */}
+              <Accordion type="multiple" className="w-full">
                 <AccordionItem value="instructions">
                   <AccordionTrigger>Repair Instructions</AccordionTrigger>
                   <AccordionContent>
@@ -353,6 +370,37 @@ export function RepairAssistant() {
                     </ol>
                   </AccordionContent>
                 </AccordionItem>
+                
+                {repairAnalysis.safetyConsiderations && repairAnalysis.safetyConsiderations.length > 0 && (
+                  <AccordionItem value="safety">
+                    <AccordionTrigger>
+                      <span className="flex items-center">
+                        Safety Considerations
+                        <Badge variant="outline" className="ml-2 bg-yellow-50 text-yellow-700">Important</Badge>
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="pl-5 space-y-2 mt-2">
+                        {repairAnalysis.safetyConsiderations.map((safety, index) => (
+                          <li key={index} className="list-disc text-sm text-amber-700">{safety}</li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+                
+                {repairAnalysis.alternativeSolutions && repairAnalysis.alternativeSolutions.length > 0 && (
+                  <AccordionItem value="alternatives">
+                    <AccordionTrigger>Alternative Solutions</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="pl-5 space-y-2 mt-2">
+                        {repairAnalysis.alternativeSolutions.map((alternative, index) => (
+                          <li key={index} className="list-disc text-sm">{alternative}</li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
               </Accordion>
               
               {/* Find Parts Button */}
@@ -382,28 +430,67 @@ export function RepairAssistant() {
                       <div>
                         <CardTitle className="text-base">{store.storeName}</CardTitle>
                         <CardDescription>{store.address}</CardDescription>
+                        {store.phoneNumber && (
+                          <CardDescription className="text-xs mt-1">{store.phoneNumber}</CardDescription>
+                        )}
+                        {store.storeHours && (
+                          <CardDescription className="text-xs mt-1">{store.storeHours}</CardDescription>
+                        )}
                       </div>
                       <Badge variant="outline">{store.distance}</Badge>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-4">
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {store.partsAvailability.map((part, partIndex) => (
-                        <div key={partIndex} className="flex justify-between items-center text-sm">
-                          <div className="flex items-center gap-2">
-                            <span>{part.name}</span>
+                        <div key={partIndex} className="border-b pb-3 last:border-0 last:pb-0">
+                          <div className="flex justify-between items-start mb-1">
+                            <div className="flex flex-col">
+                              <span className="font-medium">{part.name}</span>
+                              {part.partNumber && (
+                                <span className="text-xs text-muted-foreground">Part #: {part.partNumber}</span>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold">${part.price.toFixed(2)}</div>
+                              {part.deal && (
+                                <Badge className="ml-auto bg-blue-500 text-xs">{part.deal}</Badge>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-2 mt-2">
                             {part.inStock ? (
-                              <Badge variant="outline" className="bg-green-50 text-green-700 text-xs">In Stock</Badge>
+                              <Badge variant="outline" className="bg-green-50 text-green-700 text-xs">
+                                {part.quantity ? `In Stock (${part.quantity})` : 'In Stock'}
+                              </Badge>
                             ) : (
                               <Badge variant="outline" className="bg-red-50 text-red-700 text-xs">Out of Stock</Badge>
                             )}
-                          </div>
-                          <div className="font-medium">
-                            ${part.price.toFixed(2)}
-                            {part.deal && (
-                              <Badge className="ml-2 bg-blue-500 text-xs">{part.deal}</Badge>
+                            
+                            {part.aisle && (
+                              <Badge variant="outline" className="bg-blue-50 text-blue-700 text-xs">
+                                {part.aisle}
+                              </Badge>
+                            )}
+                            
+                            {part.warranty && (
+                              <Badge variant="outline" className="bg-purple-50 text-purple-700 text-xs">
+                                {part.warranty}
+                              </Badge>
                             )}
                           </div>
+                          
+                          {part.alternativeParts && part.alternativeParts.length > 0 && (
+                            <div className="mt-2">
+                              <span className="text-xs text-muted-foreground">Alternative parts:</span>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {part.alternativeParts.map((alt, altIndex) => (
+                                  <Badge key={altIndex} variant="outline" className="text-xs">{alt}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
