@@ -1,0 +1,63 @@
+/* Calendar desktop fixes */
+
+/* View selector tabs fixes */
+.calendar-view-tabs {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.calendar-view-tabs > div {
+  display: inline-flex !important;
+  background-color: #f3f4f6 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.25rem !important;
+}
+
+.calendar-view-tabs button {
+  min-width: 60px !important;
+  text-align: center !important;
+}
+
+/* Grid fixes */
+.calendar-scroll-container {
+  flex: 1 !important;
+  overflow: auto !important;
+  padding: 1rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.calendar-day-cells {
+  max-height: calc(100vh - 250px) !important;
+  scrollbar-width: thin !important;
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  grid-template-rows: auto repeat(5, minmax(90px, 1fr)) !important;
+  gap: 1px !important;
+  height: 650px !important;
+  min-height: 600px !important;
+  width: 100% !important;
+  margin-top: 0.5rem !important;
+}
+
+.calendar-day-cells > div:not(:first-child):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)):not(:nth-child(7)) {
+  height: 110px !important;
+  min-height: 90px !important;
+  border: 1px solid #e5e7eb !important;
+  position: relative !important;
+}
+
+/* Dialog fixes */
+.calendar-dialog {
+  width: 95% !important;
+  max-width: 500px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  position: fixed !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}

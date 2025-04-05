@@ -2,6 +2,8 @@
 @import '@fontsource/lora/700.css';
 @import './styles/calendar-overrides.css';
 @import './styles/calendar-redesigned-fix.css';
+@import './styles/calendar-emergency-fix.css';
+@import './styles/calendar-desktop-fix.css';
 
 @tailwind base;
 @tailwind components;

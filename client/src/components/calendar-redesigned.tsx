@@ -274,8 +274,13 @@ export default function CalendarRedesigned() {
           </div>
           
           {/* View selector tabs - compacted for mobile, fixed for desktop */}
-          <div className="flex justify-center sm:justify-start mb-2 calendar-view-tabs" style={{ width: '100%' }}>
-            <div className="bg-gray-100 rounded-lg p-1 inline-flex">
+          <div className="flex justify-center sm:justify-start mb-2 calendar-view-tabs" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <div className="bg-gray-100 rounded-lg p-1 inline-flex" style={{ 
+              display: 'inline-flex',
+              backgroundColor: '#f3f4f6',
+              borderRadius: '0.5rem',
+              padding: '0.25rem'
+            }}>
               <button 
                 className={cn(
                   "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
@@ -334,8 +339,24 @@ export default function CalendarRedesigned() {
           </div>
         </div>
         
-        <div className="flex-1 px-4 py-2 calendar-scroll-container">
-          <div className="grid grid-cols-7 h-full calendar-day-cells overflow-y-auto" style={{ maxHeight: 'calc(100vh - 250px)', scrollbarWidth: 'thin' }}>
+        <div className="flex-1 px-4 py-2 calendar-scroll-container" style={{
+          flex: '1',
+          overflow: 'auto',
+          padding: '1rem',
+          marginTop: '0.5rem'
+        }}>
+          <div className="grid grid-cols-7 h-full calendar-day-cells overflow-y-auto" style={{ 
+            maxHeight: 'calc(100vh - 250px)', 
+            scrollbarWidth: 'thin',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
+            gridTemplateRows: 'auto repeat(5, minmax(90px, 1fr))',
+            gap: '1px',
+            height: '650px',
+            minHeight: '600px', 
+            width: '100%',
+            marginTop: '0.5rem'
+          }}>
             {/* Day headers - mobile optimized */}
             {daysOfWeek.map((day, index) => (
               <div key={day} className={cn(
@@ -364,6 +385,12 @@ export default function CalendarRedesigned() {
                     isCurrentDay && "bg-gray-50",
                     isWeekend && !isCurrentDay && "bg-gray-50/30",
                   )}
+                  style={{
+                    height: '110px',
+                    minHeight: '90px',
+                    border: '1px solid #e5e7eb',
+                    position: 'relative'
+                  }}
                   onClick={() => {
                     setSelectedDay(day);
                     setShowEventForm(true);
@@ -1058,7 +1085,15 @@ export default function CalendarRedesigned() {
       <div id="calendar-redesigned" className={cn(
         "bg-white rounded-lg flex flex-col calendar-widget calendar-desktop-layout",
         isFullscreen ? "fixed inset-0 z-50" : "h-full"
-      )}>
+      )}
+      style={{
+        display: "flex", 
+        flexDirection: "column",
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+        padding: "0.5rem"
+      }}>
         {/* Fullscreen Toggle Header */}
         {isFullscreen && (
           <div className="p-3 bg-gray-100 border-b flex justify-between items-center">
