@@ -58,34 +58,23 @@ export default function RobotFundi({
       return;
     }
     
-    // More lenient movement threshold for better mobile support
-    const movementThreshold = 20; // Increased from 5px to 20px
+    // Get the last drag time and the distance moved
+    const lastDragTime = (window as any).lastDragTime || 0;
+    const timeSinceLastDrag = Date.now() - lastDragTime;
     
-    // Check the actual distance the avatar has been moved from its initial position
-    const dragDistance = Math.sqrt(
-      Math.pow(position.x - 63, 2) + 
-      Math.pow(position.y - 8, 2)
-    );
+    // Check if there's been significant movement (any dragging)
+    const hasMoved = wasDragged || 
+      Math.abs(position.x - 63) > 5 || 
+      Math.abs(position.y - 8) > 5;
     
-    // If the drag distance is within the threshold, treat it as a click
-    if (dragDistance < movementThreshold) {
-      if (onOpen) {
-        onOpen();
-        console.log("Opening Fundi chat - click detected!", { dragDistance });
-      }
-    } else {
-      // For substantial movements, we're in drag territory
-      const lastDragTime = (window as any).lastDragTime || 0;
-      const timeSinceLastDrag = Date.now() - lastDragTime;
-      
-      // Don't trigger chat on recent drags, but allow after a cool-off period
-      if (timeSinceLastDrag > 300 && onOpen) {
-        // This wasn't a drag but a deliberate click after positioning
-        onOpen();
-        console.log("Opening Fundi chat - deliberate click after drag");
-      } else {
-        console.log("Click ignored - this was just the end of a drag operation", { dragDistance });
-      }
+    // Only open chat on a pure click, not after any dragging
+    if (!hasMoved && onOpen) {
+      // This was a pure click with no movement
+      onOpen();
+      console.log("Opening Fundi chat - pure click detected");
+    } else if (hasMoved) {
+      // If it was moved/dragged at all, don't open chat
+      console.log("Click ignored - Fundi was recently dragged");
     }
     
     e.stopPropagation();

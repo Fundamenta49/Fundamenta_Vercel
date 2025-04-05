@@ -752,7 +752,13 @@ export default function FundiInteractiveAssistant({
         {isOpen && (
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={{ 
+              scale: 1, 
+              opacity: 1,
+              // Apply the fundiPosition to make the chat open where Fundi was positioned
+              x: fundiPosition.x,
+              y: fundiPosition.y
+            }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.2 }}
             drag
@@ -762,6 +768,14 @@ export default function FundiInteractiveAssistant({
             whileDrag={{ cursor: 'grabbing' }}
             // Immediately update cursor for drag state
             className={isChatOpen ? "mb-2" : "mb-2 cursor-grab active:cursor-grabbing"}
+            // Update fundiPosition when the open chat window is dragged too
+            onDragEnd={(e, info) => {
+              setFundiPosition({
+                x: fundiPosition.x + info.offset.x,
+                y: fundiPosition.y + info.offset.y
+              });
+              console.log(`Chat window position: x=${fundiPosition.x + info.offset.x}, y=${fundiPosition.y + info.offset.y}`);
+            }}
           >
             {isChatOpen ? (
               // Chat interface
