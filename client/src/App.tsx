@@ -41,46 +41,162 @@ import ShoppingBuddyCourse from "@/pages/learning/courses/shopping-buddy";
 import RepairAssistantCourse from "@/pages/learning/courses/repair-assistant";
 import { TourProvider } from "./contexts/tour-context";
 import Tour from "./components/tour";
+import LoginPage from "@/pages/login";
+import { AuthProvider } from "@/lib/auth-context";
+import ProtectedRoute from "@/components/protected-route";
 
 function Router() {
   return (
     <Layout>
       <Tour />
       <Switch>
-        <Route path="/" component={Home} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/">
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        </Route>
         <Route path="/why-fundamenta" component={WhyFundamenta} />
         <Route path="/partner" component={Partner} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/invite" component={Invite} />
         <Route path="/emergency" component={Emergency} />
-        <Route path="/finance" component={Finance} />
-        <Route path="/finance/mortgage" component={MortgagePage} />
-        <Route path="/career" component={Career} />
-        <Route path="/wellness" component={Wellness} />
-        <Route path="/active" component={Active} />
-        <Route path="/yoga-test" component={YogaTest} />
-        <Route path="/yoga-pose-analysis" component={YogaPoseAnalysis} />
-        <Route path="/yoga-progression" component={YogaProgressionPage} />
+        <Route path="/finance">
+          <ProtectedRoute>
+            <Finance />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/finance/mortgage">
+          <ProtectedRoute>
+            <MortgagePage />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/career">
+          <ProtectedRoute>
+            <Career />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/wellness">
+          <ProtectedRoute>
+            <Wellness />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/active">
+          <ProtectedRoute>
+            <Active />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/yoga-test">
+          <ProtectedRoute>
+            <YogaTest />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/yoga-pose-analysis">
+          <ProtectedRoute>
+            <YogaPoseAnalysis />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/yoga-progression">
+          <ProtectedRoute>
+            <YogaProgressionPage />
+          </ProtectedRoute>
+        </Route>
         <Route path="/fundi-showcase" component={FundiShowcase} />
-        <Route path="/learning" component={Learning} />
-        <Route path="/learning-calendar" component={LearningCalendar} />
-        <Route path="/enhanced-calendar" component={EnhancedCalendar} />
-        <Route path="/redesigned-calendar" component={CalendarRedesigned} />
-        <Route path="/learning/courses/vehicle-maintenance" component={VehicleMaintenanceCourse} />
-        <Route path="/learning/courses/home-maintenance" component={HomeMaintenanceCourse} />
-        <Route path="/learning/courses/cooking-basics" component={CookingBasicsCourse} />
-        <Route path="/learning/courses/health-wellness" component={HealthWellnessCourse} />
-        <Route path="/learning/courses/economics" component={EconomicsCourse} />
-        <Route path="/learning/courses/critical-thinking" component={CriticalThinkingCourse} />
-        <Route path="/learning/courses/conflict-resolution" component={ConflictResolutionCourse} />
-        <Route path="/learning/courses/decision-making" component={DecisionMakingCourse} />
-        <Route path="/learning/courses/time-management" component={TimeManagementCourse} />
-        <Route path="/learning/courses/coping-with-failure" component={CopingWithFailureCourse} />
-        <Route path="/learning/courses/conversation-skills" component={ConversationSkillsCourse} />
-        <Route path="/learning/courses/forming-positive-habits" component={FormingPositiveHabitsCourse} />
-        <Route path="/learning/courses/utilities-guide" component={UtilitiesGuideCourse} />
-        <Route path="/learning/courses/shopping-buddy" component={ShoppingBuddyCourse} />
-        <Route path="/learning/courses/repair-assistant" component={RepairAssistantCourse} />
+        <Route path="/learning">
+          <ProtectedRoute>
+            <Learning />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning-calendar">
+          <ProtectedRoute>
+            <LearningCalendar />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/enhanced-calendar">
+          <ProtectedRoute>
+            <EnhancedCalendar />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/redesigned-calendar">
+          <ProtectedRoute>
+            <CalendarRedesigned />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/vehicle-maintenance">
+          <ProtectedRoute>
+            <VehicleMaintenanceCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/home-maintenance">
+          <ProtectedRoute>
+            <HomeMaintenanceCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/cooking-basics">
+          <ProtectedRoute>
+            <CookingBasicsCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/health-wellness">
+          <ProtectedRoute>
+            <HealthWellnessCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/economics">
+          <ProtectedRoute>
+            <EconomicsCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/critical-thinking">
+          <ProtectedRoute>
+            <CriticalThinkingCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/conflict-resolution">
+          <ProtectedRoute>
+            <ConflictResolutionCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/decision-making">
+          <ProtectedRoute>
+            <DecisionMakingCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/time-management">
+          <ProtectedRoute>
+            <TimeManagementCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/coping-with-failure">
+          <ProtectedRoute>
+            <CopingWithFailureCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/conversation-skills">
+          <ProtectedRoute>
+            <ConversationSkillsCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/forming-positive-habits">
+          <ProtectedRoute>
+            <FormingPositiveHabitsCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/utilities-guide">
+          <ProtectedRoute>
+            <UtilitiesGuideCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/shopping-buddy">
+          <ProtectedRoute>
+            <ShoppingBuddyCourse />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/learning/courses/repair-assistant">
+          <ProtectedRoute>
+            <RepairAssistantCourse />
+          </ProtectedRoute>
+        </Route>
         <Route component={NotFound} />
       </Switch>
       <Toaster />
@@ -91,9 +207,11 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TourProvider>
-        <Router />
-      </TourProvider>
+      <AuthProvider>
+        <TourProvider>
+          <Router />
+        </TourProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
