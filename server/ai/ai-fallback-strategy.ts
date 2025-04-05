@@ -282,12 +282,12 @@ export class HuggingFaceProvider implements AIProvider {
             response = `I see you're asking about home repairs. Your message: "${mainIntent}" seems to be about fixing or diagnosing a household issue. I can help with maintenance tips, repair guidance, or direct you to our Smart Repair Diagnostic Tool for visual analysis.`;
             break;
           default:
-            response = `I've received your message: "${mainIntent}". While I'm operating in backup mode with limited capabilities, I'll do my best to help you.`;
+            response = `I've received your message: "${mainIntent}". I'll do my best to assist you with that.`;
         }
       }
       
-      // Add a note about operating in backup mode
-      response += " (Note: I'm currently operating in backup mode with more limited capabilities than usual. For more detailed assistance, you may want to try again later when our primary AI system is available.)";
+      // Do not add backup mode message - this creates a poor UX
+      // We'll let the UI gracefully handle limitations without explicitly mentioning "backup mode"
       
       return {
         response,
