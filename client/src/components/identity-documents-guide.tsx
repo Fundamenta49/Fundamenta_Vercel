@@ -743,38 +743,38 @@ export default function IdentityDocumentsGuide() {
   return (
     <div className="w-full max-w-screen-lg mx-auto">
       <Tabs defaultValue="passport" onValueChange={value => setActiveTab(value as DocumentTab)}>
-        <TabsList className="w-full mb-6 grid grid-cols-5 bg-muted/50 p-1 rounded-lg">
-          <TabsTrigger value="passport" className="flex items-center gap-2 rounded-md">
-            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
-              <Globe className="h-4 w-4 text-blue-500" />
+        <TabsList className="w-full mb-6 grid grid-cols-5 bg-orange-50/50 p-1 rounded-lg border border-orange-100">
+          <TabsTrigger value="passport" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+            <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
+              <Globe className="h-4 w-4 text-orange-500" />
             </div>
             <span className="hidden sm:inline">Passport</span>
             <span className="sm:hidden">Passport</span>
           </TabsTrigger>
-          <TabsTrigger value="birth-certificate" className="flex items-center gap-2 rounded-md">
-            <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
-              <FileText className="h-4 w-4 text-green-500" />
+          <TabsTrigger value="birth-certificate" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+            <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
+              <FileText className="h-4 w-4 text-orange-500" />
             </div>
             <span className="hidden sm:inline">Birth Certificate</span>
             <span className="sm:hidden">Birth Cert.</span>
           </TabsTrigger>
-          <TabsTrigger value="social-security" className="flex items-center gap-2 rounded-md">
-            <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center">
-              <CreditCard className="h-4 w-4 text-rose-500" />
+          <TabsTrigger value="social-security" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+            <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
+              <CreditCard className="h-4 w-4 text-orange-500" />
             </div>
             <span className="hidden sm:inline">Social Security</span>
             <span className="sm:hidden">SSN</span>
           </TabsTrigger>
-          <TabsTrigger value="state-id" className="flex items-center gap-2 rounded-md">
-            <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center">
-              <CreditCard className="h-4 w-4 text-indigo-600" />
+          <TabsTrigger value="state-id" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+            <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
+              <CreditCard className="h-4 w-4 text-orange-500" />
             </div>
             <span className="hidden sm:inline">State ID/License</span>
             <span className="sm:hidden">ID/License</span>
           </TabsTrigger>
-          <TabsTrigger value="voter-registration" className="flex items-center gap-2 rounded-md">
-            <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center">
-              <FileText className="h-4 w-4 text-amber-500" />
+          <TabsTrigger value="voter-registration" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+            <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
+              <FileText className="h-4 w-4 text-orange-500" />
             </div>
             <span className="hidden sm:inline">Voter Registration</span>
             <span className="sm:hidden">Voter Reg.</span>
@@ -822,8 +822,8 @@ export default function IdentityDocumentsGuide() {
             </Select>
             
             {selectedState !== "default" && (
-              <Alert className="mt-2 bg-blue-50 text-blue-800 border-blue-200">
-                <AlertCircle className="h-4 w-4 text-blue-500" />
+              <Alert className="mt-2 bg-orange-50 text-orange-800 border-orange-200">
+                <AlertCircle className="h-4 w-4 text-orange-500" />
                 <AlertDescription>
                   Showing specific information for {stateInfo.name}.
                 </AlertDescription>
@@ -954,9 +954,9 @@ export default function IdentityDocumentsGuide() {
               </div>
               
               {selectedState !== "default" && (
-                <Alert className="bg-blue-50 border-blue-200">
-                  <AlertCircle className="h-4 w-4 text-blue-500" />
-                  <AlertDescription className="text-blue-800 text-sm space-y-2">
+                <Alert className="bg-orange-50 border-orange-200">
+                  <AlertCircle className="h-4 w-4 text-orange-500" />
+                  <AlertDescription className="text-orange-800 text-sm space-y-2">
                     <p><strong>{stateInfo.name} Vital Records Office</strong></p>
                     <Button variant="outline" className="mt-1 w-full sm:w-auto justify-start" asChild>
                       <a href={stateInfo.vitalRecordsUrl} target="_blank" rel="noopener noreferrer">
@@ -1099,9 +1099,9 @@ export default function IdentityDocumentsGuide() {
               </div>
               
               {selectedState !== "default" && stateInfo.socialSecurityOffices && (
-                <Alert className="bg-blue-50 border-blue-200">
-                  <AlertCircle className="h-4 w-4 text-blue-500" />
-                  <AlertDescription className="text-blue-800 text-sm">
+                <Alert className="bg-orange-50 border-orange-200">
+                  <AlertCircle className="h-4 w-4 text-orange-500" />
+                  <AlertDescription className="text-orange-800 text-sm">
                     <div className="space-y-3">
                       <p><strong>{stateInfo.name} Social Security Offices</strong></p>
                       {stateInfo.socialSecurityOffices.map((office, idx) => (
@@ -1215,9 +1215,9 @@ export default function IdentityDocumentsGuide() {
               </div>
               
               {selectedState !== "default" && (
-                <Alert className="bg-blue-50 border-blue-200">
-                  <AlertCircle className="h-4 w-4 text-blue-500" />
-                  <AlertDescription className="text-blue-800 text-sm space-y-2">
+                <Alert className="bg-orange-50 border-orange-200">
+                  <AlertCircle className="h-4 w-4 text-orange-500" />
+                  <AlertDescription className="text-orange-800 text-sm space-y-2">
                     <p><strong>{stateInfo.name} DMV/BMV Information</strong></p>
                     <Button variant="outline" className="mt-1 w-full sm:w-auto justify-start" asChild>
                       <a href={`https://dmv.${stateInfo.code.toLowerCase()}.gov`} target="_blank" rel="noopener noreferrer">
@@ -1332,7 +1332,7 @@ export default function IdentityDocumentsGuide() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-600" />
+                <FileText className="h-5 w-5 text-orange-600" />
                 How to Register to Vote
               </CardTitle>
               <CardDescription>
@@ -1355,13 +1355,13 @@ export default function IdentityDocumentsGuide() {
               </div>
               
               {selectedState !== "default" && (
-                <Alert className="bg-blue-50 border-blue-200">
-                  <AlertCircle className="h-4 w-4 text-blue-500" />
-                  <AlertDescription className="text-blue-800 text-sm space-y-2">
+                <Alert className="bg-orange-50 border-orange-200">
+                  <AlertCircle className="h-4 w-4 text-orange-500" />
+                  <AlertDescription className="text-orange-800 text-sm space-y-2">
                     <p><strong>{stateInfo.name} Voter Registration Information</strong></p>
                     <Button variant="outline" className="mt-1 w-full sm:w-auto justify-start" asChild>
                       <a href={`https://vote.${stateInfo.code.toLowerCase()}.gov`} target="_blank" rel="noopener noreferrer">
-                        <FileText className="h-4 w-4 mr-2 text-blue-600" />
+                        <FileText className="h-4 w-4 mr-2 text-orange-600" />
                         {stateInfo.name} Voter Registration
                         <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
                       </a>
@@ -1375,7 +1375,7 @@ export default function IdentityDocumentsGuide() {
                 <div className="grid sm:grid-cols-2 gap-2">
                   <Button variant="outline" className="justify-start" asChild>
                     <a href={documentInfo.howToGet.nationalLink} target="_blank" rel="noopener noreferrer">
-                      <Globe className="h-4 w-4 mr-2 text-blue-500" />
+                      <Globe className="h-4 w-4 mr-2 text-orange-500" />
                       National Voter Registration Info
                       <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
                     </a>
@@ -1472,11 +1472,11 @@ export default function IdentityDocumentsGuide() {
 // Document Overview Component
 function DocumentOverview({ document }: { document: any }) {
   // Determine color classes based on document type
-  let iconBgClass = "bg-blue-50";
-  let iconTextClass = "text-blue-500";
-  let badgeBgClass = "bg-blue-50";
-  let badgeTextClass = "text-blue-700";
-  let badgeBorderClass = "border-blue-200";
+  let iconBgClass = "bg-orange-50";
+  let iconTextClass = "text-orange-500";
+  let badgeBgClass = "bg-orange-50";
+  let badgeTextClass = "text-orange-700";
+  let badgeBorderClass = "border-orange-200";
   let badgeType = "Federal";
   
   if (document.title === "Birth Certificate") {
