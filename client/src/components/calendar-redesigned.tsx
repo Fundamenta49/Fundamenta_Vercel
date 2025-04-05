@@ -9,8 +9,10 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import EventForm, { EventFormData } from '@/components/event-form';
+import EventForm, { EventFormData, LearningResource } from '@/components/event-form';
 import { calendarService, CalendarEvent } from '@/services/calendar-service';
+import { getWeather, WeatherData } from '@/services/weather-service';
+import WeatherWidget from '@/components/weather-widget';
 
 // Category colors mapping (Apple-style)
 const categoryColors: Record<string, { bg: string, text: string, border: string }> = {
@@ -49,6 +51,29 @@ function useIsMobile() {
   
   return isMobile;
 }
+
+// Learning resources catalog for the calendar
+const generateLearningResources = (): LearningResource[] => {
+  return [
+    { id: 'economics', title: 'Economics Basics', path: '/learning/courses/economics', category: 'finance', duration: 60 },
+    { id: 'vehicle-maintenance', title: 'Vehicle Maintenance', path: '/learning/courses/vehicle-maintenance', category: 'personal', duration: 45 },
+    { id: 'home-maintenance', title: 'Home Maintenance', path: '/learning/courses/home-maintenance', category: 'personal', duration: 50 },
+    { id: 'cooking-basics', title: 'Cooking Basics', path: '/learning/courses/cooking-basics', category: 'personal', duration: 40 },
+    { id: 'health-wellness', title: 'Health & Wellness', path: '/learning/courses/health-wellness', category: 'health', duration: 30 },
+    { id: 'critical-thinking', title: 'Critical Thinking', path: '/learning/courses/critical-thinking', category: 'school', duration: 55 },
+    { id: 'conflict-resolution', title: 'Conflict Resolution', path: '/learning/courses/conflict-resolution', category: 'work', duration: 40 },
+    { id: 'decision-making', title: 'Decision Making', path: '/learning/courses/decision-making', category: 'work', duration: 45 },
+    { id: 'time-management', title: 'Time Management', path: '/learning/courses/time-management', category: 'work', duration: 35 },
+    { id: 'coping-with-failure', title: 'Coping with Failure', path: '/learning/courses/coping-with-failure', category: 'personal', duration: 40 },
+    { id: 'conversation-skills', title: 'Conversation Skills', path: '/learning/courses/conversation-skills', category: 'personal', duration: 30 },
+    { id: 'forming-positive-habits', title: 'Positive Habits', path: '/learning/courses/forming-positive-habits', category: 'health', duration: 45 },
+    { id: 'utilities-guide', title: 'Utilities Guide', path: '/learning/courses/utilities-guide', category: 'finance', duration: 30 },
+    { id: 'shopping-buddy', title: 'Shopping Buddy', path: '/learning/courses/shopping-buddy', category: 'finance', duration: 25 },
+    { id: 'repair-assistant', title: 'Repair Assistant', path: '/learning/courses/repair-assistant', category: 'personal', duration: 35 },
+  ];
+};
+
+
 
 export default function CalendarRedesigned() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -297,6 +322,11 @@ export default function CalendarRedesigned() {
               placeholder="Search" 
               className="pl-10 pr-4 py-2 w-full max-w-[100%] sm:max-w-xs rounded-full border-gray-300 bg-gray-50"
             />
+          </div>
+          
+          {/* Weather Widget */}
+          <div className="mt-4 max-w-[100%] sm:max-w-xs">
+            <WeatherWidget />
           </div>
         </div>
         
@@ -610,6 +640,11 @@ export default function CalendarRedesigned() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          
+          {/* Weather Widget */}
+          <div className="mt-4 max-w-[100%] sm:max-w-xs">
+            <WeatherWidget />
+          </div>
         </div>
         
         <div className="flex-1 overflow-y-auto no-scrollbar">
@@ -796,6 +831,11 @@ export default function CalendarRedesigned() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          
+          {/* Weather Widget */}
+          <div className="mt-4 max-w-[100%] sm:max-w-xs">
+            <WeatherWidget />
+          </div>
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 no-scrollbar">
@@ -959,6 +999,11 @@ export default function CalendarRedesigned() {
               </button>
             </div>
           </div>
+          
+          {/* Weather Widget */}
+          <div className="mt-4 max-w-[100%] sm:max-w-xs">
+            <WeatherWidget />
+          </div>
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 no-scrollbar">
@@ -1080,7 +1125,7 @@ export default function CalendarRedesigned() {
         onSave={handleSaveEvent}
         selectedDate={selectedDay || undefined}
         editEvent={selectedEvent && selectedDay && isSameDay(selectedEvent.date, selectedDay) ? selectedEvent : null}
-        learningResources={[]}
+        learningResources={generateLearningResources()}
       />
     </>
   );
