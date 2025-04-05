@@ -743,41 +743,36 @@ export default function IdentityDocumentsGuide() {
   return (
     <div className="w-full max-w-screen-lg mx-auto">
       <Tabs defaultValue="passport" onValueChange={value => setActiveTab(value as DocumentTab)}>
-        <TabsList className="w-full mb-6 grid grid-cols-5 bg-orange-50/50 p-1 rounded-lg border border-orange-100">
-          <TabsTrigger value="passport" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+        <TabsList className="w-full mb-6 grid grid-cols-5 gap-1 bg-orange-50/50 p-2 rounded-lg border border-orange-100">
+          <TabsTrigger value="passport" className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-2 py-2 px-1 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
             <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
               <Globe className="h-4 w-4 text-orange-500" />
             </div>
-            <span className="hidden sm:inline">Passport</span>
-            <span className="sm:hidden">Passport</span>
+            <span className="text-xs md:text-sm">Passport</span>
           </TabsTrigger>
-          <TabsTrigger value="birth-certificate" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+          <TabsTrigger value="birth-certificate" className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-2 py-2 px-1 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
             <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
               <FileText className="h-4 w-4 text-orange-500" />
             </div>
-            <span className="hidden sm:inline">Birth Certificate</span>
-            <span className="sm:hidden">Birth Cert.</span>
+            <span className="text-xs md:text-sm">Birth Cert.</span>
           </TabsTrigger>
-          <TabsTrigger value="social-security" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+          <TabsTrigger value="social-security" className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-2 py-2 px-1 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
             <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
               <CreditCard className="h-4 w-4 text-orange-500" />
             </div>
-            <span className="hidden sm:inline">Social Security</span>
-            <span className="sm:hidden">SSN</span>
+            <span className="text-xs md:text-sm">SSN</span>
           </TabsTrigger>
-          <TabsTrigger value="state-id" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+          <TabsTrigger value="state-id" className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-2 py-2 px-1 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
             <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
               <CreditCard className="h-4 w-4 text-orange-500" />
             </div>
-            <span className="hidden sm:inline">State ID/License</span>
-            <span className="sm:hidden">ID/License</span>
+            <span className="text-xs md:text-sm">ID/License</span>
           </TabsTrigger>
-          <TabsTrigger value="voter-registration" className="flex items-center gap-2 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
+          <TabsTrigger value="voter-registration" className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-2 py-2 px-1 rounded-md data-[state=active]:bg-orange-100/70 data-[state=active]:text-orange-900">
             <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
               <FileText className="h-4 w-4 text-orange-500" />
             </div>
-            <span className="hidden sm:inline">Voter Registration</span>
-            <span className="sm:hidden">Voter Reg.</span>
+            <span className="text-xs md:text-sm">Voter Reg.</span>
           </TabsTrigger>
         </TabsList>
 
