@@ -574,11 +574,12 @@ export default function FundiInteractiveAssistant({
               // Chat interface
               <Card 
                 ref={chatCardRef}
-                className="shadow-xl border-t-4 resize-handler overflow-hidden" 
+                className="shadow-xl border-t-4 resize-handler overflow-hidden flex flex-col" 
                 style={{ 
                   borderTopColor: `var(--${category}-500, var(--primary))`,
                   minWidth: '300px', 
-                  maxWidth: '450px',
+                  minHeight: '400px',
+                  maxWidth: '600px',
                   width: chatSize.width,
                   height: chatSize.height,
                   resize: 'both' 
@@ -613,7 +614,7 @@ export default function FundiInteractiveAssistant({
                     </Button>
                   </div>
                 </CardHeader>
-                <ScrollArea className="h-80">
+                <ScrollArea className="flex-1 max-h-[60vh] overflow-y-auto" style={{ height: 'calc(100% - 120px)' }}>
                   <CardContent className="p-4 pt-0">
                     <div className="space-y-4">
                       {messages.map((message, index) => (
