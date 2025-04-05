@@ -28,6 +28,9 @@ import CalendarRedesigned from "@/components/calendar-redesigned";
 import CalendarTestingPage from "@/pages/calendar-testing";
 import EconomicsCourse from "@/pages/learning/courses/economics";
 import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
+import StressManagement from "@/pages/wellness/stress-management";
+import Meditation from "@/pages/wellness/meditation";
+import Mindfulness from "@/pages/wellness/mindfulness";
 import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
 import CookingBasicsCourse from "@/pages/learning/courses/cooking-basics";
 import HealthWellnessCourse from "@/pages/learning/courses/health-wellness";
@@ -86,6 +89,21 @@ function Router() {
             <Route path="/wellness">
               <ProtectedRoute>
                 <Wellness />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/wellness/stress-management">
+              <ProtectedRoute>
+                <StressManagement />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/wellness/meditation">
+              <ProtectedRoute>
+                <Meditation />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/wellness/mindfulness">
+              <ProtectedRoute>
+                <Mindfulness />
               </ProtectedRoute>
             </Route>
             <Route path="/active">
