@@ -1,161 +1,279 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import '../styles/resize-handler.css';
-import { ArrowUpRightFromCircle, ChevronDown, Ghost, Search, Send, Sparkles, User, X } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { ChevronRight, MessageSquarePlus, X, Send, Sparkles, ChevronDown, ArrowUpRightFromCircle } from 'lucide-react';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
+import { Avatar } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import FundiAvatarEnhanced from './fundi-avatar-enhanced';
-import useLocalStorage from '@/hooks/use-local-storage';
 
-// Suggestion item interface
+interface FundiInteractiveAssistantProps {
+  initialCategory?: string;
+  onRequestHelp?: (category: string, query?: string) => void;
+  onOpenFullModule?: (module: string) => void;
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  initiallyOpen?: boolean;
+  className?: string;
+}
+
 interface SuggestionItem {
   text: string;
-  category?: string;
+  category: string;
   action?: () => void;
 }
 
-// Message interface for chat
-interface Message {
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-  id?: string;
-}
-
-// Chat interface props
-interface FundiInteractiveAssistantProps {
-  className?: string;
-  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
-  initialCategory?: string;
-  initialMessages?: Message[];
-  withSuggestions?: boolean;
-  withModuleCards?: boolean;
-  onRequestHelp?: (category: string, query?: string) => void;
-  onOpenFullModule?: (module: string) => void;
-}
-
 export default function FundiInteractiveAssistant({
-  className,
-  position = 'bottom-right',
-  initialCategory = 'finance',
-  initialMessages = [],
-  withSuggestions = true,
-  withModuleCards = false,
+  initialCategory = 'general',
   onRequestHelp,
-  onOpenFullModule
+  onOpenFullModule,
+  position: positionProp = 'bottom-right',
+  initiallyOpen = false,
+  className,
 }: FundiInteractiveAssistantProps) {
-  // State for chat UI
-  const [isOpen, setIsOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(true);
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [isOpen, setIsOpen] = useState(initiallyOpen);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [category, setCategory] = useState(initialCategory);
-  const [fundiPosition, setFundiPosition] = useState({ x: 63, y: 8 });
-  const [chatSize, setChatSize] = useState({ width: '400px', height: '550px' });
-  
-  // State for animations
   const [speaking, setSpeaking] = useState(false);
   const [thinking, setThinking] = useState(false);
-  const [emotion, setEmotion] = useState<string>('neutral');
+  const [category, setCategory] = useState(initialCategory);
+  const [emotion, setEmotion] = useState<'neutral' | 'happy' | 'curious' | 'surprised' | 'concerned'>('neutral');
+  const [chatSize, setChatSize] = useState<{width: string, height: string}>({width: '360px', height: '580px'});
+  const [fundiPosition, setFundiPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
+  // State to store user name from tour
+  const [userName, setUserName] = useState<string>('');
   
-  // Refs for DOM elements
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const chatCardRef = useRef<HTMLDivElement>(null);
-  
-  // Local storage for user preferences
-  const [userName] = useLocalStorage('user-name', '');
-  
-  // Format time for chat messages - Apple Messages style
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  };
-  
-  // Scroll to bottom when messages change
+  // Get user name from localStorage on component mount
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-  
-  // Focus input when chat opens
-  useEffect(() => {
-    if (isOpen && isChatOpen && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
+    const storedName = localStorage.getItem('tourUserName');
+    if (storedName) {
+      setUserName(storedName);
     }
-  }, [isOpen, isChatOpen]);
+  }, []);
   
-  // Set initial messages if category changes
-  useEffect(() => {
-    // Only set welcome message if there are no messages yet
-    if (messages.length === 0) {
-      const welcomeMessage = {
-        text: 
-          userName
-            ? `Hey ${userName}! Welcome to the Finance assistant. How can I help you today?`
-            : `Hi there! Welcome to the Finance assistant. How can I help you today?`,
-        isUser: false,
+  // State to track if we should clear messages
+  const [shouldResetMessages, setShouldResetMessages] = useState<boolean>(false);
+  
+  // Initialize with a welcome message but connect to real API for subsequent messages
+  const [messages, setMessages] = useState<{ text: string; isUser: boolean; timestamp: Date; id?: string }[]>([
+    { 
+      text: "Hi there! I'm Fundi, your life skills assistant. How can I help you today?", 
+      isUser: false, 
+      timestamp: new Date(),
+      id: 'welcome-message'
+    }
+  ]);
+  
+  // Custom function to clear chat messages directly
+  const clearMessages = useCallback(() => {
+    // Reset to initial welcome message
+    setMessages([
+      { 
+        text: "Hi there! I'm Fundi, your life skills assistant. How can I help you today?", 
+        isUser: false, 
         timestamp: new Date(),
-      };
-      
-      setMessages([welcomeMessage]);
-    }
-  }, [category, messages.length, userName]);
+        id: 'welcome-message'
+      }
+    ]);
+    setUserName('');
+  }, []);
   
-  // Add suggestions for empty chat
-  const getSuggestionsForCategory = (cat: string): SuggestionItem[] => {
-    switch(cat) {
+  // Add window event to detect tour resets
+  useEffect(() => {
+    // Define a custom event handler for tour resets
+    const handleTourReset = () => {
+      clearMessages();
+      setShouldResetMessages(true);
+    };
+    
+    // Create custom event listener
+    window.addEventListener('tour-reset', handleTourReset);
+    
+    // Also listen for localStorage changes as fallback
+    const storageListener = (e: StorageEvent) => {
+      if (e.key === 'tourUserName' && !e.newValue) {
+        clearMessages();
+        setShouldResetMessages(true);
+      }
+    };
+    
+    window.addEventListener('storage', storageListener);
+    
+    // Check on component mount
+    if (!localStorage.getItem('tourUserName') && userName) {
+      clearMessages();
+      setShouldResetMessages(true);
+    }
+    
+    return () => {
+      window.removeEventListener('tour-reset', handleTourReset);
+      window.removeEventListener('storage', storageListener);
+    };
+  }, [clearMessages]);
+  
+  // Reset messages when shouldResetMessages is true
+  useEffect(() => {
+    if (shouldResetMessages) {
+      // Reset to initial state
+      setMessages([
+        { 
+          text: "Hi there! I'm Fundi, your life skills assistant. How can I help you today?", 
+          isUser: false, 
+          timestamp: new Date(),
+          id: 'welcome-message'
+        }
+      ]);
+      
+      // Clear flag
+      setShouldResetMessages(false);
+    }
+  }, [shouldResetMessages]);
+  
+  // Update welcome message when userName changes
+  useEffect(() => {
+    if (userName && messages.length > 0 && messages[0].id === 'welcome-message') {
+      setMessages(prev => [
+        { 
+          text: `Hi ${userName}! I'm Fundi, your life skills assistant. How can I help you today?`, 
+          isUser: false, 
+          timestamp: new Date(),
+          id: 'welcome-message'
+        },
+        ...prev.slice(1)
+      ]);
+    }
+  }, [userName]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatCardRef = useRef<HTMLDivElement>(null);
+
+  // Suggestions based on category
+  const getSuggestions = (): SuggestionItem[] => {
+    // The permissions approach - all suggestions should be phrased as questions or requests that require user consent
+    switch (category) {
       case 'finance':
         return [
-          { text: "How do I create a budget?" },
-          { text: "What's the best way to save for retirement?" },
-          { text: "How can I improve my credit score?" },
-          { text: "Explain mortgage terms" }
+          { text: 'Can you help me create a budget?', category: 'finance' },
+          { text: 'Could you explain mortgage terms?', category: 'finance' },
+          { text: 'How can I improve my credit score?', category: 'finance' },
         ];
       case 'career':
         return [
-          { text: "How do I write a resume?" },
-          { text: "What should I ask in an interview?" },
-          { text: "How do I negotiate a salary?" },
-          { text: "Tips for networking" }
+          { text: 'Could you give me resume tips?', category: 'career' },
+          { text: 'Do you have interview preparation advice?', category: 'career' },
+          { text: 'Can you help with salary negotiation?', category: 'career' },
         ];
       case 'wellness':
         return [
-          { text: "Quick meditation techniques" },
-          { text: "How can I improve my sleep?" },
-          { text: "Simple stretches for desk work" },
-          { text: "Stress management tips" }
+          { text: 'Can you guide me through meditation?', category: 'wellness' },
+          { text: 'Any advice for healthy meal planning?', category: 'wellness' },
+          { text: 'How can I improve my sleep?', category: 'wellness' },
+        ];
+      case 'learning':
+        return [
+          { text: 'Could you recommend some courses?', category: 'learning' },
+          { text: 'What study techniques do you suggest?', category: 'learning' },
+          { text: 'Can you help me learn a new skill?', category: 'learning' },
+        ];
+      case 'emergency':
+        return [
+          { text: 'Can you explain first aid basics?', category: 'emergency' },
+          { text: 'How should I prepare for emergencies?', category: 'emergency' },
+          { text: 'Can you help with a crisis situation?', category: 'emergency' },
+        ];
+      case 'cooking':
+        return [
+          { text: 'Do you have recipe ideas to share?', category: 'cooking' },
+          { text: 'Can you teach me cooking techniques?', category: 'cooking' },
+          { text: 'Any meal prep tips you recommend?', category: 'cooking' },
+        ];
+      case 'fitness':
+        return [
+          { text: 'Could you suggest some workouts?', category: 'fitness' },
+          { text: 'Can you help check my exercise form?', category: 'fitness' },
+          { text: 'How do I track my fitness progress?', category: 'fitness' },
         ];
       default:
         return [
-          { text: "What can you help me with?" },
-          { text: "Tell me about yourself" },
-          { text: "What features does this app have?" },
-          { text: "How do I get started?" }
+          { text: 'Can you help with financial questions?', category: 'finance' },
+          { text: 'Do you offer career advice?', category: 'career' },
+          { text: 'Can you share wellness tips?', category: 'wellness' },
+          { text: 'Where can I find learning resources?', category: 'learning' },
         ];
     }
   };
-  
-  // Return the position styles based on the position prop
-  const getPositionStyles = () => {
-    switch(position) {
-      case 'bottom-right':
-        return 'bottom-4 right-4';
-      case 'bottom-left':
-        return 'bottom-4 left-4';
-      case 'top-right':
-        return 'top-4 right-4';
-      case 'top-left':
-        return 'top-4 left-4';
+
+  // Category-specific modules
+  const getModules = (): {name: string, category: string, description: string}[] => {
+    switch (category) {
+      case 'finance':
+        return [
+          { name: 'Budget Planner', category: 'finance', description: 'Create and manage your budget' },
+          { name: 'Credit Score Tracker', category: 'finance', description: 'Monitor and improve your credit' },
+          { name: 'Mortgage Calculator', category: 'finance', description: 'Calculate mortgage payments' },
+        ];
+      case 'career':
+        return [
+          { name: 'Resume Builder', category: 'career', description: 'Create professional resumes' },
+          { name: 'Interview Simulator', category: 'career', description: 'Practice interview skills' },
+          { name: 'Career Path Explorer', category: 'career', description: 'Discover career options' },
+        ];
+      case 'wellness':
+        return [
+          { name: 'Meditation Guide', category: 'wellness', description: 'Guided meditation sessions' },
+          { name: 'Meal Planner', category: 'wellness', description: 'Plan healthy meals' },
+          { name: 'Sleep Tracker', category: 'wellness', description: 'Improve sleep quality' },
+        ];
+      case 'learning':
+        return [
+          { name: 'Course Catalog', category: 'learning', description: 'Browse available courses' },
+          { name: 'Study Planner', category: 'learning', description: 'Create effective study plans' },
+          { name: 'Skill Assessment', category: 'learning', description: 'Test your knowledge' },
+        ];
       default:
-        return 'bottom-4 right-4';
+        return [
+          { name: 'My Modules', category: 'general', description: 'Access your saved modules' },
+          { name: 'Recent Activities', category: 'general', description: 'View recent progress' },
+          { name: 'Learning Paths', category: 'general', description: 'Suggested learning paths' },
+        ];
     }
   };
-  
+
+  // Auto-scroll chat to bottom when new messages are added
+  useEffect(() => {
+    if (chatEndRef.current) {
+      // Using both methods to ensure cross-browser compatibility
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      
+      // Also find the ScrollArea viewport element and scroll it
+      const scrollViewport = document.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollViewport && scrollViewport instanceof HTMLElement) {
+        setTimeout(() => {
+          scrollViewport.scrollTop = scrollViewport.scrollHeight;
+        }, 100);
+      }
+    }
+  }, [messages]);
+
+  // Focus input when chat opens
+  useEffect(() => {
+    if (isChatOpen && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+    }
+  }, [isChatOpen]);
+
+  // Reset state when closed
+  useEffect(() => {
+    if (!isOpen) {
+      setIsChatOpen(false);
+    }
+  }, [isOpen]);
+
   // Handle resize observer for the chat window
   useEffect(() => {
     if (!chatCardRef.current) return;
@@ -182,6 +300,8 @@ export default function FundiInteractiveAssistant({
       resizeObserver.disconnect();
     };
   }, [chatCardRef.current]);
+
+  // Function definition moved elsewhere in the code
 
   // EMERGENCY HANDLER: Listen for force open events
   useEffect(() => {
@@ -607,31 +727,58 @@ export default function FundiInteractiveAssistant({
       } else if (lowerMessage.includes('interview')) {
         return "Preparing for interviews involves researching the company, practicing common questions, and preparing your own questions. Would you like some specific interview techniques?";
       } else if (lowerMessage.includes('salary')) {
-        return "When negotiating salary, it's important to research market rates and emphasize your value. Would you like some specific negotiation strategies?";
+        return "When negotiating salary, it's important to research market rates and emphasize your value. Would you like some specific negotiation phrases to use?";
       }
     }
     
     // Wellness responses
     else if (category === 'wellness') {
-      if (lowerMessage.includes('stress') || lowerMessage.includes('anxiety')) {
-        return "Stress management starts with identifying your triggers and developing healthy coping mechanisms. Would you like to explore some simple stress reduction techniques?";
-      } else if (lowerMessage.includes('meditation') || lowerMessage.includes('mindfulness')) {
-        return "Meditation can be a powerful tool for mental wellness. Would you like to try a short guided meditation session?";
+      if (lowerMessage.includes('meditation')) {
+        return "Guided meditation can help reduce stress and improve focus. Would you like to try a short guided meditation session now?";
+      } else if (lowerMessage.includes('meal')) {
+        return "Healthy meal planning starts with balanced nutrition. Would you like some simple, nutritious meal ideas or help creating a weekly meal plan?";
       } else if (lowerMessage.includes('sleep')) {
-        return "Quality sleep is essential for overall wellness. Would you like some tips for improving your sleep habits?";
+        return "Improving sleep quality involves consistent schedules, a relaxing bedtime routine, and a comfortable environment. Would you like more specific tips for better sleep?";
       }
     }
     
-    // Default fallback responses
-    const fallbackResponses = [
-      "That's an interesting question! I'd be happy to explore that topic with you. Could you share a bit more about what you're looking for?",
-      "I'm here to help with that. To give you the best advice, could you tell me a little more about your specific situation?",
-      "Great question! I can definitely help with that. What specific aspect are you most interested in learning about?",
-      "I'd be glad to assist with that. To provide the most relevant information, could you share what you've already tried or know about this topic?",
-      "I'm ready to help you with that! To get started, what's your main goal or what challenge are you trying to overcome?"
-    ];
-    
-    return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+    // Default response by category
+    switch (category) {
+      case 'finance':
+        return "I can help with financial matters like budgeting, saving, investing, or understanding financial terms. What specific financial topic would you like assistance with?";
+      case 'career':
+        return "I can help with career development including resume building, interview preparation, job searching, or professional growth. What aspect of your career would you like to focus on?";
+      case 'wellness':
+        return "I can assist with wellness topics such as stress management, nutrition, meditation, or self-care routines. What area of wellness would you like to improve?";
+      case 'learning':
+        return "I can help with learning new skills, finding educational resources, improving study techniques, or creating learning plans. What would you like to learn about?";
+      case 'emergency':
+        return "I can provide guidance for emergency situations or preparation. Please note that for immediate emergencies, you should contact professional emergency services. How can I assist you?";
+      case 'cooking':
+        return "I can help with recipes, cooking techniques, meal planning, or ingredient substitutions. What would you like to cook today?";
+      case 'fitness':
+        return "I can assist with workout routines, exercise techniques, fitness tracking, or physical activity recommendations. What fitness goals are you working towards?";
+      default:
+        return "I'm here to help with various life skills. Could you tell me more about what you're looking for assistance with?";
+    }
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Position-specific styling
+  const getPositionStyles = () => {
+    switch (positionProp) {
+      case 'bottom-left':
+        return 'left-4 bottom-4';
+      case 'top-right':
+        return 'right-4 top-4';
+      case 'top-left':
+        return 'left-4 top-4';
+      default: // bottom-right
+        return 'right-4 bottom-4';
+    }
   };
 
   return (
@@ -965,60 +1112,85 @@ export default function FundiInteractiveAssistant({
                       Learning
                     </Button>
                   </div>
-                  {withSuggestions && (
-                    <div className="text-sm">
-                      <p className="text-muted-foreground text-xs mb-2">Chat suggestions:</p>
-                      <div className="flex flex-col space-y-1.5">
-                        {getSuggestionsForCategory(category).map((suggestion, index) => (
-                          <Button
-                            key={index}
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto justify-start px-2 py-1.5 text-xs text-left"
-                            onClick={() => handleSuggestionClick(suggestion)}
-                          >
-                            <Search className="h-3 w-3 mr-2 flex-shrink-0" />
-                            <span className="truncate">{suggestion.text}</span>
-                          </Button>
-                        ))}
-                      </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-xs font-medium">Ask me about:</h3>
+                    <div className="flex flex-col space-y-1.5">
+                      {getSuggestions().slice(0, 3).map((suggestion, i) => (
+                        <Button 
+                          key={i} 
+                          variant="ghost" 
+                          size="sm" 
+                          className="justify-start h-auto py-1.5 text-xs"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                          <ChevronRight className="h-3 w-3 mr-1.5 flex-shrink-0" />
+                          <span className="truncate">{suggestion.text}</span>
+                        </Button>
+                      ))}
                     </div>
-                  )}
-                  {withModuleCards && (
-                    <div className="space-y-1.5">
-                      <p className="text-muted-foreground text-xs mb-2">Quick Access:</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        <ModuleCard 
-                          title="Build Credit" 
-                          description="Learn credit essentials" 
-                          category="finance"
-                          onClick={() => handleOpenModule('credit')}
-                        />
-                        <ModuleCard 
-                          title="Resume" 
-                          description="Create & improve resume" 
-                          category="career"
-                          onClick={() => handleOpenModule('resume')}
-                        />
-                      </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-xs font-medium">Quick access:</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {getModules().slice(0, 2).map((module, i) => (
+                        <Button 
+                          key={i} 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-auto py-2 flex flex-col items-center text-center justify-start w-full"
+                          onClick={() => handleOpenModule(module.name)}
+                        >
+                          <span className="text-xs font-medium">{module.name}</span>
+                          <span className="text-[10px] text-muted-foreground mt-1">{module.description}</span>
+                          <ArrowUpRightFromCircle className="h-3 w-3 mt-1" />
+                        </Button>
+                      ))}
                     </div>
-                  )}
+                  </div>
                 </CardContent>
+                <CardFooter className="border-t p-3" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
+                  <div className="flex w-full rounded-full">
+                    <Button 
+                      className="w-full gap-2 h-9 rounded-full" 
+                      size="sm"
+                      onClick={toggleChat}
+                    >
+                      <MessageSquarePlus className="h-4 w-4" />
+                      Start chat
+                    </Button>
+                  </div>
+                </CardFooter>
               </Card>
             )}
           </motion.div>
         )}
+      </AnimatePresence>
 
+      <AnimatePresence initial={false}>
         {!isOpen && (
           <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1, x: fundiPosition.x, y: fundiPosition.y }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             drag
             dragMomentum={false}
-            dragConstraints={{ left: -200, right: 200, top: -200, bottom: 200 }}
+            dragConstraints={{ left: -500, right: 500, top: -500, bottom: 500 }}
+            onDragStart={() => {
+              // Set a flag on drag start for more reliable click detection
+              (window as any).fundiDragStartTime = Date.now();
+            }}
             onDragEnd={(e, info) => {
+              // Update the position
               setFundiPosition({
                 x: fundiPosition.x + info.offset.x,
                 y: fundiPosition.y + info.offset.y
               });
+              
+              // Log the position for debugging
               console.log(`Fundi position: x=${fundiPosition.x + info.offset.x}, y=${fundiPosition.y + info.offset.y}`);
             }}
             className="cursor-grab active:cursor-grabbing"
