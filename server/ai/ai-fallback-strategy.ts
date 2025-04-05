@@ -656,6 +656,83 @@ export class FallbackAIService {
     systemPrompt: string,
     previousMessages: Message[]
   ): Promise<AIResponse> {
+    // Check if this is a simple greeting - this happens first, before any API calls
+    // to ensure consistent handling of greetings regardless of API status
+    const lowerMessage = message.toLowerCase().trim();
+    
+    // Simple greeting patterns
+    const greetingPatterns = [
+      'hi', 'hey', 'hello', 'howdy', 'hiya', 'yo', 'sup', 'whats up', "what's up",
+      'hi there', 'hey there', 'hello there', 'how are you', 'how are ya',
+      'how you doing', 'how you doin', 'how is it going', "how's it going", 'hows it going',
+      'good morning', 'good afternoon', 'good evening', 'morning', 'afternoon', 'evening'
+    ];
+    
+    // Check for common buddy/friend terms that indicate casual conversation
+    const buddyTerms = ['buddy', 'friend', 'pal', 'mate', 'dude', 'my friend', 'my buddy', 'bot buddy'];
+    
+    // Check if this is a simple greeting
+    const isSimpleGreeting = 
+      // Direct greeting match
+      greetingPatterns.some(greeting => 
+        lowerMessage === greeting || 
+        lowerMessage.startsWith(greeting + ' ') || 
+        lowerMessage.endsWith(' ' + greeting) ||
+        lowerMessage.includes(greeting + '!') ||
+        lowerMessage.includes(greeting + '?')
+      ) ||
+      // Or contains buddy terms which almost always indicate casual conversation
+      buddyTerms.some(term => lowerMessage.includes(term));
+    
+    // If this is a simple greeting and it's at the start of a conversation,
+    // respond with a friendly greeting directly, bypassing the AI providers
+    if (isSimpleGreeting && previousMessages.length === 0) {
+      console.log("Detected simple greeting, using direct greeting response");
+      
+      try {
+        // Get personalized greeting responses from personality data
+        const personalityElements = getFundiPersonalityElements();
+        const greetingResponses = personalityElements.greetingResponses.map(response => 
+          // Make sure responses end with a complete thought
+          response.endsWith("?") || response.endsWith("!") ? response : response + " What can I help with today?"
+        );
+        
+        const selectedGreeting = greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
+        
+        return {
+          response: selectedGreeting,
+          sentiment: "friendly",
+          suggestions: [{
+            text: "Would you like to see what I can help you with?",
+            path: "/"
+          }],
+          followUpQuestions: [
+            "Is there a specific feature of the app you'd like to explore?",
+            "What skills are you interested in developing today?"
+          ],
+          personality: "friendly-casual"
+        };
+      } catch (error) {
+        console.error("Error loading personality for greeting response:", error);
+        // Even if there's an error loading personality, still provide a direct greeting
+        return {
+          response: "Hey there! Great to see you. What's on your mind today?",
+          sentiment: "friendly",
+          suggestions: [{
+            text: "Want to explore the app's features?",
+            path: "/"
+          }],
+          followUpQuestions: [
+            "How can I help you today?",
+            "Anything specific you'd like to learn about?"
+          ],
+          personality: "friendly-casual"
+        };
+      }
+    }
+    
+    // If not a simple greeting, proceed with normal AI processing
+    
     // Determine which provider to use based on our fallback strategy
     if (this.shouldUseFallback()) {
       console.log("Using fallback AI provider due to recent failures");
