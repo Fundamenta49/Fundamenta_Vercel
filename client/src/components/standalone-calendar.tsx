@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   format,
   startOfMonth,
@@ -9,26 +9,44 @@ import {
   isSameMonth,
   isSameDay,
   addMonths,
-  subMonths
+  subMonths,
+  parseISO
 } from "date-fns";
 import { X } from "lucide-react";
+import { calendarService, CalendarEvent } from "@/services/calendar-service";
+import { EventCategory } from "@/components/event-form";
 
-type EventsMap = Record<string, {name: string, type: string}[]>;
-
-const eventTypeColors = {
-  default: "bg-red-500",
-  meeting: "bg-blue-500",
-  task: "bg-green-500",
-  reminder: "bg-yellow-500"
+// Map event categories to colors
+const categoryColors: Record<EventCategory, string> = {
+  work: "bg-blue-500",
+  personal: "bg-purple-500",
+  family: "bg-pink-500",
+  school: "bg-yellow-500",
+  health: "bg-green-500",
+  finance: "bg-emerald-500",
+  other: "bg-gray-500"
 };
 
 export default function StandaloneCalendar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [events, setEvents] = useState<EventsMap>({});
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [newEvent, setNewEvent] = useState("");
-  const [eventType, setEventType] = useState("default");
+  const [newEventTitle, setNewEventTitle] = useState("");
+  const [newEventCategory, setNewEventCategory] = useState<EventCategory>("personal");
+
+  // Load events when component mounts
+  useEffect(() => {
+    if (isOpen) {
+      loadEvents();
+    }
+  }, [isOpen]);
+
+  // Load events from calendar service
+  const loadEvents = () => {
+    const events = calendarService.getEvents();
+    setCalendarEvents(events);
+  };
 
   if (!isOpen) return null;
 
@@ -38,14 +56,31 @@ export default function StandaloneCalendar({ isOpen, onClose }: { isOpen: boolea
   };
 
   const handleAddEvent = () => {
-    const key = format(selectedDate, "yyyy-MM-dd");
-    const updatedEvents = { ...events };
-    if (!updatedEvents[key]) updatedEvents[key] = [];
-    updatedEvents[key].push({ name: newEvent, type: eventType });
-    setEvents(updatedEvents);
-    setNewEvent("");
-    setEventType("default");
+    if (!newEventTitle.trim()) return;
+    
+    // Create event using calendar service
+    const newEvent = {
+      title: newEventTitle,
+      date: selectedDate,
+      category: newEventCategory,
+    };
+    
+    calendarService.addEvent(newEvent);
+    loadEvents(); // Reload events
+    
+    // Reset form
+    setNewEventTitle("");
+    setNewEventCategory("personal");
     setShowModal(false);
+  };
+
+  // Get events for a specific day
+  const getEventsForDay = (date: Date): CalendarEvent[] => {
+    const dateString = format(date, "yyyy-MM-dd");
+    return calendarEvents.filter(event => {
+      const eventDateStr = format(event.date, "yyyy-MM-dd");
+      return eventDateStr === dateString;
+    });
   };
 
   const header = () => (
@@ -84,9 +119,13 @@ export default function StandaloneCalendar({ isOpen, onClose }: { isOpen: boolea
         const cloneDay = new Date(day);
         const isSelected = isSameDay(day, selectedDate);
         const isCurrentMonth = isSameMonth(day, monthStart);
-        const hasEvents = events[dayKey] && events[dayKey].length > 0;
-        const eventColor = hasEvents ? 
-          eventTypeColors[events[dayKey][0].type as keyof typeof eventTypeColors] || "bg-gray-500" : "";
+        const dayEvents = getEventsForDay(day);
+        const hasEvents = dayEvents.length > 0;
+        
+        let eventColor = "";
+        if (hasEvents && dayEvents[0].category) {
+          eventColor = categoryColors[dayEvents[0].category as EventCategory] || "bg-gray-500";
+        }
 
         days.push(
           <div
@@ -140,20 +179,23 @@ export default function StandaloneCalendar({ isOpen, onClose }: { isOpen: boolea
               <h3 className="text-lg font-semibold mb-4">Add Event - {format(selectedDate, "PPP")}</h3>
               <input
                 type="text"
-                value={newEvent}
-                onChange={(e) => setNewEvent(e.target.value)}
-                placeholder="Event name"
+                value={newEventTitle}
+                onChange={(e) => setNewEventTitle(e.target.value)}
+                placeholder="Event title"
                 className="w-full p-3 border border-gray-300 rounded-lg mb-4"
               />
               <select
-                value={eventType}
-                onChange={(e) => setEventType(e.target.value)}
+                value={newEventCategory}
+                onChange={(e) => setNewEventCategory(e.target.value as EventCategory)}
                 className="w-full p-3 border border-gray-300 rounded-lg mb-4"
               >
-                <option value="default">Default</option>
-                <option value="meeting">Meeting</option>
-                <option value="task">Task</option>
-                <option value="reminder">Reminder</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="family">Family</option>
+                <option value="school">School</option>
+                <option value="health">Health</option>
+                <option value="finance">Finance</option>
+                <option value="other">Other</option>
               </select>
               <div className="flex justify-end space-x-3">
                 <button
