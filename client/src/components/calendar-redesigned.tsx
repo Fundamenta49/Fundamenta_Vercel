@@ -1,24 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, 
   isSameMonth, isToday, addDays, isSameDay, getHours, getMinutes, parseISO, setHours, setMinutes } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, Search, X, Calendar as CalendarIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Search, X, Calendar as CalendarIcon, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-
-// Define event types
-type Event = {
-  id: string;
-  title: string;
-  date: Date;
-  startTime?: Date;
-  endTime?: Date;
-  location?: string;
-  category: string;
-  color: string;
-};
+import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
+import EventForm, { EventFormData } from '@/components/event-form';
+import { calendarService, CalendarEvent } from '@/services/calendar-service';
 
 // Category colors mapping (Apple-style)
 const categoryColors: Record<string, { bg: string, text: string, border: string }> = {
@@ -62,28 +54,41 @@ export default function CalendarRedesigned() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState<'day' | 'week' | 'month' | 'year'>('month');
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [showEventDetails, setShowEventDetails] = useState(false);
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const [, navigate] = useLocation();
   
-  // Initialize events array - empty for now until we implement API
-  const [events] = useState<Event[]>([
-    // Sample event for demonstration
-    {
-      id: '1',
-      title: 'Team Meeting',
-      date: new Date(2025, 3, 5),
-      startTime: setMinutes(setHours(new Date(2025, 3, 5), 9), 0),
-      endTime: setMinutes(setHours(new Date(2025, 3, 5), 10), 0),
-      location: 'Conference Room A',
-      category: 'work',
-      color: 'bg-blue-200 text-blue-800'
+  // Load events from storage on component mount
+  useEffect(() => {
+    try {
+      const storedEvents = calendarService.getEvents();
+      setEvents(storedEvents);
+    } catch (error) {
+      console.error('Error loading events:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load calendar events.",
+        variant: "destructive",
+      });
     }
-  ]);
+  }, []);
   
   // Helper to get events for a specific day
   const getEventsForDay = (date: Date) => {
-    return events.filter(event => isSameDay(event.date, date))
+    return events
+      .filter(event => isSameDay(event.date, date))
+      .filter(event => 
+        searchTerm ? 
+          event.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+          (event.description && event.description.toLowerCase().includes(searchTerm.toLowerCase()))
+        : true
+      )
       .sort((a, b) => {
         // Sort by start time if available
         if (a.startTime && b.startTime) {
@@ -91,6 +96,71 @@ export default function CalendarRedesigned() {
         }
         return 0;
       });
+  };
+  
+  // Handle event creation/update
+  const handleSaveEvent = (eventData: EventFormData) => {
+    try {
+      if (eventData.id) {
+        // Update existing event
+        const updatedEvent = calendarService.updateEvent(eventData);
+        if (updatedEvent) {
+          setEvents(prev => prev.map(e => e.id === updatedEvent.id ? updatedEvent : e));
+          toast({
+            title: "Event Updated",
+            description: "Your event has been updated successfully.",
+          });
+        }
+      } else {
+        // Create new event
+        const newEvent = calendarService.addEvent(eventData);
+        setEvents(prev => [...prev, newEvent]);
+        toast({
+          title: "Event Created",
+          description: "Your event has been added to the calendar.",
+        });
+      }
+    } catch (error) {
+      console.error('Error saving event:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save the event. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // Handle event deletion
+  const handleDeleteEvent = (eventId: string) => {
+    try {
+      const success = calendarService.deleteEvent(eventId);
+      if (success) {
+        setEvents(prev => prev.filter(e => e.id !== eventId));
+        setShowEventDetails(false);
+        toast({
+          title: "Event Deleted",
+          description: "The event has been removed from your calendar.",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the event. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // Handle accessing learning content
+  const handleAccessLearningContent = () => {
+    if (selectedEvent && selectedEvent.learningResourceId) {
+      // Find the path from the learning resource ID
+      // This is a simplified approach - in a real app, we'd have a more robust way to map IDs to paths
+      const path = `/learning/courses/${selectedEvent.learningResourceId}`;
+      navigate(path);
+      setShowEventDetails(false);
+    }
   };
   
   // Handler for previous month navigation
