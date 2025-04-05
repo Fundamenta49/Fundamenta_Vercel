@@ -101,35 +101,48 @@ export default function WeatherWidget({
 
   if (isLoading) {
     return (
-      <Card className={cn("overflow-hidden", compact ? "" : "w-3/4 max-w-[300px]", className)}>
-        <CardContent className="p-3">
+      <Card className={cn("overflow-hidden", className)}>
+        <CardContent className="p-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <Skeleton className="h-3.5 w-[80px]" />
-                <Skeleton className="h-2.5 w-[50px]" />
               </div>
             </div>
             {!compact && (
-              <Skeleton className="h-10 w-10 rounded-full hidden sm:block" />
+              <Skeleton className="h-10 w-10 rounded-full" />
             )}
+          </div>
+          
+          <div className="flex items-center justify-between mt-1">
+            <Skeleton className="h-7 w-12" />
+            <div className="flex gap-2">
+              <Skeleton className="h-3 w-12" />
+              <Skeleton className="h-3 w-12" />
+            </div>
           </div>
           
           {!compact && showForecast && (
             <>
-              <div className="h-px bg-gray-100 my-2" />
-              <div className="grid grid-cols-3 gap-1">
-                {Array(3).fill(0).map((_, i) => (
-                  <div key={i} className="flex flex-col items-center p-1.5">
+              <div className="h-px bg-gray-100 my-1" />
+              <div className="grid grid-cols-5 gap-1">
+                {Array(5).fill(0).map((_, i) => (
+                  <div key={i} className="flex flex-col items-center p-1">
                     <Skeleton className="h-2.5 w-10 mb-0.5" />
-                    <Skeleton className="h-6 w-6 rounded-full my-0.5" />
-                    <Skeleton className="h-2.5 w-12" />
+                    <div className="flex items-center">
+                      <Skeleton className="h-4 w-4 mx-0.5" />
+                      <Skeleton className="h-2.5 w-4 mx-0.5" />
+                    </div>
                   </div>
                 ))}
               </div>
             </>
           )}
+          
+          <div className="flex justify-end mt-1">
+            <Skeleton className="h-2.5 w-12" />
+          </div>
         </CardContent>
       </Card>
     );
@@ -137,8 +150,8 @@ export default function WeatherWidget({
 
   if (error) {
     return (
-      <Card className={cn("bg-red-50", compact ? "" : "w-3/4 max-w-[300px]", className)}>
-        <CardContent className="p-3">
+      <Card className={cn("bg-red-50", className)}>
+        <CardContent className="p-2">
           <div className="flex items-center justify-between">
             <p className="text-xs text-red-500">Unable to load weather</p>
             <Button 
@@ -186,61 +199,57 @@ export default function WeatherWidget({
     );
   }
 
-  // Full version (25% smaller)
+  // Full version (reduced height by 25%)
   return (
-    <Card className={cn("overflow-hidden w-3/4 max-w-[300px]", className)}>
-      <CardContent className="p-3">
+    <Card className={cn("overflow-hidden", className)}>
+      <CardContent className="p-2">
         {/* Header with location and refresh button - optimized for mobile */}
-        <div className="flex flex-wrap items-start justify-between gap-1">
-          <div className="max-w-[80%]">
-            <div className="flex items-center gap-1">
-              <h3 className="font-medium text-base truncate">{weather.location}</h3>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-5 w-5 rounded-full flex-shrink-0" 
-                onClick={getGeolocation}
-                disabled={isLoadingLocation}
-                title="Use my current location"
-              >
-                <MapPin className="h-3 w-3" />
-              </Button>
-            </div>
-            <p className="text-gray-500 text-xs">{weather.condition}</p>
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center gap-1">
+            <h3 className="font-medium text-base truncate max-w-[170px]">{weather.location}</h3>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-5 w-5 rounded-full flex-shrink-0" 
+              onClick={getGeolocation}
+              disabled={isLoadingLocation}
+              title="Use my current location"
+            >
+              <MapPin className="h-3 w-3" />
+            </Button>
           </div>
           
           <WeatherIcon condition={weather.icon} className="h-10 w-10 text-blue-500 flex-shrink-0" />
         </div>
 
-        {/* Current weather details - better aligned for different screen sizes */}
-        <div className="mt-2 flex flex-wrap items-center gap-2">
+        {/* Current weather details - condensed */}
+        <div className="mt-1 flex items-center justify-between">
           <p className="text-2xl font-bold">{Math.round(weather.temperature)}°F</p>
           
-          <div className="flex flex-wrap gap-2 text-xs text-gray-600">
+          <div className="flex gap-3 text-xs text-gray-600">
             <div className="flex items-center gap-1">
-              <Droplets className="h-2.5 w-2.5" />
+              <Droplets className="h-3 w-3" />
               <span>{weather.humidity}%</span>
             </div>
             <div className="flex items-center gap-1">
-              <Wind className="h-2.5 w-2.5" />
+              <Wind className="h-3 w-3" />
               <span>{weather.windSpeed} mph</span>
             </div>
           </div>
         </div>
 
-        {/* Forecast - responsive grid that adjusts based on screen size */}
+        {/* Forecast - same data, less vertical space */}
         {showForecast && (
           <>
-            <div className="h-px bg-gray-100 my-2" />
+            <div className="h-px bg-gray-100 my-1" />
             
-            <div className="grid grid-cols-3 gap-1">
-              {weather.forecast.slice(0, 3).map((day) => (
-                <div key={day.date} className="text-center p-1.5 bg-gray-50 rounded-md">
-                  <p className="text-xs font-medium">{day.date}</p>
-                  <WeatherIcon condition={day.icon} className="h-4 w-4 mx-auto my-0.5 text-blue-400" />
-                  <div className="flex justify-center gap-1 text-xs">
-                    <span className="font-medium">{Math.round(day.maxTemp)}°F</span>
-                    <span className="text-gray-500">{Math.round(day.minTemp)}°F</span>
+            <div className="grid grid-cols-5 gap-1">
+              {weather.forecast.map((day) => (
+                <div key={day.date} className="text-center py-1 px-1 rounded-md">
+                  <p className="text-xs font-medium mb-0">{day.date}</p>
+                  <div className="flex items-center justify-center">
+                    <WeatherIcon condition={day.icon} className="h-4 w-4 mx-1 text-blue-400" />
+                    <span className="text-xs">{Math.round(day.maxTemp)}°</span>
                   </div>
                 </div>
               ))}
@@ -248,9 +257,8 @@ export default function WeatherWidget({
           </>
         )}
         
-        {/* Footer - attribution and refresh button */}
-        <div className="mt-2 text-center text-[10px] text-gray-400">
-          Data from WeatherAPI.com • 
+        {/* Minimized footer */}
+        <div className="mt-1 text-right text-[10px] text-gray-400">
           <Button 
             variant="link" 
             className="h-auto p-0 text-[10px] text-gray-400" 
