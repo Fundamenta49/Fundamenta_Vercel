@@ -956,7 +956,7 @@ export default function SchedulerCalendar() {
           </button>
         </DialogTrigger>
         
-        <DialogContent className="w-full max-w-5xl h-[85vh] p-0 flex flex-col overflow-hidden">
+        <DialogContent className="w-full max-w-5xl h-[85vh] p-0 flex flex-col overflow-hidden max-h-[90vh] top-[5vh] left-1/2 translate-x-[-50%]">
           <div className="p-6 flex-1 overflow-hidden flex flex-col">
             {selectedEvent ? (
               <EventDetailsView />
