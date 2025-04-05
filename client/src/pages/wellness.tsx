@@ -24,7 +24,7 @@ import ShoppingBuddyPopOut from "@/components/shopping-buddy-pop-out";
 import WellnessCoachPopOut from "@/components/wellness-coach-pop-out";
 import BrainTapPopOut from "@/components/brain-tap-pop-out";
 import ComprehensiveWellnessPopOut from "@/components/comprehensive-wellness-pop-out";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import { Button } from "@/components/ui/button";
@@ -113,9 +113,26 @@ export default function Wellness() {
   const [isShoppingOpen, setIsShoppingOpen] = useState(false);
   const [isCoachOpen, setIsCoachOpen] = useState(false);
   const [isComprehensiveOpen, setIsComprehensiveOpen] = useState(false);
+  
+  // Check URL for parameters to automatically open certain sections
+  const { search } = window.location;
+  const params = new URLSearchParams(search);
+  const section = params.get('section');
+  
+  // Effect to open appropriate dialog based on URL parameters
+  useEffect(() => {
+    if (section) {
+      console.log("Opening section from URL parameter:", section);
+      handleSectionOpen(section);
+    }
+  }, [section]);
 
   const handleCardClick = (sectionId: string) => {
-    // Open the appropriate dialog based on the section clicked
+    handleSectionOpen(sectionId);
+  };
+  
+  const handleSectionOpen = (sectionId: string) => {
+    // Open the appropriate dialog based on the section clicked or URL parameter
     if (sectionId === 'coach') {
       setIsCoachOpen(true);
     }
@@ -123,6 +140,10 @@ export default function Wellness() {
       setIsJournalOpen(true);
     }
     else if (sectionId === 'braintap') {
+      setIsBrainTapOpen(true);
+    }
+    else if (sectionId === 'meditation' || sectionId === 'mindfulness') {
+      // Map meditation and mindfulness URLs to the brain tap component
       setIsBrainTapOpen(true);
     }
     else if (sectionId === 'nutrition') {
@@ -136,6 +157,10 @@ export default function Wellness() {
     }
     else if (sectionId === 'comprehensive') {
       setIsComprehensiveOpen(true);
+    }
+    else if (sectionId === 'stress-management') {
+      // Map stress management to the coach with a stress management focus
+      setIsCoachOpen(true);
     }
   };
 

@@ -1,4 +1,5 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
+import { useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -28,9 +29,7 @@ import CalendarRedesigned from "@/components/calendar-redesigned";
 import CalendarTestingPage from "@/pages/calendar-testing";
 import EconomicsCourse from "@/pages/learning/courses/economics";
 import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
-import StressManagement from "@/pages/wellness/stress-management";
-import Meditation from "@/pages/wellness/meditation";
-import Mindfulness from "@/pages/wellness/mindfulness";
+// We're using the main wellness page with URL parameters instead of separate pages
 import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
 import CookingBasicsCourse from "@/pages/learning/courses/cooking-basics";
 import HealthWellnessCourse from "@/pages/learning/courses/health-wellness";
@@ -50,6 +49,24 @@ import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/lib/auth-context";
 import ProtectedRoute from "@/components/protected-route";
 import TestNotification from "@/components/test-notification";
+
+// Component to handle redirects from /wellness/* to /wellness?section=*
+function WellnessRedirect() {
+  const [, navigate] = useLocation();
+  const section = window.location.pathname.split('/').pop();
+  
+  useEffect(() => {
+    // Redirect to main wellness page with section parameter
+    if (section) {
+      navigate(`/wellness?section=${section}`);
+    } else {
+      // Default to wellness page if no section
+      navigate('/wellness');
+    }
+  }, [navigate, section]);
+  
+  return null;
+}
 
 function Router() {
   return (
@@ -91,19 +108,9 @@ function Router() {
                 <Wellness />
               </ProtectedRoute>
             </Route>
-            <Route path="/wellness/stress-management">
+            <Route path="/wellness/:section">
               <ProtectedRoute>
-                <StressManagement />
-              </ProtectedRoute>
-            </Route>
-            <Route path="/wellness/meditation">
-              <ProtectedRoute>
-                <Meditation />
-              </ProtectedRoute>
-            </Route>
-            <Route path="/wellness/mindfulness">
-              <ProtectedRoute>
-                <Mindfulness />
+                <WellnessRedirect />
               </ProtectedRoute>
             </Route>
             <Route path="/active">
