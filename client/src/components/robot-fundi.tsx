@@ -194,6 +194,15 @@ export default function RobotFundi({
 
   const color = categoryColors[category] || categoryColors.general;
 
+  // This function handles ONLY opening the chat, separate from any drag handling
+  const openChatOnly = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event from bubbling to parent elements
+    if (onOpen && !wasDragged) {
+      onOpen();
+      console.log("FUNDI CHAT OPENED - Click handled by inner button");
+    }
+  };
+
   return (
     <div 
       className={cn(
@@ -216,10 +225,9 @@ export default function RobotFundi({
         minWidth: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         minHeight: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px'
       }}
-      title="Click to chat with Fundi (drag to reposition)"
+      title="Drag to reposition Fundi"
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
-      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -388,6 +396,17 @@ export default function RobotFundi({
             opacity="0.8"
           />
         )}
+        
+        {/* Invisible click target overlay - ensures we have a reliable clickable element */}
+        <rect 
+          x="25" 
+          y="25" 
+          width="50" 
+          height="50" 
+          fill="transparent"
+          onClick={openChatOnly}
+          style={{ cursor: 'pointer' }}
+        />
       </svg>
     </div>
   );

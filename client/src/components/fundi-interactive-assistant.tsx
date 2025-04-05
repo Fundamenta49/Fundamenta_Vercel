@@ -344,6 +344,18 @@ export default function FundiInteractiveAssistant({
   }, [messages]);
 
   const toggleOpen = () => {
+    // Make sure we're starting with a clean state for the chat position  
+    const opening = !isOpen;
+    if (opening) {
+      // When opening, explicitly log position info for debugging
+      console.log(`Opening chat at Fundi position: x=${fundiPosition.x}, y=${fundiPosition.y}`);
+      
+      // If we need to hook into any other functionality when opening the chat, do it here
+      if (onRequestHelp) {
+        onRequestHelp(category);
+      }
+    }
+    
     setIsOpen((prev) => !prev);
   };
 
