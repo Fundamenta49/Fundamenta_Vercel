@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Wrench, ArrowLeft } from 'lucide-react';
+import { Wrench, ArrowLeft, Camera, AlertCircle, FileText, UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import FloatingChat from '@/components/floating-chat';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import HandymanGuide from '@/components/handyman-guide';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
 import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
@@ -101,6 +101,70 @@ export default function HomeMaintenanceCourse() {
                 In this module, you'll learn about essential home maintenance tasks, basic plumbing repairs, wall patching, and when it's appropriate to call in a professional. You'll also discover how to use common tools safely and effectively.
               </p>
             </CardContent>
+          </Card>
+
+          {/* PicFix Smart Repair Assistant Card */}
+          <Card className="mb-6 border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-white">
+            <CardHeader className="pb-2">
+              <div className="flex items-start justify-between">
+                <div>
+                  <CardTitle className="flex items-center text-orange-700">
+                    <Camera className="h-5 w-5 mr-2 text-orange-500" />
+                    PicFix Smart Repair Assistant
+                  </CardTitle>
+                  <CardDescription className="text-orange-600">
+                    AI-powered tool for diagnosing home maintenance problems
+                  </CardDescription>
+                </div>
+                <div className="bg-orange-100 text-orange-600 px-2 py-1 rounded-full text-xs font-medium">
+                  New Feature
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-4 items-center">
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-800">Fix anything with AI-guided repairs</h3>
+                  <p className="text-sm text-gray-600">
+                    Just take a photo of your broken item, and our AI will instantly:
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm">
+                      <Wrench className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
+                      <span>Diagnose the problem and identify what's wrong</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm">
+                      <AlertCircle className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
+                      <span>Provide detailed step-by-step repair instructions</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm">
+                      <FileText className="h-4 w-4 text-orange-500 mt-1 flex-shrink-0" />
+                      <span>Show you exactly where to find parts with pricing</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="flex justify-center">
+                  <img 
+                    src="/repair-illustration.svg" 
+                    alt="Smart repair tool illustration" 
+                    className="h-32 mb-2"
+                    onError={(e) => {
+                      // Fallback if image doesn't exist
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="pt-0">
+              <Button 
+                onClick={() => navigate('/learning/courses/repair-assistant')}
+                className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2"
+              >
+                <Camera className="h-4 w-4" />
+                Open PicFix Repair Tool
+              </Button>
+            </CardFooter>
           </Card>
           
           <HandymanGuide />
