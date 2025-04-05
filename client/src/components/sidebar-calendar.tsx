@@ -22,21 +22,20 @@ export default function SidebarCalendar() {
         </DialogTrigger>
         
         <DialogContent 
-          className="w-[95vw] sm:w-[90vw] md:max-w-5xl p-0 flex flex-col overflow-auto" 
+          className="w-[95vw] max-w-md p-0 flex flex-col overflow-auto"
           style={{
             position: 'fixed',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
             height: 'auto',
-            maxHeight: '90vh'
+            maxHeight: '85vh',
+            minHeight: '450px',
+            borderRadius: '0.75rem'
           }}
         >
           <DialogTitle className="sr-only">Calendar</DialogTitle>
-          <div className="p-2 sm:p-3 pb-0 border-b">
-            <WeatherWidget compact={true} className="shadow-sm" />
-          </div>
-          <div className="p-2 sm:p-3 flex-1 overflow-auto" style={{ maxHeight: 'calc(80vh - 100px)' }}>
+          <div className="flex-1 overflow-auto" style={{ height: 'auto' }}>
             <CalendarRedesigned />
           </div>
         </DialogContent>

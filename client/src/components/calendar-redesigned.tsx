@@ -237,18 +237,16 @@ export default function CalendarRedesigned() {
     
     return (
       <div className="flex flex-col h-full">
-        <div className="px-3 sm:px-4 pb-2 border-b calendar-header">
-          {/* View toggle header - mobile responsive */}
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
-            <div className="mb-1 sm:mb-0">
-              <h2 className="text-base sm:text-lg font-semibold">{format(currentDate, 'MMM yyyy')}</h2>
-            </div>
-            <div className="flex items-center space-x-1 sm:space-x-2">
+        <div className="px-2 py-1 border-b calendar-header">
+          {/* View toggle header - compact version */}
+          <div className="flex justify-between items-center">
+            <h2 className="text-sm font-semibold">{format(currentDate, 'MMM yyyy')}</h2>
+            <div className="flex items-center space-x-1">
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={handlePreviousMonth}
-                className="border-gray-200 hover:bg-gray-50 rounded-full h-6 w-6 p-0"
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-5 w-5 p-0"
               >
                 <ChevronLeft className="h-3 w-3" />
                 <span className="sr-only">Previous</span>
@@ -257,7 +255,7 @@ export default function CalendarRedesigned() {
                 variant="outline" 
                 size="sm" 
                 onClick={handleToday}
-                className="border-gray-200 hover:bg-gray-50 text-xs py-1 px-2 h-6"
+                className="border-gray-200 hover:bg-gray-50 text-[10px] py-0 px-1 h-5"
               >
                 Today
               </Button>
@@ -265,7 +263,7 @@ export default function CalendarRedesigned() {
                 variant="outline" 
                 size="sm" 
                 onClick={handleNextMonth}
-                className="border-gray-200 hover:bg-gray-50 rounded-full h-6 w-6 p-0"
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-5 w-5 p-0"
               >
                 <ChevronRight className="h-3 w-3" />
                 <span className="sr-only">Next</span>
@@ -273,100 +271,76 @@ export default function CalendarRedesigned() {
             </div>
           </div>
           
-          {/* View selector tabs - compacted for mobile, fixed for desktop */}
-          <div className="flex justify-center sm:justify-start mb-2 calendar-view-tabs" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <div className="bg-gray-100 rounded-lg p-1 inline-flex" style={{ 
-              display: 'inline-flex',
-              backgroundColor: '#f3f4f6',
-              borderRadius: '0.5rem',
-              padding: '0.25rem'
-            }}>
+          {/* View selector tabs - compact version */}
+          <div className="flex justify-center mt-1 mb-1 calendar-view-tabs">
+            <div className="bg-gray-100 rounded-md p-0.5 inline-flex text-[10px]">
               <button 
                 className={cn(
-                  "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  "px-2 py-1 text-[10px] font-medium rounded-sm",
                   currentView === 'day' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('day')}
-                style={{ minWidth: '60px', textAlign: 'center' }}
+                style={{ minWidth: '32px', textAlign: 'center' }}
               >
                 Day
               </button>
               <button 
                 className={cn(
-                  "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  "px-2 py-1 text-[10px] font-medium rounded-sm",
                   currentView === 'week' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('week')}
-                style={{ minWidth: '60px', textAlign: 'center' }}
+                style={{ minWidth: '32px', textAlign: 'center' }}
               >
                 Week
               </button>
               <button 
                 className={cn(
-                  "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  "px-2 py-1 text-[10px] font-medium rounded-sm",
                   currentView === 'month' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('month')}
-                style={{ minWidth: '60px', textAlign: 'center' }}
+                style={{ minWidth: '32px', textAlign: 'center' }}
               >
                 Month
               </button>
               <button 
                 className={cn(
-                  "px-3 sm:px-5 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  "px-2 py-1 text-[10px] font-medium rounded-sm",
                   currentView === 'year' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('year')}
-                style={{ minWidth: '60px', textAlign: 'center' }}
+                style={{ minWidth: '32px', textAlign: 'center' }}
               >
                 Year
               </button>
             </div>
           </div>
-          
-          {/* Search bar and weather in a row */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center mt-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-              <Input 
-                placeholder="Search" 
-                className="pl-7 pr-2 py-1 h-7 text-xs w-full sm:max-w-[180px] rounded-full border-gray-300 bg-gray-50"
-              />
-            </div>
-            
-            {/* Weather Widget */}
-            <div className="sm:ml-auto max-w-[180px]">
-              <WeatherWidget compact={true} />
-            </div>
-          </div>
         </div>
         
-        <div className="flex-1 px-4 py-2 calendar-scroll-container" style={{
+        <div className="flex-1 px-3 py-2 calendar-scroll-container" style={{
           flex: '1',
           overflow: 'auto',
-          padding: '1rem',
-          marginTop: '0.5rem'
+          padding: '0.5rem',
+          marginTop: '0.25rem'
         }}>
           <div className="grid grid-cols-7 h-full calendar-day-cells overflow-y-auto" style={{ 
-            maxHeight: '400px', 
             scrollbarWidth: 'thin',
             display: 'grid',
             gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-            gridTemplateRows: 'auto repeat(5, minmax(40px, 1fr))',
+            gridTemplateRows: 'auto repeat(5, minmax(30px, 1fr))',
             gap: '1px',
-            height: 'auto', 
-            minHeight: 'auto',
+            height: 'auto',
             width: '100%',
-            marginTop: '0.5rem'
+            marginTop: '0.25rem'
           }}>
-            {/* Day headers - mobile optimized */}
+            {/* Day headers - compact version */}
             {daysOfWeek.map((day, index) => (
               <div key={day} className={cn(
-                "py-2 text-center text-xs uppercase font-medium tracking-wider text-gray-500",
+                "py-1 text-center text-[10px] uppercase font-medium tracking-wider text-gray-500",
                 (index === 0 || index === 6) ? "text-rose-500" : ""
               )}>
-                <span className="hidden sm:inline">{day}</span>
-                <span className="sm:hidden">{day.charAt(0)}</span>
+                <span>{day.charAt(0)}</span>
               </div>
             ))}
             
@@ -382,15 +356,15 @@ export default function CalendarRedesigned() {
                 <div 
                   key={i} 
                   className={cn(
-                    "h-[80px] sm:h-[120px] border-t border-r relative cursor-pointer",
+                    "border relative cursor-pointer",
                     !isCurrentMonth && "opacity-50",
                     isCurrentDay && "bg-gray-50",
                     isWeekend && !isCurrentDay && "bg-gray-50/30",
                   )}
                   style={{
                     height: 'auto',
-                    minHeight: '50px',
-                    maxHeight: '80px',
+                    minHeight: '40px',
+                    maxHeight: '55px',
                     border: '1px solid #e5e7eb',
                     position: 'relative',
                     overflow: 'hidden'
@@ -400,27 +374,26 @@ export default function CalendarRedesigned() {
                     setShowEventForm(true);
                   }}
                 >
-                  {/* Date number with indicator for current day - mobile optimized */}
-                  <div className="h-6 sm:h-8 flex justify-between items-center px-1">
+                  {/* Date number with indicator for current day - compact version */}
+                  <div className="h-5 flex justify-between items-center px-1">
                     <div className="relative">
                       {isCurrentDay ? (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="h-5 w-5 sm:h-6 sm:w-6 bg-red-500 rounded-full" />
+                          <div className="h-4 w-4 bg-red-500 rounded-full" />
                         </div>
                       ) : null}
                       <span className={cn(
-                        "relative z-10 text-xs sm:text-sm font-medium",
-                        isCurrentDay ? "text-white" : isCurrentMonth ? "text-gray-900" : "text-gray-400",
-                        dayNumber >= 10 ? "ml-0" : "ml-0.5" // Adjust for single digit numbers
+                        "relative z-10 text-xs font-medium",
+                        isCurrentDay ? "text-white" : isCurrentMonth ? "text-gray-900" : "text-gray-400"
                       )}>
                         {dayNumber}
                       </span>
                     </div>
                   </div>
                   
-                  {/* Events for this day - adapted for mobile */}
-                  <div className="px-1 space-y-0.5 pb-1 max-h-[calc(100%-1.5rem)] overflow-hidden">
-                    {dayEvents.slice(0, isMobile ? 1 : 2).map((event) => (
+                  {/* Events for this day - smaller for compact display */}
+                  <div className="px-1 space-y-0.5 max-h-[20px] overflow-hidden">
+                    {dayEvents.slice(0, 1).map((event) => (
                       <button
                         key={event.id}
                         onClick={(e) => {
@@ -429,26 +402,27 @@ export default function CalendarRedesigned() {
                           setShowEventDetails(true);
                         }}
                         className={cn(
-                          "w-full text-left px-1 py-0.5 text-xs rounded border-l-2",
+                          "w-full text-left py-0 text-[9px] rounded border-l-2",
                           categoryColors[event.category]?.bg || "bg-gray-100",
                           categoryColors[event.category]?.text || "text-gray-700",
                           categoryColors[event.category]?.border || "border-gray-300",
                           "hover:opacity-90 transition-opacity"
                         )}
+                        style={{ height: '14px', lineHeight: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                       >
                         {event.startTime && (
-                          <span className="inline-block mr-1 font-medium text-[9px]">
+                          <span className="inline-block mr-1 font-medium text-[8px]">
                             {formatTime(event.startTime)}
                           </span>
                         )}
-                        <span className="truncate inline-block max-w-full">
+                        <span className="truncate inline-block max-w-[70%]">
                           {event.title}
                         </span>
                       </button>
                     ))}
-                    {dayEvents.length > (isMobile ? 2 : 4) && (
-                      <div className="text-center text-xs text-gray-500">
-                        +{dayEvents.length - (isMobile ? 2 : 4)} more
+                    {dayEvents.length > 1 && (
+                      <div className="text-center text-[8px] text-gray-500">
+                        +{dayEvents.length - 1} more
                       </div>
                     )}
                   </div>
