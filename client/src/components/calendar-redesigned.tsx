@@ -416,7 +416,7 @@ export default function CalendarRedesigned() {
     
     return (
       <Dialog open={showEventDetails} onOpenChange={setShowEventDetails}>
-        <DialogContent className="w-full max-w-md top-[50%] left-1/2 translate-x-[-50%] translate-y-[-50%] fixed sm:fixed md:fixed" aria-labelledby="event-dialog-title">
+        <DialogContent className="w-[95%] max-w-md max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed" aria-labelledby="event-dialog-title">
           <div className="space-y-4">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
@@ -512,6 +512,496 @@ export default function CalendarRedesigned() {
     );
   };
   
+  // Week View Component
+  const WeekView = () => {
+    const weekStart = startOfWeek(currentDate);
+    const weekEnd = endOfWeek(currentDate);
+    const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
+    
+    return (
+      <div className="flex flex-col h-full">
+        <div className="px-3 sm:px-6 pb-4 border-b calendar-header">
+          {/* View toggle header - mobile responsive */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
+            <div className="space-y-1 mb-2 sm:mb-0">
+              <h2 className="text-xl sm:text-2xl font-semibold">
+                {format(weekStart, 'MMM d')} - {format(weekEnd, 'MMM d, yyyy')}
+              </h2>
+            </div>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentDate(addDays(currentDate, -7))}
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Previous</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleToday}
+                className="border-gray-200 hover:bg-gray-50 text-sm"
+              >
+                Today
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentDate(addDays(currentDate, 7))}
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-8 w-8 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+                <span className="sr-only">Next</span>
+              </Button>
+            </div>
+          </div>
+          
+          {/* View selector tabs - compacted for mobile */}
+          <div className="flex justify-center mb-2">
+            <div className="bg-gray-100 rounded-lg p-1 inline-flex">
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'day' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('day')}
+              >
+                Day
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'week' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('week')}
+              >
+                Week
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'month' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('month')}
+              >
+                Month
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'year' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('year')}
+              >
+                Year
+              </button>
+            </div>
+          </div>
+          
+          {/* Search bar - responsive width */}
+          <div className="relative mt-4">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input 
+              placeholder="Search" 
+              className="pl-10 pr-4 py-2 w-full max-w-[100%] sm:max-w-xs rounded-full border-gray-300 bg-gray-50"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
+          <div className="grid grid-cols-1 md:grid-cols-7 divide-y md:divide-y-0 md:divide-x border-b">
+            {days.map((day, index) => {
+              const dayEvents = getEventsForDay(day);
+              const isCurrentDay = isToday(day);
+              
+              return (
+                <div key={index} className="p-2 min-h-[150px]">
+                  <div className={cn(
+                    "flex flex-col h-full p-2 rounded-lg",
+                    isCurrentDay ? "bg-blue-50" : ""
+                  )}>
+                    <div className="text-center mb-2">
+                      <div className="text-xs text-gray-500">{format(day, 'EEE')}</div>
+                      <div className={cn(
+                        "inline-flex items-center justify-center h-7 w-7 rounded-full text-sm font-medium",
+                        isCurrentDay ? "bg-blue-600 text-white" : "text-gray-900"
+                      )}>
+                        {format(day, 'd')}
+                      </div>
+                    </div>
+                    
+                    <div className="overflow-y-auto flex-1">
+                      {dayEvents.map((event) => (
+                        <button
+                          key={event.id}
+                          onClick={() => {
+                            setSelectedEvent(event);
+                            setShowEventDetails(true);
+                          }}
+                          className={cn(
+                            "w-full text-left px-2 py-1 mb-1 text-xs rounded border-l-2",
+                            categoryColors[event.category]?.bg || "bg-gray-100",
+                            categoryColors[event.category]?.text || "text-gray-700",
+                            categoryColors[event.category]?.border || "border-gray-300"
+                          )}
+                        >
+                          {event.startTime && (
+                            <div className="font-medium">
+                              {formatTime(event.startTime)}
+                            </div>
+                          )}
+                          <div className="truncate">
+                            {event.title}
+                          </div>
+                        </button>
+                      ))}
+                      
+                      {dayEvents.length === 0 && (
+                        <div 
+                          className="h-full min-h-[50px] flex items-center justify-center text-gray-400 text-xs cursor-pointer"
+                          onClick={() => {
+                            setSelectedDay(day);
+                            setShowEventForm(true);
+                          }}
+                        >
+                          <div className="text-center">
+                            <Plus className="h-4 w-4 mx-auto mb-1" />
+                            <span>Add event</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Action Button - Fixed at bottom right */}
+        <div className="fixed bottom-6 right-6">
+          <Button 
+            onClick={() => {
+              setSelectedDay(new Date());
+              setShowEventForm(true);
+            }}
+            className="h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white p-0 calendar-add-button"
+          >
+            <Plus className="h-6 w-6" />
+            <span className="sr-only">New Event</span>
+          </Button>
+        </div>
+      </div>
+    );
+  };
+  
+  // Day View Component
+  const DayView = () => {
+    const hours = Array.from({ length: 24 }, (_, i) => i);
+    const dayEvents = getEventsForDay(currentDate);
+    
+    return (
+      <div className="flex flex-col h-full">
+        <div className="px-3 sm:px-6 pb-4 border-b calendar-header">
+          {/* View toggle header - mobile responsive */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
+            <div className="space-y-1 mb-2 sm:mb-0">
+              <h2 className="text-xl sm:text-2xl font-semibold">
+                {format(currentDate, 'EEEE, MMMM d, yyyy')}
+              </h2>
+            </div>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentDate(addDays(currentDate, -1))}
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Previous</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleToday}
+                className="border-gray-200 hover:bg-gray-50 text-sm"
+              >
+                Today
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setCurrentDate(addDays(currentDate, 1))}
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-8 w-8 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+                <span className="sr-only">Next</span>
+              </Button>
+            </div>
+          </div>
+          
+          {/* View selector tabs - compacted for mobile */}
+          <div className="flex justify-center mb-2">
+            <div className="bg-gray-100 rounded-lg p-1 inline-flex">
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'day' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('day')}
+              >
+                Day
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'week' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('week')}
+              >
+                Week
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'month' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('month')}
+              >
+                Month
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'year' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('year')}
+              >
+                Year
+              </button>
+            </div>
+          </div>
+          
+          {/* Search bar - responsive width */}
+          <div className="relative mt-4">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input 
+              placeholder="Search" 
+              className="pl-10 pr-4 py-2 w-full max-w-[100%] sm:max-w-xs rounded-full border-gray-300 bg-gray-50"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: 'thin' }}>
+          <div className="grid grid-cols-[60px_1fr] gap-2">
+            {hours.map((hour) => {
+              const hourFormatted = hour === 0 ? '12 AM' : hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
+              const hourEvents = dayEvents.filter(event => event.startTime && getHours(event.startTime) === hour);
+              
+              return (
+                <React.Fragment key={hour}>
+                  <div className="text-right pr-2 text-gray-500 text-xs">
+                    {hourFormatted}
+                  </div>
+                  <div 
+                    className="min-h-[50px] border-t border-gray-200 pt-1 relative"
+                    onClick={() => {
+                      const newDate = new Date(currentDate);
+                      newDate.setHours(hour, 0, 0, 0);
+                      setSelectedDay(newDate);
+                      setShowEventForm(true);
+                    }}
+                  >
+                    {hourEvents.map((event) => (
+                      <button
+                        key={event.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedEvent(event);
+                          setShowEventDetails(true);
+                        }}
+                        className={cn(
+                          "w-full text-left px-2 py-1 mb-1 text-xs rounded border-l-2",
+                          categoryColors[event.category]?.bg || "bg-gray-100",
+                          categoryColors[event.category]?.text || "text-gray-700",
+                          categoryColors[event.category]?.border || "border-gray-300"
+                        )}
+                      >
+                        <div className="flex justify-between">
+                          <span className="font-medium">
+                            {event.startTime && formatTime(event.startTime)}
+                            {event.endTime && ` - ${formatTime(event.endTime)}`}
+                          </span>
+                        </div>
+                        <div className="truncate">{event.title}</div>
+                      </button>
+                    ))}
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Action Button - Fixed at bottom right */}
+        <div className="fixed bottom-6 right-6">
+          <Button 
+            onClick={() => {
+              setSelectedDay(currentDate);
+              setShowEventForm(true);
+            }}
+            className="h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white p-0 calendar-add-button"
+          >
+            <Plus className="h-6 w-6" />
+            <span className="sr-only">New Event</span>
+          </Button>
+        </div>
+      </div>
+    );
+  };
+  
+  // Year View - Simple implementation
+  const YearView = () => {
+    const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
+    
+    return (
+      <div className="flex flex-col h-full">
+        <div className="px-3 sm:px-6 pb-4 border-b calendar-header">
+          {/* View toggle header - mobile responsive */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
+            <div className="space-y-1 mb-2 sm:mb-0">
+              <h2 className="text-xl sm:text-2xl font-semibold">
+                {currentDate.getFullYear()}
+              </h2>
+            </div>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => {
+                  const newDate = new Date(currentDate);
+                  newDate.setFullYear(newDate.getFullYear() - 1);
+                  setCurrentDate(newDate);
+                }}
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Previous</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleToday}
+                className="border-gray-200 hover:bg-gray-50 text-sm"
+              >
+                This Year
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => {
+                  const newDate = new Date(currentDate);
+                  newDate.setFullYear(newDate.getFullYear() + 1);
+                  setCurrentDate(newDate);
+                }}
+                className="border-gray-200 hover:bg-gray-50 rounded-full h-8 w-8 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+                <span className="sr-only">Next</span>
+              </Button>
+            </div>
+          </div>
+          
+          {/* View selector tabs - compacted for mobile */}
+          <div className="flex justify-center mb-2">
+            <div className="bg-gray-100 rounded-lg p-1 inline-flex">
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'day' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('day')}
+              >
+                Day
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'week' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('week')}
+              >
+                Week
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'month' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('month')}
+              >
+                Month
+              </button>
+              <button 
+                className={cn(
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
+                  currentView === 'year' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('year')}
+              >
+                Year
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: 'thin' }}>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {months.map((month, index) => {
+              // Calculate total events per month
+              const monthStart = startOfMonth(month);
+              const monthEnd = endOfMonth(month);
+              const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+              
+              let totalEvents = 0;
+              daysInMonth.forEach(day => {
+                totalEvents += getEventsForDay(day).length;
+              });
+              
+              const isCurrentMonth = new Date().getMonth() === month.getMonth() && 
+                                     new Date().getFullYear() === month.getFullYear();
+              
+              return (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setCurrentDate(month);
+                    handleViewChange('month');
+                  }}
+                  className={cn(
+                    "p-4 rounded-lg border flex flex-col items-center hover:bg-gray-50 transition-colors",
+                    isCurrentMonth ? "border-blue-300 bg-blue-50" : "border-gray-200"
+                  )}
+                >
+                  <span className="text-lg font-medium">{format(month, 'MMM')}</span>
+                  <div className="mt-2 mb-1 text-xs text-gray-500">
+                    {totalEvents} {totalEvents === 1 ? 'event' : 'events'}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
   // Main render with fullscreen option
   return (
     <>
@@ -557,7 +1047,21 @@ export default function CalendarRedesigned() {
           {/* Main calendar area */}
           <div className="flex-1">
             {currentView === 'month' && <MonthView />}
-            {/* We can add other views like DayView, WeekView and YearView later */}
+            {currentView === 'week' && (
+              <div className="flex flex-col h-full p-4">
+                <p className="text-center text-gray-500 py-10">Week view coming soon</p>
+              </div>
+            )}
+            {currentView === 'day' && (
+              <div className="flex flex-col h-full p-4">
+                <p className="text-center text-gray-500 py-10">Day view coming soon</p>
+              </div>
+            )}
+            {currentView === 'year' && (
+              <div className="flex flex-col h-full p-4">
+                <p className="text-center text-gray-500 py-10">Year view coming soon</p>
+              </div>
+            )}
           </div>
         </div>
         
