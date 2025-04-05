@@ -568,7 +568,10 @@ export default function FundiInteractiveAssistant({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="mb-2"
+            drag
+            dragMomentum={false}
+            dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }}
+            className="mb-2 cursor-move"
           >
             {isChatOpen ? (
               // Chat interface
@@ -614,48 +617,74 @@ export default function FundiInteractiveAssistant({
                     </Button>
                   </div>
                 </CardHeader>
-                <ScrollArea className="flex-1 max-h-[60vh] overflow-y-auto" style={{ height: 'calc(100% - 120px)' }}>
-                  <CardContent className="p-4 pt-0">
-                    <div className="space-y-4">
-                      {messages.map((message, index) => (
-                        <div 
-                          key={message.id || index} 
-                          className={cn(
-                            "flex",
-                            message.isUser ? "justify-end" : "justify-start"
-                          )}
-                        >
-                          {!message.isUser && (
-                            <div className="flex-shrink-0 mr-2 mt-1">
-                              <FundiAvatarEnhanced
-                                size="xs"
-                                category={category}
-                                speaking={false}
-                                emotion="neutral"
-                              />
-                            </div>
-                          )}
+                <ScrollArea className="flex-1 overflow-y-auto" style={{ height: 'calc(100% - 120px)' }}>
+                  <CardContent className="p-4 pt-2">
+                    <div className="space-y-1">
+                      {messages.map((message, index) => {
+                        // Check if this message should show timestamp
+                        const showTimestamp = index === 0 || 
+                          (index > 0 && 
+                           (messages[index-1].isUser !== message.isUser || 
+                            message.timestamp.getTime() - messages[index-1].timestamp.getTime() > 60000));
+                        
+                        // Check if this is first in a series of messages from same sender
+                        const isFirstInSeries = index === 0 || messages[index-1].isUser !== message.isUser;
+                        
+                        // Check if this is last in a series of messages from same sender
+                        const isLastInSeries = index === messages.length - 1 || 
+                          messages[index+1]?.isUser !== message.isUser;
+
+                        return (
                           <div 
+                            key={message.id || index} 
                             className={cn(
-                              "max-w-[80%] rounded-lg px-3 py-2 text-sm shadow-sm",
-                              message.isUser ? 
-                                "bg-primary text-primary-foreground font-medium" : 
-                                `bg-muted/85 text-foreground border border-border/40`
+                              "flex my-0.5",
+                              message.isUser ? "justify-end" : "justify-start"
                             )}
                           >
-                            <div className="leading-relaxed">{message.text}</div>
-                            <div className={cn(
-                              "text-xs mt-1 opacity-70",
-                              message.isUser ? "text-right" : ""
-                            )}>
-                              {formatTime(message.timestamp)}
+                            {!message.isUser && isFirstInSeries && (
+                              <div className="flex-shrink-0 mr-1.5 mt-1 mb-auto">
+                                <FundiAvatarEnhanced
+                                  size="xs"
+                                  category={category}
+                                  speaking={false}
+                                  emotion="neutral"
+                                />
+                              </div>
+                            )}
+                            {!message.isUser && !isFirstInSeries && (
+                              <div className="w-6 mr-1.5"></div>
+                            )}
+                            <div 
+                              className={cn(
+                                "max-w-[75%] px-3 py-1.5 text-xs shadow-sm",
+                                message.isUser ? 
+                                  "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm" : 
+                                  "bg-muted/70 text-foreground rounded-2xl rounded-tl-sm",
+                                isFirstInSeries && !isLastInSeries ? 
+                                  message.isUser ? "rounded-tr-2xl" : "rounded-tl-2xl" : "",
+                                !isFirstInSeries && isLastInSeries ? 
+                                  message.isUser ? "rounded-tr-sm" : "rounded-tl-sm" : "",
+                                !isFirstInSeries && !isLastInSeries ? 
+                                  message.isUser ? "rounded-tr-sm rounded-br-2xl" : "rounded-tl-sm rounded-bl-2xl" : ""
+                              )}
+                            >
+                              <div className="leading-relaxed">{message.text}</div>
                             </div>
                           </div>
+                        );
+                      })}
+                      
+                      {messages.length > 0 && (
+                        <div className="flex justify-center my-2">
+                          <div className="text-[10px] text-muted-foreground px-2 py-0.5 bg-muted/30 rounded-full">
+                            {formatTime(messages[messages.length - 1].timestamp)}
+                          </div>
                         </div>
-                      ))}
+                      )}
                       {thinking && (
                         <div className="flex justify-start">
-                          <div className="flex-shrink-0 mr-2 mt-1">
+                          <div className="flex-shrink-0 mr-1.5 mt-1">
                             <FundiAvatarEnhanced
                               size="xs"
                               category={category}
@@ -664,11 +693,11 @@ export default function FundiInteractiveAssistant({
                               emotion="curious"
                             />
                           </div>
-                          <div className="bg-muted/85 border border-border/40 rounded-lg px-3 py-2 text-sm shadow-sm animate-pulse">
-                            <div className="flex items-center space-x-2">
-                              <span className="inline-block w-2 h-2 bg-foreground/30 rounded-full"></span>
-                              <span className="inline-block w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                              <span className="inline-block w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                          <div className="bg-muted/70 rounded-2xl px-3 py-1.5 text-xs shadow-sm">
+                            <div className="flex items-center h-4 space-x-1">
+                              <span className="inline-block w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce"></span>
+                              <span className="inline-block w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                              <span className="inline-block w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
                             </div>
                           </div>
                         </div>
@@ -692,7 +721,6 @@ export default function FundiInteractiveAssistant({
                 </CardFooter>
               </Card>
             ) : (
-              // Quick menu
               <Card className="w-72 shadow-xl">
                 <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between space-y-0">
                   <div className="flex flex-col">
@@ -711,7 +739,6 @@ export default function FundiInteractiveAssistant({
                   </Button>
                 </CardHeader>
                 <CardContent className="space-y-4 p-4 pt-0">
-                  {/* Avatar */}
                   <div className="flex justify-center py-3">
                     <FundiAvatarEnhanced
                       size="lg"
@@ -724,8 +751,6 @@ export default function FundiInteractiveAssistant({
                       onInteraction={toggleChat}
                     />
                   </div>
-                  
-                  {/* Category selector */}
                   <div className="flex flex-wrap gap-2 justify-center">
                     <Button 
                       variant={category === 'finance' ? 'default' : 'outline'} 
@@ -761,7 +786,6 @@ export default function FundiInteractiveAssistant({
                     </Button>
                   </div>
                   
-                  {/* Quick suggestions */}
                   <div className="space-y-2">
                     <h3 className="text-xs font-medium">Ask me about:</h3>
                     <div className="flex flex-col space-y-1.5">
@@ -779,8 +803,6 @@ export default function FundiInteractiveAssistant({
                       ))}
                     </div>
                   </div>
-                  
-                  {/* Module shortcuts */}
                   <div className="space-y-2">
                     <h3 className="text-xs font-medium">Quick access:</h3>
                     <div className="grid grid-cols-2 gap-2">
@@ -816,7 +838,6 @@ export default function FundiInteractiveAssistant({
         )}
       </AnimatePresence>
 
-      {/* Avatar button */}
       <AnimatePresence initial={false}>
         {!isOpen && (
           <motion.div
