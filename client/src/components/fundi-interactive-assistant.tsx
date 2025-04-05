@@ -954,8 +954,14 @@ export default function FundiInteractiveAssistant({
                                 !isFirstInSeries && !isLastInSeries ? 
                                   message.isUser ? "rounded-tr-lg rounded-br-2xl" : "rounded-tl-lg rounded-bl-2xl" : ""
                               )}
+                              style={{
+                                maxWidth: "280px", // Control max width for better mobile display
+                                wordWrap: "break-word", // Ensure long words break
+                                overflowWrap: "break-word", // Modern alternative to word-wrap
+                                hyphens: "auto" // Add hyphens when breaking words
+                              }}
                             >
-                              <div className="leading-relaxed">{message.text}</div>
+                              <div className="leading-relaxed whitespace-normal">{message.text}</div>
                             </div>
                           </div>
                         );
