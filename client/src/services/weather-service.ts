@@ -3,16 +3,16 @@ import axios from 'axios';
 
 export interface WeatherData {
   location: string;
-  temperature: number; // in Celsius
+  temperature: number; // in Fahrenheit
   condition: string;
   icon: string;
   feelsLike: number;
   humidity: number;
-  windSpeed: number;
+  windSpeed: number; // in mph
   forecast: Array<{
     date: string;
-    maxTemp: number;
-    minTemp: number;
+    maxTemp: number; // in Fahrenheit
+    minTemp: number; // in Fahrenheit
     condition: string;
     icon: string;
   }>;
@@ -21,18 +21,18 @@ export interface WeatherData {
 // Default mock data if API is unavailable
 const defaultWeather: WeatherData = {
   location: "San Francisco, CA",
-  temperature: 18,
+  temperature: 64,
   condition: "Partly cloudy",
   icon: "partly-cloudy-day",
-  feelsLike: 17,
+  feelsLike: 62,
   humidity: 65,
-  windSpeed: 12,
+  windSpeed: 7,
   forecast: [
-    { date: "Today", maxTemp: 18, minTemp: 12, condition: "Partly cloudy", icon: "partly-cloudy-day" },
-    { date: "Tomorrow", maxTemp: 20, minTemp: 13, condition: "Sunny", icon: "clear-day" },
-    { date: "Wed", maxTemp: 19, minTemp: 14, condition: "Cloudy", icon: "cloudy" },
-    { date: "Thu", maxTemp: 17, minTemp: 11, condition: "Rain", icon: "rain" },
-    { date: "Fri", maxTemp: 16, minTemp: 10, condition: "Showers", icon: "showers-day" },
+    { date: "Today", maxTemp: 64, minTemp: 54, condition: "Partly cloudy", icon: "partly-cloudy-day" },
+    { date: "Tomorrow", maxTemp: 68, minTemp: 55, condition: "Sunny", icon: "clear-day" },
+    { date: "Wed", maxTemp: 66, minTemp: 57, condition: "Cloudy", icon: "cloudy" },
+    { date: "Thu", maxTemp: 63, minTemp: 52, condition: "Rain", icon: "rain" },
+    { date: "Fri", maxTemp: 61, minTemp: 50, condition: "Showers", icon: "showers-day" },
   ]
 };
 
@@ -59,7 +59,8 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
         q: location,
         days: 5,
         aqi: 'no',
-        alerts: 'no'
+        alerts: 'no',
+        units: 'imperial' // Use imperial units (Fahrenheit, mph)
       }
     });
 
@@ -68,18 +69,18 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
     
     return {
       location: `${data.location.name}, ${data.location.region}`,
-      temperature: data.current.temp_c,
+      temperature: data.current.temp_f,
       condition: data.current.condition.text,
       icon: mapWeatherIcon(data.current.condition.code, data.current.is_day),
-      feelsLike: data.current.feelslike_c,
+      feelsLike: data.current.feelslike_f,
       humidity: data.current.humidity,
-      windSpeed: data.current.wind_kph,
+      windSpeed: data.current.wind_mph,
       forecast: data.forecast.forecastday.map((day: any, index: number) => ({
         date: index === 0 ? 'Today' : 
               index === 1 ? 'Tomorrow' : 
               new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' }),
-        maxTemp: day.day.maxtemp_c,
-        minTemp: day.day.mintemp_c,
+        maxTemp: day.day.maxtemp_f,
+        minTemp: day.day.mintemp_f,
         condition: day.day.condition.text,
         icon: mapWeatherIcon(day.day.condition.code, 1)
       }))
