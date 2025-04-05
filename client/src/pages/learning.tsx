@@ -20,7 +20,8 @@ import {
   Lightbulb,
   MessageSquare,
   Star,
-  ShoppingBag
+  ShoppingBag,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LearningCoachPopOut from '@/components/learning-coach-pop-out';
@@ -65,6 +66,7 @@ const Icons = {
   MessageSquare: MessageSquare as React.ComponentType<{ className?: string }>,
   Star: Star as React.ComponentType<{ className?: string }>,
   ShoppingBag: ShoppingBag as React.ComponentType<{ className?: string }>,
+  Calendar: Calendar as React.ComponentType<{ className?: string }>,
 };
 
 export default function Learning() {
@@ -309,6 +311,56 @@ export default function Learning() {
 
       {/* Categories with book-style cards */}
       <div className="px-3 sm:px-5 pt-2">
+        {/* Calendar Section */}
+        <div className="mb-6">
+          <h2 className="text-xl font-bold mb-3 px-2 py-2 bg-blue-50 text-blue-800 rounded-md border-l-4 border-blue-500">
+            Learning Schedule
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-4">
+            <div className="flex flex-col h-full">
+              <button
+                onClick={() => navigate('/learning-calendar')}
+                className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
+                aria-label="Open Learning Calendar"
+              >
+                <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
+                  <Icons.Clock className="w-9 h-9 sm:w-10 sm:h-10 text-blue-500" />
+                </div>
+                
+                <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">Learning Calendar</span>
+                
+                <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
+                  Schedule and track your learning activities and goals
+                </p>
+              </button>
+            </div>
+            
+            <div className="flex flex-col h-full">
+              <button
+                onClick={() => navigate('/enhanced-calendar')}
+                className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
+                aria-label="Open Enhanced Calendar"
+              >
+                <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
+                  <Icons.Calendar className="w-9 h-9 sm:w-10 sm:h-10 text-blue-500" />
+                </div>
+                
+                <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">Enhanced Calendar</span>
+                
+                <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
+                  Advanced scheduling with week view and event management
+                </p>
+                
+                <div className="flex justify-center gap-1 mt-2">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                    New
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+        
         {/* Life Skills Section - displayed as a grid */}
         <div className="mb-6">
           <h2 className="text-xl font-bold mb-3 px-2 py-2 bg-orange-50 text-orange-800 rounded-md border-l-4 border-orange-500">
