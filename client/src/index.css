@@ -4,6 +4,7 @@
 @import './styles/calendar-redesigned-fix.css';
 @import './styles/calendar-emergency-fix.css';
 @import './styles/calendar-desktop-fix.css';
+@import './styles/calendar-dialog-fix.css';
 
 @tailwind base;
 @tailwind components;
