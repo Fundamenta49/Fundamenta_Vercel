@@ -14,6 +14,8 @@ export interface AIAction {
     focusContent?: string;
     formId?: string;
     autoFocus?: boolean;
+    reason?: string; // Explanation for the action (e.g., why navigation is happening)
+    permissionGranted?: boolean; // Flag to track if the user has granted permission
     [key: string]: any;
   };
 }
@@ -140,8 +142,15 @@ export function useAIContext(pageContext: {
 export const AIActionHandlers = {
   navigate: (action: AIAction, navigate: (path: string) => void) => {
     if (action.payload.route) {
-      navigate(action.payload.route);
-      return true;
+      // Only navigate if explicit permission has been granted
+      if (action.payload.permissionGranted === true) {
+        console.log(`Navigation to ${action.payload.route} authorized with permission`);
+        navigate(action.payload.route);
+        return true;
+      } else {
+        console.log(`Navigation to ${action.payload.route} blocked - no permission granted`);
+        return false;
+      }
     }
     return false;
   },

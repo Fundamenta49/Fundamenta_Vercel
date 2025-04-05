@@ -857,14 +857,49 @@ export default function ChatInterface({
                   }}
                   onClick={() => {
                     if (suggestion.action) {
-                      // If there's a specific action, add it to the pending actions
+                      // If there's a specific action, add it to the pending actions with permission granted
                       const aiEventStore = useAIEventStore.getState();
-                      aiEventStore.addPendingAction(suggestion.action);
+                      
+                      // Clone the action and set permissionGranted to true to indicate explicit user consent
+                      const actionWithPermission = {
+                        ...suggestion.action,
+                        payload: {
+                          ...suggestion.action.payload,
+                          permissionGranted: true, // User clicked the suggestion, so permission is explicitly granted
+                          reason: suggestion.text // Include the reason for the action
+                        }
+                      };
+                      
+                      // Log the permission granted for navigation
+                      console.log(`User authorized action: ${suggestion.action.type} with explicit permission`, actionWithPermission);
+                      
+                      // Add the action with permission to the queue
+                      aiEventStore.addPendingAction(actionWithPermission);
+                      
                       // Process the action immediately
                       processPendingActions(navigate);
                     } else if (suggestion.path) {
-                      // If there's just a path, navigate to it
-                      navigate(suggestion.path);
+                      // If there's just a path, create a navigation action with permission granted
+                      const aiEventStore = useAIEventStore.getState();
+                      
+                      // Create an explicit navigation action with permission
+                      const navigationAction = {
+                        type: 'navigate' as const,
+                        payload: {
+                          route: suggestion.path,
+                          permissionGranted: true, // User clicked the suggestion, so permission is explicitly granted
+                          reason: suggestion.text // Include the reason for navigation
+                        }
+                      };
+                      
+                      // Log the permission granted for navigation
+                      console.log(`User authorized navigation to ${suggestion.path} with explicit permission`);
+                      
+                      // Add the navigation action with permission
+                      aiEventStore.addPendingAction(navigationAction);
+                      
+                      // Process the navigation through our action system rather than directly
+                      processPendingActions(navigate);
                     }
                   }}
                 >

@@ -209,6 +209,7 @@ export const validClientRoutes: string[] = [
   "/invite",
   "/settings",
   "/help",
+  "/fundi-showcase", // Added Fundi showcase page
   
   // Core category pages
   "/emergency", 
@@ -236,6 +237,7 @@ export const validClientRoutes: string[] = [
   "/wellness/assessment",
   
   // Learning section
+  "/learning/identity-documents", // Added identity documents page
   "/learning/courses",
   "/learning/study",
   "/learning/progress",
@@ -322,8 +324,18 @@ export function processActions(aiResponse: any, category: string, context: AICon
   if (aiResponse.suggestions && Array.isArray(aiResponse.suggestions)) {
     // Filter and modify suggestions to ensure they only use valid client-side routes
     const validSuggestions = aiResponse.suggestions.filter((suggestion: AppSuggestion) => {
+      // If no path is provided, it's not a navigation suggestion, so keep it
       if (!suggestion.path) return true;
-      return validClientRoutes.includes(suggestion.path);
+      
+      // Check that the path exists in our verified list of valid client routes
+      const isValidRoute = validClientRoutes.includes(suggestion.path);
+      
+      // Log if we're filtering out an invalid route suggestion
+      if (!isValidRoute) {
+        console.warn(`Filtering out suggestion with invalid route: ${suggestion.path}`);
+      }
+      
+      return isValidRoute;
     });
     
     // If invalid suggestions were filtered out, replace them with valid ones
@@ -387,7 +399,9 @@ export function processActions(aiResponse: any, category: string, context: AICon
             type: "navigate",
             payload: {
               route: suggestion.path,
-              reason: suggestionText
+              reason: suggestionText,
+              permissionGranted: false, // Default to requiring explicit permission
+              requiresPermission: true // Flag that indicates this action needs explicit user permission
             }
           });
         }
