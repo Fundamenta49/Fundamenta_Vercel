@@ -62,9 +62,9 @@ export default function Home() {
         </p>
       </div>
       
-      {/* Weather Widget */}
-      <div className="max-w-3xl mx-auto mb-10">
-        <WeatherWidget showForecast={true} />
+      {/* Weather Widget - optimized for mobile */}
+      <div className="w-full px-2 sm:px-4 md:px-6 max-w-3xl mx-auto mb-8">
+        <WeatherWidget showForecast={true} className="shadow-sm" />
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
