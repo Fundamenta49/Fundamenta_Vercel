@@ -283,31 +283,31 @@ export class HuggingFaceProvider implements AIProvider {
           (lowerIntent.includes('learn') && lowerIntent.includes('finance')) ||
           (lowerIntent.includes('schedule') && lowerIntent.includes('financial'))) {
           
-        response = `I understand you're asking about financial education. Your message: "${mainIntent}" seems to be related to learning about finances. I'll direct you to our Finance section where you can find resources on financial literacy, budgeting, investing, and more.`;
+        response = `Great question about financial education! Our Finance section has everything you need - from financial literacy basics to advanced investing strategies and budget planning tools.`;
         // Override category to ensure proper navigation
         category.category = "finance";
       } else {
         switch (category.category) {
           case "finance":
-            response = `I understand you're asking about finances. Your message: "${mainIntent}" seems to be related to financial matters. I can help with budgeting, investing, and financial planning.`;
+            response = `Money matters can be tricky! I'd be happy to help with budgeting strategies, investment options, or any other financial planning questions you have.`;
             break;
           case "career":
-            response = `I see you're interested in career development. Your message: "${mainIntent}" appears to be about professional growth. I can help with job searches, resume building, and interview preparation.`;
+            response = `Let's boost your career! I've got tools for impressive resumes, job search strategies, and interview prep that'll help you stand out from the crowd.`;
             break;
           case "wellness":
-            response = `I understand you're focused on wellness. Your message: "${mainIntent}" seems to be about well-being. I can help with stress management, mental health tips, and self-care routines.`;
+            response = `Your wellbeing matters! I can suggest some great stress management techniques, mental health resources, or self-care routines that fit your lifestyle.`;
             break;
           case "learning":
-            response = `I see you're interested in learning. Your message: "${mainIntent}" appears to be about education or skill development. I can help with study techniques, learning resources, and knowledge acquisition.`;
+            response = `Always excited to help with learning! Let me share some effective study techniques, learning resources, or skill-building strategies to help you grow.`;
             break;
           case "emergency":
-            response = `I notice this might be an emergency situation. Your message: "${mainIntent}" seems urgent. For immediate help, please contact emergency services or visit our emergency section.`;
+            response = `This sounds urgent. For immediate assistance, please contact emergency services right away. Your safety is the top priority.`;
             break;
           case "homeMaintenance":
-            response = `I see you're asking about home repairs. Your message: "${mainIntent}" seems to be about fixing or diagnosing a household issue. I can help with maintenance tips, repair guidance, or direct you to our PicFix Smart Repair Assistant, which lets you take a photo of broken items for AI-powered diagnosis, repair instructions, and parts pricing.`;
+            response = `Home fix-it time! I can help with maintenance tips, repair guidance, or you can try our PicFix Smart Repair Assistant - just snap a photo of what's broken, and I'll diagnose the issue, provide repair instructions, and even price out parts for you.`;
             break;
           default:
-            response = `I've received your message: "${mainIntent}". I'll do my best to assist you with that.`;
+            response = `Absolutely! I'm here for you. What specific details would make my answer most helpful for you?`;
         }
       }
       
@@ -331,10 +331,10 @@ export class HuggingFaceProvider implements AIProvider {
     } catch (error) {
       console.error("HuggingFace generateResponse error:", error);
       return {
-        response: "I'm currently experiencing some technical difficulties. Please try again with a simpler question or check back later.",
+        response: "Looks like I'm having a moment! Let me reset and come back stronger. Could you try asking that again in a slightly different way?",
         sentiment: "apologetic",
         suggestions: [],
-        followUpQuestions: []
+        followUpQuestions: ["Could you rephrase that?", "Want to try a different question?"]
       };
     }
   }
@@ -534,10 +534,10 @@ export class FallbackAIService {
       } catch (error) {
         console.error("Fallback AI provider failed in fallback mode:", error);
         return {
-          response: "I'm experiencing technical difficulties with the AI system. Please try again with a simpler question or check back later.",
+          response: "Hmm, I seem to be having a bit of a brain freeze! Could we try that question again, maybe phrased differently?",
           sentiment: "apologetic",
           suggestions: [],
-          followUpQuestions: []
+          followUpQuestions: ["Would you like to try another topic?", "How about we explore something else?"]
         };
       }
     }
@@ -653,10 +653,10 @@ export class FallbackAIService {
       // Ultimate fallback if both providers fail
       console.error("All AI providers failed:", error);
       return {
-        response: "I'm experiencing technical difficulties with both AI systems. Please try again with a simpler question or check back later.",
+        response: "My digital neurons seem to be taking a coffee break! Let's try a different approach or topic - I'd love to help with something else.",
         sentiment: "apologetic",
-        suggestions: [],
-        followUpQuestions: []
+        suggestions: [{ text: "Try the Dashboard", path: "/" }],
+        followUpQuestions: ["Is there something else I can help with?", "Would you like to explore a different topic?"]
       };
     });
   }
