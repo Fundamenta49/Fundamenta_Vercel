@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { CalendarDays } from "lucide-react";
-import StandaloneCalendar from "@/components/standalone-calendar";
+import { CalendarDays, X } from "lucide-react";
 
 /**
  * Sidebar Calendar component
- * Uses StandaloneCalendar for a clean, reliable calendar experience
+ * Shows a "Coming Soon" message instead of the calendar
  */
 export default function SidebarCalendar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +18,30 @@ export default function SidebarCalendar() {
         <span className="font-medium">Calendar</span>
       </button>
       
-      <StandaloneCalendar isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full relative shadow-xl">
+            <button 
+              onClick={() => setIsOpen(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              aria-label="Close"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="flex flex-col items-center justify-center py-8">
+              <CalendarDays className="h-16 w-16 text-indigo-500 mb-4" />
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Calendar Coming Soon</h3>
+              <p className="text-gray-600 text-center mb-4">
+                Our enhanced calendar feature is currently under development and will be available soon.
+              </p>
+              <p className="text-gray-500 text-sm text-center">
+                Check back later for event tracking, reminders, and schedule management.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
