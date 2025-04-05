@@ -30,7 +30,7 @@ export default function FundiInteractiveAssistant({
   initialCategory = 'general',
   onRequestHelp,
   onOpenFullModule,
-  position = 'bottom-right',
+  position: positionProp = 'bottom-right',
   initiallyOpen = false,
   className,
 }: FundiInteractiveAssistantProps) {
@@ -42,6 +42,7 @@ export default function FundiInteractiveAssistant({
   const [category, setCategory] = useState(initialCategory);
   const [emotion, setEmotion] = useState<'neutral' | 'happy' | 'curious' | 'surprised' | 'concerned'>('neutral');
   const [chatSize, setChatSize] = useState<{width: string, height: string}>({width: '350px', height: '450px'});
+  const [fundiPosition, setFundiPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
   // Initialize with a welcome message but connect to real API for subsequent messages
   const [messages, setMessages] = useState<{ text: string; isUser: boolean; timestamp: Date; id?: string }[]>([
     { 
@@ -547,7 +548,7 @@ export default function FundiInteractiveAssistant({
 
   // Position-specific styling
   const getPositionStyles = () => {
-    switch (position) {
+    switch (positionProp) {
       case 'bottom-left':
         return 'left-4 bottom-4';
       case 'top-right':
@@ -842,13 +843,30 @@ export default function FundiInteractiveAssistant({
         {!isOpen && (
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={{ scale: 1, opacity: 1, x: fundiPosition.x, y: fundiPosition.y }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.3 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={toggleOpen}
-            className="cursor-pointer"
+            drag
+            dragMomentum={false}
+            dragConstraints={{ left: -500, right: 500, top: -500, bottom: 500 }}
+            onDragEnd={(e, info) => {
+              setFundiPosition({
+                x: fundiPosition.x + info.offset.x,
+                y: fundiPosition.y + info.offset.y
+              });
+              // Log the position for debugging
+              console.log(`Fundi position: x=${fundiPosition.x + info.offset.x}, y=${fundiPosition.y + info.offset.y}`);
+            }}
+            className="cursor-move"
+            onClick={(e) => {
+              // Only toggle open if it's a click, not a drag
+              if (Math.abs(e.clientX - e.currentTarget.getBoundingClientRect().left) < 5 &&
+                  Math.abs(e.clientY - e.currentTarget.getBoundingClientRect().top) < 5) {
+                toggleOpen();
+              }
+            }}
           >
             <FundiAvatarEnhanced
               size="lg"
