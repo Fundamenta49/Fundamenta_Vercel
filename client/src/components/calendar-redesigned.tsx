@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, 
   isSameMonth, isToday, addDays, isSameDay, getHours, getMinutes, parseISO, setHours, setMinutes } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, Search, X, Calendar as CalendarIcon } from 'lucide-react';
@@ -31,12 +31,40 @@ const categoryColors: Record<string, { bg: string, text: string, border: string 
   other: { bg: "bg-gray-100", text: "text-gray-700", border: "border-gray-300" }
 };
 
+// Custom hook for responsive design
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') return;
+    
+    // Initial check
+    setIsMobile(window.innerWidth < 640);
+    
+    // Add resize listener
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  
+  return isMobile;
+}
+
 export default function CalendarRedesigned() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState<'day' | 'week' | 'month' | 'year'>('month');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showEventDetails, setShowEventDetails] = useState(false);
+  const isMobile = useIsMobile();
   
   // Mock data for events with time information
   const [events] = useState<Event[]>([
@@ -197,13 +225,13 @@ export default function CalendarRedesigned() {
     
     return (
       <div className="flex flex-col h-full">
-        <div className="px-6 pb-4 border-b">
-          {/* View toggle header */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="space-y-1">
-              <h2 className="text-2xl font-semibold">{format(currentDate, 'MMMM yyyy')}</h2>
+        <div className="px-3 sm:px-6 pb-4 border-b">
+          {/* View toggle header - mobile responsive */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
+            <div className="space-y-1 mb-2 sm:mb-0">
+              <h2 className="text-xl sm:text-2xl font-semibold">{format(currentDate, 'MMM yyyy')}</h2>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -233,12 +261,12 @@ export default function CalendarRedesigned() {
             </div>
           </div>
           
-          {/* View selector tabs */}
+          {/* View selector tabs - compacted for mobile */}
           <div className="flex justify-center mb-2">
             <div className="bg-gray-100 rounded-lg p-1 inline-flex">
               <button 
                 className={cn(
-                  "px-4 py-1.5 text-sm font-medium rounded-md",
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
                   currentView === 'day' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('day')}
@@ -247,7 +275,7 @@ export default function CalendarRedesigned() {
               </button>
               <button 
                 className={cn(
-                  "px-4 py-1.5 text-sm font-medium rounded-md",
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
                   currentView === 'week' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('week')}
@@ -256,7 +284,7 @@ export default function CalendarRedesigned() {
               </button>
               <button 
                 className={cn(
-                  "px-4 py-1.5 text-sm font-medium rounded-md",
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
                   currentView === 'month' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('month')}
@@ -265,7 +293,7 @@ export default function CalendarRedesigned() {
               </button>
               <button 
                 className={cn(
-                  "px-4 py-1.5 text-sm font-medium rounded-md",
+                  "px-2 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md",
                   currentView === 'year' ? "bg-white shadow-sm" : "text-gray-600"
                 )}
                 onClick={() => handleViewChange('year')}
@@ -275,25 +303,26 @@ export default function CalendarRedesigned() {
             </div>
           </div>
           
-          {/* Search bar */}
+          {/* Search bar - responsive width */}
           <div className="relative mt-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input 
               placeholder="Search" 
-              className="pl-10 pr-4 py-2 w-full max-w-xs rounded-full border-gray-300 bg-gray-50"
+              className="pl-10 pr-4 py-2 w-full max-w-[100%] sm:max-w-xs rounded-full border-gray-300 bg-gray-50"
             />
           </div>
         </div>
         
         <ScrollArea className="flex-1 px-4 py-2">
           <div className="grid grid-cols-7 h-full">
-            {/* Day headers */}
+            {/* Day headers - mobile optimized */}
             {daysOfWeek.map((day, index) => (
               <div key={day} className={cn(
                 "py-2 text-center text-xs uppercase font-medium tracking-wider text-gray-500",
                 (index === 0 || index === 6) ? "text-rose-500" : ""
               )}>
-                {day}
+                <span className="hidden sm:inline">{day}</span>
+                <span className="sm:hidden">{day.charAt(0)}</span>
               </div>
             ))}
             
@@ -309,22 +338,22 @@ export default function CalendarRedesigned() {
                 <div 
                   key={i} 
                   className={cn(
-                    "min-h-[100px] border-t border-r relative",
+                    "min-h-[70px] sm:min-h-[100px] border-t border-r relative",
                     !isCurrentMonth && "opacity-50",
                     isCurrentDay && "bg-gray-50",
                     isWeekend && !isCurrentDay && "bg-gray-50/30",
                   )}
                 >
-                  {/* Date number with indicator for current day */}
-                  <div className="h-8 flex justify-between items-center px-1">
+                  {/* Date number with indicator for current day - mobile optimized */}
+                  <div className="h-6 sm:h-8 flex justify-between items-center px-1">
                     <div className="relative">
                       {isCurrentDay ? (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="h-6 w-6 bg-red-500 rounded-full" />
+                          <div className="h-5 w-5 sm:h-6 sm:w-6 bg-red-500 rounded-full" />
                         </div>
                       ) : null}
                       <span className={cn(
-                        "relative z-10 text-sm font-medium",
+                        "relative z-10 text-xs sm:text-sm font-medium",
                         isCurrentDay ? "text-white" : isCurrentMonth ? "text-gray-900" : "text-gray-400",
                         dayNumber >= 10 ? "ml-0" : "ml-0.5" // Adjust for single digit numbers
                       )}>
@@ -333,9 +362,9 @@ export default function CalendarRedesigned() {
                     </div>
                   </div>
                   
-                  {/* Events for this day */}
-                  <div className="px-1 space-y-1 pb-1">
-                    {dayEvents.map((event) => (
+                  {/* Events for this day - adapted for mobile */}
+                  <div className="px-1 space-y-1 pb-1 max-h-[calc(100%-1.5rem)] overflow-hidden">
+                    {dayEvents.slice(0, isMobile ? 2 : 4).map((event) => (
                       <button
                         key={event.id}
                         onClick={() => {
@@ -351,7 +380,7 @@ export default function CalendarRedesigned() {
                         )}
                       >
                         {event.startTime && (
-                          <div className="font-medium">
+                          <div className="font-medium hidden sm:block">
                             {formatTime(event.startTime)}
                           </div>
                         )}
@@ -360,6 +389,11 @@ export default function CalendarRedesigned() {
                         </div>
                       </button>
                     ))}
+                    {dayEvents.length > (isMobile ? 2 : 4) && (
+                      <div className="text-center text-xs text-gray-500">
+                        +{dayEvents.length - (isMobile ? 2 : 4)} more
+                      </div>
+                    )}
                   </div>
                 </div>
               );
