@@ -43,6 +43,17 @@ export default function FundiInteractiveAssistant({
   const [emotion, setEmotion] = useState<'neutral' | 'happy' | 'curious' | 'surprised' | 'concerned'>('neutral');
   const [chatSize, setChatSize] = useState<{width: string, height: string}>({width: '360px', height: '580px'});
   const [fundiPosition, setFundiPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
+  // State to store user name from tour
+  const [userName, setUserName] = useState<string>('');
+  
+  // Get user name from localStorage on component mount
+  useEffect(() => {
+    const storedName = localStorage.getItem('tourUserName');
+    if (storedName) {
+      setUserName(storedName);
+    }
+  }, []);
+  
   // Initialize with a welcome message but connect to real API for subsequent messages
   const [messages, setMessages] = useState<{ text: string; isUser: boolean; timestamp: Date; id?: string }[]>([
     { 
@@ -52,6 +63,21 @@ export default function FundiInteractiveAssistant({
       id: 'welcome-message'
     }
   ]);
+  
+  // Update welcome message when userName changes
+  useEffect(() => {
+    if (userName && messages.length > 0 && messages[0].id === 'welcome-message') {
+      setMessages(prev => [
+        { 
+          text: `Hi ${userName}! I'm Fundi, your life skills assistant. How can I help you today?`, 
+          isUser: false, 
+          timestamp: new Date(),
+          id: 'welcome-message'
+        },
+        ...prev.slice(1)
+      ]);
+    }
+  }, [userName]);
   const inputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatCardRef = useRef<HTMLDivElement>(null);
@@ -151,7 +177,16 @@ export default function FundiInteractiveAssistant({
   // Auto-scroll chat to bottom when new messages are added
   useEffect(() => {
     if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      // Using both methods to ensure cross-browser compatibility
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      
+      // Also find the ScrollArea viewport element and scroll it
+      const scrollViewport = document.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollViewport && scrollViewport instanceof HTMLElement) {
+        setTimeout(() => {
+          scrollViewport.scrollTop = scrollViewport.scrollHeight;
+        }, 100);
+      }
     }
   }, [messages]);
 
@@ -286,7 +321,8 @@ export default function FundiInteractiveAssistant({
       const context = {
         currentPage: window.location.pathname,
         currentSection: category,
-        availableActions: ['navigate', 'search', 'recommend']
+        availableActions: ['search', 'recommend'],
+        requiresPermission: ['navigate'] // Always require permission before navigation
       };
       
       // Make API request
@@ -379,7 +415,8 @@ export default function FundiInteractiveAssistant({
       const context = {
         currentPage: window.location.pathname,
         currentSection: suggestion.category || category,
-        availableActions: ['navigate', 'search', 'recommend']
+        availableActions: ['search', 'recommend'],
+        requiresPermission: ['navigate'] // Always require permission before navigation
       };
       
       // Make API request
@@ -491,6 +528,83 @@ export default function FundiInteractiveAssistant({
   // Simple response generation
   const generateResponse = (message: string): string => {
     const lowerMessage = message.toLowerCase();
+    
+    // Check for greetings and "what's up" patterns
+    const greetingPatterns = [
+      /^hey\s*.*$/i,
+      /^hi\s*.*$/i,
+      /^hello\s*.*$/i,
+      /^yo\s*.*$/i,
+      /^sup\s*.*$/i,
+      /^howdy\s*.*$/i,
+      /^hiya\s*.*$/i,
+      /^greetings\s*.*$/i,
+      /^how's it going\s*.*$/i
+    ];
+    
+    const whatsUpPatterns = [
+      /^what'?s\s+up\s*.*$/i,
+      /^what\s+is\s+up\s*.*$/i,
+      /^whats\s+good\s*.*$/i,
+      /^what'?s\s+good\s*.*$/i,
+      /^what'?s\s+happening\s*.*$/i,
+      /^how\s+are\s+you\s*.*$/i,
+      /^how\s+are\s+things\s*.*$/i,
+      /^how'?s\s+it\s+going\s*.*$/i,
+      /^how\s+have\s+you\s+been\s*.*$/i
+    ];
+    
+    // Return a "what's up" response if it matches the patterns
+    if (whatsUpPatterns.some(pattern => pattern.test(lowerMessage))) {
+      // Get random "what's up" response from personality
+      const whatsUpResponses = [
+        "Just chillin' in Fundi-land, waiting to help you achieve greatness! What masterpiece should we create today?",
+        "Oh you know, just hanging in the digital realm, dreaming up ways to make your life skills journey more awesome!",
+        "My pixels are particularly perky today! Ready to tackle whatever you've got on your mind.",
+        "Just sitting here in my digital hammock between the 1s and 0s. How can I make your day more spectacular?",
+        "I was just admiring how the code flows today - perfect conditions for some life skill adventures! What shall we conquer?",
+        "Living my best digital life and waiting for you! What excellence should we achieve together today?",
+        "Just upgrading my wit circuits and polishing my advice algorithms! What can I help you with?",
+        "You caught me practicing my virtual high-fives! *demonstrates perfect form* Now that you're here, what's our mission?",
+        "I was just contemplating the beauty of learning awkward things together. Ready to add some new skills to your collection?",
+        "Just doing some digital yoga to keep my advice muscles flexible! What can we tackle together today?",
+        "Currently defragging my inspiration database—found some gems I can't wait to share with you! What's on your agenda?",
+        "Just vibing in the cloud, waiting for someone awesome to chat with... and look who showed up! What's on your mind?"
+      ];
+      
+      // Return a random response
+      return whatsUpResponses[Math.floor(Math.random() * whatsUpResponses.length)];
+    }
+    // Return a greeting response if it matches the patterns
+    else if (greetingPatterns.some(pattern => pattern.test(lowerMessage))) {
+      // Get random greeting response
+      const greetingResponses = [
+        "Hey there! What's happening in your world today?",
+        "Hi! *virtual high five* What's on your mind?",
+        "Hey! I was just thinking about all the cool stuff we could tackle today.",
+        "Well hello there! Always a bright spot in my digital day when we chat.",
+        "Hey you! Ready for some life-skill adventures?",
+        "Hi there! How's your day treating you?",
+        "Hello! Drop me a line about what you're curious about today.",
+        "Hey! Need a friendly guide through the wilderness of adulting today?",
+        "What's up! Good to see you around these parts.",
+        "Yo! How's it going, friend?",
+        "Hey buddy! Always nice when you stop by.",
+        "Heya! Ready to make today awesome?",
+        "Sup! What's new in your world?",
+        "Hey friend! You caught me at a good time - I was just getting my digital coffee.",
+        "Oh hey there! How's your day shaping up?",
+        "Well look who it is! Good to see you!",
+        "Hey! *finger guns* What can I help with today?",
+        "What's cookin', good lookin'?",
+        "Hey pal! You're looking particularly pixel-perfect today.",
+        "Yo yo! What's the word?",
+        "Heyyy! The digital world just got brighter with you here."
+      ];
+      
+      // Return a random response
+      return greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
+    }
     
     // Finance responses
     if (category === 'finance') {
@@ -643,9 +757,9 @@ export default function FundiInteractiveAssistant({
                     </Button>
                   </div>
                 </CardHeader>
-                <ScrollArea className="flex-1 overflow-y-auto" style={{ height: 'calc(100% - 120px)' }}>
-                  <CardContent className="p-4 pt-2">
-                    <div className="space-y-1">
+                <ScrollArea className="flex-1 overflow-y-auto" style={{ height: 'calc(100% - 120px)', display: 'flex', flexDirection: 'column' }}>
+                  <CardContent className="p-4 pt-2 flex-grow">
+                    <div className="space-y-1 flex flex-col">
                       {messages.map((message, index) => {
                         // Check if this message should show timestamp
                         const showTimestamp = index === 0 || 
