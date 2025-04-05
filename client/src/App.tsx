@@ -24,6 +24,7 @@ import FundiShowcase from "@/pages/fundi-showcase";
 import LearningCalendar from "@/components/learning-calendar";
 import EnhancedCalendar from "@/components/enhanced-calendar";
 import CalendarRedesigned from "@/components/calendar-redesigned";
+import CalendarTestingPage from "@/pages/calendar-testing";
 import EconomicsCourse from "@/pages/learning/courses/economics";
 import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
 import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
@@ -125,6 +126,11 @@ function Router() {
             <Route path="/redesigned-calendar">
               <ProtectedRoute>
                 <CalendarRedesigned />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/calendar-testing">
+              <ProtectedRoute>
+                <CalendarTestingPage />
               </ProtectedRoute>
             </Route>
             <Route path="/learning/courses/vehicle-maintenance">
