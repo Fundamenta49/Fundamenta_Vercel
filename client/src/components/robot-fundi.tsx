@@ -58,23 +58,23 @@ export default function RobotFundi({
       return;
     }
     
-    // Get the last drag time and the distance moved
+    // Get the last drag time and distance moved since drag started
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
     
-    // Check if there's been significant movement (any dragging)
-    const hasMoved = wasDragged || 
-      Math.abs(position.x - 63) > 5 || 
-      Math.abs(position.y - 8) > 5;
+    // Detect if this is an actual click (very minimal movement) vs. the end of a drag
+    const isActualClick = 
+      // Either mouse didn't move much during this click...
+      (Math.abs(e.movementX) < 2 && Math.abs(e.movementY) < 2) && 
+      // ...or there was a reasonable delay since last drag (to allow intentional clicks)
+      (timeSinceLastDrag > 250);
     
-    // Only open chat on a pure click, not after any dragging
-    if (!hasMoved && onOpen) {
-      // This was a pure click with no movement
+    // Open chat if it's an actual click
+    if (isActualClick && onOpen) {
       onOpen();
-      console.log("Opening Fundi chat - pure click detected");
-    } else if (hasMoved) {
-      // If it was moved/dragged at all, don't open chat
-      console.log("Click ignored - Fundi was recently dragged");
+      console.log("Opening Fundi chat - click detected");
+    } else {
+      console.log("Click suppressed - detected as part of drag operation");
     }
     
     e.stopPropagation();

@@ -1022,16 +1022,22 @@ export default function FundiInteractiveAssistant({
                 </CardHeader>
                 <CardContent className="space-y-4 p-4 pt-0">
                   <div className="flex justify-center py-3">
-                    <FundiAvatarEnhanced
-                      size="lg"
-                      category={category}
-                      speaking={speaking}
-                      thinking={thinking}
-                      emotion={emotion}
-                      pulseEffect={true}
-                      interactive={true}
-                      onInteraction={toggleChat}
-                    />
+                    <div 
+                      className="cursor-pointer transition-transform active:scale-95 hover:scale-105"
+                      onClick={toggleChat}
+                      title="Click to open chat interface"
+                    >
+                      <FundiAvatarEnhanced
+                        size="lg"
+                        category={category}
+                        speaking={speaking}
+                        thinking={thinking}
+                        emotion={emotion}
+                        pulseEffect={true}
+                        interactive={true}
+                        onInteraction={toggleChat}
+                      />
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-2 justify-center">
                     <Button 
@@ -1134,20 +1140,39 @@ export default function FundiInteractiveAssistant({
             drag
             dragMomentum={false}
             dragConstraints={{ left: -500, right: 500, top: -500, bottom: 500 }}
+            onDragStart={() => {
+              // Set a flag on drag start for more reliable click detection
+              (window as any).fundiDragStartTime = Date.now();
+            }}
             onDragEnd={(e, info) => {
+              // Update the position
               setFundiPosition({
                 x: fundiPosition.x + info.offset.x,
                 y: fundiPosition.y + info.offset.y
               });
+              
               // Log the position for debugging
               console.log(`Fundi position: x=${fundiPosition.x + info.offset.x}, y=${fundiPosition.y + info.offset.y}`);
             }}
-            className="cursor-move"
+            className="cursor-grab active:cursor-grabbing"
             onClick={(e) => {
-              // Only toggle open if it's a click, not a drag
-              if (Math.abs(e.clientX - e.currentTarget.getBoundingClientRect().left) < 5 &&
-                  Math.abs(e.clientY - e.currentTarget.getBoundingClientRect().top) < 5) {
+              // Check if it's a true click:
+              // 1. Either no drag has happened recently
+              const dragStartTime = (window as any).fundiDragStartTime || 0;
+              const timeSinceDragStart = Date.now() - dragStartTime;
+              
+              // 2. Or the drag was very short distance (or no drag happened)
+              const isShortDrag = 
+                Math.abs(e.movementX) < 5 && 
+                Math.abs(e.movementY) < 5;
+              
+              // Only consider it a click if it wasn't immediately after a drag start
+              // or if the drag was really minimal
+              if ((timeSinceDragStart > 300 || isShortDrag)) {
                 toggleOpen();
+                console.log('Opening Fundi from closed state');
+              } else {
+                console.log('Click suppressed - detected as part of drag operation');
               }
             }}
           >
