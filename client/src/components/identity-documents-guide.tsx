@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Types
-type DocumentTab = "passport" | "birth-certificate" | "social-security";
+type DocumentTab = "passport" | "birth-certificate" | "social-security" | "state-id" | "voter-registration";
 type StateCode = 
   | "AL" | "AK" | "AZ" | "AR" | "CA" | "CO" | "CT" | "DE" | "FL" | "GA" 
   | "HI" | "ID" | "IL" | "IN" | "IA" | "KS" | "KY" | "LA" | "ME" | "MD" 
@@ -416,6 +416,94 @@ const STATES: Record<StateCode, StateInfo> = {
 
 // Usage scenarios and document information
 const DOCUMENT_INFO = {
+  "state-id": {
+    title: "State ID or Driver's License",
+    icon: <CreditCard className="h-6 w-6 text-indigo-600" />,
+    description: "Your primary form of identification for everyday use",
+    whatIsIt: "A state ID or driver's license is a government-issued photo identification card. A driver's license allows you to legally operate a motor vehicle, while a state ID provides identification without driving privileges.",
+    whyItMatters: "This is the most commonly used form of identification in the United States. It's required for many daily activities like opening a bank account, applying for jobs, renting apartments, and purchasing age-restricted items.",
+    whenToUse: [
+      "Proving your identity for everyday transactions",
+      "Verifying your age for age-restricted purchases",
+      "Driving a motor vehicle (driver's license only)",
+      "Identification at airports for domestic travel",
+      "Opening financial accounts",
+      "Employment verification",
+      "Voting in most states"
+    ],
+    howToGet: {
+      title: "How to Get a State ID or Driver's License",
+      steps: [
+        {
+          title: "Gather required documents",
+          description: "Typically: proof of identity (birth certificate or passport), proof of Social Security number, proof of residence (utility bills, lease, etc.), and payment for fees."
+        },
+        {
+          title: "Visit your local DMV/BMV",
+          description: "Make an appointment if possible to reduce wait times."
+        },
+        {
+          title: "Complete the application",
+          description: "Fill out the application form (often available online beforehand)."
+        },
+        {
+          title: "For driver's license: Take tests",
+          description: "This includes a vision test, written knowledge test, and driving skills test."
+        },
+        {
+          title: "Pay the fee",
+          description: "Fees vary by state, typically $10-50 for a state ID and $20-90 for a driver's license."
+        },
+        {
+          title: "Get your photo taken",
+          description: "Your ID will include a photo taken at the DMV/BMV."
+        }
+      ],
+      nationalLink: "https://www.usa.gov/motor-vehicle-services"
+    },
+    stateSpecific: true
+  },
+  "voter-registration": {
+    title: "Voter Registration",
+    icon: <FileText className="h-6 w-6 text-blue-600" />,
+    description: "Your gateway to participating in elections",
+    whatIsIt: "Voter registration is the process of signing up to be eligible to vote in elections. In the United States, voters need to register before they can cast a ballot in most states.",
+    whyItMatters: "Registering to vote gives you the ability to participate in democracy and have a say in who represents you at local, state, and federal levels. It's a fundamental right and responsibility of citizenship.",
+    whenToUse: [
+      "When you turn 18",
+      "When you move to a new address",
+      "When you change your name",
+      "When you want to change political party affiliation",
+      "After becoming a U.S. citizen"
+    ],
+    howToGet: {
+      title: "How to Register to Vote",
+      steps: [
+        {
+          title: "Check your eligibility",
+          description: "You must be a U.S. citizen, meet your state's residency requirements, and be 18 years old by Election Day."
+        },
+        {
+          title: "Choose a registration method",
+          description: "Most states offer multiple ways to register: online, by mail, in person at election offices, DMV, or other government agencies."
+        },
+        {
+          title: "Complete the registration form",
+          description: "Provide your legal name, address, date of birth, and ID number (usually driver's license or last 4 digits of SSN)."
+        },
+        {
+          title: "Submit your application",
+          description: "Submit before your state's registration deadline, which is typically 15-30 days before an election."
+        },
+        {
+          title: "Check your registration status",
+          description: "Follow up to confirm your registration was processed correctly."
+        }
+      ],
+      nationalLink: "https://vote.gov/"
+    },
+    stateSpecific: true
+  },
   passport: {
     title: "U.S. Passport",
     icon: <Globe className="h-6 w-6 text-blue-500" />,
@@ -616,7 +704,7 @@ export default function IdentityDocumentsGuide() {
   return (
     <div className="w-full max-w-screen-lg mx-auto">
       <Tabs defaultValue="passport" onValueChange={value => setActiveTab(value as DocumentTab)}>
-        <TabsList className="w-full mb-4 grid grid-cols-3">
+        <TabsList className="w-full mb-4 grid grid-cols-5">
           <TabsTrigger value="passport" className="flex items-center gap-2">
             <Globe className="h-4 w-4" />
             <span className="hidden sm:inline">Passport</span>
@@ -631,6 +719,16 @@ export default function IdentityDocumentsGuide() {
             <CreditCard className="h-4 w-4" />
             <span className="hidden sm:inline">Social Security</span>
             <span className="sm:hidden">SSN</span>
+          </TabsTrigger>
+          <TabsTrigger value="state-id" className="flex items-center gap-2">
+            <CreditCard className="h-4 w-4" />
+            <span className="hidden sm:inline">State ID/License</span>
+            <span className="sm:hidden">ID/License</span>
+          </TabsTrigger>
+          <TabsTrigger value="voter-registration" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            <span className="hidden sm:inline">Voter Registration</span>
+            <span className="sm:hidden">Voter Reg.</span>
           </TabsTrigger>
         </TabsList>
 
@@ -1031,6 +1129,285 @@ export default function IdentityDocumentsGuide() {
                   <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
                 </a>
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="state-id" className="space-y-6">
+          <DocumentOverview document={documentInfo} />
+          
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-indigo-600" />
+                How to Get a State ID or Driver's License
+              </CardTitle>
+              <CardDescription>
+                Steps to obtain your official state identification
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4">
+                {documentInfo.howToGet.steps.map((step, index) => (
+                  <div key={index} className="flex gap-3">
+                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-medium">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">{step.title}</h4>
+                      <p className="text-muted-foreground text-sm">{step.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {selectedState !== "default" && (
+                <Alert className="bg-blue-50 border-blue-200">
+                  <AlertCircle className="h-4 w-4 text-blue-500" />
+                  <AlertDescription className="text-blue-800 text-sm space-y-2">
+                    <p><strong>{stateInfo.name} DMV/BMV Information</strong></p>
+                    <Button variant="outline" className="mt-1 w-full sm:w-auto justify-start" asChild>
+                      <a href={`https://dmv.${stateInfo.code.toLowerCase()}.gov`} target="_blank" rel="noopener noreferrer">
+                        <CreditCard className="h-4 w-4 mr-2 text-indigo-600" />
+                        {stateInfo.name} DMV Website
+                        <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                      </a>
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              <div className="space-y-3 pt-2">
+                <h4 className="font-medium">Official Resources:</h4>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  <Button variant="outline" className="justify-start" asChild>
+                    <a href={documentInfo.howToGet.nationalLink} target="_blank" rel="noopener noreferrer">
+                      <Globe className="h-4 w-4 mr-2 text-blue-500" />
+                      National ID Information
+                      <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                    </a>
+                  </Button>
+                  {selectedState === "default" ? (
+                    <Button variant="outline" className="justify-start" asChild>
+                      <a href="https://www.usa.gov/states-and-territories" target="_blank" rel="noopener noreferrer">
+                        <MapPin className="h-4 w-4 mr-2 text-rose-500" />
+                        Find Your State's DMV
+                        <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button variant="outline" className="justify-start" asChild>
+                      <a href={`https://dmv.${stateInfo.code.toLowerCase()}.gov`} target="_blank" rel="noopener noreferrer">
+                        <MapPin className="h-4 w-4 mr-2 text-rose-500" />
+                        {stateInfo.name} DMV
+                        <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-amber-500" />
+                Important Tips
+              </CardTitle>
+              <CardDescription>
+                Helpful information about state identification
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger className="text-sm font-medium">
+                    Types of State IDs
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm space-y-2">
+                    <p>There are several types of state-issued identification:</p>
+                    <ul className="list-disc pl-6 space-y-1">
+                      <li><strong>Standard Driver's License:</strong> Allows you to legally drive and serves as identification.</li>
+                      <li><strong>REAL ID:</strong> Enhanced ID that meets federal standards, required for domestic air travel starting May 7, 2025.</li>
+                      <li><strong>Enhanced Driver's License (EDL):</strong> Available in some states, can be used for border crossings to Canada, Mexico, and Caribbean nations.</li>
+                      <li><strong>Non-Driver ID Card:</strong> For identification purposes only, doesn't grant driving privileges.</li>
+                    </ul>
+                    <p className="pt-1">Check your state's requirements to determine which ID is best for your needs.</p>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                  <AccordionTrigger className="text-sm font-medium">
+                    Required Documents
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm space-y-2">
+                    <p>Most states require these documents for a new ID or license:</p>
+                    <ul className="list-disc pl-6 space-y-1">
+                      <li><strong>Proof of Identity:</strong> Birth certificate or passport.</li>
+                      <li><strong>Proof of Social Security Number:</strong> Social Security card, W-2, or paystub with full SSN.</li>
+                      <li><strong>Proof of Residency:</strong> Two documents showing your name and address (utility bills, lease, etc.).</li>
+                      <li><strong>Legal Presence:</strong> US birth certificate, passport, or immigration documents.</li>
+                      <li><strong>Payment:</strong> For applicable fees (varies by state).</li>
+                    </ul>
+                    <p className="pt-1">For a REAL ID, requirements are more strict. Check your state's DMV website for specific document requirements.</p>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
+                  <AccordionTrigger className="text-sm font-medium">
+                    Renewal Information
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm space-y-2">
+                    <p>Important renewal information:</p>
+                    <ul className="list-disc pl-6 space-y-1">
+                      <li>Most state IDs and driver's licenses expire every 4-8 years, depending on your state.</li>
+                      <li>Many states allow online or mail renewal for standard renewals.</li>
+                      <li>If your ID is expired for a long period, you may need to reapply in person with all documentation.</li>
+                      <li>Seniors may have different renewal requirements or shorter validity periods.</li>
+                      <li>Always check expiration dates and start the renewal process early.</li>
+                    </ul>
+                    <p className="pt-1">Set up reminders for your ID expiration date to avoid issues with expired identification.</p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="voter-registration" className="space-y-6">
+          <DocumentOverview document={documentInfo} />
+          
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-blue-600" />
+                How to Register to Vote
+              </CardTitle>
+              <CardDescription>
+                Steps to register for voting in elections
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4">
+                {documentInfo.howToGet.steps.map((step, index) => (
+                  <div key={index} className="flex gap-3">
+                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-medium">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">{step.title}</h4>
+                      <p className="text-muted-foreground text-sm">{step.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {selectedState !== "default" && (
+                <Alert className="bg-blue-50 border-blue-200">
+                  <AlertCircle className="h-4 w-4 text-blue-500" />
+                  <AlertDescription className="text-blue-800 text-sm space-y-2">
+                    <p><strong>{stateInfo.name} Voter Registration Information</strong></p>
+                    <Button variant="outline" className="mt-1 w-full sm:w-auto justify-start" asChild>
+                      <a href={`https://vote.${stateInfo.code.toLowerCase()}.gov`} target="_blank" rel="noopener noreferrer">
+                        <FileText className="h-4 w-4 mr-2 text-blue-600" />
+                        {stateInfo.name} Voter Registration
+                        <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                      </a>
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              <div className="space-y-3 pt-2">
+                <h4 className="font-medium">Official Resources:</h4>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  <Button variant="outline" className="justify-start" asChild>
+                    <a href={documentInfo.howToGet.nationalLink} target="_blank" rel="noopener noreferrer">
+                      <Globe className="h-4 w-4 mr-2 text-blue-500" />
+                      National Voter Registration Info
+                      <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                    </a>
+                  </Button>
+                  {selectedState === "default" ? (
+                    <Button variant="outline" className="justify-start" asChild>
+                      <a href="https://www.usa.gov/election-office" target="_blank" rel="noopener noreferrer">
+                        <MapPin className="h-4 w-4 mr-2 text-rose-500" />
+                        Find Your State's Election Office
+                        <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button variant="outline" className="justify-start" asChild>
+                      <a href={`https://vote.${stateInfo.code.toLowerCase()}.gov`} target="_blank" rel="noopener noreferrer">
+                        <MapPin className="h-4 w-4 mr-2 text-rose-500" />
+                        {stateInfo.name} Election Office
+                        <ExternalLink className="h-3 w-3 ml-2 text-muted-foreground" />
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-amber-500" />
+                Important Voting Information
+              </CardTitle>
+              <CardDescription>
+                Key information about voting rights and processes
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger className="text-sm font-medium">
+                    Voter Registration Deadlines
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm space-y-2">
+                    <p>Registration deadlines vary by state:</p>
+                    <ul className="list-disc pl-6 space-y-1">
+                      <li>Most states require registration 15-30 days before an election.</li>
+                      <li>Some states offer same-day registration (register and vote on Election Day).</li>
+                      <li>A few states have automatic voter registration when you interact with certain government agencies.</li>
+                      <li>Special deadlines may apply for primaries versus general elections.</li>
+                    </ul>
+                    <p className="pt-1">Always check your state's specific deadlines well in advance of elections.</p>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                  <AccordionTrigger className="text-sm font-medium">
+                    ID Requirements for Voting
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm space-y-2">
+                    <p>ID requirements for voting vary significantly by state:</p>
+                    <ul className="list-disc pl-6 space-y-1">
+                      <li><strong>Strict Photo ID:</strong> Some states require government-issued photo ID to vote.</li>
+                      <li><strong>Non-Strict Photo ID:</strong> Some states request photo ID but offer alternatives if you don't have one.</li>
+                      <li><strong>Non-Photo ID:</strong> Some states accept non-photo documents like utility bills or bank statements.</li>
+                      <li><strong>No Document Required:</strong> Some states require only verbal confirmation of identity.</li>
+                    </ul>
+                    <p className="pt-1">Check your state's specific requirements before heading to the polls.</p>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
+                  <AccordionTrigger className="text-sm font-medium">
+                    Updating Your Registration
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm space-y-2">
+                    <p>You should update your voter registration when:</p>
+                    <ul className="list-disc pl-6 space-y-1">
+                      <li>You move to a new address</li>
+                      <li>You change your name</li>
+                      <li>You want to change political party affiliation</li>
+                      <li>You haven't voted in several years and may be inactive</li>
+                    </ul>
+                    <p className="pt-1">You can typically update your registration through the same methods as initial registration.</p>
+                    <p>Check your registration status regularly, especially before elections, to ensure you're properly registered.</p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </CardContent>
           </Card>
         </TabsContent>
