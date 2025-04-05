@@ -743,29 +743,39 @@ export default function IdentityDocumentsGuide() {
   return (
     <div className="w-full max-w-screen-lg mx-auto">
       <Tabs defaultValue="passport" onValueChange={value => setActiveTab(value as DocumentTab)}>
-        <TabsList className="w-full mb-4 grid grid-cols-5">
-          <TabsTrigger value="passport" className="flex items-center gap-2">
-            <Globe className="h-4 w-4" />
+        <TabsList className="w-full mb-6 grid grid-cols-5 bg-muted/50 p-1 rounded-lg">
+          <TabsTrigger value="passport" className="flex items-center gap-2 rounded-md">
+            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+              <Globe className="h-4 w-4 text-blue-500" />
+            </div>
             <span className="hidden sm:inline">Passport</span>
             <span className="sm:hidden">Passport</span>
           </TabsTrigger>
-          <TabsTrigger value="birth-certificate" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
+          <TabsTrigger value="birth-certificate" className="flex items-center gap-2 rounded-md">
+            <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
+              <FileText className="h-4 w-4 text-green-500" />
+            </div>
             <span className="hidden sm:inline">Birth Certificate</span>
             <span className="sm:hidden">Birth Cert.</span>
           </TabsTrigger>
-          <TabsTrigger value="social-security" className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4" />
+          <TabsTrigger value="social-security" className="flex items-center gap-2 rounded-md">
+            <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center">
+              <CreditCard className="h-4 w-4 text-rose-500" />
+            </div>
             <span className="hidden sm:inline">Social Security</span>
             <span className="sm:hidden">SSN</span>
           </TabsTrigger>
-          <TabsTrigger value="state-id" className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4" />
+          <TabsTrigger value="state-id" className="flex items-center gap-2 rounded-md">
+            <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center">
+              <CreditCard className="h-4 w-4 text-indigo-600" />
+            </div>
             <span className="hidden sm:inline">State ID/License</span>
             <span className="sm:hidden">ID/License</span>
           </TabsTrigger>
-          <TabsTrigger value="voter-registration" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
+          <TabsTrigger value="voter-registration" className="flex items-center gap-2 rounded-md">
+            <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center">
+              <FileText className="h-4 w-4 text-amber-500" />
+            </div>
             <span className="hidden sm:inline">Voter Registration</span>
             <span className="sm:hidden">Voter Reg.</span>
           </TabsTrigger>
@@ -1461,46 +1471,99 @@ export default function IdentityDocumentsGuide() {
 
 // Document Overview Component
 function DocumentOverview({ document }: { document: any }) {
+  // Determine color classes based on document type
+  let iconBgClass = "bg-blue-50";
+  let iconTextClass = "text-blue-500";
+  let badgeBgClass = "bg-blue-50";
+  let badgeTextClass = "text-blue-700";
+  let badgeBorderClass = "border-blue-200";
+  let badgeType = "Federal";
+  
+  if (document.title === "Birth Certificate") {
+    iconBgClass = "bg-green-50";
+    iconTextClass = "text-green-500";
+    badgeBgClass = "bg-green-50";
+    badgeTextClass = "text-green-700";
+    badgeBorderClass = "border-green-200";
+    badgeType = "State";
+  } else if (document.title === "Social Security Card") {
+    iconBgClass = "bg-rose-50";
+    iconTextClass = "text-rose-500";
+    badgeBgClass = "bg-rose-50";
+    badgeTextClass = "text-rose-700";
+    badgeBorderClass = "border-rose-200";
+    badgeType = "Federal";
+  } else if (document.title === "State ID/Driver's License") {
+    iconBgClass = "bg-indigo-50";
+    iconTextClass = "text-indigo-600";
+    badgeBgClass = "bg-indigo-50";
+    badgeTextClass = "text-indigo-700";
+    badgeBorderClass = "border-indigo-200";
+    badgeType = "State";
+  } else if (document.title === "Voter Registration") {
+    iconBgClass = "bg-amber-50";
+    iconTextClass = "text-amber-500";
+    badgeBgClass = "bg-amber-50";
+    badgeTextClass = "text-amber-700";
+    badgeBorderClass = "border-amber-200";
+    badgeType = "State";
+  }
+  
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          {document.icon}
-          {document.title}
-          {document.title === "U.S. Passport" && (
-            <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-700 border-blue-200">Federal</Badge>
-          )}
-          {document.title === "Birth Certificate" && (
-            <Badge variant="outline" className="ml-2 bg-green-50 text-green-700 border-green-200">State</Badge>
-          )}
-          {document.title === "Social Security Card" && (
-            <Badge variant="outline" className="ml-2 bg-rose-50 text-rose-700 border-rose-200">Federal</Badge>
-          )}
-        </CardTitle>
-        <CardDescription>{document.description}</CardDescription>
+    <Card className="border shadow-sm">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-full ${iconBgClass} flex items-center justify-center`}>
+              {document.icon}
+            </div>
+            <div>
+              <CardTitle className="text-xl">{document.title}</CardTitle>
+              <CardDescription className="mt-1">{document.description}</CardDescription>
+            </div>
+          </div>
+          <Badge variant="outline" className={`ml-2 ${badgeBgClass} ${badgeTextClass} ${badgeBorderClass}`}>
+            {badgeType}
+          </Badge>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-base font-medium">What is it?</h3>
+      <CardContent className="space-y-6 pt-2">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-3">
+            <h3 className="text-base font-medium flex items-center gap-2">
+              <div className={`w-5 h-5 rounded-full ${iconBgClass} flex items-center justify-center`}>
+                <span className={`text-xs font-bold ${iconTextClass}`}>?</span>
+              </div>
+              What is it?
+            </h3>
             <p className="text-sm text-muted-foreground">{document.whatIsIt}</p>
           </div>
           
-          <div>
-            <h3 className="text-base font-medium">Why it matters</h3>
+          <div className="space-y-3">
+            <h3 className="text-base font-medium flex items-center gap-2">
+              <div className={`w-5 h-5 rounded-full ${iconBgClass} flex items-center justify-center`}>
+                <span className={`text-xs font-bold ${iconTextClass}`}>!</span>
+              </div>
+              Why it matters
+            </h3>
             <p className="text-sm text-muted-foreground">{document.whyItMatters}</p>
           </div>
-          
-          <div>
-            <h3 className="text-base font-medium">When to use it</h3>
-            <ul className="grid gap-1.5 mt-2">
-              {document.whenToUse.map((use: string, idx: number) => (
-                <li key={idx} className="flex items-baseline gap-2">
-                  <ChevronRight className="h-3 w-3 text-primary flex-shrink-0 mt-1" />
-                  <span className="text-sm">{use}</span>
-                </li>
-              ))}
-            </ul>
+        </div>
+        
+        <div>
+          <h3 className="text-base font-medium mb-3 flex items-center gap-2">
+            <div className={`w-5 h-5 rounded-full ${iconBgClass} flex items-center justify-center`}>
+              <span className={`text-xs font-bold ${iconTextClass}`}>✓</span>
+            </div>
+            When to use it
+          </h3>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {document.whenToUse.map((use: string, idx: number) => (
+              <div key={idx} className="flex items-start gap-2 bg-muted/30 p-2 rounded-md">
+                <ChevronRight className={`h-4 w-4 ${iconTextClass} flex-shrink-0 mt-0.5`} />
+                <span className="text-sm">{use}</span>
+              </div>
+            ))}
           </div>
         </div>
       </CardContent>
