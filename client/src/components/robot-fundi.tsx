@@ -31,12 +31,20 @@ export default function RobotFundi({
   
   // EMERGENCY: Force direct open on mount and clicks
   useEffect(() => {
-    // Create a direct function for emergency handling
+    // Create a direct function for emergency handling - with drag distance check
     const forceOpenFundi = (e: any) => {
       console.log("DIRECT FORCE OPEN: Emergency click handler");
       
-      // Only use direct approach here to avoid any circular references
-      if (onOpen) {
+      // Add the safety checks similar to normal click handler
+      const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+      const lastDragTime = (window as any).lastDragTime || 0;
+      const timeSinceLastDrag = Date.now() - lastDragTime;
+      
+      // Only open if not dragged too far or too recently
+      const canOpen = !wasDragged && timeSinceLastDrag > 300 && (dragDistance < 100 || position.x === 0 && position.y === 0);
+      
+      if (canOpen && onOpen) {
+        console.log("Emergency open permitted - drag distance checks passed");
         // Direct open - this is the emergency path
         onOpen();
         
@@ -45,6 +53,8 @@ export default function RobotFundi({
           const openFundiEvent = new CustomEvent('forceFundiOpen');
           window.dispatchEvent(openFundiEvent);
         }
+      } else {
+        console.log(`Emergency open prevented - drag checks failed: wasDragged=${wasDragged}, dragDistance=${dragDistance.toFixed(0)}px`);
       }
       
       // Stop propagation if we have an event
@@ -153,6 +163,16 @@ export default function RobotFundi({
     if (wasDragged) {
       // Store the last drag time on the window object for reference
       (window as any).lastDragTime = Date.now();
+      
+      // Set a longer wasDragged timeout if dragged a significant distance
+      // This prevents accidental opening when dragged far
+      const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+      if (dragDistance > 100) {
+        // For long drags, we'll set a longer timeout to prevent accidental opening
+        (window as any).lastDragTime = Date.now() + 500; // Add extra time to delay click sensitivity
+        console.log(`Long drag detected (${dragDistance.toFixed(0)}px), extending click prevention`);
+      }
+      
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
   };
@@ -167,6 +187,16 @@ export default function RobotFundi({
     if (wasDragged) {
       // Store the last drag time on the window object for reference
       (window as any).lastDragTime = Date.now();
+      
+      // Set a longer wasDragged timeout if dragged a significant distance
+      // This prevents accidental opening when dragged far (mobile)
+      const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+      if (dragDistance > 100) {
+        // For long drags, we'll set a longer timeout to prevent accidental opening
+        (window as any).lastDragTime = Date.now() + 500; // Add extra time to delay touch sensitivity
+        console.log(`Long touch drag detected (${dragDistance.toFixed(0)}px), extending touch prevention`);
+      }
+      
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
   };
@@ -257,8 +287,16 @@ export default function RobotFundi({
     console.log("Handle Open Chat called");
     e.stopPropagation();
     
-    // Only open if not in the middle of a drag operation
-    if (!wasDragged && onOpen) {
+    // Calculate drag distance to add an extra safety check
+    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+    
+    // Only open if not in the middle of a drag operation AND not recently dragged far
+    const lastDragTime = (window as any).lastDragTime || 0;
+    const timeSinceLastDrag = Date.now() - lastDragTime;
+    const canOpen = !wasDragged && timeSinceLastDrag > 300 && (dragDistance < 100 || position.x === 0 && position.y === 0);
+    
+    if (canOpen && onOpen) {
+      console.log("Opening chat - conditions satisfied");
       // Call the onOpen callback
       onOpen();
       
@@ -268,6 +306,8 @@ export default function RobotFundi({
         window.dispatchEvent(openFundiEvent);
         console.log("Dispatched forceFundiOpen event from handleOpenChat");
       }
+    } else {
+      console.log(`Chat not opened - conditions not met: wasDragged=${wasDragged}, timeSinceLastDrag=${timeSinceLastDrag}ms, dragDistance=${dragDistance.toFixed(0)}px`);
     }
   };
 
