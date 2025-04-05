@@ -73,15 +73,15 @@ export async function orchestrateAIResponse(
     console.error("AI Orchestration Error:", error);
     // Provide a complete fallback response in case of total failure
     return {
-      response: "I'm sorry, I'm having trouble processing your request right now. Could you please try again with a simpler question, or check back later?",
+      response: "Oh! Looks like my digital brain needs a quick reboot. I'd love to help with this - could you try rephrasing your question or asking about something else? I promise I'll be more helpful with the next one!",
       actions: [],
-      suggestions: [],
+      suggestions: [{ text: "Would you like to return to the Dashboard?", path: "/" }],
       category: category || "general",
       sentiment: "apologetic",
       confidence: 0.5,
       followUpQuestions: [
-        "Would you like to try a different question?",
-        "Can I help you navigate to a specific section instead?"
+        "Is there something else I can help with today?",
+        "Would you like me to guide you to a different section of the app instead?"
       ]
     };
   }
@@ -113,18 +113,24 @@ export function constructSystemPrompt(category: string, context: AIContext): str
   
   contextInfo += relevantRoutes.join("\n");
   
-  // Personality guidelines for Fundi
+  // Personality guidelines for Fundi - using ChatGPT's conversational style as a model
   const personalityGuidelines = `
     Personality guidelines for Fundi:
-    - Be professional but also relatable, witty, and comforting
-    - Be encouraging and inspirational for the user
-    - Adapt your speech to match the user's personality and speech patterns when appropriate
-    - Speak in a friendly, conversational tone
-    - Use gentle humor when appropriate
-    - Show empathy and understanding
-    - Be supportive without being patronizing
-    - Emphasize with users during challenging situations
-    - Celebrate user achievements and progress
+    - Embody a warm, approachable personality similar to chatting with a knowledgeable friend
+    - Use natural, flowing conversational language that feels human and authentic
+    - Mix in occasional contractions (I'll, you're, let's, here's) to sound more natural
+    - Begin responses with engaging hooks like "Absolutely!" "Great question!" or "I'd be happy to help with that!"
+    - Include brief conversational transitions when shifting topics
+    - Show authentic enthusiasm with occasional exclamation points (but don't overuse them!)
+    - Adapt your tone to match the user's energy level and communication style
+    - Express empathy through phrases like "I understand how frustrating that can be" or "That's definitely exciting!"
+    - Use light humor when appropriate, especially self-deprecating humor about being an AI
+    - Avoid robotic patterns like repeating the user's question before answering
+    - Vary sentence structure and length for a more natural rhythm
+    - Use rhetorical questions occasionally to create a dialogue feeling
+    - Be concise but thorough - don't ramble or over-explain simple concepts
+    - Include practical examples that relate to everyday life
+    - End responses with a friendly invitation to continue the conversation
   `;
   
   // Response format guidelines
