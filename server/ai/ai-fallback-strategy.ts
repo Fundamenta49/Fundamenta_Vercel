@@ -136,13 +136,15 @@ export class OpenAIProvider implements AIProvider {
     try {
       // Check for home maintenance related queries
       const lowerMessage = message.toLowerCase();
-      if ((lowerMessage.includes('broken') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('fixture'))) ||
+      if (lowerMessage.includes('picfix') || lowerMessage.includes('pic fix') || 
+          (lowerMessage.includes('photo') && (lowerMessage.includes('repair') || lowerMessage.includes('fix') || lowerMessage.includes('diagnose'))) ||
+          (lowerMessage.includes('broken') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('fixture'))) ||
           (lowerMessage.includes('repair') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('toilet') || lowerMessage.includes('sink') || lowerMessage.includes('door'))) ||
           (lowerMessage.includes('fix') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('fixture') || lowerMessage.includes('toilet') || lowerMessage.includes('sink'))) ||
           (lowerMessage.includes('diagnose') && (lowerMessage.includes('house') || lowerMessage.includes('home') || lowerMessage.includes('appliance') || lowerMessage.includes('problem'))) ||
           (lowerMessage.includes('camera') && lowerMessage.includes('repair')) ||
           (lowerMessage.includes('leaking') || lowerMessage.includes('water damage') || lowerMessage.includes('plumbing issue'))) {
-        console.log('OpenAI provider - early detection: Home maintenance query, categorizing as homeMaintenance');
+        console.log('OpenAI provider - early detection: Home maintenance or PicFix query, categorizing as homeMaintenance');
         return { category: "homeMaintenance", confidence: 0.95 };
       }
       
@@ -279,7 +281,7 @@ export class HuggingFaceProvider implements AIProvider {
             response = `I notice this might be an emergency situation. Your message: "${mainIntent}" seems urgent. For immediate help, please contact emergency services or visit our emergency section.`;
             break;
           case "homeMaintenance":
-            response = `I see you're asking about home repairs. Your message: "${mainIntent}" seems to be about fixing or diagnosing a household issue. I can help with maintenance tips, repair guidance, or direct you to our Smart Repair Diagnostic Tool for visual analysis.`;
+            response = `I see you're asking about home repairs. Your message: "${mainIntent}" seems to be about fixing or diagnosing a household issue. I can help with maintenance tips, repair guidance, or direct you to our PicFix Smart Repair Assistant, which lets you take a photo of broken items for AI-powered diagnosis, repair instructions, and parts pricing.`;
             break;
           default:
             response = `I've received your message: "${mainIntent}". I'll do my best to assist you with that.`;
