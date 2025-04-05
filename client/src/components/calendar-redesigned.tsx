@@ -416,9 +416,9 @@ export default function CalendarRedesigned() {
     
     return (
       <Dialog open={showEventDetails} onOpenChange={setShowEventDetails}>
-        <DialogContent className="bg-white dark:bg-gray-900 w-[95%] max-w-md max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed sm:rounded-lg shadow-lg" aria-labelledby="event-dialog-title">
+        <DialogContent className="bg-white dark:bg-gray-900 w-[95%] max-w-md max-h-[80vh] sm:max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed sm:rounded-lg shadow-lg no-scrollbar" aria-labelledby="event-dialog-title">
           <div className="space-y-4">
-            <div className="flex justify-between items-start">
+            <div className="flex justify-between items-start sticky top-0 bg-white dark:bg-gray-900 z-10 pb-2">
               <div className="space-y-1">
                 <h2 id="event-dialog-title" className="text-xl font-semibold">{selectedEvent.title}</h2>
                 <div className="flex items-center text-sm text-gray-600">
@@ -612,7 +612,7 @@ export default function CalendarRedesigned() {
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
+        <div className="flex-1 overflow-y-auto no-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-7 divide-y md:divide-y-0 md:divide-x border-b">
             {days.map((day, index) => {
               const dayEvents = getEventsForDay(day);
@@ -798,8 +798,8 @@ export default function CalendarRedesigned() {
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: 'thin' }}>
-          <div className="grid grid-cols-[60px_1fr] gap-2">
+        <div className="flex-1 overflow-y-auto p-4 no-scrollbar">
+          <div className="grid grid-cols-[50px_1fr] sm:grid-cols-[60px_1fr] gap-2">
             {hours.map((hour) => {
               const hourFormatted = hour === 0 ? '12 AM' : hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
               const hourEvents = dayEvents.filter(event => event.startTime && getHours(event.startTime) === hour);
@@ -961,7 +961,7 @@ export default function CalendarRedesigned() {
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: 'thin' }}>
+        <div className="flex-1 overflow-y-auto p-4 no-scrollbar">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {months.map((month, index) => {
               // Calculate total events per month
@@ -1047,21 +1047,9 @@ export default function CalendarRedesigned() {
           {/* Main calendar area */}
           <div className="flex-1">
             {currentView === 'month' && <MonthView />}
-            {currentView === 'week' && (
-              <div className="flex flex-col h-full p-4">
-                <p className="text-center text-gray-500 py-10">Week view coming soon</p>
-              </div>
-            )}
-            {currentView === 'day' && (
-              <div className="flex flex-col h-full p-4">
-                <p className="text-center text-gray-500 py-10">Day view coming soon</p>
-              </div>
-            )}
-            {currentView === 'year' && (
-              <div className="flex flex-col h-full p-4">
-                <p className="text-center text-gray-500 py-10">Year view coming soon</p>
-              </div>
-            )}
+            {currentView === 'week' && <WeekView />}
+            {currentView === 'day' && <DayView />}
+            {currentView === 'year' && <YearView />}
           </div>
         </div>
         

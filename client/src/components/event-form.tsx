@@ -197,12 +197,12 @@ const EventForm = ({ isOpen, onClose, onSave, selectedDate, editEvent, learningR
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-white dark:bg-gray-900 sm:max-w-[500px] w-[95%] max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed sm:rounded-lg shadow-lg">
-        <DialogHeader>
+      <DialogContent className="bg-white dark:bg-gray-900 sm:max-w-[500px] w-[95%] max-h-[80vh] sm:max-h-[90vh] overflow-y-auto top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed sm:rounded-lg shadow-lg no-scrollbar">
+        <DialogHeader className="sticky top-0 bg-white dark:bg-gray-900 z-10 pb-2">
           <DialogTitle>{editEvent ? 'Edit Event' : 'Add New Event'}</DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-2">
           {/* Learning resource selector */}
           <div className="space-y-2">
             <Label htmlFor="learning-resource">Link to Learning Content (Optional)</Label>
