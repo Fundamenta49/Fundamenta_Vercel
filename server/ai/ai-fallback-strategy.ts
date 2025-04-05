@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { textClassifier, analyzeUserEmotion, getContentCategory } from "../huggingface";
 import type { ChatCompletionMessageParam } from "openai/resources";
 import { z } from "zod";
+import { getFundiPersonalityElements } from "./fundi-personality-integration";
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -276,13 +277,23 @@ export class HuggingFaceProvider implements AIProvider {
       let response = "";
       
       // Engaging conversation starters that show Fundi's personality
+      // Get personality elements from JSON file
+      const personalityElements = getFundiPersonalityElements();
+      
+      // Combine default starters with any examples from the personality file
       const conversationStarters = [
         "Absolutely! I'd love to help with that. ",
         "Great question! This is actually something I'm passionate about. ",
         "Oh, I'm so glad you asked about this! ",
         "I'm really excited to talk about this with you! ",
         "This is one of my favorite topics! ",
-        "I'd be thrilled to help with that! "
+        "I'd be thrilled to help with that! ",
+        // Add starters adapted from the personality file's response examples
+        ...(personalityElements.responseExamples || []).map(example => {
+          // Transform longer response examples into conversation starters
+          const shortenedExample = example.split('.')[0] + '. ';
+          return shortenedExample;
+        })
       ];
       
       // Random personal touch to start the response
@@ -686,8 +697,22 @@ export class FallbackAIService {
     .catch(error => {
       // Ultimate fallback if both providers fail
       console.error("All AI providers failed:", error);
+      // Get personality elements from the user's custom settings
+      const personalityElements = getFundiPersonalityElements();
+      
+      // Get a random favorite quote or response example from the personality data
+      let personalizedTouch = "";
+      if (personalityElements.favoriteQuote) {
+        personalizedTouch = `As I like to say, "${personalityElements.favoriteQuote}" `;
+      } else if (personalityElements.responseExamples && personalityElements.responseExamples.length > 0) {
+        const randomExample = personalityElements.responseExamples[
+          Math.floor(Math.random() * personalityElements.responseExamples.length)
+        ];
+        personalizedTouch = `${randomExample} `;
+      }
+      
       return {
-        response: "Wow, I just had a flash of inspiration about how to help you better! Let's take a fresh approach. What are you most excited to learn about today? I'd love to show you some of my favorite features in the app!",
+        response: `${personalizedTouch}Wow, I just had a flash of inspiration about how to help you better! Let's take a fresh approach. What are you most excited to learn about today? I'd love to show you some of my favorite features in the app!`,
         sentiment: "enthusiastic",
         suggestions: [{ text: "Would you like to explore our dashboard for inspiration?", path: "/" }],
         followUpQuestions: [
