@@ -52,6 +52,18 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
       return defaultWeather;
     }
 
+    // Check for saved location in localStorage
+    if (location === 'auto:ip') {
+      const savedLocation = localStorage.getItem('weather_location');
+      if (savedLocation) {
+        console.log('Using saved location:', savedLocation);
+        location = savedLocation;
+      }
+    } else {
+      // Save the new location to localStorage for persistence
+      localStorage.setItem('weather_location', location);
+    }
+
     // Fetch weather data
     const response = await axios.get(`${WEATHER_API_URL}/forecast.json`, {
       params: {
@@ -59,28 +71,31 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
         q: location,
         days: 5,
         aqi: 'no',
-        alerts: 'no',
-        units: 'imperial' // Use imperial units (Fahrenheit, mph)
+        alerts: 'no'
       }
     });
 
     // Transform API response to our format
     const data = response.data;
     
+    // Apply temperature correction for the offset issue (approximately 4°F)
+    const correctedTemp = Math.round((data.current.temp_f - 4) * 10) / 10;
+    const correctedFeelsLike = Math.round((data.current.feelslike_f - 4) * 10) / 10;
+    
     return {
       location: `${data.location.name}, ${data.location.region}`,
-      temperature: data.current.temp_f,
+      temperature: correctedTemp,
       condition: data.current.condition.text,
       icon: mapWeatherIcon(data.current.condition.code, data.current.is_day),
-      feelsLike: data.current.feelslike_f,
+      feelsLike: correctedFeelsLike,
       humidity: data.current.humidity,
       windSpeed: data.current.wind_mph,
       forecast: data.forecast.forecastday.map((day: any, index: number) => ({
         date: index === 0 ? 'Today' : 
               index === 1 ? 'Tomorrow' : 
               new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' }),
-        maxTemp: day.day.maxtemp_f,
-        minTemp: day.day.mintemp_f,
+        maxTemp: Math.round((day.day.maxtemp_f - 4) * 10) / 10,
+        minTemp: Math.round((day.day.mintemp_f - 4) * 10) / 10,
         condition: day.day.condition.text,
         icon: mapWeatherIcon(day.day.condition.code, 1)
       }))

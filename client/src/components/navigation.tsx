@@ -30,6 +30,7 @@ import { useState, useEffect } from "react";
 import { TourSettings } from "@/components/tour-settings";
 import { Separator } from "@/components/ui/separator";
 import SidebarCalendar from "@/components/sidebar-calendar";
+import AdminBypass from "@/components/admin-bypass";
 
 const defaultNavItems = [
   { href: "/", label: "Home", icon: Home },
@@ -231,8 +232,9 @@ export default function Navigation() {
               </div>
             </div>
             
-            {/* Help & Support Button */}
-            <div className="mt-4 mx-2">
+            {/* Admin Bypass & Help Buttons */}
+            <div className="mt-4 mx-2 flex flex-col gap-2">
+              <AdminBypass />
               <TourSettings />
             </div>
           </div>
@@ -330,9 +332,22 @@ export default function Navigation() {
           )}
         </div>
         
-        {/* Help & Support */}
-        <div className={cn("mt-auto pt-6", isMinimized ? "absolute bottom-4 left-0 right-0 flex justify-center" : "mt-auto pt-6")}>
-          <TourSettings />
+        {/* Admin Bypass & Help */}
+        <div className={cn(
+          "mt-auto pt-6", 
+          isMinimized 
+            ? "absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2" 
+            : "mt-auto pt-6 flex flex-col gap-2"
+        )}>
+          {/* Admin Bypass */}
+          <div className={cn(!isMinimized && "px-3")}>
+            <AdminBypass />
+          </div>
+          
+          {/* Tour Settings */}
+          <div>
+            <TourSettings />
+          </div>
         </div>
       </div>
     </nav>
