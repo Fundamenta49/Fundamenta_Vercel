@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { CalendarDays } from "lucide-react";
-import SimpleCalendar from "@/components/simple-calendar";
+import { CalendarDays, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Calendar from "@/components/simple-calendar";
 
 /**
  * Sidebar Calendar component
- * Uses SimpleCalendar for a clean, reliable calendar experience
+ * Uses Calendar for a clean, reliable calendar experience
  */
 export default function SidebarCalendar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +20,22 @@ export default function SidebarCalendar() {
         <span className="font-medium">Calendar</span>
       </button>
       
-      <SimpleCalendar isOpen={isOpen} onOpenChange={setIsOpen} />
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="relative bg-white rounded-lg">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-3 right-3 h-6 w-6"
+              onClick={() => setIsOpen(false)}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </Button>
+            <Calendar />
+          </div>
+        </div>
+      )}
     </>
   );
 }

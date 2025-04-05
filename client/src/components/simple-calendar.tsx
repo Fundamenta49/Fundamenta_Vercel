@@ -11,12 +11,6 @@ import {
   addMonths,
   subMonths
 } from "date-fns";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-
-interface CalendarProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-}
 
 interface CalendarEvent {
   name: string;
@@ -32,13 +26,13 @@ const eventTypeColors = {
   reminder: "bg-yellow-500"
 };
 
-export default function SimpleCalendar({ isOpen, onOpenChange }: CalendarProps) {
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+export default function Calendar() {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<EventsMap>({});
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [newEvent, setNewEvent] = useState<string>("");
-  const [eventType, setEventType] = useState<string>("default");
+  const [showModal, setShowModal] = useState(false);
+  const [newEvent, setNewEvent] = useState("");
+  const [eventType, setEventType] = useState("default");
 
   const handleDayClick = (date: Date) => {
     setSelectedDate(date);
@@ -130,53 +124,54 @@ export default function SimpleCalendar({ isOpen, onOpenChange }: CalendarProps) 
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 bg-white">
-        <div className="max-w-md mx-auto bg-white shadow-xl rounded-2xl p-6 relative">
-          {header()}
-          {daysOfWeek()}
-          {cells()}
+    <div className="max-w-md mx-auto bg-white shadow-xl rounded-2xl p-6 relative">
+      <h2 className="sr-only">Calendar</h2>
+      <div aria-hidden="true" className="sr-only">
+        Calendar for viewing and selecting dates
+      </div>
+      
+      {header()}
+      {daysOfWeek()}
+      {cells()}
 
-          {showModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
-                <h3 className="text-lg font-semibold mb-4">Add Event - {format(selectedDate, "PPP")}</h3>
-                <input
-                  type="text"
-                  value={newEvent}
-                  onChange={(e) => setNewEvent(e.target.value)}
-                  placeholder="Event name"
-                  className="w-full p-3 border border-gray-300 rounded-lg mb-4"
-                />
-                <select
-                  value={eventType}
-                  onChange={(e) => setEventType(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg mb-4"
-                >
-                  <option value="default">Default</option>
-                  <option value="meeting">Meeting</option>
-                  <option value="task">Task</option>
-                  <option value="reminder">Reminder</option>
-                </select>
-                <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleAddEvent}
-                    className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
+            <h3 className="text-lg font-semibold mb-4">Add Event - {format(selectedDate, "PPP")}</h3>
+            <input
+              type="text"
+              value={newEvent}
+              onChange={(e) => setNewEvent(e.target.value)}
+              placeholder="Event name"
+              className="w-full p-3 border border-gray-300 rounded-lg mb-4"
+            />
+            <select
+              value={eventType}
+              onChange={(e) => setEventType(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg mb-4"
+            >
+              <option value="default">Default</option>
+              <option value="meeting">Meeting</option>
+              <option value="task">Task</option>
+              <option value="reminder">Reminder</option>
+            </select>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddEvent}
+                className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+              >
+                Add
+              </button>
             </div>
-          )}
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </div>
   );
 }
