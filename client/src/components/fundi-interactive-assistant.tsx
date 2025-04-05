@@ -767,9 +767,13 @@ export default function FundiInteractiveAssistant({
             animate={{ 
               scale: 1, 
               opacity: 1,
-              // Apply the fundiPosition to make the chat open where Fundi was positioned
+              // FORCE the fundiPosition to make the chat open where Fundi was positioned
               x: fundiPosition.x,
               y: fundiPosition.y
+            }}
+            style={{
+              // Extra inline style to enforce position directly
+              transform: `translate(${fundiPosition.x}px, ${fundiPosition.y}px)`
             }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.2 }}
@@ -1167,34 +1171,22 @@ export default function FundiInteractiveAssistant({
               console.log(`Fundi position: x=${fundiPosition.x + info.offset.x}, y=${fundiPosition.y + info.offset.y}`);
             }}
             className="cursor-grab active:cursor-grabbing"
-            onClick={(e) => {
-              // Check if it's a true click:
-              // 1. Either no drag has happened recently
-              const dragStartTime = (window as any).fundiDragStartTime || 0;
-              const timeSinceDragStart = Date.now() - dragStartTime;
-              
-              // 2. Or the drag was very short distance (or no drag happened)
-              const isShortDrag = 
-                Math.abs(e.movementX) < 5 && 
-                Math.abs(e.movementY) < 5;
-              
-              // Only consider it a click if it wasn't immediately after a drag start
-              // or if the drag was really minimal
-              if ((timeSinceDragStart > 300 || isShortDrag)) {
-                toggleOpen();
-                console.log('Opening Fundi from closed state');
-              } else {
-                console.log('Click suppressed - detected as part of drag operation');
-              }
-            }}
           >
-            <FundiAvatarEnhanced
-              size="lg"
-              category={category}
-              glowEffect={true}
-              pulseEffect={true}
-              withShadow={true}
-            />
+            <div 
+              onClick={() => {
+                toggleOpen();
+                console.log("DIRECT CLICK: Opening Fundi from closed state");
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <FundiAvatarEnhanced
+                size="lg"
+                category={category}
+                glowEffect={true}
+                pulseEffect={true}
+                withShadow={true}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

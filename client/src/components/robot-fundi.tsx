@@ -399,12 +399,20 @@ export default function RobotFundi({
         
         {/* Invisible click target overlay - ensures we have a reliable clickable element */}
         <rect 
-          x="25" 
-          y="25" 
-          width="50" 
-          height="50" 
+          x="0" 
+          y="0" 
+          width="100" 
+          height="100" 
           fill="transparent"
-          onClick={openChatOnly}
+          onClick={(e) => {
+            console.log("Button clicked, delegating to RobotFundi handler");
+            // Direct call to open function rather than delegating
+            if (onOpen) {
+              e.stopPropagation();
+              onOpen();
+              console.log("DIRECTLY OPENING FUNDI CHAT");
+            }
+          }}
           style={{ cursor: 'pointer' }}
         />
       </svg>
