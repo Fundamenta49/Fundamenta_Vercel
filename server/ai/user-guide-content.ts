@@ -55,7 +55,9 @@ export const quickGuideInstructions: Record<string, string> = {
   
   "savings-challenges": "Boost your savings with fun challenges. Choose a challenge like the '52 Week Challenge' or 'No-Spend Month' and the app will guide you through it. Track your progress and celebrate your wins along the way.",
   
-  "fundamenta-mortgage": "Fundamenta Mortgage offers a comprehensive home buying experience. Our mortgage calculator helps you estimate monthly payments and total costs. Enter your home price, down payment, loan term, and interest rate to see a detailed breakdown of costs including principal, interest, taxes, and insurance (PITI). You can explore different scenarios like adjusting your down payment or loan term to find what works best for your budget. Our closing cost estimator also helps you prepare for upfront expenses so there are no surprises at closing. When you're ready to proceed, our mortgage guides will walk you through the application process step by step."
+  "fundamenta-mortgage": "Fundamenta Mortgage offers a comprehensive home buying experience. Our mortgage calculator helps you estimate monthly payments and total costs. Enter your home price, down payment, loan term, and interest rate to see a detailed breakdown of costs including principal, interest, taxes, and insurance (PITI). You can explore different scenarios like adjusting your down payment or loan term to find what works best for your budget. Our closing cost estimator also helps you prepare for upfront expenses so there are no surprises at closing. When you're ready to proceed, our mortgage guides will walk you through the application process step by step.",
+  
+  "identity-documents": "Our Identity Documents Guide helps you understand, obtain, and manage essential documents like Social Security cards, birth certificates, and state IDs. Simply select your document type and your state to get customized, step-by-step instructions for obtaining these documents. You'll find detailed information about required forms, fees, processing times, and where to apply. Each guide includes state-specific requirements and contact information for the relevant government agencies. The information is organized in easy-to-follow tabs that guide you through the entire process, from requirements to application steps and what to do after applying."
 };
 
 export const contextualGuidance: Record<string, string> = {
@@ -83,7 +85,9 @@ export const contextualGuidance: Record<string, string> = {
   
   "debt-paydown-milestone": "You've made amazing progress paying down your debt! You've reduced your balance by 25% since you started. Keep up the great work!",
   
-  "mortgage-section": "Welcome to the Mortgage section! Whether you're just starting to think about buying a home or ready to refinance, our tools will help you make informed decisions. The mortgage calculator helps you estimate monthly payments, while our affordability calculator shows what price range fits your budget. If you have questions about any terms or concepts, just ask!"
+  "mortgage-section": "Welcome to the Mortgage section! Whether you're just starting to think about buying a home or ready to refinance, our tools will help you make informed decisions. The mortgage calculator helps you estimate monthly payments, while our affordability calculator shows what price range fits your budget. If you have questions about any terms or concepts, just ask!",
+  
+  "identity-documents-section": "Welcome to the Identity Documents Guide! This tool helps you navigate the sometimes confusing process of obtaining essential documents like Social Security cards, birth certificates, and state IDs. Simply select your document type and state to get personalized instructions. The information is organized in easy-to-follow tabs that walk you through requirements, application steps, and what to do after applying. If you have any questions about a specific document or process, just ask me!"
 };
 
 export const userGuideContent = `
@@ -195,6 +199,17 @@ Build important life skills:
 - Track your progress through courses
 - Apply what you learn with practical exercises
 - Earn badges for completing learning milestones
+
+## Identity Documents Guide
+
+Navigate the process of obtaining essential documents with ease:
+
+- Select from document types including Social Security cards, birth certificates, and state IDs
+- Get state-specific information tailored to your location
+- Follow clear step-by-step instructions organized in easy-to-navigate tabs
+- Access details about required forms, fees, processing times, and application locations
+- Find direct links to official government resources and application forms
+- Learn when and why these documents are needed in different life situations
 
 ## Getting Help
 
