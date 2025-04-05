@@ -55,9 +55,14 @@ interface SmartPrompt {
 
 type LifeSkillsTabId = "dashboard" | "search" | "financial" | "cooking" | "home" | "time" | "communication" | "shopping" | "identity";
 
+// Interfaces
+interface LifeSkillsComponentProps {
+  initialTab?: string;
+}
+
 // Complete implementation of Life Skills component with horizontal tabs and search functionality
-export const LifeSkillsComponent = () => {
-  const [activeTab, setActiveTab] = useState<LifeSkillsTabId>("dashboard");
+export const LifeSkillsComponent = ({ initialTab = "dashboard" }: LifeSkillsComponentProps) => {
+  const [activeTab, setActiveTab] = useState<LifeSkillsTabId>(initialTab as LifeSkillsTabId);
   const [searchQuery, setSearchQuery] = useState("");
   const [guidance, setGuidance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

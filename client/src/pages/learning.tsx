@@ -79,6 +79,15 @@ export default function Learning() {
   // Group courses by categories
   const LIFE_SKILLS: Course[] = [
     {
+      id: 'identity-documents',
+      title: 'Identity Documents',
+      description: 'Learn how to obtain and manage essential identity documents',
+      icon: Icons.BookOpen,
+      path: '/learning/life-skills?tab=identity',
+      level: 'beginner',
+      new: true
+    },
+    {
       id: 'shopping-buddy',
       title: 'Shopping Buddy',
       description: 'Get help with grocery planning and healthy food choices',
