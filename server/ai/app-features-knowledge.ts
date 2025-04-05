@@ -114,7 +114,7 @@ Our career development suite helps users advance professionally and navigate the
 ### 3. Wellness Coach
 Our mental and emotional wellness tools provide support, guidance, and resources for overall wellbeing:
 
-- **Stress Management** (/wellness/stress-management): A comprehensive stress reduction platform that:
+- **Stress Management** (/wellness?section=stress-management): A comprehensive stress reduction platform that:
   * Offers guided breathing exercises
   * Provides progressive muscle relaxation techniques
   * Features cognitive reframing tools
@@ -123,7 +123,7 @@ Our mental and emotional wellness tools provide support, guidance, and resources
   * Provides workplace stress strategies
   * Features relaxation audio sessions
 
-- **Sleep Tracker** (/wellness/sleep-tracker): A sleep improvement system that:
+- **Sleep Tracker** (/wellness?section=sleep): A sleep improvement system that:
   * Tracks sleep duration and quality
   * Provides sleep hygiene recommendations
   * Offers bedtime routine suggestions
@@ -132,7 +132,7 @@ Our mental and emotional wellness tools provide support, guidance, and resources
   * Provides sleep pattern analysis
   * Offers relaxing sleep sounds
 
-- **Mindfulness Practice** (/wellness/mindfulness): A meditation and mindfulness platform that:
+- **Mindfulness Practice** (/wellness?section=mindfulness): A meditation and mindfulness platform that:
   * Provides guided meditation sessions of various lengths
   * Offers specialized meditation for anxiety, focus, and sleep
   * Includes mindful breathing exercises
@@ -141,7 +141,7 @@ Our mental and emotional wellness tools provide support, guidance, and resources
   * Offers progressive courses from beginner to advanced
   * Includes mindful walking and eating guidance
 
-- **Mental Health Resources** (/wellness/mental-health-resources): A supportive resource center that:
+- **Mental Health Resources** (/wellness?section=mental-health): A supportive resource center that:
   * Provides educational content about common mental health conditions
   * Offers self-assessment tools
   * Includes coping strategy libraries
@@ -150,7 +150,7 @@ Our mental and emotional wellness tools provide support, guidance, and resources
   * Offers workplace mental health resources
   * Includes professional help-seeking guidance
 
-- **Journal** (/wellness/journal): A therapeutic writing platform that:
+- **Journal** (/wellness?section=journal): A therapeutic writing platform that:
   * Provides guided journaling prompts
   * Offers mood tracking and analysis
   * Includes gratitude practice exercises
