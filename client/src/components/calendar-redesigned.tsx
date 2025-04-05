@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { format, addDays, eachDayOfInterval, startOfWeek, endOfWeek, isToday, isSameMonth } from 'date-fns';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Plus } from 'lucide-react';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday, addDays, isSameDay } from 'date-fns';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
 // Define types
@@ -10,402 +9,266 @@ type Event = {
   id: string;
   title: string;
   date: Date;
-  startTime: string;
-  endTime: string;
   category: string;
-  location?: string;
-  attendees?: string[];
+  color: string;
 };
 
 export default function CalendarRedesigned() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('week');
+  const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('month');
   
   // Mock data for events
   const [events] = useState<Event[]>([
     {
       id: '1',
-      title: 'Daily standup',
-      date: new Date(),
-      startTime: '09:00',
-      endTime: '10:00',
+      title: 'Team Meeting',
+      date: new Date(2025, 3, 5), // April 5, 2025
       category: 'work',
-      location: 'Conference Room A',
-      attendees: ['john@example.com', 'jane@example.com', 'mark@example.com', 'sarah@example.com']
+      color: 'bg-blue-200 text-blue-800'
     },
     {
       id: '2',
-      title: 'Weekly Review',
-      date: addDays(new Date(), 1),
-      startTime: '10:00',
-      endTime: '12:00',
-      category: 'work',
-      attendees: ['boss@example.com', 'john@example.com']
+      title: 'Dentist',
+      date: new Date(2025, 3, 7), // April 7, 2025
+      category: 'health',
+      color: 'bg-pink-200 text-pink-800'
     },
     {
       id: '3',
-      title: 'Check Up to Doctor',
-      date: addDays(new Date(), 2),
-      startTime: '09:00',
-      endTime: '10:00',
-      category: 'health',
-      location: 'Medical Center'
+      title: 'Budget Review',
+      date: new Date(2025, 3, 7), // April 7, 2025
+      category: 'finance',
+      color: 'bg-green-200 text-green-800'
     },
     {
       id: '4',
-      title: 'Agencies Birthday',
-      date: new Date(),
-      startTime: '11:00',
-      endTime: '13:00',
-      category: 'personal'
+      title: 'Client Call',
+      date: new Date(2025, 3, 6), // April 6, 2025
+      category: 'work',
+      color: 'bg-orange-200 text-orange-800'
     },
     {
       id: '5',
-      title: 'Bazaar',
-      date: addDays(new Date(), 2),
-      startTime: '10:00',
-      endTime: '12:00',
-      category: 'personal',
-      location: 'City Center',
-      attendees: ['friend1@example.com', 'friend2@example.com']
-    },
-    {
-      id: '6',
-      title: 'Meeting with Client',
-      date: addDays(new Date(), 1),
-      startTime: '12:00',
-      endTime: '13:00',
-      category: 'work',
-      attendees: ['client@example.com', 'john@example.com', 'jane@example.com', 'mark@example.com']
-    },
-    {
-      id: '7',
-      title: 'Lunch Break',
-      date: addDays(new Date(), 2),
-      startTime: '12:00',
-      endTime: '13:00',
-      category: 'personal'
+      title: 'Fitness Class',
+      date: new Date(2025, 3, 14), // April 14, 2025
+      category: 'health',
+      color: 'bg-cyan-200 text-cyan-800'
     }
   ]);
   
-  // Category colors for events
-  const categoryColors: Record<string, { bg: string, border: string }> = {
-    work: { 
-      bg: "bg-red-100", 
-      border: "border-l-4 border-red-500"
-    },
-    health: { 
-      bg: "bg-green-100", 
-      border: "border-l-4 border-green-500"
-    },
-    personal: { 
-      bg: "bg-yellow-100", 
-      border: "border-l-4 border-yellow-500"
-    },
-    learning: { 
-      bg: "bg-blue-100", 
-      border: "border-l-4 border-blue-500"
-    }
-  };
-  
-  // Helper function to get avatar info by email
-  const getAvatarByEmail = (email: string) => {
-    const name = email.split('@')[0];
-    const colors = [
-      'bg-red-500',
-      'bg-blue-500',
-      'bg-green-500',
-      'bg-yellow-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-indigo-500'
-    ];
-    
-    // Use a deterministic method to assign colors
-    const colorIndex = name.length % colors.length;
-    return {
-      name,
-      color: colors[colorIndex]
-    };
-  };
-  
   // Helper to get events for a specific day
   const getEventsForDay = (date: Date) => {
-    return events.filter(event => 
-      event.date.getDate() === date.getDate() &&
-      event.date.getMonth() === date.getMonth() &&
-      event.date.getFullYear() === date.getFullYear()
-    );
+    return events.filter(event => isSameDay(event.date, date));
   };
   
-  // Month mini-calendar for sidebar
-  const MonthMiniCalendar = () => {
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    
-    // Get days of the month plus any days needed to complete the weeks
-    const startDate = startOfWeek(firstDayOfMonth);
-    const endDate = endOfWeek(lastDayOfMonth);
-    const days = eachDayOfInterval({ start: startDate, end: endDate });
-    
-    // Days of the week
-    const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-    
-    return (
-      <div className="bg-white rounded-lg p-4 border">
-        <div className="flex items-center justify-between mb-4">
-          <button className="p-1 text-gray-500 hover:text-gray-800">
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <h3 className="text-md font-medium">March</h3>
-          <button className="p-1 text-gray-500 hover:text-gray-800">
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-7 gap-1 mb-1">
-          {daysOfWeek.map(day => (
-            <div key={day} className="text-center text-xs text-gray-500 font-medium py-1">
-              {day}
-            </div>
-          ))}
-        </div>
-        
-        <div className="grid grid-cols-7 gap-1">
-          {days.map((day, i) => {
-            const isCurrentDay = isToday(day);
-            const inCurrentMonth = isSameMonth(day, currentDate);
-            
-            return (
-              <button
-                key={i}
-                className={cn(
-                  "text-center py-1 rounded-full text-sm",
-                  isCurrentDay && "bg-blue-600 text-white",
-                  !isCurrentDay && inCurrentMonth && "text-gray-800 hover:bg-gray-100",
-                  !inCurrentMonth && "text-gray-400"
-                )}
-              >
-                {format(day, 'd')}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
+  // Handler for previous month navigation
+  const handlePreviousMonth = () => {
+    setCurrentDate(subMonths(currentDate, 1));
   };
   
-  // My Schedule component for sidebar
-  const MySchedule = () => {
-    return (
-      <div className="bg-white rounded-lg p-4 border mt-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium">My Schedule</h3>
-          <ChevronDown className="h-4 w-4 text-gray-500" />
-        </div>
-        
-        <div className="space-y-2">
-          {['Daily Standup', 'Weekly Review', 'Team Meeting', 'Lunch Break', 'Client Meeting', 'Other'].map(item => (
-            <div key={item} className="flex items-center">
-              <input type="checkbox" defaultChecked className="mr-3" />
-              <span className="text-sm">{item}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  // Handler for next month navigation
+  const handleNextMonth = () => {
+    setCurrentDate(addMonths(currentDate, 1));
   };
   
-  // Categories component for sidebar
-  const Categories = () => {
-    const categories = [
-      { name: 'Work', color: 'bg-red-500', count: 18 },
-      { name: 'Learning', color: 'bg-blue-500', count: 5 },
-      { name: 'Health', color: 'bg-green-500', count: 7 },
-      { name: 'Personal', color: 'bg-yellow-500', count: 12 },
-      { name: 'Other', color: 'bg-gray-500', count: 3 }
-    ];
-    
-    return (
-      <div className="bg-white rounded-lg p-4 border mt-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium">Categories</h3>
-          <ChevronDown className="h-4 w-4 text-gray-500" />
-        </div>
-        
-        <div className="space-y-3">
-          {categories.map(category => (
-            <div key={category.name} className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className={`w-3 h-3 rounded-full ${category.color} mr-3`}></div>
-                <span className="text-sm">{category.name}</span>
-              </div>
-              <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-                {category.count}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  // Handler for current month navigation
+  const handleCurrentMonth = () => {
+    setCurrentDate(new Date());
   };
   
-  // Week Calendar View
-  const WeekCalendarView = () => {
-    // Get the current week's days
-    const weekStart = startOfWeek(currentDate);
-    const weekDays = eachDayOfInterval({
-      start: weekStart,
-      end: endOfWeek(currentDate)
-    });
+  // Handler for view change
+  const handleViewChange = (view: 'day' | 'week' | 'month') => {
+    setCurrentView(view);
+  };
+  
+  // Month View Component
+  const MonthView = () => {
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(currentDate);
+    const calendarStart = startOfWeek(monthStart);
+    const calendarEnd = endOfWeek(monthEnd);
     
-    // Map of hours to display
-    const hours = ['09 AM', '10 AM', '11 AM', '12 PM'];
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
     
-    return (
-      <div className="h-full flex flex-col">
-        {/* Header with month and view toggles */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <h2 className="text-2xl font-bold text-gray-800">
-              {format(currentDate, 'MMMM, yyyy')}
-            </h2>
-            <ChevronDown className="h-5 w-5 text-gray-500" />
-          </div>
-          
-          <div className="bg-gray-100 rounded-full p-1 flex">
-            <button className="px-4 py-1 rounded-full">Day</button>
-            <button className="px-4 py-1 rounded-full bg-white shadow">Week</button>
-            <button className="px-4 py-1 rounded-full">Month</button>
-          </div>
-        </div>
-        
-        {/* Calendar info and actions */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <CalendarIcon className="h-5 w-5 text-blue-500" />
-            <span className="text-blue-500">45 events</span>
-          </div>
-          
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-1" />
-            New Event
+    // Navigation controls for month view
+    const MonthNavigation = () => (
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold text-indigo-900">April 2025</h2>
+        <div className="flex space-x-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handlePreviousMonth}
+            className="border-gray-300"
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Previous Month
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleCurrentMonth}
+            className="border-gray-300"
+          >
+            Current Month
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleNextMonth}
+            className="border-gray-300"
+          >
+            Next Month
+            <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
-        
-        {/* Week header */}
-        <div className="flex border-b">
-          {/* Time column header */}
-          <div className="w-24 text-center p-2 font-medium text-gray-500">
-            UTC +1
+      </div>
+    );
+    
+    return (
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="p-4">
+          {/* Month header with navigation */}
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-indigo-900">Calendar</h1>
+            <Button className="rounded-full bg-white text-indigo-800 border border-gray-200 shadow-sm hover:bg-gray-50">
+              <Plus className="h-4 w-4 mr-1" />
+              New Event
+            </Button>
           </div>
           
-          {/* Day columns headers */}
-          {weekDays.map((day, i) => (
-            <div key={i} className="flex-1 text-center p-2 border-l">
-              <div className="font-medium">{format(day, 'd')}</div>
-              <div className="text-sm text-gray-500">{format(day, 'EEEE')}</div>
+          {/* View toggle buttons */}
+          <div className="flex mb-6">
+            <div className="bg-gray-100 p-1 rounded-lg flex">
+              <button 
+                className={cn(
+                  "px-6 py-1 rounded-md font-medium text-sm",
+                  currentView === 'day' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('day')}
+              >
+                Day
+              </button>
+              <button 
+                className={cn(
+                  "px-6 py-1 rounded-md font-medium text-sm",
+                  currentView === 'week' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('week')}
+              >
+                Week
+              </button>
+              <button 
+                className={cn(
+                  "px-6 py-1 rounded-md font-medium text-sm",
+                  currentView === 'month' ? "bg-white shadow-sm" : "text-gray-600"
+                )}
+                onClick={() => handleViewChange('month')}
+              >
+                Month
+              </button>
             </div>
-          ))}
-        </div>
-        
-        {/* Calendar grid */}
-        <div className="flex-grow overflow-auto">
-          {/* Time rows */}
-          {hours.map((hour, hourIndex) => (
-            <div key={hourIndex} className="flex border-b min-h-[100px]">
-              {/* Time column */}
-              <div className="w-24 text-center p-2 text-gray-500 font-medium">
-                {hour}
+          </div>
+          
+          {/* Month navigation */}
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-indigo-900">{format(currentDate, 'MMMM yyyy')}</h2>
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handlePreviousMonth}
+                className="border-gray-200 hover:bg-gray-50"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Previous Month</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleCurrentMonth}
+                className="border-gray-200 hover:bg-gray-50"
+              >
+                Current Month
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleNextMonth}
+                className="border-gray-200 hover:bg-gray-50"
+              >
+                <ChevronRight className="h-4 w-4" />
+                <span className="sr-only">Next Month</span>
+              </Button>
+            </div>
+          </div>
+          
+          {/* Calendar grid */}
+          <div className="grid grid-cols-7 gap-px border rounded-lg overflow-hidden bg-gray-200">
+            {/* Day headers */}
+            {daysOfWeek.map((day) => (
+              <div key={day} className="bg-gray-50 py-2 text-center text-gray-600 text-sm font-medium">
+                {day}
               </div>
+            ))}
+            
+            {/* Calendar cells */}
+            {days.map((day, i) => {
+              const dayEvents = getEventsForDay(day);
+              const isCurrentMonth = isSameMonth(day, currentDate);
+              const isCurrentDay = isToday(day);
               
-              {/* Day columns */}
-              {weekDays.map((day, dayIndex) => {
-                const dayEvents = getEventsForDay(day).filter(event => 
-                  event.startTime.startsWith(hour.split(' ')[0].padStart(2, '0'))
-                );
-                
-                return (
-                  <div key={dayIndex} className="flex-1 p-1 border-l">
-                    {dayEvents.map((event, eventIndex) => (
+              return (
+                <div 
+                  key={i} 
+                  className={cn(
+                    "h-32 p-1 bg-white",
+                    !isCurrentMonth && "bg-gray-50",
+                    isCurrentDay && "bg-blue-50"
+                  )}
+                >
+                  {/* Date number */}
+                  <div className="flex justify-between items-start">
+                    <span 
+                      className={cn(
+                        "inline-block rounded-full w-6 h-6 text-center leading-6 text-sm",
+                        isCurrentDay && "bg-blue-600 text-white",
+                        !isCurrentMonth && "text-gray-400"
+                      )}
+                    >
+                      {format(day, 'd')}
+                    </span>
+                  </div>
+                  
+                  {/* Events for this day */}
+                  <div className="mt-1 space-y-1 max-h-24 overflow-hidden">
+                    {dayEvents.map((event) => (
                       <div 
-                        key={eventIndex}
+                        key={event.id}
                         className={cn(
-                          "rounded-md p-2 mb-1",
-                          categoryColors[event.category]?.bg || "bg-gray-100",
-                          categoryColors[event.category]?.border || "border-l-4 border-gray-400"
+                          "px-2 py-1 text-xs rounded truncate",
+                          event.color
                         )}
                       >
-                        <div className="font-medium text-sm">{event.title}</div>
-                        <div className="text-xs flex items-center mt-1">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {event.startTime} - {event.endTime}
-                        </div>
-                        
-                        {event.attendees && event.attendees.length > 0 && (
-                          <div className="flex items-center mt-2">
-                            <div className="flex -space-x-2">
-                              {event.attendees.slice(0, 3).map((email, i) => {
-                                const avatar = getAvatarByEmail(email);
-                                return (
-                                  <Avatar key={i} className="h-6 w-6 border border-white">
-                                    <AvatarFallback className={avatar.color}>
-                                      {avatar.name.charAt(0).toUpperCase()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                );
-                              })}
-                            </div>
-                            {event.attendees.length > 3 && (
-                              <span className="text-xs ml-1 text-gray-500">
-                                +{event.attendees.length - 3} Other
-                              </span>
-                            )}
-                          </div>
-                        )}
+                        {event.title}
                       </div>
                     ))}
                   </div>
-                );
-              })}
-            </div>
-          ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );
   };
   
+  // Main render
   return (
-    <div className="h-full bg-gray-50 flex">
-      {/* Left sidebar */}
-      <div className="w-64 p-4 border-r">
-        <MonthMiniCalendar />
-        <MySchedule />
-        <Categories />
-      </div>
-      
-      {/* Main content */}
-      <div className="flex-1 p-6">
-        <div className="flex flex-col h-full">
-          <WeekCalendarView />
-        </div>
-      </div>
+    <div className="h-full bg-gray-50 p-6">
+      {currentView === 'month' && <MonthView />}
+      {/* We can add other views like DayView and WeekView later */}
     </div>
   );
 }
-
-// Helper components
-const ChevronDown = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none"
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <path d="m6 9 6 6 6-6"/>
-  </svg>
-);
