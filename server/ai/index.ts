@@ -296,7 +296,7 @@ export function processActions(aiResponse: any, category: string, context: AICon
       if (suggestion.path) {
         // Verify the path is in our valid client routes list
         if (validClientRoutes.includes(suggestion.path)) {
-          // Ensure the suggestion text is phrased as a question seeking permission
+          // ALWAYS ensure the suggestion text is phrased as a question seeking permission
           let suggestionText = suggestion.text || '';
           
           try {

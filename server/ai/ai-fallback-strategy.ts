@@ -118,10 +118,6 @@ export class OpenAIProvider implements AIProvider {
     message: string, 
     preferredCategory?: string
   ): Promise<{ category: string; confidence: number }> {
-    if (preferredCategory) {
-      return { category: preferredCategory, confidence: 1.0 };
-    }
-    
     // First, check for special phrases like financial education or financial literacy
     const lowerMessage = message.toLowerCase();
     if ((lowerMessage.includes('financial') && lowerMessage.includes('learning')) ||
@@ -131,6 +127,27 @@ export class OpenAIProvider implements AIProvider {
         (lowerMessage.includes('schedule') && lowerMessage.includes('financial'))) {
       console.log('OpenAI provider - early detection: Financial education query, categorizing as finance');
       return { category: "finance", confidence: 0.95 };
+    }
+    
+    // Check for mental health/wellness indicators which should override any other categorization
+    if (lowerMessage.includes('anxiety') || 
+        lowerMessage.includes('worried') || 
+        lowerMessage.includes('stressed') ||
+        lowerMessage.includes('feeling') ||
+        lowerMessage.includes('mental health') || 
+        lowerMessage.includes('overwhelmed') ||
+        lowerMessage.includes('scared') ||
+        lowerMessage.includes('nervous') ||
+        lowerMessage.includes('afraid') || 
+        lowerMessage.includes('panic') ||
+        lowerMessage.includes('meditation')) {
+      console.log('OpenAI provider - early detection: Mental health/wellness query, categorizing as wellness');
+      return { category: "wellness", confidence: 0.9 };
+    }
+    
+    // Only use preferred category if it's not overridden by content-specific categorization
+    if (preferredCategory) {
+      return { category: preferredCategory, confidence: 0.8 };
     }
     
     try {
@@ -320,8 +337,36 @@ export class HuggingFaceProvider implements AIProvider {
     message: string, 
     preferredCategory?: string
   ): Promise<{ category: string; confidence: number }> {
+    // First, check for special phrases like financial education or financial literacy
+    const lowerMessage = message.toLowerCase();
+    if ((lowerMessage.includes('financial') && lowerMessage.includes('learning')) ||
+        (lowerMessage.includes('financial') && lowerMessage.includes('education')) ||
+        (lowerMessage.includes('financial literacy')) ||
+        (lowerMessage.includes('learn') && lowerMessage.includes('finance')) ||
+        (lowerMessage.includes('schedule') && lowerMessage.includes('financial'))) {
+      console.log('HuggingFace provider - early detection: Financial education query, categorizing as finance');
+      return { category: "finance", confidence: 0.95 };
+    }
+    
+    // Check for mental health/wellness indicators which should override any other categorization
+    if (lowerMessage.includes('anxiety') || 
+        lowerMessage.includes('worried') || 
+        lowerMessage.includes('stressed') ||
+        lowerMessage.includes('feeling') ||
+        lowerMessage.includes('mental health') || 
+        lowerMessage.includes('overwhelmed') ||
+        lowerMessage.includes('scared') ||
+        lowerMessage.includes('nervous') ||
+        lowerMessage.includes('afraid') || 
+        lowerMessage.includes('panic') ||
+        lowerMessage.includes('meditation')) {
+      console.log('HuggingFace provider - early detection: Mental health/wellness query, categorizing as wellness');
+      return { category: "wellness", confidence: 0.9 };
+    }
+    
+    // Only use preferred category if it's not overridden by content-specific categorization
     if (preferredCategory) {
-      return { category: preferredCategory, confidence: 1.0 };
+      return { category: preferredCategory, confidence: 0.8 };
     }
     
     try {
