@@ -149,14 +149,27 @@ export default function VehicleGuide() {
     const initCamera = async () => {
       if (isCameraOpen && videoRef.current && !capturedImage) {
         try {
-          // Request camera permissions and get stream
+          // Request camera permissions and get stream with higher resolution
           stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: 'environment' } // Use back camera on mobile if available
+            video: { 
+              facingMode: 'environment', // Use back camera on mobile if available
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            } 
           });
           
           // Connect the stream to video element
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
+            
+            // Add an event listener to ensure video is playing
+            videoRef.current.onloadedmetadata = () => {
+              if (videoRef.current) {
+                videoRef.current.play().catch(e => {
+                  console.error('Error playing video:', e);
+                });
+              }
+            };
           }
         } catch (err) {
           console.error('Error accessing camera:', err);
@@ -165,24 +178,9 @@ export default function VehicleGuide() {
       }
     };
     
-    // Watch for changes to Dialog open state
-    const dialogTrigger = document.querySelector('[aria-haspopup="dialog"]');
-    const dialogElement = document.querySelector('[role="dialog"]');
-    
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'aria-expanded' && dialogTrigger) {
-          const isOpen = dialogTrigger.getAttribute('aria-expanded') === 'true';
-          setIsCameraOpen(isOpen);
-          if (isOpen) {
-            initCamera();
-          }
-        }
-      });
-    });
-    
-    if (dialogTrigger) {
-      observer.observe(dialogTrigger, { attributes: true });
+    // Initialize camera when dialog opens
+    if (isCameraOpen) {
+      initCamera();
     }
     
     // Clean up camera stream when component unmounts or dialog closes
@@ -192,7 +190,9 @@ export default function VehicleGuide() {
           track.stop();
         });
       }
-      observer.disconnect();
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
     };
   }, [isCameraOpen, capturedImage]);
 
@@ -613,7 +613,7 @@ export default function VehicleGuide() {
                           <Camera className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="w-[95vw] max-w-full sm:max-w-md mx-auto fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                      <DialogContent className="w-[95vw] max-w-full sm:max-w-md mx-auto fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background border shadow-lg">
                         <DialogHeader>
                           <DialogTitle>Scan VIN with Camera</DialogTitle>
                           <DialogDescription>
@@ -642,12 +642,13 @@ export default function VehicleGuide() {
                               </Button>
                             </div>
                           ) : (
-                            <div className="bg-muted rounded-md aspect-video relative overflow-hidden">
+                            <div className="bg-black rounded-md aspect-video relative overflow-hidden">
                               <video 
                                 ref={videoRef} 
                                 className="w-full h-full object-cover"
                                 autoPlay 
                                 playsInline
+                                muted
                               />
                               <canvas 
                                 ref={canvasRef} 
