@@ -612,7 +612,7 @@ export default function VehicleGuide() {
                           <Camera className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-md">
+                      <DialogContent className="max-w-[95vw] w-full sm:max-w-md">
                         <DialogHeader>
                           <DialogTitle>Scan VIN with Camera</DialogTitle>
                           <DialogDescription>
