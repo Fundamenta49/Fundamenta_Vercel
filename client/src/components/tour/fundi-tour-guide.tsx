@@ -30,39 +30,71 @@ export default function FundiTourGuide() {
   // Calculate progress
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
   
-  // Get a different position for Fundi for each step of the tour
+  // Get positions based on feature cards on the page and tour step
   const getFundiPosition = (stepIndex: number, isMobile: boolean) => {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
-    // For smaller screens, use a fixed center-aligned position for consistency
-    if (viewportWidth < 500) {
-      // On very small screens, keep Fundi in a safe, fixed position
-      return { 
-        x: Math.min(viewportWidth / 2 - 40, viewportWidth - 80), 
-        y: 120  // Fixed position at top center
-      };
+    // Find all the feature cards on the page
+    const featureCards = document.querySelectorAll('.card');
+    const cardPositions = [];
+    
+    // Try to position Fundi near feature cards if they exist
+    if (featureCards.length > 0) {
+      featureCards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        // For each card, create a position near it
+        cardPositions.push({
+          x: Math.min(rect.left - 60, viewportWidth - 100), // Position to the left of the card
+          y: rect.top + 20 // Near the top of the card
+        });
+        
+        // Also add positions for the right side of cards for variety
+        cardPositions.push({
+          x: Math.min(rect.right + 20, viewportWidth - 100), // Position to the right of the card
+          y: rect.top + 20 // Near the top of the card
+        });
+      });
     }
     
-    // For mobile and small screens that aren't tiny, use more conservative positions
-    if (isMobile) {
-      // Use a single consistent position for mobile
-      return { 
-        x: Math.min(viewportWidth / 2 - 40, viewportWidth - 80), 
-        y: 120  // Keep in a fixed position at top
-      };
-    } else {
-      // On desktop, we'll use just 2 alternating positions
-      // This reduces animation and prevents Fundi from moving too far
-      const positions = [
-        { x: viewportWidth / 2 - 40, y: 100 },                   // Top center
-        { x: viewportWidth / 2 - 40, y: Math.min(300, viewportHeight / 2) }  // Middle center, but not too far down
+    // If no cards found or on very small screens, use fallback positions
+    if (cardPositions.length === 0 || viewportWidth < 500) {
+      // Define fallback positions for different points around the screen
+      const fallbackPositions = [
+        { x: Math.min(viewportWidth / 4, viewportWidth - 100),      y: 120 },  // Top left area
+        { x: Math.min(viewportWidth / 2 - 40, viewportWidth - 100), y: 120 },  // Top center
+        { x: Math.min(viewportWidth * 0.75, viewportWidth - 100),   y: 120 },  // Top right area
+        { x: Math.min(viewportWidth / 4, viewportWidth - 100),      y: Math.min(viewportHeight / 2, 400) },  // Middle left
+        { x: Math.min(viewportWidth * 0.75, viewportWidth - 100),   y: Math.min(viewportHeight / 2, 400) },  // Middle right
       ];
       
-      // Alternate between just two positions for stability
-      const positionIndex = stepIndex % positions.length;
-      return positions[positionIndex];
+      // For mobile, just use a subset of positions to avoid going off-screen
+      if (isMobile) {
+        const mobilePositions = [
+          { x: Math.min(viewportWidth / 2 - 40, viewportWidth - 100), y: 120 },  // Top center
+          { x: Math.min(viewportWidth / 2 - 40, viewportWidth - 100), y: Math.min(viewportHeight / 2, 300) },  // Middle center
+        ];
+        
+        // Use modulo to cycle through positions safely
+        const positionIndex = stepIndex % mobilePositions.length;
+        return mobilePositions[positionIndex];
+      }
+      
+      // Use modulo to cycle through fallback positions if no cards found
+      const positionIndex = stepIndex % fallbackPositions.length;
+      return fallbackPositions[positionIndex];
     }
+    
+    // Use the card positions when available
+    // Use modulo to cycle through the positions based on step index
+    const positionIndex = stepIndex % cardPositions.length;
+    
+    // Always ensure position stays within the viewport
+    const position = cardPositions[positionIndex];
+    position.x = Math.max(20, Math.min(position.x, viewportWidth - 100));
+    position.y = Math.max(20, Math.min(position.y, viewportHeight - 200));
+    
+    return position;
   };
 
   // Control Fundi's appearance and position based on the current step
