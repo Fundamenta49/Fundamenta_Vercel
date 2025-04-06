@@ -520,8 +520,8 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
 @media (max-width: 768px) {
   .resizable-chat {
     max-height: 60vh !important; /* Smaller max height on mobile */
-    max-width: 70vw !important; /* Keep width reasonable on mobile */
-    width: 70vw !important; /* Force width to be narrower */
+    max-width: 280px !important; /* Force specific pixel width */
+    width: 280px !important; /* Force width to be fixed */
     right: 10px !important; /* Position from right edge */
   }
 }
