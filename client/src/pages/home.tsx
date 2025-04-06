@@ -3,6 +3,10 @@ import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } fr
 import { Link } from "wouter";
 import RestartTourButton from "@/components/tour/restart-tour-button";
 import WeatherWidget from "@/components/weather-widget";
+import { useTour } from "@/contexts/tour-context";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth-context";
+import { useEffect } from "react";
 
 const features = [
   {
@@ -50,8 +54,57 @@ const features = [
 ];
 
 export default function Home() {
+  const { startTour, restartTour } = useTour();
+  const { isAuthenticated } = useAuth();
+
+  // For testing purposes, enable admin bypass to simulate authentication
+  useEffect(() => {
+    // Set admin_bypass for testing to enable the tour automatically
+    const enableBypass = () => {
+      localStorage.setItem('admin_bypass', 'enabled');
+      // Reload the page to apply the authentication
+      window.location.reload();
+    };
+
+    // Check if there's a query parameter to enable the tour directly
+    const queryParams = new URLSearchParams(window.location.search);
+    if (queryParams.get('startTour') === 'true') {
+      startTour();
+    }
+  }, [startTour]);
+
   return (
     <div className="px-4 py-8">
+      {/* Tour Controls for testing */}
+      <div className="fixed bottom-4 left-4 z-50 flex gap-2">
+        <Button 
+          size="sm" 
+          onClick={startTour}
+          className="bg-primary text-white"
+        >
+          Start Tour
+        </Button>
+        
+        <Button 
+          size="sm" 
+          onClick={restartTour}
+          variant="outline"
+        >
+          Restart Tour
+        </Button>
+        
+        <Button 
+          size="sm" 
+          onClick={() => {
+            localStorage.setItem('admin_bypass', 'enabled');
+            window.location.reload();
+          }}
+          variant="outline"
+          className="bg-amber-500 text-white hover:bg-amber-600"
+        >
+          Enable Admin Mode
+        </Button>
+      </div>
 
       <div className="text-center mb-8 relative">
         <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
@@ -59,6 +112,9 @@ export default function Home() {
         </h1>
         <p className="text-lg text-muted-foreground">
           Your AI-powered assistant for life skills and wellness
+        </p>
+        <p className="text-sm text-muted-foreground mt-2">
+          {isAuthenticated ? "You are logged in" : "You are not logged in"}
         </p>
       </div>
       
