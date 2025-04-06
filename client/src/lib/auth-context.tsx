@@ -43,30 +43,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Initialize auth state from localStorage on component mount
   useEffect(() => {
     const checkAuth = () => {
-      // Check for admin bypass
-      const adminBypass = localStorage.getItem('admin_bypass');
-      
-      if (adminBypass === 'enabled') {
-        // Create an admin user session automatically
-        const userData: AuthUser = {
-          name: 'Admin User',
-          email: 'admin@fundamenta.app',
-          role: 'admin'
-        };
-        
-        setIsAuthenticated(true);
-        setUser(userData);
-        
-        // Store in auth data as well for consistency
-        localStorage.setItem('auth', JSON.stringify({
-          isAuthenticated: true,
-          user: userData
-        }));
-        
-        setLoading(false);
-        return;
-      }
-      
       // Regular auth check
       const authData = localStorage.getItem('auth');
       

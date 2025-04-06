@@ -31,7 +31,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { TourSettings } from "@/components/tour-settings";
 import { Separator } from "@/components/ui/separator";
-import AdminBypass from "@/components/admin-bypass";
 import NotificationPanel from "@/components/notification-panel";
 
 const defaultNavItems = [
@@ -263,11 +262,8 @@ export default function Navigation() {
               </div>
             </div>
             
-            {/* Admin Bypass, Notification Panel, & Help Buttons */}
+            {/* Notification Panel & Help Buttons */}
             <div className="mt-4 mx-2 flex flex-col gap-2">
-              {localStorage.getItem('admin_bypass') === 'enabled' && (
-                <AdminBypass />
-              )}
               <div className="flex justify-center my-2">
                 <NotificationPanel />
               </div>
@@ -403,20 +399,13 @@ export default function Navigation() {
           )}
         </div>
         
-        {/* Admin Bypass & Help */}
+        {/* Notification Panel & Tour Settings */}
         <div className={cn(
           "mt-auto pt-6", 
           isMinimized 
             ? "absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2" 
             : "mt-auto pt-6 flex flex-col gap-2"
         )}>
-          {/* Admin Bypass - Only visible to admins */}
-          {localStorage.getItem('admin_bypass') === 'enabled' && (
-            <div className={cn(!isMinimized && "px-3")}>
-              <AdminBypass />
-            </div>
-          )}
-          
           {/* Notification Panel */}
           <div className={cn(!isMinimized && "px-3", "flex justify-center")}>
             <NotificationPanel />
