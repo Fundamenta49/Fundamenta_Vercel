@@ -97,7 +97,7 @@ export default function ChatInterface({
   const [initialPosition, setInitialPosition] = useState({ left: 0, top: 0, width: 0, height: 0 });
   const [chatSize, setChatSize] = useState({
     width: window.innerWidth < 768 ? 
-      (window.matchMedia('(orientation: portrait)').matches ? '200px' : '280px') : 
+      '280px' : // Same width for both portrait and landscape on mobile
       '350px', 
     height: window.innerWidth < 768 ? '260px' : '350px'
   });
@@ -538,7 +538,7 @@ export default function ChatInterface({
       case 'br': // Bottom-right corner
         width = Math.max(e.clientX - rect.left, 
           window.innerWidth < 768 ? 
-            (window.matchMedia('(orientation: portrait)').matches ? 160 : 200) : 
+            200 : // Same minimum width for both portrait and landscape
             280);
         height = Math.max(e.clientY - rect.top, 
           window.innerWidth < 768 ? 200 : 300);
@@ -546,7 +546,7 @@ export default function ChatInterface({
       case 'bl': // Bottom-left corner
         width = Math.max(rect.right - e.clientX, 
           window.innerWidth < 768 ? 
-            (window.matchMedia('(orientation: portrait)').matches ? 160 : 200) : 
+            200 : // Same minimum width for both portrait and landscape
             280);
         height = Math.max(e.clientY - rect.top, 
           window.innerWidth < 768 ? 200 : 300);
@@ -596,7 +596,7 @@ export default function ChatInterface({
       case 'br': // Bottom-right corner
         width = Math.max(e.touches[0].clientX - rect.left, 
           window.innerWidth < 768 ? 
-            (window.matchMedia('(orientation: portrait)').matches ? 160 : 200) : 
+            200 : // Same minimum width for both portrait and landscape
             280);
         height = Math.max(e.touches[0].clientY - rect.top, 
           window.innerWidth < 768 ? 200 : 300);
@@ -604,7 +604,7 @@ export default function ChatInterface({
       case 'bl': // Bottom-left corner
         width = Math.max(rect.right - e.touches[0].clientX, 
           window.innerWidth < 768 ? 
-            (window.matchMedia('(orientation: portrait)').matches ? 160 : 200) : 
+            200 : // Same minimum width for both portrait and landscape
             280);
         height = Math.max(e.touches[0].clientY - rect.top, 
           window.innerWidth < 768 ? 200 : 300);
