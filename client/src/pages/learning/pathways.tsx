@@ -167,101 +167,139 @@ export default function LearningPathwaysPage() {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid grid-cols-3 sm:grid-cols-7 w-full max-w-4xl mx-auto">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="finance">Finance</TabsTrigger>
-          <TabsTrigger value="learning">Skills</TabsTrigger>
-          <TabsTrigger value="career">Career</TabsTrigger>
-          <TabsTrigger value="wellness">Wellness</TabsTrigger>
-          <TabsTrigger value="fitness">Fitness</TabsTrigger>
-          <TabsTrigger value="emergency">Emergency</TabsTrigger>
-        </TabsList>
+      <div className="mb-6">
+        <h2 className="text-lg font-medium mb-3">Filter by Category</h2>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full max-w-4xl">
+            <TabsTrigger 
+              value="all" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              All
+            </TabsTrigger>
+            <TabsTrigger 
+              value="finance" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Finance
+            </TabsTrigger>
+            <TabsTrigger 
+              value="learning" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Skills
+            </TabsTrigger>
+            <TabsTrigger 
+              value="career" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Career
+            </TabsTrigger>
+            <TabsTrigger 
+              value="wellness" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Wellness
+            </TabsTrigger>
+            <TabsTrigger 
+              value="fitness" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Fitness
+            </TabsTrigger>
+            <TabsTrigger 
+              value="emergency" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Emergency
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value={activeTab}>
-          <div className="grid grid-cols-1 gap-4">
-            {filteredPathways.map(pathway => (
-              <Card key={pathway.id} className="border">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className={`rounded-full p-1.5 ${categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
-                        {pathway.icon}
-                      </div>
-                      <CardTitle className="text-lg">{pathway.title}</CardTitle>
-                    </div>
-                    <Badge variant="outline">
-                      {pathway.modules.length} modules
-                    </Badge>
-                  </div>
-                  <CardDescription className="mt-1">
-                    {pathway.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Progress</span>
-                        <span className="font-medium">{pathway.progress}%</span>
-                      </div>
-                      <Progress value={pathway.progress} className="h-2" />
-                    </div>
-                    
-                    {expandedPath === pathway.id && (
-                      <div className="mt-4 space-y-3 pt-3 border-t">
-                        <h4 className="text-sm font-medium">Modules:</h4>
-                        <div className="space-y-2">
-                          {pathway.modules.map((module) => (
-                            <div key={module.id} className="flex justify-between items-center p-2 rounded-md bg-gray-50">
-                              <div className="flex items-center">
-                                {module.complete ? (
-                                  <div className="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
-                                ) : (
-                                  <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
-                                )}
-                                <span className={module.complete ? "text-sm" : "text-sm text-gray-600"}>
-                                  {module.title}
-                                </span>
-                              </div>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="h-7"
-                                onClick={() => navigate(module.path)}
-                              >
-                                {module.complete ? "Review" : "Start"}
-                              </Button>
-                            </div>
-                          ))}
+          <TabsContent value={activeTab} className="mt-6">
+            <div className="grid grid-cols-1 gap-4">
+              {filteredPathways.map(pathway => (
+                <Card key={pathway.id} className="border">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <div className={`rounded-full p-1.5 ${categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
+                          {pathway.icon}
                         </div>
+                        <CardTitle className="text-lg">{pathway.title}</CardTitle>
                       </div>
-                    )}
-                    
-                    <div className="flex justify-between pt-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => togglePathDetails(pathway.id)}
-                      >
-                        {expandedPath === pathway.id ? "Hide Details" : "Show Details"}
-                      </Button>
-                      
-                      <Button 
-                        variant="default" 
-                        size="sm"
-                        onClick={() => navigate(pathway.modules.find(m => !m.complete)?.path || pathway.modules[0].path)}
-                      >
-                        {pathway.progress > 0 ? "Continue" : "Start"} Pathway
-                      </Button>
+                      <Badge variant="outline">
+                        {pathway.modules.length} modules
+                      </Badge>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+                    <CardDescription className="mt-1">
+                      {pathway.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Progress</span>
+                          <span className="font-medium">{pathway.progress}%</span>
+                        </div>
+                        <Progress value={pathway.progress} className="h-2" />
+                      </div>
+                      
+                      {expandedPath === pathway.id && (
+                        <div className="mt-4 space-y-3 pt-3 border-t">
+                          <h4 className="text-sm font-medium">Modules:</h4>
+                          <div className="space-y-2">
+                            {pathway.modules.map((module) => (
+                              <div key={module.id} className="flex justify-between items-center p-2 rounded-md bg-gray-50">
+                                <div className="flex items-center">
+                                  {module.complete ? (
+                                    <div className="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
+                                  ) : (
+                                    <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                                  )}
+                                  <span className={module.complete ? "text-sm" : "text-sm text-gray-600"}>
+                                    {module.title}
+                                  </span>
+                                </div>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-7"
+                                  onClick={() => navigate(module.path)}
+                                >
+                                  {module.complete ? "Review" : "Start"}
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-between pt-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => togglePathDetails(pathway.id)}
+                        >
+                          {expandedPath === pathway.id ? "Hide Details" : "Show Details"}
+                        </Button>
+                        
+                        <Button 
+                          variant="default" 
+                          size="sm"
+                          onClick={() => navigate(pathway.modules.find(m => !m.complete)?.path || pathway.modules[0].path)}
+                        >
+                          {pathway.progress > 0 ? "Continue" : "Start"} Pathway
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

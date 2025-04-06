@@ -121,60 +121,88 @@ export default function CompletedCoursesPage() {
         </Card>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid grid-cols-3 sm:grid-cols-5 w-full max-w-3xl mx-auto">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="finance">Finance</TabsTrigger>
-          <TabsTrigger value="learning">Learning</TabsTrigger>
-          <TabsTrigger value="career">Career</TabsTrigger>
-          <TabsTrigger value="wellness">Wellness</TabsTrigger>
-        </TabsList>
+      <div className="mb-6">
+        <h2 className="text-lg font-medium mb-3">Filter by Category</h2>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full max-w-3xl">
+            <TabsTrigger 
+              value="all" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              All
+            </TabsTrigger>
+            <TabsTrigger 
+              value="finance" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Finance
+            </TabsTrigger>
+            <TabsTrigger 
+              value="learning" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Learning
+            </TabsTrigger>
+            <TabsTrigger 
+              value="career" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Career
+            </TabsTrigger>
+            <TabsTrigger 
+              value="wellness" 
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+            >
+              Wellness
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value={activeTab}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredCourses.map(course => (
-              <Card key={course.id} className="border-2 border-green-200">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className={`rounded-full p-1.5 ${categoryColors[course.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
-                        {course.icon}
+          <TabsContent value={activeTab} className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredCourses.map(course => (
+                <Card key={course.id} className="border-2 border-green-200">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <div className={`rounded-full p-1.5 ${categoryColors[course.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
+                          {course.icon}
+                        </div>
+                        <CardTitle className="text-base">{course.title}</CardTitle>
                       </div>
-                      <CardTitle className="text-base">{course.title}</CardTitle>
+                      <Badge className="bg-green-600">+{course.points} pts</Badge>
                     </div>
-                    <Badge className="bg-green-600">+{course.points} pts</Badge>
-                  </div>
-                  <CardDescription>
-                    <div className="flex items-center mt-1">
-                      <Check className="h-3.5 w-3.5 text-green-600 mr-1" />
-                      <span>Completed on {course.completedDate}</span>
+                    <CardDescription>
+                      <div className="flex items-center mt-1">
+                        <Check className="h-3.5 w-3.5 text-green-600 mr-1" />
+                        <span>Completed on {course.completedDate}</span>
+                      </div>
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <Badge variant="outline" className="mr-2">
+                          {course.modules} modules
+                        </Badge>
+                        <Badge variant="outline" className="capitalize">
+                          {course.category}
+                        </Badge>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => navigate(course.path)}
+                      >
+                        Review Course
+                      </Button>
                     </div>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <Badge variant="outline" className="mr-2">
-                        {course.modules} modules
-                      </Badge>
-                      <Badge variant="outline" className="capitalize">
-                        {course.category}
-                      </Badge>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => navigate(course.path)}
-                    >
-                      Review Course
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
