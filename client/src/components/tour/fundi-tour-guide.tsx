@@ -37,7 +37,7 @@ export default function FundiTourGuide() {
     
     // Find all the feature cards on the page
     const featureCards = document.querySelectorAll('.card');
-    const cardPositions = [];
+    const cardPositions: Array<{ x: number; y: number }> = [];
     
     // Try to position Fundi near feature cards if they exist
     if (featureCards.length > 0) {
@@ -378,39 +378,29 @@ export default function FundiTourGuide() {
         </div>
       </motion.div>
       
-      {/* Speech Bubble with tour content */}
+      {/* Speech Bubble with tour content - always stays within screen */}
       <motion.div
         className="fixed z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-4"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Use fixed position for speech bubble for stability
-          x: window.innerWidth < 640 
-            ? Math.max(20, Math.min(window.innerWidth / 2 - 125, window.innerWidth - 270)) 
-            : position.x + 90,
-          y: 260  // Fixed position below Fundi to prevent jumping
+          // For consistency across all devices, keep speech bubble at fixed position
+          x: Math.max(20, Math.min(window.innerWidth / 2 - 125, window.innerWidth - 270)),  // Center horizontally on all screens
+          y: window.innerHeight < 600 ? 100 : 200  // Higher on small screens, lower on larger screens
         }}
         transition={{ 
-          type: "tween", // Use tween instead of spring for more controlled animation
-          duration: 0.4,  // Faster, more controlled transition
+          type: "tween", 
+          duration: 0.4,
           ease: "easeInOut"
         }}
         style={{ 
           width: '250px',
-          maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : '80vw',
+          maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : '250px',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
         }}
       >
-        {/* Speech bubble pointer - always at top for visual consistency */}
-        <div 
-          className="absolute w-4 h-4 bg-white border-l border-t border-gray-200 transform -rotate-45"
-          style={{
-            left: '50%', // Centered at the top for a consistent look
-            marginLeft: '-4px',
-            top: '-8px'
-          }}
-        />
+        {/* No pointer for cleaner look - bubble is not directly attached to Fundi for better readability */}
         
         {/* Tour Content */}
         <div className="font-medium text-sm mb-2">{currentStep.title}</div>
