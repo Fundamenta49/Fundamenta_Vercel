@@ -133,6 +133,9 @@ export default function FundiTourGuide() {
     return finalPosition;
   };
 
+  // Track the current route to detect page changes
+  const [currentRoute, setCurrentRoute] = useState<string | null>(null);
+  
   // Control Fundi's appearance and position based on the current step
   useEffect(() => {
     if (!isTourActive || !currentStep) return;
@@ -152,58 +155,68 @@ export default function FundiTourGuide() {
       }, 2000);
     }, 800);
     
-    // Position Fundi based on the current step
-    // Check if we're on mobile
-    const isMobile = window.innerWidth < 640;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // If we have a highlight selector, try to position Fundi near it
-    if (currentStep.highlightSelector) {
-      const targetElement = document.querySelector(currentStep.highlightSelector);
-      if (targetElement) {
-        const rect = targetElement.getBoundingClientRect();
-        
-        // Calculate a position near the element (to the right or below)
-        let newX, newY;
-        
-        if (isMobile) {
-          // On mobile, use dynamic positions but stay within safe zone
-          const position = getFundiPosition(currentStepIndex, true);
-          newX = position.x;
-          newY = position.y;
+    // Only reposition Fundi when the route (page) changes
+    const pageChanged = currentRoute !== currentStep.route;
+    if (pageChanged) {
+      // Update our current route tracking
+      setCurrentRoute(currentStep.route || null);
+      
+      // Position Fundi based on the current step
+      // Check if we're on mobile
+      const isMobile = window.innerWidth < 640;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // If we have a highlight selector, try to position Fundi near it
+      if (currentStep.highlightSelector) {
+        const targetElement = document.querySelector(currentStep.highlightSelector);
+        if (targetElement) {
+          const rect = targetElement.getBoundingClientRect();
           
-          // Log position for debugging
-          console.log(`Fundi position (mobile): x=${newX}px, y=${newY}px, step=${currentStepIndex}`);
-        } else if (rect.right + 150 < viewportWidth) {
-          // Position to the right of the highlight
-          newX = rect.right + 20;
-          newY = rect.top + (rect.height / 2) - 40;
+          // Calculate a position near the element (to the right or below)
+          let newX, newY;
+          
+          if (isMobile) {
+            // On mobile, use dynamic positions but stay within safe zone
+            const position = getFundiPosition(currentStepIndex, true);
+            newX = position.x;
+            newY = position.y;
+            
+            // Log position for debugging
+            console.log(`Fundi position (mobile): x=${newX}px, y=${newY}px, step=${currentStepIndex}`);
+          } else if (rect.right + 150 < viewportWidth) {
+            // Position to the right of the highlight
+            newX = rect.right + 20;
+            newY = rect.top + (rect.height / 2) - 40;
+          } else {
+            // Position below the highlight
+            newX = rect.left + (rect.width / 2) - 40;
+            newY = rect.bottom + 20;
+          }
+          
+          // Ensure Fundi stays within viewport with better margins
+          newX = Math.max(60, Math.min(newX, viewportWidth - 100));
+          newY = Math.max(60, Math.min(newY, viewportHeight - 200));
+          
+          setTargetPosition({ x: newX, y: newY });
+          setAnimate(true);
+          console.log("Repositioning Fundi because page changed");
         } else {
-          // Position below the highlight
-          newX = rect.left + (rect.width / 2) - 40;
-          newY = rect.bottom + 20;
+          // If element not found, use predefined positions
+          const position = getFundiPosition(currentStepIndex, isMobile);
+          setTargetPosition(position);
+          setAnimate(true);
+          console.log(`Fundi position (no element): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
         }
-        
-        // Ensure Fundi stays within viewport with better margins
-        newX = Math.max(60, Math.min(newX, viewportWidth - 100));
-        newY = Math.max(60, Math.min(newY, viewportHeight - 200));
-        
-        setTargetPosition({ x: newX, y: newY });
-        setAnimate(true);
       } else {
-        // If element not found, use predefined positions
+        // For general steps without a specific element, use predefined positions
         const position = getFundiPosition(currentStepIndex, isMobile);
         setTargetPosition(position);
         setAnimate(true);
-        console.log(`Fundi position (no element): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
+        console.log(`Fundi position (general): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
       }
     } else {
-      // For general steps without a specific element, use predefined positions
-      const position = getFundiPosition(currentStepIndex, isMobile);
-      setTargetPosition(position);
-      setAnimate(true);
-      console.log(`Fundi position (general): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
+      console.log("Keeping Fundi at current position - same page");
     }
     
     // Clear any existing timeout
@@ -232,7 +245,7 @@ export default function FundiTourGuide() {
         el.classList.remove('tour-card-highlight');
       });
     };
-  }, [isTourActive, currentStep, currentStepIndex]);
+  }, [isTourActive, currentStep, currentStepIndex, currentRoute]);
   
   // Update position when target changes
   useEffect(() => {
@@ -251,7 +264,7 @@ export default function FundiTourGuide() {
     
     setIsTransitioning(true);
     
-    // Preserve Fundi's current position temporarily during transition
+    // Preserve Fundi's current position during transition
     const currentPosition = {...position};
     
     // Remove any highlights before transitioning
@@ -260,30 +273,62 @@ export default function FundiTourGuide() {
     // Make Fundi think to indicate processing
     setThinking(true);
     
-    // Calculate the next position before transitioning
-    const isMobile = window.innerWidth < 640;
+    // Get the current and next step info
     const nextStepIndex = currentStepIndex + 1;
-    const nextPosition = getFundiPosition(nextStepIndex, isMobile);
     
-    // Call the next step immediately
-    nextStep();
-    
-    // Animate Fundi to move to a new position for the next step
-    setTimeout(() => {
-      // Keep Fundi visible at the current position until the new step's position is calculated
-      // This prevents the disappearing effect
-      if (!animate) {
-        setPosition(currentPosition);
-      }
-      
-      // Set new position for an engaging animated transition
-      setTargetPosition(nextPosition);
-      setAnimate(true);
-      console.log(`Fundi transitioning to: x=${nextPosition.x}px, y=${nextPosition.y}px for step ${nextStepIndex}`);
-      
-      setThinking(false);
+    // Safety check - we shouldn't be here if currentStep is null, but just to be extra safe
+    if (!currentStep) {
+      // If somehow we don't have currentStep, just go to the next step without animations
+      nextStep();
       setIsTransitioning(false);
-    }, 300);
+      return;
+    }
+    
+    // We can't access tourSteps directly as it's in the context provider
+    // Get information about the next step from the context when we move to it
+    
+    // Check if we're moving to a different page - we can compare current and next routes
+    // If we don't have the next step data yet, we'll check after navigation
+    const pageChanging = nextStepIndex < totalSteps && currentStep.route !== null;
+    
+    // Only calculate a new position if we're changing pages
+    // This keeps Fundi in the same position for different steps on the same page
+    if (pageChanging) {
+      // Only calculate new position if page is changing
+      const isMobile = window.innerWidth < 640;
+      const nextPosition = getFundiPosition(nextStepIndex, isMobile);
+      
+      // Call the next step immediately
+      nextStep();
+      
+      // Animate Fundi to move to a new position for the next page
+      setTimeout(() => {
+        // Keep Fundi visible at the current position until the new step's position is calculated
+        if (!animate) {
+          setPosition(currentPosition);
+        }
+        
+        // Set new position for an engaging animated transition
+        setTargetPosition(nextPosition);
+        setAnimate(true);
+        console.log(`Fundi transitioning to: x=${nextPosition.x}px, y=${nextPosition.y}px for step ${nextStepIndex} (page changed)`);
+        
+        setThinking(false);
+        setIsTransitioning(false);
+      }, 300);
+    } else {
+      // No page change, keep Fundi in the same position
+      console.log(`Keeping Fundi in current position for step ${nextStepIndex} (same page)`);
+      
+      // Call the next step immediately
+      nextStep();
+      
+      // Just update state without changing position
+      setTimeout(() => {
+        setThinking(false);
+        setIsTransitioning(false);
+      }, 300);
+    }
   };
   
   // Handle previous step
@@ -295,7 +340,7 @@ export default function FundiTourGuide() {
     
     setIsTransitioning(true);
     
-    // Preserve Fundi's current position temporarily during transition
+    // Preserve Fundi's current position during transition
     const currentPosition = {...position};
     
     // Remove any highlights before transitioning
@@ -304,30 +349,59 @@ export default function FundiTourGuide() {
     // Make Fundi think to indicate processing
     setThinking(true);
     
-    // Calculate the previous position before transitioning
-    const isMobile = window.innerWidth < 640;
+    // Get the current and previous step info
     const prevStepIndex = Math.max(0, currentStepIndex - 1);
-    const prevPosition = getFundiPosition(prevStepIndex, isMobile);
     
-    // Call the previous step immediately
-    prevStep();
-    
-    // Animate Fundi to move to a new position for the previous step
-    setTimeout(() => {
-      // Keep Fundi visible at the current position until the new step's position is calculated
-      // This prevents the disappearing effect
-      if (!animate) {
-        setPosition(currentPosition);
-      }
-      
-      // Set new position for an engaging animated transition
-      setTargetPosition(prevPosition);
-      setAnimate(true);
-      console.log(`Fundi transitioning to: x=${prevPosition.x}px, y=${prevPosition.y}px for step ${prevStepIndex}`);
-      
-      setThinking(false);
+    // Safety check - we shouldn't be here if currentStep is null, but just to be extra safe
+    if (!currentStep) {
+      // If somehow we don't have currentStep, just go to the previous step without animations
+      prevStep();
       setIsTransitioning(false);
-    }, 300);
+      return;
+    }
+    
+    // We're checking if we need to move Fundi
+    // If we're at step 0 or moving within the same page, we don't need to move Fundi
+    const pageChanging = prevStepIndex >= 0 && currentStep.route !== null;
+    
+    // Only calculate a new position if we're changing pages
+    // This keeps Fundi in the same position for different steps on the same page
+    if (pageChanging) {
+      // Only calculate new position if page is changing
+      const isMobile = window.innerWidth < 640;
+      const prevPosition = getFundiPosition(prevStepIndex, isMobile);
+      
+      // Call the previous step immediately
+      prevStep();
+      
+      // Animate Fundi to move to a new position for the previous page
+      setTimeout(() => {
+        // Keep Fundi visible at the current position until the new step's position is calculated
+        if (!animate) {
+          setPosition(currentPosition);
+        }
+        
+        // Set new position for an engaging animated transition
+        setTargetPosition(prevPosition);
+        setAnimate(true);
+        console.log(`Fundi transitioning to: x=${prevPosition.x}px, y=${prevPosition.y}px for step ${prevStepIndex} (page changed)`);
+        
+        setThinking(false);
+        setIsTransitioning(false);
+      }, 300);
+    } else {
+      // No page change, keep Fundi in the same position
+      console.log(`Keeping Fundi in current position for step ${prevStepIndex} (same page)`);
+      
+      // Call the previous step immediately
+      prevStep();
+      
+      // Just update state without changing position
+      setTimeout(() => {
+        setThinking(false);
+        setIsTransitioning(false);
+      }, 300);
+    }
   };
   
   // Debug function to track clicks on Fundi elements - moved outside conditional to follow React hooks rules
@@ -377,6 +451,18 @@ export default function FundiTourGuide() {
 
   return (
     <>
+      {/* Invisible overlay to capture clicks anywhere on the screen */}
+      <div 
+        className="fixed inset-0 z-[99990]" 
+        onClick={() => {
+          // Click anywhere to advance the tour
+          if (!isTransitioning && currentStepIndex < totalSteps - 1) {
+            console.log("Overlay clicked - advancing to next step");
+            handleNextStep();
+          }
+        }}
+      />
+      
       {/* Fundi Robot with fixed position and limited animation */}
       <motion.div
         className="fixed z-[99999]"
@@ -417,6 +503,7 @@ export default function FundiTourGuide() {
       {/* Speech Bubble with tour content - stays close to Fundi */}
       <motion.div
         className="fixed z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-4"
+        onClick={(e) => e.stopPropagation()} // Prevent clicks on the speech bubble from advancing tour
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ 
           opacity: 1, 
