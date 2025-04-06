@@ -520,7 +520,7 @@ export default function FundiTourGuide() {
         
         {/* Speech Bubble is now a child of Fundi for proper anchoring */}
         <motion.div
-          className="absolute z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-2.5"
+          className="absolute z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-3.5"
           onClick={(e) => e.stopPropagation()} // Prevent clicks on the speech bubble from advancing tour
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ 
@@ -535,10 +535,10 @@ export default function FundiTourGuide() {
             delay: 0.05 // Slight delay after Fundi moves
           }}
           style={{ 
-            width: '140px', // Dramatically reduced width 
-            maxWidth: '140px', // Matching max width
-            height: '160px', // Further reduced height for better proportions
-            maxHeight: '160px', // Matching max height
+            width: '180px', // Slightly wider for better text display
+            maxWidth: '180px', // Matching max width
+            height: '200px', // Taller to show more content
+            maxHeight: '200px', // Matching max height
             boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
             willChange: 'transform', // Performance optimization
             transformOrigin: 'center top', // Consistent transform origin
@@ -550,8 +550,8 @@ export default function FundiTourGuide() {
           {/* No pointer for cleaner look - bubble is now directly attached to Fundi */}
           
           {/* Tour Content */}
-          <div className="font-medium text-xs mb-1">{currentStep.title}</div>
-          <p className="text-gray-600 text-xs mb-2">{currentStep.content}</p>
+          <div className="font-semibold text-sm mb-1.5">{currentStep.title}</div>
+          <p className="text-gray-700 text-xs leading-relaxed mb-2.5">{currentStep.content}</p>
           
           {/* Progress bar */}
           <div className="mb-2">
@@ -569,7 +569,7 @@ export default function FundiTourGuide() {
           
           {/* Navigation buttons - optimized for mobile */}
           <div className="flex justify-between">
-            <div className="flex gap-0.5 sm:gap-1.5">
+            <div className="flex gap-0.5 sm:gap-2">
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -579,10 +579,10 @@ export default function FundiTourGuide() {
                   handlePrevStep();
                 }}
                 disabled={currentStepIndex === 0 || isTransitioning}
-                className="h-7 sm:h-6 px-1 sm:px-1.5 text-xs"
+                className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
                 data-tour-button="back"
               >
-                <ChevronLeft className="h-3.5 sm:h-3 w-3.5 sm:w-3 mr-0.5 sm:mr-1" />
+                <ChevronLeft className="h-3.5 sm:h-3.5 w-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
                 <span className="hidden sm:inline">{window.innerWidth < 480 ? '' : 'Back'}</span>
               </Button>
               
@@ -595,10 +595,10 @@ export default function FundiTourGuide() {
                   skipTour();
                 }}
                 disabled={isTransitioning}
-                className="h-7 sm:h-6 px-1 sm:px-1.5 text-xs"
+                className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
                 data-tour-button="skip"
               >
-                <X className="h-3.5 sm:h-3 w-3.5 sm:w-3 mr-0.5 sm:mr-1" />
+                <X className="h-3.5 sm:h-3.5 w-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
                 <span className="hidden sm:inline">{window.innerWidth < 480 ? '' : 'Skip'}</span>
               </Button>
             </div>
@@ -611,14 +611,14 @@ export default function FundiTourGuide() {
                 handleNextStep();
               }}
               disabled={isTransitioning}
-              className="h-7 sm:h-6 px-1.5 sm:px-2 text-xs"
+              className="h-7 sm:h-7 px-2 sm:px-3 text-xs sm:text-xs"
               data-tour-button="next" // Identifier for the button
             >
               <span className="hidden sm:inline">{currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}</span>
               {currentStepIndex < totalSteps - 1 ? (
-                <ChevronRight className="h-3.5 sm:h-3 w-3.5 sm:w-3 ml-0 sm:ml-1" />
+                <ChevronRight className="h-3.5 sm:h-3.5 w-3.5 sm:w-3.5 ml-0 sm:ml-1" />
               ) : (
-                <Check className="h-3.5 sm:h-3 w-3.5 sm:w-3 ml-0 sm:ml-1" />
+                <Check className="h-3.5 sm:h-3.5 w-3.5 sm:w-3.5 ml-0 sm:ml-1" />
               )}
             </Button>
           </div>
