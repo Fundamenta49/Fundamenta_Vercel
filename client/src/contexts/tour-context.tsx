@@ -329,8 +329,8 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       el.classList.remove('tour-highlight');
     });
     
-    // Don't add highlights for steps 0 and 1 (welcome and fundi intro)
-    if (isTourActive && currentStep && typeof currentStep.highlightSelector === 'string' && currentStepIndex > 1) {
+    // Now we can highlight elements for any step, as the tour uses speech bubbles instead of dialogs
+    if (isTourActive && currentStep && typeof currentStep.highlightSelector === 'string') {
       // Small delay to ensure the element is rendered
       const timeout = setTimeout(() => {
         const selector = currentStep.highlightSelector as string;
@@ -373,8 +373,8 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         ...currentStep,
         content: processStepContent(currentStep.content),
         title: processStepContent(currentStep.title),
-        // Ensure we don't include highlightSelector for step 0 (welcome) and step 1 (Fundi intro)
-        highlightSelector: currentStepIndex <= 1 ? undefined : currentStep.highlightSelector
+        // With the new speech bubble tour, we keep all highlightSelectors as is
+        highlightSelector: currentStep.highlightSelector
       }
     : null;
 
