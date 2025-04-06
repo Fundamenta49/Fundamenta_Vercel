@@ -30,6 +30,47 @@ export default function FundiTourGuide() {
   // Calculate progress
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
   
+  // Get a different position for Fundi for each step of the tour
+  const getFundiPosition = (stepIndex: number, isMobile: boolean) => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // Define different positions based on step index
+    // For mobile, we have fewer options but still want to move Fundi around
+    if (isMobile) {
+      const positions = [
+        { x: viewportWidth - 80, y: 80 },                   // Top right
+        { x: 80, y: 80 },                                   // Top left
+        { x: viewportWidth - 80, y: viewportHeight / 2 },   // Middle right
+        { x: 80, y: viewportHeight / 2 },                   // Middle left
+        { x: viewportWidth - 80, y: viewportHeight - 200 }, // Bottom right
+        { x: 80, y: viewportHeight - 200 },                 // Bottom left
+        { x: viewportWidth / 2 - 40, y: 80 },               // Top center
+        { x: viewportWidth / 2 - 40, y: viewportHeight - 200 } // Bottom center
+      ];
+      
+      // Use modulo to cycle through positions if more steps than positions
+      const positionIndex = stepIndex % positions.length;
+      return positions[positionIndex];
+    } else {
+      // On desktop, we have more space to move Fundi around
+      const positions = [
+        { x: viewportWidth - 120, y: 100 },                    // Top right
+        { x: 120, y: 100 },                                    // Top left
+        { x: viewportWidth - 120, y: viewportHeight / 2 },     // Middle right
+        { x: 120, y: viewportHeight / 2 },                     // Middle left
+        { x: viewportWidth - 120, y: viewportHeight - 200 },   // Bottom right
+        { x: 120, y: viewportHeight - 200 },                   // Bottom left
+        { x: viewportWidth / 2 - 40, y: 100 },                 // Top center
+        { x: viewportWidth / 2 - 40, y: viewportHeight - 200 } // Bottom center
+      ];
+      
+      // Use modulo to cycle through positions if more steps than positions
+      const positionIndex = stepIndex % positions.length;
+      return positions[positionIndex];
+    }
+  };
+
   // Control Fundi's appearance and position based on the current step
   useEffect(() => {
     if (!isTourActive || !currentStep) return;
@@ -50,69 +91,57 @@ export default function FundiTourGuide() {
     }, 800);
     
     // Position Fundi based on the current step
-    // If we have a highlight selector, position Fundi near it
+    // Check if we're on mobile
+    const isMobile = window.innerWidth < 640;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // If we have a highlight selector, try to position Fundi near it
     if (currentStep.highlightSelector) {
       const targetElement = document.querySelector(currentStep.highlightSelector);
       if (targetElement) {
         const rect = targetElement.getBoundingClientRect();
         
         // Calculate a position near the element (to the right or below)
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        
-        // Determine if Fundi should be to the right or below the element
         let newX, newY;
         
-        // Check if we're on mobile
-        const isMobile = window.innerWidth < 640;
-        
         if (isMobile) {
-          // On mobile, position Fundi at the top right for better visibility
-          // Fixed position that works well on small screens
-          newX = Math.min(viewportWidth - 80, viewportWidth - 100);
-          newY = 80; // Fixed at top with good margin
+          // On mobile, use dynamic positions but stay within safe zone
+          const position = getFundiPosition(currentStepIndex, true);
+          newX = position.x;
+          newY = position.y;
           
           // Log position for debugging
-          console.log(`Fundi position: top=${newY}px, right=${viewportWidth - newX}px, translate(${newX}px, ${newY}px)`);
+          console.log(`Fundi position (mobile): x=${newX}px, y=${newY}px, step=${currentStepIndex}`);
         } else if (rect.right + 150 < viewportWidth) {
-          // Position to the right
+          // Position to the right of the highlight
           newX = rect.right + 20;
           newY = rect.top + (rect.height / 2) - 40;
         } else {
-          // Position below
+          // Position below the highlight
           newX = rect.left + (rect.width / 2) - 40;
           newY = rect.bottom + 20;
         }
         
         // Ensure Fundi stays within viewport with better margins
         newX = Math.max(60, Math.min(newX, viewportWidth - 100));
-        newY = Math.max(60, Math.min(newY, viewportHeight - 100));
+        newY = Math.max(60, Math.min(newY, viewportHeight - 200));
         
         setTargetPosition({ x: newX, y: newY });
         setAnimate(true);
+      } else {
+        // If element not found, use predefined positions
+        const position = getFundiPosition(currentStepIndex, isMobile);
+        setTargetPosition(position);
+        setAnimate(true);
+        console.log(`Fundi position (no element): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
       }
     } else {
-      // For general steps without a specific element, position Fundi in a fixed location
-      const isMobile = window.innerWidth < 640;
-      const viewportWidth = window.innerWidth;
-      
-      if (isMobile) {
-        // On mobile, fixed position in the top right for consistency and visibility
-        const newX = viewportWidth - 100; // 100px from right edge
-        const newY = 80; // 80px from top
-        
-        setTargetPosition({ x: newX, y: newY });
-        
-        // Log position for debugging
-        console.log(`Fundi position: top=${newY}px, right=${viewportWidth - newX}px, translate(${newX}px, ${newY}px)`);
-      } else {
-        // On desktop, center in the viewport
-        setTargetPosition({ 
-          x: window.innerWidth / 2 - 100, 
-          y: window.innerHeight / 3 - 50 
-        });
-      }
+      // For general steps without a specific element, use predefined positions
+      const position = getFundiPosition(currentStepIndex, isMobile);
+      setTargetPosition(position);
       setAnimate(true);
+      console.log(`Fundi position (general): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
     }
     
     // Clear any existing timeout
@@ -169,33 +198,29 @@ export default function FundiTourGuide() {
     // Make Fundi think to indicate processing
     setThinking(true);
     
-    // Call the next step immediately - then handle positioning after
+    // Calculate the next position before transitioning
+    const isMobile = window.innerWidth < 640;
+    const nextStepIndex = currentStepIndex + 1;
+    const nextPosition = getFundiPosition(nextStepIndex, isMobile);
+    
+    // Call the next step immediately
     nextStep();
     
-    // Small delay to ensure proper cleanup and visual indication of transition
-    setTimeout(() => {      
+    // Animate Fundi to move to a new position for the next step
+    setTimeout(() => {
       // Keep Fundi visible at the current position until the new step's position is calculated
       // This prevents the disappearing effect
       if (!animate) {
         setPosition(currentPosition);
       }
       
+      // Set new position for an engaging animated transition
+      setTargetPosition(nextPosition);
+      setAnimate(true);
+      console.log(`Fundi transitioning to: x=${nextPosition.x}px, y=${nextPosition.y}px for step ${nextStepIndex}`);
+      
       setThinking(false);
       setIsTransitioning(false);
-      
-      // Force recalculation after a short delay in case the step transition
-      // isn't being caught by the useEffect dependency array
-      setTimeout(() => {
-        const isMobile = window.innerWidth < 640;
-        if (isMobile) {
-          // On mobile, fixed position at top right
-          setTargetPosition({
-            x: window.innerWidth - 100,
-            y: 80
-          });
-          setAnimate(true);
-        }
-      }, 200);
     }, 300);
   };
   
@@ -219,33 +244,29 @@ export default function FundiTourGuide() {
     // Make Fundi think to indicate processing
     setThinking(true);
     
-    // Call the previous step immediately - then handle positioning after
+    // Calculate the previous position before transitioning
+    const isMobile = window.innerWidth < 640;
+    const prevStepIndex = Math.max(0, currentStepIndex - 1);
+    const prevPosition = getFundiPosition(prevStepIndex, isMobile);
+    
+    // Call the previous step immediately
     prevStep();
     
-    // Small delay to ensure proper cleanup and visual indication of transition
-    setTimeout(() => {      
+    // Animate Fundi to move to a new position for the previous step
+    setTimeout(() => {
       // Keep Fundi visible at the current position until the new step's position is calculated
       // This prevents the disappearing effect
       if (!animate) {
         setPosition(currentPosition);
       }
       
+      // Set new position for an engaging animated transition
+      setTargetPosition(prevPosition);
+      setAnimate(true);
+      console.log(`Fundi transitioning to: x=${prevPosition.x}px, y=${prevPosition.y}px for step ${prevStepIndex}`);
+      
       setThinking(false);
       setIsTransitioning(false);
-      
-      // Force recalculation after a short delay in case the step transition
-      // isn't being caught by the useEffect dependency array
-      setTimeout(() => {
-        const isMobile = window.innerWidth < 640;
-        if (isMobile) {
-          // On mobile, fixed position at top right
-          setTargetPosition({
-            x: window.innerWidth - 100,
-            y: 80
-          });
-          setAnimate(true);
-        }
-      }, 200);
     }, 300);
   };
   
