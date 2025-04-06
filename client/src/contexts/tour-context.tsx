@@ -278,36 +278,28 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return; // Exit early if auth is still loading
     }
     
-    // Check for admin bypass (for development/testing only)
-    const adminBypass = localStorage.getItem('admin_bypass') === 'enabled';
+    // For testing purposes, always consider the user authenticated for the tour
+    // This allows the tour to run regardless of authentication state
     
-    // Only check tour state if the user is authenticated or admin bypass is enabled
-    if (isAuthenticated || adminBypass) {
-      console.log('User authenticated or admin bypass active:', { isAuthenticated, adminBypass });
-      
-      // Check if tour has been seen
-      const tourSeen = localStorage.getItem('hasSeenTour');
-      if (tourSeen && !adminBypass) {  // Don't respect tourSeen if admin bypass is active
-        setHasSeenTour(true);
+    // Check if tour has been seen
+    const tourSeen = localStorage.getItem('hasSeenTour');
+    if (tourSeen) {
+      setHasSeenTour(true);
+    }
+    
+    // First try to use the name from the authenticated user profile
+    if (user && user.name) {
+      setUserName(user.name);
+      localStorage.setItem('tourUserName', user.name);
+    } else {
+      // Fall back to checking if user name is stored in localStorage
+      const savedUserName = localStorage.getItem('tourUserName');
+      if (savedUserName) {
+        setUserName(savedUserName);
       } else {
-        // Don't auto-start tour - we'll use buttons for testing
-        // startTour();
-      }
-      
-      // First try to use the name from the authenticated user profile
-      if (user && user.name) {
-        setUserName(user.name);
-        localStorage.setItem('tourUserName', user.name);
-      } else {
-        // Fall back to checking if user name is stored in localStorage
-        const savedUserName = localStorage.getItem('tourUserName');
-        if (savedUserName) {
-          setUserName(savedUserName);
-        } else {
-          // Set a default name for testing
-          setUserName('Tester');
-          localStorage.setItem('tourUserName', 'Tester');
-        }
+        // Set a default name for the tour
+        setUserName('Friend');
+        localStorage.setItem('tourUserName', 'Friend');
       }
     }
   }, [isAuthenticated, authLoading, user]); // startTour is defined in the component so we don't need it in deps

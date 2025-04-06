@@ -36,17 +36,15 @@ export default function FundiTourGuide() {
     const viewportHeight = window.innerHeight;
     
     // Define different positions based on step index
-    // For mobile, we have fewer options but still want to move Fundi around
+    // For mobile, use centered positions that ensure Fundi stays on screen
     if (isMobile) {
+      // On mobile, we need to be more careful about positioning to keep Fundi on screen
       const positions = [
-        { x: viewportWidth - 80, y: 80 },                   // Top right
-        { x: 80, y: 80 },                                   // Top left
-        { x: viewportWidth - 80, y: viewportHeight / 2 },   // Middle right
-        { x: 80, y: viewportHeight / 2 },                   // Middle left
-        { x: viewportWidth - 80, y: viewportHeight - 200 }, // Bottom right
-        { x: 80, y: viewportHeight - 200 },                 // Bottom left
-        { x: viewportWidth / 2 - 40, y: 80 },               // Top center
-        { x: viewportWidth / 2 - 40, y: viewportHeight - 200 } // Bottom center
+        { x: viewportWidth / 2 - 40, y: 100 },               // Top center
+        { x: viewportWidth / 2 - 40, y: viewportHeight / 2 - 150 }, // Upper middle
+        { x: viewportWidth / 2 - 40, y: viewportHeight / 2 },       // Middle center
+        { x: viewportWidth / 2 - 40, y: viewportHeight / 2 + 100 }, // Lower middle
+        { x: viewportWidth / 2 - 40, y: viewportHeight - 240 }      // Bottom center (higher up)
       ];
       
       // Use modulo to cycle through positions if more steps than positions
@@ -57,12 +55,12 @@ export default function FundiTourGuide() {
       const positions = [
         { x: viewportWidth - 120, y: 100 },                    // Top right
         { x: 120, y: 100 },                                    // Top left
+        { x: viewportWidth - 120, y: viewportHeight / 2 - 100 }, // Upper right
+        { x: 120, y: viewportHeight / 2 - 100 },                // Upper left
         { x: viewportWidth - 120, y: viewportHeight / 2 },     // Middle right
         { x: 120, y: viewportHeight / 2 },                     // Middle left
-        { x: viewportWidth - 120, y: viewportHeight - 200 },   // Bottom right
-        { x: 120, y: viewportHeight - 200 },                   // Bottom left
-        { x: viewportWidth / 2 - 40, y: 100 },                 // Top center
-        { x: viewportWidth / 2 - 40, y: viewportHeight - 200 } // Bottom center
+        { x: viewportWidth - 120, y: viewportHeight - 240 },   // Bottom right (higher)
+        { x: 120, y: viewportHeight - 240 },                   // Bottom left (higher)
       ];
       
       // Use modulo to cycle through positions if more steps than positions
@@ -359,12 +357,12 @@ export default function FundiTourGuide() {
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Mobile positioning - centered at bottom of screen for optimal visibility
+          // Mobile positioning - centered in the middle of the screen for optimal visibility
           x: window.innerWidth < 640 
             ? Math.max(20, Math.min(window.innerWidth / 2 - 125, window.innerWidth - 270)) 
             : position.x + 90,
           y: window.innerWidth < 640 
-            ? window.innerHeight - 200  // Fixed position from bottom of screen
+            ? position.y + 100  // Position below Fundi on mobile
             : position.y - 20
         }}
         transition={{ 
@@ -385,7 +383,7 @@ export default function FundiTourGuide() {
           <div 
             className="absolute w-4 h-4 bg-white border-l border-t border-gray-200 transform -rotate-45"
             style={{
-              left: '50%', // Centered at the top for bottom-fixed position
+              left: '50%', // Centered at the top for position below Fundi
               marginLeft: '-4px',
               top: '-8px'
             }}
