@@ -46,11 +46,47 @@ export default function WeatherWidget({
       },
       (error) => {
         console.error("Geolocation error:", error);
+        
+        // Offer demo mode option in the toast message
         toast({
           title: "Location access denied",
-          description: "Please enable location access for accurate weather data.",
+          description: (
+            <div className="space-y-2">
+              <p>Please enable location access for accurate weather data.</p>
+              <button 
+                onClick={() => {
+                  // Enable demo mode
+                  localStorage.setItem('weather_mode', 'demo');
+                  localStorage.setItem('weather_use_demo_on_error', 'true');
+                  
+                  // Set a nice demo location
+                  const cityOptions = [
+                    "Miami, FL", 
+                    "San Francisco, CA", 
+                    "New York, NY", 
+                    "Chicago, IL",
+                    "Denver, CO"
+                  ];
+                  const randomCity = cityOptions[Math.floor(Math.random() * cityOptions.length)];
+                  localStorage.setItem('weather_demo_location', randomCity);
+                  
+                  // Refetch data with demo mode
+                  refetch();
+                  
+                  toast({
+                    title: "Demo mode activated",
+                    description: `Using simulated weather data for ${randomCity}`,
+                  });
+                }}
+                className="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded hover:bg-orange-200 transition-colors"
+              >
+                Use Demo Mode Instead
+              </button>
+            </div>
+          ),
           variant: "destructive"
         });
+        
         setIsLoadingLocation(false);
       },
       { timeout: 10000, enableHighAccuracy: true }
@@ -177,22 +213,66 @@ export default function WeatherWidget({
         <CardContent className="p-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <WeatherIcon condition={weather.icon} className="h-8 w-8 text-blue-500 flex-shrink-0" />
+              <div className="relative">
+                <WeatherIcon condition={weather.icon} className="h-8 w-8 text-blue-500 flex-shrink-0" />
+                
+                {/* Demo mode badge for compact view */}
+                {localStorage.getItem('weather_mode') === 'demo' && (
+                  <span className="absolute -bottom-1 -right-1 text-[7px] px-1 leading-none py-0.5 bg-orange-100 text-orange-700 rounded-sm font-medium">
+                    Demo
+                  </span>
+                )}
+              </div>
               <div className="min-w-0">
                 <p className="font-medium">{Math.round(weather.temperature)}°F</p>
                 <p className="text-xs text-gray-500 truncate w-full">{weather.location.split(',')[0]}</p>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-6 w-6 rounded-full hidden sm:flex" 
-              onClick={getGeolocation}
-              disabled={isLoadingLocation}
-              title="Use my current location"
-            >
-              <MapPin className="h-3 w-3" />
-            </Button>
+            
+            {/* Actions group */}
+            <div className="flex items-center gap-1">
+              {/* Location button */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6 rounded-full hidden sm:flex" 
+                onClick={getGeolocation}
+                disabled={isLoadingLocation}
+                title="Use my current location"
+              >
+                <MapPin className="h-3 w-3" />
+              </Button>
+              
+              {/* Demo mode toggle button - only shown if location denied */}
+              {localStorage.getItem('weather_mode') !== 'demo' && navigator.permissions && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 rounded-full hidden sm:flex"
+                  onClick={() => {
+                    // Enable demo mode
+                    localStorage.setItem('weather_mode', 'demo');
+                    localStorage.setItem('weather_use_demo_on_error', 'true');
+                    
+                    // Set a demo location
+                    const cityOptions = ["Miami, FL", "San Francisco, CA", "New York, NY"];
+                    const randomCity = cityOptions[Math.floor(Math.random() * cityOptions.length)];
+                    localStorage.setItem('weather_demo_location', randomCity);
+                    
+                    // Refetch weather with demo data
+                    refetch();
+                    
+                    toast({
+                      title: "Demo mode activated",
+                      description: `Using simulated weather data for ${randomCity}`,
+                    });
+                  }}
+                  title="Use demo weather data"
+                >
+                  <Cloud className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -219,7 +299,16 @@ export default function WeatherWidget({
             </Button>
           </div>
           
-          <WeatherIcon condition={weather.icon} className="h-10 w-10 text-blue-500 flex-shrink-0" />
+          <div className="flex flex-col items-end">
+            <WeatherIcon condition={weather.icon} className="h-10 w-10 text-blue-500 flex-shrink-0" />
+            
+            {/* Demo mode indicator */}
+            {localStorage.getItem('weather_mode') === 'demo' && (
+              <span className="text-[9px] px-1 py-0.5 bg-orange-100 text-orange-700 rounded-sm font-medium leading-none">
+                Demo
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Current weather details - condensed */}

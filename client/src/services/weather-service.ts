@@ -52,6 +52,31 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
       return defaultWeather;
     }
 
+    // Check if we're using demo mode
+    const weatherMode = localStorage.getItem('weather_mode');
+    if (weatherMode === 'demo') {
+      console.log('Using demo mode for weather');
+      // Generate slightly different weather each time to simulate changes
+      const tempVariation = Math.round(Math.random() * 4 - 2); // -2 to +2 degrees
+      const humidityVariation = Math.round(Math.random() * 10 - 5); // -5 to +5 percent
+      
+      // Get saved demo location or use default
+      const demoData = { ...defaultWeather };
+      const demoLocation = localStorage.getItem('weather_demo_location');
+      
+      if (demoLocation) {
+        demoData.location = demoLocation;
+      }
+      
+      // Add some randomness to the demo data
+      demoData.temperature += tempVariation;
+      demoData.feelsLike += tempVariation;
+      demoData.humidity = Math.min(100, Math.max(30, demoData.humidity + humidityVariation));
+      demoData.windSpeed = Math.max(1, demoData.windSpeed + Math.round(Math.random() * 3 - 1));
+      
+      return demoData;
+    }
+
     // Check for saved location in localStorage
     if (location === 'auto:ip') {
       const savedLocation = localStorage.getItem('weather_location');
@@ -77,6 +102,17 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
           }
         } catch (geoError) {
           console.warn('Geolocation error:', geoError);
+          
+          // Check if we should switch to demo mode after permission denied
+          if (localStorage.getItem('weather_use_demo_on_error') === 'true') {
+            console.log('Switching to demo mode after geolocation error');
+            localStorage.setItem('weather_mode', 'demo');
+            
+            // Use a default location or let the user set it
+            const demoData = { ...defaultWeather };
+            return demoData;
+          }
+          
           // Continue with IP-based location if geolocation fails
         }
       }
