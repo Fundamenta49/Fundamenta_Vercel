@@ -87,11 +87,13 @@ export default function FundiTourGuide() {
         { x: Math.min(viewportWidth * 0.75, viewportWidth - 100),   y: Math.min(viewportHeight / 2, 400) },  // Middle right
       ];
       
-      // For mobile, just use a subset of positions to avoid going off-screen
+      // For mobile, use a more constrained set of positions optimized for small screens
       if (isMobile) {
         const mobilePositions = [
-          { x: Math.min(viewportWidth / 2 - 40, viewportWidth - 100), y: 120 },  // Top center
-          { x: Math.min(viewportWidth / 2 - 40, viewportWidth - 100), y: Math.min(viewportHeight / 2, 300) },  // Middle center
+          // Center positions for better visibility on small screens
+          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: 80 },  // Top center
+          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: Math.min(viewportHeight * 0.3, 180) },  // Upper center
+          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: Math.min(viewportHeight * 0.4, 220) },  // Middle center
         ];
         
         // Use modulo to cycle through positions safely
@@ -508,13 +510,15 @@ export default function FundiTourGuide() {
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Position relative to Fundi with enhanced positioning logic for better visibility
-          x: position.x > window.innerWidth / 2 
-            ? Math.max(20, position.x - (window.innerWidth < 640 ? 230 : 270)) // Mobile-aware left positioning
-            : Math.min(position.x + 90, window.innerWidth - (window.innerWidth < 640 ? 40 : 270)), // Mobile-aware right positioning
+          // Position relative to Fundi with optimized mobile positioning
+          x: window.innerWidth < 640
+            ? Math.max(10, Math.min((window.innerWidth - 230) / 2, window.innerWidth - 240)) // Center on mobile
+            : position.x > window.innerWidth / 2 
+              ? Math.max(20, position.x - 270) // Left positioning on desktop
+              : Math.min(position.x + 90, window.innerWidth - 270), // Right positioning on desktop
           y: window.innerWidth < 640 
-            ? Math.min(Math.max(80, position.y + 100), window.innerHeight - 280) // On mobile, position below Fundi
-            : Math.min(Math.max(20, position.y - 20), window.innerHeight - 280) // On desktop, position above/beside Fundi
+            ? Math.min(Math.max(80, position.y + 90), window.innerHeight - 240) // Below Fundi on mobile, but closer
+            : Math.min(Math.max(20, position.y - 20), window.innerHeight - 280) // Above/beside Fundi on desktop
         }}
         transition={{ 
           type: "spring", 
@@ -524,11 +528,11 @@ export default function FundiTourGuide() {
           delay: 0.05 // Slight delay after Fundi moves
         }}
         style={{ 
-          width: '250px',
-          maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : '250px',
+          width: window.innerWidth < 640 ? 'calc(100vw - 20px)' : '250px', // Full width minus margins on mobile
+          maxWidth: window.innerWidth < 640 ? 'calc(100vw - 20px)' : '250px',
           boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
           willChange: 'transform', // Performance optimization
-          transformOrigin: position.x > window.innerWidth / 2 ? 'right center' : 'left center' // Animation pivot point
+          transformOrigin: window.innerWidth < 640 ? 'center top' : (position.x > window.innerWidth / 2 ? 'right center' : 'left center')
         }}
       >
         {/* No pointer for cleaner look - bubble is not directly attached to Fundi for better readability */}
@@ -551,9 +555,9 @@ export default function FundiTourGuide() {
           </div>
         </div>
         
-        {/* Navigation buttons */}
+        {/* Navigation buttons - optimized for mobile */}
         <div className="flex justify-between">
-          <div className="flex gap-1.5">
+          <div className="flex gap-1 sm:gap-1.5">
             <Button 
               variant="outline" 
               size="sm" 
@@ -563,11 +567,11 @@ export default function FundiTourGuide() {
                 handlePrevStep();
               }}
               disabled={currentStepIndex === 0 || isTransitioning}
-              className="h-7 px-2 text-xs"
+              className="h-8 sm:h-7 px-2.5 sm:px-2 text-xs"
               data-tour-button="back"
             >
-              <ChevronLeft className="h-3 w-3 mr-1" />
-              Back
+              <ChevronLeft className="h-3.5 sm:h-3 w-3.5 sm:w-3 mr-0.5 sm:mr-1" />
+              <span className="sm:inline">{window.innerWidth < 400 ? '' : 'Back'}</span>
             </Button>
             
             <Button 
@@ -579,11 +583,11 @@ export default function FundiTourGuide() {
                 skipTour();
               }}
               disabled={isTransitioning}
-              className="h-7 px-2 text-xs"
+              className="h-8 sm:h-7 px-2.5 sm:px-2 text-xs"
               data-tour-button="skip"
             >
-              <X className="h-3 w-3 mr-1" />
-              Skip
+              <X className="h-3.5 sm:h-3 w-3.5 sm:w-3 mr-0.5 sm:mr-1" />
+              <span className="sm:inline">{window.innerWidth < 400 ? '' : 'Skip'}</span>
             </Button>
           </div>
           
@@ -595,11 +599,11 @@ export default function FundiTourGuide() {
               handleNextStep();
             }}
             disabled={isTransitioning}
-            className="h-7 px-2 text-xs"
+            className="h-8 sm:h-7 px-3 sm:px-2 text-xs"
             data-tour-button="next" // Identifier for the button
           >
             {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
-            {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-3 w-3 ml-1" />}
+            {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-3.5 sm:h-3 w-3.5 sm:w-3 ml-0.5 sm:ml-1" />}
           </Button>
         </div>
       </motion.div>

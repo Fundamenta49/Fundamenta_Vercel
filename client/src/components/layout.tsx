@@ -1,6 +1,5 @@
 import Navigation from "@/components/navigation";
 import FloatingChat from "@/components/floating-chat";
-import RestartTourButton from "@/components/tour/restart-tour-button";
 import { AIFallbackNotice } from "@/components/ai-fallback-notice";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
@@ -57,17 +56,6 @@ export default function Layout({ children }: LayoutProps) {
       <div data-tour="fundi-assistant">
         <FloatingChat category={currentCategory} />
       </div>
-      
-      {/* Help button to restart tour - hidden on home page */}
-      {!isHomePage && (
-        <div data-tour="restart-tour" className="fixed top-4 left-4 z-[9999]">
-          <RestartTourButton 
-            position="relative"
-            tooltipText="Restart guided tour" 
-            className="!shadow-lg !border-primary/20"
-          />
-        </div>
-      )}
     </div>
   );
 }
