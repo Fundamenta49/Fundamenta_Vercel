@@ -52,7 +52,7 @@ const tourSteps: TourStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to Fundamenta',
-    content: 'Hi there! I\'m Fundi, your AI assistant. I\'ll guide you through this app so you can make the most of it. What should I call you?',
+    content: 'Hi {userName}! I\'m Fundi, your AI assistant. I\'ll guide you through this app so you can make the most of it.',
     category: 'general',
     route: '/',
   },
@@ -192,8 +192,8 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [userName, setUserName] = useState('');
   const [hasSeenTour, setHasSeenTour] = useState(false);
 
-  // Import auth context to check authentication status
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  // Import auth context to check authentication status and get user info
+  const { isAuthenticated, loading: authLoading, user } = useAuth();
   
   // Tour control functions
   const startTour = () => {
@@ -289,13 +289,19 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         startTour();
       }
       
-      // Check if user name is stored
-      const savedUserName = localStorage.getItem('tourUserName');
-      if (savedUserName) {
-        setUserName(savedUserName);
+      // First try to use the name from the authenticated user profile
+      if (user && user.name) {
+        setUserName(user.name);
+        localStorage.setItem('tourUserName', user.name);
+      } else {
+        // Fall back to checking if user name is stored in localStorage
+        const savedUserName = localStorage.getItem('tourUserName');
+        if (savedUserName) {
+          setUserName(savedUserName);
+        }
       }
     }
-  }, [isAuthenticated, authLoading]); // startTour is defined in the component so we don't need it in deps
+  }, [isAuthenticated, authLoading, user]); // startTour is defined in the component so we don't need it in deps
   
   // Save user name to localStorage when it changes
   useEffect(() => {

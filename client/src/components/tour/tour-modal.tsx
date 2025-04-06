@@ -33,15 +33,26 @@ const TourModal = () => {
   
   // Check if we're on the first step and need to collect the user's name
   useEffect(() => {
+    // Only show name input if we're on first step AND don't have a name already
     if (isTourActive && currentStepIndex === 0 && !userName) {
       setShowUserNameInput(true);
     } else {
       setShowUserNameInput(false);
+      
+      // If it's the first step but we already have the user's name (from auth),
+      // wait a brief moment to ensure states are updated, then auto-advance
+      if (isTourActive && currentStepIndex === 0 && userName && !isTransitioning) {
+        const timer = setTimeout(() => {
+          nextStep(); // Auto-advance since we already have the name
+        }, 1500); // Give user a moment to see the personalized greeting
+        
+        return () => clearTimeout(timer);
+      }
     }
     
     // Reset transitioning state when step changes
     setIsTransitioning(false);
-  }, [isTourActive, currentStepIndex, userName]);
+  }, [isTourActive, currentStepIndex, userName, nextStep, isTransitioning]);
   
   // Force dialog positioning before render to ensure proper mobile display
   useLayoutEffect(() => {
