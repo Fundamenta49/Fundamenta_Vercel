@@ -454,6 +454,15 @@
   pointer-events: auto !important;
 }
 
+/* Hide the standard Fundi robot and its speech bubble during tours */
+body.tour-active .floating-chat-container,
+body.tour-active .speech-bubble-container {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* Chat resizing styles */
 .user-select-none {
   user-select: none !important;

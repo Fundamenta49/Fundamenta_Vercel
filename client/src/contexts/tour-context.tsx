@@ -199,12 +199,16 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const startTour = () => {
     setIsTourActive(true);
     setCurrentStepIndex(0);
+    // Add tour-active class to body when tour starts
+    document.body.classList.add('tour-active');
   };
 
   const endTour = () => {
     setIsTourActive(false);
     localStorage.setItem('hasSeenTour', 'true');
     setHasSeenTour(true);
+    // Remove tour-active class from body when tour ends
+    document.body.classList.remove('tour-active');
     // Reset location to home
     setLocation('/');
   };
@@ -240,6 +244,9 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     document.querySelectorAll('.tour-highlight').forEach(el => {
       el.classList.remove('tour-highlight');
     });
+    
+    // Remove tour-active class from body in case tour is still active
+    document.body.classList.remove('tour-active');
     
     // Clear any stored tour state and user name
     localStorage.removeItem('hasSeenTour');
@@ -322,6 +329,13 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setLocation(currentStep.route);
     }
   }, [currentStepIndex, isTourActive, currentStep, setLocation]);
+  
+  // Clean up when component unmounts to ensure tour-active class is removed
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove('tour-active');
+    };
+  }, []);
 
   // Highlight the relevant element if specified
   useEffect(() => {

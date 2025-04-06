@@ -8,6 +8,7 @@ import RobotFundi from '@/components/robot-fundi';
 import FundiPersonalityAdapter from '@/components/fundi-personality-adapter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAIEventStore } from '@/lib/ai-event-system';
+import { useTour } from '@/contexts/tour-context';
 
 interface FloatingChatProps {
   category?: string;
@@ -20,6 +21,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   const [isThinking, setIsThinking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { lastResponse, currentCategory } = useAIEventStore();
+  const { isTourActive } = useTour();
 
   const categoryColors: Record<string, string> = {
     finance: '#22c55e', 
@@ -32,8 +34,13 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     general: '#6366f1',
   };
 
-  // Add random animations to make the robot feel more alive
+  // Add random animations to make the robot feel more alive, but only when not in a tour
   useEffect(() => {
+    // Don't run any animations if a tour is active
+    if (isTourActive) {
+      return;
+    }
+    
     // Initial attention animation
     setTimeout(() => {
       setIsAnimating(true);
@@ -67,12 +74,17 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       clearInterval(thinkingInterval);
       clearInterval(attentionInterval);
     };
-  }, [isSpeaking, isThinking]);
+  }, [isSpeaking, isThinking, isTourActive]);
 
   // Get the color for the current category
   const getCategoryColor = (category: string) => {
     return categoryColors[category] || categoryColors.general;
   };
+  
+  // Don't render the floating chat if a tour is active
+  if (isTourActive) {
+    return null;
+  }
   
   return (
     <>
