@@ -99,7 +99,7 @@ export default function ChatInterface({
     width: window.innerWidth < 768 ? 
       '280px' : // Same width for both portrait and landscape on mobile
       '350px', 
-    height: window.innerWidth < 768 ? '260px' : '350px'
+    height: window.innerWidth < 768 ? '350px' : '350px' // Same height for mobile and desktop
   });
   
   // User memory and conversation hooks
@@ -536,25 +536,17 @@ export default function ChatInterface({
     // Calculate new dimensions based on resize direction
     switch (resizeDirection) {
       case 'br': // Bottom-right corner
-        width = Math.max(e.clientX - rect.left, 
-          window.innerWidth < 768 ? 
-            200 : // Same minimum width for both portrait and landscape
-            280);
-        height = Math.max(e.clientY - rect.top, 
-          window.innerWidth < 768 ? 200 : 300);
+        width = Math.max(e.clientX - rect.left, 280); // Fixed width for consistency
+        height = Math.max(e.clientY - rect.top, 350); // Fixed height for consistency
         break;
       case 'bl': // Bottom-left corner
-        width = Math.max(rect.right - e.clientX, 
-          window.innerWidth < 768 ? 
-            200 : // Same minimum width for both portrait and landscape
-            280);
-        height = Math.max(e.clientY - rect.top, 
-          window.innerWidth < 768 ? 200 : 300);
+        width = Math.max(rect.right - e.clientX, 280); // Fixed width for consistency
+        height = Math.max(e.clientY - rect.top, 350); // Fixed height for consistency
         chatElement.style.right = 'auto'; 
         chatElement.style.left = `${e.clientX}px`;
         break;
       case 'b': // Bottom edge
-        height = Math.max(e.clientY - rect.top, 300);
+        height = Math.max(e.clientY - rect.top, 350); // Fixed height for consistency
         break;
       case 'r': // Right edge
         width = Math.max(e.clientX - rect.left, 280);
@@ -594,25 +586,17 @@ export default function ChatInterface({
     // Calculate new dimensions based on resize direction
     switch (resizeDirection) {
       case 'br': // Bottom-right corner
-        width = Math.max(e.touches[0].clientX - rect.left, 
-          window.innerWidth < 768 ? 
-            200 : // Same minimum width for both portrait and landscape
-            280);
-        height = Math.max(e.touches[0].clientY - rect.top, 
-          window.innerWidth < 768 ? 200 : 300);
+        width = Math.max(e.touches[0].clientX - rect.left, 280); // Fixed width for consistency
+        height = Math.max(e.touches[0].clientY - rect.top, 350); // Fixed height for consistency
         break;
       case 'bl': // Bottom-left corner
-        width = Math.max(rect.right - e.touches[0].clientX, 
-          window.innerWidth < 768 ? 
-            200 : // Same minimum width for both portrait and landscape
-            280);
-        height = Math.max(e.touches[0].clientY - rect.top, 
-          window.innerWidth < 768 ? 200 : 300);
+        width = Math.max(rect.right - e.touches[0].clientX, 280); // Fixed width for consistency
+        height = Math.max(e.touches[0].clientY - rect.top, 350); // Fixed height for consistency
         chatElement.style.right = 'auto'; 
         chatElement.style.left = `${e.touches[0].clientX}px`;
         break;
       case 'b': // Bottom edge
-        height = Math.max(e.touches[0].clientY - rect.top, 300);
+        height = Math.max(e.touches[0].clientY - rect.top, 350); // Fixed height for consistency
         break;
       case 'r': // Right edge
         width = Math.max(e.touches[0].clientX - rect.left, 280);
@@ -661,7 +645,7 @@ export default function ChatInterface({
   return (
     <Card className={`flex flex-col border shadow-lg resizable-chat ${className} ${isResizing ? 'user-select-none' : ''}`} 
       style={{ 
-        height: expanded ? '85vh' : chatSize.height,
+        height: expanded ? '500px' : chatSize.height, // Fixed height for consistency
         width: chatSize.width,
         maxWidth: expanded ? '95vw' : window.innerWidth < 768 ? '95%' : 'none',
         margin: !expanded ? '0 auto' : undefined,

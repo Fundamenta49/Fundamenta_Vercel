@@ -516,21 +516,12 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   max-height: 80vh !important; /* Ensure chat doesn't get too large */
 }
 
-/* Mobile specific chat sizing - Portrait mode */
-@media (max-width: 768px) and (orientation: portrait) {
+/* Mobile specific chat sizing - Both Portrait and Landscape modes use identical fixed sizing */
+@media (max-width: 768px) {
   .resizable-chat {
-    max-height: 70vh !important; /* Same height as landscape */
-    max-width: 280px !important; /* Same width as landscape */
-    width: 280px !important; /* Force width to be fixed */
-    right: 10px !important; /* Position from right edge */
-  }
-}
-
-/* Mobile specific chat sizing - Landscape mode */
-@media (max-width: 768px) and (orientation: landscape) {
-  .resizable-chat {
-    max-height: 70vh !important; /* Slightly taller in landscape */
-    max-width: 280px !important; /* Force specific pixel width */
+    max-height: 350px !important; /* Fixed height */
+    height: 350px !important; /* Force height to be fixed */
+    max-width: 280px !important; /* Fixed width */
     width: 280px !important; /* Force width to be fixed */
     right: 10px !important; /* Position from right edge */
   }
