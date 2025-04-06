@@ -63,7 +63,18 @@ export default function FundiTourGuide() {
         // Determine if Fundi should be to the right or below the element
         let newX, newY;
         
-        if (rect.right + 150 < viewportWidth) {
+        // Check if we're on mobile
+        const isMobile = window.innerWidth < 640;
+        
+        if (isMobile) {
+          // On mobile, position Fundi at the top right for better visibility
+          // Fixed position that works well on small screens
+          newX = Math.min(viewportWidth - 80, viewportWidth - 100);
+          newY = 80; // Fixed at top with good margin
+          
+          // Log position for debugging
+          console.log(`Fundi position: top=${newY}px, right=${viewportWidth - newX}px, translate(${newX}px, ${newY}px)`);
+        } else if (rect.right + 150 < viewportWidth) {
           // Position to the right
           newX = rect.right + 20;
           newY = rect.top + (rect.height / 2) - 40;
@@ -73,19 +84,34 @@ export default function FundiTourGuide() {
           newY = rect.bottom + 20;
         }
         
-        // Ensure Fundi stays within viewport
-        newX = Math.max(20, Math.min(newX, viewportWidth - 100));
-        newY = Math.max(20, Math.min(newY, viewportHeight - 100));
+        // Ensure Fundi stays within viewport with better margins
+        newX = Math.max(60, Math.min(newX, viewportWidth - 100));
+        newY = Math.max(60, Math.min(newY, viewportHeight - 100));
         
         setTargetPosition({ x: newX, y: newY });
         setAnimate(true);
       }
     } else {
-      // For general steps without a specific element, position Fundi centrally
-      setTargetPosition({ 
-        x: window.innerWidth / 2 - 100, 
-        y: window.innerHeight / 2 - 150 
-      });
+      // For general steps without a specific element, position Fundi in a fixed location
+      const isMobile = window.innerWidth < 640;
+      const viewportWidth = window.innerWidth;
+      
+      if (isMobile) {
+        // On mobile, fixed position in the top right for consistency and visibility
+        const newX = viewportWidth - 100; // 100px from right edge
+        const newY = 80; // 80px from top
+        
+        setTargetPosition({ x: newX, y: newY });
+        
+        // Log position for debugging
+        console.log(`Fundi position: top=${newY}px, right=${viewportWidth - newX}px, translate(${newX}px, ${newY}px)`);
+      } else {
+        // On desktop, center in the viewport
+        setTargetPosition({ 
+          x: window.innerWidth / 2 - 100, 
+          y: window.innerHeight / 3 - 50 
+        });
+      }
       setAnimate(true);
     }
     
@@ -129,14 +155,29 @@ export default function FundiTourGuide() {
     
     setIsTransitioning(true);
     
+    // Preserve Fundi's current position temporarily during transition
+    const currentPosition = {...position};
+    
     // Remove any highlights before transitioning
     document.querySelectorAll('.tour-highlight').forEach(el => {
       el.classList.remove('tour-highlight');
     });
     
-    // Small delay to ensure proper cleanup
+    // Make Fundi think to indicate processing
+    setThinking(true);
+    
+    // Small delay to ensure proper cleanup and visual indication of transition
     setTimeout(() => {
       nextStep();
+      
+      // Keep Fundi visible at the current position until the new step's position is calculated
+      // This prevents the disappearing effect
+      setTimeout(() => {
+        if (!animate) {
+          setPosition(currentPosition);
+        }
+        setThinking(false);
+      }, 100);
     }, 300);
   };
   
@@ -146,14 +187,29 @@ export default function FundiTourGuide() {
     
     setIsTransitioning(true);
     
+    // Preserve Fundi's current position temporarily during transition
+    const currentPosition = {...position};
+    
     // Remove any highlights before transitioning
     document.querySelectorAll('.tour-highlight').forEach(el => {
       el.classList.remove('tour-highlight');
     });
     
-    // Small delay to ensure proper cleanup
+    // Make Fundi think to indicate processing
+    setThinking(true);
+    
+    // Small delay to ensure proper cleanup and visual indication of transition
     setTimeout(() => {
       prevStep();
+      
+      // Keep Fundi visible at the current position until the new step's position is calculated
+      // This prevents the disappearing effect
+      setTimeout(() => {
+        if (!animate) {
+          setPosition(currentPosition);
+        }
+        setThinking(false);
+      }, 100);
     }, 300);
   };
   
@@ -162,6 +218,42 @@ export default function FundiTourGuide() {
     return null;
   }
   
+  // Debug function to track clicks on Fundi elements
+  useEffect(() => {
+    // Add click listeners to help prevent disappearing issues
+    const addEmergencyListeners = () => {
+      const fundiElements = document.querySelectorAll('.fixed.z-\\[99999\\], .fixed.z-\\[99998\\]');
+      let count = 0;
+      
+      fundiElements.forEach(el => {
+        if (!el.getAttribute('data-emergency-handler')) {
+          el.setAttribute('data-emergency-handler', 'true');
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            // Ensure visibility is maintained
+            const element = e.currentTarget as HTMLElement;
+            if (element) {
+              element.style.visibility = 'visible';
+              element.style.opacity = '1';
+            }
+          });
+          count++;
+        }
+      });
+      
+      if (count > 0) {
+        console.log(`Added emergency click handlers to ${count} Fundi elements`);
+      }
+    };
+    
+    // Run initially and then every second to ensure elements are always accessible
+    addEmergencyListeners();
+    const interval = setInterval(addEmergencyListeners, 1000);
+    
+    return () => clearInterval(interval);
+  }, [isTourActive]);
+
   return (
     <>
       {/* Fundi Robot that moves around */}
@@ -181,7 +273,7 @@ export default function FundiTourGuide() {
           duration: 0.8
         }}
         style={{ 
-          pointerEvents: 'none',
+          pointerEvents: 'auto', // Changed to auto for emergency recovery clicks
           width: '80px',
           height: '80px'
         }}
@@ -206,8 +298,13 @@ export default function FundiTourGuide() {
         animate={{ 
           opacity: 1, 
           scale: 1,
-          x: position.x + 90,
-          y: position.y - 20
+          // Better mobile positioning - to the left of Fundi and below
+          x: window.innerWidth < 640 
+            ? Math.max(20, Math.min(position.x - 230, window.innerWidth - 270)) 
+            : position.x + 90,
+          y: window.innerWidth < 640 
+            ? position.y + 90 
+            : position.y - 20
         }}
         transition={{ 
           type: "spring",
@@ -217,18 +314,28 @@ export default function FundiTourGuide() {
           duration: 0.8
         }}
         style={{ 
-          width: '280px',
-          maxWidth: '80vw'
+          width: '250px',
+          maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : '80vw'
         }}
       >
-        {/* Speech bubble pointer */}
-        <div 
-          className="absolute w-4 h-4 bg-white border-l border-b border-gray-200 transform rotate-45"
-          style={{
-            left: '-8px',
-            top: '30px'
-          }}
-        />
+        {/* Speech bubble pointer - conditionally position based on device */}
+        {window.innerWidth < 640 ? (
+          <div 
+            className="absolute w-4 h-4 bg-white border-l border-t border-gray-200 transform -rotate-45"
+            style={{
+              right: '30px', // Changed from left to right for better alignment with Fundi
+              top: '-8px'
+            }}
+          />
+        ) : (
+          <div 
+            className="absolute w-4 h-4 bg-white border-l border-b border-gray-200 transform rotate-45"
+            style={{
+              left: '-8px',
+              top: '30px'
+            }}
+          />
+        )}
         
         {/* Tour Content */}
         <div className="font-medium text-sm mb-2">{currentStep.title}</div>
