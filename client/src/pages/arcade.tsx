@@ -13,14 +13,17 @@ import {
   Target,
   Trophy,
   Users,
-  Zap
+  Zap,
+  Share2
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
+import { SocialShare } from "@/components/social-sharing";
 
 import { 
   AchievementCategory, 
@@ -29,6 +32,7 @@ import {
   createSampleUserProgress, 
   UserArcadeProgress 
 } from "@/shared/arcade-schema";
+import { fundiInteractionsService } from "@/services/fundi-interactions-service";
 
 // Map of category icons
 const CATEGORY_ICONS: Record<AchievementCategory, React.ReactNode> = {
@@ -107,6 +111,28 @@ const AchievementCard = ({
     Trophy : 
     Trophy;
 
+  // Handle sharing achievements to social media
+  const handleShareAchievement = () => {
+    // If this is the first time the user is sharing this achievement
+    // We could mark it as shared in the database
+    if (isUnlocked) {
+      toast({
+        title: "Achievement Shared!",
+        description: "Your achievement has been shared to social media.",
+        duration: 3000,
+      });
+      
+      // Trigger a witty Fundi comment about sharing achievements
+      fundiInteractionsService.processEvent({
+        type: 'achievement_unlocked',
+        userId: userProgress.userId,
+        achievementId: achievement.id,
+        achievementTitle: achievement.title,
+        category: achievement.category
+      });
+    }
+  };
+
   return (
     <Card className={`border-2 ${isUnlocked ? tierStyle.border : 'border-gray-200 bg-gray-50 opacity-75'}`}>
       <CardHeader className="pb-2">
@@ -138,6 +164,17 @@ const AchievementCard = ({
           </span>
         </div>
       </CardContent>
+      
+      {/* Add social sharing if achievement is unlocked */}
+      {isUnlocked && (
+        <CardFooter className="pt-0 flex justify-end">
+          <SocialShare
+            title={`I just earned the "${achievement.title}" achievement!`}
+            description={achievement.description}
+            onShare={handleShareAchievement}
+          />
+        </CardFooter>
+      )}
     </Card>
   );
 };

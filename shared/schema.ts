@@ -1,109 +1,92 @@
-import { 
-  pgTable, 
-  serial, 
-  text, 
-  timestamp, 
-  json, 
-  integer, 
-  boolean,
-  primaryKey,
-  varchar 
-} from 'drizzle-orm/pg-core';
-import { createInsertSchema } from 'drizzle-zod';
-import { z } from 'zod';
+import { pgTable, text, timestamp, integer, boolean, json, pgEnum, uuid } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 
-// Users table
-export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  name: text('name'),
-  email: text('email').unique(),
-  preferences: json('preferences').$type<{
-    theme?: string;
-    notifications?: boolean;
-    categoryPreferences?: string[];
-  }>().default({}),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
+// User goals
+export const userGoalTable = pgTable("user_goals", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category").notNull(), // "finance", "career", "wellness", etc.
+  targetDate: timestamp("target_date"),
+  completed: boolean("completed").default(false),
+  progress: integer("progress").default(0), // 0-100 percent
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Conversations table
-export const conversations = pgTable('conversations', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
-  title: text('title'),
-  category: text('category').default('general'),
-  lastMessageAt: timestamp('last_message_at').defaultNow(),
-  createdAt: timestamp('created_at').defaultNow(),
+// Notifications
+export const notificationTypeEnum = pgEnum("notification_type", [
+  "ACHIEVEMENT_UNLOCKED", 
+  "GOAL_PROGRESS", 
+  "GOAL_COMPLETED", 
+  "REMINDER",
+  "SYSTEM",
+  "FUNDI_COMMENT"
+]);
+
+export const notificationTable = pgTable("notifications", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id").notNull(),
+  type: notificationTypeEnum("type").notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  actionUrl: text("action_url"),
+  actionLabel: text("action_label"),
+  read: boolean("read").default(false),
+  timestamp: timestamp("timestamp").defaultNow(),
+  metadata: json("metadata").default({}), // For storing achievement/goal data if needed
 });
 
-// Messages table
-export const messages = pgTable('messages', {
-  id: serial('id').primaryKey(),
-  conversationId: integer('conversation_id').references(() => conversations.id, { onDelete: 'cascade' }),
-  role: text('role').$type<'user' | 'assistant' | 'system'>(),
-  content: text('content'),
-  category: text('category'),
-  metadata: json('metadata').$type<{
-    sentiment?: string;
-    actions?: any[];
-    suggestions?: any[];
-  }>().default({}),
-  timestamp: timestamp('timestamp').defaultNow(),
+// Achievement tracking for users
+export const userAchievementTable = pgTable("user_achievements", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id").notNull(),
+  achievementId: text("achievement_id").notNull(),
+  unlockedAt: timestamp("unlocked_at").defaultNow(),
+  shared: boolean("shared").default(false), // Whether the achievement has been shared to social media
 });
 
-// Session storage for user recognition
-export const sessions = pgTable('sessions', {
-  sid: varchar('sid').primaryKey(),
-  sess: json('sess').notNull(),
-  expire: timestamp('expire', { withTimezone: true }).notNull(),
+// Schema validators
+export const insertUserGoalSchema = createInsertSchema(userGoalTable).omit({ 
+  id: true, 
+  createdAt: true, 
+  updatedAt: true 
 });
 
-// User information storage (for users without accounts)
-export const userInfo = pgTable('user_info', {
-  id: serial('id').primaryKey(),
-  sessionId: text('session_id').notNull(),
-  name: text('name'),
-  interests: json('interests').$type<string[]>().default([]),
-  preferences: json('preferences').$type<Record<string, any>>().default({}),
-  lastSeen: timestamp('last_seen').defaultNow(),
-  createdAt: timestamp('created_at').defaultNow(),
-});
-
-// Define insert schemas
-export const insertUserSchema = createInsertSchema(users).omit({ 
+export const insertNotificationSchema = createInsertSchema(notificationTable).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true
+  timestamp: true
 });
 
-export const insertConversationSchema = createInsertSchema(conversations).omit({ 
+export const insertUserAchievementSchema = createInsertSchema(userAchievementTable).omit({
   id: true,
-  createdAt: true,
-  lastMessageAt: true
+  unlockedAt: true
 });
 
-export const insertMessageSchema = createInsertSchema(messages).omit({ 
-  id: true,
-  timestamp: true 
+// User schema for user accounts
+export const insertUserSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  name: z.string().optional(),
+  role: z.enum(["user", "admin"]).default("user"),
 });
 
-export const insertUserInfoSchema = createInsertSchema(userInfo).omit({
-  id: true,
-  createdAt: true,
-  lastSeen: true
+// User Info schema for session-based user data
+export const insertUserInfoSchema = z.object({
+  sessionId: z.string(),
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+  preferences: z.record(z.any()).optional(),
 });
 
-// Define types
-export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
+// Type definitions
+export type UserGoal = typeof userGoalTable.$inferSelect;
+export type InsertUserGoal = z.infer<typeof insertUserGoalSchema>;
 
-export type Conversation = typeof conversations.$inferSelect;
-export type InsertConversation = z.infer<typeof insertConversationSchema>;
+export type Notification = typeof notificationTable.$inferSelect;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 
-export type Message = typeof messages.$inferSelect;
-export type InsertMessage = z.infer<typeof insertMessageSchema>;
-
-export type UserInfo = typeof userInfo.$inferSelect;
-export type InsertUserInfo = z.infer<typeof insertUserInfoSchema>;
-
-export type Session = typeof sessions.$inferSelect;
+export type UserAchievement = typeof userAchievementTable.$inferSelect;
+export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;

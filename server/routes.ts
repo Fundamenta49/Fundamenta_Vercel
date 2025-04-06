@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { orchestrateAIResponse } from "./ai/index";
 import { fallbackAIService } from "./ai/ai-fallback-strategy";
-import { insertUserSchema, insertUserInfoSchema } from "@shared/schema";
+import { insertUserGoalSchema, insertNotificationSchema, insertUserAchievementSchema, insertUserInfoSchema, insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { userService, userInfoService, conversationService, messageService } from './db/services';
 import OpenAI from 'openai';

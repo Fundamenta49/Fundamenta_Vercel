@@ -8,6 +8,8 @@ export enum NotificationType {
   UPCOMING_EVENT = 'upcoming-event',
   LEARNING_REMINDER = 'learning-reminder',
   EVENT_STARTED = 'event-started',
+  FUNDI_COMMENT = 'fundi-comment',
+  ACHIEVEMENT_UNLOCKED = 'achievement-unlocked',
 }
 
 export interface Notification {
@@ -20,6 +22,8 @@ export interface Notification {
   timestamp: Date;
   read: boolean;
   eventId?: string;
+  userId?: string;
+  metadata?: Record<string, any>;
 }
 
 class NotificationService {
