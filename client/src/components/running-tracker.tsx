@@ -211,55 +211,143 @@ export default function RunningTracker() {
   };
 
   const startRun = () => {
-    if (!navigator.geolocation) {
-      toast({
-        variant: "destructive",
-        title: "GPS Not Available",
-        description: "Your browser doesn't support GPS tracking.",
+    // Get the current permission mode
+    const permissionMode = localStorage.getItem('location_permission');
+    
+    // For regular GPS tracking mode
+    if (permissionMode === 'granted') {
+      if (!navigator.geolocation) {
+        toast({
+          variant: "destructive",
+          title: "GPS Not Available",
+          description: "Your browser doesn't support GPS tracking.",
+        });
+        return;
+      }
+
+      setIsTracking(true);
+      setCurrentSession({
+        startTime: Date.now(),
+        distance: 0,
+        duration: 0,
+        pace: 0,
+        route: [],
       });
-      return;
-    }
 
-    setIsTracking(true);
-    setCurrentSession({
-      startTime: Date.now(),
-      distance: 0,
-      duration: 0,
-      pace: 0,
-      route: [],
-    });
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        (position) => {
+          setCurrentSession((prev) => {
+            if (!prev) return prev;
 
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      (position) => {
+            const newRoute = [
+              ...prev.route,
+              {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                timestamp: position.timestamp,
+              },
+            ];
+
+            // Calculate new distance in miles
+            let distance = prev.distance;
+            if (newRoute.length > 1) {
+              const lastPoint = newRoute[newRoute.length - 2];
+              const newPoint = newRoute[newRoute.length - 1];
+              const kmDistance = calculateDistance(
+                lastPoint.latitude,
+                lastPoint.longitude,
+                newPoint.latitude,
+                newPoint.longitude
+              );
+              distance += kmDistance * 0.621371; // Convert km to miles
+            }
+
+            const duration = (Date.now() - prev.startTime) / 1000 / 60; // in minutes
+            const pace = duration > 0 ? distance > 0 ? duration / distance : 0 : 0; // min/mile
+
+            return {
+              ...prev,
+              distance,
+              duration,
+              pace,
+              route: newRoute,
+            };
+          });
+        },
+        (error) => {
+          toast({
+            variant: "destructive",
+            title: "GPS Error",
+            description: error.message,
+          });
+          stopRun();
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        }
+      );
+    } 
+    // For demo mode
+    else if (permissionMode === 'demo') {
+      // Start with the initial demo location from localStorage
+      const storedLocation = localStorage.getItem('last_location');
+      let initialLocation = { latitude: 40.7128, longitude: -74.0060, timestamp: Date.now() };
+      
+      if (storedLocation) {
+        try {
+          initialLocation = JSON.parse(storedLocation);
+        } catch (e) {
+          console.error('Error parsing stored location', e);
+        }
+      }
+      
+      setIsTracking(true);
+      setCurrentSession({
+        startTime: Date.now(),
+        distance: 0,
+        duration: 0,
+        pace: 0,
+        route: [initialLocation],
+      });
+      
+      // Set up a simulated GPS tracker that moves the position slightly every few seconds
+      const simulatedTrackingInterval = setInterval(() => {
         setCurrentSession((prev) => {
-          if (!prev) return prev;
-
-          const newRoute = [
-            ...prev.route,
-            {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              timestamp: position.timestamp,
-            },
-          ];
-
-          // Calculate new distance in miles
+          if (!prev || !prev.route || prev.route.length === 0) return prev;
+          
+          // Get the last point
+          const lastPoint = prev.route[prev.route.length - 1];
+          
+          // Create a new point with a small random offset (simulates movement)
+          // These small offsets create a realistic-looking running route
+          const newPoint = {
+            latitude: lastPoint.latitude + (Math.random() * 0.0008 - 0.0004),
+            longitude: lastPoint.longitude + (Math.random() * 0.0008 - 0.0004),
+            timestamp: Date.now()
+          };
+          
+          const newRoute = [...prev.route, newPoint];
+          
+          // Calculate new distance
           let distance = prev.distance;
-          if (newRoute.length > 1) {
-            const lastPoint = newRoute[newRoute.length - 2];
-            const newPoint = newRoute[newRoute.length - 1];
-            const kmDistance = calculateDistance(
-              lastPoint.latitude,
-              lastPoint.longitude,
-              newPoint.latitude,
-              newPoint.longitude
-            );
-            distance += kmDistance * 0.621371; // Convert km to miles
-          }
-
+          const kmDistance = calculateDistance(
+            lastPoint.latitude,
+            lastPoint.longitude,
+            newPoint.latitude,
+            newPoint.longitude
+          );
+          distance += kmDistance * 0.621371; // Convert km to miles
+          
           const duration = (Date.now() - prev.startTime) / 1000 / 60; // in minutes
-          const pace = duration > 0 ? distance > 0 ? duration / distance : 0 : 0; // min/mile
-
+          
+          // Calculate a realistic pace (slightly variable)
+          // In demo mode, we aim for a typical jogging pace of around 9-10 min/mile
+          const basePace = 9.5; // 9:30 min/mile base pace
+          const variability = 0.5; // +/- 30 seconds variability
+          const pace = basePace + (Math.random() * variability * 2 - variability);
+          
           return {
             ...prev,
             distance,
@@ -268,32 +356,50 @@ export default function RunningTracker() {
             route: newRoute,
           };
         });
-      },
-      (error) => {
-        toast({
-          variant: "destructive",
-          title: "GPS Error",
-          description: error.message,
-        });
-        stopRun();
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-      }
-    );
+      }, 3000); // Update every 3 seconds
+      
+      // Store the interval ID for cleanup
+      watchIdRef.current = simulatedTrackingInterval as unknown as number;
+      
+      toast({
+        title: "Demo Run Started",
+        description: "Using simulated GPS data to track your run.",
+      });
+    } else {
+      // Shouldn't happen but just in case
+      toast({
+        variant: "destructive",
+        title: "Location Error",
+        description: "Please enable location services or use demo mode.",
+      });
+    }
   };
 
   const stopRun = () => {
-    if (watchIdRef.current) {
+    const permissionMode = localStorage.getItem('location_permission');
+    
+    if (permissionMode === 'granted' && watchIdRef.current) {
+      // Clear real GPS watch
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
+    } else if (permissionMode === 'demo' && watchIdRef.current) {
+      // Clear demo interval
+      clearInterval(watchIdRef.current as unknown as number);
+      watchIdRef.current = null;
     }
+    
     setIsTracking(false);
     setCurrentSession((prev) => 
       prev ? { ...prev, endTime: Date.now() } : null
     );
+    
+    // Show completion message
+    if (currentSession && currentSession.distance > 0) {
+      toast({
+        title: "Run Completed",
+        description: `You ran ${currentSession.distance.toFixed(2)} miles in ${formatDuration(currentSession.duration)}.`,
+      });
+    }
   };
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -359,16 +465,94 @@ export default function RunningTracker() {
                 
                 <div className="flex justify-center">
                   <Button 
-                    className="bg-orange-600 hover:bg-orange-700 shadow-md py-5 px-6 text-lg"
+                    className="bg-orange-600 hover:bg-orange-700 shadow-md py-5 px-6 text-lg mb-3"
                     onClick={() => {
-                      // Attempt to request location permission
-                      localStorage.removeItem('location_permission'); // Clear any saved permission status
-                      checkLocationPermission(); // This will trigger the permission dialog
+                      // Clear any saved permission status
+                      localStorage.removeItem('location_permission');
+                      
+                      // Attempt to request location permission again
+                      navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                          // Success! Save the permission and location
+                          localStorage.setItem('location_permission', 'granted');
+                          setHasLocationPermission(true);
+                          
+                          toast({
+                            title: "Location Access Granted",
+                            description: "GPS tracking is now enabled for your runs.",
+                          });
+                          
+                          // Store the position
+                          if (position && position.coords) {
+                            localStorage.setItem('last_location', 
+                              JSON.stringify({
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                timestamp: position.timestamp
+                              })
+                            );
+                          }
+                        },
+                        (error) => {
+                          // Error or denied again
+                          toast({
+                            variant: "destructive",
+                            title: "Location Access Denied",
+                            description: "Unable to access your location. Try using the demo mode below.",
+                          });
+                          console.error("Location error:", error);
+                        },
+                        { 
+                          enableHighAccuracy: true,
+                          timeout: 10000,
+                          maximumAge: 0
+                        }
+                      );
                     }}
                   >
                     <MapPin className="h-5 w-5 mr-2" />
                     Enable GPS Location
                   </Button>
+                </div>
+                
+                {/* Demo Mode / Manual Entry */}
+                <div className="border-t border-orange-200 pt-4 mt-3">
+                  <h4 className="font-semibold text-center text-gray-800 mb-3">
+                    Can't enable location?
+                  </h4>
+                  
+                  <p className="text-center text-gray-600 text-sm mb-3">
+                    Use our demo mode to try the run tracker with simulated data.
+                  </p>
+                  
+                  <div className="flex justify-center">
+                    <Button
+                      variant="outline"
+                      className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                      onClick={() => {
+                        // Set fake location data for demo purposes
+                        const demoLocation = {
+                          latitude: 40.7128,
+                          longitude: -74.0060,
+                          timestamp: Date.now()
+                        };
+                        
+                        // Store the demo location
+                        localStorage.setItem('last_location', JSON.stringify(demoLocation));
+                        localStorage.setItem('location_permission', 'demo');
+                        
+                        // Enable the tracker with demo mode
+                        setHasLocationPermission(true);
+                        
+                        toast({
+                          title: "Demo Mode Activated",
+                          description: "You can now use the run tracker with simulated GPS data.",
+                        });
+                      }}
+                    >
+                      Use Demo Mode
+                    </Button>
+                  </div>
                 </div>
               </div>
               
@@ -450,7 +634,18 @@ export default function RunningTracker() {
                     {isTracking && (
                       <div className="absolute top-3 right-3 bg-white/90 rounded-md shadow-md px-3 py-2 flex items-center z-[1000] text-sm">
                         <div className="h-3 w-3 rounded-full bg-green-500 mr-2 animate-pulse"></div>
-                        <span>Live GPS Tracking</span>
+                        <span>
+                          {localStorage.getItem('location_permission') === 'demo' 
+                            ? "Simulated GPS Data (Demo)" 
+                            : "Live GPS Tracking"}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {/* Demo mode badge */}
+                    {localStorage.getItem('location_permission') === 'demo' && (
+                      <div className="absolute bottom-3 left-3 bg-orange-100 text-orange-800 rounded-md shadow-md px-3 py-1 flex items-center z-[1000] text-xs font-medium border border-orange-200">
+                        <span>Demo Mode</span>
                       </div>
                     )}
                   </>
