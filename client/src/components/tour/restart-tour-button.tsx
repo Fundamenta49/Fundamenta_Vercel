@@ -27,7 +27,7 @@ const RestartTourButton = ({
             variant="ghost"
             size="sm"
             onClick={restartTour}
-            className={`${position === 'fixed' ? 'fixed top-4 right-4 z-50' : ''} 
+            className={`${position === 'fixed' ? 'fixed top-4 left-4 z-50' : ''} 
                         rounded-full w-8 h-8 p-0 hover:bg-primary/10 
                         text-muted-foreground hover:text-primary
                         ${className}`}
@@ -38,7 +38,7 @@ const RestartTourButton = ({
             {showLabel && <span className="ml-2">Help</span>}
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="left">
+        <TooltipContent side="right">
           <p>{tooltipText}</p>
         </TooltipContent>
       </Tooltip>
