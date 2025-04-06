@@ -544,7 +544,7 @@ export default function FundiTourGuide() {
             transformOrigin: 'center top', // Consistent transform origin
             overflowY: 'auto', // Allow scrolling if content is too tall
             top: '0px', // Align with Fundi vertically
-            right: '85px' // Position to the left of Fundi
+            left: '85px' // Position to the right of Fundi
           }}
         >
           {/* No pointer for cleaner look - bubble is now directly attached to Fundi */}
