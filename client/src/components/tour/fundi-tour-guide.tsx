@@ -504,15 +504,15 @@ export default function FundiTourGuide() {
       
       {/* Speech Bubble with tour content - stays close to Fundi */}
       <motion.div
-        className="fixed z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-4"
+        className="fixed z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-3"
         onClick={(e) => e.stopPropagation()} // Prevent clicks on the speech bubble from advancing tour
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Consistent positioning calculation regardless of orientation
-          x: Math.max(10, Math.min((window.innerWidth - 280) / 2, window.innerWidth - 290)), // Centered horizontally
-          y: Math.min(Math.max(80, position.y + 90), window.innerHeight - 350) // Below Fundi with consistent distance
+          // Refined positioning calculation for optimal placement
+          x: Math.max(10, Math.min((window.innerWidth - 250) / 2, window.innerWidth - 260)), // Centered horizontally
+          y: Math.min(Math.max(75, position.y + 85), window.innerHeight - 240) // Below Fundi with consistent distance
         }}
         transition={{ 
           type: "spring", 
@@ -522,24 +522,24 @@ export default function FundiTourGuide() {
           delay: 0.05 // Slight delay after Fundi moves
         }}
         style={{ 
-          width: '280px', // Consistent width regardless of orientation
-          maxWidth: '280px', // Consistent max width
-          minHeight: '200px', // Consistent min height
-          maxHeight: '350px', // Consistent max height
+          width: '250px', // Reduced width for better proportions
+          maxWidth: '250px', // Matching max width
+          height: '240px', // Reduced height for better proportions
+          maxHeight: '240px', // Matching max height
           boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
           willChange: 'transform', // Performance optimization
-          transformOrigin: 'center top', // Consistent transform origin regardless of orientation
+          transformOrigin: 'center top', // Consistent transform origin
           overflowY: 'auto' // Allow scrolling if content is too tall
         }}
       >
         {/* No pointer for cleaner look - bubble is not directly attached to Fundi for better readability */}
         
         {/* Tour Content */}
-        <div className="font-medium text-sm mb-2">{currentStep.title}</div>
-        <p className="text-gray-600 text-xs mb-4">{currentStep.content}</p>
+        <div className="font-medium text-sm mb-1">{currentStep.title}</div>
+        <p className="text-gray-600 text-xs mb-2">{currentStep.content}</p>
         
         {/* Progress bar */}
-        <div className="mb-3">
+        <div className="mb-2">
           <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
             <div 
               className="h-full bg-primary rounded-full" 
