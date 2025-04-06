@@ -286,7 +286,7 @@
 /* Mobile tour modal positioning */
 .tour-modal-position {
   bottom: 0.5rem;
-  right: 0.5rem;
+  left: -1.5rem; /* Shifted farther to the left of the screen */
   transform: translate(0, 0);
 }
 

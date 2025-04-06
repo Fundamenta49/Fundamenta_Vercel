@@ -55,6 +55,7 @@ const features = [
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
+  const { startTour } = useTour();
 
   return (
     <div className="px-4 py-8">
@@ -72,6 +73,14 @@ export default function Home() {
         <p className="text-lg text-muted-foreground">
           Your AI-powered assistant for life skills and wellness
         </p>
+        <div className="mt-4">
+          <Button 
+            onClick={() => startTour()} 
+            className="bg-orange-500 hover:bg-orange-600 text-white"
+          >
+            Test Tour Modal Position
+          </Button>
+        </div>
       </div>
       
       {/* Weather Widget - optimized for mobile */}
