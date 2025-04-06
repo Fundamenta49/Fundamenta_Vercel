@@ -510,15 +510,9 @@ export default function FundiTourGuide() {
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Position relative to Fundi with optimized mobile positioning
-          x: window.innerWidth < 640
-            ? Math.max(10, Math.min((window.innerWidth - 230) / 2, window.innerWidth - 240)) // Center on mobile
-            : position.x > window.innerWidth / 2 
-              ? Math.max(20, position.x - 270) // Left positioning on desktop
-              : Math.min(position.x + 90, window.innerWidth - 270), // Right positioning on desktop
-          y: window.innerWidth < 640 
-            ? Math.min(Math.max(80, position.y + 90), window.innerHeight - 240) // Below Fundi on mobile, but closer
-            : Math.min(Math.max(20, position.y - 20), window.innerHeight - 280) // Above/beside Fundi on desktop
+          // Consistent positioning calculation regardless of orientation
+          x: Math.max(10, Math.min((window.innerWidth - 280) / 2, window.innerWidth - 290)), // Centered horizontally
+          y: Math.min(Math.max(80, position.y + 90), window.innerHeight - 350) // Below Fundi with consistent distance
         }}
         transition={{ 
           type: "spring", 
@@ -528,11 +522,14 @@ export default function FundiTourGuide() {
           delay: 0.05 // Slight delay after Fundi moves
         }}
         style={{ 
-          width: window.innerWidth < 640 ? 'calc(100vw - 20px)' : '250px', // Full width minus margins on mobile
-          maxWidth: window.innerWidth < 640 ? 'calc(100vw - 20px)' : '250px',
+          width: '280px', // Consistent width regardless of orientation
+          maxWidth: '280px', // Consistent max width
+          minHeight: '200px', // Consistent min height
+          maxHeight: '350px', // Consistent max height
           boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
           willChange: 'transform', // Performance optimization
-          transformOrigin: window.innerWidth < 640 ? 'center top' : (position.x > window.innerWidth / 2 ? 'right center' : 'left center')
+          transformOrigin: 'center top', // Consistent transform origin regardless of orientation
+          overflowY: 'auto' // Allow scrolling if content is too tall
         }}
       >
         {/* No pointer for cleaner look - bubble is not directly attached to Fundi for better readability */}
