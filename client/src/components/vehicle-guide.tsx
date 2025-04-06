@@ -612,7 +612,7 @@ export default function VehicleGuide() {
                           <Camera className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-[95vw] w-full sm:max-w-md">
+                      <DialogContent className="w-[95vw] max-w-full sm:max-w-md mx-auto">
                         <DialogHeader>
                           <DialogTitle>Scan VIN with Camera</DialogTitle>
                           <DialogDescription>
@@ -620,7 +620,7 @@ export default function VehicleGuide() {
                           </DialogDescription>
                         </DialogHeader>
                         
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-4 w-full">
                           {capturedImage ? (
                             <div className="relative">
                               <img 
@@ -665,7 +665,7 @@ export default function VehicleGuide() {
                             </div>
                           )}
                           
-                          <div className="flex space-x-2">
+                          <div className="flex flex-col sm:flex-row gap-2">
                             {!capturedImage ? (
                               <>
                                 <Button
@@ -701,13 +701,13 @@ export default function VehicleGuide() {
                                       }
                                     }
                                   }}
-                                  className="flex-1"
+                                  className="w-full"
                                 >
                                   <Camera className="h-4 w-4 mr-2" />
                                   Take Photo
                                 </Button>
                                 
-                                <div className="relative">
+                                <div className="relative w-full">
                                   <Button
                                     variant="outline"
                                     onClick={() => {
@@ -716,7 +716,7 @@ export default function VehicleGuide() {
                                         fileInputRef.current.click();
                                       }
                                     }}
-                                    className="flex-1"
+                                    className="w-full"
                                   >
                                     <Upload className="h-4 w-4 mr-2" />
                                     Upload Image
@@ -761,7 +761,7 @@ export default function VehicleGuide() {
                                     }
                                   }}
                                   disabled={!vinFromImage || isProcessingImage}
-                                  className="flex-1"
+                                  className="w-full"
                                 >
                                   <FileCheck className="h-4 w-4 mr-2" />
                                   Use This VIN
@@ -773,7 +773,7 @@ export default function VehicleGuide() {
                                     setCapturedImage(null);
                                     setVinFromImage(null);
                                   }}
-                                  className="flex-1"
+                                  className="w-full"
                                 >
                                   <Camera className="h-4 w-4 mr-2" />
                                   Retake Photo
