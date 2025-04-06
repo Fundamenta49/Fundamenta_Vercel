@@ -35,35 +35,31 @@ export default function FundiTourGuide() {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
-    // Define different positions based on step index
-    // For mobile, use centered positions that ensure Fundi stays on screen
+    // For smaller screens, use a fixed center-aligned position for consistency
+    if (viewportWidth < 500) {
+      // On very small screens, keep Fundi in a safe, fixed position
+      return { 
+        x: Math.min(viewportWidth / 2 - 40, viewportWidth - 80), 
+        y: 120  // Fixed position at top center
+      };
+    }
+    
+    // For mobile and small screens that aren't tiny, use more conservative positions
     if (isMobile) {
-      // On mobile, we need to be more careful about positioning to keep Fundi on screen
-      const positions = [
-        { x: viewportWidth / 2 - 40, y: 100 },               // Top center
-        { x: viewportWidth / 2 - 40, y: viewportHeight / 2 - 150 }, // Upper middle
-        { x: viewportWidth / 2 - 40, y: viewportHeight / 2 },       // Middle center
-        { x: viewportWidth / 2 - 40, y: viewportHeight / 2 + 100 }, // Lower middle
-        { x: viewportWidth / 2 - 40, y: viewportHeight - 240 }      // Bottom center (higher up)
-      ];
-      
-      // Use modulo to cycle through positions if more steps than positions
-      const positionIndex = stepIndex % positions.length;
-      return positions[positionIndex];
+      // Use a single consistent position for mobile
+      return { 
+        x: Math.min(viewportWidth / 2 - 40, viewportWidth - 80), 
+        y: 120  // Keep in a fixed position at top
+      };
     } else {
-      // On desktop, we have more space to move Fundi around
+      // On desktop, we'll use just 2 alternating positions
+      // This reduces animation and prevents Fundi from moving too far
       const positions = [
-        { x: viewportWidth - 120, y: 100 },                    // Top right
-        { x: 120, y: 100 },                                    // Top left
-        { x: viewportWidth - 120, y: viewportHeight / 2 - 100 }, // Upper right
-        { x: 120, y: viewportHeight / 2 - 100 },                // Upper left
-        { x: viewportWidth - 120, y: viewportHeight / 2 },     // Middle right
-        { x: 120, y: viewportHeight / 2 },                     // Middle left
-        { x: viewportWidth - 120, y: viewportHeight - 240 },   // Bottom right (higher)
-        { x: 120, y: viewportHeight - 240 },                   // Bottom left (higher)
+        { x: viewportWidth / 2 - 40, y: 100 },                   // Top center
+        { x: viewportWidth / 2 - 40, y: Math.min(300, viewportHeight / 2) }  // Middle center, but not too far down
       ];
       
-      // Use modulo to cycle through positions if more steps than positions
+      // Alternate between just two positions for stability
       const positionIndex = stepIndex % positions.length;
       return positions[positionIndex];
     }
@@ -315,7 +311,7 @@ export default function FundiTourGuide() {
 
   return (
     <>
-      {/* Fundi Robot that moves around */}
+      {/* Fundi Robot with fixed position and limited animation */}
       <motion.div
         className="fixed z-[99999]"
         initial={{ opacity: 0, scale: 0.8 }}
@@ -326,15 +322,15 @@ export default function FundiTourGuide() {
           y: position.y 
         }}
         transition={{ 
-          type: "spring",
-          stiffness: 300,
-          damping: 25,
-          duration: 0.8
+          type: "tween", 
+          duration: 0.3,
+          ease: "easeInOut"
         }}
         style={{ 
-          pointerEvents: 'auto', // Changed to auto for emergency recovery clicks
+          pointerEvents: 'auto',
           width: '80px',
-          height: '80px'
+          height: '80px',
+          willChange: 'transform', // Optimize for animation performance
         }}
       >
         <div className="w-20 h-20">
@@ -357,20 +353,16 @@ export default function FundiTourGuide() {
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Mobile positioning - centered in the middle of the screen for optimal visibility
+          // Use fixed position for speech bubble for stability
           x: window.innerWidth < 640 
             ? Math.max(20, Math.min(window.innerWidth / 2 - 125, window.innerWidth - 270)) 
             : position.x + 90,
-          y: window.innerWidth < 640 
-            ? position.y + 100  // Position below Fundi on mobile
-            : position.y - 20
+          y: 260  // Fixed position below Fundi to prevent jumping
         }}
         transition={{ 
-          type: "spring",
-          stiffness: 300,
-          damping: 25,
-          delay: 0.1,
-          duration: 0.8
+          type: "tween", // Use tween instead of spring for more controlled animation
+          duration: 0.4,  // Faster, more controlled transition
+          ease: "easeInOut"
         }}
         style={{ 
           width: '250px',
@@ -378,25 +370,15 @@ export default function FundiTourGuide() {
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
         }}
       >
-        {/* Speech bubble pointer - conditionally position based on device */}
-        {window.innerWidth < 640 ? (
-          <div 
-            className="absolute w-4 h-4 bg-white border-l border-t border-gray-200 transform -rotate-45"
-            style={{
-              left: '50%', // Centered at the top for position below Fundi
-              marginLeft: '-4px',
-              top: '-8px'
-            }}
-          />
-        ) : (
-          <div 
-            className="absolute w-4 h-4 bg-white border-l border-b border-gray-200 transform rotate-45"
-            style={{
-              left: '-8px',
-              top: '30px'
-            }}
-          />
-        )}
+        {/* Speech bubble pointer - always at top for visual consistency */}
+        <div 
+          className="absolute w-4 h-4 bg-white border-l border-t border-gray-200 transform -rotate-45"
+          style={{
+            left: '50%', // Centered at the top for a consistent look
+            marginLeft: '-4px',
+            top: '-8px'
+          }}
+        />
         
         {/* Tour Content */}
         <div className="font-medium text-sm mb-2">{currentStep.title}</div>
