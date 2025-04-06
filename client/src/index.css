@@ -454,6 +454,14 @@
   pointer-events: auto !important;
 }
 
+/* Always show restart tour button */
+[data-tour="restart-tour"] {
+  z-index: 10000 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
 /* Hide the standard Fundi robot and its speech bubble during tours */
 body.tour-active .floating-chat-container,
 body.tour-active .speech-bubble-container {
@@ -461,6 +469,36 @@ body.tour-active .speech-bubble-container {
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* Enhanced tour styling for better visual connection */
+/* Style for the speech bubble during tours */
+body.tour-active .fixed.z-\[99998\] {
+  box-shadow: 0 10px 25px -5px rgba(var(--primary-rgb), 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(var(--primary-rgb), 0.2) !important;
+}
+
+/* Create a subtle connection between Fundi and speech bubble */
+body.tour-active .fixed.z-\[99998\]::before {
+  content: '';
+  position: absolute;
+  width: 50px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.4), rgba(var(--primary-rgb), 0.1));
+  z-index: -1;
+  top: 40%;
+}
+
+/* When speech bubble is to the left of Fundi */
+body.tour-active .fixed.z-\[99998\][style*="transform: translate"][style*="translateX(-"]::before {
+  right: -30px;
+  transform: rotate(-20deg);
+}
+
+/* When speech bubble is to the right of Fundi */
+body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="translateX(-"])::before {
+  left: -30px;
+  transform: rotate(20deg);
 }
 
 /* Chat resizing styles */

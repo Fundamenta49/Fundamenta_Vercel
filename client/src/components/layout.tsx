@@ -59,10 +59,11 @@ export default function Layout({ children }: LayoutProps) {
       </div>
       
       {/* Help button to restart tour */}
-      <div data-tour="restart-tour">
+      <div data-tour="restart-tour" className="fixed top-4 left-4 z-[9999]">
         <RestartTourButton 
-          position="fixed"
+          position="relative"
           tooltipText="Restart guided tour" 
+          className="!shadow-lg !border-primary/20"
         />
       </div>
     </div>

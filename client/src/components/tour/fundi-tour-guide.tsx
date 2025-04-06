@@ -508,11 +508,13 @@ export default function FundiTourGuide() {
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Position relative to Fundi for consistent experience
+          // Position relative to Fundi with enhanced positioning logic for better visibility
           x: position.x > window.innerWidth / 2 
-            ? Math.max(20, position.x - 270) // If Fundi is on the right side, position chat to the left
-            : Math.min(position.x + 90, window.innerWidth - 270), // If Fundi is on the left, position chat to the right
-          y: Math.min(position.y - 20, window.innerHeight - 280) // Position slightly above Fundi
+            ? Math.max(20, position.x - (window.innerWidth < 640 ? 230 : 270)) // Mobile-aware left positioning
+            : Math.min(position.x + 90, window.innerWidth - (window.innerWidth < 640 ? 40 : 270)), // Mobile-aware right positioning
+          y: window.innerWidth < 640 
+            ? Math.min(Math.max(80, position.y + 100), window.innerHeight - 280) // On mobile, position below Fundi
+            : Math.min(Math.max(20, position.y - 20), window.innerHeight - 280) // On desktop, position above/beside Fundi
         }}
         transition={{ 
           type: "spring", 
@@ -524,7 +526,9 @@ export default function FundiTourGuide() {
         style={{ 
           width: '250px',
           maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : '250px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
+          willChange: 'transform', // Performance optimization
+          transformOrigin: position.x > window.innerWidth / 2 ? 'right center' : 'left center' // Animation pivot point
         }}
       >
         {/* No pointer for cleaner look - bubble is not directly attached to Fundi for better readability */}

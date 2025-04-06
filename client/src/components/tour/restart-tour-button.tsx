@@ -27,14 +27,14 @@ const RestartTourButton = ({
             variant="ghost"
             size="sm"
             onClick={restartTour}
-            className={`${position === 'fixed' ? 'fixed top-4 left-4 z-50' : ''} 
-                        rounded-full w-8 h-8 p-0 hover:bg-primary/10 
-                        text-muted-foreground hover:text-primary
+            className={`${position === 'fixed' ? 'fixed top-4 left-4 z-[9999]' : ''} 
+                        rounded-full w-10 h-10 p-0 bg-white shadow-md border border-gray-200
+                        text-primary hover:bg-primary/10 hover:text-primary-dark
                         ${className}`}
             aria-label="Restart tour"
             {...props}
           >
-            <HelpCircle className="h-5 w-5" />
+            <HelpCircle className="h-6 w-6" />
             {showLabel && <span className="ml-2">Help</span>}
           </Button>
         </TooltipTrigger>
