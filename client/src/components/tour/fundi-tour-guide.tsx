@@ -87,13 +87,23 @@ export default function FundiTourGuide() {
         { x: Math.min(viewportWidth * 0.75, viewportWidth - 100), y: Math.min(viewportHeight / 2, 400) },  // Middle right
       ];
       
-      // For mobile, use a more constrained set of positions optimized for small screens
+      // For mobile, use more diverse positions optimized for highlighting different cards
       if (isMobile) {
         const mobilePositions = [
-          // Center positions for better visibility on small screens
+          // Upper positions
           { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: 80 },  // Top center
-          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: Math.min(viewportHeight * 0.3, 180) },  // Upper center
-          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: Math.min(viewportHeight * 0.4, 220) },  // Middle center
+          { x: Math.min(viewportWidth / 3 - 20, viewportWidth - 80), y: 120 }, // Top left-ish
+          { x: Math.min(viewportWidth * 0.7, viewportWidth - 80), y: 100 },    // Top right-ish
+          
+          // Middle positions
+          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: Math.min(viewportHeight * 0.3, 180) }, // Middle upper
+          { x: Math.min(viewportWidth / 3 - 20, viewportWidth - 80), y: Math.min(viewportHeight * 0.35, 200) }, // Middle left
+          { x: Math.min(viewportWidth * 0.7, viewportWidth - 80), y: Math.min(viewportHeight * 0.32, 190) },  // Middle right
+          
+          // Lower positions for highlighting lower content
+          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: Math.min(viewportHeight * 0.45, 240) }, // Lower middle
+          { x: Math.min(viewportWidth / 3 - 20, viewportWidth - 80), y: Math.min(viewportHeight * 0.5, 260) },  // Lower left
+          { x: Math.min(viewportWidth * 0.7, viewportWidth - 80), y: Math.min(viewportHeight * 0.48, 250) },   // Lower right
         ];
         
         // Use modulo to cycle through positions safely
@@ -157,9 +167,13 @@ export default function FundiTourGuide() {
       }, 2000);
     }, 800);
     
-    // Only reposition Fundi when the route (page) changes
+    // Always reposition Fundi on mobile to showcase different cards
+    // On desktop, only reposition when the route (page) changes
+    const isMobile = window.innerWidth < 640;
     const pageChanged = currentRoute !== currentStep.route;
-    if (pageChanged) {
+    const shouldRepositionFundi = isMobile || pageChanged;
+    
+    if (shouldRepositionFundi) {
       // Update our current route tracking
       setCurrentRoute(currentStep.route || null);
       
@@ -292,10 +306,11 @@ export default function FundiTourGuide() {
     // Check if we're moving to a different page - we can compare current and next routes
     // If we don't have the next step data yet, we'll check after navigation
     const pageChanging = nextStepIndex < totalSteps && currentStep.route !== null;
+    const isMobile = window.innerWidth < 640;
     
-    // Only calculate a new position if we're changing pages
-    // This keeps Fundi in the same position for different steps on the same page
-    if (pageChanging) {
+    // Calculate a new position if we're changing pages OR we're on mobile
+    // This moves Fundi to different positions on mobile to showcase different cards
+    if (pageChanging || isMobile) {
       // Only calculate new position if page is changing
       const isMobile = window.innerWidth < 640;
       const nextPosition = getFundiPosition(nextStepIndex, isMobile);
@@ -313,7 +328,7 @@ export default function FundiTourGuide() {
         // Set new position for an engaging animated transition
         setTargetPosition(nextPosition);
         setAnimate(true);
-        console.log(`Fundi transitioning to: x=${nextPosition.x}px, y=${nextPosition.y}px for step ${nextStepIndex} (page changed)`);
+        console.log(`Fundi transitioning to: x=${nextPosition.x}px, y=${nextPosition.y}px for step ${nextStepIndex} ${pageChanging ? '(page changed)' : '(mobile position change)'}`);
         
         setThinking(false);
         setIsTransitioning(false);
@@ -363,12 +378,13 @@ export default function FundiTourGuide() {
     }
     
     // We're checking if we need to move Fundi
-    // If we're at step 0 or moving within the same page, we don't need to move Fundi
+    // If we're at step 0 or moving within the same page, we don't need to move Fundi on desktop
     const pageChanging = prevStepIndex >= 0 && currentStep.route !== null;
+    const isMobile = window.innerWidth < 640;
     
-    // Only calculate a new position if we're changing pages
-    // This keeps Fundi in the same position for different steps on the same page
-    if (pageChanging) {
+    // Calculate a new position if we're changing pages OR we're on mobile
+    // This moves Fundi to different positions on mobile to showcase different cards
+    if (pageChanging || isMobile) {
       // Only calculate new position if page is changing
       const isMobile = window.innerWidth < 640;
       const prevPosition = getFundiPosition(prevStepIndex, isMobile);
@@ -386,7 +402,7 @@ export default function FundiTourGuide() {
         // Set new position for an engaging animated transition
         setTargetPosition(prevPosition);
         setAnimate(true);
-        console.log(`Fundi transitioning to: x=${prevPosition.x}px, y=${prevPosition.y}px for step ${prevStepIndex} (page changed)`);
+        console.log(`Fundi transitioning to: x=${prevPosition.x}px, y=${prevPosition.y}px for step ${prevStepIndex} ${pageChanging ? '(page changed)' : '(mobile position change)'}`);
         
         setThinking(false);
         setIsTransitioning(false);
@@ -535,10 +551,10 @@ export default function FundiTourGuide() {
             delay: 0.05 // Slight delay after Fundi moves
           }}
           style={{ 
-            width: '180px', // Slightly wider for better text display
-            maxWidth: '180px', // Matching max width
-            height: '200px', // Taller to show more content
-            maxHeight: '200px', // Matching max height
+            width: '220px', // Larger width for better text display
+            maxWidth: '220px', // Matching max width
+            height: '220px', // Taller to show more content
+            maxHeight: '220px', // Matching max height
             boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
             willChange: 'transform', // Performance optimization
             transformOrigin: 'center top', // Consistent transform origin
