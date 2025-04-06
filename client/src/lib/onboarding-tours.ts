@@ -10,7 +10,7 @@ export const initialTour: Tour = {
     {
       targetSelector: 'header',
       title: 'Welcome to Fundamenta!',
-      content: 'Fundamenta is your all-in-one platform for developing essential life skills. This quick tour will help you get started.',
+      content: 'Pssst… you\'re officially one of the first humans to ever enter the world of Fundamenta. I\'ve got secrets to show you—and awkward life wins to celebrate. Wanna go on a mini quest? I\'m Fundi, and I\'m here to make life LIFEABLE!!!',
       placement: 'bottom',
     },
     {
