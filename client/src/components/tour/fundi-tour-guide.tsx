@@ -213,13 +213,11 @@ export default function FundiTourGuide() {
     }, 300);
   };
   
-  // If tour isn't active, don't render anything
-  if (!isTourActive || !currentStep) {
-    return null;
-  }
-  
-  // Debug function to track clicks on Fundi elements
+  // Debug function to track clicks on Fundi elements - moved outside conditional to follow React hooks rules
   useEffect(() => {
+    // Only run if tour is active
+    if (!isTourActive || !currentStep) return;
+    
     // Add click listeners to help prevent disappearing issues
     const addEmergencyListeners = () => {
       const fundiElements = document.querySelectorAll('.fixed.z-\\[99999\\], .fixed.z-\\[99998\\]');
@@ -252,7 +250,12 @@ export default function FundiTourGuide() {
     const interval = setInterval(addEmergencyListeners, 1000);
     
     return () => clearInterval(interval);
-  }, [isTourActive]);
+  }, [isTourActive, currentStep]);
+  
+  // If tour isn't active, don't render anything
+  if (!isTourActive || !currentStep) {
+    return null;
+  }
 
   return (
     <>
@@ -298,12 +301,12 @@ export default function FundiTourGuide() {
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Better mobile positioning - to the left of Fundi and below
+          // Mobile positioning - centered at bottom of screen for optimal visibility
           x: window.innerWidth < 640 
-            ? Math.max(20, Math.min(position.x - 230, window.innerWidth - 270)) 
+            ? Math.max(20, Math.min(window.innerWidth / 2 - 125, window.innerWidth - 270)) 
             : position.x + 90,
           y: window.innerWidth < 640 
-            ? position.y + 90 
+            ? window.innerHeight - 200  // Fixed position from bottom of screen
             : position.y - 20
         }}
         transition={{ 
@@ -315,7 +318,8 @@ export default function FundiTourGuide() {
         }}
         style={{ 
           width: '250px',
-          maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : '80vw'
+          maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : '80vw',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
         }}
       >
         {/* Speech bubble pointer - conditionally position based on device */}
@@ -323,7 +327,8 @@ export default function FundiTourGuide() {
           <div 
             className="absolute w-4 h-4 bg-white border-l border-t border-gray-200 transform -rotate-45"
             style={{
-              right: '30px', // Changed from left to right for better alignment with Fundi
+              left: '50%', // Centered at the top for bottom-fixed position
+              marginLeft: '-4px',
               top: '-8px'
             }}
           />
