@@ -49,7 +49,6 @@ const featureNavItems = [
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
   { href: "/active", label: "Active You", icon: Activity },
   { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
-  { href: "/arcade", label: "Arcade", icon: Gamepad2 },
 ];
 
 export default function Navigation() {
@@ -248,6 +247,19 @@ export default function Navigation() {
                   <CalendarDays className="h-5 w-5 text-gray-600" />
                   <span className="font-medium">Learning Calendar</span>
                 </button>
+                
+                <button 
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left mt-1",
+                    isNavItemActive("/arcade")
+                      ? `${activeItemBg} ${activeItemText}`
+                      : `text-gray-700 hover:bg-gray-50`
+                  )}
+                  onClick={() => handleNavigation("/arcade")}
+                >
+                  <Gamepad2 className={cn("h-5 w-5", isNavItemActive("/arcade") ? themeColors.iconColor : "text-gray-600")} />
+                  <span className="font-medium">Arcade</span>
+                </button>
               </div>
             </div>
             
@@ -348,15 +360,44 @@ export default function Navigation() {
                 <CalendarDays className="h-5 w-5 text-gray-600" />
                 <span className="font-medium">Learning Calendar</span>
               </button>
+              
+              <button 
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left mt-1",
+                  isNavItemActive("/arcade")
+                    ? `${activeItemBg} ${activeItemText}`
+                    : `text-gray-700 hover:bg-gray-50`
+                )}
+                onClick={() => handleNavigation("/arcade")}
+              >
+                <Gamepad2 className={cn("h-5 w-5", isNavItemActive("/arcade") ? themeColors.iconColor : "text-gray-600")} />
+                <span className="font-medium">Arcade</span>
+              </button>
             </div>
           ) : (
-            <div className="mt-3 flex justify-center">
+            <div className="mt-3 flex flex-col items-center gap-3">
               <button
                 onClick={() => handleNavigation("/learning-calendar")}
                 className="p-2 rounded-md hover:bg-gray-100"
                 title="Learning Calendar"
               >
                 <CalendarDays className="h-5 w-5 text-gray-600" />
+              </button>
+              
+              <button
+                onClick={() => handleNavigation("/arcade")}
+                className={cn(
+                  "p-2 rounded-md",
+                  isNavItemActive("/arcade")
+                    ? activeItemBg
+                    : "hover:bg-gray-100"
+                )}
+                title="Arcade"
+              >
+                <Gamepad2 className={cn(
+                  "h-5 w-5", 
+                  isNavItemActive("/arcade") ? themeColors.iconColor : "text-gray-600"
+                )} />
               </button>
             </div>
           )}
