@@ -278,15 +278,20 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return; // Exit early if auth is still loading
     }
     
-    // Only check tour state if the user is authenticated
-    if (isAuthenticated) {
+    // Check for admin bypass (for development/testing only)
+    const adminBypass = localStorage.getItem('admin_bypass') === 'enabled';
+    
+    // Only check tour state if the user is authenticated or admin bypass is enabled
+    if (isAuthenticated || adminBypass) {
+      console.log('User authenticated or admin bypass active:', { isAuthenticated, adminBypass });
+      
       // Check if tour has been seen
       const tourSeen = localStorage.getItem('hasSeenTour');
-      if (tourSeen) {
+      if (tourSeen && !adminBypass) {  // Don't respect tourSeen if admin bypass is active
         setHasSeenTour(true);
       } else {
-        // Start tour automatically on first visit, but only for authenticated users
-        startTour();
+        // Don't auto-start tour - we'll use buttons for testing
+        // startTour();
       }
       
       // First try to use the name from the authenticated user profile
@@ -298,6 +303,10 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const savedUserName = localStorage.getItem('tourUserName');
         if (savedUserName) {
           setUserName(savedUserName);
+        } else {
+          // Set a default name for testing
+          setUserName('Tester');
+          localStorage.setItem('tourUserName', 'Tester');
         }
       }
     }

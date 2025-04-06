@@ -116,6 +116,15 @@ export default function Home() {
         <p className="text-sm text-muted-foreground mt-2">
           {isAuthenticated ? "You are logged in" : "You are not logged in"}
         </p>
+        
+        {/* Question mark icon for starting the tour */}
+        <div className="absolute top-0 right-0">
+          <RestartTourButton 
+            position="relative" 
+            className="bg-white shadow-sm" 
+            showLabel={true} 
+          />
+        </div>
       </div>
       
       {/* Weather Widget - optimized for mobile */}
