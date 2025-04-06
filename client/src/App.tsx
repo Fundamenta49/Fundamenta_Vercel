@@ -21,7 +21,6 @@ import Learning from "@/pages/learning";
 import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";
 import YogaProgressionPage from "@/pages/yoga-progression";
-import FundiShowcase from "@/pages/fundi-showcase";
 import LearningCalendar from "@/components/learning-calendar";
 import LearningCalendarPopOut from "@/components/learning-calendar-pop-out";
 import EnhancedCalendar from "@/components/enhanced-calendar";
@@ -186,7 +185,6 @@ function Router() {
                 <YogaProgressionPage />
               </ProtectedRoute>
             </Route>
-            <Route path="/fundi-showcase" component={FundiShowcase} />
             <Route path="/admin" component={AdminPage} />
             <Route path="/learning">
               <ProtectedRoute>
