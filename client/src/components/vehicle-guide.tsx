@@ -601,18 +601,19 @@ export default function VehicleGuide() {
                       maxLength={17}
                       aria-label="Vehicle Identification Number"
                     />
-                    <Dialog>
+                    <Dialog open={isCameraOpen} onOpenChange={setIsCameraOpen}>
                       <DialogTrigger asChild>
                         <Button 
                           variant="outline" 
                           size="icon"
                           className="flex-shrink-0"
                           title="Scan VIN with camera"
+                          onClick={() => setIsCameraOpen(true)}
                         >
                           <Camera className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="w-[95vw] max-w-full sm:max-w-md mx-auto">
+                      <DialogContent className="w-[95vw] max-w-full sm:max-w-md mx-auto fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <DialogHeader>
                           <DialogTitle>Scan VIN with Camera</DialogTitle>
                           <DialogDescription>
