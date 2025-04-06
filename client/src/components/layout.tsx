@@ -58,14 +58,16 @@ export default function Layout({ children }: LayoutProps) {
         <FloatingChat category={currentCategory} />
       </div>
       
-      {/* Help button to restart tour */}
-      <div data-tour="restart-tour" className="fixed top-4 left-4 z-[9999]">
-        <RestartTourButton 
-          position="relative"
-          tooltipText="Restart guided tour" 
-          className="!shadow-lg !border-primary/20"
-        />
-      </div>
+      {/* Help button to restart tour - hidden on home page */}
+      {!isHomePage && (
+        <div data-tour="restart-tour" className="fixed top-4 left-4 z-[9999]">
+          <RestartTourButton 
+            position="relative"
+            tooltipText="Restart guided tour" 
+            className="!shadow-lg !border-primary/20"
+          />
+        </div>
+      )}
     </div>
   );
 }

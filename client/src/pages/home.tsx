@@ -59,21 +59,19 @@ export default function Home() {
   return (
     <div className="px-4 py-8">
       <div className="text-center mb-8 relative">
-        <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A]">
+        <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
           Welcome to Fundamenta
+          <span className="inline-block ml-2 sm:ml-2 -mt-1 sm:-mt-1 relative transform transition-all hover:scale-110" title="Take a tour!">
+            <RestartTourButton 
+              position="relative" 
+              className="bg-primary/5 shadow-md border border-primary/20 scale-[0.85] sm:scale-90 hover:bg-primary/10" 
+              tooltipText="Start Tour Guide" 
+            />
+          </span>
         </h1>
         <p className="text-lg text-muted-foreground">
           Your AI-powered assistant for life skills and wellness
         </p>
-        
-        {/* Question mark icon for starting the tour */}
-        <div className="absolute top-0 right-0">
-          <RestartTourButton 
-            position="relative" 
-            className="bg-white shadow-sm" 
-            tooltipText="Start Tour Guide" 
-          />
-        </div>
       </div>
       
       {/* Weather Widget - optimized for mobile */}
