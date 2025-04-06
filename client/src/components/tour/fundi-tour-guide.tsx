@@ -79,12 +79,15 @@ export default function FundiTourGuide() {
     // If no cards found or on very small screens, use fallback positions
     if (cardPositions.length === 0 || viewportWidth < 500) {
       // Define fallback positions for different points around the screen
+      // Set a stricter maximum X position for desktop to prevent Fundi from moving too far right
+      const maxDesktopX = isMobile ? viewportWidth - 100 : Math.min(500, viewportWidth - 200);
+      
       const fallbackPositions = [
-        { x: Math.min(viewportWidth / 4, viewportWidth - 100), y: 120 },  // Top left area
-        { x: Math.min(viewportWidth / 2 - 40, viewportWidth - 100), y: 120 },  // Top center
-        { x: Math.min(viewportWidth * 0.75, viewportWidth - 100), y: 120 },  // Top right area
-        { x: Math.min(viewportWidth / 4, viewportWidth - 100), y: Math.min(viewportHeight / 2, 400) },  // Middle left
-        { x: Math.min(viewportWidth * 0.75, viewportWidth - 100), y: Math.min(viewportHeight / 2, 400) },  // Middle right
+        { x: Math.min(viewportWidth / 4, maxDesktopX), y: 120 },  // Top left area
+        { x: Math.min(viewportWidth / 2 - 40, maxDesktopX), y: 120 },  // Top center
+        { x: Math.min(viewportWidth * 0.6, maxDesktopX), y: 120 },  // Top right area (reduced from 0.75)
+        { x: Math.min(viewportWidth / 4, maxDesktopX), y: Math.min(viewportHeight / 2, 400) },  // Middle left
+        { x: Math.min(viewportWidth * 0.6, maxDesktopX), y: Math.min(viewportHeight / 2, 400) },  // Middle right (reduced from 0.75)
       ];
       
       // For mobile, use more diverse positions optimized for highlighting different cards
@@ -124,8 +127,10 @@ export default function FundiTourGuide() {
     const selectedPosition = cardPositions[positionIndex];
     
     // Always ensure position stays within the viewport
+    // Apply stricter limits on desktop to prevent Fundi from going too far right
+    const maxDesktopX = isMobile ? viewportWidth - 100 : Math.min(500, viewportWidth - 200);
     const finalPosition = {
-      x: Math.max(20, Math.min(selectedPosition.x, viewportWidth - 100)),
+      x: Math.max(20, Math.min(selectedPosition.x, maxDesktopX)),
       y: Math.max(20, Math.min(selectedPosition.y, viewportHeight - 200))
     };
     
@@ -210,7 +215,9 @@ export default function FundiTourGuide() {
           }
           
           // Ensure Fundi stays within viewport with better margins
-          newX = Math.max(60, Math.min(newX, viewportWidth - 100));
+          // Apply stricter boundaries on desktop to prevent Fundi from going too far right
+          const maxDesktopX = isMobile ? viewportWidth - 100 : Math.min(500, viewportWidth - 200);
+          newX = Math.max(60, Math.min(newX, maxDesktopX));
           newY = Math.max(60, Math.min(newY, viewportHeight - 200));
           
           setTargetPosition({ x: newX, y: newY });
