@@ -256,7 +256,7 @@ const RankCard = ({ userProgress }: { userProgress: UserArcadeProgress }) => {
 };
 
 // Daily Challenges Component
-const DailyChallenges = () => {
+const DailyChallenges = ({ onViewAllChallenges }: { onViewAllChallenges?: () => void }) => {
   return (
     <Card>
       <CardHeader>
@@ -304,7 +304,12 @@ const DailyChallenges = () => {
           <Badge variant="outline">+15 pts</Badge>
         </div>
         
-        <Button className="w-full">View All Challenges</Button>
+        <Button 
+          className="w-full" 
+          onClick={onViewAllChallenges}
+        >
+          View All Challenges
+        </Button>
       </CardContent>
     </Card>
   );
@@ -314,6 +319,7 @@ const DailyChallenges = () => {
 export default function Arcade() {
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [categoryFilter, setCategoryFilter] = useState<AchievementCategory | "all">("all");
+  const [, navigate] = useLocation();
   
   // Filter achievements by category
   const filteredAchievements = ACHIEVEMENTS.filter(achievement => 
@@ -341,6 +347,23 @@ export default function Arcade() {
       }
       return acc;
     }, {} as Record<string, number>);
+    
+  // Handler functions for buttons
+  const handleViewAllChallenges = () => {
+    setActiveTab("challenges");
+  };
+  
+  const handleViewAllPathways = () => {
+    navigate("/learning/pathways");
+  };
+  
+  const handleViewAllCompletedCourses = () => {
+    navigate("/learning/completed");
+  };
+  
+  const handleContinuePath = (path: string) => {
+    navigate(path);
+  };
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
@@ -372,7 +395,7 @@ export default function Arcade() {
             <RankCard userProgress={userProgress} />
             
             {/* Daily Challenges Preview */}
-            <DailyChallenges />
+            <DailyChallenges onViewAllChallenges={handleViewAllChallenges} />
           </div>
           
           <h2 className="text-xl font-bold mt-8">Recent Achievements</h2>
@@ -476,7 +499,12 @@ export default function Arcade() {
                   <Progress value={50} className="h-1.5 mb-2" />
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-500">50% complete</span>
-                    <Button variant="link" size="sm" className="h-5 p-0">
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      className="h-5 p-0"
+                      onClick={() => handleContinuePath("/finance/education")}
+                    >
                       Continue
                     </Button>
                   </div>
@@ -494,7 +522,12 @@ export default function Arcade() {
                   <Progress value={75} className="h-1.5 mb-2" />
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-500">75% complete</span>
-                    <Button variant="link" size="sm" className="h-5 p-0">
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      className="h-5 p-0"
+                      onClick={() => handleContinuePath("/learning/courses/cooking-basics")}
+                    >
                       Continue
                     </Button>
                   </div>
@@ -502,7 +535,12 @@ export default function Arcade() {
                 
                 {/* More paths can be added here */}
                 
-                <Button className="w-full mt-2">View All Pathways</Button>
+                <Button 
+                  className="w-full mt-2"
+                  onClick={handleViewAllPathways}
+                >
+                  View All Pathways
+                </Button>
               </CardContent>
             </Card>
             
@@ -553,7 +591,12 @@ export default function Arcade() {
                   </div>
                 </div>
                 
-                <Button className="w-full mt-4">View All Completed Courses</Button>
+                <Button 
+                  className="w-full mt-4"
+                  onClick={handleViewAllCompletedCourses}
+                >
+                  View All Completed Courses
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -643,7 +686,12 @@ export default function Arcade() {
                   <Progress value={33} className="h-1.5" />
                   <div className="flex justify-between mt-2">
                     <span className="text-xs text-gray-500">1/3 complete</span>
-                    <Button variant="link" size="sm" className="h-5 p-0">
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      className="h-5 p-0"
+                      onClick={() => handleContinuePath("/finance/goals")}
+                    >
                       Continue
                     </Button>
                   </div>
@@ -663,7 +711,12 @@ export default function Arcade() {
                   <Progress value={40} className="h-1.5" />
                   <div className="flex justify-between mt-2">
                     <span className="text-xs text-gray-500">2/5 complete</span>
-                    <Button variant="link" size="sm" className="h-5 p-0">
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      className="h-5 p-0"
+                      onClick={() => handleContinuePath("/active")}
+                    >
                       Continue
                     </Button>
                   </div>
@@ -683,7 +736,12 @@ export default function Arcade() {
                   <Progress value={0} className="h-1.5" />
                   <div className="flex justify-between mt-2">
                     <span className="text-xs text-gray-500">0/3 complete</span>
-                    <Button variant="link" size="sm" className="h-5 p-0">
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      className="h-5 p-0"
+                      onClick={() => handleContinuePath("/learning/courses/cooking-basics")}
+                    >
                       Start
                     </Button>
                   </div>
