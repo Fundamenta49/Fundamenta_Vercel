@@ -548,10 +548,10 @@ export default function FundiTourGuide() {
             delay: 0.05 // Slight delay after Fundi moves
           }}
           style={{ 
-            width: '220px', // Larger width for better text display
-            maxWidth: '220px', // Matching max width
-            height: '220px', // Taller to show more content
-            maxHeight: '220px', // Matching max height
+            width: '300px', // Increased width for longer introduction text
+            maxWidth: '300px', // Matching max width
+            height: '250px', // Increased height for more content
+            maxHeight: '250px', // Matching max height
             boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
             willChange: 'transform', // Performance optimization
             transformOrigin: 'center top', // Consistent transform origin
@@ -563,8 +563,8 @@ export default function FundiTourGuide() {
           {/* No pointer for cleaner look - bubble is now directly attached to Fundi */}
           
           {/* Tour Content */}
-          <div className="font-semibold text-sm mb-1.5">{currentStep.title}</div>
-          <p className="text-gray-700 text-xs leading-relaxed mb-2.5">{currentStep.content}</p>
+          <div className="font-semibold text-base mb-2">{currentStep.title}</div>
+          <p className="text-gray-700 text-sm leading-relaxed mb-3">{currentStep.content}</p>
           
           {/* Progress bar */}
           <div className="mb-2">
