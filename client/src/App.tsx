@@ -45,6 +45,8 @@ import ShoppingBuddyCourse from "@/pages/learning/courses/shopping-buddy";
 import RepairAssistantCourse from "@/pages/learning/courses/repair-assistant";
 import LifeSkillsPage from "@/pages/learning/life-skills";
 import IdentityDocumentsPage from "@/pages/learning/identity-documents";
+import CompletedCoursesPage from "@/pages/learning/completed";
+import LearningPathwaysPage from "@/pages/learning/pathways";
 import { TourProvider } from "./contexts/tour-context";
 import Tour from "./components/tour";
 import LoginPage from "@/pages/login";
@@ -305,6 +307,16 @@ function Router() {
             <Route path="/learning/courses/repair-assistant">
               <ProtectedRoute>
                 <RepairAssistantCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/completed">
+              <ProtectedRoute>
+                <CompletedCoursesPage />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/pathways">
+              <ProtectedRoute>
+                <LearningPathwaysPage />
               </ProtectedRoute>
             </Route>
             <Route component={NotFound} />
