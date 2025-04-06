@@ -245,10 +245,10 @@ const TourModal = () => {
                 size="icon" 
                 onClick={handlePrevStep}
                 disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
-                className="h-6 w-6 p-0 opacity-70 hover:opacity-100"
+                className="h-5 w-5 p-0 opacity-40 hover:opacity-70"
                 aria-label="Back"
               >
-                <ChevronLeft className="h-3 w-3" />
+                <ChevronLeft className="h-2.5 w-2.5" />
               </Button>
               
               <div className="flex gap-1">
@@ -257,10 +257,10 @@ const TourModal = () => {
                   size="icon" 
                   onClick={skipTour}
                   disabled={showUserNameInput || isTransitioning}
-                  className="h-6 w-6 p-0 opacity-70 hover:opacity-100"
+                  className="h-5 w-5 p-0 opacity-40 hover:opacity-70"
                   aria-label="Cancel Tour"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-2.5 w-2.5" />
                 </Button>
                 
                 {/* We're hiding the Next button since tour progresses via click anywhere */}
