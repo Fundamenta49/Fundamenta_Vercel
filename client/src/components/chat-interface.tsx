@@ -96,8 +96,8 @@ export default function ChatInterface({
   const [resizeDirection, setResizeDirection] = useState<'br' | 'bl' | 'b' | 'r' | 'l' | null>(null);
   const [initialPosition, setInitialPosition] = useState({ left: 0, top: 0, width: 0, height: 0 });
   const [chatSize, setChatSize] = useState({
-    width: window.innerWidth < 768 ? '90%' : '350px',
-    height: window.innerWidth < 768 ? '380px' : '350px'
+    width: window.innerWidth < 768 ? '80%' : '350px',
+    height: window.innerWidth < 768 ? '260px' : '350px'
   });
   
   // User memory and conversation hooks

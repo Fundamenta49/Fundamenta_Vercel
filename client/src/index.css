@@ -513,6 +513,15 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
 .resizable-chat {
   transition: width 0.05s ease, height 0.05s ease;
   resize: both;
+  max-height: 80vh !important; /* Ensure chat doesn't get too large */
+}
+
+/* Mobile specific chat sizing */
+@media (max-width: 768px) {
+  .resizable-chat {
+    max-height: 60vh !important; /* Smaller max height on mobile */
+    max-width: 85vw !important; /* Keep width reasonable on mobile */
+  }
 }
 
 .resizable-chat.user-select-none {

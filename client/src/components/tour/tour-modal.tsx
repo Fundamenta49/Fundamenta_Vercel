@@ -245,9 +245,10 @@ const TourModal = () => {
                 size="icon" 
                 onClick={handlePrevStep}
                 disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
-                className="h-8 w-8 p-0"
+                className="h-6 w-6 p-0 opacity-70 hover:opacity-100"
+                aria-label="Back"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3 w-3" />
               </Button>
               
               <div className="flex gap-1">
@@ -256,19 +257,13 @@ const TourModal = () => {
                   size="icon" 
                   onClick={skipTour}
                   disabled={showUserNameInput || isTransitioning}
-                  className="h-8 w-8 p-0"
+                  className="h-6 w-6 p-0 opacity-70 hover:opacity-100"
+                  aria-label="Cancel Tour"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3" />
                 </Button>
                 
-                <Button 
-                  size="sm" 
-                  onClick={handleNextStep}
-                  disabled={showUserNameInput || isTransitioning}
-                  className="h-8"
-                >
-                  {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
-                </Button>
+                {/* We're hiding the Next button since tour progresses via click anywhere */}
               </div>
             </>
           ) : (
@@ -279,6 +274,7 @@ const TourModal = () => {
                   size="sm" 
                   onClick={handlePrevStep}
                   disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
+                  className="h-8 md:h-9"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Back
@@ -289,6 +285,7 @@ const TourModal = () => {
                   size="sm" 
                   onClick={skipTour}
                   disabled={showUserNameInput || isTransitioning}
+                  className="h-8 md:h-9"
                 >
                   <X className="h-4 w-4 mr-1" />
                   Skip
@@ -300,6 +297,7 @@ const TourModal = () => {
                   size="sm" 
                   onClick={handleNextStep}
                   disabled={showUserNameInput || isTransitioning}
+                  className="h-8 md:h-9"
                 >
                   {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
                   {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-1" />}
