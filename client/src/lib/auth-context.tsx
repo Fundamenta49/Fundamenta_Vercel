@@ -13,6 +13,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   user: AuthUser | null;
   login: (email: string, password: string) => Promise<boolean>;
+  signUp: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
 };
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
   login: async () => false,
+  signUp: async () => false,
   logout: () => {},
   loading: true,
 });
@@ -90,12 +92,88 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
     
-    // Demo admin login - in production, this would validate credentials with a server
-    if (email === 'admin@fundamenta.app' && password === 'admin123') {
+    try {
+      // Demo admin login - in production, this would validate credentials with a server
+      if (email === 'admin@fundamenta.app' && password === 'admin123') {
+        const userData: AuthUser = {
+          name: 'Admin User',
+          email: email,
+          role: 'admin'
+        };
+        
+        setIsAuthenticated(true);
+        setUser(userData);
+        
+        // Store auth data in localStorage
+        localStorage.setItem('auth', JSON.stringify({
+          isAuthenticated: true,
+          user: userData
+        }));
+        
+        setLoading(false);
+        return true;
+      }
+      
+      // Check if this is a registered user
+      const registeredUsers = localStorage.getItem('registered_users');
+      if (registeredUsers) {
+        const users = JSON.parse(registeredUsers);
+        const userMatch = users.find((user: any) => 
+          user.email === email && user.password === password
+        );
+        
+        if (userMatch) {
+          const userData: AuthUser = {
+            name: userMatch.name,
+            email: userMatch.email,
+            role: 'user'
+          };
+          
+          setIsAuthenticated(true);
+          setUser(userData);
+          
+          // Store auth data in localStorage
+          localStorage.setItem('auth', JSON.stringify({
+            isAuthenticated: true,
+            user: userData
+          }));
+          
+          setLoading(false);
+          return true;
+        }
+      }
+      
+      setLoading(false);
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      setLoading(false);
+      return false;
+    }
+  };
+  
+  // Sign-up function to register new users
+  const signUp = async (name: string, email: string, password: string): Promise<boolean> => {
+    try {
+      // Check if user already exists
+      const registeredUsers = localStorage.getItem('registered_users');
+      let users = registeredUsers ? JSON.parse(registeredUsers) : [];
+      
+      const existingUser = users.find((user: any) => user.email === email);
+      if (existingUser) {
+        return false; // User already exists
+      }
+      
+      // Register new user
+      const newUser = { name, email, password };
+      users.push(newUser);
+      localStorage.setItem('registered_users', JSON.stringify(users));
+      
+      // Auto-login after registration
       const userData: AuthUser = {
-        name: 'Admin User',
+        name: name,
         email: email,
-        role: 'admin'
+        role: 'user'
       };
       
       setIsAuthenticated(true);
@@ -107,12 +185,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         user: userData
       }));
       
-      setLoading(false);
       return true;
+    } catch (error) {
+      console.error('Sign-up error:', error);
+      return false;
     }
-    
-    setLoading(false);
-    return false;
   };
 
   // Logout function
@@ -124,7 +201,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, signUp, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -90,13 +90,65 @@ export default function RunningTracker() {
   const watchIdRef = useRef<number | null>(null);
 
   useEffect(() => {
-    checkLocationPermission();
+    // Check for saved location permission or prompt the user
+    const savedPermission = localStorage.getItem('location_permission');
+    if (savedPermission === 'granted') {
+      // Verify the permission is still valid
+      checkLocationPermission();
+    } else {
+      // Show a more prominent permission request
+      setHasLocationPermission(false);
+    }
   }, []);
 
   const checkLocationPermission = async () => {
     try {
-      const permission = await navigator.permissions.query({ name: 'geolocation' });
+      // First try to actively request location to trigger the browser permission dialog
+      if (!localStorage.getItem('location_permission')) {
+        try {
+          // This will trigger the browser's permission dialog
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0
+            });
+          });
+          
+          // If we get here, permission was granted
+          localStorage.setItem('location_permission', 'granted');
+          setHasLocationPermission(true);
+          
+          // Store the initial position for future reference
+          if (position && position.coords) {
+            localStorage.setItem('last_location', 
+              JSON.stringify({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                timestamp: position.timestamp
+              })
+            );
+          }
+          
+          toast({
+            title: "Location Access Granted",
+            description: "GPS tracking is now enabled for your runs.",
+          });
+          
+          return;
+        } catch (posError) {
+          // User denied or there was an error
+          localStorage.setItem('location_permission', 'denied');
+          console.warn('Position access error:', posError);
+        }
+      }
+      
+      // Check permission status via the permissions API if available
+      const permission = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
       setHasLocationPermission(permission.state === 'granted');
+      
+      // Update localStorage based on current permission state
+      localStorage.setItem('location_permission', permission.state === 'granted' ? 'granted' : 'denied');
 
       if (permission.state === 'prompt') {
         toast({
@@ -113,14 +165,48 @@ export default function RunningTracker() {
 
       // Listen for permission changes
       permission.addEventListener('change', () => {
-        setHasLocationPermission(permission.state === 'granted');
+        const newState = permission.state === 'granted';
+        setHasLocationPermission(newState);
+        localStorage.setItem('location_permission', newState ? 'granted' : 'denied');
       });
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Location Error",
-        description: "Unable to access location services.",
-      });
+      console.error('Permission check error:', error);
+      // Fall back to direct geolocation request if permissions API isn't available
+      try {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setHasLocationPermission(true);
+            localStorage.setItem('location_permission', 'granted');
+            
+            // Store the position
+            if (position && position.coords) {
+              localStorage.setItem('last_location', 
+                JSON.stringify({
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  timestamp: position.timestamp
+                })
+              );
+            }
+          },
+          () => {
+            setHasLocationPermission(false);
+            localStorage.setItem('location_permission', 'denied');
+            toast({
+              variant: "destructive",
+              title: "Location Access Denied",
+              description: "You've denied location access. Please enable it in your device settings to use this feature.",
+            });
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      } catch (geoError) {
+        toast({
+          variant: "destructive",
+          title: "Location Error",
+          description: "Unable to access location services on this device.",
+        });
+      }
     }
   };
 
@@ -248,62 +334,74 @@ export default function RunningTracker() {
         <CardContent className="space-y-4">
           {!hasLocationPermission ? (
             <div className="space-y-4">
-              <Alert className="bg-amber-50 border-amber-200">
-                <AlertDescription className="flex flex-col space-y-4">
-                  <div className="text-amber-800">
-                    <strong>Location permission required:</strong> This feature needs access to your GPS to track your runs.
+              <div className="p-5 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border-2 border-orange-200 shadow-md">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white shadow-md">
+                    <MapPin className="h-8 w-8" />
                   </div>
-                  <div className="text-sm text-slate-600">
-                    <ul className="list-disc pl-4 space-y-2">
-                      <li>Clicking the button below will prompt for location access</li>
-                      <li>If previously denied, you'll need to update your browser/device settings</li>
-                      <li>For iOS: Settings → Safari → Location (or relevant browser)</li>
-                      <li>For Android: Settings → Apps → Browser → Permissions → Location</li>
-                    </ul>
-                  </div>
+                </div>
+                
+                <h3 className="text-xl font-bold text-center text-orange-800 mb-3">Location Access Required</h3>
+                
+                <p className="text-center text-orange-700 mb-4">
+                  To track your runs and provide accurate distance measurements, we need permission to use your device's GPS.
+                </p>
+                
+                <div className="bg-white rounded-lg p-4 mb-4">
+                  <h4 className="font-semibold text-gray-800 mb-2">How to enable location:</h4>
+                  <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
+                    <li>Click the button below to grant permission</li>
+                    <li>Select "Allow" when prompted by your browser</li>
+                    <li>If previously denied, you may need to update settings in your browser</li>
+                    <li>For the best experience, please allow "precise location"</li>
+                  </ul>
+                </div>
+                
+                <div className="flex justify-center">
                   <Button 
-                    className="self-start bg-amber-600 hover:bg-amber-700"
+                    className="bg-orange-600 hover:bg-orange-700 shadow-md py-5 px-6 text-lg"
                     onClick={() => {
                       // Attempt to request location permission
-                      navigator.geolocation.getCurrentPosition(
-                        () => checkLocationPermission(),
-                        () => checkLocationPermission(),
-                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-                      );
+                      localStorage.removeItem('location_permission'); // Clear any saved permission status
+                      checkLocationPermission(); // This will trigger the permission dialog
                     }}
                   >
-                    <MapPin className="h-4 w-4 mr-2" />
+                    <MapPin className="h-5 w-5 mr-2" />
                     Enable GPS Location
                   </Button>
-                </AlertDescription>
-              </Alert>
+                </div>
+              </div>
               
-              {/* Deep link to device settings for mobile devices where possible */}
-              <div className="text-center">
-                <a 
-                  href={
-                    // iOS deep link - will only work on Safari iOS
-                    navigator.userAgent.match(/iPhone|iPad|iPod/i) 
-                      ? "App-prefs:root=Privacy&path=LOCATION" 
-                      // Android - only works on some devices/browsers
-                      : navigator.userAgent.match(/Android/i)
-                        ? "intent://settings/location#Intent;scheme=android-app;end"
-                        : "#"
-                  }
-                  className="text-sm text-blue-600 hover:underline cursor-pointer"
-                  onClick={(e) => {
-                    // For devices where deep links don't work, show instructions
-                    if (!navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
-                      e.preventDefault();
-                      toast({
-                        title: "Open Settings Manually",
-                        description: "Please open your device settings and enable location services for this browser."
-                      });
-                    }
-                  }}
-                >
-                  Open Device Location Settings
-                </a>
+              {/* Device settings links section */}
+              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                <h4 className="font-medium text-slate-700 mb-2 text-center">Already denied permission?</h4>
+                <p className="text-sm text-slate-600 text-center mb-3">
+                  You'll need to enable location in your device settings:
+                </p>
+                
+                <div className="flex justify-center space-x-4">
+                  {/* iOS Instructions */}
+                  <div className="text-center">
+                    <p className="text-xs font-medium text-slate-700 mb-1">iOS Devices</p>
+                    <a 
+                      href="App-prefs:root=Privacy&path=LOCATION"
+                      className="text-xs text-blue-600 hover:underline cursor-pointer bg-blue-50 px-3 py-2 rounded-md flex items-center justify-center"
+                    >
+                      Settings → Safari → Location
+                    </a>
+                  </div>
+                  
+                  {/* Android Instructions */}
+                  <div className="text-center">
+                    <p className="text-xs font-medium text-slate-700 mb-1">Android Devices</p>
+                    <a 
+                      href="intent://settings/location#Intent;scheme=android-app;end"
+                      className="text-xs text-blue-600 hover:underline cursor-pointer bg-blue-50 px-3 py-2 rounded-md flex items-center justify-center"
+                    >
+                      Settings → Apps → Browser → Permissions
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           ) : (

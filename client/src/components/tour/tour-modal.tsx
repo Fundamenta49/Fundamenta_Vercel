@@ -180,18 +180,24 @@ const TourModal = () => {
         {/* User name input (first step) */}
         {showUserNameInput && (
           <div className="py-3">
-            <Input
-              placeholder="Your name"
-              value={userNameInput}
-              onChange={(e) => setUserNameInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleUserNameSubmit()}
-              autoFocus
-              className="mb-2"
-              aria-label="Enter your name"
-            />
+            <div className="mb-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
+              <label htmlFor="user-name-input" className="block text-sm font-medium text-orange-800 mb-2">
+                Please enter your name to continue:
+              </label>
+              <Input
+                id="user-name-input"
+                placeholder="Your name"
+                value={userNameInput}
+                onChange={(e) => setUserNameInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleUserNameSubmit()}
+                autoFocus
+                className="mb-2 border-orange-300 focus:border-orange-500 focus:ring focus:ring-orange-200"
+                aria-label="Enter your name"
+              />
+            </div>
             <Button 
               onClick={handleUserNameSubmit} 
-              className="w-full"
+              className="w-full bg-orange-600 hover:bg-orange-700"
               disabled={!userNameInput.trim() || isTransitioning}
             >
               Continue

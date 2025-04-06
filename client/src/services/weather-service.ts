@@ -58,6 +58,27 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
       if (savedLocation) {
         console.log('Using saved location:', savedLocation);
         location = savedLocation;
+      } else {
+        // Try to get location from browser geolocation
+        try {
+          if (navigator.geolocation) {
+            const geoPosition = await new Promise<GeolocationPosition>((resolve, reject) => {
+              navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+              });
+            });
+            
+            const { latitude, longitude } = geoPosition.coords;
+            console.log(`Location services provided coordinates: ${latitude},${longitude}`);
+            localStorage.setItem('weather_location', `${latitude},${longitude}`);
+            location = `${latitude},${longitude}`;
+          }
+        } catch (geoError) {
+          console.warn('Geolocation error:', geoError);
+          // Continue with IP-based location if geolocation fails
+        }
       }
     } else {
       // Save the new location to localStorage for persistence
