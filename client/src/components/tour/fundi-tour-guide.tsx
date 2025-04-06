@@ -27,6 +27,14 @@ export default function FundiTourGuide() {
   const [animate, setAnimate] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
+  // Helper function to clean up all tour highlights
+  const cleanupTourHighlights = () => {
+    document.querySelectorAll('.tour-highlight, .tour-card-highlight').forEach(el => {
+      el.classList.remove('tour-highlight');
+      el.classList.remove('tour-card-highlight');
+    });
+  };
+  
   // Calculate progress
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
   
@@ -35,25 +43,36 @@ export default function FundiTourGuide() {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
-    // Find all the feature cards on the page
+    // Find all the feature cards on the page - looking specifically for cards in grid sections
     const featureCards = document.querySelectorAll('.card');
-    const cardPositions: Array<{ x: number; y: number }> = [];
+    const cardPositions: Array<{ x: number; y: number; element: Element }> = [];
     
     // Try to position Fundi near feature cards if they exist
     if (featureCards.length > 0) {
-      featureCards.forEach((card) => {
+      featureCards.forEach((card, index) => {
         const rect = card.getBoundingClientRect();
-        // For each card, create a position near it
-        cardPositions.push({
-          x: Math.min(rect.left - 60, viewportWidth - 100), // Position to the left of the card
-          y: rect.top + 20 // Near the top of the card
-        });
         
-        // Also add positions for the right side of cards for variety
-        cardPositions.push({
-          x: Math.min(rect.right + 20, viewportWidth - 100), // Position to the right of the card
-          y: rect.top + 20 // Near the top of the card
-        });
+        // Only include cards that are actually visible in the viewport
+        if (rect.top < viewportHeight && rect.bottom > 0 && 
+            rect.left < viewportWidth && rect.right > 0) {
+          
+          // For each visible card, create a position near it
+          if (index % 2 === 0) {
+            // Position to the left of even-indexed cards
+            cardPositions.push({
+              x: Math.min(rect.left - 60, viewportWidth - 100), 
+              y: rect.top + 20,
+              element: card
+            });
+          } else {
+            // Position to the right of odd-indexed cards
+            cardPositions.push({
+              x: Math.min(rect.right + 20, viewportWidth - 100),
+              y: rect.top + 20,
+              element: card
+            });
+          }
+        }
       });
     }
     
@@ -86,15 +105,32 @@ export default function FundiTourGuide() {
     }
     
     // Use the card positions when available
-    // Use modulo to cycle through the positions based on step index
+    // Use step index to choose a specific card - more predictable than random selection
     const positionIndex = stepIndex % cardPositions.length;
     
-    // Always ensure position stays within the viewport
-    const position = cardPositions[positionIndex];
-    position.x = Math.max(20, Math.min(position.x, viewportWidth - 100));
-    position.y = Math.max(20, Math.min(position.y, viewportHeight - 200));
+    // Get the selected position and extract x/y coordinates
+    const selectedPosition = cardPositions[positionIndex];
     
-    return position;
+    // Always ensure position stays within the viewport
+    const finalPosition = {
+      x: Math.max(20, Math.min(selectedPosition.x, viewportWidth - 100)),
+      y: Math.max(20, Math.min(selectedPosition.y, viewportHeight - 200))
+    };
+    
+    // Highlight the card we're pointing to with a subtle glow
+    try {
+      document.querySelectorAll('.tour-card-highlight').forEach(el => {
+        el.classList.remove('tour-card-highlight');
+      });
+      
+      // Add highlight to the selected card
+      selectedPosition.element.classList.add('tour-card-highlight');
+    } catch (e) {
+      // If we can't highlight (e.g., element missing), just continue
+      console.log('Could not highlight card');
+    }
+    
+    return finalPosition;
   };
 
   // Control Fundi's appearance and position based on the current step
@@ -190,8 +226,10 @@ export default function FundiTourGuide() {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      document.querySelectorAll('.tour-highlight').forEach(el => {
+      // Clean up all tour-related highlights
+      document.querySelectorAll('.tour-highlight, .tour-card-highlight').forEach(el => {
         el.classList.remove('tour-highlight');
+        el.classList.remove('tour-card-highlight');
       });
     };
   }, [isTourActive, currentStep, currentStepIndex]);
@@ -217,9 +255,7 @@ export default function FundiTourGuide() {
     const currentPosition = {...position};
     
     // Remove any highlights before transitioning
-    document.querySelectorAll('.tour-highlight').forEach(el => {
-      el.classList.remove('tour-highlight');
-    });
+    cleanupTourHighlights();
     
     // Make Fundi think to indicate processing
     setThinking(true);
@@ -263,9 +299,7 @@ export default function FundiTourGuide() {
     const currentPosition = {...position};
     
     // Remove any highlights before transitioning
-    document.querySelectorAll('.tour-highlight').forEach(el => {
-      el.classList.remove('tour-highlight');
-    });
+    cleanupTourHighlights();
     
     // Make Fundi think to indicate processing
     setThinking(true);
@@ -354,9 +388,11 @@ export default function FundiTourGuide() {
           y: position.y 
         }}
         transition={{ 
-          type: "tween", 
-          duration: 0.3,
-          ease: "easeInOut"
+          type: "spring", 
+          stiffness: 100, 
+          damping: 15, 
+          mass: 1,
+          velocity: 2
         }}
         style={{ 
           pointerEvents: 'auto',
@@ -378,21 +414,25 @@ export default function FundiTourGuide() {
         </div>
       </motion.div>
       
-      {/* Speech Bubble with tour content - always stays within screen */}
+      {/* Speech Bubble with tour content - stays close to Fundi */}
       <motion.div
         className="fixed z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-4"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // For consistency across all devices, keep speech bubble at fixed position
-          x: Math.max(20, Math.min(window.innerWidth / 2 - 125, window.innerWidth - 270)),  // Center horizontally on all screens
-          y: window.innerHeight < 600 ? 100 : 200  // Higher on small screens, lower on larger screens
+          // Position relative to Fundi for consistent experience
+          x: position.x > window.innerWidth / 2 
+            ? Math.max(20, position.x - 270) // If Fundi is on the right side, position chat to the left
+            : Math.min(position.x + 90, window.innerWidth - 270), // If Fundi is on the left, position chat to the right
+          y: Math.min(position.y - 20, window.innerHeight - 280) // Position slightly above Fundi
         }}
         transition={{ 
-          type: "tween", 
-          duration: 0.4,
-          ease: "easeInOut"
+          type: "spring", 
+          stiffness: 90, 
+          damping: 16,
+          mass: 0.8,
+          delay: 0.05 // Slight delay after Fundi moves
         }}
         style={{ 
           width: '250px',

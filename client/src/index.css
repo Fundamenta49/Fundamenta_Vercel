@@ -363,6 +363,36 @@
     position: relative !important;
     z-index: 50 !important;
     box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.4) !important;
+    animation: highlight-pulse 2s infinite alternate !important;
+  }
+  
+  @keyframes highlight-pulse {
+    0% {
+      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.3) !important;
+    }
+    100% {
+      box-shadow: 0 0 0 6px rgba(var(--primary-rgb), 0.6) !important;
+    }
+  }
+  
+  /* Highlight card that Fundi is positioned near */
+  .tour-card-highlight {
+    position: relative !important;
+    z-index: 45 !important; 
+    box-shadow: 0 0 12px 4px rgba(var(--primary-rgb), 0.5) !important;
+    transform: translateY(-3px) !important;
+    transition: all 0.3s ease-in-out !important;
+    border-color: rgba(var(--primary-rgb), 0.3) !important;
+    animation: card-glow 2s infinite alternate !important;
+  }
+  
+  @keyframes card-glow {
+    0% {
+      box-shadow: 0 0 12px 2px rgba(var(--primary-rgb), 0.3);
+    }
+    100% {
+      box-shadow: 0 0 16px 6px rgba(var(--primary-rgb), 0.6);
+    }
   }
   
   /* Dialog container position for mobile */
@@ -377,6 +407,43 @@
 @media (min-width: 640px) {
   [data-state="open"] .fixed[role="dialog"] {
     align-items: center;
+  }
+  
+  /* Desktop-specific element highlight with more pronounced effect */
+  .tour-highlight {
+    position: relative !important;
+    z-index: 50 !important;
+    box-shadow: 0 0 0 5px rgba(var(--primary-rgb), 0.5) !important;
+    animation: desktop-highlight-pulse 2.5s infinite alternate !important;
+  }
+  
+  @keyframes desktop-highlight-pulse {
+    0% {
+      box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.4) !important;
+    }
+    100% {
+      box-shadow: 0 0 0 8px rgba(var(--primary-rgb), 0.7) !important;
+    }
+  }
+  
+  /* Desktop-specific card highlight with more pronounced effect */
+  .tour-card-highlight {
+    position: relative !important;
+    z-index: 45 !important; 
+    box-shadow: 0 0 18px 6px rgba(var(--primary-rgb), 0.6) !important;
+    transform: translateY(-5px) scale(1.02) !important;
+    transition: all 0.4s ease-in-out !important;
+    border-color: rgba(var(--primary-rgb), 0.4) !important;
+    animation: desktop-card-glow 2.5s infinite alternate !important;
+  }
+  
+  @keyframes desktop-card-glow {
+    0% {
+      box-shadow: 0 0 15px 4px rgba(var(--primary-rgb), 0.4);
+    }
+    100% {
+      box-shadow: 0 0 22px 8px rgba(var(--primary-rgb), 0.7);
+    }
   }
 }
 
