@@ -305,8 +305,8 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setUserName(savedUserName);
       } else {
         // Set a default name for the tour
-        setUserName('Friend');
-        localStorage.setItem('tourUserName', 'Friend');
+        setUserName('Welcome!!');
+        localStorage.setItem('tourUserName', 'Welcome!!');
       }
     }
   }, [isAuthenticated, authLoading, user]); // startTour is defined in the component so we don't need it in deps
@@ -379,7 +379,7 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Process template strings in content to include user name
   const processStepContent = (content: string) => {
-    return content.replace('{userName}', userName || 'there');
+    return content.replace('{userName}', userName || 'welcome!!');
   };
 
   // Process current step to include user name
