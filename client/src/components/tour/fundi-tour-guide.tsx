@@ -167,11 +167,10 @@ export default function FundiTourGuide() {
       }, 2000);
     }, 800);
     
-    // Always reposition Fundi on mobile to showcase different cards
-    // On desktop, only reposition when the route (page) changes
-    const isMobile = window.innerWidth < 640;
+    // Only reposition Fundi when the route (page) changes
+    // We previously also repositioned on mobile, but that functionality has been removed
     const pageChanged = currentRoute !== currentStep.route;
-    const shouldRepositionFundi = isMobile || pageChanged;
+    const shouldRepositionFundi = pageChanged;
     
     if (shouldRepositionFundi) {
       // Update our current route tracking
@@ -306,12 +305,11 @@ export default function FundiTourGuide() {
     // Check if we're moving to a different page - we can compare current and next routes
     // If we don't have the next step data yet, we'll check after navigation
     const pageChanging = nextStepIndex < totalSteps && currentStep.route !== null;
-    const isMobile = window.innerWidth < 640;
     
-    // Calculate a new position if we're changing pages OR we're on mobile
-    // This moves Fundi to different positions on mobile to showcase different cards
-    if (pageChanging || isMobile) {
-      // Only calculate new position if page is changing
+    // Calculate a new position only if we're changing pages
+    // Previously we also moved on mobile devices for each step, but this has been removed
+    if (pageChanging) {
+      // Get screen size to pass to position function
       const isMobile = window.innerWidth < 640;
       const nextPosition = getFundiPosition(nextStepIndex, isMobile);
       
@@ -378,14 +376,13 @@ export default function FundiTourGuide() {
     }
     
     // We're checking if we need to move Fundi
-    // If we're at step 0 or moving within the same page, we don't need to move Fundi on desktop
+    // Only move Fundi when changing pages, regardless of device
     const pageChanging = prevStepIndex >= 0 && currentStep.route !== null;
-    const isMobile = window.innerWidth < 640;
     
-    // Calculate a new position if we're changing pages OR we're on mobile
-    // This moves Fundi to different positions on mobile to showcase different cards
-    if (pageChanging || isMobile) {
-      // Only calculate new position if page is changing
+    // Calculate a new position only if we're changing pages
+    // Previously we also moved on mobile devices for each step, but this has been removed
+    if (pageChanging) {
+      // Get screen size to pass to position function
       const isMobile = window.innerWidth < 640;
       const prevPosition = getFundiPosition(prevStepIndex, isMobile);
       

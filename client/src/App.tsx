@@ -53,7 +53,6 @@ import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
 import ProtectedRoute from "@/components/protected-route";
-import TestNotification from "@/components/test-notification";
 
 // Component to handle redirects from /wellness/* to /wellness?section=*
 function WellnessRedirect() {
@@ -322,7 +321,6 @@ function Router() {
             <Route component={NotFound} />
           </Switch>
           <Toaster />
-          <TestNotification />
         </Layout>
       </Route>
     </Switch>
