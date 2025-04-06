@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTour } from '@/contexts/tour-context';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft, X } from 'lucide-react';
+import { ChevronRight, ChevronLeft, X, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RobotFundi from '@/components/robot-fundi';
 import FundiPersonalityAdapter from '@/components/fundi-personality-adapter';
@@ -510,8 +510,8 @@ export default function FundiTourGuide() {
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Adjusted positioning calculation for smallest bubble
-          x: Math.max(10, Math.min((window.innerWidth - 170) / 2, window.innerWidth - 180)), // Centered horizontally
+          // Adjusted positioning for ultra-thin bubble
+          x: Math.max(10, Math.min((window.innerWidth - 140) / 2, window.innerWidth - 150)), // Centered horizontally
           y: Math.min(Math.max(70, position.y + 75), window.innerHeight - 160) // Below Fundi with consistent distance
         }}
         transition={{ 
@@ -522,8 +522,8 @@ export default function FundiTourGuide() {
           delay: 0.05 // Slight delay after Fundi moves
         }}
         style={{ 
-          width: '170px', // Further reduced width for better proportions
-          maxWidth: '170px', // Matching max width
+          width: '140px', // Dramatically reduced width 
+          maxWidth: '140px', // Matching max width
           height: '160px', // Further reduced height for better proportions
           maxHeight: '160px', // Matching max height
           boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
@@ -535,7 +535,7 @@ export default function FundiTourGuide() {
         {/* No pointer for cleaner look - bubble is not directly attached to Fundi for better readability */}
         
         {/* Tour Content */}
-        <div className="font-medium text-sm mb-1">{currentStep.title}</div>
+        <div className="font-medium text-xs mb-1">{currentStep.title}</div>
         <p className="text-gray-600 text-xs mb-2">{currentStep.content}</p>
         
         {/* Progress bar */}
@@ -554,7 +554,7 @@ export default function FundiTourGuide() {
         
         {/* Navigation buttons - optimized for mobile */}
         <div className="flex justify-between">
-          <div className="flex gap-1 sm:gap-1.5">
+          <div className="flex gap-0.5 sm:gap-1.5">
             <Button 
               variant="outline" 
               size="sm" 
@@ -564,11 +564,11 @@ export default function FundiTourGuide() {
                 handlePrevStep();
               }}
               disabled={currentStepIndex === 0 || isTransitioning}
-              className="h-7 sm:h-6 px-2 sm:px-1.5 text-xs"
+              className="h-7 sm:h-6 px-1 sm:px-1.5 text-xs"
               data-tour-button="back"
             >
               <ChevronLeft className="h-3.5 sm:h-3 w-3.5 sm:w-3 mr-0.5 sm:mr-1" />
-              <span className="sm:inline">{window.innerWidth < 400 ? '' : 'Back'}</span>
+              <span className="hidden sm:inline">{window.innerWidth < 480 ? '' : 'Back'}</span>
             </Button>
             
             <Button 
@@ -580,11 +580,11 @@ export default function FundiTourGuide() {
                 skipTour();
               }}
               disabled={isTransitioning}
-              className="h-7 sm:h-6 px-2 sm:px-1.5 text-xs"
+              className="h-7 sm:h-6 px-1 sm:px-1.5 text-xs"
               data-tour-button="skip"
             >
               <X className="h-3.5 sm:h-3 w-3.5 sm:w-3 mr-0.5 sm:mr-1" />
-              <span className="sm:inline">{window.innerWidth < 400 ? '' : 'Skip'}</span>
+              <span className="hidden sm:inline">{window.innerWidth < 480 ? '' : 'Skip'}</span>
             </Button>
           </div>
           
@@ -596,11 +596,15 @@ export default function FundiTourGuide() {
               handleNextStep();
             }}
             disabled={isTransitioning}
-            className="h-7 sm:h-6 px-2.5 sm:px-2 text-xs"
+            className="h-7 sm:h-6 px-1.5 sm:px-2 text-xs"
             data-tour-button="next" // Identifier for the button
           >
-            {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
-            {currentStepIndex < totalSteps - 1 && <ChevronRight className="h-3.5 sm:h-3 w-3.5 sm:w-3 ml-0.5 sm:ml-1" />}
+            <span className="hidden sm:inline">{currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}</span>
+            {currentStepIndex < totalSteps - 1 ? (
+              <ChevronRight className="h-3.5 sm:h-3 w-3.5 sm:w-3 ml-0 sm:ml-1" />
+            ) : (
+              <Check className="h-3.5 sm:h-3 w-3.5 sm:w-3 ml-0 sm:ml-1" />
+            )}
           </Button>
         </div>
       </motion.div>
