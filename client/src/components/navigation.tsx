@@ -17,7 +17,9 @@ import {
   Home,
   Sparkles,
   HelpCircle,
-  CalendarDays
+  CalendarDays,
+  Trophy,
+  Gamepad2
 } from "lucide-react";
 import {
   Sheet,
@@ -47,6 +49,7 @@ const featureNavItems = [
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
   { href: "/active", label: "Active You", icon: Activity },
   { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
+  { href: "/arcade", label: "Arcade", icon: Gamepad2 },
 ];
 
 export default function Navigation() {
@@ -69,6 +72,7 @@ export default function Navigation() {
     if (href === '/wellness' && location.includes('/wellness')) return true;
     if (href === '/active' && (location.includes('/active') || location.includes('/fitness'))) return true;
     if (href === '/emergency' && location.includes('/emergency')) return true;
+    if (href === '/arcade' && location.includes('/arcade')) return true;
     
     return false;
   };
@@ -148,6 +152,15 @@ export default function Navigation() {
         hoverBg: "hover:bg-red-50",
         iconColor: "text-red-700",
         borderColor: "border-red-300"
+      };
+    } else if (location.includes('/arcade')) {
+      // Amber for Arcade
+      return {
+        activeItemBg: "bg-amber-100",
+        activeItemText: "text-amber-700",
+        hoverBg: "hover:bg-amber-50",
+        iconColor: "text-amber-700",
+        borderColor: "border-amber-300"
       };
     }
     
