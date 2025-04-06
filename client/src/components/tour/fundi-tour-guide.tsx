@@ -504,15 +504,15 @@ export default function FundiTourGuide() {
       
       {/* Speech Bubble with tour content - stays close to Fundi */}
       <motion.div
-        className="fixed z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-3"
+        className="fixed z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-2.5"
         onClick={(e) => e.stopPropagation()} // Prevent clicks on the speech bubble from advancing tour
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ 
           opacity: 1, 
           scale: 1,
-          // Refined positioning calculation for optimal placement
-          x: Math.max(10, Math.min((window.innerWidth - 250) / 2, window.innerWidth - 260)), // Centered horizontally
-          y: Math.min(Math.max(75, position.y + 85), window.innerHeight - 240) // Below Fundi with consistent distance
+          // Adjusted positioning calculation for smallest bubble
+          x: Math.max(10, Math.min((window.innerWidth - 170) / 2, window.innerWidth - 180)), // Centered horizontally
+          y: Math.min(Math.max(70, position.y + 75), window.innerHeight - 160) // Below Fundi with consistent distance
         }}
         transition={{ 
           type: "spring", 
@@ -522,10 +522,10 @@ export default function FundiTourGuide() {
           delay: 0.05 // Slight delay after Fundi moves
         }}
         style={{ 
-          width: '250px', // Reduced width for better proportions
-          maxWidth: '250px', // Matching max width
-          height: '240px', // Reduced height for better proportions
-          maxHeight: '240px', // Matching max height
+          width: '170px', // Further reduced width for better proportions
+          maxWidth: '170px', // Matching max width
+          height: '160px', // Further reduced height for better proportions
+          maxHeight: '160px', // Matching max height
           boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
           willChange: 'transform', // Performance optimization
           transformOrigin: 'center top', // Consistent transform origin
@@ -564,7 +564,7 @@ export default function FundiTourGuide() {
                 handlePrevStep();
               }}
               disabled={currentStepIndex === 0 || isTransitioning}
-              className="h-8 sm:h-7 px-2.5 sm:px-2 text-xs"
+              className="h-7 sm:h-6 px-2 sm:px-1.5 text-xs"
               data-tour-button="back"
             >
               <ChevronLeft className="h-3.5 sm:h-3 w-3.5 sm:w-3 mr-0.5 sm:mr-1" />
@@ -580,7 +580,7 @@ export default function FundiTourGuide() {
                 skipTour();
               }}
               disabled={isTransitioning}
-              className="h-8 sm:h-7 px-2.5 sm:px-2 text-xs"
+              className="h-7 sm:h-6 px-2 sm:px-1.5 text-xs"
               data-tour-button="skip"
             >
               <X className="h-3.5 sm:h-3 w-3.5 sm:w-3 mr-0.5 sm:mr-1" />
@@ -596,7 +596,7 @@ export default function FundiTourGuide() {
               handleNextStep();
             }}
             disabled={isTransitioning}
-            className="h-8 sm:h-7 px-3 sm:px-2 text-xs"
+            className="h-7 sm:h-6 px-2.5 sm:px-2 text-xs"
             data-tour-button="next" // Identifier for the button
           >
             {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
