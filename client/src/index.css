@@ -519,9 +519,9 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
 /* Mobile specific chat sizing - Portrait mode */
 @media (max-width: 768px) and (orientation: portrait) {
   .resizable-chat {
-    max-height: 60vh !important; /* Smaller max height on mobile */
-    max-width: 200px !important; /* Much smaller width for portrait mode */
-    width: 200px !important; /* Force width to be fixed */
+    max-height: 70vh !important; /* Same height as landscape */
+    max-width: 280px !important; /* Same width as landscape */
+    width: 280px !important; /* Force width to be fixed */
     right: 10px !important; /* Position from right edge */
   }
 }
