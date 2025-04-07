@@ -28,8 +28,8 @@ const RestartTourButton = ({
             size="sm"
             onClick={restartTour}
             className={`${position === 'fixed' ? 'fixed top-4 left-4 z-[9999]' : ''} 
-                        rounded-full w-10 h-10 p-0 bg-white shadow-md border border-gray-200
-                        text-primary hover:bg-primary/10 hover:text-primary-dark
+                        rounded-full w-10 h-10 p-0 
+                        text-primary hover:text-primary-dark
                         ${className}`}
             aria-label="Restart tour"
             {...props}
