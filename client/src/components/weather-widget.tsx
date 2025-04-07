@@ -8,6 +8,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 
+// Clear demo mode settings to ensure we use real data with the valid Weather API key
+if (typeof window !== 'undefined') {
+  localStorage.removeItem('weather_mode');
+  localStorage.removeItem('weather_use_demo_on_error');
+}
+
 interface WeatherWidgetProps {
   location?: string;
   compact?: boolean;
@@ -47,7 +53,7 @@ export default function WeatherWidget({
       (error) => {
         console.error("Geolocation error:", error);
         
-        // Offer demo mode option in the toast message
+        // Offer weather by city option in the toast message instead of demo mode
         toast({
           title: "Location access denied",
           description: (
@@ -55,11 +61,7 @@ export default function WeatherWidget({
               <p>Please enable location access for accurate weather data.</p>
               <button 
                 onClick={() => {
-                  // Enable demo mode
-                  localStorage.setItem('weather_mode', 'demo');
-                  localStorage.setItem('weather_use_demo_on_error', 'true');
-                  
-                  // Set a nice demo location
+                  // We'll use a real location instead of demo mode since API key is valid
                   const cityOptions = [
                     "Miami, FL", 
                     "San Francisco, CA", 
@@ -68,19 +70,26 @@ export default function WeatherWidget({
                     "Denver, CO"
                   ];
                   const randomCity = cityOptions[Math.floor(Math.random() * cityOptions.length)];
-                  localStorage.setItem('weather_demo_location', randomCity);
                   
-                  // Refetch data with demo mode
+                  // Set the location
+                  setCurrentLocation(randomCity);
+                  
+                  // Force clear any demo mode settings
+                  localStorage.removeItem('weather_mode');
+                  localStorage.removeItem('weather_use_demo_on_error');
+                  localStorage.setItem('weather_location', randomCity);
+                  
+                  // Refetch weather data with the city location
                   refetch();
                   
                   toast({
-                    title: "Demo mode activated",
-                    description: `Using simulated weather data for ${randomCity}`,
+                    title: "Using city location",
+                    description: `Weather data for ${randomCity}`,
                   });
                 }}
-                className="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded hover:bg-orange-200 transition-colors"
+                className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors"
               >
-                Use Demo Mode Instead
+                Use City Weather Instead
               </button>
             </div>
           ),
@@ -216,12 +225,7 @@ export default function WeatherWidget({
               <div className="relative">
                 <WeatherIcon condition={weather.icon} className="h-8 w-8 text-blue-500 flex-shrink-0" />
                 
-                {/* Demo mode badge for compact view */}
-                {localStorage.getItem('weather_mode') === 'demo' && (
-                  <span className="absolute -bottom-1 -right-1 text-[7px] px-1 leading-none py-0.5 bg-orange-100 text-orange-700 rounded-sm font-medium">
-                    Demo
-                  </span>
-                )}
+                {/* We've removed the demo mode badge as we're now using real weather data */}
               </div>
               <div className="min-w-0">
                 <p className="font-medium">{Math.round(weather.temperature)}°F</p>
@@ -243,31 +247,32 @@ export default function WeatherWidget({
                 <MapPin className="h-3 w-3" />
               </Button>
               
-              {/* Demo mode toggle button - only shown if location denied */}
-              {localStorage.getItem('weather_mode') !== 'demo' && navigator.permissions && (
+              {/* City selection button - allow user to pick a predefined city */}
+              {navigator.permissions && (
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-6 w-6 rounded-full hidden sm:flex"
                   onClick={() => {
-                    // Enable demo mode
-                    localStorage.setItem('weather_mode', 'demo');
-                    localStorage.setItem('weather_use_demo_on_error', 'true');
-                    
-                    // Set a demo location
+                    // Use a real location for weather 
                     const cityOptions = ["Miami, FL", "San Francisco, CA", "New York, NY"];
                     const randomCity = cityOptions[Math.floor(Math.random() * cityOptions.length)];
-                    localStorage.setItem('weather_demo_location', randomCity);
                     
-                    // Refetch weather with demo data
+                    // Force clear any demo mode settings
+                    localStorage.removeItem('weather_mode');
+                    localStorage.removeItem('weather_use_demo_on_error');
+                    localStorage.setItem('weather_location', randomCity);
+                    
+                    // Set city location and refetch
+                    setCurrentLocation(randomCity);
                     refetch();
                     
                     toast({
-                      title: "Demo mode activated",
-                      description: `Using simulated weather data for ${randomCity}`,
+                      title: "Location updated",
+                      description: `Showing weather for ${randomCity}`,
                     });
                   }}
-                  title="Use demo weather data"
+                  title="Try a different city"
                 >
                   <Cloud className="h-3 w-3" />
                 </Button>
@@ -302,12 +307,7 @@ export default function WeatherWidget({
           <div className="flex flex-col items-end">
             <WeatherIcon condition={weather.icon} className="h-10 w-10 text-blue-500 flex-shrink-0" />
             
-            {/* Demo mode indicator */}
-            {localStorage.getItem('weather_mode') === 'demo' && (
-              <span className="text-[9px] px-1 py-0.5 bg-orange-100 text-orange-700 rounded-sm font-medium leading-none">
-                Demo
-              </span>
-            )}
+            {/* We've removed the demo mode badge as we're now using real weather data */}
           </div>
         </div>
 

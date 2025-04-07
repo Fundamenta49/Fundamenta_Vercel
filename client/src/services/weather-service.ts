@@ -46,6 +46,12 @@ const WEATHER_API_URL = 'https://api.weatherapi.com/v1';
  */
 export async function getWeather(location: string = 'auto:ip'): Promise<WeatherData> {
   try {
+    // Reset demo mode if it was previously set - the API key is valid
+    if (localStorage.getItem('weather_mode') === 'demo') {
+      console.log('Weather API key is valid, clearing demo mode');
+      localStorage.removeItem('weather_mode');
+      localStorage.removeItem('weather_use_demo_on_error');
+    }
     // Check if API key is available
     if (!WEATHER_API_KEY) {
       console.warn('Weather API key not found. Using sample data.');
