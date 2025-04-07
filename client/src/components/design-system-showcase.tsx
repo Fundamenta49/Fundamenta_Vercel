@@ -51,12 +51,12 @@ const DesignSystemShowcase = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5 mb-8">
-          <TabsTrigger value="cards">Cards</TabsTrigger>
-          <TabsTrigger value="buttons">Buttons</TabsTrigger>
-          <TabsTrigger value="typography">Typography</TabsTrigger>
-          <TabsTrigger value="forms">Form Elements</TabsTrigger>
-          <TabsTrigger value="sections">Section Headers</TabsTrigger>
+        <TabsList className="grid grid-cols-5 mb-8 bg-transparent border-b border-gray-200">
+          <TabsTrigger value="cards" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Cards</TabsTrigger>
+          <TabsTrigger value="buttons" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Buttons</TabsTrigger>
+          <TabsTrigger value="typography" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Typography</TabsTrigger>
+          <TabsTrigger value="forms" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Form Elements</TabsTrigger>
+          <TabsTrigger value="sections" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Section Headers</TabsTrigger>
         </TabsList>
 
         {/* CARDS SHOWCASE */}
