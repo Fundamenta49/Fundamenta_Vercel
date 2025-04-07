@@ -28,6 +28,7 @@ const RestartTourButton = ({
             size="sm"
             onClick={restartTour}
             className={`${position === 'fixed' ? 'fixed top-4 left-4 z-[9999]' : ''} 
+                        bg-transparent border-none shadow-none
                         rounded-full w-10 h-10 p-0 
                         text-primary hover:text-primary-dark
                         ${className}`}
