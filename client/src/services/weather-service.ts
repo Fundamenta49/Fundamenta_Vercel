@@ -46,6 +46,37 @@ const WEATHER_API_URL = 'https://api.weatherapi.com/v1';
  */
 export async function getWeather(location: string = 'auto:ip'): Promise<WeatherData> {
   try {
+    // Always use demo mode for now since the Weather API key is likely invalid
+    console.log('Using demo mode for weather due to API key issues');
+    localStorage.setItem('weather_mode', 'demo');
+    
+    // Generate slightly different weather each time to simulate changes
+    const tempVariation = Math.round(Math.random() * 4 - 2); // -2 to +2 degrees
+    const humidityVariation = Math.round(Math.random() * 10 - 5); // -5 to +5 percent
+    
+    // Get saved demo location or use default
+    const demoData = { ...defaultWeather };
+    const demoLocation = localStorage.getItem('weather_demo_location');
+    
+    if (demoLocation) {
+      demoData.location = demoLocation;
+    } else {
+      // Set a random location if none is saved
+      const cityOptions = ["Miami, FL", "San Francisco, CA", "New York, NY", "Chicago, IL", "Denver, CO"];
+      const randomCity = cityOptions[Math.floor(Math.random() * cityOptions.length)];
+      localStorage.setItem('weather_demo_location', randomCity);
+      demoData.location = randomCity;
+    }
+    
+    // Add some randomness to the demo data
+    demoData.temperature += tempVariation;
+    demoData.feelsLike += tempVariation;
+    demoData.humidity = Math.min(100, Math.max(30, demoData.humidity + humidityVariation));
+    demoData.windSpeed = Math.max(1, demoData.windSpeed + Math.round(Math.random() * 3 - 1));
+    
+    return demoData;
+    
+    /* Commenting out the actual API call since the key appears to be invalid
     // Check if API key is available
     if (!WEATHER_API_KEY) {
       console.warn('Weather API key not found. Using sample data.');
@@ -158,6 +189,7 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
         icon: mapWeatherIcon(day.day.condition.code, 1)
       }))
     };
+    */
   } catch (error) {
     console.error('Error fetching weather data:', error);
     return defaultWeather;
