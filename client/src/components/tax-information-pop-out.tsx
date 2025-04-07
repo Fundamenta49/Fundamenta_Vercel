@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { AlertCircle, DollarSign, Briefcase, Home, FileText, ScrollText, Award, Star, BookOpen, CheckCircle2, TrendingUp } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Home, FileText, ScrollText, Award, Star, BookOpen, CheckCircle2, TrendingUp, Clock, CalendarDays } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -95,6 +95,84 @@ const STATE_TAX_DATA: Record<string, StateTaxInfo> = {
 // Default state to show first
 const DEFAULT_STATE = "CA";
 
+// Define an interface for learning events that will integrate with the Learning Calendar
+interface TaxLearningEvent {
+  id: string;
+  title: string;
+  category: "skill" | "goal" | "project" | "webinar" | "other";
+  points: number;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  estimatedTimeMinutes: number;
+  description: string;
+}
+
+// Create tax learning modules that can be tracked in the learning calendar
+const TAX_LEARNING_MODULES: TaxLearningEvent[] = [
+  {
+    id: "tax-basics-101",
+    title: "Tax Basics 101",
+    category: "skill",
+    points: 25,
+    difficulty: "beginner",
+    estimatedTimeMinutes: 15,
+    description: "Learn the fundamental concepts of taxation and how the tax system works"
+  },
+  {
+    id: "income-tax-essentials",
+    title: "Income Tax Essentials",
+    category: "skill",
+    points: 30,
+    difficulty: "beginner",
+    estimatedTimeMinutes: 20,
+    description: "Understanding income tax brackets, deductions, and credits"
+  },
+  {
+    id: "property-tax-understanding",
+    title: "Property Tax Deep Dive",
+    category: "skill",
+    points: 35,
+    difficulty: "intermediate",
+    estimatedTimeMinutes: 25,
+    description: "Learn how property taxes are assessed and their impact on homeownership"
+  },
+  {
+    id: "sales-tax-fundamentals",
+    title: "Sales Tax Fundamentals",
+    category: "skill",
+    points: 20,
+    difficulty: "beginner",
+    estimatedTimeMinutes: 15,
+    description: "Understand how sales taxes work and vary across states"
+  },
+  {
+    id: "business-tax-planning",
+    title: "Business Tax Planning",
+    category: "project",
+    points: 50,
+    difficulty: "advanced",
+    estimatedTimeMinutes: 40,
+    description: "Strategic approaches to business tax planning and structure optimization"
+  },
+  {
+    id: "tax-filing-mastery",
+    title: "Tax Filing Mastery",
+    category: "skill",
+    points: 40,
+    difficulty: "intermediate",
+    estimatedTimeMinutes: 35,
+    description: "Become proficient in understanding tax forms and filing requirements"
+  },
+  {
+    id: "tax-saving-strategies",
+    title: "Tax-Saving Strategies",
+    category: "goal",
+    points: 45,
+    difficulty: "intermediate",
+    estimatedTimeMinutes: 30,
+    description: "Learn legal strategies to minimize your tax burden"
+  }
+];
+
 export default function TaxInformationPopOut() {
   const [selectedState, setSelectedState] = useState<string>(DEFAULT_STATE);
   const [activeTab, setActiveTab] = useState<string>("overview");
@@ -104,22 +182,76 @@ export default function TaxInformationPopOut() {
   const [showAchievement, setShowAchievement] = useState<boolean>(false);
   const [recentAchievement, setRecentAchievement] = useState<string>("");
   
+  // Track when modules were added to the learning calendar
+  const [addedToCalendar, setAddedToCalendar] = useState<string[]>([]);
+  
   // Sort states alphabetically by name for the dropdown
   const sortedStates = Object.entries(STATE_TAX_DATA)
     .sort(([, a], [, b]) => a.name.localeCompare(b.name))
     .map(([code]) => code);
+  
+  // Store progress in localStorage to persist between sessions
+  useEffect(() => {
+    // Load from localStorage on component mount
+    const savedProgress = localStorage.getItem('taxLearningProgress');
+    const savedBadges = localStorage.getItem('taxLearningBadges');
+    const savedAddedToCalendar = localStorage.getItem('taxModulesInCalendar');
     
+    if (savedProgress) {
+      setCompletedLessons(JSON.parse(savedProgress));
+      // Calculate points based on completed lessons
+      const points = JSON.parse(savedProgress).reduce((total: number, lessonId: string) => {
+        const module = TAX_LEARNING_MODULES.find(m => m.id === lessonId);
+        return total + (module ? module.points : 0);
+      }, 0);
+      setUserPoints(points);
+    }
+    
+    if (savedBadges) {
+      setUserBadges(JSON.parse(savedBadges));
+    }
+    
+    if (savedAddedToCalendar) {
+      setAddedToCalendar(JSON.parse(savedAddedToCalendar));
+    }
+  }, []);
+  
+  // Save progress to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('taxLearningProgress', JSON.stringify(completedLessons));
+    localStorage.setItem('taxLearningBadges', JSON.stringify(userBadges));
+    localStorage.setItem('taxModulesInCalendar', JSON.stringify(addedToCalendar));
+    
+    // Create a custom event to notify other components (like the Learning Calendar)
+    // that tax learning progress has been updated
+    if (typeof window !== 'undefined') {
+      const progressEvent = new CustomEvent('taxLearningProgressUpdated', {
+        detail: {
+          completedModules: completedLessons,
+          badges: userBadges,
+          points: userPoints
+        }
+      });
+      window.dispatchEvent(progressEvent);
+    }
+  }, [completedLessons, userBadges, userPoints, addedToCalendar]);
+  
   // Handle completing a section and award points
-  const completeSection = (sectionId: string, points: number) => {
+  const completeSection = (sectionId: string) => {
     if (!completedLessons.includes(sectionId)) {
-      setUserPoints(prev => prev + points);
-      setCompletedLessons(prev => [...prev, sectionId]);
-      
-      // Check for badges
-      if (completedLessons.length + 1 === 3) {
-        awardBadge("tax-novice", "Tax Novice");
-      } else if (completedLessons.length + 1 === 7) {
-        awardBadge("tax-pro", "Tax Pro");
+      const module = TAX_LEARNING_MODULES.find(m => m.id === sectionId);
+      if (module) {
+        setUserPoints(prev => prev + module.points);
+        setCompletedLessons(prev => [...prev, sectionId]);
+        
+        // Check for badges based on number of completed lessons
+        if (completedLessons.length + 1 === 3) {
+          awardBadge("tax-novice", "Tax Novice");
+        } else if (completedLessons.length + 1 === 5) {
+          awardBadge("tax-pro", "Tax Pro");
+        } else if (completedLessons.length + 1 === 7) {
+          awardBadge("tax-master", "Tax Master");
+        }
       }
     }
   };
@@ -135,6 +267,41 @@ export default function TaxInformationPopOut() {
       setTimeout(() => {
         setShowAchievement(false);
       }, 3000);
+      
+      // Dispatch event for badge earned (for Fundi to react to)
+      if (typeof window !== 'undefined') {
+        const badgeEvent = new CustomEvent('taxBadgeEarned', {
+          detail: {
+            badgeId,
+            badgeName
+          }
+        });
+        window.dispatchEvent(badgeEvent);
+      }
+    }
+  };
+  
+  // Add a module to the learning calendar
+  const addToLearningCalendar = (moduleId: string) => {
+    if (!addedToCalendar.includes(moduleId)) {
+      setAddedToCalendar(prev => [...prev, moduleId]);
+      
+      // Create event to add this to Learning Calendar
+      if (typeof window !== 'undefined') {
+        const module = TAX_LEARNING_MODULES.find(m => m.id === moduleId);
+        if (module) {
+          const calendarEvent = new CustomEvent('addToLearningCalendar', {
+            detail: {
+              id: module.id,
+              title: module.title,
+              category: module.category,
+              date: new Date(Date.now() + 86400000), // Schedule for tomorrow
+              completed: completedLessons.includes(moduleId)
+            }
+          });
+          window.dispatchEvent(calendarEvent);
+        }
+      }
     }
   };
 
@@ -510,113 +677,254 @@ export default function TaxInformationPopOut() {
           </Card>
         </TabsContent>
         
-        {/* Learn More Tab */}
+        {/* Learn More Tab with Gamification */}
         <TabsContent value="learn" className="mt-0">
           <Card>
-            <CardHeader>
-              <CardTitle>Tax Education Resources</CardTitle>
-              <CardDescription>
-                Additional resources to enhance your tax knowledge
-              </CardDescription>
+            <CardHeader className="relative">
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Tax Learning Center</CardTitle>
+                  <CardDescription>
+                    Master tax concepts and track your learning progress
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="bg-green-50 rounded-lg px-3 py-1 border border-green-200 flex items-center">
+                    <Star className="h-4 w-4 text-amber-500 mr-1" />
+                    <span className="font-medium">{userPoints} Points</span>
+                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="relative flex">
+                          {userBadges.includes('tax-master') ? (
+                            <Award className="h-6 w-6 text-amber-500" />
+                          ) : userBadges.includes('tax-pro') ? (
+                            <Award className="h-6 w-6 text-slate-400" />
+                          ) : userBadges.includes('tax-novice') ? (
+                            <Award className="h-6 w-6 text-amber-800" />
+                          ) : (
+                            <Award className="h-6 w-6 text-slate-300" />
+                          )}
+                          <span className="absolute -top-2 -right-2 bg-green-100 text-green-800 text-xs font-medium rounded-full h-5 w-5 flex items-center justify-center">
+                            {userBadges.length}
+                          </span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>You've earned {userBadges.length} badges</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+              
+              {/* Achievement notification */}
+              {showAchievement && (
+                <div className="absolute top-0 left-0 right-0 -mt-10 flex justify-center">
+                  <div className="bg-gradient-to-r from-green-600 to-green-400 text-white px-4 py-2 rounded-lg shadow-lg animate-bounce flex items-center">
+                    <Award className="h-5 w-5 mr-2" />
+                    <span>Achievement Unlocked: {recentAchievement}</span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Progress bar showing completion towards next badge */}
+              <div className="mt-4">
+                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  <span>Learning Progress</span>
+                  <span>{completedLessons.length}/{TAX_LEARNING_MODULES.length} Modules</span>
+                </div>
+                <Progress 
+                  value={(completedLessons.length / TAX_LEARNING_MODULES.length) * 100} 
+                  className="h-2"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>
+                    {userBadges.includes('tax-master') ? 'Master Level Achieved!' : 
+                     userBadges.includes('tax-pro') ? 'Next: Tax Master Badge' : 
+                     userBadges.includes('tax-novice') ? 'Next: Tax Pro Badge' : 
+                     'Next: Tax Novice Badge'}
+                  </span>
+                  <span>
+                    {userBadges.includes('tax-master') ? '100%' : 
+                     userBadges.includes('tax-pro') ? `${Math.round((completedLessons.length - 5) / 2 * 100)}%` : 
+                     userBadges.includes('tax-novice') ? `${Math.round((completedLessons.length - 3) / 2 * 100)}%` : 
+                     `${Math.round(completedLessons.length / 3 * 100)}%`}
+                  </span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Official Resources</h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Button variant="link" className="p-0 h-auto text-left font-normal justify-start" onClick={() => window.open("https://www.irs.gov", "_blank")}>
-                        Internal Revenue Service (IRS)
-                      </Button>
-                      <p className="text-sm text-gray-500">Federal tax information and forms</p>
-                    </li>
-                    <li>
-                      <Button variant="link" className="p-0 h-auto text-left font-normal justify-start">
-                        {STATE_TAX_DATA[selectedState].name} Department of Revenue
-                      </Button>
-                      <p className="text-sm text-gray-500">State-specific tax information</p>
-                    </li>
-                    <li>
-                      <Button variant="link" className="p-0 h-auto text-left font-normal justify-start" onClick={() => window.open("https://www.usa.gov/taxes", "_blank")}>
-                        USA.gov Tax Information
-                      </Button>
-                      <p className="text-sm text-gray-500">Government tax resources</p>
-                    </li>
-                  </ul>
+              <ScrollArea className="h-[400px] pr-4">
+                <div className="space-y-6">
+                  <h3 className="text-lg font-medium flex items-center">
+                    <BookOpen className="h-5 w-5 mr-2 text-green-600" />
+                    Tax Learning Modules
+                  </h3>
+                  
+                  {TAX_LEARNING_MODULES.map((module) => (
+                    <div 
+                      key={module.id}
+                      className={`border rounded-lg p-4 transition-all ${
+                        completedLessons.includes(module.id) 
+                          ? 'bg-green-50 border-green-200' 
+                          : 'hover:shadow-md hover:border-green-200'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-medium">{module.title}</h4>
+                            {completedLessons.includes(module.id) && (
+                              <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Completed
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1">{module.description}</p>
+                        </div>
+                        <Badge 
+                          variant="outline" 
+                          className={`
+                            ${module.category === 'skill' ? 'bg-blue-50 text-blue-800 border-blue-200' : 
+                              module.category === 'project' ? 'bg-purple-50 text-purple-800 border-purple-200' : 
+                              'bg-green-50 text-green-800 border-green-200'} 
+                            ml-2
+                          `}
+                        >
+                          {module.category.charAt(0).toUpperCase() + module.category.slice(1)}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-sm">
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 text-amber-500 mr-1" />
+                          <span>{module.points} points</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 text-gray-500 mr-1" />
+                          <span>{module.estimatedTimeMinutes} min</span>
+                        </div>
+                        <div>
+                          <Badge variant="outline" className="font-normal bg-gray-50">
+                            {module.difficulty}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap mt-4 gap-2">
+                        {!completedLessons.includes(module.id) ? (
+                          <Button 
+                            size="sm" 
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={() => completeSection(module.id)}
+                          >
+                            Complete Module
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="border-green-200 text-green-800 bg-green-50 hover:bg-green-100"
+                            onClick={() => completeSection(module.id)}
+                            disabled
+                          >
+                            <CheckCircle2 className="h-4 w-4 mr-1" />
+                            Completed
+                          </Button>
+                        )}
+                        
+                        {!addedToCalendar.includes(module.id) ? (
+                          <Button 
+                            variant="outline"
+                            size="sm"
+                            onClick={() => addToLearningCalendar(module.id)}
+                          >
+                            <CalendarDays className="h-4 w-4 mr-1" />
+                            Add to Calendar
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="outline"
+                            size="sm"
+                            className="border-blue-200 text-blue-800 bg-blue-50"
+                            disabled
+                          >
+                            <CheckCircle2 className="h-4 w-4 mr-1" />
+                            Added to Calendar
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Tax Concepts to Learn</h3>
-                  <ul className="space-y-4">
-                    <li className="flex items-start">
-                      <div className="mr-2 mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-xs font-medium text-green-800">1</div>
-                      <div>
-                        <h4 className="font-medium">Progressive Taxation</h4>
-                        <p className="text-sm text-gray-600">How tax brackets work and why your entire income isn't taxed at your highest rate</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="mr-2 mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-xs font-medium text-green-800">2</div>
-                      <div>
-                        <h4 className="font-medium">Tax Credits vs. Deductions</h4>
-                        <p className="text-sm text-gray-600">Understanding the difference and which provides more benefit</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="mr-2 mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-xs font-medium text-green-800">3</div>
-                      <div>
-                        <h4 className="font-medium">Tax-Advantaged Accounts</h4>
-                        <p className="text-sm text-gray-600">How 401(k)s, IRAs, HSAs, and other accounts provide tax benefits</p>
-                      </div>
-                    </li>
-                  </ul>
+                <div className="mt-8">
+                  <h3 className="text-lg font-medium flex items-center mb-4">
+                    <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
+                    Achievements & Badges
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className={`border rounded-lg p-4 text-center ${userBadges.includes('tax-novice') ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 opacity-70'}`}>
+                      <Award className={`h-12 w-12 mx-auto mb-2 ${userBadges.includes('tax-novice') ? 'text-amber-500' : 'text-gray-300'}`} />
+                      <h4 className="font-medium">Tax Novice</h4>
+                      <p className="text-xs text-gray-600 mt-1 mb-2">Complete 3 tax learning modules</p>
+                      <Progress 
+                        value={Math.min(completedLessons.length / 3 * 100, 100)} 
+                        className="h-1.5"
+                      />
+                    </div>
+                    
+                    <div className={`border rounded-lg p-4 text-center ${userBadges.includes('tax-pro') ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 opacity-70'}`}>
+                      <Award className={`h-12 w-12 mx-auto mb-2 ${userBadges.includes('tax-pro') ? 'text-blue-500' : 'text-gray-300'}`} />
+                      <h4 className="font-medium">Tax Pro</h4>
+                      <p className="text-xs text-gray-600 mt-1 mb-2">Complete 5 tax learning modules</p>
+                      <Progress 
+                        value={Math.min(completedLessons.length / 5 * 100, 100)} 
+                        className="h-1.5"
+                      />
+                    </div>
+                    
+                    <div className={`border rounded-lg p-4 text-center ${userBadges.includes('tax-master') ? 'bg-green-50 border-green-200' : 'bg-gray-50 opacity-70'}`}>
+                      <Award className={`h-12 w-12 mx-auto mb-2 ${userBadges.includes('tax-master') ? 'text-green-500' : 'text-gray-300'}`} />
+                      <h4 className="font-medium">Tax Master</h4>
+                      <p className="text-xs text-gray-600 mt-1 mb-2">Complete 7 tax learning modules</p>
+                      <Progress 
+                        value={Math.min(completedLessons.length / 7 * 100, 100)} 
+                        className="h-1.5"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <Separator className="my-6" />
-              
-              <div>
-                <h3 className="text-lg font-medium mb-3">Common Tax Questions</h3>
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="q1">
-                    <AccordionTrigger>What's the difference between marginal and effective tax rates?</AccordionTrigger>
-                    <AccordionContent>
-                      <p><strong>Marginal tax rate</strong> is the rate applied to your last dollar of income (your tax bracket).</p>
-                      <p className="mt-2"><strong>Effective tax rate</strong> is your total tax paid divided by your total income, usually much lower than your marginal rate due to progressive taxation.</p>
-                      <p className="mt-2">Example: Someone in the 22% federal tax bracket might have an effective federal tax rate of only 15% when accounting for lower rates on earlier portions of income.</p>
-                    </AccordionContent>
-                  </AccordionItem>
-                  
-                  <AccordionItem value="q2">
-                    <AccordionTrigger>How do tax deductions actually save me money?</AccordionTrigger>
-                    <AccordionContent>
-                      <p>Tax deductions reduce your taxable income, not your tax directly.</p>
-                      <p className="mt-2">A $1,000 deduction saves you:
-                      <ul className="list-disc pl-5 mt-1">
-                        <li>$220 if you're in the 22% tax bracket</li>
-                        <li>$320 if you're in the 32% tax bracket</li>
-                      </ul>
-                      </p>
-                      <p className="mt-2">The higher your tax bracket, the more valuable deductions become.</p>
-                    </AccordionContent>
-                  </AccordionItem>
-                  
-                  <AccordionItem value="q3">
-                    <AccordionTrigger>What taxes do self-employed people pay?</AccordionTrigger>
-                    <AccordionContent>
-                      <p>Self-employed individuals pay:</p>
-                      <ul className="list-disc pl-5 mt-2">
-                        <li>Income tax (same brackets as employees)</li>
-                        <li>Self-employment tax (15.3% covering both employer and employee portions of Social Security and Medicare)</li>
-                        <li>Estimated quarterly tax payments</li>
-                        <li>State income taxes</li>
-                        <li>Local business taxes where applicable</li>
-                      </ul>
-                      <p className="mt-2">But they can deduct business expenses and 50% of the self-employment tax.</p>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </div>
+                
+                <div className="mt-8">
+                  <h3 className="text-lg font-medium mb-3">Official Tax Resources</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Button variant="outline" className="flex items-center justify-start text-left h-auto p-3" onClick={() => window.open("https://www.irs.gov", "_blank")}>
+                      <div className="bg-blue-50 p-2 rounded-lg mr-3">
+                        <FileText className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <div className="font-medium">Internal Revenue Service</div>
+                        <div className="text-xs text-gray-500">Federal tax forms and information</div>
+                      </div>
+                    </Button>
+                    
+                    <Button variant="outline" className="flex items-center justify-start text-left h-auto p-3">
+                      <div className="bg-green-50 p-2 rounded-lg mr-3">
+                        <ScrollText className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div>
+                        <div className="font-medium">{STATE_TAX_DATA[selectedState].name} Tax Authority</div>
+                        <div className="text-xs text-gray-500">State tax resources</div>
+                      </div>
+                    </Button>
+                  </div>
+                </div>
+              </ScrollArea>
             </CardContent>
           </Card>
         </TabsContent>
