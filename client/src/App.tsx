@@ -47,6 +47,7 @@ import LifeSkillsPage from "@/pages/learning/life-skills";
 import IdentityDocumentsPage from "@/pages/learning/identity-documents";
 import CompletedCoursesPage from "@/pages/learning/completed";
 import LearningPathwaysPage from "@/pages/learning/pathways";
+import DesignShowcasePage from "@/pages/design-showcase";
 import { TourProvider } from "./contexts/tour-context";
 import Tour from "./components/tour";
 import LoginPage from "@/pages/login";
@@ -193,6 +194,7 @@ function Router() {
               </ProtectedRoute>
             </Route>
             <Route path="/admin" component={AdminPage} />
+            <Route path="/design-showcase" component={DesignShowcasePage} />
             <Route path="/learning">
               <ProtectedRoute>
                 <Learning />

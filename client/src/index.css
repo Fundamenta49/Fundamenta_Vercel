@@ -97,6 +97,27 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  
+  /* Section-specific border utilities */
+  .border-emergency {
+    border-color: #b91c1c;
+  }
+  
+  .border-financial {
+    border-color: #3b82f6;
+  }
+  
+  .border-wellness {
+    border-color: #10b981;
+  }
+  
+  .border-career {
+    border-color: #8b5cf6;
+  }
+  
+  .border-learning {
+    border-color: #f59e0b;
+  }
 }
 
 @layer base {

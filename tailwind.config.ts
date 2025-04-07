@@ -59,6 +59,12 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        // Section-specific colors
+        emergency: "#b91c1c", // Red
+        financial: "#3b82f6", // Blue
+        wellness: "#10b981", // Green
+        career: "#8b5cf6", // Purple
+        learning: "#f59e0b", // Yellow
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
