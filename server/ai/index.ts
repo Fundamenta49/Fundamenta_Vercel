@@ -179,6 +179,10 @@ export function constructSystemPrompt(category: string, context: AIContext): str
     // Add cooking knowledge
     basePrompt += "## COOKING KNOWLEDGE\n";
     basePrompt += extractCapabilitiesFromPrompt(categoryBasedSystemPrompts.cooking) + "\n\n";
+    
+    // Add fitness knowledge
+    basePrompt += "## FITNESS KNOWLEDGE\n";
+    basePrompt += extractCapabilitiesFromPrompt(categoryBasedSystemPrompts.fitness) + "\n\n";
   } else {
     // Use the specified category prompt for specialized assistants
     basePrompt = categoryBasedSystemPrompts[category] || categoryBasedSystemPrompts.general;

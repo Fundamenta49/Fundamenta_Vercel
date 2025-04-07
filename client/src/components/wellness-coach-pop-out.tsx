@@ -9,7 +9,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Brain, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import ChatInterface, { WELLNESS_CATEGORY } from "@/components/chat-interface";
+import { WELLNESS_CATEGORY } from "@/components/chat-interface";
+import ChatRedirect from "@/components/chat-redirect";
 
 export default function WellnessCoachPopOut() {
   return (
@@ -33,7 +34,7 @@ export default function WellnessCoachPopOut() {
           </AlertDescription>
         </Alert>
         
-        <ChatInterface category={WELLNESS_CATEGORY} />
+        <ChatRedirect category={WELLNESS_CATEGORY} />
       </FullScreenDialogBody>
     </div>
   );
