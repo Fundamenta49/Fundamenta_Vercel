@@ -23,8 +23,7 @@ import {
   ShoppingBag,
   Calendar
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import LearningCoachPopOut from '@/components/learning-coach-pop-out';
+
 import FloatingChat from '@/components/floating-chat';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
@@ -71,7 +70,6 @@ const Icons = {
 
 export default function Learning() {
   const [, navigate] = useLocation();
-  const [showChat, setShowChat] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   // No need for expandedCourse state since we directly navigate
@@ -307,17 +305,6 @@ export default function Learning() {
         Learning Hub
       </h1>
       
-      {/* Hide Learning Coach button on mobile, show only on SM and larger screens */}
-      <div className="mx-4 sm:mx-6 mb-6 hidden sm:flex justify-end">
-        <Button 
-          onClick={() => setShowChat(!showChat)}
-          className="bg-orange-500 hover:bg-orange-600"
-        >
-          <BookIcon className="mr-2 h-4 w-4" />
-          Ask Learning Coach
-        </Button>
-      </div>
-
       {/* Categories with book-style cards */}
       <div className="px-3 sm:px-5 pt-2">
         {/* Calendar Section */}
@@ -426,12 +413,8 @@ export default function Learning() {
         {/* Languages and Creative sections removed as requested */}
       </div>
 
-      {/* Always show either the pop-out chat or the floating chat */}
-      {showChat ? (
-        <LearningCoachPopOut onClose={() => setShowChat(false)} />
-      ) : (
-        <FloatingChat category={LEARNING_CATEGORY} />
-      )}
+      {/* Only show floating chat */}
+      <FloatingChat category={LEARNING_CATEGORY} />
     </div>
   );
 }

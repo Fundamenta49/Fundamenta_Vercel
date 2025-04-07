@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Loader2, Utensils, ChefHat, ThermometerSun, Trash2, Timer, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import ChatInterface from "@/components/chat-interface";
+
 import { cn } from "@/lib/utils";
 
 // Define cooking topics with their icons and descriptions
@@ -325,25 +325,7 @@ export default function CookingGuide() {
         </DialogContent>
       </Dialog>
 
-      {/* AI Chat Interface */}
-      <Card className="w-full shadow border-2 border-primary/10">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <ChefHat className="h-5 w-5 text-primary" />
-            <div className="flex-1 min-w-0">
-              <CardTitle className="text-lg">Cooking AI Assistant</CardTitle>
-              <CardDescription>
-                Get personalized help with cooking questions
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="border-t p-3 sm:p-6">
-          <div className="overflow-y-auto max-h-[60vh] w-full">
-            <ChatInterface category="cooking" />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Cooking Assistant has been removed as Fundi now handles all AI interactions */}
     </div>
   );
 }

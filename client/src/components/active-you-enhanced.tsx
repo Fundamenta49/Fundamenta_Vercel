@@ -48,9 +48,8 @@ import MeditationGuide from "./meditation-guide";
 import FitnessProgress from "./fitness-progress";
 import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
-import ChatInterface from "./chat-interface";
 import YogaPromptFlow, { YogaSession } from "./yoga-prompt-flow";
-import { FITNESS_CATEGORY } from "./chat-interface";
+// AI Coach functionality removed as Fundi now handles all AI interactions
 import {
   Dumbbell,
   Bird as YogaIcon,
@@ -162,7 +161,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasWebcamPermission, setHasWebcamPermission] = useState<boolean | null>(null);
   const [poseAnalysisResult, setPoseAnalysisResult] = useState<PoseFeedback | null>(null);
-  const [showAICoach, setShowAICoach] = useState(false);
+  // AI Coach functionality removed as Fundi now handles all AI interactions
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -831,11 +830,11 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </Button>
                 
                 <Button
-                  onClick={() => setShowAICoach(true)}
+                  onClick={() => alert("Please use Fundi for AI assistance")}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   <MessageSquare className="h-4 w-4 mr-1" />
-                  Ask AI Coach
+                  Use Fundi Instead
                 </Button>
               </div>
             </div>
@@ -1235,38 +1234,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       {/* Progress tracking */}
       <FitnessProgress />
       
-      {/* AI Coach Dialog */}
-      <Dialog open={showAICoach} onOpenChange={setShowAICoach}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <User className="h-5 w-5 text-blue-600" />
-              AI Fitness Coach
-            </DialogTitle>
-            <DialogDescription>
-              Get personalized guidance for your yoga practice
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 min-h-[50vh] overflow-hidden">
-            {/* Embed the ChatInterface component for fitness coaching */}
-            <ChatInterface 
-              category={FITNESS_CATEGORY}
-              initialContext={{
-                currentPage: "yoga",
-                currentSection: "pose-analysis",
-                availableActions: ["/fitness", "/yoga", "/active"]
-              }}
-            />
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAICoach(false)}>
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* AI Coach Dialog - removed as Fundi now handles all AI interactions */}
     </div>
   );
   
@@ -1459,11 +1427,11 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </Button>
                 
                 <Button
-                  onClick={() => setShowAICoach(true)}
+                  onClick={() => alert("Please use Fundi for AI assistance")}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   <MessageSquare className="h-4 w-4 mr-1" />
-                  Ask AI Coach
+                  Use Fundi Instead
                 </Button>
               </div>
             </div>
@@ -1659,38 +1627,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       
       <FitnessProgress />
       
-      {/* AI Coach Dialog */}
-      <Dialog open={showAICoach} onOpenChange={setShowAICoach}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <User className="h-5 w-5 text-blue-600" />
-              AI Fitness Coach
-            </DialogTitle>
-            <DialogDescription>
-              Get personalized guidance for your stretching routine
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 min-h-[50vh] overflow-hidden">
-            {/* Embed the ChatInterface component for fitness coaching */}
-            <ChatInterface 
-              category={FITNESS_CATEGORY}
-              initialContext={{
-                currentPage: "stretch",
-                currentSection: "form-analysis",
-                availableActions: ["/fitness", "/stretch", "/active"]
-              }}
-            />
-          </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAICoach(false)}>
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* AI Coach Dialog - removed as Fundi now handles all AI interactions */}
     </div>
   );
   
@@ -2097,11 +2034,11 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               <DialogFooter className="flex justify-between mt-6 pt-4 border-t">
                 <Button
                   variant="outline"
-                  onClick={() => setShowAICoach(true)}
+                  onClick={() => alert("Please use Fundi for AI assistance")}
                   className="gap-2 shadow-sm hover:shadow-md transition-all"
                 >
                   <MessageSquare className="h-4 w-4" />
-                  Ask AI Coach
+                  Use Fundi Instead
                 </Button>
                 
                 <Button

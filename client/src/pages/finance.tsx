@@ -29,12 +29,6 @@ type SectionType = {
 
 const SECTIONS: SectionType[] = [
   {
-    id: 'advisor',
-    title: 'Financial AI Advisor',
-    description: 'Get personalized financial advice and guidance',
-    icon: Brain,
-  },
-  {
     id: 'budget',
     title: 'Smart Budget Planner',
     description: 'Track your income, expenses, and set savings goals',
@@ -155,11 +149,6 @@ export default function Finance() {
       </Alert>
 
       {/* Full-screen dialogs */}
-      <FullScreenDialog open={isAdvisorOpen} onOpenChange={setIsAdvisorOpen}>
-        <FullScreenDialogContent themeColor="#22c55e">
-          <FinanceAdvisorPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
 
       <FullScreenDialog open={isBudgetOpen} onOpenChange={setIsBudgetOpen}>
         <FullScreenDialogContent themeColor="#22c55e">

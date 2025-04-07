@@ -10,7 +10,7 @@ import {
   FullScreenDialogDescription, 
   FullScreenDialogBody 
 } from "@/components/ui/full-screen-dialog";
-import CareerCoachPopOut from "@/components/career-coach-pop-out";
+
 import CareerAssessmentPopOut from "@/components/career-assessment-pop-out";
 import ResumeBuilderPopOut from "@/components/resume-builder-pop-out";
 import JobSearchPopOut from "@/components/job-search-pop-out";
@@ -38,13 +38,6 @@ type SectionType = {
 };
 
 const SECTIONS: SectionType[] = [
-  {
-    id: 'chat',
-    title: 'Career AI Coach',
-    description: 'Get professional guidance for your career journey',
-    icon: Brain,
-    component: CareerCoachPopOut
-  },
   {
     id: 'assessment',
     title: 'Career Assessment',

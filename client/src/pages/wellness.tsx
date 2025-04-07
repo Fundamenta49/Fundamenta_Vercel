@@ -45,23 +45,6 @@ type SectionType = {
 
 const SECTIONS: SectionType[] = [
   {
-    id: 'coach',
-    title: 'Wellness AI Coach',
-    description: 'Get personalized guidance on nutrition, mental health, and wellness',
-    icon: Brain,
-    component: ChatRedirect,
-    props: { category: WELLNESS_CATEGORY },
-    alert: (
-      <Alert className="mt-4 border-purple-500 bg-purple-50">
-        <AlertCircle className="h-4 w-4 text-purple-500" />
-        <AlertDescription className="text-purple-800 text-sm">
-          The AI coach provides general wellness guidance based on public health information.
-          Always consult healthcare professionals for medical advice.
-        </AlertDescription>
-      </Alert>
-    )
-  },
-  {
     id: 'comprehensive',
     title: 'Comprehensive Assessment',
     description: 'Complete physical and mental health evaluation with personalized recommendations',
@@ -200,12 +183,6 @@ export default function Wellness() {
       <FullScreenDialog open={isShoppingOpen} onOpenChange={setIsShoppingOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
           <ShoppingBuddyPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-      
-      <FullScreenDialog open={isCoachOpen} onOpenChange={setIsCoachOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <WellnessCoachPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
       
