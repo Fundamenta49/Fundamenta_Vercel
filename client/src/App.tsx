@@ -22,8 +22,6 @@ import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";
 import YogaProgressionPage from "@/pages/yoga-progression";
 import Arcade from "@/pages/arcade";
-import LearningCalendar from "@/components/learning-calendar";
-import LearningCalendarPopOut from "@/components/learning-calendar-pop-out";
 import EnhancedCalendar from "@/components/enhanced-calendar";
 import CalendarRedesigned from "@/components/calendar-redesigned";
 import CalendarTestingPage from "@/pages/calendar-testing";
@@ -99,6 +97,18 @@ function FitnessRedirect() {
       navigate('/active');
     }
   }, [navigate, section]);
+  
+  return null;
+}
+
+// Component to handle redirects from /learning-calendar to /redesigned-calendar
+function LearningCalendarRedirect() {
+  const [, navigate] = useLocation();
+  
+  useEffect(() => {
+    // Redirect to redesigned calendar page
+    navigate('/redesigned-calendar');
+  }, [navigate]);
   
   return null;
 }
@@ -202,7 +212,7 @@ function Router() {
             </Route>
             <Route path="/learning-calendar">
               <ProtectedRoute>
-                <LearningCalendarPopOut />
+                <LearningCalendarRedirect />
               </ProtectedRoute>
             </Route>
             <Route path="/enhanced-calendar">
