@@ -48,6 +48,55 @@ export const userAchievementTable = pgTable("user_achievements", {
   shared: boolean("shared").default(false), // Whether the achievement has been shared to social media
 });
 
+// Users
+export const users = pgTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name"),
+  email: text("email").notNull().unique(),
+  preferences: json("preferences").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Session-based user info
+export const userInfo = pgTable("user_info", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  sessionId: text("session_id").notNull().unique(),
+  name: text("name"),
+  interests: json("interests").default({}),
+  preferences: json("preferences").default({}),
+  lastSeen: timestamp("last_seen").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Sessions
+export const sessions = pgTable("sessions", {
+  sid: text("sid").primaryKey(),
+  sess: json("sess").notNull(),
+  expire: timestamp("expire").notNull(),
+});
+
+// Conversations
+export const conversations = pgTable("conversations", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id"),
+  title: text("title").notNull(),
+  category: text("category"),
+  lastMessageAt: timestamp("last_message_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Messages
+export const messages = pgTable("messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  conversationId: integer("conversation_id").notNull(),
+  role: text("role").notNull(), // "user", "assistant", "system"
+  content: text("content").notNull(),
+  category: text("category"), // Optional category/topic
+  metadata: json("metadata").default({}),
+  timestamp: timestamp("timestamp").defaultNow(),
+});
+
 // Schema validators
 export const insertUserGoalSchema = createInsertSchema(userGoalTable).omit({ 
   id: true, 
@@ -65,20 +114,31 @@ export const insertUserAchievementSchema = createInsertSchema(userAchievementTab
   unlockedAt: true
 });
 
-// User schema for user accounts
-export const insertUserSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  name: z.string().optional(),
-  role: z.enum(["user", "admin"]).default("user"),
+// Insert schema for users
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
-// User Info schema for session-based user data
-export const insertUserInfoSchema = z.object({
-  sessionId: z.string(),
-  name: z.string().optional(),
-  email: z.string().email().optional(),
-  preferences: z.record(z.any()).optional(),
+// Insert schema for user info
+export const insertUserInfoSchema = createInsertSchema(userInfo).omit({
+  id: true,
+  lastSeen: true,
+  createdAt: true,
+});
+
+// Insert schema for conversations
+export const insertConversationSchema = createInsertSchema(conversations).omit({
+  id: true,
+  lastMessageAt: true,
+  createdAt: true,
+});
+
+// Insert schema for messages
+export const insertMessageSchema = createInsertSchema(messages).omit({
+  id: true,
+  timestamp: true,
 });
 
 // Type definitions
@@ -90,3 +150,15 @@ export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 
 export type UserAchievement = typeof userAchievementTable.$inferSelect;
 export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
+export type UserInfo = typeof userInfo.$inferSelect;
+export type InsertUserInfo = z.infer<typeof insertUserInfoSchema>;
+
+export type Conversation = typeof conversations.$inferSelect;
+export type InsertConversation = z.infer<typeof insertConversationSchema>;
+
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = z.infer<typeof insertMessageSchema>;
