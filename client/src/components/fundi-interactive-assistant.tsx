@@ -483,12 +483,13 @@ export default function FundiInteractiveAssistant({
     setThinking(true);
     
     try {
-      // Format previous messages for API
-      const previousMessages = messages.map(msg => ({
+      // Format previous messages for API - ensure correct format for proper context handling
+      // Skip the welcome message (first message) since it's generic and might confuse context
+      const previousMessages = messages.slice(messages[0]?.id === 'welcome-message' ? 1 : 0).map(msg => ({
         role: msg.isUser ? "user" : "assistant",
-        content: msg.text,
-        timestamp: msg.timestamp,
-        category: category
+        content: msg.text
+        // Removed timestamp and category as they're not needed by the API
+        // and could be causing format inconsistency for context processing
       }));
       
       // Get context from the current page/state
@@ -498,6 +499,8 @@ export default function FundiInteractiveAssistant({
         availableActions: ['search', 'recommend'],
         requiresPermission: ['navigate'] // Always require permission before navigation
       };
+      
+      console.log("Sending messages to API:", previousMessages.length, "previous messages");
       
       // Make API request
       const response = await fetch('/api/chat', {
@@ -577,13 +580,16 @@ export default function FundiInteractiveAssistant({
     setThinking(true);
     
     try {
-      // Format previous messages for API
-      const previousMessages = messages.map(msg => ({
+      // Format previous messages for API - ensure correct format for proper context handling
+      // Skip the welcome message (first message) since it's generic and might confuse context
+      const previousMessages = messages.slice(messages[0]?.id === 'welcome-message' ? 1 : 0).map(msg => ({
         role: msg.isUser ? "user" : "assistant",
-        content: msg.text,
-        timestamp: msg.timestamp,
-        category: category
+        content: msg.text
+        // Removed timestamp and category as they're not needed by the API
+        // and could be causing format inconsistency for context processing
       }));
+      
+      console.log("Sending suggestion messages to API:", previousMessages.length, "previous messages");
       
       // Get context from the current page/state
       const context = {

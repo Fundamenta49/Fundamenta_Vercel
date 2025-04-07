@@ -50,7 +50,7 @@ export const userAchievementTable = pgTable("user_achievements", {
 
 // Users
 export const users = pgTable("users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name"),
   email: text("email").notNull().unique(),
   preferences: json("preferences").default({}),
@@ -60,7 +60,7 @@ export const users = pgTable("users", {
 
 // Session-based user info
 export const userInfo = pgTable("user_info", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   sessionId: text("session_id").notNull().unique(),
   name: text("name"),
   interests: json("interests").default({}),
@@ -78,8 +78,8 @@ export const sessions = pgTable("sessions", {
 
 // Conversations
 export const conversations = pgTable("conversations", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  userId: integer("user_id"),
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  userId: integer("user_id", { mode: "number" }),
   title: text("title").notNull(),
   category: text("category"),
   lastMessageAt: timestamp("last_message_at").defaultNow(),
@@ -88,8 +88,8 @@ export const conversations = pgTable("conversations", {
 
 // Messages
 export const messages = pgTable("messages", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  conversationId: integer("conversation_id").notNull(),
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  conversationId: integer("conversation_id", { mode: "number" }).notNull(),
   role: text("role").notNull(), // "user", "assistant", "system"
   content: text("content").notNull(),
   category: text("category"), // Optional category/topic
@@ -118,27 +118,27 @@ export const insertUserAchievementSchema = createInsertSchema(userAchievementTab
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
-  updatedAt: true,
+  updatedAt: true
 });
 
 // Insert schema for user info
 export const insertUserInfoSchema = createInsertSchema(userInfo).omit({
   id: true,
   lastSeen: true,
-  createdAt: true,
+  createdAt: true
 });
 
 // Insert schema for conversations
 export const insertConversationSchema = createInsertSchema(conversations).omit({
   id: true,
   lastMessageAt: true,
-  createdAt: true,
+  createdAt: true
 });
 
 // Insert schema for messages
 export const insertMessageSchema = createInsertSchema(messages).omit({
   id: true,
-  timestamp: true,
+  timestamp: true
 });
 
 // Type definitions
