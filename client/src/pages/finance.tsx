@@ -1,5 +1,5 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Home, DollarSign, Calculator, Brain, CreditCard, PiggyBank, Building } from "lucide-react";
+import { AlertCircle, Home, DollarSign, Calculator, Brain, CreditCard, PiggyBank, Building, Receipt } from "lucide-react";
 import { FINANCE_CATEGORY } from "@/components/chat-interface";
 import { BudgetData } from "@/components/budget-calculator";
 import { useState, useRef, useEffect } from "react";
@@ -18,6 +18,7 @@ import CreditSkillsPopOut from "@/components/credit-skills-pop-out";
 import RetirementPlanningPopOut from "@/components/retirement-planning-pop-out";
 import MortgageCalculatorPopOut from "@/components/mortgage-calculator-pop-out";
 import BankLinkPopOut from "@/components/bank-link-pop-out";
+import TaxInformationPopOut from "@/components/tax-information-pop-out";
 
 // Define section properties
 type SectionType = {
@@ -45,6 +46,12 @@ const SECTIONS: SectionType[] = [
     title: 'Credit Building Skills',
     description: 'Learn about credit scores and building good credit',
     icon: CreditCard,
+  },
+  {
+    id: 'tax',
+    title: 'Tax Information',
+    description: 'State-specific tax guides for personal finance and business',
+    icon: Receipt,
   },
   {
     id: 'retirement',
@@ -76,6 +83,7 @@ export default function Finance() {
   const [isBudgetOpen, setIsBudgetOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isCreditOpen, setIsCreditOpen] = useState(false);
+  const [isTaxOpen, setIsTaxOpen] = useState(false);
   const [isRetirementOpen, setIsRetirementOpen] = useState(false);
   const [isMortgageOpen, setIsMortgageOpen] = useState(false);
   const [isBankOpen, setIsBankOpen] = useState(false);
@@ -93,6 +101,9 @@ export default function Finance() {
     }
     else if (sectionId === 'credit') {
       setIsCreditOpen(true);
+    }
+    else if (sectionId === 'tax') {
+      setIsTaxOpen(true);
     }
     else if (sectionId === 'retirement') {
       setIsRetirementOpen(true);
@@ -165,6 +176,12 @@ export default function Finance() {
       <FullScreenDialog open={isCreditOpen} onOpenChange={setIsCreditOpen}>
         <FullScreenDialogContent themeColor="#22c55e">
           <CreditSkillsPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+      
+      <FullScreenDialog open={isTaxOpen} onOpenChange={setIsTaxOpen}>
+        <FullScreenDialogContent themeColor="#22c55e">
+          <TaxInformationPopOut />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
