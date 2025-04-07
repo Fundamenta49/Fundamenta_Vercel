@@ -144,11 +144,31 @@ export default function TaxInformationPopOut() {
         onValueChange={setActiveTab}
         className="w-full"
       >
-        <TabsList className="grid grid-cols-4 mb-6">
-          <TabsTrigger value="overview">Tax Overview</TabsTrigger>
-          <TabsTrigger value="personal">Personal Taxes</TabsTrigger>
-          <TabsTrigger value="business">Business Taxes</TabsTrigger>
-          <TabsTrigger value="learn">Learn More</TabsTrigger>
+        <TabsList className="flex flex-wrap bg-green-50 mb-6 p-1 rounded-lg">
+          <TabsTrigger 
+            value="overview" 
+            className="flex-1 data-[state=active]:bg-green-600 data-[state=active]:text-white text-sm sm:text-base"
+          >
+            Tax Overview
+          </TabsTrigger>
+          <TabsTrigger 
+            value="personal" 
+            className="flex-1 data-[state=active]:bg-green-600 data-[state=active]:text-white text-sm sm:text-base"
+          >
+            Personal Taxes
+          </TabsTrigger>
+          <TabsTrigger 
+            value="business" 
+            className="flex-1 data-[state=active]:bg-green-600 data-[state=active]:text-white text-sm sm:text-base"
+          >
+            Business Taxes
+          </TabsTrigger>
+          <TabsTrigger 
+            value="learn" 
+            className="flex-1 data-[state=active]:bg-green-600 data-[state=active]:text-white text-sm sm:text-base"
+          >
+            Learn More
+          </TabsTrigger>
         </TabsList>
 
         {/* Tax Overview Tab */}
