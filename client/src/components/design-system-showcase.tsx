@@ -54,12 +54,12 @@ const DesignSystemShowcase = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5 mb-8 bg-transparent border-b border-gray-200">
-          <TabsTrigger value="cards" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Cards</TabsTrigger>
-          <TabsTrigger value="buttons" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Buttons</TabsTrigger>
-          <TabsTrigger value="typography" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Typography</TabsTrigger>
-          <TabsTrigger value="forms" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Form Elements</TabsTrigger>
-          <TabsTrigger value="sections" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Section Headers</TabsTrigger>
+        <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-8 bg-transparent border-b border-gray-200">
+          <TabsTrigger value="cards" className="px-2 text-sm data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Cards</TabsTrigger>
+          <TabsTrigger value="buttons" className="px-2 text-sm data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Buttons</TabsTrigger>
+          <TabsTrigger value="typography" className="px-2 text-sm data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Type</TabsTrigger>
+          <TabsTrigger value="forms" className="px-2 text-sm data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Forms</TabsTrigger>
+          <TabsTrigger value="sections" className="px-2 text-sm data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none rounded-none">Headers</TabsTrigger>
         </TabsList>
 
         {/* CARDS SHOWCASE */}
@@ -318,7 +318,7 @@ const DesignSystemShowcase = () => {
                     </label>
                     <input 
                       type="text" 
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md" 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md font-sans text-base" 
                       placeholder="Inconsistent input styling"
                     />
                   </div>
