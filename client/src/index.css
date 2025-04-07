@@ -483,6 +483,17 @@
   opacity: 1 !important;
 }
 
+/* Remove background from question mark icons */
+.restart-tour-button-container,
+.restart-tour-button-container svg,
+span[title="Take a tour!"] svg,
+[aria-label="Restart tour"] svg {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
 /* Hide the standard Fundi robot and its speech bubble during tours */
 body.tour-active .floating-chat-container,
 body.tour-active .speech-bubble-container {

@@ -1,21 +1,20 @@
 import React from 'react';
 import { useTour } from '@/contexts/tour-context';
-import { Button, ButtonProps } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface RestartTourButtonProps extends ButtonProps {
+interface RestartTourButtonProps {
   showLabel?: boolean;
   tooltipText?: string;
   position?: 'fixed' | 'absolute' | 'relative';
+  className?: string;
 }
 
 const RestartTourButton = ({ 
   showLabel = false, 
   tooltipText = 'Restart Tour',
   position = 'fixed',
-  className,
-  ...props 
+  className = '',
 }: RestartTourButtonProps) => {
   const { restartTour } = useTour();
 
@@ -23,21 +22,19 @@ const RestartTourButton = ({
     <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
+          <div
             onClick={restartTour}
-            className={`${position === 'fixed' ? 'fixed top-4 left-4 z-[9999]' : ''} 
-                        bg-transparent border-none shadow-none
-                        rounded-full w-10 h-10 p-0 
-                        text-primary hover:text-primary-dark
-                        ${className}`}
+            className={`restart-tour-button-container ${position === 'fixed' ? 'fixed top-4 left-4 z-[9999]' : ''} 
+                       cursor-pointer flex items-center justify-center 
+                       w-10 h-10 
+                       text-primary hover:text-primary-dark
+                       ${className}`}
+            role="button"
             aria-label="Restart tour"
-            {...props}
           >
             <HelpCircle className="h-6 w-6" />
             {showLabel && <span className="ml-2">Help</span>}
-          </Button>
+          </div>
         </TooltipTrigger>
         <TooltipContent side="right">
           <p>{tooltipText}</p>

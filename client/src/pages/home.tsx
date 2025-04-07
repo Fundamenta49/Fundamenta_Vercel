@@ -65,7 +65,7 @@ export default function Home() {
           <span className="inline-block ml-2 sm:ml-2 -mt-1 sm:-mt-1 relative transform transition-all hover:scale-110" title="Take a tour!">
             <RestartTourButton 
               position="relative" 
-              className="bg-primary/5 shadow-md border border-primary/20 scale-[0.85] sm:scale-90 hover:bg-primary/10" 
+              className="scale-[0.85] sm:scale-90" 
               tooltipText="Start Tour Guide" 
             />
           </span>
