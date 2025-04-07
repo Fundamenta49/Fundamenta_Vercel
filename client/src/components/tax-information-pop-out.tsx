@@ -92,8 +92,90 @@ const STATE_TAX_DATA: Record<string, StateTaxInfo> = {
   // This is just a representative sample
 };
 
+// 2023 Federal Tax Brackets (simplified for demonstration)
+const FEDERAL_TAX_BRACKETS = {
+  single: [
+    { min: 0, max: 11000, rate: 0.10 },
+    { min: 11000, max: 44725, rate: 0.12 },
+    { min: 44725, max: 95375, rate: 0.22 },
+    { min: 95375, max: 182100, rate: 0.24 },
+    { min: 182100, max: 231250, rate: 0.32 },
+    { min: 231250, max: 578125, rate: 0.35 },
+    { min: 578125, max: Infinity, rate: 0.37 }
+  ],
+  married: [
+    { min: 0, max: 22000, rate: 0.10 },
+    { min: 22000, max: 89450, rate: 0.12 },
+    { min: 89450, max: 190750, rate: 0.22 },
+    { min: 190750, max: 364200, rate: 0.24 },
+    { min: 364200, max: 462500, rate: 0.32 },
+    { min: 462500, max: 693750, rate: 0.35 },
+    { min: 693750, max: Infinity, rate: 0.37 }
+  ],
+  headOfHousehold: [
+    { min: 0, max: 15700, rate: 0.10 },
+    { min: 15700, max: 59850, rate: 0.12 },
+    { min: 59850, max: 95350, rate: 0.22 },
+    { min: 95350, max: 182100, rate: 0.24 },
+    { min: 182100, max: 231250, rate: 0.32 },
+    { min: 231250, max: 578100, rate: 0.35 },
+    { min: 578100, max: Infinity, rate: 0.37 }
+  ]
+};
+
 // Default state to show first
 const DEFAULT_STATE = "CA";
+
+// Define interface for the tax calculator
+interface TaxCalculatorState {
+  income: number;
+  incomeType: "hourly" | "salary";
+  filingStatus: "single" | "married" | "headOfHousehold";
+  hoursPerWeek: number;
+  weeksPerYear: number;
+  state: string;
+  includeStateIncome: boolean;
+  includeFederalIncome: boolean;
+  includeFICA: boolean;
+}
+
+interface TaxDeduction {
+  name: string;
+  amount: number;
+  percentage: number;
+}
+
+interface TaxCalculatorResult {
+  grossIncome: number;
+  federalTax: number;
+  stateTax: number;
+  ficaTax: number;
+  totalTax: number;
+  netIncome: number;
+  effectiveTaxRate: number;
+  deductions: TaxDeduction[];
+}
+
+
+
+// Helper function to extract tax rate from state tax information
+const getStateIncomeTaxRate = (stateInfo: StateTaxInfo): number => {
+  // Extract the highest rate from the income tax range
+  const match = stateInfo.incomeTaxRange.match(/(\d+(\.\d+)?)%/g);
+  if (match && match.length > 0) {
+    // If there are multiple rates, use the average of the highest and lowest
+    const rates = match.map(rate => parseFloat(rate.replace('%', '')));
+    if (rates.length > 1) {
+      // If there's a range, calculate average
+      return (Math.max(...rates) + Math.min(...rates)) / 2 / 100;
+    } else {
+      // If there's just one rate or a flat rate
+      return rates[0] / 100;
+    }
+  }
+  // Return 0 if no income tax or couldn't parse
+  return stateInfo.incomeTaxRange.toLowerCase().includes('no state income tax') ? 0 : 0.05; // Default to 5% if parsing fails
+};
 
 // Define an interface for learning events that will integrate with the Learning Calendar
 interface TaxLearningEvent {
@@ -184,6 +266,30 @@ export default function TaxInformationPopOut() {
   
   // Track when modules were added to the learning calendar
   const [addedToCalendar, setAddedToCalendar] = useState<string[]>([]);
+  
+  // Tax calculator state
+  const [calculatorState, setCalculatorState] = useState<TaxCalculatorState>({
+    income: 50000,
+    incomeType: "salary",
+    filingStatus: "single",
+    hoursPerWeek: 40,
+    weeksPerYear: 50,
+    state: selectedState,
+    includeStateIncome: true,
+    includeFederalIncome: true,
+    includeFICA: true
+  });
+  
+  const [calculatorResult, setCalculatorResult] = useState<TaxCalculatorResult>({
+    grossIncome: 0,
+    federalTax: 0,
+    stateTax: 0,
+    ficaTax: 0,
+    totalTax: 0,
+    netIncome: 0,
+    effectiveTaxRate: 0,
+    deductions: []
+  });
   
   // Sort states alphabetically by name for the dropdown
   const sortedStates = Object.entries(STATE_TAX_DATA)
@@ -281,6 +387,125 @@ export default function TaxInformationPopOut() {
     }
   };
   
+  // Calculate federal income tax
+  const calculateFederalTax = (income: number, filingStatus: "single" | "married" | "headOfHousehold"): number => {
+    let tax = 0;
+    const brackets = FEDERAL_TAX_BRACKETS[filingStatus];
+    
+    for (let i = 0; i < brackets.length; i++) {
+      const { min, max, rate } = brackets[i];
+      if (income > min) {
+        const taxableInThisBracket = Math.min(income, max) - min;
+        tax += taxableInThisBracket * rate;
+      }
+      if (income <= max) break;
+    }
+    
+    return tax;
+  };
+  
+  // Calculate state income tax (simplified)
+  const calculateStateTax = (income: number, stateCode: string): number => {
+    const stateInfo = STATE_TAX_DATA[stateCode];
+    const rate = getStateIncomeTaxRate(stateInfo);
+    return income * rate;
+  };
+  
+  // Calculate FICA taxes (Social Security + Medicare)
+  const calculateFICATax = (income: number): number => {
+    const socialSecurityRate = 0.062; // 6.2%
+    const medicareRate = 0.0145; // 1.45%
+    const socialSecurityWageCap = 160200; // 2023 cap
+    
+    const socialSecurityTax = Math.min(income, socialSecurityWageCap) * socialSecurityRate;
+    const medicareTax = income * medicareRate;
+    
+    return socialSecurityTax + medicareTax;
+  };
+  
+  // Calculate total taxes and net income
+  const calculateTaxes = () => {
+    // Convert hourly wage to annual salary if needed
+    const annualIncome = calculatorState.incomeType === "hourly" 
+      ? calculatorState.income * calculatorState.hoursPerWeek * calculatorState.weeksPerYear 
+      : calculatorState.income;
+    
+    // Calculate different tax components
+    const federalTax = calculatorState.includeFederalIncome 
+      ? calculateFederalTax(annualIncome, calculatorState.filingStatus) 
+      : 0;
+      
+    const stateTax = calculatorState.includeStateIncome 
+      ? calculateStateTax(annualIncome, calculatorState.state) 
+      : 0;
+      
+    const ficaTax = calculatorState.includeFICA 
+      ? calculateFICATax(annualIncome) 
+      : 0;
+    
+    const totalTax = federalTax + stateTax + ficaTax;
+    const netIncome = annualIncome - totalTax;
+    const effectiveTaxRate = (totalTax / annualIncome) * 100;
+    
+    // Create deduction entries for the breakdown
+    const deductions: TaxDeduction[] = [
+      {
+        name: "Federal Income Tax",
+        amount: federalTax,
+        percentage: (federalTax / annualIncome) * 100
+      },
+      {
+        name: "State Income Tax",
+        amount: stateTax,
+        percentage: (stateTax / annualIncome) * 100
+      },
+      {
+        name: "FICA (Social Security & Medicare)",
+        amount: ficaTax,
+        percentage: (ficaTax / annualIncome) * 100
+      }
+    ];
+    
+    // Update calculator results
+    setCalculatorResult({
+      grossIncome: annualIncome,
+      federalTax,
+      stateTax,
+      ficaTax,
+      totalTax,
+      netIncome,
+      effectiveTaxRate,
+      deductions
+    });
+  };
+  
+  // Update calculator state when inputs change
+  const handleCalculatorChange = (field: keyof TaxCalculatorState, value: any) => {
+    setCalculatorState(prev => ({ 
+      ...prev, 
+      [field]: value,
+      // Update state to match selected state in the main component
+      ...(field === 'state' ? { state: value } : {})
+    }));
+  };
+  
+  // Format currency for display
+  const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+  
+  // Run calculation when calculator state changes or when tab is selected
+  useEffect(() => {
+    if (activeTab === 'calculator') {
+      calculateTaxes();
+    }
+  }, [calculatorState, activeTab]);
+  
   // Add a module to the learning calendar
   const addToLearningCalendar = (moduleId: string) => {
     if (!addedToCalendar.includes(moduleId)) {
@@ -325,7 +550,14 @@ export default function TaxInformationPopOut() {
         <h2 className="text-lg font-medium mb-2">Select Your State</h2>
         <Select
           value={selectedState}
-          onValueChange={(value) => setSelectedState(value)}
+          onValueChange={(value) => {
+            setSelectedState(value);
+            // Also update the calculator state with the new state value
+            setCalculatorState(prev => ({
+              ...prev,
+              state: value
+            }));
+          }}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Select a state" />
@@ -361,6 +593,12 @@ export default function TaxInformationPopOut() {
             Personal Taxes
           </TabsTrigger>
           <TabsTrigger 
+            value="calculator" 
+            className="flex-1 data-[state=active]:bg-green-600 data-[state=active]:text-white text-sm sm:text-base"
+          >
+            Tax Calculator
+          </TabsTrigger>
+          <TabsTrigger 
             value="business" 
             className="flex-1 data-[state=active]:bg-green-600 data-[state=active]:text-white text-sm sm:text-base"
           >
@@ -374,6 +612,210 @@ export default function TaxInformationPopOut() {
           </TabsTrigger>
         </TabsList>
 
+        {/* Tax Calculator Tab */}
+        <TabsContent value="calculator" className="mt-0">
+          <Card>
+            <CardHeader>
+              <CardTitle>Tax Calculator for {STATE_TAX_DATA[selectedState].name}</CardTitle>
+              <CardDescription>
+                Estimate your tax burden and take-home pay based on your income and filing status
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Inputs section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium mb-2">Income Information</h3>
+                  
+                  {/* Income Type Selection */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium mb-2">Income Type</h4>
+                    <div className="flex space-x-2">
+                      <Button 
+                        type="button" 
+                        variant={calculatorState.incomeType === "salary" ? "default" : "outline"}
+                        onClick={() => handleCalculatorChange("incomeType", "salary")}
+                        className="flex-1"
+                      >
+                        Annual Salary
+                      </Button>
+                      <Button 
+                        type="button"
+                        variant={calculatorState.incomeType === "hourly" ? "default" : "outline"}
+                        onClick={() => handleCalculatorChange("incomeType", "hourly")}
+                        className="flex-1"
+                      >
+                        Hourly Wage
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Income Input */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium mb-2">
+                      {calculatorState.incomeType === "salary" ? "Annual Salary" : "Hourly Rate"}
+                    </h4>
+                    <div className="flex items-center">
+                      <span className="bg-gray-100 p-2 rounded-l-md border border-r-0">$</span>
+                      <input 
+                        type="number" 
+                        value={calculatorState.income}
+                        onChange={(e) => handleCalculatorChange("income", parseFloat(e.target.value) || 0)}
+                        className="flex-1 p-2 border rounded-r-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Show hourly options if hourly is selected */}
+                  {calculatorState.incomeType === "hourly" && (
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="text-sm font-medium mb-2">Hours Per Week</h4>
+                        <input 
+                          type="number" 
+                          value={calculatorState.hoursPerWeek}
+                          onChange={(e) => handleCalculatorChange("hoursPerWeek", parseFloat(e.target.value) || 0)}
+                          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-sm font-medium mb-2">Weeks Per Year</h4>
+                        <input 
+                          type="number" 
+                          value={calculatorState.weeksPerYear}
+                          onChange={(e) => handleCalculatorChange("weeksPerYear", parseFloat(e.target.value) || 0)}
+                          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Filing Status */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium mb-2">Filing Status</h4>
+                    <Select
+                      value={calculatorState.filingStatus}
+                      onValueChange={(value) => handleCalculatorChange("filingStatus", value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select filing status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="single">Single</SelectItem>
+                        <SelectItem value="married">Married Filing Jointly</SelectItem>
+                        <SelectItem value="headOfHousehold">Head of Household</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {/* Tax Inclusions */}
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium mb-2">Include Taxes</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center">
+                        <input 
+                          type="checkbox" 
+                          id="federal-tax"
+                          checked={calculatorState.includeFederalIncome}
+                          onChange={(e) => handleCalculatorChange("includeFederalIncome", e.target.checked)}
+                          className="mr-2 h-4 w-4"
+                        />
+                        <label htmlFor="federal-tax">Federal Income Tax</label>
+                      </div>
+                      
+                      <div className="flex items-center">
+                        <input 
+                          type="checkbox" 
+                          id="state-tax"
+                          checked={calculatorState.includeStateIncome}
+                          onChange={(e) => handleCalculatorChange("includeStateIncome", e.target.checked)}
+                          className="mr-2 h-4 w-4"
+                        />
+                        <label htmlFor="state-tax">State Income Tax ({STATE_TAX_DATA[selectedState].name})</label>
+                      </div>
+                      
+                      <div className="flex items-center">
+                        <input 
+                          type="checkbox" 
+                          id="fica-tax"
+                          checked={calculatorState.includeFICA}
+                          onChange={(e) => handleCalculatorChange("includeFICA", e.target.checked)}
+                          className="mr-2 h-4 w-4"
+                        />
+                        <label htmlFor="fica-tax">FICA (Social Security & Medicare)</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Results section */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-medium mb-4">Tax Calculation Results</h3>
+                  
+                  {/* Summary */}
+                  <div className="mb-6 grid grid-cols-2 gap-3">
+                    <div className="bg-white p-3 rounded-md border">
+                      <h4 className="text-sm text-gray-500">Gross Income</h4>
+                      <p className="text-lg font-bold text-gray-800">{formatCurrency(calculatorResult.grossIncome)}</p>
+                      <p className="text-xs text-gray-500">
+                        {calculatorState.incomeType === "hourly" ? `$${calculatorState.income}/hr × ${calculatorState.hoursPerWeek}hrs × ${calculatorState.weeksPerYear}wks` : "Annual"}
+                      </p>
+                    </div>
+                    
+                    <div className="bg-white p-3 rounded-md border">
+                      <h4 className="text-sm text-gray-500">Total Tax</h4>
+                      <p className="text-lg font-bold text-red-600">{formatCurrency(calculatorResult.totalTax)}</p>
+                      <p className="text-xs text-gray-500">{calculatorResult.effectiveTaxRate.toFixed(1)}% effective rate</p>
+                    </div>
+                    
+                    <div className="bg-white p-3 rounded-md border col-span-2">
+                      <h4 className="text-sm text-gray-500">Take-Home Pay</h4>
+                      <p className="text-2xl font-bold text-green-600">{formatCurrency(calculatorResult.netIncome)}</p>
+                      <p className="text-xs text-gray-500">
+                        {calculatorState.incomeType === "hourly" 
+                          ? `${formatCurrency(calculatorResult.netIncome / (calculatorState.hoursPerWeek * calculatorState.weeksPerYear))}/hr after taxes` 
+                          : `${formatCurrency(calculatorResult.netIncome / 12)}/month after taxes`}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Tax Breakdown */}
+                  <div>
+                    <h4 className="font-medium mb-2">Tax Breakdown</h4>
+                    <div className="space-y-3">
+                      {calculatorResult.deductions.map((deduction, index) => (
+                        deduction.amount > 0 ? (
+                          <div key={index} className="bg-white p-3 rounded-md border">
+                            <div className="flex justify-between mb-1">
+                              <span className="text-sm">{deduction.name}</span>
+                              <span className="text-sm font-semibold">{formatCurrency(deduction.amount)}</span>
+                            </div>
+                            <Progress value={deduction.percentage} className="h-2" />
+                            <div className="text-right text-xs text-gray-500 mt-1">
+                              {deduction.percentage.toFixed(1)}% of income
+                            </div>
+                          </div>
+                        ) : null
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <Alert variant="default" className="border-amber-500 bg-amber-50">
+                      <AlertCircle className="h-4 w-4 text-amber-500" />
+                      <AlertDescription className="text-amber-800 text-xs">
+                        This is a simplified tax estimation based on {STATE_TAX_DATA[selectedState].name}'s tax rates. 
+                        Actual tax calculations may differ based on specific deductions, credits, and other factors.
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
         {/* Tax Overview Tab */}
         <TabsContent value="overview" className="mt-0">
           <Card>
