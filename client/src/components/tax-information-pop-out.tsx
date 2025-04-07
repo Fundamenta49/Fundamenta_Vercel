@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { AlertCircle, DollarSign, Briefcase, Home, FileText, ScrollText } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Home, FileText, ScrollText, Award, Star, BookOpen, CheckCircle2, TrendingUp } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // State tax information interface
 interface StateTaxInfo {
@@ -96,11 +98,45 @@ const DEFAULT_STATE = "CA";
 export default function TaxInformationPopOut() {
   const [selectedState, setSelectedState] = useState<string>(DEFAULT_STATE);
   const [activeTab, setActiveTab] = useState<string>("overview");
+  const [userPoints, setUserPoints] = useState<number>(0);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const [userBadges, setUserBadges] = useState<string[]>([]);
+  const [showAchievement, setShowAchievement] = useState<boolean>(false);
+  const [recentAchievement, setRecentAchievement] = useState<string>("");
   
   // Sort states alphabetically by name for the dropdown
   const sortedStates = Object.entries(STATE_TAX_DATA)
     .sort(([, a], [, b]) => a.name.localeCompare(b.name))
     .map(([code]) => code);
+    
+  // Handle completing a section and award points
+  const completeSection = (sectionId: string, points: number) => {
+    if (!completedLessons.includes(sectionId)) {
+      setUserPoints(prev => prev + points);
+      setCompletedLessons(prev => [...prev, sectionId]);
+      
+      // Check for badges
+      if (completedLessons.length + 1 === 3) {
+        awardBadge("tax-novice", "Tax Novice");
+      } else if (completedLessons.length + 1 === 7) {
+        awardBadge("tax-pro", "Tax Pro");
+      }
+    }
+  };
+  
+  // Award a badge
+  const awardBadge = (badgeId: string, badgeName: string) => {
+    if (!userBadges.includes(badgeId)) {
+      setUserBadges(prev => [...prev, badgeId]);
+      setRecentAchievement(badgeName);
+      setShowAchievement(true);
+      
+      // Hide achievement notification after 3 seconds
+      setTimeout(() => {
+        setShowAchievement(false);
+      }, 3000);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
