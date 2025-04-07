@@ -324,6 +324,77 @@ export default function FundiInteractiveAssistant({
     };
   }, [isOpen, isChatOpen, category, onRequestHelp]);
   
+  // Handle tax-related events (badge earned and learning progress)
+  useEffect(() => {
+    // Handle tax badge earned event
+    const handleTaxBadgeEarned = (e: any) => {
+      const badgeName = e.detail?.badgeName || 'a tax knowledge badge';
+      
+      // Add a system message about the tax badge achievement
+      setMessages(prev => [
+        ...prev,
+        {
+          text: `Congratulations! You've earned the "${badgeName}" badge. That's a great step in understanding how taxes work. Would you like to learn about more tax concepts?`,
+          isUser: false,
+          timestamp: new Date()
+        }
+      ]);
+      
+      // Open Fundi to congratulate the user
+      setIsOpen(true);
+      if (!isChatOpen) {
+        setIsChatOpen(true);
+      }
+      
+      // Set category to finance for appropriate responses
+      if (onRequestHelp) {
+        onRequestHelp('finance');
+      }
+    };
+    
+    // Handle tax learning progress event
+    const handleTaxLearningProgress = (e: any) => {
+      const progressPercent = e.detail?.progressPercent || 0;
+      const topic = e.detail?.topic || 'taxes';
+      
+      // Only respond to significant progress milestones (25%, 50%, 75%, 100%)
+      if (progressPercent === 25 || progressPercent === 50 || 
+          progressPercent === 75 || progressPercent === 100) {
+        
+        // Add a system message about the learning progress
+        setMessages(prev => [
+          ...prev,
+          {
+            text: `Great job! You've completed ${progressPercent}% of the ${topic} learning module. Keep up the good work! Is there anything specific about taxes you'd like to learn more about?`,
+            isUser: false,
+            timestamp: new Date()
+          }
+        ]);
+        
+        // Open Fundi to encourage the user
+        setIsOpen(true);
+        if (!isChatOpen) {
+          setIsChatOpen(true);
+        }
+        
+        // Set category to finance for appropriate responses
+        if (onRequestHelp) {
+          onRequestHelp('finance');
+        }
+      }
+    };
+    
+    // Add event listeners for tax-related events
+    window.addEventListener('taxBadgeEarned', handleTaxBadgeEarned);
+    window.addEventListener('taxLearningProgressUpdated', handleTaxLearningProgress);
+    
+    // Remove event listeners on cleanup
+    return () => {
+      window.removeEventListener('taxBadgeEarned', handleTaxBadgeEarned);
+      window.removeEventListener('taxLearningProgressUpdated', handleTaxLearningProgress);
+    };
+  }, [setMessages, isOpen, isChatOpen, onRequestHelp]);
+  
   // Handle emotion changes based on conversation
   useEffect(() => {
     if (messages.length > 0) {
@@ -611,7 +682,9 @@ export default function FundiInteractiveAssistant({
   const detectCategory = (message: string) => {
     const lowerMessage = message.toLowerCase();
     
-    if (lowerMessage.includes('budget') || lowerMessage.includes('money') || lowerMessage.includes('finance') || lowerMessage.includes('credit')) {
+    if (lowerMessage.includes('tax') || lowerMessage.includes('taxes') || lowerMessage.includes('income tax') || lowerMessage.includes('tax bracket') || 
+        lowerMessage.includes('fica') || lowerMessage.includes('withholding') || lowerMessage.includes('refund') || 
+        lowerMessage.includes('budget') || lowerMessage.includes('money') || lowerMessage.includes('finance') || lowerMessage.includes('credit')) {
       setCategory('finance');
     } else if (lowerMessage.includes('job') || lowerMessage.includes('career') || lowerMessage.includes('resume') || lowerMessage.includes('interview')) {
       setCategory('career');
@@ -711,7 +784,23 @@ export default function FundiInteractiveAssistant({
     
     // Finance responses
     if (category === 'finance') {
-      if (lowerMessage.includes('budget')) {
+      if (lowerMessage.includes('tax') || lowerMessage.includes('taxes')) {
+        if (lowerMessage.includes('bracket') || lowerMessage.includes('income tax')) {
+          return "In the US, tax brackets determine how much federal income tax you pay based on your taxable income. The system is progressive, with higher incomes taxed at higher rates. Would you like to calculate your estimated taxes with our tax calculator?";
+        } else if (lowerMessage.includes('file') || lowerMessage.includes('return')) {
+          return "Filing taxes correctly is important to avoid penalties. The standard deadline for filing federal income taxes is April 15th (unless it falls on a weekend). Would you like to learn about common tax deductions or tax forms?";
+        } else if (lowerMessage.includes('deduction') || lowerMessage.includes('credit')) {
+          return "Tax deductions reduce your taxable income, while tax credits directly reduce the tax you owe. Common deductions include mortgage interest, student loan interest, and charitable donations. Would you like to learn more about specific deductions?";
+        } else if (lowerMessage.includes('fica') || lowerMessage.includes('social security')) {
+          return "FICA taxes include Social Security tax (6.2%) and Medicare tax (1.45%), which are withheld from your paycheck. These taxes fund retirement and health benefits. Would you like to know how these taxes affect your take-home pay?";
+        } else if (lowerMessage.includes('withholding') || lowerMessage.includes('w4')) {
+          return "Tax withholding is the amount of income tax your employer holds from your paycheck. Proper withholding helps avoid owing a large sum at tax time or giving the government an interest-free loan. Would you like help with adjusting your withholdings?";
+        } else if (lowerMessage.includes('calculate') || lowerMessage.includes('calculator')) {
+          return "Our tax calculator can help you estimate your federal and state taxes based on your income and filing status. Would you like to use the calculator to see a breakdown of your tax liability?";
+        } else {
+          return "I can help with various tax topics including understanding tax brackets, filing taxes, tax deductions and credits, and tax planning strategies. What specific tax information are you looking for?";
+        }
+      } else if (lowerMessage.includes('budget')) {
         return "Creating a budget starts with tracking your income and expenses. Would you like me to help you set up a basic budget plan?";
       } else if (lowerMessage.includes('mortgage')) {
         return "Mortgages can be complex! The main terms to understand are principal, interest, term, and down payment. Would you like me to explain these in more detail?";

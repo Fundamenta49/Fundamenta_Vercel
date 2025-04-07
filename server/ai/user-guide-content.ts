@@ -25,6 +25,8 @@ export const quickGuideInstructions: Record<string, string> = {
   
   "mortgage-calculator": "The Mortgage Calculator helps you estimate monthly payments and total costs. Enter the home price, your down payment, loan term, and interest rate. You'll see your monthly payment breakdown and how changes to any value affect your costs. You can also compare different scenarios side by side.",
   
+  "tax-calculator": "The Tax Calculator helps you estimate your tax burden and take-home pay. Switch between salary or hourly wage, select your filing status, and choose your state to see a detailed breakdown of federal, state, and FICA taxes. You can toggle different tax components on or off to see their impact. The calculator also includes learning modules that help you understand different types of taxes, with achievements to earn as you learn.",
+  
   "debt-payoff": "The Debt Payoff Planner helps you create a strategy to become debt-free. Add your debts with their balances, interest rates, and minimum payments. The tool will suggest either the snowball method (paying smallest debts first) or avalanche method (highest interest first) based on your situation.",
   
   "expense-categorization": "To categorize expenses, simply drag and drop them into the appropriate category. The system will learn from your choices and start to automatically categorize similar expenses in the future. You can create custom categories by clicking 'Create New Category'.",
@@ -71,6 +73,14 @@ export const contextualGuidance: Record<string, string> = {
   
   "learning-section": "Welcome to the Learning section! This is where you can build valuable life skills at your own pace. Browse topics that interest you, or take a quick assessment to get personalized recommendations.",
   
+  "tax-calculator-open": "Welcome to the Tax Calculator! Understanding taxes can be confusing, but we'll break it down step-by-step. Start by entering your income information, and you'll see how it affects your tax situation. There are learning modules to help explain key concepts as you go.",
+  
+  "tax-badge-earned": "Congratulations on earning a tax knowledge badge! Understanding how taxes work is an important financial skill. Keep exploring the tax calculator to earn more badges and deepen your understanding of different tax concepts.",
+  
+  "tax-filing-season": "It's tax season! The Tax Calculator can help you estimate your potential refund or amount owed. Make sure to update your information to get the most accurate estimate before filing your taxes.",
+  
+  "new-job-tax-estimate": "Starting a new job? Use the Tax Calculator to estimate your after-tax take-home pay. This will help you budget properly knowing what your actual paycheck will be after all deductions.",
+  
   "goal-completion": "Congratulations on reaching your goal! This is a big achievement. Would you like to set a new goal, or should we review your other financial priorities?",
   
   "recurring-expense-increase": "I noticed this expense has increased from last month. Would you like to take a closer look at why, or should we adjust your budget to account for the new amount?",
@@ -84,6 +94,12 @@ export const contextualGuidance: Record<string, string> = {
   "negative-spending-trend": "I've noticed spending in this category has been increasing over the past few months. Would you like to take a closer look together to see what might be driving the change?",
   
   "debt-paydown-milestone": "You've made amazing progress paying down your debt! You've reduced your balance by 25% since you started. Keep up the great work!",
+  
+  "tax-calculator-section": "Welcome to the Tax Calculator! This tool helps you estimate your tax burden and take-home pay based on your income and filing status. You can switch between salary and hourly calculations, and see a detailed breakdown of federal, state, and FICA taxes. As you use the interactive modules, you'll earn badges for learning about different aspects of taxation. Have a specific tax question? Just ask me!",
+  
+  "tax-badge-success": "Congratulations on earning a tax knowledge badge! You're making great progress understanding how taxation works. Would you like to learn about more advanced tax concepts, or explore how taxes fit into your overall financial picture?",
+  
+  "tax-learning-progress": "You're doing great with the tax learning modules! Understanding how taxes work helps you make better financial decisions year-round, not just during tax season. Is there a specific tax topic you'd like to learn more about?",
   
   "mortgage-section": "Welcome to the Mortgage section! Whether you're just starting to think about buying a home or ready to refinance, our tools will help you make informed decisions. The mortgage calculator helps you estimate monthly payments, while our affordability calculator shows what price range fits your budget. If you have questions about any terms or concepts, just ask!",
   
@@ -189,6 +205,33 @@ We explain key terms in simple language:
 - Points and closing costs
 - Escrow and impounds
 - Amortization
+
+## Tax Calculator Guide
+
+Understand and estimate your tax liability with our interactive tools:
+
+### Income Tax Calculator
+The Tax Calculator helps you:
+- Switch between salary or hourly wage calculation methods
+- Select your filing status (single, married filing jointly, etc.)
+- Choose your state to calculate both federal and state taxes
+- See a detailed breakdown of different tax components (federal, state, FICA)
+- Toggle different tax types on/off to understand their impact
+
+### Tax Learning Modules
+Our interactive learning modules help you:
+- Understand the difference between marginal and effective tax rates
+- Learn how tax brackets work with progressive taxation
+- Discover common tax deductions and credits you may qualify for
+- Understand how FICA taxes fund Social Security and Medicare
+- Earn achievement badges as you progress through the modules
+
+### Tax Planning Tools
+Plan ahead to optimize your tax situation:
+- Estimate your quarterly tax payments if you're self-employed
+- See how changes in income affect your tax bracket
+- Understand the tax implications of different investment decisions
+- Calculate after-tax income for better budgeting
 
 ## Learning New Skills
 
