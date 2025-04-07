@@ -888,7 +888,7 @@ export default function FundiInteractiveAssistant({
                 </CardHeader>
                 <ScrollArea className="flex-1 overflow-y-auto" style={{ height: 'calc(100% - 120px)', display: 'flex', flexDirection: 'column' }}>
                   <CardContent className="p-4 pt-2 flex-grow">
-                    <div className="space-y-1 flex flex-col">
+                    <div className="space-y-2 sm:space-y-1 flex flex-col">
                       {messages.map((message, index) => {
                         // Check if this message should show timestamp
                         const showTimestamp = index === 0 || 
@@ -907,7 +907,7 @@ export default function FundiInteractiveAssistant({
                           <div 
                             key={message.id || index} 
                             className={cn(
-                              "flex my-1",
+                              "flex my-1.5 sm:my-1",
                               message.isUser ? "justify-end" : "justify-start",
                               // Add timestamp above message if needed
                               showTimestamp && index !== 0 ? "mt-3" : ""
@@ -942,10 +942,10 @@ export default function FundiInteractiveAssistant({
                             {/* The actual message bubble - Apple iMessage style */}
                             <div 
                               className={cn(
-                                "max-w-[80%] px-3 py-2 leading-snug text-xs",
+                                "max-w-[75%] px-3 py-2.5 leading-snug text-xs sm:max-w-[80%] sm:py-2",
                                 message.isUser ? 
-                                  "bg-primary text-primary-foreground rounded-2xl rounded-tr-lg shadow-sm" : 
-                                  "bg-muted/40 text-foreground rounded-2xl rounded-tl-lg border border-muted/20",
+                                  "bg-primary text-primary-foreground rounded-2xl rounded-tr-lg shadow-md" : 
+                                  "bg-muted/50 text-foreground rounded-2xl rounded-tl-lg border border-muted/30 shadow-sm",
                                 // Apple-style rounded bubbles with specific corners based on position in sequence
                                 isFirstInSeries && !isLastInSeries ? 
                                   message.isUser ? "rounded-tr-2xl" : "rounded-tl-2xl" : "",
@@ -955,10 +955,11 @@ export default function FundiInteractiveAssistant({
                                   message.isUser ? "rounded-tr-lg rounded-br-2xl" : "rounded-tl-lg rounded-bl-2xl" : ""
                               )}
                               style={{
-                                maxWidth: "280px", // Control max width for better mobile display
+                                maxWidth: window.innerWidth < 768 ? "240px" : "280px", // Narrower on mobile for better visibility
                                 wordWrap: "break-word", // Ensure long words break
                                 overflowWrap: "break-word", // Modern alternative to word-wrap
-                                hyphens: "auto" // Add hyphens when breaking words
+                                hyphens: "auto", // Add hyphens when breaking words
+                                fontSize: window.innerWidth < 768 ? "14px" : "12px" // Larger text on mobile for better readability
                               }}
                             >
                               <div className="leading-relaxed whitespace-normal">{message.text}</div>
@@ -985,11 +986,11 @@ export default function FundiInteractiveAssistant({
                               emotion="curious"
                             />
                           </div>
-                          <div className="bg-muted/40 rounded-2xl px-3 py-2 text-xs border border-muted/20">
-                            <div className="flex items-center h-4 space-x-1.5">
-                              <span className="inline-block w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce"></span>
-                              <span className="inline-block w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                              <span className="inline-block w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                          <div className="bg-muted/50 rounded-2xl px-3 py-2.5 text-xs border border-muted/30 shadow-sm">
+                            <div className="flex items-center h-4 sm:h-3 space-x-2 sm:space-x-1.5">
+                              <span className="inline-block w-2 h-2 sm:w-1.5 sm:h-1.5 bg-foreground/40 rounded-full animate-bounce"></span>
+                              <span className="inline-block w-2 h-2 sm:w-1.5 sm:h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                              <span className="inline-block w-2 h-2 sm:w-1.5 sm:h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
                             </div>
                           </div>
                         </div>
