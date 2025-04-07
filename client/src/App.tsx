@@ -22,11 +22,7 @@ import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";
 import YogaProgressionPage from "@/pages/yoga-progression";
 import Arcade from "@/pages/arcade";
-import LearningCalendar from "@/components/learning-calendar";
 import LearningCalendarPopOut from "@/components/learning-calendar-pop-out";
-import EnhancedCalendar from "@/components/enhanced-calendar";
-import CalendarRedesigned from "@/components/calendar-redesigned";
-import CalendarTestingPage from "@/pages/calendar-testing";
 import EconomicsCourse from "@/pages/learning/courses/economics";
 import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
 // We're using the main wellness page with URL parameters instead of separate pages
@@ -203,26 +199,6 @@ function Router() {
             <Route path="/learning-calendar">
               <ProtectedRoute>
                 <LearningCalendarPopOut />
-              </ProtectedRoute>
-            </Route>
-            <Route path="/enhanced-calendar">
-              <ProtectedRoute>
-                <EnhancedCalendar />
-              </ProtectedRoute>
-            </Route>
-            <Route path="/redesigned-calendar">
-              <ProtectedRoute>
-                <CalendarRedesigned />
-              </ProtectedRoute>
-            </Route>
-            <Route path="/calendar">
-              <ProtectedRoute>
-                <CalendarRedesigned />
-              </ProtectedRoute>
-            </Route>
-            <Route path="/calendar-testing">
-              <ProtectedRoute>
-                <CalendarTestingPage />
               </ProtectedRoute>
             </Route>
             <Route path="/learning/courses/vehicle-maintenance">
