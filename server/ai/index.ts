@@ -143,8 +143,46 @@ export async function orchestrateAIResponse(
  * Constructs the system prompt based on category and context.
  */
 export function constructSystemPrompt(category: string, context: AIContext): string {
-  // Get the base prompt for the category
-  const basePrompt = categoryBasedSystemPrompts[category] || categoryBasedSystemPrompts.general;
+  // Base behavior: using a specialized prompt based on the category
+  let basePrompt = "";
+  
+  // ENHANCEMENT: For the main Fundi assistant, combine ALL specialized knowledge
+  // This ensures Fundi has the complete knowledge of all specialized assistants
+  if (category === "general") {
+    // Combine all specialized knowledge into Fundi's general prompt
+    basePrompt = categoryBasedSystemPrompts.general + "\n\n";
+    
+    // Add knowledge from all specialized domains
+    basePrompt += "# SPECIALIZED DOMAIN KNOWLEDGE\n";
+    basePrompt += "You also have access to all specialized knowledge from these domains:\n\n";
+    
+    // Add finance knowledge
+    basePrompt += "## FINANCE KNOWLEDGE\n";
+    basePrompt += extractCapabilitiesFromPrompt(categoryBasedSystemPrompts.finance) + "\n\n";
+    
+    // Add career knowledge
+    basePrompt += "## CAREER KNOWLEDGE\n";
+    basePrompt += extractCapabilitiesFromPrompt(categoryBasedSystemPrompts.career) + "\n\n";
+    
+    // Add wellness knowledge
+    basePrompt += "## WELLNESS KNOWLEDGE\n";
+    basePrompt += extractCapabilitiesFromPrompt(categoryBasedSystemPrompts.wellness) + "\n\n";
+    
+    // Add learning knowledge
+    basePrompt += "## LEARNING KNOWLEDGE\n";
+    basePrompt += extractCapabilitiesFromPrompt(categoryBasedSystemPrompts.learning) + "\n\n";
+    
+    // Add emergency knowledge
+    basePrompt += "## EMERGENCY KNOWLEDGE\n";
+    basePrompt += extractCapabilitiesFromPrompt(categoryBasedSystemPrompts.emergency) + "\n\n";
+    
+    // Add cooking knowledge
+    basePrompt += "## COOKING KNOWLEDGE\n";
+    basePrompt += extractCapabilitiesFromPrompt(categoryBasedSystemPrompts.cooking) + "\n\n";
+  } else {
+    // Use the specified category prompt for specialized assistants
+    basePrompt = categoryBasedSystemPrompts[category] || categoryBasedSystemPrompts.general;
+  }
   
   // Add application context 
   let contextInfo = `
@@ -156,10 +194,10 @@ export function constructSystemPrompt(category: string, context: AIContext): str
     Application routes you can navigate to:
   `;
   
-  // Add relevant routes based on category
+  // Show ALL routes for Fundi in general mode to ensure complete knowledge
   const relevantRoutes = Object.entries(applicationRoutes)
     .filter(([_, routeInfo]) => 
-      routeInfo.categories.includes(category) || routeInfo.categories.includes("all"))
+      category === "general" || routeInfo.categories.includes(category) || routeInfo.categories.includes("all"))
     .map(([path, routeInfo]) => 
       `- ${routeInfo.name}: ${path} - ${routeInfo.description}`);
   
@@ -168,6 +206,27 @@ export function constructSystemPrompt(category: string, context: AIContext): str
   // Load enhanced personality guidelines from the custom personality file
   // This combines our pre-defined personality traits with user customizations
   const personalityGuidelines = getFundiPersonalityPrompt();
+  
+// Helper function to extract capabilities from specialized prompts
+function extractCapabilitiesFromPrompt(prompt: string): string {
+  if (!prompt) return "";
+  
+  // Look for the "Capabilities:" section which typically contains the specialized knowledge
+  const capabilitiesMatch = prompt.match(/Capabilities:([\s\S]*?)(?=Limitations:|When responding:|$)/i);
+  if (capabilitiesMatch && capabilitiesMatch[1]) {
+    return capabilitiesMatch[1].trim();
+  }
+  
+  // If no Capabilities section, try to extract anything useful
+  const sections = prompt.split('\n\n');
+  for (const section of sections) {
+    if (!section.includes("You are") && section.includes("help") && section.length > 100) {
+      return section.trim();
+    }
+  }
+  
+  return ""; // Return empty string if nothing found
+}
   
   // Get comprehensive app features knowledge
   const appFeatures = getAppFeaturesKnowledge();
