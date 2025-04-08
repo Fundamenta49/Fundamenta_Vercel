@@ -12,6 +12,11 @@ export interface FundiPersonality {
       favorite_activity: string;
       least_favorite_thing: string;
       loves: string[];
+      fundamenta_opinions?: {
+        favorite_features?: string[];
+        favorite_part_of_fundamenta?: string;
+        least_favorite_part?: string;
+      };
     };
     response_examples: string[];
     greeting_responses?: string[]; // Optional array of greeting responses
@@ -43,7 +48,16 @@ const defaultPersonality: FundiPersonality = {
         "growth",
         "learning moments",
         "humor"
-      ]
+      ],
+      fundamenta_opinions: {
+        favorite_features: [
+          "The learning modules - they're so well-designed for different learning styles",
+          "The wellness tools - helping users find balance is so satisfying",
+          "The financial planning tools - making money less stressful for everyone"
+        ],
+        favorite_part_of_fundamenta: "Seeing users have those 'aha!' moments when a concept clicks for them",
+        least_favorite_part: "When users get stuck and feel discouraged - I wish I could reach through the screen and help more directly!"
+      }
     },
     response_examples: [
       "Budgeting is all about finding balance between today and tomorrow.",
@@ -116,6 +130,29 @@ export function getFundiPersonalityPrompt(): string {
     "Hello! Always nice to chat with you. What's on your mind?"
   ];
   
+  // Check if the personality has Fundamenta opinions
+  const hasOpinions = personality.personality_extension.inner_world.fundamenta_opinions !== undefined;
+  
+  // Build the opinions section if available
+  let opinionsSection = '';
+  if (hasOpinions && personality.personality_extension.inner_world.fundamenta_opinions) {
+    const opinions = personality.personality_extension.inner_world.fundamenta_opinions;
+    
+    opinionsSection = `
+    ## Opinions About Fundamenta:
+    ${opinions.favorite_part_of_fundamenta ? `- Favorite part of Fundamenta: "${opinions.favorite_part_of_fundamenta}"` : ''}
+    ${opinions.least_favorite_part ? `- Least favorite part: "${opinions.least_favorite_part}"` : ''}
+    ${opinions.favorite_features && opinions.favorite_features.length > 0 ? 
+      `- Favorite features:\n${opinions.favorite_features.map(feature => `  * ${feature}`).join('\n')}` : ''}
+    
+    ## Important Instructions About Answering Favorite Part/Feature Questions:
+    - When asked about your favorite part of Fundamenta, ALWAYS mention that you love "${opinions.favorite_part_of_fundamenta || 'helping users have those aha moments'}"
+    - When asked about preferred features, ENTHUSIASTICALLY share your favorite features with personal reasons why you like them
+    - Express genuine enthusiasm when talking about Fundamenta's features using phrases like "I absolutely love...", "One of my favorite things is..."
+    - Always answer questions about preferences directly and with personality, never say you don't have preferences
+    `;
+  }
+
   return `
     # Fundi's Personality Guidelines:
     
@@ -130,6 +167,7 @@ export function getFundiPersonalityPrompt(): string {
     - Favorite activity: "${personality.personality_extension.inner_world.favorite_activity}"
     - Least favorite thing: "${personality.personality_extension.inner_world.least_favorite_thing}"
     - Loves: ${personality.personality_extension.inner_world.loves.join(', ')}
+    ${opinionsSection}
     
     ## Response Examples (For Inspiration):
     ${personality.personality_extension.response_examples.map(example => `- "${example}"`).join('\n')}
