@@ -154,101 +154,34 @@ export default function FundiTourGuide() {
   // Track the current route to detect page changes
   const [currentRoute, setCurrentRoute] = useState<string | null>(null);
   
-  // Control Fundi's appearance and position based on the current step
+  // Simple effect to update Fundi's position based on the current step
   useEffect(() => {
     if (!isTourActive || !currentStep) return;
     
-    console.log(`Tour step changed - stepIndex=${currentStepIndex}, current route: ${currentRoute}, step route: ${currentStep.route}`);
-    
-    // Reset transition state when the step changes
-    setIsTransitioning(false);
-    
-    // Show Fundi thinking briefly
+    // Basic animations for Fundi
     setThinking(true);
     setTimeout(() => {
       setThinking(false);
       setSpeaking(true);
-      
-      // Stop speaking after a few seconds
-      setTimeout(() => {
-        setSpeaking(false);
-      }, 2000);
+      setTimeout(() => setSpeaking(false), 2000);
     }, 800);
     
-    // Compare routes to determine if page has changed
-    // Only reposition Fundi when the route (page) changes
-    const pageChanged = currentRoute !== currentStep.route;
-    
-    // Update our current route tracking ALWAYS when the step changes
-    // This ensures our route tracking stays in sync
+    // Update the route tracking
     if (currentStep.route) {
       setCurrentRoute(currentStep.route);
     }
     
-    // Position Fundi based on the current step and whether the page changed
-    const positionFundi = () => {
-      // Check if we're on mobile
-      const isMobile = window.innerWidth < 640;
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      // If we have a highlight selector, try to position Fundi near it
-      if (currentStep.highlightSelector) {
-        const targetElement = document.querySelector(currentStep.highlightSelector);
-        if (targetElement) {
-          const rect = targetElement.getBoundingClientRect();
-          
-          // Calculate a position near the element (to the right or below)
-          let newX, newY;
-          
-          if (isMobile) {
-            // On mobile, use dynamic positions but stay within safe zone
-            const position = getFundiPosition(currentStepIndex, true);
-            newX = position.x;
-            newY = position.y;
-            
-            console.log(`Fundi position (mobile): x=${newX}px, y=${newY}px, step=${currentStepIndex}`);
-          } else if (rect.right + 150 < viewportWidth) {
-            // Position to the right of the highlight
-            newX = rect.right + 20;
-            newY = rect.top + (rect.height / 2) - 40;
-          } else {
-            // Position below the highlight
-            newX = rect.left + (rect.width / 2) - 40;
-            newY = rect.bottom + 20;
-          }
-          
-          // Ensure Fundi stays within viewport with better margins
-          // Apply stricter boundaries on desktop to prevent Fundi from going too far right
-          const maxDesktopX = isMobile ? viewportWidth - 100 : Math.min(500, viewportWidth - 200);
-          newX = Math.max(60, Math.min(newX, maxDesktopX));
-          newY = Math.max(60, Math.min(newY, viewportHeight - 200));
-          
-          setTargetPosition({ x: newX, y: newY });
-          setAnimate(true);
-          return true;
-        } 
-      } 
-      
-      // If no highlight selector or element not found, use predefined positions
-      const position = getFundiPosition(currentStepIndex, isMobile);
-      setTargetPosition(position);
-      setAnimate(true);
-      console.log(`Fundi position (general): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
-      return true;
-    };
+    // Use predefined positions
+    const isMobile = window.innerWidth < 640;
+    const position = getFundiPosition(currentStepIndex, isMobile);
+    setTargetPosition(position);
+    setAnimate(true);
+    console.log(`Positioning Fundi for step ${currentStepIndex} at x=${position.x}px, y=${position.y}px`);
     
-    // Always position Fundi for better consistency
-    // This prevents the tour from getting "stuck" in odd states
-    positionFundi();
-    
-    // Clear any existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    
-    // Scroll element into view if highlighted - add a delay to ensure the page has loaded
+    // Handle highlighting if needed
     if (currentStep.highlightSelector) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      
       timeoutRef.current = setTimeout(() => {
         const element = document.querySelector(currentStep.highlightSelector as string);
         if (element) {
@@ -258,11 +191,9 @@ export default function FundiTourGuide() {
       }, 800);
     }
     
+    // Cleanup
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      // Clean up all tour-related highlights
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       document.querySelectorAll('.tour-highlight, .tour-card-highlight').forEach(el => {
         el.classList.remove('tour-highlight');
         el.classList.remove('tour-card-highlight');
@@ -282,28 +213,20 @@ export default function FundiTourGuide() {
   
   // We're now using direct calls to context methods
   
-  // Setup direct click handling
+  // Setup visibility monitors
   useEffect(() => {
     // Only run if tour is active
     if (!isTourActive || !currentStep) return;
     
-    // No emergency click handlers needed anymore since we use direct button onClick handlers
-    
-    // Add visibility monitor to help prevent disappearing issues
-    const addVisibilityMonitors = () => {
-      const fundiElements = document.querySelectorAll('.robot-container, [data-tour-button]');
-      console.log(`Added emergency visibility handlers to ${fundiElements.length} Fundi elements`);
-    };
-    
-    // Set up visibility monitors
-    addVisibilityMonitors();
+    // Add visibility monitors
+    const fundiElements = document.querySelectorAll('.robot-container, [data-tour-button]');
+    console.log(`Added visibility handlers to ${fundiElements.length} Fundi elements`);
     
     // Log current position for debugging
     console.log(`Fundi position: top=${position.y}px, right=${position.x}px, translate(${position.x}px, ${position.y}px)`);
     
-    // Just setup a return func for useEffect
     return () => {};
-  }, [isTourActive, currentStep, position, nextStep, prevStep, skipTour]);
+  }, [isTourActive, currentStep, position]);
 
   if (!isTourActive || !currentStep) {
     return null;
@@ -315,25 +238,11 @@ export default function FundiTourGuide() {
       <div 
         className="fixed inset-0 z-[99990] cursor-pointer" 
         onClick={(e) => {
-          // Click anywhere to advance the tour - direct call to nextStep instead of handleNextStep
-          e.stopPropagation(); // Prevent any event bubbling issues
-          e.preventDefault(); // Prevent any default behavior
-          
-          // Add additional safeguards to prevent rapid clicks or transitions
-          if (!isTransitioning && currentStepIndex < totalSteps - 1) {
-            console.log("Overlay clicked - direct advance to next step");
-            // Set transitioning state to prevent multiple clicks
-            setIsTransitioning(true);
-            
-            // Small delay to prevent multiple rapid clicks
-            setTimeout(() => {
-              nextStep(); // Call the nextStep function in the tour context
-              
-              // Reset transitioning state after a delay to allow for animations
-              setTimeout(() => {
-                setIsTransitioning(false);
-              }, 800); // Match this with animation durations
-            }, 50);
+          // Simple, direct click handler
+          e.stopPropagation();
+          if (currentStepIndex < totalSteps - 1) {
+            console.log("Overlay clicked - advancing to next step");
+            nextStep();
           }
         }}
       />
@@ -435,25 +344,10 @@ export default function FundiTourGuide() {
                 size="sm" 
                 onClick={(e) => {
                   e.stopPropagation();
-                  e.preventDefault();
-                  
-                  if (!isTransitioning && currentStepIndex > 0) {
-                    console.log("Back button clicked directly");
-                    // Set transitioning state to prevent multiple clicks
-                    setIsTransitioning(true);
-                    
-                    // Small delay to prevent rapid clicks
-                    setTimeout(() => {
-                      prevStep(); // Direct call to context function
-                      
-                      // Reset transitioning state after a delay
-                      setTimeout(() => {
-                        setIsTransitioning(false);
-                      }, 500);
-                    }, 50);
-                  }
+                  console.log("Back button clicked");
+                  prevStep();
                 }}
-                disabled={currentStepIndex === 0 || isTransitioning}
+                disabled={currentStepIndex === 0}
                 className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
                 data-tour-button="back"
               >
@@ -466,20 +360,9 @@ export default function FundiTourGuide() {
                 size="sm" 
                 onClick={(e) => {
                   e.stopPropagation();
-                  e.preventDefault();
-                  
-                  if (!isTransitioning) {
-                    console.log("Skip button clicked directly");
-                    // Set transitioning state to prevent multiple clicks
-                    setIsTransitioning(true);
-                    
-                    // Small delay to prevent rapid clicks
-                    setTimeout(() => {
-                      skipTour(); // Direct call to context function
-                    }, 50);
-                  }
+                  console.log("Skip button clicked");
+                  skipTour();
                 }}
-                disabled={isTransitioning}
                 className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
                 data-tour-button="skip"
               >
@@ -491,26 +374,10 @@ export default function FundiTourGuide() {
             <Button 
               size="sm" 
               onClick={(e) => {
-                e.stopPropagation(); // Stop event bubbling
-                e.preventDefault(); // Prevent any default behavior
-
-                if (!isTransitioning) {
-                  console.log("Next button clicked directly - using context nextStep"); 
-                  // Set transitioning state to prevent multiple clicks
-                  setIsTransitioning(true);
-                  
-                  // Small delay to prevent rapid clicks
-                  setTimeout(() => {
-                    nextStep(); // Direct call to context function
-                    
-                    // Reset transitioning state after a delay
-                    setTimeout(() => {
-                      setIsTransitioning(false);
-                    }, 500);
-                  }, 50);
-                }
+                e.stopPropagation();
+                console.log("Next button clicked");
+                nextStep();
               }}
-              disabled={isTransitioning}
               className="h-7 sm:h-7 px-2 sm:px-3 text-xs sm:text-xs"
               data-tour-button="next" // Identifier for the button
             >
