@@ -90,7 +90,18 @@ const messageSchema = z.object({
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
     try {
-      console.log("Incoming chat request:", req.body); // Debug log
+      // Enhanced debug logging to understand the incoming request better
+      console.log("🔍 DEBUG - Incoming chat request:", { 
+        message: req.body.message,
+        category: req.body.category,
+        previousMessagesCount: req.body.previousMessages?.length || 0,
+        contextInfo: req.body.context ? {
+          currentPage: req.body.context.currentPage,
+          currentSection: req.body.context.currentSection,
+          actionsCount: req.body.context.availableActions?.length
+        } : 'No context'
+      });
+      
       const validatedData = messageSchema.parse(req.body);
 
       let systemMessage = `You are Fundi, a friendly and supportive AI assistant.
@@ -174,6 +185,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const responseData = JSON.parse(response.choices[0].message.content);
+      
+      // Debug log for the API response
+      console.log("✅ DEBUG - API response data:", {
+        hasResponse: Boolean(responseData.response),
+        responseLength: responseData.response?.length || 0,
+        actionsCount: responseData.actions?.length || 0,
+        suggestionsCount: responseData.suggestions?.length || 0
+      });
 
       res.json({
         success: true,

@@ -502,6 +502,14 @@ export default function FundiInteractiveAssistant({
       
       console.log("Sending messages to API:", previousMessages.length, "previous messages");
       
+      // Debug log for request
+      console.log("🚀 Fundi chat request:", { 
+        message: inputValue, 
+        category, 
+        contextInfo: context,
+        previousMessagesCount: previousMessages.length
+      });
+      
       // Make API request
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -517,10 +525,21 @@ export default function FundiInteractiveAssistant({
       });
       
       if (!response.ok) {
+        console.warn("❌ Fundi chat API error:", { status: response.status, statusText: response.statusText });
         throw new Error(`API error: ${response.status}`);
       }
       
       const responseData = await response.json();
+      
+      // Debug log for response
+      console.log("✅ Fundi chat response:", { 
+        hasResponse: Boolean(responseData.response),
+        hasMessage: Boolean(responseData.message),
+        usedFallback: !responseData.response && !responseData.message,
+        actions: responseData.actions?.length || 0,
+        suggestions: responseData.suggestions?.length || 0,
+        responseText: responseData.response || responseData.message || "USING CLIENT FALLBACK"
+      });
       
       // Update UI with AI response
       const responseMessage = {
@@ -591,6 +610,17 @@ export default function FundiInteractiveAssistant({
       
       console.log("Sending suggestion messages to API:", previousMessages.length, "previous messages");
       
+      // Debug log for suggestion request
+      console.log("🚀 Fundi suggestion request:", { 
+        message: suggestion.text, 
+        category: suggestion.category || category,
+        contextInfo: {
+          currentPage: window.location.pathname,
+          currentSection: suggestion.category || category
+        }, 
+        previousMessagesCount: previousMessages.length
+      });
+      
       // Get context from the current page/state
       const context = {
         currentPage: window.location.pathname,
@@ -614,10 +644,21 @@ export default function FundiInteractiveAssistant({
       });
       
       if (!response.ok) {
+        console.warn("❌ Fundi suggestion API error:", { status: response.status, statusText: response.statusText });
         throw new Error(`API error: ${response.status}`);
       }
       
       const responseData = await response.json();
+      
+      // Debug log for suggestion response
+      console.log("✅ Fundi suggestion response:", { 
+        hasResponse: Boolean(responseData.response),
+        hasMessage: Boolean(responseData.message),
+        usedFallback: !responseData.response && !responseData.message,
+        actions: responseData.actions?.length || 0,
+        suggestions: responseData.suggestions?.length || 0,
+        responseText: responseData.response || responseData.message || "USING CLIENT FALLBACK"
+      });
       
       // Update UI with AI response
       const responseMessage = {
