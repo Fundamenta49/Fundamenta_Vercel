@@ -216,7 +216,8 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const nextStep = () => {
     if (currentStepIndex < tourSteps.length - 1) {
       console.log(`Advancing tour from step ${currentStepIndex} to ${currentStepIndex + 1}`);
-      setCurrentStepIndex(currentStepIndex + 1);
+      // Use a functional update to ensure we're working with the latest state
+      setCurrentStepIndex(prevIndex => prevIndex + 1);
     } else {
       console.log('Tour complete, ending tour');
       endTour();
@@ -226,7 +227,8 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const prevStep = () => {
     if (currentStepIndex > 0) {
       console.log(`Going back from step ${currentStepIndex} to ${currentStepIndex - 1}`);
-      setCurrentStepIndex(currentStepIndex - 1);
+      // Use a functional update to ensure we're working with the latest state
+      setCurrentStepIndex(prevIndex => prevIndex - 1);
     } else {
       console.log('Already at first step, cannot go back');
     }
@@ -234,6 +236,7 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const goToStep = (index: number) => {
     if (index >= 0 && index < tourSteps.length) {
+      // Set the index directly since it's an explicit value
       setCurrentStepIndex(index);
     }
   };

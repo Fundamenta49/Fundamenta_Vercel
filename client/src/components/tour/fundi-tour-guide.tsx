@@ -158,6 +158,9 @@ export default function FundiTourGuide() {
   useEffect(() => {
     if (!isTourActive || !currentStep) return;
     
+    // Store the step index to avoid stale closures 
+    const stepIndex = currentStepIndex;
+    
     // Basic animations for Fundi
     setThinking(true);
     setTimeout(() => {
@@ -173,10 +176,10 @@ export default function FundiTourGuide() {
     
     // Use predefined positions
     const isMobile = window.innerWidth < 640;
-    const position = getFundiPosition(currentStepIndex, isMobile);
+    const position = getFundiPosition(stepIndex, isMobile);
     setTargetPosition(position);
     setAnimate(true);
-    console.log(`Positioning Fundi for step ${currentStepIndex} at x=${position.x}px, y=${position.y}px`);
+    console.log(`Positioning Fundi for step ${stepIndex} at x=${position.x}px, y=${position.y}px`);
     
     // Handle highlighting if needed
     if (currentStep.highlightSelector) {
@@ -240,8 +243,24 @@ export default function FundiTourGuide() {
         onClick={(e) => {
           // Simple, direct click handler
           e.stopPropagation();
+          e.preventDefault();
+          
+          // Prevent multiple clicks
+          const overlayElement = e.currentTarget as HTMLDivElement;
+          if (overlayElement) {
+            overlayElement.style.pointerEvents = 'none';
+            
+            // Re-enable after a delay
+            setTimeout(() => {
+              if (overlayElement) {
+                overlayElement.style.pointerEvents = 'auto';
+              }
+            }, 1000);
+          }
+          
           if (currentStepIndex < totalSteps - 1) {
             console.log("Overlay clicked - advancing to next step");
+            // Only advance if we're not at the last step
             nextStep();
           }
         }}
@@ -345,6 +364,20 @@ export default function FundiTourGuide() {
                 onClick={(e) => {
                   e.stopPropagation();
                   console.log("Back button clicked");
+                  
+                  // Prevent multiple clicks
+                  const button = e.currentTarget as HTMLButtonElement;
+                  if (button) {
+                    button.disabled = true;
+                    
+                    // Re-enable after a delay
+                    setTimeout(() => {
+                      if (button) {
+                        button.disabled = false;
+                      }
+                    }, 800);
+                  }
+                  
                   prevStep();
                 }}
                 disabled={currentStepIndex === 0}
@@ -376,6 +409,21 @@ export default function FundiTourGuide() {
               onClick={(e) => {
                 e.stopPropagation();
                 console.log("Next button clicked");
+                
+                // Prevent multiple clicks
+                const button = e.currentTarget as HTMLButtonElement;
+                if (button) {
+                  button.disabled = true;
+                  
+                  // Re-enable after a delay
+                  setTimeout(() => {
+                    if (button) {
+                      button.disabled = false;
+                    }
+                  }, 800);
+                }
+                
+                // Advance to next step
                 nextStep();
               }}
               className="h-7 sm:h-7 px-2 sm:px-3 text-xs sm:text-xs"
