@@ -168,3 +168,37 @@ export function useAIProviderStatus() {
     statusMessage: getProviderStatusMessage(status)
   };
 }
+
+/**
+ * Performs a health check on the AI system and resets it if needed
+ * This is used to prevent accumulated failures from permanently 
+ * triggering the fallback system
+ */
+export const performAIHealthCheck = async (): Promise<{
+  action: 'reset_performed' | 'none_needed';
+  previousStatus?: any;
+  currentStatus?: any;
+  message: string;
+  success: boolean;
+}> => {
+  try {
+    const response = await fetch('/api/ai/health-check');
+    if (!response.ok) {
+      throw new Error('Failed to perform AI health check');
+    }
+    const data = await response.json();
+    
+    if (data.action === 'reset_performed') {
+      console.log('AI system was automatically reset during health check', data);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error performing AI health check:', error);
+    return {
+      success: false,
+      message: 'Health check failed',
+      action: 'none_needed'
+    };
+  }
+};

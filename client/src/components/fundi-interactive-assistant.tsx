@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import FundiAvatarEnhanced from './fundi-avatar-enhanced';
+import { performAIHealthCheck } from '@/lib/ai-provider-service';
 
 interface FundiInteractiveAssistantProps {
   initialCategory?: string;
@@ -53,6 +54,40 @@ export default function FundiInteractiveAssistant({
       setUserName(storedName);
     }
   }, []);
+  
+  // Automatic health check to prevent AI system from getting stuck in fallback mode
+  useEffect(() => {
+    // Perform an initial health check when component mounts
+    performAIHealthCheck().then(result => {
+      if (result.action === 'reset_performed') {
+        console.log('AI system was automatically reset on startup', result);
+      }
+    });
+    
+    // Set up a periodic health check every 10 minutes
+    const healthCheckInterval = setInterval(() => {
+      console.log('Performing scheduled AI health check...');
+      performAIHealthCheck().then(result => {
+        if (result.action === 'reset_performed') {
+          console.log('AI system was automatically reset during scheduled health check', result);
+        }
+      });
+    }, 10 * 60 * 1000); // Every 10 minutes
+    
+    // Also perform a health check before the user sends a message
+    const preventFallback = () => {
+      if (isChatOpen) {
+        performAIHealthCheck();
+      }
+    };
+    
+    document.addEventListener('click', preventFallback, { capture: true });
+    
+    return () => {
+      clearInterval(healthCheckInterval);
+      document.removeEventListener('click', preventFallback, { capture: true });
+    };
+  }, [isChatOpen]);
   
   // State to track if we should clear messages
   const [shouldResetMessages, setShouldResetMessages] = useState<boolean>(false);
@@ -464,6 +499,17 @@ export default function FundiInteractiveAssistant({
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     
+    // First, ensure the AI system isn't in fallback mode by performing a health check
+    try {
+      console.log("Performing AI health check before sending message...");
+      const healthCheck = await performAIHealthCheck();
+      if (healthCheck.action === 'reset_performed') {
+        console.log("AI system was reset before processing your message", healthCheck);
+      }
+    } catch (error) {
+      console.error("Health check failed, but continuing with message send", error);
+    }
+    
     // Add user message
     const userMessage = {
       text: inputValue,
@@ -583,6 +629,17 @@ export default function FundiInteractiveAssistant({
     // Update category if different
     if (suggestion.category !== category) {
       setCategory(suggestion.category);
+    }
+    
+    // First, ensure the AI system isn't in fallback mode by performing a health check
+    try {
+      console.log("Performing AI health check before sending suggestion...");
+      const healthCheck = await performAIHealthCheck();
+      if (healthCheck.action === 'reset_performed') {
+        console.log("AI system was reset before processing your suggestion", healthCheck);
+      }
+    } catch (error) {
+      console.error("Health check failed, but continuing with suggestion processing", error);
     }
     
     // Add as user message

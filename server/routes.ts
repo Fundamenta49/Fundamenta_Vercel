@@ -1143,6 +1143,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Health check endpoint for AI system - resets if necessary
+  app.get("/api/ai/health-check", (req, res) => {
+    try {
+      const status = fallbackAIService.getFallbackStatus();
+      
+      // If system is in fallback mode or has failures, automatically reset
+      if (status.useFallback || status.failureCount > 0) {
+        console.log("Health check detected failure state, performing auto-reset...");
+        const resetStatus = fallbackAIService.resetFailures();
+        res.json({
+          success: true,
+          message: "Automatic reset performed during health check",
+          previousStatus: status,
+          currentStatus: resetStatus,
+          action: "reset_performed"
+        });
+      } else {
+        res.json({
+          success: true,
+          message: "AI system healthy",
+          status,
+          action: "none_needed"
+        });
+      }
+    } catch (error) {
+      console.error("Error during AI health check:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to perform AI health check"
+      });
+    }
+  });
 
   // Fundi personality test routes
   app.post("/api/test-fundi-prompt", (req, res) => {
