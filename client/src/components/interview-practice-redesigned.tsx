@@ -957,7 +957,7 @@ Result: ${starGuide.result}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* Question Bank Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3 rounded-t-lg">
             <CardTitle className="flex items-center gap-2 text-xl">
               <BookText className="h-5 w-5" />
               Question Bank
@@ -1002,7 +1002,7 @@ Result: ${starGuide.result}
 
         {/* Custom Questions Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3 rounded-t-lg">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Target className="h-5 w-5" />
               Job-Specific Questions
@@ -1077,7 +1077,7 @@ Result: ${starGuide.result}
 
         {/* STAR Method Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3 rounded-t-lg">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Star className="h-5 w-5" />
               STAR Method
@@ -1114,7 +1114,7 @@ Result: ${starGuide.result}
 
         {/* Mock Interview Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3 rounded-t-lg">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Users className="h-5 w-5" />
               Mock Interview
@@ -1168,7 +1168,7 @@ Result: ${starGuide.result}
 
         {/* Interview Checklist Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3 rounded-t-lg">
             <CardTitle className="flex items-center gap-2 text-xl">
               <ListChecks className="h-5 w-5" />
               Interview Checklist
@@ -1204,7 +1204,7 @@ Result: ${starGuide.result}
         
         {/* Interview Tips Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3 rounded-t-lg">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Lightbulb className="h-5 w-5" />
               Interview Tips
