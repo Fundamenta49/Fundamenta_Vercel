@@ -83,10 +83,10 @@ const tourSteps: TourStep[] = [
   {
     id: 'life-skills-courses',
     title: 'Interactive Courses',
-    content: 'These courses are designed to be practical and engaging. You can learn at your own pace with step-by-step guidance.',
+    content: 'These courses are designed to be practical and engaging. You can learn at your own pace with step-by-step guidance. Let\'s look at the Vehicle Maintenance course as an example.',
     category: 'general',
-    route: '/learning',
-    highlightSelector: '.course-list',
+    route: '/learning/courses/vehicle-maintenance',
+    highlightSelector: '.course-content',
   },
   
   // Financial Literacy section
@@ -100,9 +100,9 @@ const tourSteps: TourStep[] = [
   {
     id: 'finance-tools',
     title: 'Financial Tools',
-    content: 'Try our interactive budgeting tools and calculators to plan your finances better.',
+    content: 'Try our interactive budgeting tools and calculators to plan your finances better. Our mortgage calculator can help you understand home buying costs.',
     category: 'finance',
-    route: '/finance',
+    route: '/finance/mortgage',
     highlightSelector: '.finance-tools',
   },
   
@@ -151,9 +151,9 @@ const tourSteps: TourStep[] = [
   {
     id: 'fitness-tracking',
     title: 'Fitness Tracking',
-    content: 'Track your progress with our easy-to-use fitness trackers and get personalized recommendations.',
+    content: 'Track your progress with our easy-to-use fitness trackers and get personalized recommendations. Let\'s check out the yoga features too!',
     category: 'fitness',
-    route: '/active',
+    route: '/yoga-progression',
     highlightSelector: '.fitness-tracker',
   },
   
@@ -343,16 +343,25 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     ? tourSteps[currentStepIndex] 
     : null;
 
-  // Enhanced navigation effect for smooth page transitions during tour
+  // Thoroughly enhanced navigation effect for smooth page transitions during tour
   useEffect(() => {
     if (!isTourActive || !currentStep || !currentStep.route) return;
 
-    // Only navigate if we're on a different route or haven't navigated to this route yet
-    if (currentStep.route !== lastNavigatedRoute) {
+    // Check if we're already on the correct route or page
+    const isOnCorrectRoute = currentLocation === currentStep.route;
+    const isAlreadyNavigated = currentStep.route === lastNavigatedRoute;
+
+    // Only navigate if we need to change routes
+    if (!isOnCorrectRoute || !isAlreadyNavigated) {
       console.log(`TOUR NAVIGATION: Moving to ${currentStep.route} for step ${currentStepIndex}`);
       
       // Set the flag first before navigation
       setLastNavigatedRoute(currentStep.route);
+      
+      // Clear existing highlights before navigation
+      document.querySelectorAll('.tour-highlight').forEach(el => {
+        el.classList.remove('tour-highlight');
+      });
       
       // Add a forced delay to ensure stable navigation and allow speech bubble to show first
       setTimeout(() => {
@@ -368,14 +377,28 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           // Keep a backup of the current step
           document.body.setAttribute('data-tour-current-step', String(currentStepIndex));
           
-          // Actual navigation
+          // Flag for special handling - for detecting forced navigation
+          document.body.setAttribute('data-tour-navigating', 'true');
+          
+          // CRITICAL: Force navigation even if we think we're already there
+          // This handles cases where the route is correct but component didn't fully load
           setLocation(route);
           
+          // Extended delay for large pages to load
+          const loadDelay = route.includes('/learning/courses/') ? 800 : 
+                          route.includes('/finance/mortgage') ? 800 : 
+                          route.includes('/yoga') ? 800 : 500;
+          
           // After navigation, check for elements to highlight after the page loads
-          if (currentStep.highlightSelector) {
-            setTimeout(() => {
-              try {
-                // Clean up any existing highlights
+          setTimeout(() => {
+            // Reset the navigation flag
+            document.body.removeAttribute('data-tour-navigating');
+            
+            // Verify we're on the correct page after navigation
+            try {
+              // If there's a specific element to highlight, focus on it
+              if (currentStep.highlightSelector) {
+                // Clean up any existing highlights again (safety check)
                 document.querySelectorAll('.tour-highlight').forEach(el => {
                   el.classList.remove('tour-highlight');
                 });
@@ -392,17 +415,26 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                     block: 'center' 
                   });
                 } else {
-                  console.log(`TOUR HIGHLIGHT: Could not find element matching ${currentStep.highlightSelector}`);
+                  console.log(`TOUR HIGHLIGHT: Could not find element matching ${currentStep.highlightSelector} - will try again`);
+                  
+                  // Try one more time with a longer delay
+                  setTimeout(() => {
+                    const retryElement = document.querySelector(currentStep.highlightSelector as string);
+                    if (retryElement) {
+                      retryElement.classList.add('tour-highlight');
+                      retryElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  }, 800);
                 }
-              } catch (e) {
-                console.error('Error highlighting element:', e);
               }
-            }, 500); // Wait for page rendering to complete
-          }
+            } catch (e) {
+              console.error('Error highlighting element:', e);
+            }
+          }, loadDelay); // Adaptive delay for page rendering to complete
         }
-      }, 400); // Increased delay for better user experience
+      }, 600); // Increased delay for better user experience
     }
-  }, [isTourActive, currentStep, currentStepIndex, lastNavigatedRoute, setLocation]);
+  }, [isTourActive, currentStep, currentStepIndex, lastNavigatedRoute, setLocation, currentLocation]);
   
   // Check if the user has seen the tour before and load user name,
   // but only after authentication is checked

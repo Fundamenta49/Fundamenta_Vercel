@@ -345,9 +345,20 @@ export default function FundiTourGuide() {
         >
           {/* No pointer for cleaner look - bubble is now directly attached to Fundi */}
           
-          {/* Tour Content */}
+          {/* Tour Content - Enhanced with contextual information */}
           <div className="font-semibold text-base mb-2">{currentStep.title}</div>
           <p className="text-gray-700 text-sm leading-relaxed mb-3">{currentStep.content}</p>
+          
+          {/* Additional context for page-specific information - help users understand where they are */}
+          {currentStep.route && currentStep.route !== '/' && (
+            <div className="text-xs text-blue-600 mb-3">
+              <span className="font-medium">You are now viewing: </span> 
+              {currentStep.route.replace('/learning/courses/', 'Course: ')
+                .replace('/finance/', 'Finance: ')
+                .replace('/yoga-', 'Yoga: ')
+                .replace('/', ' ')}
+            </div>
+          )}
           
           {/* Progress bar */}
           <div className="mb-2">
