@@ -50,8 +50,8 @@ router.get("/health-check", async (req, res) => {
   try {
     const status = fallbackAIService.getFallbackStatus();
     
-    // If the system is in fallback mode, reset it
-    if (status.isInFallback) {
+    // If the system is in fallback mode (useFallback is true), reset it
+    if (status.useFallback) {
       fallbackAIService.resetFailures();
       console.log("Health check: AI fallback system was in fallback mode - reset performed");
       

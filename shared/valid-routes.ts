@@ -81,11 +81,76 @@ export function getSuggestedAlternativeRoute(invalidRoute: string): string {
     ? invalidRoute.slice(0, -1) 
     : invalidRoute;
   
-  // First check if the parent route exists
+  // Special case handling for known common misroutes
+  // For example, if someone requests cooking/techniques, we should direct to cooking/basics
+  const specialCases: Record<string, string> = {
+    '/cooking/techniques': '/cooking/basics',
+    '/cooking/recipe': '/cooking/basics',
+    '/cooking/recipes': '/cooking/basics',
+    '/career/jobs': '/career/job-search',
+    '/career/resumes': '/career/resume',
+    '/finance/budget-planner': '/finance/budget',
+    '/finance/mortgage-calculator': '/finance/mortgage',
+    '/fitness/workout': '/fitness/exercises',
+    '/fitness/workouts': '/fitness/exercises'
+  };
+  
+  // Check if we have a special case for this route
+  if (specialCases[normalizedRoute]) {
+    return specialCases[normalizedRoute];
+  }
+  
+  // Extract segments for further processing
   const segments = normalizedRoute.split('/').filter(Boolean);
+  
+  // If we have a parent and child route, try to find the best match
   if (segments.length > 1) {
-    const parentRoute = '/' + segments[0];
+    const category = segments[0];
+    const subcategory = segments[1];
+    
+    // First, check if the parent/category route exists
+    const parentRoute = '/' + category;
     if (validRoutes.includes(parentRoute)) {
+      // Find all valid subcategories of this parent
+      const subcategories = validRoutes.filter(route => 
+        route.startsWith(parentRoute + '/') 
+      );
+      
+      if (subcategories.length > 0) {
+        // Find the most similar subcategory using simple string similarity
+        let bestMatch = subcategories[0];
+        let highestSimilarity = 0;
+        
+        for (const route of subcategories) {
+          const routeSubcategory = route.split('/')[2]; // Get the subcategory part
+          let similarity = 0;
+          
+          // Simple character matching algorithm
+          for (let i = 0; i < Math.min(subcategory.length, routeSubcategory.length); i++) {
+            if (subcategory[i] === routeSubcategory[i]) {
+              similarity++;
+            }
+          }
+          
+          // Adjust for length differences
+          similarity = similarity / Math.max(subcategory.length, routeSubcategory.length);
+          
+          if (similarity > highestSimilarity) {
+            highestSimilarity = similarity;
+            bestMatch = route;
+          }
+        }
+        
+        // Return the most similar subcategory if above threshold
+        if (highestSimilarity > 0.3) {
+          return bestMatch;
+        }
+        
+        // If no good match, return the first subcategory as default
+        return subcategories[0];
+      }
+      
+      // If no subcategories, return the parent route
       return parentRoute;
     }
   }
@@ -96,8 +161,17 @@ export function getSuggestedAlternativeRoute(invalidRoute: string): string {
   );
   
   if (possibleMatches.length > 0) {
-    // Return the shortest match as it's likely the main category page
-    return possibleMatches.sort((a, b) => a.length - b.length)[0];
+    // Sort by length to get the most relevant (shorter) route first
+    const sortedMatches = possibleMatches.sort((a, b) => a.length - b.length);
+    
+    // Prefer routes with two segments (more precise) if available
+    const twoSegmentRoutes = sortedMatches.filter(route => route.split('/').length === 3);
+    if (twoSegmentRoutes.length > 0) {
+      return twoSegmentRoutes[0];
+    }
+    
+    // Otherwise fall back to the shortest match (main category)
+    return sortedMatches[0];
   }
   
   // If no matches found, return home page

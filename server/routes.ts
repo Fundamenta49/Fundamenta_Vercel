@@ -18,6 +18,7 @@ import youtubeRoutes, { youtubeSearchHandler } from './routes/youtube';
 import nhtsaRoutes from './routes/nhtsa';
 import chatRoutes from './routes/chat';
 import journalRoutes from './routes/journal';
+import aiRoutes from './routes/ai';
 import brainTapRoutes from './routes/brain-tap';
 import nutritionRoutes from './routes/nutrition';
 import comprehensiveWellnessRoutes from './routes/comprehensive-wellness';
@@ -1084,6 +1085,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/yoga', yogaRoutes);
   // Register the repair routes
   app.use('/api/repair', repairRoutes);
+  
+  // AI routes for fallback management and route validation
+  app.use('/api/ai', aiRoutes);
   
   // Dual AI API endpoints - admin controls for fallback mode
   app.post("/api/ai/toggle-fallback", (req, res) => {
