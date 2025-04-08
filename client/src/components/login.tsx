@@ -37,6 +37,9 @@ export default function Login() {
       const success = await signUp(username, email, password);
       
       if (success) {
+        // Store the username for the tour
+        localStorage.setItem('tourUserName', username);
+        
         // Registration successful, redirect to home page
         setLocation("/");
       } else {
@@ -47,6 +50,9 @@ export default function Login() {
       const success = await login(email, password);
       
       if (success) {
+        // Get user info to set tour name - this will be pulled from auth context
+        // The auth context will later set the userName in the tour context
+        
         // Login successful, redirect to home page
         setLocation("/");
       } else {

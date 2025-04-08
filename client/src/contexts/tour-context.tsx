@@ -52,7 +52,7 @@ const tourSteps: TourStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to Fundamenta',
-    content: 'Pssst… {userName} you\'re officially one of the first humans to ever enter the world of Fundamenta. I\'ve got secrets to show you—and awkward life wins to celebrate. Wanna go on a mini quest? I\'m Fundi, and I\'m here to make life LIFEABLE!!!',
+    content: 'Pssst.... Welcome {userName}!! You\'re officially one of the first humans to ever enter the world of Fundamenta. I\'ve got secrets to show you—and awkward life wins to celebrate. Wanna go on a mini quest? I\'m Fundi, and I\'m here to make life LIFEABLE!!!',
     category: 'general',
     route: '/',
   },
@@ -285,13 +285,18 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return; // Exit early if auth is still loading
     }
     
-    // For testing purposes, always consider the user authenticated for the tour
-    // This allows the tour to run regardless of authentication state
-    
     // Check if tour has been seen
     const tourSeen = localStorage.getItem('hasSeenTour');
     if (tourSeen) {
       setHasSeenTour(true);
+    } else {
+      // If user hasn't seen tour, auto-start it for authenticated users or visitors
+      if (isAuthenticated || user) {
+        // Small delay to ensure everything is loaded
+        setTimeout(() => {
+          startTour();
+        }, 500);
+      }
     }
     
     // First try to use the name from the authenticated user profile
@@ -304,12 +309,11 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (savedUserName) {
         setUserName(savedUserName);
       } else {
-        // Set a default name for the tour
-        setUserName('Welcome!!');
-        localStorage.setItem('tourUserName', 'Welcome!!');
+        // Set a default greeting (this will get replaced with username when available)
+        setUserName('');
       }
     }
-  }, [isAuthenticated, authLoading, user]); // startTour is defined in the component so we don't need it in deps
+  }, [isAuthenticated, authLoading, user, startTour]);
   
   // Save user name to localStorage when it changes
   useEffect(() => {
@@ -379,7 +383,12 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Process template strings in content to include user name
   const processStepContent = (content: string) => {
-    return content.replace('{userName}', userName || 'welcome!!');
+    // If userName is empty, show just the message without the placeholder
+    if (!userName) {
+      return content.replace('{userName} ', '').replace(' {userName}', '').replace('{userName}', '');
+    }
+    // Otherwise, use their name
+    return content.replace('{userName}', userName);
   };
 
   // Process current step to include user name
