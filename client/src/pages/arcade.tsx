@@ -315,30 +315,30 @@ const DailyChallenges = ({ onViewAllChallenges }: { onViewAllChallenges?: () => 
           <Badge className="bg-green-600">+20 pts</Badge>
         </div>
         
-        <div className="flex justify-between items-center p-3 border rounded-lg">
+        <div className="flex justify-between items-center p-3 border rounded-lg bg-purple-50 border-purple-200">
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gray-100 p-2">
-              <Dumbbell className="h-5 w-5 text-gray-600" />
+            <div className="rounded-full bg-purple-100 p-2">
+              <Dumbbell className="h-5 w-5 text-purple-600" />
             </div>
             <div>
               <h4 className="font-medium">Workout Challenge</h4>
               <p className="text-xs text-gray-600">Log a fitness activity today</p>
             </div>
           </div>
-          <Badge variant="outline">+15 pts</Badge>
+          <Badge className="bg-purple-600">+15 pts</Badge>
         </div>
         
-        <div className="flex justify-between items-center p-3 border rounded-lg">
+        <div className="flex justify-between items-center p-3 border rounded-lg bg-orange-50 border-orange-200">
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-gray-100 p-2">
-              <BookOpenCheck className="h-5 w-5 text-gray-600" />
+            <div className="rounded-full bg-orange-100 p-2">
+              <BookOpenCheck className="h-5 w-5 text-orange-600" />
             </div>
             <div>
               <h4 className="font-medium">Learning Streak</h4>
               <p className="text-xs text-gray-600">Complete any learning module</p>
             </div>
           </div>
-          <Badge variant="outline">+15 pts</Badge>
+          <Badge className="bg-orange-600">+15 pts</Badge>
         </div>
         
         <Button 
@@ -662,43 +662,43 @@ export default function Arcade() {
                   <Badge className="bg-green-600">+20 pts</Badge>
                 </div>
                 
-                <div className="flex justify-between items-center p-3 border rounded-lg">
+                <div className="flex justify-between items-center p-3 border rounded-lg bg-purple-50 border-purple-200">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-full bg-gray-100 p-2">
-                      <Dumbbell className="h-5 w-5 text-gray-600" />
+                    <div className="rounded-full bg-purple-100 p-2">
+                      <Dumbbell className="h-5 w-5 text-purple-600" />
                     </div>
                     <div>
                       <h4 className="font-medium">Workout Challenge</h4>
                       <p className="text-xs text-gray-600">Log a fitness activity today</p>
                     </div>
                   </div>
-                  <Badge variant="outline">+15 pts</Badge>
+                  <Badge className="bg-purple-600">+15 pts</Badge>
                 </div>
                 
-                <div className="flex justify-between items-center p-3 border rounded-lg">
+                <div className="flex justify-between items-center p-3 border rounded-lg bg-orange-50 border-orange-200">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-full bg-gray-100 p-2">
-                      <BookOpenCheck className="h-5 w-5 text-gray-600" />
+                    <div className="rounded-full bg-orange-100 p-2">
+                      <BookOpenCheck className="h-5 w-5 text-orange-600" />
                     </div>
                     <div>
                       <h4 className="font-medium">Learning Streak</h4>
                       <p className="text-xs text-gray-600">Complete any learning module</p>
                     </div>
                   </div>
-                  <Badge variant="outline">+15 pts</Badge>
+                  <Badge className="bg-orange-600">+15 pts</Badge>
                 </div>
                 
-                <div className="flex justify-between items-center p-3 border rounded-lg">
+                <div className="flex justify-between items-center p-3 border rounded-lg bg-rose-50 border-rose-200">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-full bg-gray-100 p-2">
-                      <Flame className="h-5 w-5 text-gray-600" />
+                    <div className="rounded-full bg-rose-100 p-2">
+                      <Flame className="h-5 w-5 text-rose-600" />
                     </div>
                     <div>
                       <h4 className="font-medium">Meditation Session</h4>
                       <p className="text-xs text-gray-600">Complete a guided meditation</p>
                     </div>
                   </div>
-                  <Badge variant="outline">+10 pts</Badge>
+                  <Badge className="bg-rose-600">+10 pts</Badge>
                 </div>
               </CardContent>
             </Card>
