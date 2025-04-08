@@ -154,61 +154,52 @@ export default function FundiTourGuide() {
   // Track the current route to detect page changes
   const [currentRoute, setCurrentRoute] = useState<string | null>(null);
   
+  // EMERGENCY FIX: Simple mechanism to ensure tour positions correctly
   // Track when the component has mounted/updated for a given step
-  const [hasPositionedForStep, setHasPositionedForStep] = useState<Record<number, boolean>>({});
+  const [hasRendered, setHasRendered] = useState(false);
   
   // Simple effect to update Fundi's position based on the current step
   useEffect(() => {
     if (!isTourActive || !currentStep) return;
     
+    // Ensure we only run this once per component mount
+    if (hasRendered) return;
+    setHasRendered(true);
+    
     // Store the step index to avoid stale closures 
     const stepIndex = currentStepIndex;
     
-    // Check if we've already positioned for this step during this mount cycle
-    // This prevents multiple repositioning attempts for the same step
-    if (hasPositionedForStep[stepIndex]) {
-      console.log(`Already positioned for step ${stepIndex}, skipping positioning`);
-      return;
-    }
-    
-    // Mark this step as positioned
-    setHasPositionedForStep(prev => ({
-      ...prev,
-      [stepIndex]: true
-    }));
-    
-    // Basic animations for Fundi
-    setThinking(true);
+    // Use a forced delay to ensure we don't get race conditions
     setTimeout(() => {
-      setThinking(false);
-      setSpeaking(true);
-      setTimeout(() => setSpeaking(false), 2000);
-    }, 800);
-    
-    // Update the route tracking
-    if (currentStep.route) {
-      setCurrentRoute(currentStep.route);
-    }
-    
-    // Use predefined positions
-    const isMobile = window.innerWidth < 640;
-    const position = getFundiPosition(stepIndex, isMobile);
-    setTargetPosition(position);
-    setAnimate(true);
-    console.log(`Positioning Fundi for step ${stepIndex} at x=${position.x}px, y=${position.y}px`);
-    
-    // Handle highlighting if needed
-    if (currentStep.highlightSelector) {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      
-      timeoutRef.current = setTimeout(() => {
-        const element = document.querySelector(currentStep.highlightSelector as string);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          element.classList.add('tour-highlight');
-        }
+      // Basic animations for Fundi
+      setThinking(true);
+      setTimeout(() => {
+        setThinking(false);
+        setSpeaking(true);
+        setTimeout(() => setSpeaking(false), 2000);
       }, 800);
-    }
+      
+      // Use predefined positions
+      const isMobile = window.innerWidth < 640;
+      const position = getFundiPosition(stepIndex, isMobile);
+      setTargetPosition(position);
+      setPosition(position); // Set position directly
+      setAnimate(true);
+      console.log(`FIXED: Fundi positioned for step ${stepIndex} at x=${position.x}px, y=${position.y}px`);
+      
+      // Handle highlighting if needed
+      if (currentStep.highlightSelector) {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        
+        timeoutRef.current = setTimeout(() => {
+          const element = document.querySelector(currentStep.highlightSelector as string);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.classList.add('tour-highlight');
+          }
+        }, 800);
+      }
+    }, 300);
     
     // Cleanup
     return () => {
@@ -218,7 +209,7 @@ export default function FundiTourGuide() {
         el.classList.remove('tour-card-highlight');
       });
     };
-  }, [isTourActive, currentStep, currentStepIndex, hasPositionedForStep]);
+  }, [isTourActive, currentStep, currentStepIndex]);
   
   // Update position when target changes
   useEffect(() => {
