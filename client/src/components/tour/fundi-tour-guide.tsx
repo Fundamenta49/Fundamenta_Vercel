@@ -471,50 +471,18 @@ export default function FundiTourGuide() {
     
     // Set up interval to check if Fundi is still visible
     const interval = setInterval(() => {
-      // Check if Fundi elements are visible using any possible selector
-      const fundiRobot = document.querySelector('.robot-container, .robot-fundi, .fundi-wrapper, .tour-fundi-robot, .tour-robot-visible');
-      
-      if (fundiRobot) {
-        console.log('Fundi robot is visible');
-      } else {
-        console.log('Fundi robot is NOT visible - potential issue');
-        
-        // Get the speech bubble element first
-        const speechBubble = document.querySelector('div[style*="width: 300px"]');
-        if (speechBubble) {
-          console.log('Found speech bubble - its parent should contain the Fundi robot');
-          
-          // If we found the speech bubble, make sure its parent is visible
-          const speechParent = speechBubble.parentElement;
-          if (speechParent && speechParent instanceof HTMLElement) {
-            console.log('Found speech bubble parent - forcing visibility');
-            speechParent.style.display = 'block';
-            speechParent.style.visibility = 'visible';
-            speechParent.style.opacity = '1';
-          }
+      // Test overlay click to advance tour - DEBUGGING
+      const overlayElement = document.querySelector('.fixed.inset-0.z-\\[99990\\]');
+      if (overlayElement) {
+        // Every 15 seconds in debugging, simulate a click on the overlay
+        if (Date.now() % 15000 < 500) {
+          console.log("Debug auto-click on overlay");
+          overlayElement.dispatchEvent(new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          }));
         }
-        
-        // Try to force Fundi to display by modifying styles directly for all fixed elements
-        const fundiElements = document.querySelectorAll('div[style*="position: fixed"]');
-        fundiElements.forEach(element => {
-          if (element instanceof HTMLElement) {
-            element.style.display = 'block';
-            element.style.visibility = 'visible';
-            element.style.opacity = '1';
-            console.log('Applied emergency visibility fix to fixed position element');
-          }
-        });
-        
-        // Explicitly search for RobotFundi and make it visible
-        const robotFundiElements = document.querySelectorAll('.tour-fundi-robot, .tour-robot-visible');
-        robotFundiElements.forEach(element => {
-          if (element instanceof HTMLElement) {
-            element.style.display = 'block';
-            element.style.visibility = 'visible';
-            element.style.opacity = '1';
-            console.log('Applied emergency visibility fix to Fundi robot element');
-          }
-        });
       }
     }, 5000);
     
@@ -529,12 +497,13 @@ export default function FundiTourGuide() {
     <>
       {/* Invisible overlay to capture clicks anywhere on the screen */}
       <div 
-        className="fixed inset-0 z-[99990]" 
-        onClick={() => {
-          // Click anywhere to advance the tour
+        className="fixed inset-0 z-[99990] cursor-pointer" 
+        onClick={(e) => {
+          // Click anywhere to advance the tour - direct call to nextStep instead of handleNextStep
+          e.stopPropagation(); // Prevent any event bubbling issues
           if (!isTransitioning && currentStepIndex < totalSteps - 1) {
-            console.log("Overlay clicked - advancing to next step");
-            handleNextStep();
+            console.log("Overlay clicked - direct advance to next step");
+            nextStep(); // Direct call to context function
           }
         }}
       />
@@ -614,6 +583,22 @@ export default function FundiTourGuide() {
           <div className="font-semibold text-base mb-2">{currentStep.title}</div>
           <p className="text-gray-700 text-sm leading-relaxed mb-3">{currentStep.content}</p>
           
+          {/* Special test buttons for troubleshooting - only in first step */}
+          {currentStepIndex === 0 && (
+            <div className="mb-2 pt-1 border-t border-gray-200">
+              <button 
+                className="w-full py-1 bg-blue-100 text-blue-700 text-xs rounded mb-1 hover:bg-blue-200" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("Direct next via context");
+                  nextStep();
+                }}
+              >
+                Click to Advance (Direct)
+              </button>
+            </div>
+          )}
+          
           {/* Progress bar */}
           <div className="mb-2">
             <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
@@ -668,8 +653,8 @@ export default function FundiTourGuide() {
               size="sm" 
               onClick={(e) => {
                 e.stopPropagation(); // Stop event bubbling
-                console.log("Next button clicked directly"); 
-                handleNextStep();
+                console.log("Next button clicked directly - using context nextStep"); 
+                nextStep(); // Direct call to context function instead of local handler
               }}
               disabled={isTransitioning}
               className="h-7 sm:h-7 px-2 sm:px-3 text-xs sm:text-xs"

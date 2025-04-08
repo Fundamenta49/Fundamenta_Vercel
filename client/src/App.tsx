@@ -313,6 +313,23 @@ function App() {
       <AuthProvider>
         <TourProvider>
           <Router />
+          {/* Debug Tour Testing Button - only in development */}
+          {import.meta.env.DEV && (
+            <div className="fixed right-2 bottom-2 z-[999999]">
+              <button 
+                className="bg-red-500 text-white px-3 py-1 rounded text-xs opacity-50 hover:opacity-100"
+                onClick={() => {
+                  // Force tour to show
+                  localStorage.removeItem('hasSeenTour');
+                  localStorage.setItem('tourUserName', 'TestUser');
+                  // Force reload to trigger tour
+                  window.location.reload();
+                }}
+              >
+                Test Tour
+              </button>
+            </div>
+          )}
         </TourProvider>
       </AuthProvider>
     </QueryClientProvider>
