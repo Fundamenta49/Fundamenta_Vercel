@@ -154,12 +154,28 @@ export default function FundiTourGuide() {
   // Track the current route to detect page changes
   const [currentRoute, setCurrentRoute] = useState<string | null>(null);
   
+  // Track when the component has mounted/updated for a given step
+  const [hasPositionedForStep, setHasPositionedForStep] = useState<Record<number, boolean>>({});
+  
   // Simple effect to update Fundi's position based on the current step
   useEffect(() => {
     if (!isTourActive || !currentStep) return;
     
     // Store the step index to avoid stale closures 
     const stepIndex = currentStepIndex;
+    
+    // Check if we've already positioned for this step during this mount cycle
+    // This prevents multiple repositioning attempts for the same step
+    if (hasPositionedForStep[stepIndex]) {
+      console.log(`Already positioned for step ${stepIndex}, skipping positioning`);
+      return;
+    }
+    
+    // Mark this step as positioned
+    setHasPositionedForStep(prev => ({
+      ...prev,
+      [stepIndex]: true
+    }));
     
     // Basic animations for Fundi
     setThinking(true);
@@ -202,7 +218,7 @@ export default function FundiTourGuide() {
         el.classList.remove('tour-card-highlight');
       });
     };
-  }, [isTourActive, currentStep, currentStepIndex]);
+  }, [isTourActive, currentStep, currentStepIndex, hasPositionedForStep]);
   
   // Update position when target changes
   useEffect(() => {

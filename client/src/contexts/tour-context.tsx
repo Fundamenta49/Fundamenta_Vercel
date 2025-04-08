@@ -345,16 +345,31 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [lastNavigatedRoute, setLastNavigatedRoute] = useState<string | null>(null);
   
   // Navigate to the correct route only when the route changes
+  // Keep track of where we need to navigate to prevent loop
   useEffect(() => {
+    // Store the current step index to avoid closure issues
+    const currentIdx = currentStepIndex;
+    
     if (isTourActive && currentStep?.route) {
       // Only navigate if we're on a different route or haven't navigated to this route yet
       if (currentStep.route !== lastNavigatedRoute) {
-        console.log(`Tour navigation: ${currentStep.route}`);
-        setLocation(currentStep.route);
+        console.log(`Tour navigation: ${currentStep.route} for step ${currentIdx}`);
+        
+        // Set the flag first before navigation to prevent immediate remounting issues
         setLastNavigatedRoute(currentStep.route);
+        
+        // Small delay to prevent race conditions with state updates
+        setTimeout(() => {
+          // Double-check that we're still on the same step to prevent navigation after step change
+          if (currentStepIndex === currentIdx && currentStep && currentStep.route) {
+            // Type assertion to ensure route is a string
+            const route = currentStep.route as string;
+            setLocation(route);
+          }
+        }, 50);
       }
     }
-  }, [isTourActive, currentStep, lastNavigatedRoute, setLocation]);
+  }, [isTourActive, currentStep, currentStepIndex, lastNavigatedRoute, setLocation]);
   
   // Clean up when component unmounts to ensure tour-active class is removed
   useEffect(() => {
