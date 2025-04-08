@@ -1092,10 +1092,10 @@ Result: ${starGuide.result}
                 The STAR method helps you create structured, compelling responses:
               </p>
               <ul className="text-sm space-y-2 text-gray-700">
-                <li className="flex items-center gap-2"><span className="text-yellow-500 font-semibold bg-yellow-50 w-6 h-6 flex items-center justify-center rounded-full">S</span>ituation - The context</li>
-                <li className="flex items-center gap-2"><span className="text-blue-500 font-semibold bg-blue-50 w-6 h-6 flex items-center justify-center rounded-full">T</span>ask - Your responsibility</li>
-                <li className="flex items-center gap-2"><span className="text-green-500 font-semibold bg-green-50 w-6 h-6 flex items-center justify-center rounded-full">A</span>ction - What you did</li>
-                <li className="flex items-center gap-2"><span className="text-purple-500 font-semibold bg-purple-50 w-6 h-6 flex items-center justify-center rounded-full">R</span>esult - The outcome</li>
+                <li className="flex items-center gap-2"><span className="text-amber-600 font-semibold bg-amber-50 w-6 h-6 flex items-center justify-center rounded-full shadow-sm">S</span>ituation - The context</li>
+                <li className="flex items-center gap-2"><span className="text-blue-600 font-semibold bg-blue-50 w-6 h-6 flex items-center justify-center rounded-full shadow-sm">T</span>ask - Your responsibility</li>
+                <li className="flex items-center gap-2"><span className="text-emerald-600 font-semibold bg-emerald-50 w-6 h-6 flex items-center justify-center rounded-full shadow-sm">A</span>ction - What you did</li>
+                <li className="flex items-center gap-2"><span className="text-indigo-600 font-semibold bg-indigo-50 w-6 h-6 flex items-center justify-center rounded-full shadow-sm">R</span>esult - The outcome</li>
               </ul>
             </div>
             
@@ -1130,26 +1130,26 @@ Result: ${starGuide.result}
               </p>
               <ul className="text-sm space-y-2 text-gray-700 grid grid-cols-2 gap-2">
                 <li className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                    <Timer className="h-3.5 w-3.5 text-blue-700" />
+                  <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shadow-sm">
+                    <Timer className="h-3.5 w-3.5 text-indigo-600" />
                   </div>
                   <span>Timed responses</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                    <Briefcase className="h-3.5 w-3.5 text-blue-700" />
+                  <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shadow-sm">
+                    <Briefcase className="h-3.5 w-3.5 text-indigo-600" />
                   </div>
                   <span>Industry questions</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                    <ThumbsUp className="h-3.5 w-3.5 text-blue-700" />
+                  <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shadow-sm">
+                    <ThumbsUp className="h-3.5 w-3.5 text-indigo-600" />
                   </div>
                   <span>AI feedback</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                    <Users className="h-3.5 w-3.5 text-blue-700" />
+                  <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center shadow-sm">
+                    <Users className="h-3.5 w-3.5 text-indigo-600" />
                   </div>
                   <span>Realistic format</span>
                 </li>
@@ -1181,14 +1181,14 @@ Result: ${starGuide.result}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <p className="text-sm font-medium text-blue-900">Track your preparation:</p>
-                <span className="text-xs font-medium text-blue-800 bg-blue-100 px-2.5 py-1 rounded-full">
+                <span className="text-xs font-medium text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-full shadow-sm">
                   {interviewChecklist.filter(i => i.completed).length}/{interviewChecklist.length}
                 </span>
               </div>
               
               <Progress 
                 value={interviewChecklist.filter(i => i.completed).length / interviewChecklist.length * 100} 
-                className="h-2.5 bg-blue-100" 
+                className="h-2.5 bg-indigo-100" 
               />
               
               <Button 
@@ -1217,27 +1217,27 @@ Result: ${starGuide.result}
             <div className="space-y-4">
               <div className="space-y-2">
                 <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="preparation" className="border-blue-200">
-                    <AccordionTrigger className="text-sm font-medium text-blue-900 hover:text-blue-700">
+                  <AccordionItem value="preparation" className="border-indigo-200">
+                    <AccordionTrigger className="text-sm font-medium text-indigo-900 hover:text-indigo-700">
                       Preparation Tips
                     </AccordionTrigger>
-                    <AccordionContent className="text-sm text-gray-700 bg-blue-50 p-2 rounded-md">
+                    <AccordionContent className="text-sm text-gray-700 bg-indigo-50 p-2 rounded-md">
                       Research the company thoroughly, practice common questions, prepare examples of your achievements, and review the job description carefully.
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="communication" className="border-blue-200">
-                    <AccordionTrigger className="text-sm font-medium text-blue-900 hover:text-blue-700">
+                  <AccordionItem value="communication" className="border-indigo-200">
+                    <AccordionTrigger className="text-sm font-medium text-indigo-900 hover:text-indigo-700">
                       Communication Skills
                     </AccordionTrigger>
-                    <AccordionContent className="text-sm text-gray-700 bg-blue-50 p-2 rounded-md">
+                    <AccordionContent className="text-sm text-gray-700 bg-indigo-50 p-2 rounded-md">
                       Speak clearly, use the STAR method for behavioral questions, avoid filler words, and practice active listening.
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="followup" className="border-blue-200">
-                    <AccordionTrigger className="text-sm font-medium text-blue-900 hover:text-blue-700">
+                  <AccordionItem value="followup" className="border-indigo-200">
+                    <AccordionTrigger className="text-sm font-medium text-indigo-900 hover:text-indigo-700">
                       Follow-up Strategy
                     </AccordionTrigger>
-                    <AccordionContent className="text-sm text-gray-700 bg-blue-50 p-2 rounded-md">
+                    <AccordionContent className="text-sm text-gray-700 bg-indigo-50 p-2 rounded-md">
                       Send a thank-you email within 24 hours, reference specific discussion points, express continued interest, and follow their timeline instructions.
                     </AccordionContent>
                   </AccordionItem>
@@ -1404,24 +1404,24 @@ Result: ${starGuide.result}
       >
         <div className="space-y-6">
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-blue-700 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-indigo-700 flex items-center gap-2">
               <Briefcase className="h-5 w-5" />
               Before the Interview
             </h3>
             <div className="grid gap-3">
-              <div className="p-3 bg-blue-50 rounded-lg">
+              <div className="p-3 bg-indigo-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Research the Company</h4>
                 <p className="text-sm">Study the company's website, recent news, mission statement, culture, and industry position. Understand their products, services, and competitors.</p>
               </div>
-              <div className="p-3 bg-blue-50 rounded-lg">
+              <div className="p-3 bg-indigo-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Analyze the Job Description</h4>
                 <p className="text-sm">Highlight key requirements and responsibilities. Prepare examples from your experience that demonstrate these skills and qualifications.</p>
               </div>
-              <div className="p-3 bg-blue-50 rounded-lg">
+              <div className="p-3 bg-indigo-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Practice Common Questions</h4>
                 <p className="text-sm">Rehearse answers to standard questions while keeping them conversational. Record yourself and review your responses.</p>
               </div>
-              <div className="p-3 bg-blue-50 rounded-lg">
+              <div className="p-3 bg-indigo-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Prepare Your Questions</h4>
                 <p className="text-sm">Develop thoughtful questions that demonstrate your interest in the role and company. Avoid questions about salary or benefits in initial interviews.</p>
               </div>
@@ -1429,24 +1429,24 @@ Result: ${starGuide.result}
           </div>
           
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-blue-700 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-emerald-700 flex items-center gap-2">
               <Users className="h-5 w-5" />
               During the Interview
             </h3>
             <div className="grid gap-3">
-              <div className="p-3 bg-green-50 rounded-lg">
+              <div className="p-3 bg-emerald-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">First Impressions</h4>
                 <p className="text-sm">Arrive 10-15 minutes early. Dress professionally, one level above the company dress code. Greet everyone politely with a firm handshake and smile.</p>
               </div>
-              <div className="p-3 bg-green-50 rounded-lg">
+              <div className="p-3 bg-emerald-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Communication Skills</h4>
                 <p className="text-sm">Speak clearly and confidently. Use the STAR method for behavioral questions. Maintain good eye contact and posture. Listen actively and avoid interrupting.</p>
               </div>
-              <div className="p-3 bg-green-50 rounded-lg">
+              <div className="p-3 bg-emerald-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Handling Difficult Questions</h4>
                 <p className="text-sm">Take a moment to think before answering tough questions. Be honest but positive about weaknesses, focusing on how you're improving. Never speak negatively about previous employers.</p>
               </div>
-              <div className="p-3 bg-green-50 rounded-lg">
+              <div className="p-3 bg-emerald-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Closing Strong</h4>
                 <p className="text-sm">Ask your prepared questions. Express your interest in the position. Ask about next steps in the process. Thank the interviewer for their time.</p>
               </div>
@@ -1454,20 +1454,20 @@ Result: ${starGuide.result}
           </div>
           
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-blue-700 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-purple-700 flex items-center gap-2">
               <FileText className="h-5 w-5" />
               After the Interview
             </h3>
             <div className="grid gap-3">
-              <div className="p-3 bg-purple-50 rounded-lg">
+              <div className="p-3 bg-purple-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Follow Up</h4>
                 <p className="text-sm">Send a personalized thank-you email within 24 hours. Reference specific points from your conversation to show your attentiveness and continued interest.</p>
               </div>
-              <div className="p-3 bg-purple-50 rounded-lg">
+              <div className="p-3 bg-purple-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Self-Assessment</h4>
                 <p className="text-sm">Reflect on what went well and what could be improved. Note any questions that were difficult so you can prepare better answers for future interviews.</p>
               </div>
-              <div className="p-3 bg-purple-50 rounded-lg">
+              <div className="p-3 bg-purple-50 rounded-lg shadow-sm">
                 <h4 className="font-medium mb-1">Appropriate Follow-up</h4>
                 <p className="text-sm">If you haven't heard back within the timeframe mentioned, it's appropriate to send one follow-up email expressing your continued interest and asking for an update.</p>
               </div>
