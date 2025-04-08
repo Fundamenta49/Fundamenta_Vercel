@@ -957,12 +957,12 @@ Result: ${starGuide.result}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* Question Bank Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-500 to-blue-600 text-white pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
             <CardTitle className="flex items-center gap-2 text-xl">
               <BookText className="h-5 w-5" />
               Question Bank
             </CardTitle>
-            <CardDescription className="text-blue-50">
+            <CardDescription className="text-blue-700">
               Browse and practice with common interview questions
             </CardDescription>
           </CardHeader>
@@ -1002,12 +1002,12 @@ Result: ${starGuide.result}
 
         {/* Custom Questions Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-600 to-blue-700 text-white pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Target className="h-5 w-5" />
               Job-Specific Questions
             </CardTitle>
-            <CardDescription className="text-blue-50">
+            <CardDescription className="text-blue-700">
               Generate questions tailored to your target role
             </CardDescription>
           </CardHeader>
@@ -1077,12 +1077,12 @@ Result: ${starGuide.result}
 
         {/* STAR Method Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-700 to-blue-800 text-white pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Star className="h-5 w-5" />
               STAR Method
             </CardTitle>
-            <CardDescription className="text-blue-50">
+            <CardDescription className="text-blue-700">
               Structure your responses for behavioral questions
             </CardDescription>
           </CardHeader>
@@ -1114,12 +1114,12 @@ Result: ${starGuide.result}
 
         {/* Mock Interview Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-blue-800 to-indigo-700 text-white pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Users className="h-5 w-5" />
               Mock Interview
             </CardTitle>
-            <CardDescription className="text-blue-50">
+            <CardDescription className="text-blue-700">
               Simulate a full interview experience
             </CardDescription>
           </CardHeader>
@@ -1168,12 +1168,12 @@ Result: ${starGuide.result}
 
         {/* Interview Checklist Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-indigo-700 to-indigo-800 text-white pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
             <CardTitle className="flex items-center gap-2 text-xl">
               <ListChecks className="h-5 w-5" />
               Interview Checklist
             </CardTitle>
-            <CardDescription className="text-blue-50">
+            <CardDescription className="text-blue-700">
               Prepare fully for your interview
             </CardDescription>
           </CardHeader>
@@ -1204,12 +1204,12 @@ Result: ${starGuide.result}
         
         {/* Interview Tips Card */}
         <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-all group">
-          <CardHeader className="bg-gradient-to-br from-indigo-800 to-purple-700 text-white pb-3">
+          <CardHeader className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-900 pb-3">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Lightbulb className="h-5 w-5" />
               Interview Tips
             </CardTitle>
-            <CardDescription className="text-blue-50">
+            <CardDescription className="text-blue-700">
               Expert advice for interview success
             </CardDescription>
           </CardHeader>
