@@ -278,184 +278,16 @@ export default function FundiTourGuide() {
     }
   }, [targetPosition, animate]);
   
-  // Handle next step
-  const handleNextStep = () => {
-    if (isTransitioning) return;
-    
-    // Log button press for debugging
-    console.log("Next button clicked - advancing to next step");
-    
-    setIsTransitioning(true);
-    
-    // Preserve Fundi's current position during transition
-    const currentPosition = {...position};
-    
-    // Remove any highlights before transitioning
-    cleanupTourHighlights();
-    
-    // Make Fundi think to indicate processing
-    setThinking(true);
-    
-    // Get the current and next step info
-    const nextStepIndex = currentStepIndex + 1;
-    
-    // Safety check - we shouldn't be here if currentStep is null, but just to be extra safe
-    if (!currentStep) {
-      // If somehow we don't have currentStep, just go to the next step without animations
-      nextStep();
-      setIsTransitioning(false);
-      return;
-    }
-    
-    // We can't access tourSteps directly as it's in the context provider
-    // Get information about the next step from the context when we move to it
-    
-    // Check if we're moving to a different page - we can compare current and next routes
-    // If we don't have the next step data yet, we'll check after navigation
-    const pageChanging = nextStepIndex < totalSteps && currentStep.route !== null;
-    
-    // Calculate a new position only if we're changing pages
-    // Previously we also moved on mobile devices for each step, but this has been removed
-    if (pageChanging) {
-      // Get screen size to pass to position function
-      const isMobile = window.innerWidth < 640;
-      const nextPosition = getFundiPosition(nextStepIndex, isMobile);
-      
-      // Call the next step immediately
-      nextStep();
-      
-      // Animate Fundi to move to a new position for the next page
-      setTimeout(() => {
-        // Keep Fundi visible at the current position until the new step's position is calculated
-        if (!animate) {
-          setPosition(currentPosition);
-        }
-        
-        // Set new position for an engaging animated transition
-        setTargetPosition(nextPosition);
-        setAnimate(true);
-        console.log(`Fundi transitioning to: x=${nextPosition.x}px, y=${nextPosition.y}px for step ${nextStepIndex} ${pageChanging ? '(page changed)' : '(mobile position change)'}`);
-        
-        setThinking(false);
-        setIsTransitioning(false);
-      }, 300);
-    } else {
-      // No page change, keep Fundi in the same position
-      console.log(`Keeping Fundi in current position for step ${nextStepIndex} (same page)`);
-      
-      // Call the next step immediately
-      nextStep();
-      
-      // Just update state without changing position
-      setTimeout(() => {
-        setThinking(false);
-        setIsTransitioning(false);
-      }, 300);
-    }
-  };
+  // We're now using direct calls to context methods (nextStep) instead of complex handlers
   
-  // Handle previous step
-  const handlePrevStep = () => {
-    if (isTransitioning) return;
-    
-    // Log button press for debugging
-    console.log("Back button clicked - returning to previous step");
-    
-    setIsTransitioning(true);
-    
-    // Preserve Fundi's current position during transition
-    const currentPosition = {...position};
-    
-    // Remove any highlights before transitioning
-    cleanupTourHighlights();
-    
-    // Make Fundi think to indicate processing
-    setThinking(true);
-    
-    // Get the current and previous step info
-    const prevStepIndex = Math.max(0, currentStepIndex - 1);
-    
-    // Safety check - we shouldn't be here if currentStep is null, but just to be extra safe
-    if (!currentStep) {
-      // If somehow we don't have currentStep, just go to the previous step without animations
-      prevStep();
-      setIsTransitioning(false);
-      return;
-    }
-    
-    // We're checking if we need to move Fundi
-    // Only move Fundi when changing pages, regardless of device
-    const pageChanging = prevStepIndex >= 0 && currentStep.route !== null;
-    
-    // Calculate a new position only if we're changing pages
-    // Previously we also moved on mobile devices for each step, but this has been removed
-    if (pageChanging) {
-      // Get screen size to pass to position function
-      const isMobile = window.innerWidth < 640;
-      const prevPosition = getFundiPosition(prevStepIndex, isMobile);
-      
-      // Call the previous step immediately
-      prevStep();
-      
-      // Animate Fundi to move to a new position for the previous page
-      setTimeout(() => {
-        // Keep Fundi visible at the current position until the new step's position is calculated
-        if (!animate) {
-          setPosition(currentPosition);
-        }
-        
-        // Set new position for an engaging animated transition
-        setTargetPosition(prevPosition);
-        setAnimate(true);
-        console.log(`Fundi transitioning to: x=${prevPosition.x}px, y=${prevPosition.y}px for step ${prevStepIndex} ${pageChanging ? '(page changed)' : '(mobile position change)'}`);
-        
-        setThinking(false);
-        setIsTransitioning(false);
-      }, 300);
-    } else {
-      // No page change, keep Fundi in the same position
-      console.log(`Keeping Fundi in current position for step ${prevStepIndex} (same page)`);
-      
-      // Call the previous step immediately
-      prevStep();
-      
-      // Just update state without changing position
-      setTimeout(() => {
-        setThinking(false);
-        setIsTransitioning(false);
-      }, 300);
-    }
-  };
+  // We're now using direct calls to context methods
   
-  // Debug function to track clicks on Fundi elements
+  // Setup direct click handling
   useEffect(() => {
     // Only run if tour is active
     if (!isTourActive || !currentStep) return;
     
-    // Add emergency click handlers to handle edge cases (e.g., if bubbling is blocked)
-    const addEmergencyListeners = () => {
-      // Find all buttons in the tour
-      const tourButtons = document.querySelectorAll('[data-tour-button]');
-      console.log(`Added emergency click handlers to ${tourButtons.length} Fundi elements`);
-      
-      // Add direct click handlers to each button as a fallback
-      tourButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-          // Cast to HTMLElement to access dataset
-          const buttonType = (button as HTMLElement).dataset.tourButton;
-          if (buttonType === 'next') {
-            handleNextStep();
-          } else if (buttonType === 'back') {
-            handlePrevStep();
-          } else if (buttonType === 'skip') {
-            skipTour();
-          }
-        });
-      });
-    };
-    
-    // Call immediately and also on any position changes
-    addEmergencyListeners();
+    // No emergency click handlers needed anymore since we use direct button onClick handlers
     
     // Add visibility monitor to help prevent disappearing issues
     const addVisibilityMonitors = () => {
@@ -469,25 +301,9 @@ export default function FundiTourGuide() {
     // Log current position for debugging
     console.log(`Fundi position: top=${position.y}px, right=${position.x}px, translate(${position.x}px, ${position.y}px)`);
     
-    // Set up interval to check if Fundi is still visible
-    const interval = setInterval(() => {
-      // Test overlay click to advance tour - DEBUGGING
-      const overlayElement = document.querySelector('.fixed.inset-0.z-\\[99990\\]');
-      if (overlayElement) {
-        // Every 15 seconds in debugging, simulate a click on the overlay
-        if (Date.now() % 15000 < 500) {
-          console.log("Debug auto-click on overlay");
-          overlayElement.dispatchEvent(new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-          }));
-        }
-      }
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [isTourActive, currentStep, position]);
+    // Just setup a return func for useEffect
+    return () => {};
+  }, [isTourActive, currentStep, position, nextStep, prevStep, skipTour]);
 
   if (!isTourActive || !currentStep) {
     return null;
@@ -583,22 +399,6 @@ export default function FundiTourGuide() {
           <div className="font-semibold text-base mb-2">{currentStep.title}</div>
           <p className="text-gray-700 text-sm leading-relaxed mb-3">{currentStep.content}</p>
           
-          {/* Special test buttons for troubleshooting - only in first step */}
-          {currentStepIndex === 0 && (
-            <div className="mb-2 pt-1 border-t border-gray-200">
-              <button 
-                className="w-full py-1 bg-blue-100 text-blue-700 text-xs rounded mb-1 hover:bg-blue-200" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log("Direct next via context");
-                  nextStep();
-                }}
-              >
-                Click to Advance (Direct)
-              </button>
-            </div>
-          )}
-          
           {/* Progress bar */}
           <div className="mb-2">
             <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
@@ -622,7 +422,7 @@ export default function FundiTourGuide() {
                 onClick={(e) => {
                   e.stopPropagation();
                   console.log("Back button clicked directly");
-                  handlePrevStep();
+                  prevStep(); // Direct call to context function
                 }}
                 disabled={currentStepIndex === 0 || isTransitioning}
                 className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
