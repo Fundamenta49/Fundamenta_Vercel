@@ -66,7 +66,7 @@ export const getEmergencyGuidance = async (situation: string): Promise<string> =
         },
         {
           role: "user",
-          content: situation
+          content: `Please provide emergency guidance for this situation: ${situation}`
         }
       ]
     });
@@ -106,11 +106,13 @@ export const optimizeResume = async (data: any): Promise<string> => {
             ],
             "overallScore": 75,
             "topPriorities": ["Improve action verbs", "Add metrics", "Customize for job"]
-          }`
+          }
+          
+          Ensure your response is valid JSON.`
         },
         {
           role: "user",
-          content: JSON.stringify(data)
+          content: `Please analyze and provide suggestions for this resume: ${JSON.stringify(data)} (please format your response as JSON with suggestions, overallScore, and topPriorities fields)`
         }
       ],
       response_format: { type: "json_object" }
@@ -155,7 +157,7 @@ export const analyzeInterviewAnswer = async (
         },
         {
           role: "user",
-          content: `Question: ${question}\n\nMy Answer: ${answer}`
+          content: `Question: ${question}\n\nMy Answer: ${answer}\n\nPlease provide detailed feedback on my interview answer.`
         }
       ]
     });
@@ -200,7 +202,13 @@ export const generateJobQuestions = async (jobField: string): Promise<string[]> 
               "Another question here",
               ...more questions
             ]
-          }`
+          }
+          
+          Ensure your response is valid JSON.`
+        },
+        {
+          role: "user",
+          content: `Generate challenging interview questions for a ${jobField} position. (Please format your response as JSON with a 'questions' array.)`
         }
       ],
       response_format: { type: "json_object" }
@@ -261,7 +269,7 @@ export const generateCoverLetter = async (data: any): Promise<string> => {
         },
         {
           role: "user",
-          content: JSON.stringify(resume)
+          content: `Please write a cover letter for a ${jobTitle} position at ${company} based on this resume: ${JSON.stringify(resume)}`
         }
       ]
     });
@@ -300,11 +308,13 @@ export const assessCareer = async (answers: Record<string, string>): Promise<{
               "Career 1": "Explanation for why this is a match...",
               "Career 2": "Explanation for why this is a match..."
             }
-          }`
+          }
+          
+          Ensure your response is valid JSON.`
         },
         {
           role: "user",
-          content: formattedAnswers
+          content: formattedAnswers + " (please format your response as JSON with topMatches and explanations)"
         }
       ],
       response_format: { type: "json_object" }

@@ -90,11 +90,13 @@ export async function parseResume(resumeText: string): Promise<ResumeParseRespon
             }
           }
           If you can't extract certain fields, return empty strings for those fields, but make your best effort to extract as much as possible.
-          For the analysis, provide 3-5 items for each category based on the resume content.`
+          For the analysis, provide 3-5 items for each category based on the resume content.
+          
+          Ensure your response is valid JSON.`
         },
         {
           role: "user",
-          content: resumeText
+          content: resumeText + " (please format your response as JSON with the fields specified)"
         }
       ],
       response_format: { type: "json_object" },
@@ -158,11 +160,13 @@ export async function enhanceResumeSection(
           
           Return your response as a JSON array with exactly 3 different, improved versions of the content.
           Each suggestion should be complete and ready to be used directly in a resume.
-          Format: { "suggestions": [string, string, string] }`
+          Format: { "suggestions": [string, string, string] }
+          
+          Ensure your response is valid JSON.`
         },
         {
           role: "user",
-          content: content
+          content: content + " (please format your response as JSON with a suggestions array)"
         }
       ],
       response_format: { type: "json_object" },
@@ -222,6 +226,7 @@ export async function optimizeResumeForJob(
           Guidelines:
           - Emphasize skills and experiences relevant to the target position
           - Incorporate relevant keywords from the industry and job description
+          - Ensure your response is valid JSON
           - Maintain authenticity - don't fabricate experience
           - Quantify achievements when possible
           - Be concise and impactful
@@ -252,7 +257,9 @@ export async function optimizeResumeForJob(
           ${resumeData.education || "Not provided"}
           
           ${resumeData.projects ? `PROJECTS:\n${resumeData.projects}\n\n` : ""}
-          ${resumeData.certifications ? `CERTIFICATIONS:\n${resumeData.certifications}` : ""}`
+          ${resumeData.certifications ? `CERTIFICATIONS:\n${resumeData.certifications}` : ""}
+          
+          (Please format your response as JSON with summary, experience, and skills fields)`
         }
       ],
       response_format: { type: "json_object" },
@@ -293,14 +300,14 @@ export async function extractTextFromPDF(filePath: string): Promise<string> {
       messages: [
         {
           role: "system",
-          content: "You are a document parsing assistant. Extract all the text content from the provided document. Preserve the structure, sections, and formatting as much as possible."
+          content: "You are a document parsing assistant. Extract all the text content from the provided document. Preserve the structure, sections, and formatting as much as possible. Return the complete content as plain text."
         },
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: "Extract all the text from this resume document. Maintain the structure and sections."
+              text: "Extract all the text from this resume document. Maintain the structure and sections. Extract all content as plain text in JSON format."
             },
             {
               type: "image_url",

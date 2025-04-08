@@ -177,12 +177,18 @@ export class OpenAIProvider implements AIProvider {
       // For normal requests, proceed with OpenAI
       // Create the messages array
       const messages: ChatCompletionMessageParam[] = [
-        { role: "system", content: systemPrompt },
+        { 
+          role: "system", 
+          content: systemPrompt + "\n\nVery important: Format your response as valid JSON following the structure described above." 
+        },
         ...previousMessages.map(msg => ({ 
           role: msg.role, 
           content: msg.content 
         })) as ChatCompletionMessageParam[],
-        { role: "user", content: message }
+        { 
+          role: "user", 
+          content: message + " (Please provide your answer in JSON format.)" 
+        }
       ];
       
       // Call the OpenAI API
@@ -343,8 +349,8 @@ export class OpenAIProvider implements AIProvider {
       const response = await this.client.chat.completions.create({
         model: "gpt-4o",
         messages: [
-          { role: "system", content: "You classify user messages into categories accurately." },
-          { role: "user", content: prompt }
+          { role: "system", content: "You classify user messages into categories accurately. Respond with valid JSON." },
+          { role: "user", content: prompt + " Ensure your response is in JSON format." }
         ],
         response_format: { type: "json_object" }
       });
@@ -376,8 +382,8 @@ export class OpenAIProvider implements AIProvider {
       const response = await this.client.chat.completions.create({
         model: "gpt-4o",
         messages: [
-          { role: "system", content: "You analyze the emotional tone of messages." },
-          { role: "user", content: prompt }
+          { role: "system", content: "You analyze the emotional tone of messages. Respond with valid JSON." },
+          { role: "user", content: prompt + " Ensure your response is in JSON format." }
         ],
         response_format: { type: "json_object" }
       });

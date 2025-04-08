@@ -150,17 +150,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         - Available Actions: ${validatedData.context.availableActions.join(', ')}`;
       }
 
+      // When using response_format of type "json_object", OpenAI requires the word "json" to be in the messages
+      // We'll add a system message that mentions we need JSON to satisfy this requirement
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
             role: "system",
-            content: systemMessage
+            content: systemMessage + "\n\nIMPORTANT: Please format your response as valid JSON per the guidelines above."
           },
           ...conversationHistory,
           {
             role: "user",
-            content: validatedData.message
+            content: validatedData.message + " (please format your response as json)"
           }
         ],
         response_format: { type: "json_object" }
@@ -401,11 +403,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
               - If a field can't be found, use an empty string
               - Format dates consistently
               - Keep descriptions concise
-              - Ensure valid JSON output`
+              - Ensure valid JSON output
+              - Format your response as JSON`
             },
             {
               role: "user",
-              content: extractedText
+              content: extractedText + " (respond with json)"
             }
           ],
           response_format: { type: "json_object" }
