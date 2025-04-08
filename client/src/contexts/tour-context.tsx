@@ -343,29 +343,64 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     ? tourSteps[currentStepIndex] 
     : null;
 
-  // EMERGENCY FIX: Simplified navigation effect to prevent infinite loops
+  // Enhanced navigation effect for smooth page transitions during tour
   useEffect(() => {
     if (!isTourActive || !currentStep || !currentStep.route) return;
 
     // Only navigate if we're on a different route or haven't navigated to this route yet
     if (currentStep.route !== lastNavigatedRoute) {
-      console.log(`EMERGENCY FIX: Navigation to ${currentStep.route} for step ${currentStepIndex}`);
+      console.log(`TOUR NAVIGATION: Moving to ${currentStep.route} for step ${currentStepIndex}`);
       
       // Set the flag first before navigation
       setLastNavigatedRoute(currentStep.route);
       
-      // Add a forced delay to ensure stable navigation
+      // Add a forced delay to ensure stable navigation and allow speech bubble to show first
       setTimeout(() => {
         if (currentStep && currentStep.route) {
           // Type assertion for TypeScript
           const route = currentStep.route as string;
-          console.log(`EMERGENCY FIX: Actually navigating to ${route}`);
+          console.log(`TOUR NAVIGATION: Navigating to ${route}`);
+          
+          // Store the current route in localStorage and DOM for persistence
+          localStorage.setItem('lastTourRoute', route);
+          document.body.setAttribute('data-tour-route', route);
+          
+          // Keep a backup of the current step
+          document.body.setAttribute('data-tour-current-step', String(currentStepIndex));
+          
+          // Actual navigation
           setLocation(route);
           
-          // Store location in data attribute
-          document.body.setAttribute('data-tour-route', route);
+          // After navigation, check for elements to highlight after the page loads
+          if (currentStep.highlightSelector) {
+            setTimeout(() => {
+              try {
+                // Clean up any existing highlights
+                document.querySelectorAll('.tour-highlight').forEach(el => {
+                  el.classList.remove('tour-highlight');
+                });
+                
+                // Find and highlight the element
+                const elementToHighlight = document.querySelector(currentStep.highlightSelector as string);
+                if (elementToHighlight) {
+                  console.log(`TOUR HIGHLIGHT: Found element matching ${currentStep.highlightSelector}`);
+                  elementToHighlight.classList.add('tour-highlight');
+                  
+                  // Scroll the element into view with smooth behavior
+                  elementToHighlight.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                  });
+                } else {
+                  console.log(`TOUR HIGHLIGHT: Could not find element matching ${currentStep.highlightSelector}`);
+                }
+              } catch (e) {
+                console.error('Error highlighting element:', e);
+              }
+            }, 500); // Wait for page rendering to complete
+          }
         }
-      }, 100);
+      }, 400); // Increased delay for better user experience
     }
   }, [isTourActive, currentStep, currentStepIndex, lastNavigatedRoute, setLocation]);
   

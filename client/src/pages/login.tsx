@@ -36,8 +36,16 @@ export default function LoginPage() {
         const success = await signUp(username, email, password);
         
         if (success) {
-          // Store the username for the tour
-          localStorage.setItem('tourUserName', username);
+          // Store the username for the tour with proper capitalization for better greeting
+          const formattedName = username.charAt(0).toUpperCase() + username.slice(1);
+          localStorage.setItem('tourUserName', formattedName);
+          
+          // Also capture that this is a brand new user who should definitely see the tour
+          localStorage.setItem('newUser', 'true');
+          localStorage.removeItem('hasSeenTour'); // Explicitly ensure tour will be shown
+          
+          // Add a DOM attribute as fallback storage
+          document.body.setAttribute('data-new-user', 'true');
           
           // Registration successful, redirect to home page
           setLocation("/");
@@ -54,8 +62,18 @@ export default function LoginPage() {
         const success = await login(email, password);
         if (success) {
           // Get username from email for the tour if not already set
-          const username = email.split('@')[0];
-          localStorage.setItem('tourUserName', username);
+          if (!localStorage.getItem('tourUserName')) {
+            const username = email.split('@')[0];
+            const formattedName = username.charAt(0).toUpperCase() + username.slice(1);
+            localStorage.setItem('tourUserName', formattedName);
+          }
+          
+          // Check if user has never completed the tour
+          const hasSeenTour = localStorage.getItem('hasSeenTour');
+          if (!hasSeenTour) {
+            // Flag them to see the tour but don't force for returning users
+            localStorage.setItem('showTourSuggestion', 'true');
+          }
           
           setLocation("/");
         } else {

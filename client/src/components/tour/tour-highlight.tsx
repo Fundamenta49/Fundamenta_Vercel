@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Styling for elements highlighted during the tour
+// Enhanced styling for elements highlighted during the tour
 const TourHighlight = () => {
   return (
     <style dangerouslySetInnerHTML={{
@@ -20,15 +20,29 @@ const TourHighlight = () => {
           outline: none !important;
         }
         
+        /* Add a subtle page overlay to make highlighted elements stand out more */
+        body.tour-active::after {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.15);
+          z-index: 5;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+        }
+        
         /* General highlighting for any element with tour-highlight class (but outside dialogs) */
         *:not([role="dialog"]):not(.DialogContent):not(.DialogOverlay).tour-highlight,
         *:not([role="dialog"] *):not(.DialogContent *):not(.DialogOverlay *).tour-highlight {
           position: relative;
           z-index: 10;
-          animation: tour-pulse 1.5s infinite;
-          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6);
-          outline: 2px solid rgba(99, 102, 241, 0.8);
-          outline-offset: 2px;
+          animation: tour-pulse 2s infinite;
+          box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.4);
+          outline: 3px solid rgba(99, 102, 241, 0.8);
+          outline-offset: 4px;
           pointer-events: auto !important;
         }
         
@@ -38,28 +52,41 @@ const TourHighlight = () => {
         body > div > div.fixed.z-\\[9999\\].robot-fundi.tour-highlight {
           position: relative;
           z-index: 50;
-          animation: tour-pulse 1.5s infinite;
-          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6);
-          outline: 2px solid rgba(99, 102, 241, 0.8);
-          outline-offset: 2px;
+          animation: tour-pulse 2s infinite;
+          box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.4);
+          outline: 3px solid rgba(99, 102, 241, 0.8);
+          outline-offset: 4px;
           pointer-events: auto !important;
         }
         
-        /* For features that need highlighting (using very specific selectors) */
+        /* Feature-specific highlighting classes with enhanced visibility */
         main:not([role="dialog"]) div.course-list.tour-highlight,
         main:not([role="dialog"]) div.finance-tools.tour-highlight,
         main:not([role="dialog"]) div.resume-builder.tour-highlight,
         main:not([role="dialog"]) div.meditation-guide.tour-highlight,
         main:not([role="dialog"]) div.fitness-tracker.tour-highlight,
-        main:not([role="dialog"]) div.emergency-guides.tour-highlight,
+        main:not([role="dialog"]) div.emergency-guides.tour-highlight {
+          position: relative;
+          z-index: 10;
+          animation: tour-feature-pulse 2s infinite;
+          box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.6), 0 0 30px rgba(99, 102, 241, 0.4);
+          outline: 3px solid rgba(99, 102, 241, 0.9);
+          outline-offset: 4px;
+          pointer-events: auto !important;
+          transform: scale(1.02);
+          transition: transform 0.3s ease;
+          filter: brightness(1.1) contrast(1.05);
+        }
+        
+        /* General sections and divs that might be highlighted */
         main:not([role="dialog"]) section.tour-highlight,
         main:not([role="dialog"]) div.tour-highlight {
           position: relative;
           z-index: 10;
-          animation: tour-pulse 1.5s infinite;
-          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6);
-          outline: 2px solid rgba(99, 102, 241, 0.8);
-          outline-offset: 2px;
+          animation: tour-pulse 2s infinite;
+          box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.4);
+          outline: 3px solid rgba(99, 102, 241, 0.8);
+          outline-offset: 4px;
           pointer-events: auto !important;
         }
         
@@ -68,19 +95,43 @@ const TourHighlight = () => {
           z-index: 60 !important;
         }
         
-        /* Improved animation to avoid conflicts with other animations */
+        /* For tour cards highlight */
+        .tour-card-highlight {
+          z-index: 11 !important;
+          transform: translateZ(0) scale(1.03) !important;
+          box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4), 0 8px 10px -6px rgba(99, 102, 241, 0.3) !important;
+          transition: all 0.3s ease !important;
+        }
+        
+        /* Enhanced animation for regular highlights */
         @keyframes tour-pulse {
           0% {
-            box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.2);
             outline-color: rgba(99, 102, 241, 0.8);
           }
-          70% {
-            box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
+          50% {
+            box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.4), 0 0 25px rgba(99, 102, 241, 0.4);
             outline-color: rgba(99, 102, 241, 1);
           }
           100% {
-            box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.2);
             outline-color: rgba(99, 102, 241, 0.8);
+          }
+        }
+        
+        /* Special animation for featured elements */
+        @keyframes tour-feature-pulse {
+          0% {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6), 0 0 30px rgba(99, 102, 241, 0.3);
+            outline-color: rgba(99, 102, 241, 0.9);
+          }
+          50% {
+            box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.5), 0 0 40px rgba(99, 102, 241, 0.5);
+            outline-color: rgba(99, 102, 241, 1);
+          }
+          100% {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6), 0 0 30px rgba(99, 102, 241, 0.3);
+            outline-color: rgba(99, 102, 241, 0.9);
           }
         }
       `
