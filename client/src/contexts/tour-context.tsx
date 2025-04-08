@@ -215,15 +215,20 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const nextStep = () => {
     if (currentStepIndex < tourSteps.length - 1) {
-      setCurrentStepIndex(prev => prev + 1);
+      console.log(`Advancing tour from step ${currentStepIndex} to ${currentStepIndex + 1}`);
+      setCurrentStepIndex(currentStepIndex + 1);
     } else {
+      console.log('Tour complete, ending tour');
       endTour();
     }
   };
 
   const prevStep = () => {
     if (currentStepIndex > 0) {
-      setCurrentStepIndex(prev => prev - 1);
+      console.log(`Going back from step ${currentStepIndex} to ${currentStepIndex - 1}`);
+      setCurrentStepIndex(currentStepIndex - 1);
+    } else {
+      console.log('Already at first step, cannot go back');
     }
   };
 
@@ -330,13 +335,23 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     ? tourSteps[currentStepIndex] 
     : null;
 
-  // Navigate to the correct route when step changes
+  // Get current location
+  const [currentLocation] = useLocation();
+  
+  // Keep track of the last route we navigated to
+  const [lastNavigatedRoute, setLastNavigatedRoute] = useState<string | null>(null);
+  
+  // Navigate to the correct route only when the route changes
   useEffect(() => {
     if (isTourActive && currentStep?.route) {
-      // Always navigate to the route specified in the step
-      setLocation(currentStep.route);
+      // Only navigate if we're on a different route or haven't navigated to this route yet
+      if (currentStep.route !== lastNavigatedRoute) {
+        console.log(`Tour navigation: ${currentStep.route}`);
+        setLocation(currentStep.route);
+        setLastNavigatedRoute(currentStep.route);
+      }
     }
-  }, [currentStepIndex, isTourActive, currentStep, setLocation]);
+  }, [isTourActive, currentStep, lastNavigatedRoute, setLocation]);
   
   // Clean up when component unmounts to ensure tour-active class is removed
   useEffect(() => {
