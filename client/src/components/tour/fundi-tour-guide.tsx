@@ -488,9 +488,9 @@ export default function FundiTourGuide() {
 
   return (
     <>
-      {/* Invisible overlay to capture clicks anywhere on the screen */}
+      {/* Semi-transparent overlay to indicate it's interactive */}
       <div 
-        className="fixed inset-0 z-[99990]" 
+        className="fixed inset-0 z-[99990] bg-black/5" 
         onClick={() => {
           // Click anywhere to advance the tour
           if (!isTransitioning && currentStepIndex < totalSteps - 1) {

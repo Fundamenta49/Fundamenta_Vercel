@@ -52,7 +52,7 @@ const tourSteps: TourStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to Fundamenta',
-    content: 'Pssst.... Welcome {userName}!! You\'re officially one of the first humans to ever enter the world of Fundamenta. I\'ve got secrets to show you—and awkward life wins to celebrate. Wanna go on a mini quest? I\'m Fundi, and I\'m here to make life LIFEABLE!!!',
+    content: 'Pssst.... Welcome {userName}!! You\'re officially one of the first humans to ever enter the world of Fundamenta. I\'ve got secrets to show you—and awkward life wins to celebrate. Click the "Next" button or anywhere on the screen to continue the tour. I\'m Fundi, and I\'m here to make life LIFEABLE!!!',
     category: 'general',
     route: '/',
   },
@@ -278,7 +278,7 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // Check if the user has seen the tour before and load user name,
-  // but only after authentication is checked and user is authenticated
+  // but only after authentication is checked
   useEffect(() => {
     // Wait until auth is no longer loading
     if (authLoading) {
@@ -290,13 +290,11 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (tourSeen) {
       setHasSeenTour(true);
     } else {
-      // If user hasn't seen tour, auto-start it for authenticated users or visitors
-      if (isAuthenticated || user) {
-        // Small delay to ensure everything is loaded
-        setTimeout(() => {
-          startTour();
-        }, 500);
-      }
+      // If user hasn't seen tour, auto-start it for all users
+      // Small delay to ensure everything is loaded
+      setTimeout(() => {
+        startTour();
+      }, 500);
     }
     
     // First try to use the name from the authenticated user profile
@@ -308,6 +306,11 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const savedUserName = localStorage.getItem('tourUserName');
       if (savedUserName) {
         setUserName(savedUserName);
+      } else if (isAuthenticated && user && user.email) {
+        // If we have an authenticated user with email but no name, use email username
+        const usernameFromEmail = user.email.split('@')[0];
+        setUserName(usernameFromEmail);
+        localStorage.setItem('tourUserName', usernameFromEmail);
       } else {
         // Set a default greeting (this will get replaced with username when available)
         setUserName('');
@@ -385,10 +388,15 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const processStepContent = (content: string) => {
     // If userName is empty, show just the message without the placeholder
     if (!userName) {
-      return content.replace('{userName} ', '').replace(' {userName}', '').replace('{userName}', '');
+      return content
+        .replace('{userName}!!', '!')
+        .replace('{userName},', '')
+        .replace('{userName} ', '')
+        .replace(' {userName}', '')
+        .replace('{userName}', '');
     }
     // Otherwise, use their name
-    return content.replace('{userName}', userName);
+    return content.replace(/\{userName\}/g, userName);
   };
 
   // Process current step to include user name

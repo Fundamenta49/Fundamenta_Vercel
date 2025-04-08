@@ -36,6 +36,9 @@ export default function LoginPage() {
         const success = await signUp(username, email, password);
         
         if (success) {
+          // Store the username for the tour
+          localStorage.setItem('tourUserName', username);
+          
           // Registration successful, redirect to home page
           setLocation("/");
         } else {
@@ -50,6 +53,10 @@ export default function LoginPage() {
       try {
         const success = await login(email, password);
         if (success) {
+          // Get username from email for the tour if not already set
+          const username = email.split('@')[0];
+          localStorage.setItem('tourUserName', username);
+          
           setLocation("/");
         } else {
           setError("Invalid credentials. Please try again.");
