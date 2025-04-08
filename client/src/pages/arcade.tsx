@@ -302,17 +302,17 @@ const DailyChallenges = ({ onViewAllChallenges }: { onViewAllChallenges?: () => 
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Sample challenges */}
-        <div className="flex justify-between items-center p-3 border rounded-lg bg-blue-50 border-blue-200">
+        <div className="flex justify-between items-center p-3 border rounded-lg bg-green-50 border-green-200">
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-blue-100 p-2">
-              <Trophy className="h-5 w-5 text-blue-600" />
+            <div className="rounded-full bg-green-100 p-2">
+              <Trophy className="h-5 w-5 text-green-600" />
             </div>
             <div>
               <h4 className="font-medium">Finance Quiz</h4>
               <p className="text-xs text-gray-600">Answer 5 finance questions correctly</p>
             </div>
           </div>
-          <Badge className="bg-blue-600">+20 pts</Badge>
+          <Badge className="bg-green-600">+20 pts</Badge>
         </div>
         
         <div className="flex justify-between items-center p-3 border rounded-lg">
@@ -649,17 +649,17 @@ export default function Arcade() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Expanded version of the DailyChallenges component */}
-                <div className="flex justify-between items-center p-3 border rounded-lg bg-blue-50 border-blue-200">
+                <div className="flex justify-between items-center p-3 border rounded-lg bg-green-50 border-green-200">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-full bg-blue-100 p-2">
-                      <Trophy className="h-5 w-5 text-blue-600" />
+                    <div className="rounded-full bg-green-100 p-2">
+                      <Trophy className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
                       <h4 className="font-medium">Finance Quiz</h4>
                       <p className="text-xs text-gray-600">Answer 5 finance questions correctly</p>
                     </div>
                   </div>
-                  <Badge className="bg-blue-600">+20 pts</Badge>
+                  <Badge className="bg-green-600">+20 pts</Badge>
                 </div>
                 
                 <div className="flex justify-between items-center p-3 border rounded-lg">
