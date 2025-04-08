@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, boolean, json, pgEnum, uuid, foreignKey, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, integer, boolean, json, pgEnum, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -95,63 +95,6 @@ export const messages = pgTable("messages", {
   category: text("category"), // Optional category/topic
   metadata: json("metadata").default({}),
   timestamp: timestamp("timestamp").defaultNow(),
-});
-
-// Subscription plan types
-export const planTypeEnum = pgEnum("plan_type", [
-  "FREE",
-  "BASIC",
-  "PROFESSIONAL",
-  "TEAM"
-]);
-
-// Subscription plans
-export const subscriptionPlans = pgTable("subscription_plans", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
-  type: planTypeEnum("type").notNull(),
-  description: text("description"),
-  price: integer("price").notNull(), // Stored in cents
-  billingCycle: text("billing_cycle").notNull(), // "monthly" or "yearly"
-  features: json("features").default([]),
-  maxUsers: integer("max_users"), // Maximum users allowed (for team plans)
-  active: boolean("active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Organizations/Teams
-export const organizations = pgTable("organizations", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
-  description: text("description"),
-  ownerId: integer("owner_id", { mode: "number" }).notNull().references(() => users.id),
-  planId: uuid("plan_id").references(() => subscriptionPlans.id),
-  planExpiresAt: timestamp("plan_expires_at"),
-  logoUrl: text("logo_url"),
-  settings: json("settings").default({}),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// User roles in organizations
-export const userRoleEnum = pgEnum("user_role", [
-  "OWNER",
-  "ADMIN",
-  "MEMBER",
-  "VIEWER"
-]);
-
-// Organization memberships
-export const organizationMembers = pgTable("organization_members", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  organizationId: uuid("organization_id").notNull().references(() => organizations.id),
-  userId: integer("user_id", { mode: "number" }).notNull().references(() => users.id),
-  role: userRoleEnum("role").notNull().default("MEMBER"),
-  invitedBy: integer("invited_by", { mode: "number" }).references(() => users.id),
-  invitedAt: timestamp("invited_at").defaultNow(),
-  joinedAt: timestamp("joined_at"),
-  status: text("status").notNull().default("PENDING"), // "PENDING", "ACTIVE", "DECLINED"
 });
 
 // Schema validators
