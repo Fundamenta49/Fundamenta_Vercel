@@ -331,15 +331,16 @@ export default function FundiTourGuide() {
           }}
           style={{ 
             width: '300px', // Increased width for longer introduction text
-            maxWidth: '300px', // Matching max width
-            height: '250px', // Increased height for more content
-            maxHeight: '250px', // Matching max height
+            maxWidth: `calc(100vw - 100px)`, // Responsive width that works on mobile
+            height: 'auto', // Auto height based on content
+            maxHeight: `calc(90vh - 100px)`, // Responsive max height
             boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
             willChange: 'transform', // Performance optimization
             transformOrigin: 'center top', // Consistent transform origin
             overflowY: 'auto', // Allow scrolling if content is too tall
             top: '0px', // Align with Fundi vertically
-            left: '85px' // Position to the right of Fundi
+            left: '85px', // Position to the right of Fundi
+            fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' // Responsive font size
           }}
         >
           {/* No pointer for cleaner look - bubble is now directly attached to Fundi */}
@@ -364,7 +365,7 @@ export default function FundiTourGuide() {
           
           {/* Navigation buttons - optimized for mobile */}
           <div className="flex justify-between">
-            <div className="flex gap-0.5 sm:gap-2">
+            <div className="flex gap-1 sm:gap-2">
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -388,7 +389,7 @@ export default function FundiTourGuide() {
                   prevStep();
                 }}
                 disabled={currentStepIndex === 0}
-                className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
+                className="h-8 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm min-w-[40px]"
                 data-tour-button="back"
               >
                 <ChevronLeft className="h-3.5 sm:h-3.5 w-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
@@ -403,7 +404,7 @@ export default function FundiTourGuide() {
                   console.log("Skip button clicked");
                   skipTour();
                 }}
-                className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
+                className="h-8 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm min-w-[40px]"
                 data-tour-button="skip"
               >
                 <X className="h-3.5 sm:h-3.5 w-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
@@ -433,10 +434,10 @@ export default function FundiTourGuide() {
                 // Advance to next step
                 nextStep();
               }}
-              className="h-7 sm:h-7 px-2 sm:px-3 text-xs sm:text-xs"
+              className="h-8 sm:h-8 px-3 sm:px-4 text-xs sm:text-sm min-w-[50px]"
               data-tour-button="next" // Identifier for the button
             >
-              <span className="hidden sm:inline">{currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}</span>
+              <span className="inline">{currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}</span>
               {currentStepIndex < totalSteps - 1 ? (
                 <ChevronRight className="h-3.5 sm:h-3.5 w-3.5 sm:w-3.5 ml-0 sm:ml-1" />
               ) : (

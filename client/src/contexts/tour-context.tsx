@@ -64,7 +64,116 @@ const tourSteps: TourStep[] = [
     route: '/',
     highlightSelector: '.robot-fundi',
   },
-  // Rest of tour steps omitted for brevity
+  {
+    id: 'home-overview',
+    title: 'Main Dashboard',
+    content: 'This is your main dashboard, {userName}. From here, you can access all the different areas of Fundamenta to help you develop essential life skills.',
+    category: 'general',
+    route: '/',
+  },
+  
+  // Life Skills section
+  {
+    id: 'life-skills',
+    title: 'Life Skills',
+    content: 'Let\'s explore the Life Skills section, {userName}. Here you\'ll find practical courses on everything from cooking to home maintenance.',
+    category: 'general',
+    route: '/learning',
+  },
+  {
+    id: 'life-skills-courses',
+    title: 'Interactive Courses',
+    content: 'These courses are designed to be practical and engaging. You can learn at your own pace with step-by-step guidance.',
+    category: 'general',
+    route: '/learning',
+    highlightSelector: '.course-list',
+  },
+  
+  // Financial Literacy section
+  {
+    id: 'financial-literacy',
+    title: 'Financial Literacy',
+    content: '{userName}, managing money is an essential life skill. In this section, you\'ll learn budgeting, savings strategies, and smart financial planning.',
+    category: 'finance',
+    route: '/finance',
+  },
+  {
+    id: 'finance-tools',
+    title: 'Financial Tools',
+    content: 'Try our interactive budgeting tools and calculators to plan your finances better.',
+    category: 'finance',
+    route: '/finance',
+    highlightSelector: '.finance-tools',
+  },
+  
+  // Career Development
+  {
+    id: 'career-development',
+    title: 'Career Development',
+    content: 'Looking to advance your career, {userName}? This section helps you with resume building, interview preparation, and job search strategies.',
+    category: 'career',
+    route: '/career',
+  },
+  {
+    id: 'resume-builder',
+    title: 'Resume Builder',
+    content: 'Our AI-powered resume builder will help you create professional resumes tailored to specific job listings.',
+    category: 'career',
+    route: '/career',
+    highlightSelector: '.resume-builder',
+  },
+  
+  // Wellness & Nutrition
+  {
+    id: 'wellness',
+    title: 'Wellness & Nutrition',
+    content: '{userName}, your mental and physical health are connected. This section offers resources for both.',
+    category: 'wellness',
+    route: '/wellness',
+  },
+  {
+    id: 'meditation-guides',
+    title: 'Meditation Guides',
+    content: 'Try our guided meditation sessions designed to reduce stress and improve focus.',
+    category: 'wellness',
+    route: '/wellness',
+    highlightSelector: '.meditation-guide',
+  },
+  
+  // Active You
+  {
+    id: 'active-you',
+    title: 'Active You',
+    content: 'Ready to get moving, {userName}? This section provides personalized workout plans and fitness tracking.',
+    category: 'fitness',
+    route: '/active',
+  },
+  {
+    id: 'fitness-tracking',
+    title: 'Fitness Tracking',
+    content: 'Track your progress with our easy-to-use fitness trackers and get personalized recommendations.',
+    category: 'fitness',
+    route: '/active',
+    highlightSelector: '.fitness-tracker',
+  },
+  
+  // Emergency Guidance
+  {
+    id: 'emergency',
+    title: 'Emergency Guidance',
+    content: 'I hope you never need this, {userName}, but just in case - this section provides step-by-step guidance for various emergency situations.',
+    category: 'general',
+    route: '/emergency',
+  },
+  {
+    id: 'emergency-guides',
+    title: 'Emergency Guides',
+    content: 'Access quick, clear instructions for first aid, natural disasters, and other emergencies.',
+    category: 'general',
+    route: '/emergency',
+    highlightSelector: '.emergency-guides',
+  },
+  
   // Conclusion
   {
     id: 'conclusion',
