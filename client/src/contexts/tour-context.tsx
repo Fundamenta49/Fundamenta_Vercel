@@ -282,19 +282,28 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [endTour]);
 
   const restartTour = useCallback(() => {
+    console.log("EMERGENCY FIX: Restarting tour");
+    
     // Remove all highlights first to ensure a clean state
     document.querySelectorAll('.tour-highlight').forEach(el => {
       el.classList.remove('tour-highlight');
     });
     
-    // Remove tour-active class from body in case tour is still active
-    document.body.classList.remove('tour-active');
+    // Always ensure tour-active class is present
+    document.body.classList.add('tour-active');
     
-    // Clear any stored tour state and user name
+    // Preserve userName if it exists
+    const userNameToUse = userName || '';
+    
+    // Clear stored tour state
     localStorage.removeItem('hasSeenTour');
-    localStorage.removeItem('tourUserName');
     setHasSeenTour(false);
-    setUserName('');
+    
+    // Do NOT reset userName if it's already set - this helps with tour continuity
+    // But do save it to localStorage for persistence
+    if (userNameToUse) {
+      localStorage.setItem('tourUserName', userNameToUse);
+    } 
     
     // Also reset any stored chat messages
     try {
@@ -310,22 +319,29 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Dispatch a custom event to notify components of tour reset
     window.dispatchEvent(new CustomEvent('tour-reset'));
     
-    // Ensure we go back to the home page
+    // Always navigate to home page to ensure a clean start
+    console.log("EMERGENCY FIX: Navigating to home before starting tour");
+    
+    // Navigate to homepage
     setLocation('/');
     
-    // Use a small delay to ensure navigation completes before starting the tour
+    // Use a slightly longer delay to ensure navigation completes
     setTimeout(() => {
+      // Set DOM attributes as fallback storage (emergency feature)
+      document.body.setAttribute('data-tour-active', 'true');
+      document.body.setAttribute('data-tour-restarted', 'true');
+      
       startTour();
-    }, 100);
-  }, [setLocation, startTour]);
+    }, 300);
+  }, [setLocation, startTour, userName]);
 
+  // Get current location first so it can be used in other hooks
+  const [currentLocation] = useLocation();
+  
   // Get current step data
   const currentStep = isTourActive && currentStepIndex < tourSteps.length 
     ? tourSteps[currentStepIndex] 
     : null;
-
-  // Get current location
-  const [currentLocation] = useLocation();
 
   // EMERGENCY FIX: Simplified navigation effect to prevent infinite loops
   useEffect(() => {
