@@ -9,6 +9,7 @@ import { getAppFeaturesKnowledge } from "./app-features-knowledge";
 import { getFundiPersonalityPrompt } from "./fundi-personality-integration";
 import { userGuidePrompt, quickGuideInstructions, contextualGuidance, userGuideContent } from "./user-guide-content";
 import { userGuideService } from "../services/user-guide-service";
+import { isValidRoute, getSuggestedAlternativeRoute } from "../../shared/valid-routes";
 
 // Context interface 
 export interface AIContext {
@@ -390,15 +391,25 @@ export function processActions(aiResponse: any, category: string, context: AICon
       // If no path is provided, it's not a navigation suggestion, so keep it
       if (!suggestion.path) return true;
       
-      // Check that the path exists in our verified list of valid client routes
-      const isValidRoute = validClientRoutes.includes(suggestion.path);
+      // Check that the path exists using our validated routes utility
+      const pathIsValid = isValidRoute(suggestion.path);
       
-      // Log if we're filtering out an invalid route suggestion
-      if (!isValidRoute) {
-        console.warn(`Filtering out suggestion with invalid route: ${suggestion.path}`);
+      // If the route is invalid, try to find an alternative route
+      if (!pathIsValid) {
+        console.warn(`Invalid route suggested: ${suggestion.path}`);
+        const alternativeRoute = getSuggestedAlternativeRoute(suggestion.path);
+        
+        // Update the suggestion with the valid alternative route
+        if (alternativeRoute) {
+          console.log(`Replacing invalid route ${suggestion.path} with alternative: ${alternativeRoute}`);
+          suggestion.path = alternativeRoute;
+          return true;
+        } else {
+          console.warn(`No alternative found for invalid route: ${suggestion.path}`);
+        }
       }
       
-      return isValidRoute;
+      return pathIsValid;
     });
     
     // If invalid suggestions were filtered out, replace them with valid ones
@@ -417,8 +428,8 @@ export function processActions(aiResponse: any, category: string, context: AICon
     
     for (const suggestion of aiResponse.suggestions) {
       if (suggestion.path) {
-        // Verify the path is in our valid client routes list
-        if (validClientRoutes.includes(suggestion.path)) {
+        // Verify the path is valid using our route validation utility
+        if (isValidRoute(suggestion.path)) {
           // ALWAYS ensure the suggestion text is phrased as a question seeking permission
           let suggestionText = suggestion.text || '';
           
@@ -482,9 +493,9 @@ export function processActions(aiResponse: any, category: string, context: AICon
     // Only use valid client-side routes that are also categorized as emergency routes
     const validEmergencyRoutes = Object.entries(applicationRoutes)
       .filter(([path, routeInfo]) => {
-        // Check if route is both for emergency category and exists in valid client routes
+        // Check if route is both for emergency category and exists in valid routes
         return routeInfo.categories.includes("emergency") && 
-               validClientRoutes.includes(path);
+               isValidRoute(path);
       });
     
     if (validEmergencyRoutes.length > 0) {
@@ -503,7 +514,7 @@ export function processActions(aiResponse: any, category: string, context: AICon
       });
     } else {
       // Fallback to the main emergency route if it exists in valid routes
-      if (validClientRoutes.includes("/emergency") && !aiResponse.suggestions?.some((s: AppSuggestion) => s.path === "/emergency")) {
+      if (isValidRoute("/emergency") && !aiResponse.suggestions?.some((s: AppSuggestion) => s.path === "/emergency")) {
         if (!aiResponse.suggestions) {
           aiResponse.suggestions = [];
         }
@@ -524,7 +535,7 @@ export function processActions(aiResponse: any, category: string, context: AICon
     const repairAssistantPath = "/learning/courses/repair-assistant";
     const repairAssistantInfo = applicationRoutes[repairAssistantPath];
     
-    if (repairAssistantInfo && validClientRoutes.includes(repairAssistantPath) && 
+    if (repairAssistantInfo && isValidRoute(repairAssistantPath) && 
         !aiResponse.suggestions?.some((s: AppSuggestion) => s.path === repairAssistantPath)) {
       
       if (!aiResponse.suggestions) {
