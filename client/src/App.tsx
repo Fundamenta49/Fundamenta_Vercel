@@ -49,6 +49,7 @@ import Tour from "./components/tour";
 import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
+import PersonalityTestPage from "@/pages/admin/personality-test";
 import ProtectedRoute from "@/components/protected-route";
 
 // Component to handle redirects from /wellness/* to /wellness?section=*
@@ -190,6 +191,7 @@ function Router() {
               </ProtectedRoute>
             </Route>
             <Route path="/admin" component={AdminPage} />
+            <Route path="/admin/personality-test" component={PersonalityTestPage} />
             <Route path="/design-showcase" component={DesignShowcasePage} />
             <Route path="/learning">
               <ProtectedRoute>

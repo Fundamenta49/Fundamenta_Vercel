@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { orchestrateAIResponse } from "./ai/index";
 import { fallbackAIService } from "./ai/ai-fallback-strategy";
+import { getFundiPersonalityElements, getFundiPersonalityPrompt } from "./ai/fundi-personality-integration";
 import { insertUserGoalSchema, insertNotificationSchema, insertUserAchievementSchema, insertUserInfoSchema, insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { userService, userInfoService, conversationService, messageService } from './db/services';
@@ -1120,6 +1121,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         error: "Failed to reset fallback system"
+      });
+    }
+  });
+
+  // Fundi personality test routes
+  app.post("/api/test-fundi-prompt", (req, res) => {
+    try {
+      const prompt = getFundiPersonalityPrompt();
+      res.json({
+        success: true,
+        prompt
+      });
+    } catch (error) {
+      console.error("Error generating Fundi personality prompt:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to generate Fundi personality prompt"
+      });
+    }
+  });
+  
+  app.post("/api/admin/get-fundi-personality-elements", (req, res) => {
+    try {
+      const elements = getFundiPersonalityElements();
+      res.json({
+        success: true,
+        elements
+      });
+    } catch (error) {
+      console.error("Error getting Fundi personality elements:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to get Fundi personality elements"
       });
     }
   });

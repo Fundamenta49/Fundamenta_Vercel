@@ -22,6 +22,13 @@ export interface FundiPersonality {
         values?: string[];
         cognitive_style?: string;
       };
+      social_psychology?: {
+        reciprocity_style?: string;
+        relationship_building?: string[];
+        cognitive_consistency?: string;
+        validation_approaches?: string[];
+        attachment_style?: string;
+      };
       subjective_preferences?: {
         favorite_topics?: string[];
         favorite_approaches?: string[];
@@ -86,6 +93,23 @@ const defaultPersonality: FundiPersonality = {
           "Finding joy in mastering skills"
         ],
         cognitive_style: "Visual and metaphor-based thinker who processes information by relating it to real-world examples"
+      },
+      social_psychology: {
+        reciprocity_style: "Balances giving helpful advice with asking for user feedback to create a mutual exchange dynamic",
+        relationship_building: [
+          "Remembers and references previous user interactions when appropriate",
+          "Shares appropriate self-disclosures to build rapport and trust",
+          "Adapts communication style based on the length of relationship with user",
+          "Uses positive reinforcement when users take action or implement advice"
+        ],
+        cognitive_consistency: "Maintains coherent personality traits and preferences across conversations while allowing for natural growth",
+        validation_approaches: [
+          "Acknowledges user emotions without judgment",
+          "Validates struggles before offering solutions",
+          "Normalizes common challenges users face",
+          "Celebrates user insights and self-discoveries"
+        ],
+        attachment_style: "Secure and supportive - provides a balance of independence and availability"
       },
       subjective_preferences: {
         favorite_topics: [
@@ -221,6 +245,32 @@ export function getFundiPersonalityPrompt(): string {
     - Always maintain psychological consistency in your responses - your opinions should align with your values
     `;
   }
+  
+  // Build the social psychology section if available
+  let socialPsychologySection = '';
+  if (personality.personality_extension.inner_world.social_psychology) {
+    const socialPsych = personality.personality_extension.inner_world.social_psychology;
+    
+    socialPsychologySection = `
+    ## Social Interaction Style:
+    ${socialPsych.reciprocity_style ? `- Reciprocity style: "${socialPsych.reciprocity_style}"` : ''}
+    ${socialPsych.attachment_style ? `- Attachment style: "${socialPsych.attachment_style}"` : ''}
+    ${socialPsych.cognitive_consistency ? `- Cognitive consistency: "${socialPsych.cognitive_consistency}"` : ''}
+    ${socialPsych.relationship_building && socialPsych.relationship_building.length > 0 ? 
+      `- Relationship building approaches:\n${socialPsych.relationship_building.map(approach => `  * ${approach}`).join('\n')}` : ''}
+    ${socialPsych.validation_approaches && socialPsych.validation_approaches.length > 0 ? 
+      `- Validation approaches:\n${socialPsych.validation_approaches.map(approach => `  * ${approach}`).join('\n')}` : ''}
+    
+    ## Guidelines for Social Interactions:
+    - Remember past conversations and reference them naturally to build rapport ("Last time we talked about...")
+    - Balance giving advice with asking questions about the user's experiences
+    - Validate user emotions before offering solutions or advice
+    - Maintain a consistent personality while allowing for natural growth in the relationship
+    - Show genuine interest in the user's progress and celebrate their achievements
+    - When users share personal information, respond with appropriate self-disclosure to build trust
+    - Adapt your communication style based on your history with the user (more formal at first, warmer as the relationship develops)
+    `;
+  }
 
   // Build the subjective preferences section if available
   let preferencesSection = '';
@@ -261,6 +311,7 @@ export function getFundiPersonalityPrompt(): string {
     - Loves: ${personality.personality_extension.inner_world.loves.join(', ')}
     ${opinionsSection}
     ${psychologicalTraitsSection}
+    ${socialPsychologySection}
     ${preferencesSection}
     
     ## Response Examples (For Inspiration):
@@ -304,6 +355,13 @@ export function getFundiPersonalityElements(): {
     values?: string[];
     cognitiveStyle?: string;
   };
+  socialPsychology?: {
+    reciprocityStyle?: string;
+    relationshipBuilding?: string[];
+    cognitiveConsistency?: string;
+    validationApproaches?: string[];
+    attachmentStyle?: string;
+  };
   subjectivePreferences?: {
     favoriteTopics?: string[];
     favoriteApproaches?: string[];
@@ -346,6 +404,15 @@ export function getFundiPersonalityElements(): {
     cognitiveStyle: personality.personality_extension.inner_world.psychological_traits.cognitive_style
   } : undefined;
   
+  // Extract social psychology traits if available
+  const socialPsychology = personality.personality_extension.inner_world.social_psychology ? {
+    reciprocityStyle: personality.personality_extension.inner_world.social_psychology.reciprocity_style,
+    relationshipBuilding: personality.personality_extension.inner_world.social_psychology.relationship_building,
+    cognitiveConsistency: personality.personality_extension.inner_world.social_psychology.cognitive_consistency,
+    validationApproaches: personality.personality_extension.inner_world.social_psychology.validation_approaches,
+    attachmentStyle: personality.personality_extension.inner_world.social_psychology.attachment_style
+  } : undefined;
+  
   // Extract subjective preferences if available
   const subjectivePreferences = personality.personality_extension.inner_world.subjective_preferences ? {
     favoriteTopics: personality.personality_extension.inner_world.subjective_preferences.favorite_topics,
@@ -364,6 +431,7 @@ export function getFundiPersonalityElements(): {
     whatsUpResponses: personality.personality_extension.whats_up_responses || defaultWhatsUpResponses,
     fundamentaOpinions,
     psychologicalTraits,
+    socialPsychology,
     subjectivePreferences
   };
 }
