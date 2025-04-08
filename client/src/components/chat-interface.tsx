@@ -792,7 +792,9 @@ export default function ChatInterface({
                       : `${categoryColors[msg.category || category]}30`, // 30% opacity
                     color: msg.role === 'user' ? 'white' : '',
                     width: 'auto',
-                    maxWidth: window.innerWidth < 768 ? '80%' : '85%'
+                    maxWidth: window.innerWidth < 768 ? '70%' : '85%',
+                    overflowWrap: 'break-word',
+                    wordBreak: 'break-word'
                   }}
                 >
                   {msg.role === 'assistant' && (
@@ -832,7 +834,11 @@ export default function ChatInterface({
                       )}
                     </div>
                   )}
-                  <p className="text-[11px] sm:text-xs md:text-sm leading-tight whitespace-pre-wrap break-words">{msg.content}</p>
+                  <p className="text-[11px] sm:text-xs md:text-sm leading-tight whitespace-pre-wrap break-words chat-message-content" style={{
+                    maxWidth: "100%",
+                    overflow: "hidden",
+                    wordBreak: "break-word"
+                  }}>{msg.content}</p>
                   <p className="text-[7px] sm:text-[8px] opacity-60 text-right mt-0.5">
                     {msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                   </p>

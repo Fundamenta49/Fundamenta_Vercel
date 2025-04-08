@@ -1050,14 +1050,19 @@ export default function FundiInteractiveAssistant({
                                   message.isUser ? "rounded-tr-lg rounded-br-2xl" : "rounded-tl-lg rounded-bl-2xl" : ""
                               )}
                               style={{
-                                maxWidth: window.innerWidth < 768 ? "240px" : "280px", // Narrower on mobile for better visibility
+                                maxWidth: window.innerWidth < 768 ? "220px" : "280px", // Even narrower on mobile for better visibility
                                 wordWrap: "break-word", // Ensure long words break
                                 overflowWrap: "break-word", // Modern alternative to word-wrap
+                                wordBreak: "break-word", // Force break long words
                                 hyphens: "auto", // Add hyphens when breaking words
-                                fontSize: window.innerWidth < 768 ? "14px" : "12px" // Larger text on mobile for better readability
+                                fontSize: window.innerWidth < 768 ? "13px" : "12px", // Balanced text size on mobile
+                                whiteSpace: "pre-wrap" // Preserve line breaks but wrap text
                               }}
                             >
-                              <div className="leading-relaxed whitespace-normal">{message.text}</div>
+                              <div className="leading-relaxed whitespace-pre-wrap break-words chat-message-content" style={{ 
+                                maxWidth: "100%", 
+                                overflow: "hidden"
+                              }}>{message.text}</div>
                             </div>
                           </div>
                         );

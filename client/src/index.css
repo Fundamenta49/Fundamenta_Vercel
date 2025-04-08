@@ -553,9 +553,17 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   .resizable-chat {
     max-height: 350px !important; /* Fixed height */
     height: 350px !important; /* Force height to be fixed */
-    max-width: 280px !important; /* Fixed width */
-    width: 280px !important; /* Force width to be fixed */
+    max-width: 300px !important; /* Fixed width */
+    width: 300px !important; /* Force width to be fixed */
     right: 10px !important; /* Position from right edge */
+  }
+  
+  /* Ensure chat messages don't overflow on mobile */
+  .chat-message-content {
+    max-width: 220px !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
   }
 }
 
