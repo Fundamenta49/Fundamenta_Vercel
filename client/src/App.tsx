@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Layout from "@/components/layout";
 import NotFound from "@/pages/not-found";
 import RobotFundi from "@/components/robot-fundi";
+import { ForceRestartTour } from "@/components/tour/force-restart-tour";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
 import Partner from "@/pages/partner";
@@ -109,6 +110,7 @@ function Router() {
       <Route>
         <Layout>
           <Tour />
+          <ForceRestartTour />
           <Switch>
             <Route path="/">
               <ProtectedRoute>

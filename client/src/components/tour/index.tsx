@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useEffect } from 'react';
 import TourHighlight from './tour-highlight';
 import FundiTourGuide from './fundi-tour-guide';
+import TourEmergencyFix from './tour-emergency-fix';
 import { useTour } from '@/contexts/tour-context';
 
 // Main tour component that includes all tour-related subcomponents
@@ -61,6 +62,7 @@ const Tour = () => {
 
   return (
     <>
+      <TourEmergencyFix />
       <FundiTourGuide />
       <TourHighlight />
     </>
