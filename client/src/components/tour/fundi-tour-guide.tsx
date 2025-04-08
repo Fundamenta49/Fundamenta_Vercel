@@ -22,8 +22,9 @@ export default function FundiTourGuide() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [thinking, setThinking] = useState(false);
-  const [position, setPosition] = useState({ x: 50, y: 50 });
-  const [targetPosition, setTargetPosition] = useState({ x: 50, y: 50 });
+  const [position, setPosition] = useState({ x: 166, y: 80 });
+  const [targetPosition, setTargetPosition] = useState({ x: 166, y: 80 });
+  console.log("FundiTourGuide mounted with initial position:", { x: 166, y: 80 });
   const [animate, setAnimate] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
@@ -470,12 +471,50 @@ export default function FundiTourGuide() {
     
     // Set up interval to check if Fundi is still visible
     const interval = setInterval(() => {
-      // Check if Fundi elements are visible
-      const fundiRobot = document.querySelector('.robot-container');
+      // Check if Fundi elements are visible using any possible selector
+      const fundiRobot = document.querySelector('.robot-container, .robot-fundi, .fundi-wrapper, .tour-fundi-robot, .tour-robot-visible');
+      
       if (fundiRobot) {
         console.log('Fundi robot is visible');
       } else {
         console.log('Fundi robot is NOT visible - potential issue');
+        
+        // Get the speech bubble element first
+        const speechBubble = document.querySelector('div[style*="width: 300px"]');
+        if (speechBubble) {
+          console.log('Found speech bubble - its parent should contain the Fundi robot');
+          
+          // If we found the speech bubble, make sure its parent is visible
+          const speechParent = speechBubble.parentElement;
+          if (speechParent && speechParent instanceof HTMLElement) {
+            console.log('Found speech bubble parent - forcing visibility');
+            speechParent.style.display = 'block';
+            speechParent.style.visibility = 'visible';
+            speechParent.style.opacity = '1';
+          }
+        }
+        
+        // Try to force Fundi to display by modifying styles directly for all fixed elements
+        const fundiElements = document.querySelectorAll('div[style*="position: fixed"]');
+        fundiElements.forEach(element => {
+          if (element instanceof HTMLElement) {
+            element.style.display = 'block';
+            element.style.visibility = 'visible';
+            element.style.opacity = '1';
+            console.log('Applied emergency visibility fix to fixed position element');
+          }
+        });
+        
+        // Explicitly search for RobotFundi and make it visible
+        const robotFundiElements = document.querySelectorAll('.tour-fundi-robot, .tour-robot-visible');
+        robotFundiElements.forEach(element => {
+          if (element instanceof HTMLElement) {
+            element.style.display = 'block';
+            element.style.visibility = 'visible';
+            element.style.opacity = '1';
+            console.log('Applied emergency visibility fix to Fundi robot element');
+          }
+        });
       }
     }, 5000);
     
@@ -503,7 +542,7 @@ export default function FundiTourGuide() {
       {/* Fundi Robot with fixed position and limited animation - now contains the speech bubble */}
       <motion.div
         className="fixed z-[99999]"
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 1, scale: 0.8 }}
         animate={{ 
           opacity: 1, 
           scale: 1,
@@ -522,11 +561,13 @@ export default function FundiTourGuide() {
           width: '80px', 
           height: '80px',
           willChange: 'transform', // Optimize for animation performance
-          position: 'relative' // Added for proper child positioning
+          position: 'relative', // Added for proper child positioning
+          display: 'block', // Ensure it's displayed
+          visibility: 'visible' // Ensure it's visible
         }}
       >
         {/* Fundi Character */}
-        <div className="w-20 h-20">
+        <div className="w-20 h-20 tour-fundi-robot">
           <FundiPersonalityAdapter>
             <RobotFundi
               speaking={speaking}
