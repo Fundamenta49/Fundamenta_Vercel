@@ -330,12 +330,15 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     ? tourSteps[currentStepIndex] 
     : null;
 
-  // Navigate to the correct route when step changes
+  // Navigate to the correct route when step changes - but only when the route actually changes
+  const [lastNavigatedRoute, setLastNavigatedRoute] = useState<string>('/');
   useEffect(() => {
-    if (isTourActive && currentStep?.route) {
+    if (isTourActive && currentStep?.route && currentStep.route !== lastNavigatedRoute) {
+      console.log(`Tour navigating from ${lastNavigatedRoute} to ${currentStep.route}`);
+      setLastNavigatedRoute(currentStep.route);
       setLocation(currentStep.route);
     }
-  }, [currentStepIndex, isTourActive, currentStep, setLocation]);
+  }, [currentStepIndex, isTourActive, currentStep, setLocation, lastNavigatedRoute]);
   
   // Clean up when component unmounts to ensure tour-active class is removed
   useEffect(() => {

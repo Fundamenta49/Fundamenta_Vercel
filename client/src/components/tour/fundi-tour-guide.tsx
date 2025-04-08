@@ -158,7 +158,9 @@ export default function FundiTourGuide() {
   useEffect(() => {
     if (!isTourActive || !currentStep) return;
     
-    // Reset transition state
+    console.log(`Tour step changed - stepIndex=${currentStepIndex}, current route: ${currentRoute}, step route: ${currentStep.route}`);
+    
+    // Reset transition state when the step changes
     setIsTransitioning(false);
     
     // Show Fundi thinking briefly
@@ -173,16 +175,18 @@ export default function FundiTourGuide() {
       }, 2000);
     }, 800);
     
+    // Compare routes to determine if page has changed
     // Only reposition Fundi when the route (page) changes
-    // We previously also repositioned on mobile, but that functionality has been removed
     const pageChanged = currentRoute !== currentStep.route;
-    const shouldRepositionFundi = pageChanged;
     
-    if (shouldRepositionFundi) {
-      // Update our current route tracking
-      setCurrentRoute(currentStep.route || null);
-      
-      // Position Fundi based on the current step
+    // Update our current route tracking ALWAYS when the step changes
+    // This ensures our route tracking stays in sync
+    if (currentStep.route) {
+      setCurrentRoute(currentStep.route);
+    }
+    
+    // Position Fundi based on the current step and whether the page changed
+    const positionFundi = () => {
       // Check if we're on mobile
       const isMobile = window.innerWidth < 640;
       const viewportWidth = window.innerWidth;
@@ -203,7 +207,6 @@ export default function FundiTourGuide() {
             newX = position.x;
             newY = position.y;
             
-            // Log position for debugging
             console.log(`Fundi position (mobile): x=${newX}px, y=${newY}px, step=${currentStepIndex}`);
           } else if (rect.right + 150 < viewportWidth) {
             // Position to the right of the highlight
@@ -223,31 +226,28 @@ export default function FundiTourGuide() {
           
           setTargetPosition({ x: newX, y: newY });
           setAnimate(true);
-          console.log("Repositioning Fundi because page changed");
-        } else {
-          // If element not found, use predefined positions
-          const position = getFundiPosition(currentStepIndex, isMobile);
-          setTargetPosition(position);
-          setAnimate(true);
-          console.log(`Fundi position (no element): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
-        }
-      } else {
-        // For general steps without a specific element, use predefined positions
-        const position = getFundiPosition(currentStepIndex, isMobile);
-        setTargetPosition(position);
-        setAnimate(true);
-        console.log(`Fundi position (general): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
-      }
-    } else {
-      console.log("Keeping Fundi at current position - same page");
-    }
+          return true;
+        } 
+      } 
+      
+      // If no highlight selector or element not found, use predefined positions
+      const position = getFundiPosition(currentStepIndex, isMobile);
+      setTargetPosition(position);
+      setAnimate(true);
+      console.log(`Fundi position (general): x=${position.x}px, y=${position.y}px, step=${currentStepIndex}`);
+      return true;
+    };
+    
+    // Always position Fundi for better consistency
+    // This prevents the tour from getting "stuck" in odd states
+    positionFundi();
     
     // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     
-    // Scroll element into view if highlighted
+    // Scroll element into view if highlighted - add a delay to ensure the page has loaded
     if (currentStep.highlightSelector) {
       timeoutRef.current = setTimeout(() => {
         const element = document.querySelector(currentStep.highlightSelector as string);
@@ -268,7 +268,7 @@ export default function FundiTourGuide() {
         el.classList.remove('tour-card-highlight');
       });
     };
-  }, [isTourActive, currentStep, currentStepIndex, currentRoute]);
+  }, [isTourActive, currentStep, currentStepIndex]);
   
   // Update position when target changes
   useEffect(() => {
@@ -317,9 +317,23 @@ export default function FundiTourGuide() {
         onClick={(e) => {
           // Click anywhere to advance the tour - direct call to nextStep instead of handleNextStep
           e.stopPropagation(); // Prevent any event bubbling issues
+          e.preventDefault(); // Prevent any default behavior
+          
+          // Add additional safeguards to prevent rapid clicks or transitions
           if (!isTransitioning && currentStepIndex < totalSteps - 1) {
             console.log("Overlay clicked - direct advance to next step");
-            nextStep(); // Direct call to context function
+            // Set transitioning state to prevent multiple clicks
+            setIsTransitioning(true);
+            
+            // Small delay to prevent multiple rapid clicks
+            setTimeout(() => {
+              nextStep(); // Call the nextStep function in the tour context
+              
+              // Reset transitioning state after a delay to allow for animations
+              setTimeout(() => {
+                setIsTransitioning(false);
+              }, 800); // Match this with animation durations
+            }, 50);
           }
         }}
       />
@@ -421,8 +435,23 @@ export default function FundiTourGuide() {
                 size="sm" 
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log("Back button clicked directly");
-                  prevStep(); // Direct call to context function
+                  e.preventDefault();
+                  
+                  if (!isTransitioning && currentStepIndex > 0) {
+                    console.log("Back button clicked directly");
+                    // Set transitioning state to prevent multiple clicks
+                    setIsTransitioning(true);
+                    
+                    // Small delay to prevent rapid clicks
+                    setTimeout(() => {
+                      prevStep(); // Direct call to context function
+                      
+                      // Reset transitioning state after a delay
+                      setTimeout(() => {
+                        setIsTransitioning(false);
+                      }, 500);
+                    }, 50);
+                  }
                 }}
                 disabled={currentStepIndex === 0 || isTransitioning}
                 className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
@@ -437,8 +466,18 @@ export default function FundiTourGuide() {
                 size="sm" 
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log("Skip button clicked directly");
-                  skipTour();
+                  e.preventDefault();
+                  
+                  if (!isTransitioning) {
+                    console.log("Skip button clicked directly");
+                    // Set transitioning state to prevent multiple clicks
+                    setIsTransitioning(true);
+                    
+                    // Small delay to prevent rapid clicks
+                    setTimeout(() => {
+                      skipTour(); // Direct call to context function
+                    }, 50);
+                  }
                 }}
                 disabled={isTransitioning}
                 className="h-7 sm:h-7 px-1.5 sm:px-2 text-xs sm:text-xs"
@@ -453,8 +492,23 @@ export default function FundiTourGuide() {
               size="sm" 
               onClick={(e) => {
                 e.stopPropagation(); // Stop event bubbling
-                console.log("Next button clicked directly - using context nextStep"); 
-                nextStep(); // Direct call to context function instead of local handler
+                e.preventDefault(); // Prevent any default behavior
+
+                if (!isTransitioning) {
+                  console.log("Next button clicked directly - using context nextStep"); 
+                  // Set transitioning state to prevent multiple clicks
+                  setIsTransitioning(true);
+                  
+                  // Small delay to prevent rapid clicks
+                  setTimeout(() => {
+                    nextStep(); // Direct call to context function
+                    
+                    // Reset transitioning state after a delay
+                    setTimeout(() => {
+                      setIsTransitioning(false);
+                    }, 500);
+                  }, 50);
+                }
               }}
               disabled={isTransitioning}
               className="h-7 sm:h-7 px-2 sm:px-3 text-xs sm:text-xs"
