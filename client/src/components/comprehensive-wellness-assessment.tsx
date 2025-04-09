@@ -1599,9 +1599,9 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <Button 
             onClick={() => setIsOpen(true)}
             size="lg"
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 self-start mt-2 sm:mt-0 w-full sm:w-auto"
+            className="bg-gradient-to-r from-purple-300 to-indigo-300 hover:from-purple-400 hover:to-indigo-400 text-purple-900 self-start mt-2 sm:mt-0 w-full sm:w-auto"
           >
-            <Heart className="h-5 w-5 mr-2 fill-white/10" />
+            <Heart className="h-5 w-5 mr-2 fill-purple-200" />
             <span>Start Assessment</span>
           </Button>
         </div>
