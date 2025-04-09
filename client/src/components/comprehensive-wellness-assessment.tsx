@@ -1583,7 +1583,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
   };
 
   return (
-    <Card className="w-full shadow-sm">
+    <Card className="w-full max-w-5xl mx-auto shadow-sm">
       <CardHeader className="pb-0">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
@@ -1608,8 +1608,8 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       </CardHeader>
       
       <CardContent className="pt-6">
-        <div className="rounded-xl bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 p-6 relative overflow-hidden">
-          <div className="max-w-2xl">
+        <div className="rounded-xl bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 p-6 md:p-8 relative overflow-hidden">
+          <div className="max-w-4xl mx-auto">
             <h3 className="text-xl font-semibold text-purple-900 mb-3">Body & Mind Wellness Profile</h3>
             <p className="text-gray-700 mb-4">
               This comprehensive assessment combines nutrition and mental health analysis to create a holistic view of your wellbeing.
