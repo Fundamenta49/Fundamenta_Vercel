@@ -45,6 +45,16 @@ export default function FundiTourGuide() {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
+    // For mobile devices, we'll use fixed positioning controlled by CSS instead of calculating positions
+    // This provides a more consistent experience on small screens
+    if (isMobile) {
+      // Return a dummy position that will be overridden by CSS in mobile mode
+      // We're using { x: 0, y: 0 } because our CSS will apply transformX(-50%) to center the robot
+      console.log("Using mobile optimized positioning");
+      return { x: 0, y: 0 };
+    }
+    
+    // Desktop positioning logic - keeps the existing functionality for desktop
     // Find all the feature cards on the page - looking specifically for cards in grid sections
     const featureCards = document.querySelectorAll('.card');
     const cardPositions: Array<{ x: number; y: number; element: Element }> = [];
@@ -78,11 +88,11 @@ export default function FundiTourGuide() {
       });
     }
     
-    // If no cards found or on very small screens, use fallback positions
-    if (cardPositions.length === 0 || viewportWidth < 500) {
+    // If no cards found or on small desktop screens, use fallback positions
+    if (cardPositions.length === 0) {
       // Define fallback positions for different points around the screen
       // Set a stricter maximum X position for desktop to prevent Fundi from moving too far right
-      const maxDesktopX = isMobile ? viewportWidth - 100 : Math.min(500, viewportWidth - 200);
+      const maxDesktopX = Math.min(500, viewportWidth - 200);
       
       const fallbackPositions = [
         { x: Math.min(viewportWidth / 4, maxDesktopX), y: 120 },  // Top left area
@@ -91,30 +101,6 @@ export default function FundiTourGuide() {
         { x: Math.min(viewportWidth / 4, maxDesktopX), y: Math.min(viewportHeight / 2, 400) },  // Middle left
         { x: Math.min(viewportWidth * 0.6, maxDesktopX), y: Math.min(viewportHeight / 2, 400) },  // Middle right (reduced from 0.75)
       ];
-      
-      // For mobile, use more diverse positions optimized for highlighting different cards
-      if (isMobile) {
-        const mobilePositions = [
-          // Upper positions
-          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: 80 },  // Top center
-          { x: Math.min(viewportWidth / 3 - 20, viewportWidth - 80), y: 120 }, // Top left-ish
-          { x: Math.min(viewportWidth * 0.7, viewportWidth - 80), y: 100 },    // Top right-ish
-          
-          // Middle positions
-          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: Math.min(viewportHeight * 0.3, 180) }, // Middle upper
-          { x: Math.min(viewportWidth / 3 - 20, viewportWidth - 80), y: Math.min(viewportHeight * 0.35, 200) }, // Middle left
-          { x: Math.min(viewportWidth * 0.7, viewportWidth - 80), y: Math.min(viewportHeight * 0.32, 190) },  // Middle right
-          
-          // Lower positions for highlighting lower content
-          { x: Math.min(viewportWidth / 2 - 30, viewportWidth - 80), y: Math.min(viewportHeight * 0.45, 240) }, // Lower middle
-          { x: Math.min(viewportWidth / 3 - 20, viewportWidth - 80), y: Math.min(viewportHeight * 0.5, 260) },  // Lower left
-          { x: Math.min(viewportWidth * 0.7, viewportWidth - 80), y: Math.min(viewportHeight * 0.48, 250) },   // Lower right
-        ];
-        
-        // Use modulo to cycle through positions safely
-        const positionIndex = stepIndex % mobilePositions.length;
-        return mobilePositions[positionIndex];
-      }
       
       // Use modulo to cycle through fallback positions if no cards found
       const positionIndex = stepIndex % fallbackPositions.length;
@@ -129,8 +115,8 @@ export default function FundiTourGuide() {
     const selectedPosition = cardPositions[positionIndex];
     
     // Always ensure position stays within the viewport
-    // Apply stricter limits on desktop to prevent Fundi from going too far right
-    const maxDesktopX = isMobile ? viewportWidth - 100 : Math.min(500, viewportWidth - 200);
+    // Apply desktop limits to prevent Fundi from going too far right
+    const maxDesktopX = Math.min(500, viewportWidth - 200);
     const finalPosition = {
       x: Math.max(20, Math.min(selectedPosition.x, maxDesktopX)),
       y: Math.max(20, Math.min(selectedPosition.y, viewportHeight - 200))
@@ -346,7 +332,7 @@ export default function FundiTourGuide() {
       
       {/* Fundi Robot with fixed position and limited animation - now contains the speech bubble */}
       <motion.div
-        className="fixed z-[99999]"
+        className={`fixed z-[99999] ${window.innerWidth < 640 ? 'mobile-tour-fundi' : ''}`}
         initial={{ opacity: 1, scale: 0.8 }}
         animate={{ 
           opacity: 1, 
@@ -402,16 +388,20 @@ export default function FundiTourGuide() {
           }}
           style={{ 
             width: '300px', // Increased width for longer introduction text
-            maxWidth: `calc(100vw - 140px)`, // Reduced max width to ensure it stays on screen
+            maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : 'calc(100vw - 140px)', // More width on mobile
             height: 'auto', // Auto height based on content
             maxHeight: `calc(90vh - 100px)`, // Responsive max height
             boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
             willChange: 'transform', // Performance optimization
             transformOrigin: 'center top', // Consistent transform origin
             overflowY: 'auto', // Allow scrolling if content is too tall
-            top: '0px', // Align with Fundi vertically
-            right: '85px', // Position to the left of Fundi (changed from left to right)
-            fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' // Responsive font size
+            top: window.innerWidth < 640 ? 'auto' : '0px', // Different position on mobile
+            bottom: window.innerWidth < 640 ? '100px' : 'auto', // Position above robot on mobile
+            left: window.innerWidth < 640 ? '50%' : 'auto', // Center on mobile
+            transform: window.innerWidth < 640 ? 'translateX(-50%)' : 'none', // Center on mobile 
+            right: window.innerWidth < 640 ? 'auto' : '85px', // Different position between desktop/mobile
+            fontSize: 'clamp(0.75rem, 2vw, 0.9rem)', // Responsive font size
+            zIndex: 99998 // Ensure proper stacking
           }}
         >
           {/* No pointer for cleaner look - bubble is now directly attached to Fundi */}

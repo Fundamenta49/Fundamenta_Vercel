@@ -23,14 +23,28 @@ const Tour = () => {
           // Make sure dialog has a proper background and isn't transparent
           if (dialog instanceof HTMLElement) {
             dialog.style.backgroundColor = 'white';
-            dialog.style.borderRadius = '0.5rem';
+            dialog.style.borderRadius = '0.75rem';
             dialog.style.border = '1px solid rgba(0, 0, 0, 0.1)';
             dialog.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)';
-            dialog.style.maxHeight = '65vh';
+            dialog.style.maxHeight = '70vh';
             dialog.style.overflowY = 'auto';
+            dialog.style.width = 'calc(100% - 1rem)';
+            dialog.style.margin = '0 auto';
+            dialog.style.bottom = '1rem';
+            dialog.style.left = '0.5rem';
+            dialog.style.right = '0.5rem';
           }
         } else {
           dialog.classList.remove('mobile-tour-dialog');
+          
+          // Reset styles for desktop
+          if (dialog instanceof HTMLElement) {
+            dialog.style.width = '';
+            dialog.style.margin = '';
+            dialog.style.bottom = '';
+            dialog.style.left = '';
+            dialog.style.right = '';
+          }
         }
       });
     };

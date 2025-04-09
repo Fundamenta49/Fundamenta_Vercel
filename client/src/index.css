@@ -367,6 +367,13 @@
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+    /* Improved mobile positioning - anchor to bottom of screen */
+    position: fixed !important;
+    bottom: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    top: auto !important;
+    right: auto !important;
   }
   
   body.tour-active .fixed.z-\[99998\] {
@@ -375,8 +382,16 @@
     opacity: 1 !important;
     max-width: calc(100vw - 40px) !important;
     width: auto !important;
-    min-width: 250px !important;
+    min-width: 240px !important;
     transition: none !important;
+    /* Improved mobile positioning - ensure it doesn't overlap the Fundi robot */
+    position: fixed !important;
+    top: auto !important;
+    bottom: 100px !important;  /* Position above robot */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important;
+    margin: 0 auto !important;
   }
   
   /* Ensure the tour stays within viewport on mobile */
@@ -531,6 +546,42 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"][style*="trans
 body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="translateX(-"])::before {
   left: -30px;
   transform: rotate(20deg);
+}
+
+/* Mobile-specific connection line */
+@media (max-width: 639px) {
+  body.tour-active .fixed.z-\[99998\]::before {
+    width: 2px;
+    height: 30px;
+    left: 50%;
+    top: auto;
+    bottom: -30px;
+    transform: none !important;
+    background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.4), rgba(var(--primary-rgb), 0.1));
+  }
+  
+  /* Mobile tour-specific styles for Fundi */
+  .mobile-tour-fundi {
+    position: fixed !important;
+    bottom: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    top: auto !important; 
+    right: auto !important;
+  }
+  
+  /* Improve button spacing and sizing in mobile tour */
+  [data-tour-button] {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  /* Make sure the Fundi robot stays at the bottom on mobile */
+  body.tour-active .mobile-tour-fundi {
+    bottom: 20px !important;
+    transform: translateX(-50%) !important;
+    position: fixed !important;
+  }
 }
 
 /* Chat resizing styles */
