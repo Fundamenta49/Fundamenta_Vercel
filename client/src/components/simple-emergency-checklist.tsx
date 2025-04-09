@@ -6,7 +6,8 @@ import {
   Save, 
   Trash2,
   ListChecks,
-  ShoppingBag
+  ShoppingBag,
+  Heart
 } from "lucide-react";
 import {
   Card, 
@@ -40,77 +41,129 @@ const generateId = (prefix: string): string => {
 
 // Default emergency supplies checklist
 const defaultSupplies: ChecklistItem[] = [
-  // Basic Supplies
-  { id: "supply-1", text: "Batteries (AAA)", completed: false },
-  { id: "supply-2", text: "Batteries (AA)", completed: false },
-  { id: "supply-3", text: "Batteries (D)", completed: false },
-  { id: "supply-4", text: "Flashlights", completed: false },
-  { id: "supply-5", text: "AM/FM Radio (battery-powered)", completed: false },
-  { id: "supply-6", text: "Battery-powered fan", completed: false },
-  { id: "supply-7", text: "Propane stove", completed: false },
-  { id: "supply-8", text: "Matches/lighters", completed: false },
-  { id: "supply-9", text: "Candles", completed: false },
-  { id: "supply-10", text: "Water (1 gallon per person per day)", completed: false },
+  // Batteries & Lighting
+  { id: "battery-1", text: "AAA Batteries", completed: false },
+  { id: "battery-2", text: "AA Batteries", completed: false },
+  { id: "battery-3", text: "D Batteries", completed: false },
+  { id: "battery-4", text: "9V Batteries", completed: false },
+  { id: "light-1", text: "Flashlights", completed: false },
+  { id: "light-2", text: "Candles", completed: false },
+  { id: "light-3", text: "Matches/Lighters", completed: false },
+  { id: "light-4", text: "Battery Lanterns", completed: false },
   
-  // First Aid Kit
-  { id: "firstaid-1", text: "First Aid Kit - Bandages", completed: false },
-  { id: "firstaid-2", text: "First Aid Kit - Gauze", completed: false },
-  { id: "firstaid-3", text: "First Aid Kit - Adhesive tape", completed: false },
-  { id: "firstaid-4", text: "First Aid Kit - Alcohol wipes", completed: false },
-  { id: "firstaid-5", text: "First Aid Kit - Antiseptic ointment", completed: false },
-  { id: "firstaid-6", text: "First Aid Kit - Pain relievers", completed: false },
-  { id: "firstaid-7", text: "First Aid Kit - Scissors", completed: false },
-  { id: "firstaid-8", text: "First Aid Kit - Tweezers", completed: false },
+  // Electronics & Communication
+  { id: "elec-1", text: "AM/FM Radio (battery-powered)", completed: false },
+  { id: "elec-2", text: "Portable Phone Charger", completed: false },
+  { id: "elec-3", text: "Battery-powered Fan", completed: false },
+  { id: "elec-4", text: "Whistle", completed: false },
   
-  // Medications
-  { id: "meds-1", text: "Personal medications (2-week supply)", completed: false },
-  { id: "meds-2", text: "Prescription info (doctor, pharmacy)", completed: false },
+  // Cooking & Heating
+  { id: "cook-1", text: "Propane Stove", completed: false },
+  { id: "cook-2", text: "Propane Fuel", completed: false },
+  { id: "cook-3", text: "Manual Can Opener", completed: false },
+  { id: "cook-4", text: "Disposable Plates/Utensils", completed: false },
   
-  // Communication
-  { id: "comm-1", text: "Cell phone charger (portable)", completed: false },
-  { id: "comm-2", text: "Whistle", completed: false },
-  { id: "comm-3", text: "Emergency contact list", completed: false },
+  // Water & Storage
+  { id: "water-1", text: "Bottled Water (1 gallon per person per day)", completed: false },
+  { id: "water-2", text: "Water Purification Tablets", completed: false },
+  { id: "water-3", text: "Water Storage Containers", completed: false },
   
   // Other Essential Items
-  { id: "other-1", text: "Manual can opener", completed: false },
-  { id: "other-2", text: "Cash in small denominations", completed: false },
-  { id: "other-3", text: "Personal documents (copies)", completed: false },
-  { id: "other-4", text: "Extra clothes", completed: false },
-  { id: "other-5", text: "Blankets", completed: false }
+  { id: "other-1", text: "Emergency Contact List", completed: false },
+  { id: "other-2", text: "Cash in Small Denominations", completed: false },
+  { id: "other-3", text: "Copies of Important Documents", completed: false },
+  { id: "other-4", text: "Blankets", completed: false },
+  { id: "other-5", text: "Extra Clothes", completed: false },
+  { id: "other-6", text: "Rain Ponchos", completed: false }
+];
+
+// First Aid Kit items
+const defaultFirstAid: ChecklistItem[] = [
+  // Bandages & Wound Care
+  { id: "aid-1", text: "Adhesive Bandages (various sizes)", completed: false },
+  { id: "aid-2", text: "Gauze Pads (various sizes)", completed: false },
+  { id: "aid-3", text: "Adhesive Tape", completed: false },
+  { id: "aid-4", text: "Elastic Bandages", completed: false },
+  { id: "aid-5", text: "Triangular Bandages", completed: false },
+  { id: "aid-6", text: "Cotton Balls & Swabs", completed: false },
+  
+  // Antiseptics & Cleaners
+  { id: "anti-1", text: "Alcohol Wipes", completed: false },
+  { id: "anti-2", text: "Hydrogen Peroxide", completed: false },
+  { id: "anti-3", text: "Antiseptic Ointment", completed: false },
+  { id: "anti-4", text: "Hand Sanitizer", completed: false },
+  { id: "anti-5", text: "Antibacterial Soap", completed: false },
+  
+  // Medications
+  { id: "med-1", text: "Pain Relievers (Acetaminophen/Ibuprofen)", completed: false },
+  { id: "med-2", text: "Anti-diarrhea Medication", completed: false },
+  { id: "med-3", text: "Antihistamines", completed: false },
+  { id: "med-4", text: "Hydrocortisone Cream", completed: false },
+  { id: "med-5", text: "Personal Medications (2-week supply)", completed: false },
+  { id: "med-6", text: "Prescription Information", completed: false },
+  
+  // Tools & Equipment
+  { id: "tool-1", text: "Scissors", completed: false },
+  { id: "tool-2", text: "Tweezers", completed: false },
+  { id: "tool-3", text: "Thermometer", completed: false },
+  { id: "tool-4", text: "Disposable Gloves", completed: false },
+  { id: "tool-5", text: "Safety Pins", completed: false }
 ];
 
 // Default emergency food recommendations
 const defaultFoods: ChecklistItem[] = [
-  // Non-perishable foods
-  { id: "food-1", text: "Canned vegetables", completed: false },
-  { id: "food-2", text: "Canned fruits", completed: false },
-  { id: "food-3", text: "Canned meat (tuna, chicken)", completed: false },
-  { id: "food-4", text: "Canned beans", completed: false },
-  { id: "food-5", text: "Canned soup", completed: false },
-  { id: "food-6", text: "Peanut butter", completed: false },
-  { id: "food-7", text: "Jelly/jam", completed: false },
-  { id: "food-8", text: "Crackers", completed: false },
-  { id: "food-9", text: "Granola bars", completed: false },
-  { id: "food-10", text: "Cereal", completed: false },
-  { id: "food-11", text: "Dried fruits", completed: false },
-  { id: "food-12", text: "Nuts and seeds", completed: false },
-  { id: "food-13", text: "Rice", completed: false },
-  { id: "food-14", text: "Pasta", completed: false },
-  { id: "food-15", text: "Instant oatmeal", completed: false },
-  { id: "food-16", text: "Powdered milk", completed: false },
-  { id: "food-17", text: "Coffee/tea", completed: false },
-  { id: "food-18", text: "Sugar, salt, pepper", completed: false },
-  { id: "food-19", text: "Bottled water", completed: false },
-  { id: "food-20", text: "Sports drinks", completed: false }
+  // Canned Goods
+  { id: "can-1", text: "Canned Vegetables", completed: false },
+  { id: "can-2", text: "Canned Fruits", completed: false },
+  { id: "can-3", text: "Canned Meat (Tuna, Chicken)", completed: false },
+  { id: "can-4", text: "Canned Beans", completed: false },
+  { id: "can-5", text: "Canned Soup", completed: false },
+  { id: "can-6", text: "Canned Stew", completed: false },
+  { id: "can-7", text: "Canned Pasta", completed: false },
+  
+  // Spreads & Condiments
+  { id: "spread-1", text: "Peanut Butter", completed: false },
+  { id: "spread-2", text: "Jelly/Jam", completed: false },
+  { id: "spread-3", text: "Honey", completed: false },
+  
+  // Dry Goods & Grains
+  { id: "dry-1", text: "Rice", completed: false },
+  { id: "dry-2", text: "Pasta", completed: false },
+  { id: "dry-3", text: "Oatmeal", completed: false },
+  { id: "dry-4", text: "Cereal", completed: false },
+  { id: "dry-5", text: "Crackers", completed: false },
+  { id: "dry-6", text: "Granola Bars", completed: false },
+  { id: "dry-7", text: "Dried Beans", completed: false },
+  { id: "dry-8", text: "Flour", completed: false },
+  { id: "dry-9", text: "Sugar", completed: false },
+  { id: "dry-10", text: "Salt & Pepper", completed: false },
+  
+  // Nuts, Fruits & Snacks
+  { id: "snack-1", text: "Dried Fruits", completed: false },
+  { id: "snack-2", text: "Nuts and Seeds", completed: false },
+  { id: "snack-3", text: "Trail Mix", completed: false },
+  { id: "snack-4", text: "Jerky", completed: false },
+  
+  // Beverages & Milk
+  { id: "drink-1", text: "Bottled Water", completed: false },
+  { id: "drink-2", text: "Powdered Milk", completed: false },
+  { id: "drink-3", text: "Coffee/Tea", completed: false },
+  { id: "drink-4", text: "Powdered Juice/Drink Mixes", completed: false },
+  { id: "drink-5", text: "Sports Drinks", completed: false }
 ];
 
 export default function SimpleEmergencyChecklist() {
   const { toast } = useToast();
   
-  // States for the supply checklist and food checklist
+  // States for the supply checklist, first aid kit, and food checklist
   const [supplies, setSupplies] = useState<ChecklistItem[]>(() => {
     const savedSupplies = localStorage.getItem('emergency_supplies');
     return savedSupplies ? JSON.parse(savedSupplies) : defaultSupplies;
+  });
+  
+  const [firstAid, setFirstAid] = useState<ChecklistItem[]>(() => {
+    const savedFirstAid = localStorage.getItem('emergency_firstaid');
+    return savedFirstAid ? JSON.parse(savedFirstAid) : defaultFirstAid;
   });
   
   const [foods, setFoods] = useState<ChecklistItem[]>(() => {
@@ -120,6 +173,7 @@ export default function SimpleEmergencyChecklist() {
   
   // State for adding new items
   const [newSupplyText, setNewSupplyText] = useState("");
+  const [newFirstAidText, setNewFirstAidText] = useState("");
   const [newFoodText, setNewFoodText] = useState("");
   
   // Save to localStorage whenever checklists change
@@ -128,12 +182,20 @@ export default function SimpleEmergencyChecklist() {
   }, [supplies]);
   
   useEffect(() => {
+    localStorage.setItem('emergency_firstaid', JSON.stringify(firstAid));
+  }, [firstAid]);
+  
+  useEffect(() => {
     localStorage.setItem('emergency_foods', JSON.stringify(foods));
   }, [foods]);
   
   // Calculate completion percentages
   const suppliesCompletion = Math.round(
     (supplies.filter(item => item.completed).length / supplies.length) * 100
+  );
+  
+  const firstAidCompletion = Math.round(
+    (firstAid.filter(item => item.completed).length / firstAid.length) * 100
   );
   
   const foodsCompletion = Math.round(
@@ -328,12 +390,19 @@ export default function SimpleEmergencyChecklist() {
       
       <CardContent>
         <Tabs defaultValue="supplies" className="w-full">
-          <TabsList className="grid grid-cols-2 mb-4">
+          <TabsList className="grid grid-cols-3 mb-4">
             <TabsTrigger value="supplies" className="flex items-center gap-1">
               <ListChecks className="h-4 w-4" />
               <span>Supplies</span>
               <Badge variant="outline" className="ml-1">
                 {supplies.filter(i => i.completed).length}/{supplies.length}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="firstaid" className="flex items-center gap-1">
+              <Heart className="h-4 w-4" />
+              <span>First Aid</span>
+              <Badge variant="outline" className="ml-1">
+                {firstAid.filter(i => i.completed).length}/{firstAid.length}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="food" className="flex items-center gap-1">
@@ -356,6 +425,17 @@ export default function SimpleEmergencyChecklist() {
             )}
           </TabsContent>
           
+          <TabsContent value="firstaid" className="mt-0">
+            {renderChecklist(
+              firstAid,
+              setFirstAid,
+              newFirstAidText,
+              setNewFirstAidText,
+              "firstaid",
+              firstAidCompletion
+            )}
+          </TabsContent>
+          
           <TabsContent value="food" className="mt-0">
             {renderChecklist(
               foods,
@@ -371,7 +451,7 @@ export default function SimpleEmergencyChecklist() {
       
       <CardFooter className="flex justify-between border-t pt-4">
         <div className="text-sm text-muted-foreground">
-          {suppliesCompletion === 100 && foodsCompletion === 100 
+          {suppliesCompletion === 100 && firstAidCompletion === 100 && foodsCompletion === 100 
             ? "Great job! You're fully prepared." 
             : "Check off items as you acquire them."}
         </div>
@@ -382,6 +462,7 @@ export default function SimpleEmergencyChecklist() {
             onClick={() => {
               if (window.confirm("Are you sure you want to reset all checklists to defaults?")) {
                 setSupplies(defaultSupplies);
+                setFirstAid(defaultFirstAid);
                 setFoods(defaultFoods);
                 toast({
                   title: "Reset Complete",
