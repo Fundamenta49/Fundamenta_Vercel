@@ -17,7 +17,7 @@ body.tour-active {
   position: relative;
 }
 
-/* Add a subtle background overlay when tour is active */
+/* Add a subtle background overlay when tour is active - NO BLUR */
 body.tour-active::after {
   content: '';
   position: fixed;
@@ -27,14 +27,13 @@ body.tour-active::after {
   bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.03),
-    rgba(var(--primary-rgb), 0.025)
+    rgba(255, 255, 255, 0.02),
+    rgba(var(--primary-rgb), 0.015)
   );
   pointer-events: none;
   z-index: 9000;
   transition: all 0.4s ease-in-out;
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
+  /* Removed blur effect as requested */
 }
 
 /* Enhanced background for tour active state */
@@ -45,7 +44,7 @@ body.tour-active .feature-card {
   transition: transform 0.4s ease-out, box-shadow 0.4s ease, border-color 0.4s ease !important;
 }
 
-/* Add a subtle animated gradient behind Fundi for visual enhancement */
+/* Add a very subtle hint behind Fundi without animation or blur */
 .tour-fundi-robot::before {
   content: '';
   position: absolute;
@@ -53,20 +52,15 @@ body.tour-active .feature-card {
   height: 100px;
   border-radius: 50%;
   background: radial-gradient(circle, 
-    rgba(var(--primary-rgb), 0.1) 0%, 
-    rgba(var(--primary-rgb), 0.05) 30%, 
+    rgba(var(--primary-rgb), 0.05) 0%, 
+    rgba(var(--primary-rgb), 0.02) 40%, 
     rgba(var(--primary-rgb), 0) 70%
   );
   z-index: -1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  animation: pulse-glow 3s infinite alternate ease-in-out;
-}
-
-@keyframes pulse-glow {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-  100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.2; }
+  /* Removed animation for cleaner look */
 }
 
 /* Onboarding tour styles */
