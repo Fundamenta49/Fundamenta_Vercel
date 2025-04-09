@@ -194,8 +194,28 @@ export default function FundiTourGuide() {
         timeoutRef.current = setTimeout(() => {
           const element = document.querySelector(currentStep.highlightSelector as string);
           if (element) {
+            // First scroll the element into view
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             element.classList.add('tour-highlight');
+            
+            // Then reposition Fundi after scrolling is complete to stay with the highlighted element
+            setTimeout(() => {
+              const rect = element.getBoundingClientRect();
+              const viewportWidth = window.innerWidth;
+              
+              // Calculate a position for Fundi that's near the highlighted element
+              // Position Fundi to the right or left of the element based on space available
+              const newPosition = {
+                x: viewportWidth - rect.right > 150 ? 
+                    Math.min(rect.right + 30, viewportWidth - 120) : // Right side if space available
+                    Math.max(20, rect.left - 100), // Otherwise left side
+                y: Math.max(80, rect.top - 50) // Above the element but not too high
+              };
+              
+              console.log(`Repositioning Fundi to stay with highlighted element: x=${newPosition.x}, y=${newPosition.y}`);
+              setTargetPosition(newPosition);
+              setPosition(newPosition);
+            }, 500); // Wait for scrolling to complete
           }
         }, 800);
       }
