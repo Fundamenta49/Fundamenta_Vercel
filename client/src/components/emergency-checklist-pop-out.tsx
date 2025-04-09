@@ -399,7 +399,7 @@ export default function EmergencyChecklistPopOut() {
     <Button 
       variant="ghost" 
       size="sm" 
-      className="mb-4 text-red-600" 
+      className="mb-4 text-primary hover:text-primary/80 hover:bg-gray-50" 
       onClick={() => {
         setCurrentSection("menu");
         setCurrentChecklist(null);
@@ -413,13 +413,13 @@ export default function EmergencyChecklistPopOut() {
   // Render menu section
   const renderMenu = () => (
     <div className="w-full space-y-4">
-      <h2 className="text-lg sm:text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2">
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
         Emergency Checklists
       </h2>
       
-      <Alert className="bg-red-50 border-red-300 mb-4">
-        <AlertCircle className="h-4 w-4 text-red-500" />
-        <AlertDescription className="text-red-700 text-sm">
+      <Alert className="bg-gray-50 border-gray-200 mb-4">
+        <AlertCircle className="h-4 w-4 text-primary" />
+        <AlertDescription className="text-gray-700 text-sm">
           Save these checklists to prepare for and respond to different types of emergencies. Your progress is saved automatically.
         </AlertDescription>
       </Alert>
@@ -429,18 +429,15 @@ export default function EmergencyChecklistPopOut() {
           <div 
             key={checklist.id}
             className={cn(
-              "relative p-4 rounded-lg border-2 bg-white shadow cursor-pointer transition-all duration-200",
+              "relative p-4 rounded-lg border bg-white shadow-sm cursor-pointer transition-all duration-200",
               progress[checklist.id]?.total > 0 
-                ? "border-indigo-300 hover:border-indigo-500 hover:shadow-md"
-                : "border-gray-200 hover:border-red-500 hover:shadow-md"
+                ? "border-primary/30 hover:border-primary hover:shadow"
+                : "border-gray-200 hover:border-gray-400 hover:shadow"
             )}
             onClick={() => handleSelectChecklist(checklist)}
           >
             <div className="flex items-start gap-3">
-              <div className={cn(
-                "p-2 rounded-full flex-shrink-0",
-                progress[checklist.id]?.total > 0 ? "bg-indigo-50" : "bg-red-50"
-              )}>
+              <div className="p-2 rounded-full bg-gray-50 flex-shrink-0">
                 {checklist.icon}
               </div>
               
@@ -451,25 +448,16 @@ export default function EmergencyChecklistPopOut() {
                 {progress[checklist.id] && (
                   <div className="mt-3">
                     <div className="flex justify-between text-sm font-medium mb-1">
-                      <span className={progress[checklist.id].total > 0 ? "text-indigo-700" : "text-gray-500"}>
+                      <span className="text-gray-600">
                         Progress
                       </span>
-                      <span className={cn(
-                        "font-bold",
-                        progress[checklist.id].total === 100 ? "text-green-600" : 
-                        progress[checklist.id].total > 50 ? "text-indigo-600" : "text-indigo-500"
-                      )}>
+                      <span className="font-bold text-primary">
                         {progress[checklist.id].total}%
                       </span>
                     </div>
-                    <div className="h-6 w-full bg-gray-100 rounded overflow-hidden">
+                    <div className="h-4 w-full bg-gray-100 rounded overflow-hidden">
                       <div 
-                        className={cn(
-                          "h-full rounded transition-all",
-                          progress[checklist.id].total === 100 
-                            ? "bg-green-500" 
-                            : "bg-indigo-500"
-                        )} 
+                        className="h-full rounded bg-primary transition-all"
                         style={{ width: `${progress[checklist.id].total}%` }}
                       >
                         {progress[checklist.id].total > 15 && (
@@ -484,7 +472,7 @@ export default function EmergencyChecklistPopOut() {
               </div>
               
               <div className="absolute top-2 right-2">
-                <ArrowRight className="h-5 w-5 text-indigo-400" />
+                <ArrowRight className="h-5 w-5 text-primary/70" />
               </div>
             </div>
           </div>
@@ -504,7 +492,7 @@ export default function EmergencyChecklistPopOut() {
         <BackToMenuButton />
         
         <div className="flex items-start gap-3 mb-4">
-          <div className="p-2 rounded-full bg-red-50 flex-shrink-0">
+          <div className="p-2 rounded-full bg-gray-50 flex-shrink-0">
             {currentChecklist.icon}
           </div>
           
@@ -517,32 +505,29 @@ export default function EmergencyChecklistPopOut() {
         </div>
         
         {/* Progress summary */}
-        <Card className="mb-4 border-2 border-indigo-100 shadow-md">
-          <CardHeader className="pb-2 bg-indigo-50">
+        <Card className="mb-4 border border-gray-200 shadow-sm">
+          <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-indigo-600" />
+              <CheckCircle2 className="h-5 w-5 text-primary" />
               Progress Summary
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                <div className="text-sm font-medium text-blue-800 mb-1">Before</div>
-                <Progress value={currentProgress?.before || 0} className="h-3 mb-2" />
-                <div className="text-xl font-bold text-blue-700">{currentProgress?.before || 0}%</div>
-                <div className="text-xs text-blue-600 mt-1">Preparation</div>
+          <CardContent className="pt-2">
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="p-2 rounded-md border border-gray-100">
+                <div className="text-sm font-medium mb-1">Before</div>
+                <Progress value={currentProgress?.before || 0} className="h-2 mb-2" />
+                <div className="text-lg font-bold">{currentProgress?.before || 0}%</div>
               </div>
-              <div className="bg-amber-50 p-3 rounded-lg border border-amber-100">
-                <div className="text-sm font-medium text-amber-800 mb-1">During</div>
-                <Progress value={currentProgress?.during || 0} className="h-3 mb-2" />
-                <div className="text-xl font-bold text-amber-700">{currentProgress?.during || 0}%</div>
-                <div className="text-xs text-amber-600 mt-1">Response</div>
+              <div className="p-2 rounded-md border border-gray-100">
+                <div className="text-sm font-medium mb-1">During</div>
+                <Progress value={currentProgress?.during || 0} className="h-2 mb-2" />
+                <div className="text-lg font-bold">{currentProgress?.during || 0}%</div>
               </div>
-              <div className="bg-green-50 p-3 rounded-lg border border-green-100">
-                <div className="text-sm font-medium text-green-800 mb-1">After</div>
-                <Progress value={currentProgress?.after || 0} className="h-3 mb-2" />
-                <div className="text-xl font-bold text-green-700">{currentProgress?.after || 0}%</div>
-                <div className="text-xs text-green-600 mt-1">Recovery</div>
+              <div className="p-2 rounded-md border border-gray-100">
+                <div className="text-sm font-medium mb-1">After</div>
+                <Progress value={currentProgress?.after || 0} className="h-2 mb-2" />
+                <div className="text-lg font-bold">{currentProgress?.after || 0}%</div>
               </div>
             </div>
           </CardContent>
@@ -550,10 +535,10 @@ export default function EmergencyChecklistPopOut() {
         
         {/* Tabs for before, during, after phases */}
         <Tabs defaultValue="before" className="w-full">
-          <TabsList className="w-full bg-red-50 border-red-200">
-            <TabsTrigger value="before" className="flex-1 data-[state=active]:bg-red-100 data-[state=active]:text-red-900">Before</TabsTrigger>
-            <TabsTrigger value="during" className="flex-1 data-[state=active]:bg-red-100 data-[state=active]:text-red-900">During</TabsTrigger>
-            <TabsTrigger value="after" className="flex-1 data-[state=active]:bg-red-100 data-[state=active]:text-red-900">After</TabsTrigger>
+          <TabsList className="w-full bg-gray-50 border-gray-200">
+            <TabsTrigger value="before" className="flex-1 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-primary">Before</TabsTrigger>
+            <TabsTrigger value="during" className="flex-1 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-primary">During</TabsTrigger>
+            <TabsTrigger value="after" className="flex-1 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-primary">After</TabsTrigger>
           </TabsList>
           
           {/* Before Items */}
@@ -563,7 +548,7 @@ export default function EmergencyChecklistPopOut() {
                 <h3 className="font-medium text-gray-900">Before {currentChecklist.title.toLowerCase()} occurs:</h3>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="border-red-200 hover:bg-red-50 hover:text-red-700">
+                    <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50">
                       <Plus className="h-4 w-4 mr-1" /> Add Item
                     </Button>
                   </DialogTrigger>
@@ -601,7 +586,7 @@ export default function EmergencyChecklistPopOut() {
                     <DialogFooter>
                       <Button 
                         onClick={() => addNewItem(currentChecklist.id, "before")}
-                        className="bg-red-500 hover:bg-red-600 text-white"
+                        className="bg-primary hover:bg-primary/90 text-white"
                       >
                         Add Item
                       </Button>
@@ -621,9 +606,10 @@ export default function EmergencyChecklistPopOut() {
                     <div 
                       key={item.id} 
                       className={cn(
-                        "flex items-start gap-2 p-2 rounded-md",
-                        item.completed ? "bg-green-50" : (item.critical ? "bg-red-50" : "hover:bg-accent")
+                        "flex items-start gap-2 p-2 rounded-md border border-gray-200 cursor-pointer",
+                        item.completed ? "bg-gray-50" : "hover:bg-slate-50"
                       )}
+                      onClick={() => toggleItemCompletion(currentChecklist.id, "beforeItems", item.id)}
                     >
                       <Checkbox 
                         id={item.id}
@@ -637,15 +623,14 @@ export default function EmergencyChecklistPopOut() {
                           className={cn(
                             "text-sm cursor-pointer transition-all", 
                             item.completed 
-                              ? "line-through text-muted-foreground opacity-70" 
+                              ? "line-through text-muted-foreground" 
                               : "font-medium"
                           )}
-                          onClick={() => toggleItemCompletion(currentChecklist.id, "beforeItems", item.id)}
                         >
                           {item.text}
                           {item.critical && (
-                            <span className="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
-                              Critical
+                            <span className="ml-2 inline-flex items-center px-1.5 text-xs font-medium">
+                              (Critical)
                             </span>
                           )}
                         </label>
@@ -675,7 +660,7 @@ export default function EmergencyChecklistPopOut() {
                 <h3 className="font-medium text-gray-900">During {currentChecklist.title.toLowerCase()}:</h3>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="border-red-200 hover:bg-red-50 hover:text-red-700">
+                    <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50">
                       <Plus className="h-4 w-4 mr-1" /> Add Item
                     </Button>
                   </DialogTrigger>
@@ -713,7 +698,7 @@ export default function EmergencyChecklistPopOut() {
                     <DialogFooter>
                       <Button 
                         onClick={() => addNewItem(currentChecklist.id, "during")}
-                        className="bg-red-500 hover:bg-red-600 text-white"
+                        className="bg-primary hover:bg-primary/90 text-white"
                       >
                         Add Item
                       </Button>
@@ -733,9 +718,10 @@ export default function EmergencyChecklistPopOut() {
                     <div 
                       key={item.id} 
                       className={cn(
-                        "flex items-start gap-2 p-2 rounded-md",
-                        item.completed ? "bg-green-50" : (item.critical ? "bg-red-50" : "hover:bg-accent")
+                        "flex items-start gap-2 p-2 rounded-md border border-gray-200 cursor-pointer",
+                        item.completed ? "bg-gray-50" : "hover:bg-slate-50"
                       )}
+                      onClick={() => toggleItemCompletion(currentChecklist.id, "duringItems", item.id)}
                     >
                       <Checkbox 
                         id={item.id}
@@ -749,15 +735,14 @@ export default function EmergencyChecklistPopOut() {
                           className={cn(
                             "text-sm cursor-pointer transition-all", 
                             item.completed 
-                              ? "line-through text-muted-foreground opacity-70" 
+                              ? "line-through text-muted-foreground" 
                               : "font-medium"
                           )}
-                          onClick={() => toggleItemCompletion(currentChecklist.id, "duringItems", item.id)}
                         >
                           {item.text}
                           {item.critical && (
-                            <span className="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
-                              Critical
+                            <span className="ml-2 inline-flex items-center px-1.5 text-xs font-medium">
+                              (Critical)
                             </span>
                           )}
                         </label>
@@ -787,7 +772,7 @@ export default function EmergencyChecklistPopOut() {
                 <h3 className="font-medium text-gray-900">After {currentChecklist.title.toLowerCase()}:</h3>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="border-red-200 hover:bg-red-50 hover:text-red-700">
+                    <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50">
                       <Plus className="h-4 w-4 mr-1" /> Add Item
                     </Button>
                   </DialogTrigger>
@@ -825,7 +810,7 @@ export default function EmergencyChecklistPopOut() {
                     <DialogFooter>
                       <Button 
                         onClick={() => addNewItem(currentChecklist.id, "after")}
-                        className="bg-red-500 hover:bg-red-600 text-white"
+                        className="bg-primary hover:bg-primary/90 text-white"
                       >
                         Add Item
                       </Button>
@@ -845,9 +830,10 @@ export default function EmergencyChecklistPopOut() {
                     <div 
                       key={item.id} 
                       className={cn(
-                        "flex items-start gap-2 p-2 rounded-md",
-                        item.completed ? "bg-green-50" : (item.critical ? "bg-red-50" : "hover:bg-accent")
+                        "flex items-start gap-2 p-2 rounded-md border border-gray-200 cursor-pointer",
+                        item.completed ? "bg-gray-50" : "hover:bg-slate-50"
                       )}
+                      onClick={() => toggleItemCompletion(currentChecklist.id, "afterItems", item.id)}
                     >
                       <Checkbox 
                         id={item.id}
@@ -861,15 +847,14 @@ export default function EmergencyChecklistPopOut() {
                           className={cn(
                             "text-sm cursor-pointer transition-all", 
                             item.completed 
-                              ? "line-through text-muted-foreground opacity-70" 
+                              ? "line-through text-muted-foreground" 
                               : "font-medium"
                           )}
-                          onClick={() => toggleItemCompletion(currentChecklist.id, "afterItems", item.id)}
                         >
                           {item.text}
                           {item.critical && (
-                            <span className="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
-                              Critical
+                            <span className="ml-2 inline-flex items-center px-1.5 text-xs font-medium">
+                              (Critical)
                             </span>
                           )}
                         </label>
