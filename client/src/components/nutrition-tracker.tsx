@@ -174,7 +174,7 @@ export default function NutritionTracker() {
     <div className="space-y-6">
       {/* Goals Section */}
       <Card>
-        <CardHeader>
+        <CardHeader className="relative z-20 mb-6">
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
             Nutrition Goals
@@ -222,7 +222,7 @@ export default function NutritionTracker() {
 
       {/* Image Analysis Section */}
       <Card>
-        <CardHeader>
+        <CardHeader className="relative z-20 mb-6">
           <CardTitle className="flex items-center gap-2">
             <Camera className="h-5 w-5 text-primary" />
             AI Food Analysis
@@ -283,7 +283,7 @@ export default function NutritionTracker() {
 
       {/* Manual Entry Section */}
       <Card>
-        <CardHeader>
+        <CardHeader className="relative z-20 mb-6">
           <CardTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5 text-primary" />
             Manual Entry
@@ -340,7 +340,7 @@ export default function NutritionTracker() {
 
       {/* History Section */}
       <Card>
-        <CardHeader>
+        <CardHeader className="relative z-20 mb-6">
           <CardTitle className="flex items-center gap-2">
             <History className="h-5 w-5 text-primary" />
             Today's Food Log
