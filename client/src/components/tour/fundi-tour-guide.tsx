@@ -47,11 +47,16 @@ export default function FundiTourGuide() {
     
     // For mobile devices, we'll use fixed positioning controlled by CSS instead of calculating positions
     // This provides a more consistent experience on small screens
-    if (isMobile) {
+    if (isMobile || viewportWidth < 640) {
       // Return a dummy position that will be overridden by CSS in mobile mode
       // We're using { x: 0, y: 0 } because our CSS will apply transformX(-50%) to center the robot
-      console.log("Using mobile optimized positioning");
+      console.log("Using mobile optimized positioning mode");
+      document.body.classList.add('tour-mobile-mode');
       return { x: 0, y: 0 };
+    } else {
+      // For desktop, ensure we're not using mobile mode
+      document.body.classList.remove('tour-mobile-mode');
+      console.log("Using desktop positioning mode");
     }
     
     // Desktop positioning logic - keeps the existing functionality for desktop
@@ -387,10 +392,11 @@ export default function FundiTourGuide() {
         }}
         transition={{ 
           type: "spring", 
-          stiffness: 100, 
-          damping: 15, 
-          mass: 1,
-          velocity: 2
+          stiffness: 80, // Reduced stiffness for smoother motion
+          damping: 16, // Increased damping to reduce bouncing
+          mass: 1.2, // Increased mass for more "weighty" feel
+          velocity: 1.5, // Reduced velocity for smoother start
+          duration: 0.6 // Set a fixed minimum duration
         }}
         style={{ 
           pointerEvents: 'auto',
@@ -426,10 +432,12 @@ export default function FundiTourGuide() {
           }}
           transition={{ 
             type: "spring", 
-            stiffness: 90, 
-            damping: 16,
-            mass: 0.8,
-            delay: 0.05 // Slight delay after Fundi moves
+            stiffness: 70, // Reduced stiffness for smoother motion
+            damping: 14, // Adjusted damping for smoother settling
+            mass: 0.7, // Lighter mass for more "airy" feel
+            delay: 0.08, // Slightly longer delay to create staggered effect
+            restDelta: 0.005, // Smaller rest delta for smoother end of animation
+            duration: 0.6 // Fixed duration ensures consistent timing
           }}
           style={{ 
             width: '250px', // Reduced width to avoid overflow
