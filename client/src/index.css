@@ -603,13 +603,14 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
 /* Mobile-specific connection line */
 @media (max-width: 639px) {
   body.tour-active .fixed.z-\[99998\]::before {
-    width: 2px;
-    height: 30px;
-    left: 50%;
-    top: auto;
-    bottom: -30px;
+    /* Change to horizontal connecting line for Fundi at left of chat bubble */
+    width: 30px;
+    height: 2px;
+    left: -30px;
+    top: 50%;
+    bottom: auto;
     transform: none !important;
-    background: linear-gradient(180deg, rgba(var(--primary-rgb), 0.4), rgba(var(--primary-rgb), 0.1));
+    background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.1), rgba(var(--primary-rgb), 0.4));
   }
   
   /* Mobile tour-specific styles for Fundi */
@@ -647,24 +648,25 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
     y: 0 !important;
   }
   
-  /* Original mobile tour mode positioning - no special left/top alignment */
+  /* Position Fundi at the top-left of the tour box in mobile mode */
   body.tour-mobile-mode .fixed.z-\[99999\] {
-    bottom: 20px !important;
-    left: 50% !important;
+    /* Position in the bottom corner of the screen */
+    bottom: 120px !important;
+    left: 20px !important;
     right: auto !important;
     top: auto !important;
-    transform: translateX(-50%) !important;
+    transform: none !important;
     position: fixed !important;
     x: 0 !important;
     y: 0 !important;
   }
   
-  /* Original speech bubble positioning for mobile */
+  /* Position speech bubble to the right of Fundi instead of above */
   body.tour-mobile-mode .fixed.z-\[99999\] > div[style*="width"] {
-    bottom: 100px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    max-width: calc(100vw - 40px) !important;
+    bottom: 120px !important;
+    left: 100px !important;
+    transform: none !important;
+    max-width: calc(100vw - 120px) !important;
   }
   
   /* Ensure speech bubble always stays on screen */
