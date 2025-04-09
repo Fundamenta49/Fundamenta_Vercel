@@ -402,7 +402,7 @@ export default function ShoppingBuddy() {
             value={groceryPreferences.diet}
             onValueChange={(value) => setGroceryPreferences(prev => ({ ...prev, diet: value }))}
           >
-            <SelectTrigger>
+            <SelectTrigger className="z-20">
               <SelectValue placeholder="Select your diet type" />
             </SelectTrigger>
             <SelectContent>
@@ -417,7 +417,7 @@ export default function ShoppingBuddy() {
             value={groceryPreferences.budget}
             onValueChange={(value) => setGroceryPreferences(prev => ({ ...prev, budget: value }))}
           >
-            <SelectTrigger>
+            <SelectTrigger className="z-20">
               <SelectValue placeholder="Weekly budget" />
             </SelectTrigger>
             <SelectContent>
