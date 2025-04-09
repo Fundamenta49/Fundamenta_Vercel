@@ -34,6 +34,19 @@ const TourHighlight = () => {
           transition: opacity 0.3s ease;
         }
         
+        /* Mobile-specific overlay adjustment - thinner overlay for better visibility */
+        @media (max-width: 640px) {
+          body.tour-active::after {
+            background: rgba(0, 0, 0, 0.1);
+          }
+          
+          /* Adjust the blurring effect for mobile - none for better performance */
+          body.tour-active::before {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+          }
+        }
+        
         /* General highlighting for any element with tour-highlight class (but outside dialogs) */
         *:not([role="dialog"]):not(.DialogContent):not(.DialogOverlay).tour-highlight,
         *:not([role="dialog"] *):not(.DialogContent *):not(.DialogOverlay *).tour-highlight {
@@ -103,6 +116,38 @@ const TourHighlight = () => {
           transition: all 0.3s ease !important;
         }
         
+        /* Mobile-specific highlight adjustments */
+        @media (max-width: 640px) {
+          /* Smaller, more subtle highlights on mobile */
+          *:not([role="dialog"]):not(.DialogContent):not(.DialogOverlay).tour-highlight,
+          *:not([role="dialog"] *):not(.DialogContent *):not(.DialogOverlay *).tour-highlight {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.5), 0 0 10px rgba(99, 102, 241, 0.3) !important;
+            outline: 2px solid rgba(99, 102, 241, 0.7) !important;
+            outline-offset: 2px !important;
+            animation: tour-pulse-mobile 2s infinite !important;
+          }
+          
+          /* Smaller feature highlights for mobile */
+          main:not([role="dialog"]) div.course-list.tour-highlight,
+          main:not([role="dialog"]) div.finance-tools.tour-highlight,
+          main:not([role="dialog"]) div.resume-builder.tour-highlight,
+          main:not([role="dialog"]) div.meditation-guide.tour-highlight,
+          main:not([role="dialog"]) div.fitness-tracker.tour-highlight,
+          main:not([role="dialog"]) div.emergency-guides.tour-highlight {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.5), 0 0 15px rgba(99, 102, 241, 0.3) !important;
+            outline: 2px solid rgba(99, 102, 241, 0.8) !important;
+            outline-offset: 2px !important;
+            transform: scale(1.01) !important;
+            animation: tour-feature-pulse-mobile 2s infinite !important;
+          }
+          
+          /* No scale transform on mobile */
+          .tour-card-highlight {
+            transform: none !important;
+            box-shadow: 0 5px 15px -3px rgba(99, 102, 241, 0.3), 0 4px 6px -4px rgba(99, 102, 241, 0.2) !important;
+          }
+        }
+        
         /* Enhanced animation for regular highlights */
         @keyframes tour-pulse {
           0% {
@@ -115,6 +160,37 @@ const TourHighlight = () => {
           }
           100% {
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.2);
+            outline-color: rgba(99, 102, 241, 0.8);
+          }
+        }
+        
+        /* Mobile optimized animations - less intense */
+        @keyframes tour-pulse-mobile {
+          0% {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5), 0 0 8px rgba(99, 102, 241, 0.2);
+            outline-color: rgba(99, 102, 241, 0.7);
+          }
+          50% {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.4), 0 0 12px rgba(99, 102, 241, 0.3);
+            outline-color: rgba(99, 102, 241, 0.9);
+          }
+          100% {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5), 0 0 8px rgba(99, 102, 241, 0.2);
+            outline-color: rgba(99, 102, 241, 0.7);
+          }
+        }
+        
+        @keyframes tour-feature-pulse-mobile {
+          0% {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5), 0 0 10px rgba(99, 102, 241, 0.2);
+            outline-color: rgba(99, 102, 241, 0.8);
+          }
+          50% {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.4), 0 0 15px rgba(99, 102, 241, 0.3);
+            outline-color: rgba(99, 102, 241, 0.9);
+          }
+          100% {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5), 0 0 10px rgba(99, 102, 241, 0.2);
             outline-color: rgba(99, 102, 241, 0.8);
           }
         }

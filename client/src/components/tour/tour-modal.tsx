@@ -145,13 +145,13 @@ const TourModal = () => {
     // First two steps are centered (welcome and intro)
     if (isInitialStep) {
       return isMobile 
-        ? "max-w-[95vw] max-h-[80vh] overflow-y-auto" 
+        ? "max-w-[90vw] max-h-[60vh] overflow-y-auto tour-mobile-modal" 
         : ""; // Default centered position
     }
     
     // After step 2, position to bottom with special mobile styling
     return isMobile
-      ? "fixed bottom-4 left-0 right-0 mx-2 max-h-[65vh] overflow-y-auto"
+      ? "fixed bottom-2 left-0 right-0 mx-2 max-h-[50vh] overflow-y-auto tour-mobile-modal tour-compact-modal"
       : "fixed tour-modal-position max-h-[380px] overflow-y-auto";
   };
   
@@ -178,12 +178,15 @@ const TourModal = () => {
         {...dialogContentProps} 
         data-tour-dialog 
         className={`${dialogContentProps.className} bg-white border rounded-md shadow-md`}>
-        <DialogHeader className={isInitialStep ? "" : "pb-2"}>
+        <DialogHeader className={`${isInitialStep ? "" : "pb-2"} ${window.innerWidth < 640 ? "!p-2" : ""}`}>
           <DialogTitle className="flex items-center gap-2 text-base">
-            <HelpCircle className="h-4 w-4 text-primary" />
-            {currentStep?.title}
+            <HelpCircle className={`h-4 w-4 text-primary ${window.innerWidth < 640 ? "!h-3 !w-3" : ""}`} />
+            <span className={window.innerWidth < 640 ? "text-sm font-medium" : ""}>{currentStep?.title}</span>
           </DialogTitle>
-          <DialogDescription id="tour-description" className={`${isInitialStep ? "pt-2" : "pt-1 text-sm"}`}>
+          <DialogDescription 
+            id="tour-description" 
+            className={`${isInitialStep ? "pt-2" : "pt-1 text-sm"} ${window.innerWidth < 640 ? "!pt-1 !text-xs !leading-tight" : ""}`}
+          >
             {currentStep?.content}
           </DialogDescription>
         </DialogHeader>

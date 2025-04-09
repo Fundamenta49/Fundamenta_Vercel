@@ -211,8 +211,25 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const startTour = useCallback(() => {
     setIsTourActive(true);
     setCurrentStepIndex(0);
+    
     // Add tour-active class to body when tour starts
     document.body.classList.add('tour-active');
+    
+    // Detect if user is on mobile and add appropriate class
+    const isMobile = window.innerWidth <= 640;
+    if (isMobile) {
+      console.log("Mobile device detected, adding mobile optimization class");
+      document.body.classList.add('tour-mobile-mode');
+      
+      // Add attribute for CSS targeting
+      document.body.setAttribute('data-device-type', 'mobile');
+      
+      // Scroll to top of page to ensure proper tour start
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Desktop mode
+      document.body.setAttribute('data-device-type', 'desktop');
+    }
   }, []);
 
   const endTour = useCallback(() => {
@@ -391,6 +408,19 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           localStorage.setItem('lastTourRoute', route);
           document.body.setAttribute('data-tour-route', route);
           
+          // Add page-specific classes for mobile optimization
+          if (route.includes('/learning/courses/vehicle-maintenance')) {
+            document.body.classList.add('tour-vehicle-page');
+            document.body.classList.remove('tour-finance-page');
+          } else if (route.includes('/finance') || route.includes('/mortgage')) {
+            document.body.classList.add('tour-finance-page');
+            document.body.classList.remove('tour-vehicle-page');
+          } else {
+            // Remove any page-specific classes
+            document.body.classList.remove('tour-vehicle-page');
+            document.body.classList.remove('tour-finance-page');
+          }
+          
           // Keep a backup of the current step
           document.body.setAttribute('data-tour-current-step', String(currentStepIndex));
           
@@ -513,6 +543,33 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       document.body.classList.remove('tour-active');
     };
   }, []);
+  
+  // Handle window resize to update mobile/desktop mode during tour
+  useEffect(() => {
+    if (!isTourActive) return;
+    
+    const handleResize = () => {
+      const isMobile = window.innerWidth <= 640;
+      if (isMobile) {
+        document.body.classList.add('tour-mobile-mode');
+        document.body.setAttribute('data-device-type', 'mobile');
+      } else {
+        document.body.classList.remove('tour-mobile-mode');
+        document.body.setAttribute('data-device-type', 'desktop');
+      }
+    };
+    
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+    
+    // Initial check
+    handleResize();
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isTourActive]);
 
   // Process template strings in content to include user name
   const processStepContent = (content: string) => {
