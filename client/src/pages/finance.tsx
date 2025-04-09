@@ -209,28 +209,28 @@ export default function Finance() {
           <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-green-50 text-green-800 rounded-md border-l-4 border-green-500">
             Financial Tools
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5 mt-4" data-tour="finance-grid">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 max-w-6xl mx-auto" data-tour="finance-grid">
             {SECTIONS.map((section) => (
               <div 
                 key={section.id} 
-                className={`flex flex-col h-full ${section.id === 'bank' ? 'col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 xl:col-span-6' : ''}`}
+                className={`flex flex-col h-full ${section.id === 'bank' ? 'col-span-2 sm:col-span-3 md:col-span-3 lg:col-span-3 xl:col-span-3' : ''}`}
               >
                 <button
                   onClick={() => handleCardClick(section.id)}
-                  className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-500 min-h-[130px] sm:min-h-[160px] w-full h-full ${section.id === 'bank' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start' : ''}`}
+                  className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-500 min-h-[130px] sm:min-h-[180px] md:min-h-[200px] lg:min-h-[220px] w-full h-full ${section.id === 'bank' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[160px] md:min-h-[180px]' : ''}`}
                   aria-label={`Open ${section.title}`}
                   data-tour={section.id === 'budget' ? 'budget-calculator' : section.id === 'credit' ? 'credit-skills' : `finance-${section.id}`}
                 >
-                  <div className={`flex items-center justify-center h-12 sm:h-14 ${section.id === 'bank' ? 'sm:mr-6' : 'w-full'} mb-2`}>
-                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 text-green-500" />
+                  <div className={`flex items-center justify-center h-12 sm:h-14 md:h-16 lg:h-20 ${section.id === 'bank' ? 'sm:mr-6' : 'w-full'} mb-2 md:mb-4`}>
+                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-green-500" />
                   </div>
                   
                   <div className={`flex flex-col ${section.id === 'bank' ? 'items-start' : 'items-center'} w-full`}>
-                    <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
+                    <span className="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-center line-clamp-2 w-full">{section.title}</span>
                     
-                    <p className={`text-xs text-gray-500 mt-1 line-clamp-2 ${section.id === 'bank' ? 'text-left' : 'text-center'} ${section.id === 'bank' ? 'block' : 'hidden sm:block'}`}>
-                      {section.description.length > (section.id === 'bank' ? 100 : 60) 
-                        ? `${section.description.substring(0, section.id === 'bank' ? 100 : 60)}...` 
+                    <p className={`text-xs sm:text-sm md:text-base text-gray-500 mt-1 md:mt-2 line-clamp-3 ${section.id === 'bank' ? 'text-left' : 'text-center'} ${section.id === 'bank' ? 'block' : 'block'}`}>
+                      {section.description.length > (section.id === 'bank' ? 100 : 80) 
+                        ? `${section.description.substring(0, section.id === 'bank' ? 100 : 80)}...` 
                         : section.description}
                     </p>
                   </div>
