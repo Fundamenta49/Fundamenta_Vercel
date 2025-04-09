@@ -428,11 +428,19 @@ export default function EmergencyChecklistPopOut() {
         {checklists.map(checklist => (
           <div 
             key={checklist.id}
-            className="relative p-4 rounded-lg border border-gray-200 hover:border-red-500 bg-white shadow-sm hover:shadow-md cursor-pointer transition-all duration-200"
+            className={cn(
+              "relative p-4 rounded-lg border-2 bg-white shadow cursor-pointer transition-all duration-200",
+              progress[checklist.id]?.total > 0 
+                ? "border-indigo-300 hover:border-indigo-500 hover:shadow-md"
+                : "border-gray-200 hover:border-red-500 hover:shadow-md"
+            )}
             onClick={() => handleSelectChecklist(checklist)}
           >
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-full bg-red-50 flex-shrink-0">
+              <div className={cn(
+                "p-2 rounded-full flex-shrink-0",
+                progress[checklist.id]?.total > 0 ? "bg-indigo-50" : "bg-red-50"
+              )}>
                 {checklist.icon}
               </div>
               
@@ -442,17 +450,41 @@ export default function EmergencyChecklistPopOut() {
                 
                 {progress[checklist.id] && (
                   <div className="mt-3">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>Overall progress</span>
-                      <span>{progress[checklist.id].total}%</span>
+                    <div className="flex justify-between text-sm font-medium mb-1">
+                      <span className={progress[checklist.id].total > 0 ? "text-indigo-700" : "text-gray-500"}>
+                        Progress
+                      </span>
+                      <span className={cn(
+                        "font-bold",
+                        progress[checklist.id].total === 100 ? "text-green-600" : 
+                        progress[checklist.id].total > 50 ? "text-indigo-600" : "text-indigo-500"
+                      )}>
+                        {progress[checklist.id].total}%
+                      </span>
                     </div>
-                    <Progress value={progress[checklist.id].total} className="h-2" />
+                    <div className="h-6 w-full bg-gray-100 rounded overflow-hidden">
+                      <div 
+                        className={cn(
+                          "h-full rounded transition-all",
+                          progress[checklist.id].total === 100 
+                            ? "bg-green-500" 
+                            : "bg-indigo-500"
+                        )} 
+                        style={{ width: `${progress[checklist.id].total}%` }}
+                      >
+                        {progress[checklist.id].total > 15 && (
+                          <div className="flex h-full items-center justify-center text-xs font-bold text-white">
+                            {progress[checklist.id].total}% Complete
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
               
               <div className="absolute top-2 right-2">
-                <ArrowRight className="h-4 w-4 text-gray-400" />
+                <ArrowRight className="h-5 w-5 text-indigo-400" />
               </div>
             </div>
           </div>
@@ -485,26 +517,32 @@ export default function EmergencyChecklistPopOut() {
         </div>
         
         {/* Progress summary */}
-        <Card className="mb-4">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Progress Summary</CardTitle>
+        <Card className="mb-4 border-2 border-indigo-100 shadow-md">
+          <CardHeader className="pb-2 bg-indigo-50">
+            <CardTitle className="text-base flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-indigo-600" />
+              Progress Summary
+            </CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div>
-                <div className="text-xs text-gray-500 mb-1">Before</div>
-                <Progress value={currentProgress?.before || 0} className="h-2 mb-1" />
-                <div className="text-sm font-medium">{currentProgress?.before || 0}%</div>
+          <CardContent className="pt-4">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                <div className="text-sm font-medium text-blue-800 mb-1">Before</div>
+                <Progress value={currentProgress?.before || 0} className="h-3 mb-2" />
+                <div className="text-xl font-bold text-blue-700">{currentProgress?.before || 0}%</div>
+                <div className="text-xs text-blue-600 mt-1">Preparation</div>
               </div>
-              <div>
-                <div className="text-xs text-gray-500 mb-1">During</div>
-                <Progress value={currentProgress?.during || 0} className="h-2 mb-1" />
-                <div className="text-sm font-medium">{currentProgress?.during || 0}%</div>
+              <div className="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                <div className="text-sm font-medium text-amber-800 mb-1">During</div>
+                <Progress value={currentProgress?.during || 0} className="h-3 mb-2" />
+                <div className="text-xl font-bold text-amber-700">{currentProgress?.during || 0}%</div>
+                <div className="text-xs text-amber-600 mt-1">Response</div>
               </div>
-              <div>
-                <div className="text-xs text-gray-500 mb-1">After</div>
-                <Progress value={currentProgress?.after || 0} className="h-2 mb-1" />
-                <div className="text-sm font-medium">{currentProgress?.after || 0}%</div>
+              <div className="bg-green-50 p-3 rounded-lg border border-green-100">
+                <div className="text-sm font-medium text-green-800 mb-1">After</div>
+                <Progress value={currentProgress?.after || 0} className="h-3 mb-2" />
+                <div className="text-xl font-bold text-green-700">{currentProgress?.after || 0}%</div>
+                <div className="text-xs text-green-600 mt-1">Recovery</div>
               </div>
             </div>
           </CardContent>
@@ -597,9 +635,12 @@ export default function EmergencyChecklistPopOut() {
                         <label 
                           htmlFor={item.id} 
                           className={cn(
-                            "text-sm cursor-pointer", 
-                            item.completed && "line-through text-muted-foreground"
+                            "text-sm cursor-pointer transition-all", 
+                            item.completed 
+                              ? "line-through text-muted-foreground opacity-70" 
+                              : "font-medium"
                           )}
+                          onClick={() => toggleItemCompletion(currentChecklist.id, "beforeItems", item.id)}
                         >
                           {item.text}
                           {item.critical && (
@@ -706,9 +747,12 @@ export default function EmergencyChecklistPopOut() {
                         <label 
                           htmlFor={item.id} 
                           className={cn(
-                            "text-sm cursor-pointer", 
-                            item.completed && "line-through text-muted-foreground"
+                            "text-sm cursor-pointer transition-all", 
+                            item.completed 
+                              ? "line-through text-muted-foreground opacity-70" 
+                              : "font-medium"
                           )}
+                          onClick={() => toggleItemCompletion(currentChecklist.id, "duringItems", item.id)}
                         >
                           {item.text}
                           {item.critical && (
@@ -815,9 +859,12 @@ export default function EmergencyChecklistPopOut() {
                         <label 
                           htmlFor={item.id} 
                           className={cn(
-                            "text-sm cursor-pointer", 
-                            item.completed && "line-through text-muted-foreground"
+                            "text-sm cursor-pointer transition-all", 
+                            item.completed 
+                              ? "line-through text-muted-foreground opacity-70" 
+                              : "font-medium"
                           )}
+                          onClick={() => toggleItemCompletion(currentChecklist.id, "afterItems", item.id)}
                         >
                           {item.text}
                           {item.critical && (
