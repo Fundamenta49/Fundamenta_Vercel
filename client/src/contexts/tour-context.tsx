@@ -442,23 +442,29 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [isTourActive, currentStep, currentStepIndex, lastNavigatedRoute, setLocation, currentLocation]);
   
   // Check if the user has seen the tour before and load user name,
-  // but only after authentication is checked
+  // But only after authentication is checked and user is authenticated
   useEffect(() => {
     // Wait until auth is no longer loading
     if (authLoading) {
       return; // Exit early if auth is still loading
     }
     
-    // Check if tour has been seen
-    const tourSeen = localStorage.getItem('hasSeenTour');
-    if (tourSeen) {
-      setHasSeenTour(true);
+    // Only initialize the tour for authenticated users
+    if (isAuthenticated) {
+      // Check if tour has been seen
+      const tourSeen = localStorage.getItem('hasSeenTour');
+      if (tourSeen) {
+        setHasSeenTour(true);
+      } else {
+        // If user hasn't seen tour, auto-start it for authenticated users only
+        // Small delay to ensure everything is loaded
+        setTimeout(() => {
+          startTour();
+        }, 500);
+      }
     } else {
-      // If user hasn't seen tour, auto-start it for all users
-      // Small delay to ensure everything is loaded
-      setTimeout(() => {
-        startTour();
-      }, 500);
+      // If not authenticated, make sure tour is not active
+      setIsTourActive(false);
     }
     
     // First try to use the name from the authenticated user profile

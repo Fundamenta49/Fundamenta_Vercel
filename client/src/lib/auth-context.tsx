@@ -69,8 +69,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(true);
     
     try {
+      // Prevent empty credentials
+      if (!email || !password) {
+        console.error('Email and password are required');
+        setLoading(false);
+        return false;
+      }
+      
       // Demo admin login - in production, this would validate credentials with a server
-      if (email === 'admin@fundamenta.app' && password === 'admin123') {
+      if (email.toLowerCase() === 'admin@fundamenta.app' && password === 'admin123') {
         const userData: AuthUser = {
           name: 'Admin User',
           email: email,
@@ -80,43 +87,67 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsAuthenticated(true);
         setUser(userData);
         
-        // Store auth data in localStorage
-        localStorage.setItem('auth', JSON.stringify({
-          isAuthenticated: true,
-          user: userData
-        }));
+        // Store auth data in localStorage with error handling
+        try {
+          localStorage.setItem('auth', JSON.stringify({
+            isAuthenticated: true,
+            user: userData
+          }));
+        } catch (storageError) {
+          console.error('Failed to save auth state:', storageError);
+          // Continue anyway since we've already set the in-memory state
+        }
         
         setLoading(false);
         return true;
       }
       
       // Check if this is a registered user
-      const registeredUsers = localStorage.getItem('registered_users');
-      if (registeredUsers) {
-        const users = JSON.parse(registeredUsers);
-        const userMatch = users.find((user: any) => 
-          user.email === email && user.password === password
-        );
-        
-        if (userMatch) {
-          const userData: AuthUser = {
-            name: userMatch.name,
-            email: userMatch.email,
-            role: 'user'
-          };
+      try {
+        const registeredUsers = localStorage.getItem('registered_users');
+        if (registeredUsers) {
+          const users = JSON.parse(registeredUsers);
           
-          setIsAuthenticated(true);
-          setUser(userData);
+          // Case-insensitive email comparison
+          const userMatch = users.find((user: any) => 
+            user.email.toLowerCase() === email.toLowerCase() && user.password === password
+          );
           
-          // Store auth data in localStorage
-          localStorage.setItem('auth', JSON.stringify({
-            isAuthenticated: true,
-            user: userData
-          }));
-          
-          setLoading(false);
-          return true;
+          if (userMatch) {
+            console.log('User authenticated successfully');
+            
+            const userData: AuthUser = {
+              name: userMatch.name,
+              email: userMatch.email,
+              role: 'user'
+            };
+            
+            setIsAuthenticated(true);
+            setUser(userData);
+            
+            // Store auth data in localStorage with error handling
+            try {
+              localStorage.setItem('auth', JSON.stringify({
+                isAuthenticated: true,
+                user: userData
+              }));
+            } catch (storageError) {
+              console.error('Failed to save auth state:', storageError);
+              // Continue anyway since we've already set the in-memory state
+            }
+            
+            setLoading(false);
+            return true;
+          } else {
+            console.log('Invalid credentials - no matching user found');
+          }
+        } else {
+          console.log('No registered users found');
         }
+      } catch (parseError) {
+        console.error('Error parsing registered users:', parseError);
+        // Clear corrupted data
+        localStorage.removeItem('registered_users');
       }
       
       setLoading(false);
@@ -131,19 +162,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Sign-up function to register new users
   const signUp = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
+      // Add loading state to prevent multiple signups
+      setLoading(true);
+      
       // Check if user already exists
       const registeredUsers = localStorage.getItem('registered_users');
       let users = registeredUsers ? JSON.parse(registeredUsers) : [];
       
-      const existingUser = users.find((user: any) => user.email === email);
+      // Case-insensitive email check to prevent duplicate registrations
+      const existingUser = users.find((user: any) => 
+        user.email.toLowerCase() === email.toLowerCase()
+      );
+      
       if (existingUser) {
+        console.log('User already exists with this email');
+        setLoading(false);
         return false; // User already exists
       }
       
       // Register new user
       const newUser = { name, email, password };
       users.push(newUser);
-      localStorage.setItem('registered_users', JSON.stringify(users));
+      
+      // Store updated users list in local storage
+      try {
+        localStorage.setItem('registered_users', JSON.stringify(users));
+      } catch (storageError) {
+        console.error('Failed to save user to localStorage:', storageError);
+        setLoading(false);
+        return false;
+      }
+      
+      console.log('Successfully registered user');
       
       // Auto-login after registration
       const userData: AuthUser = {
@@ -156,14 +206,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(userData);
       
       // Store auth data in localStorage
-      localStorage.setItem('auth', JSON.stringify({
-        isAuthenticated: true,
-        user: userData
-      }));
+      try {
+        localStorage.setItem('auth', JSON.stringify({
+          isAuthenticated: true,
+          user: userData
+        }));
+      } catch (authStorageError) {
+        console.error('Failed to save auth state:', authStorageError);
+        // Continue anyway, as the user is authenticated in memory
+      }
       
+      setLoading(false);
       return true;
     } catch (error) {
       console.error('Sign-up error:', error);
+      setLoading(false);
       return false;
     }
   };

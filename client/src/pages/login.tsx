@@ -16,9 +16,25 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    
+    // Don't allow form submission if already loading
+    if (loading) {
+      console.log("Form submission already in progress");
+      return;
+    }
 
     if (isSignUp) {
-      // Handle sign up
+      // Handle sign up - validate inputs first
+      if (!email) {
+        setError("Email is required");
+        return;
+      }
+      
+      if (!email.includes('@') || !email.includes('.')) {
+        setError("Please enter a valid email address");
+        return;
+      }
+      
       if (password !== confirmPassword) {
         setError("Passwords do not match");
         return;
@@ -30,13 +46,20 @@ export default function LoginPage() {
       }
       
       // Use the username or extract one from email if not provided
-      const username = name || email.split('@')[0];
+      let username = name;
+      if (!username || username.trim() === '') {
+        username = email.split('@')[0];
+      }
       
       try {
+        console.log("Attempting to register new user...");
+        
         // Use the signUp function from our auth context
         const success = await signUp(username, email, password);
         
         if (success) {
+          console.log("Registration successful");
+          
           // Store the username for the tour with proper capitalization for better greeting
           const formattedName = username.charAt(0).toUpperCase() + username.slice(1);
           localStorage.setItem('tourUserName', formattedName);
@@ -45,11 +68,17 @@ export default function LoginPage() {
           localStorage.setItem('newUser', 'true');
           localStorage.removeItem('hasSeenTour'); // Explicitly ensure tour will be shown
           
-          // Add a DOM attribute as fallback storage
-          document.body.setAttribute('data-new-user', 'true');
-          
-          // Registration successful, redirect to home page
-          setLocation("/");
+          // Small delay to ensure everything is saved before redirecting
+          setTimeout(() => {
+            // Clear form fields
+            setEmail("");
+            setPassword("");
+            setName("");
+            setConfirmPassword("");
+            
+            console.log("Redirecting to home page after successful registration");
+            setLocation("/");
+          }, 300);
         } else {
           setError("This email is already registered. Please log in instead.");
         }
@@ -58,10 +87,24 @@ export default function LoginPage() {
         console.error(error);
       }
     } else {
-      // Handle login
+      // Handle login - validate inputs first
+      if (!email) {
+        setError("Email is required");
+        return;
+      }
+      
+      if (!password) {
+        setError("Password is required");
+        return;
+      }
+      
       try {
+        console.log("Attempting to log in...");
+        
         const success = await login(email, password);
         if (success) {
+          console.log("Login successful");
+          
           // Get username from email for the tour if not already set
           if (!localStorage.getItem('tourUserName')) {
             const username = email.split('@')[0];
@@ -76,7 +119,15 @@ export default function LoginPage() {
             localStorage.setItem('showTourSuggestion', 'true');
           }
           
-          setLocation("/");
+          // Small delay to ensure everything is saved before redirecting
+          setTimeout(() => {
+            // Clear form fields
+            setEmail("");
+            setPassword("");
+            
+            console.log("Redirecting to home page after successful login");
+            setLocation("/");
+          }, 300);
         } else {
           setError("Invalid credentials. Please try again.");
         }
