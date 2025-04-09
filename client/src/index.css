@@ -576,11 +576,77 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
     padding-right: 0.5rem !important;
   }
   
-  /* Make sure the Fundi robot stays at the bottom on mobile */
+  /* Make sure the Fundi robot stays at the bottom on mobile - with !important flag for all properties */
   body.tour-active .mobile-tour-fundi {
     bottom: 20px !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
     transform: translateX(-50%) !important;
     position: fixed !important;
+    x: 0 !important;
+    y: 0 !important;
+  }
+  
+  /* Fix for Fundi positioning calculations on mobile */
+  body.tour-active .fixed.z-\[99999\][style*="transform"] {
+    transform: translateX(-50%) !important;
+    x: 0 !important;
+    y: 0 !important;
+  }
+  
+  /* Extra fixes for mobile tour mode */
+  body.tour-mobile-mode .fixed.z-\[99999\] {
+    bottom: 20px !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    transform: translateX(-50%) !important;
+    position: fixed !important;
+    x: 0 !important;
+    y: 0 !important;
+  }
+  
+  /* Fix speech bubble position in mobile tour mode */
+  body.tour-mobile-mode .fixed.z-\[99999\] > div[style*="width"] {
+    bottom: 100px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    max-width: calc(100vw - 40px) !important;
+  }
+  
+  /* Ensure speech bubble always stays on screen */
+  .z-\[99999\] .z-\[99998\], .tour-speech-bubble {
+    transform: none !important; /* Don't transform X for desktop */
+    max-width: 250px !important; /* Limit the width to avoid overflow */
+  }
+  
+  /* Make sure the chat is always visible on screen */
+  @media (min-width: 641px) {
+    .z-\[99999\]:not(.mobile-tour-fundi) .z-\[99998\] {
+      left: -250px !important; /* Position to the inside/left of Fundi */
+      right: auto !important; /* Don't use right positioning */
+    }
+    
+    /* When Fundi is on the left side, put bubble on the right */
+    .z-\[99999\][style*="left: 0"] .z-\[99998\],
+    .z-\[99999\][style*="left: 1"] .z-\[99998\],
+    .z-\[99999\][style*="left: 2"] .z-\[99998\],
+    .z-\[99999\][style*="left: 3"] .z-\[99998\],
+    .z-\[99999\][style*="left: 4"] .z-\[99998\],
+    .z-\[99999\][style*="left: 5"] .z-\[99998\],
+    .z-\[99999\][style*="left: 6"] .z-\[99998\],
+    .z-\[99999\][style*="left: 7"] .z-\[99998\],
+    .z-\[99999\][style*="left: 8"] .z-\[99998\],
+    .z-\[99999\][style*="left: 9"] .z-\[99998\] {
+      left: 80px !important; /* Position to the right of Fundi when Fundi is on left edge */
+    }
+  
+    /* Ensure the bubble is fully on screen by limiting its max-width */
+    .tour-speech-bubble {
+      max-width: min(250px, calc(100vw - 100px)) !important;
+      font-size: 0.85rem !important;
+    }
   }
 }
 

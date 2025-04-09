@@ -59,6 +59,22 @@ export default function FundiTourGuide() {
     const featureCards = document.querySelectorAll('.card');
     const cardPositions: Array<{ x: number; y: number; element: Element }> = [];
     
+    // Calculate safe boundaries for positioning
+    // The speech bubble is 250px wide, and Fundi is 80px wide
+    // We need at least 330px of total width - to ensure both fit on screen
+    // We'll constrain placement to keep Fundi and chat box in safe zones 
+    const FUNDI_WIDTH = 80;
+    const BUBBLE_WIDTH = 250;
+    const SAFE_RIGHT_MARGIN = FUNDI_WIDTH + 20; // Fundi width + safety margin
+    
+    // For safety, modify margin based on window width
+    // Larger screens can accommodate more complex positioning
+    const safetyMargin = viewportWidth < 768 ? viewportWidth * 0.4 : 250;
+    
+    // Maximum allowed X position - prevents Fundi from getting too close to the right edge 
+    const maxSafeX = viewportWidth - SAFE_RIGHT_MARGIN - safetyMargin;
+    console.log(`Screen size: ${viewportWidth}x${viewportHeight}, Safe max X position: ${maxSafeX}`);
+    
     // Try to position Fundi near feature cards if they exist
     if (featureCards.length > 0) {
       featureCards.forEach((card, index) => {
@@ -72,15 +88,17 @@ export default function FundiTourGuide() {
           if (index % 2 === 0) {
             // Position to the left of even-indexed cards
             cardPositions.push({
-              x: Math.min(rect.left - 60, viewportWidth - 100), 
-              y: rect.top + 20,
+              // Ensure we don't place too far right
+              x: Math.min(rect.left - 60, maxSafeX), 
+              y: Math.min(rect.top + 20, viewportHeight - 100),
               element: card
             });
           } else {
             // Position to the right of odd-indexed cards
             cardPositions.push({
-              x: Math.min(rect.right + 20, viewportWidth - 100),
-              y: rect.top + 20,
+              // Ensure we don't place too far right
+              x: Math.min(rect.right + 20, maxSafeX),
+              y: Math.min(rect.top + 20, viewportHeight - 100),
               element: card
             });
           }
@@ -90,16 +108,32 @@ export default function FundiTourGuide() {
     
     // If no cards found or on small desktop screens, use fallback positions
     if (cardPositions.length === 0) {
-      // Define fallback positions for different points around the screen
-      // Set a stricter maximum X position for desktop to prevent Fundi from moving too far right
-      const maxDesktopX = Math.min(500, viewportWidth - 200);
+      // Use the previously calculated maxSafeX to keep Fundi from going too far right
+      // This ensures speech bubble stays on screen
       
+      // Calculate ideal positions that adapt to screen size safely
+      const leftSide = Math.min(viewportWidth * 0.2, 100); // 20% of screen width or 100px, whichever is smaller
+      const centerLeft = Math.min(viewportWidth * 0.3, maxSafeX);
+      const center = Math.min(viewportWidth * 0.4, maxSafeX);
+      
+      // Top safe margin - keep robot in view
+      const topMargin = Math.min(100, viewportHeight * 0.1);
+      // Keep robot away from bottom edge
+      const bottomSafeY = viewportHeight - 150;
+      
+      // Create a variety of safe positions around the screen
       const fallbackPositions = [
-        { x: Math.min(viewportWidth / 4, maxDesktopX), y: 120 },  // Top left area
-        { x: Math.min(viewportWidth / 2 - 40, maxDesktopX), y: 120 },  // Top center
-        { x: Math.min(viewportWidth * 0.6, maxDesktopX), y: 120 },  // Top right area (reduced from 0.75)
-        { x: Math.min(viewportWidth / 4, maxDesktopX), y: Math.min(viewportHeight / 2, 400) },  // Middle left
-        { x: Math.min(viewportWidth * 0.6, maxDesktopX), y: Math.min(viewportHeight / 2, 400) },  // Middle right (reduced from 0.75)
+        // Left side positions (where speech bubble appears to right of Fundi)
+        { x: leftSide, y: topMargin }, // Top left
+        { x: leftSide, y: Math.min(viewportHeight * 0.3, bottomSafeY) }, // Middle-upper left
+        { x: leftSide, y: Math.min(viewportHeight * 0.5, bottomSafeY) }, // Middle left
+        
+        // Middle positions
+        { x: centerLeft, y: topMargin }, // Top center-left
+        { x: center, y: Math.min(topMargin + 50, viewportHeight * 0.2) }, // Top center
+        
+        // Keep all X positions within the safe boundary
+        { x: Math.min(centerLeft, maxSafeX), y: Math.min(viewportHeight * 0.4, bottomSafeY) } // Middle center-left
       ];
       
       // Use modulo to cycle through fallback positions if no cards found
@@ -115,11 +149,11 @@ export default function FundiTourGuide() {
     const selectedPosition = cardPositions[positionIndex];
     
     // Always ensure position stays within the viewport
-    // Apply desktop limits to prevent Fundi from going too far right
-    const maxDesktopX = Math.min(500, viewportWidth - 200);
+    // Use the previously calculated maxSafeX to keep Fundi in the safe zone
+    // This ensures speech bubble stays on screen too
     const finalPosition = {
-      x: Math.max(20, Math.min(selectedPosition.x, maxDesktopX)),
-      y: Math.max(20, Math.min(selectedPosition.y, viewportHeight - 200))
+      x: Math.max(20, Math.min(selectedPosition.x, maxSafeX)),
+      y: Math.max(20, Math.min(selectedPosition.y, viewportHeight - 150))
     };
     
     // Highlight the card we're pointing to with a subtle glow
@@ -211,7 +245,7 @@ export default function FundiTourGuide() {
         setTimeout(() => setSpeaking(false), 2000);
       }, 800);
       
-      // Use predefined positions
+      // Detect mobile devices
       const isMobile = window.innerWidth < 640;
       
       // Check if this step has special positioning needs
@@ -219,12 +253,22 @@ export default function FundiTourGuide() {
         // Use the explicitly defined fixed position from the step
         setPosition(currentStep.fixedPosition);
         console.log(`Using fixed position from step config: x=${currentStep.fixedPosition.x}px, y=${currentStep.fixedPosition.y}px`);
+      } else if (isMobile) {
+        // On mobile devices, force the position to be centered at bottom
+        // These coordinates are intentionally set to 0,0 for mobile as the CSS will handle positioning
+        setPosition({ x: 0, y: 0 });
+        setTargetPosition({ x: 0, y: 0 });
+        console.log("Mobile device detected: Using CSS-controlled fixed position");
+        
+        // Add mobile-specific class to body for additional styling
+        document.body.classList.add('tour-mobile-mode');
       } else {
-        // Normal positioning for other steps
+        // Normal positioning for desktop steps
         const position = getFundiPosition(stepIndex, isMobile);
         setTargetPosition(position);
         setPosition(position); // Set position directly
       }
+      
       setAnimate(true);
       console.log(`FIXED: Fundi positioned for step ${stepIndex}`);
       
@@ -257,6 +301,7 @@ export default function FundiTourGuide() {
         el.classList.remove('tour-highlight');
         el.classList.remove('tour-card-highlight');
       });
+      document.body.classList.remove('tour-mobile-mode');
     };
   }, [isTourActive, currentStep, currentStepIndex]);
   
@@ -372,7 +417,7 @@ export default function FundiTourGuide() {
         
         {/* Speech Bubble is now a child of Fundi for proper anchoring */}
         <motion.div
-          className="absolute z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-3.5"
+          className="absolute z-[99998] bg-white rounded-2xl shadow-lg border border-gray-200 p-3.5 tour-speech-bubble"
           onClick={(e) => e.stopPropagation()} // Prevent clicks on the speech bubble from advancing tour
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ 
@@ -387,21 +432,29 @@ export default function FundiTourGuide() {
             delay: 0.05 // Slight delay after Fundi moves
           }}
           style={{ 
-            width: '300px', // Increased width for longer introduction text
-            maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : 'calc(100vw - 140px)', // More width on mobile
+            width: '250px', // Reduced width to avoid overflow
+            maxWidth: window.innerWidth < 640 ? 'calc(100vw - 40px)' : 'calc(min(400px, 100vw - 100px))', // Responsive capping
             height: 'auto', // Auto height based on content
-            maxHeight: `calc(90vh - 100px)`, // Responsive max height
+            maxHeight: `calc(80vh - 100px)`, // Reduced max height for better fitting
             boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
             willChange: 'transform', // Performance optimization
             transformOrigin: 'center top', // Consistent transform origin
             overflowY: 'auto', // Allow scrolling if content is too tall
-            top: window.innerWidth < 640 ? 'auto' : '0px', // Different position on mobile
-            bottom: window.innerWidth < 640 ? '100px' : 'auto', // Position above robot on mobile
-            left: window.innerWidth < 640 ? '50%' : 'auto', // Center on mobile
-            transform: window.innerWidth < 640 ? 'translateX(-50%)' : 'none', // Center on mobile 
-            right: window.innerWidth < 640 ? 'auto' : '85px', // Different position between desktop/mobile
-            fontSize: 'clamp(0.75rem, 2vw, 0.9rem)', // Responsive font size
-            zIndex: 99998 // Ensure proper stacking
+            
+            // Mobile positioning - above Fundi
+            top: window.innerWidth < 640 ? 'auto' : '0px',
+            bottom: window.innerWidth < 640 ? '100px' : 'auto',
+            
+            // Always position to ensure visibility
+            right: 'auto', 
+            // Handle adaptive positioning - using Math.min ensures we don't position it off-screen
+            left: Math.min(0, window.innerWidth - 350) + 'px', // Dynamically adjust based on screen width
+            
+            // Responsive font size - slightly smaller for better fit
+            fontSize: 'clamp(0.7rem, 1.8vw, 0.85rem)', 
+            
+            // Ensure proper stacking
+            zIndex: 99998 
           }}
         >
           {/* No pointer for cleaner look - bubble is now directly attached to Fundi */}
