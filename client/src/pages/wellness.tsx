@@ -143,92 +143,94 @@ export default function Wellness() {
   };
 
   return (
-    <div className="w-full h-full mx-auto p-0">
-      <h1 className="text-2xl font-bold tracking-tight text-center mb-2">
-        Wellness & Nutrition
-      </h1>
+    <div className="w-full h-full mx-auto p-0 md:p-2 lg:p-4 flex flex-col items-center">
+      <div className="w-full max-w-6xl">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-2 md:mb-4">
+          Wellness & Nutrition
+        </h1>
 
-      <Alert variant="default" className="mx-3 sm:mx-5 mb-2 border-blue-500 bg-blue-50">
-        <AlertCircle className="h-4 w-4 text-blue-500" />
-        <AlertDescription className="text-blue-800 text-sm">
-          Remember to consult with healthcare professionals for medical advice. Our AI provides general wellness guidance only.
-        </AlertDescription>
-      </Alert>
+        <Alert variant="default" className="mx-3 sm:mx-5 mb-2 border-blue-500 bg-blue-50">
+          <AlertCircle className="h-4 w-4 text-blue-500" />
+          <AlertDescription className="text-blue-800 text-sm">
+            Remember to consult with healthcare professionals for medical advice. Our AI provides general wellness guidance only.
+          </AlertDescription>
+        </Alert>
 
-      {/* Full-screen dialogs */}
-      <FullScreenDialog open={isJournalOpen} onOpenChange={setIsJournalOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <JournalPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+        {/* Full-screen dialogs */}
+        <FullScreenDialog open={isJournalOpen} onOpenChange={setIsJournalOpen}>
+          <FullScreenDialogContent themeColor="#a855f7">
+            <JournalPopOut />
+          </FullScreenDialogContent>
+        </FullScreenDialog>
 
-      <FullScreenDialog open={isRiskOpen} onOpenChange={setIsRiskOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <RiskAssessmentPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+        <FullScreenDialog open={isRiskOpen} onOpenChange={setIsRiskOpen}>
+          <FullScreenDialogContent themeColor="#a855f7">
+            <RiskAssessmentPopOut />
+          </FullScreenDialogContent>
+        </FullScreenDialog>
 
-      <FullScreenDialog open={isNutritionOpen} onOpenChange={setIsNutritionOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <IntegratedNutritionPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+        <FullScreenDialog open={isNutritionOpen} onOpenChange={setIsNutritionOpen}>
+          <FullScreenDialogContent themeColor="#a855f7">
+            <IntegratedNutritionPopOut />
+          </FullScreenDialogContent>
+        </FullScreenDialog>
 
-      <FullScreenDialog open={isTrackerOpen} onOpenChange={setIsTrackerOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <NutritionTrackerPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+        <FullScreenDialog open={isTrackerOpen} onOpenChange={setIsTrackerOpen}>
+          <FullScreenDialogContent themeColor="#a855f7">
+            <NutritionTrackerPopOut />
+          </FullScreenDialogContent>
+        </FullScreenDialog>
 
-      <FullScreenDialog open={isShoppingOpen} onOpenChange={setIsShoppingOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <ShoppingBuddyPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-      
-      <FullScreenDialog open={isBrainTapOpen} onOpenChange={setIsBrainTapOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <BrainTapPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-      
-      <FullScreenDialog open={isComprehensiveOpen} onOpenChange={setIsComprehensiveOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <ComprehensiveWellnessPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+        <FullScreenDialog open={isShoppingOpen} onOpenChange={setIsShoppingOpen}>
+          <FullScreenDialogContent themeColor="#a855f7">
+            <ShoppingBuddyPopOut />
+          </FullScreenDialogContent>
+        </FullScreenDialog>
+        
+        <FullScreenDialog open={isBrainTapOpen} onOpenChange={setIsBrainTapOpen}>
+          <FullScreenDialogContent themeColor="#a855f7">
+            <BrainTapPopOut />
+          </FullScreenDialogContent>
+        </FullScreenDialog>
+        
+        <FullScreenDialog open={isComprehensiveOpen} onOpenChange={setIsComprehensiveOpen}>
+          <FullScreenDialogContent themeColor="#a855f7">
+            <ComprehensiveWellnessPopOut />
+          </FullScreenDialogContent>
+        </FullScreenDialog>
 
-      {/* Grid-style cards layout (similar to Learning section) */}
-      <div className="px-2">
-        <div className="mb-4">
-          <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-purple-50 text-purple-800 rounded-md border-l-4 border-purple-500">
-            Wellness Tools
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 mt-3 sm:mt-4">
-            {SECTIONS.map((section) => (
-              <div 
-                key={section.id} 
-                className={`flex flex-col h-full ${section.id === 'shopping' ? 'col-span-1 sm:col-span-3 md:col-span-4 lg:col-span-5 xl:col-span-6' : ''}`}
-              >
-                <button
-                  onClick={() => handleCardClick(section.id)}
-                  className={`relative flex flex-row sm:flex-col items-start sm:items-center justify-start sm:justify-between text-left sm:text-center p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[90px] sm:min-h-[160px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start' : ''}`}
-                  aria-label={`Open ${section.title}`}
+        {/* Grid-style cards layout (similar to Learning section) */}
+        <div className="px-2">
+          <div className="mb-4">
+            <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-purple-50 text-purple-800 rounded-md border-l-4 border-purple-500">
+              Wellness Tools
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 max-w-6xl mx-auto">
+              {SECTIONS.map((section) => (
+                <div 
+                  key={section.id} 
+                  className={`flex flex-col h-full ${section.id === 'shopping' ? 'col-span-2 sm:col-span-3 md:col-span-3 lg:col-span-4 xl:col-span-4' : ''}`}
                 >
-                  <div className={`flex items-center justify-center h-14 w-14 mr-4 flex-shrink-0 ${section.id === 'shopping' ? 'sm:mr-6 sm:flex-shrink-0' : 'sm:w-full sm:h-14 sm:mb-2'}`}>
-                    <section.icon className="w-10 h-10 text-purple-500" />
-                  </div>
-                  
-                  <div className="flex flex-col items-start sm:items-center w-full">
-                    <span className="text-base font-medium text-left sm:text-center line-clamp-2 w-full">{section.title}</span>
+                  <button
+                    onClick={() => handleCardClick(section.id)}
+                    className={`relative flex flex-row sm:flex-col items-start sm:items-center justify-start sm:justify-between text-left sm:text-center p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[90px] sm:min-h-[180px] md:min-h-[200px] lg:min-h-[220px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[160px] md:min-h-[180px]' : ''}`}
+                    aria-label={`Open ${section.title}`}
+                  >
+                    <div className={`flex items-center justify-center h-14 w-14 mr-4 flex-shrink-0 ${section.id === 'shopping' ? 'sm:mr-6 sm:flex-shrink-0' : 'sm:w-full sm:h-16 md:h-20 lg:h-24 sm:mb-3 md:mb-4'}`}>
+                      <section.icon className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 text-purple-500" />
+                    </div>
                     
-                    <p className={`text-xs text-gray-500 mt-1 ${section.id === 'shopping' ? 'line-clamp-3' : 'line-clamp-2'} text-left sm:text-center block ${section.id === 'shopping' ? 'sm:block' : 'sm:hidden'}`}>
-                      {section.description}
-                    </p>
-                  </div>
-                </button>
-              </div>
-            ))}
+                    <div className="flex flex-col items-start sm:items-center w-full">
+                      <span className="text-base sm:text-lg md:text-xl font-medium text-left sm:text-center line-clamp-2 w-full">{section.title}</span>
+                      
+                      <p className={`text-xs sm:text-sm md:text-base text-gray-500 mt-1 md:mt-2 ${section.id === 'shopping' ? 'line-clamp-3' : 'line-clamp-2 md:line-clamp-3'} text-left sm:text-center block ${section.id === 'shopping' ? 'sm:block' : 'sm:block'}`}>
+                        {section.description}
+                      </p>
+                    </div>
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
