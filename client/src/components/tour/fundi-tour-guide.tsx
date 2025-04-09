@@ -158,6 +158,41 @@ export default function FundiTourGuide() {
   // Track when the component has mounted/updated for a given step
   const [hasRendered, setHasRendered] = useState(false);
   
+  // Special handler for vehicle maintenance page scroll repositioning
+  useEffect(() => {
+    // Only run for the specific step that needs fixing
+    if (isTourActive && currentStep?.route === '/learning/courses/vehicle-maintenance') {
+      // Listen for scroll events to move Fundi with the page
+      const handleScroll = () => {
+        const element = document.querySelector('.course-content');
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // Only reposition if the element is partially visible
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            // Get the top of the element in the viewport
+            // Position Fundi near the top of the visible portion of the element
+            const visibleTop = Math.max(0, rect.top);
+            const newPosition = {
+              x: 166, // Keep horizontal position the same
+              y: Math.max(80, visibleTop + 60) // Keep Fundi just below the top of the card
+            };
+            setPosition(newPosition);
+          }
+        }
+      };
+      
+      // Add scroll listener
+      window.addEventListener('scroll', handleScroll);
+      
+      // Initial positioning
+      setTimeout(handleScroll, 300);
+      
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isTourActive, currentStep?.route]);
+
   // Simple effect to update Fundi's position based on the current step
   useEffect(() => {
     if (!isTourActive || !currentStep) return;
@@ -181,11 +216,21 @@ export default function FundiTourGuide() {
       
       // Use predefined positions
       const isMobile = window.innerWidth < 640;
-      const position = getFundiPosition(stepIndex, isMobile);
-      setTargetPosition(position);
-      setPosition(position); // Set position directly
+      
+      // Special case for vehicle maintenance page to position Fundi near the top initially
+      if (currentStep.route === '/learning/courses/vehicle-maintenance') {
+        // Start Fundi at the top so it's visible, scroll listener will handle the rest
+        const position = { x: 166, y: 120 };
+        setPosition(position);
+        console.log(`Vehicle maintenance special positioning: x=${position.x}px, y=${position.y}px`);
+      } else {
+        // Normal positioning for other steps
+        const position = getFundiPosition(stepIndex, isMobile);
+        setTargetPosition(position);
+        setPosition(position); // Set position directly
+      }
       setAnimate(true);
-      console.log(`FIXED: Fundi positioned for step ${stepIndex} at x=${position.x}px, y=${position.y}px`);
+      console.log(`FIXED: Fundi positioned for step ${stepIndex}`);
       
       // Handle highlighting if needed
       if (currentStep.highlightSelector) {
@@ -194,28 +239,15 @@ export default function FundiTourGuide() {
         timeoutRef.current = setTimeout(() => {
           const element = document.querySelector(currentStep.highlightSelector as string);
           if (element) {
-            // First scroll the element into view
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Scroll the element into view, but only if it's not the vehicle maintenance page
+            // (We handle that separately with the scroll listener)
+            if (currentStep.route !== '/learning/courses/vehicle-maintenance') {
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+              // For vehicle maintenance, highlight but don't auto-scroll
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
             element.classList.add('tour-highlight');
-            
-            // Then reposition Fundi after scrolling is complete to stay with the highlighted element
-            setTimeout(() => {
-              const rect = element.getBoundingClientRect();
-              const viewportWidth = window.innerWidth;
-              
-              // Calculate a position for Fundi that's near the highlighted element
-              // Position Fundi to the right or left of the element based on space available
-              const newPosition = {
-                x: viewportWidth - rect.right > 150 ? 
-                    Math.min(rect.right + 30, viewportWidth - 120) : // Right side if space available
-                    Math.max(20, rect.left - 100), // Otherwise left side
-                y: Math.max(80, rect.top - 50) // Above the element but not too high
-              };
-              
-              console.log(`Repositioning Fundi to stay with highlighted element: x=${newPosition.x}, y=${newPosition.y}`);
-              setTargetPosition(newPosition);
-              setPosition(newPosition);
-            }, 500); // Wait for scrolling to complete
           }
         }, 800);
       }
