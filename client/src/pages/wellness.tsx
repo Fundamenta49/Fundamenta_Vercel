@@ -205,26 +205,28 @@ export default function Wellness() {
             <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-purple-50 text-purple-800 rounded-md border-l-4 border-purple-500">
               Wellness Tools
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 mt-4 px-1 sm:px-0 max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 px-1 sm:px-0 max-w-6xl mx-auto">
               {SECTIONS.map((section) => (
                 <div 
                   key={section.id} 
-                  className={`flex flex-col h-full ${section.id === 'shopping' ? 'col-span-2 sm:col-span-3 md:col-span-3 lg:col-span-4 xl:col-span-4' : ''}`}
+                  className={`flex flex-col h-full ${section.id === 'shopping' ? 'col-span-2 sm:col-span-3 md:col-span-3 lg:col-span-3 xl:col-span-3' : ''}`}
                 >
                   <button
                     onClick={() => handleCardClick(section.id)}
-                    className={`relative flex flex-row sm:flex-col items-center justify-start text-left sm:text-center py-3 px-3 sm:p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[100px] sm:min-h-[220px] md:min-h-[240px] lg:min-h-[260px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[160px]' : ''}`}
+                    className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`}
                     aria-label={`Open ${section.title}`}
                   >
-                    <div className={`flex items-center justify-center h-10 w-10 mr-3 flex-shrink-0 ${section.id === 'shopping' ? 'sm:mr-5 sm:flex-shrink-0' : 'sm:w-full sm:h-16 md:h-20 lg:h-24 sm:mb-4 md:mb-6'}`}>
-                      <section.icon className="w-6 h-6 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-purple-500" />
+                    <div className={`flex items-center justify-center h-12 sm:h-14 md:h-14 ${section.id === 'shopping' ? 'sm:mr-6' : 'w-full'} mb-2`}>
+                      <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 text-purple-500" />
                     </div>
                     
-                    <div className="flex flex-col justify-center w-full">
-                      <span className="text-sm sm:text-lg md:text-xl font-medium text-left sm:text-center line-clamp-1 sm:line-clamp-2 w-full">{section.title}</span>
+                    <div className={`flex flex-col ${section.id === 'shopping' ? 'sm:items-start items-center' : 'items-center'} w-full`}>
+                      <span className={`text-sm sm:text-base md:text-lg font-medium ${section.id === 'shopping' ? 'sm:text-left text-center' : 'text-center'} line-clamp-2 w-full`}>{section.title}</span>
                       
-                      <p className="text-xs sm:text-sm md:text-base text-gray-500 mt-1 sm:mt-3 line-clamp-2 sm:line-clamp-3 text-left sm:text-center w-full">
-                        {section.description}
+                      <p className={`text-xs sm:text-sm text-gray-500 mt-1 md:mt-2 line-clamp-3 ${section.id === 'shopping' ? 'sm:text-left text-center' : 'text-center'} block`}>
+                        {section.description.length > (section.id === 'shopping' ? 100 : 80) 
+                          ? `${section.description.substring(0, section.id === 'shopping' ? 100 : 80)}...` 
+                          : section.description}
                       </p>
                     </div>
                   </button>
