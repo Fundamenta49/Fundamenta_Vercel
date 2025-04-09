@@ -12,7 +12,7 @@ import ComprehensiveWellnessAssessment from "@/components/comprehensive-wellness
 export default function ComprehensiveWellnessPopOut() {
   return (
     <>
-      <FullScreenDialogHeader>
+      <FullScreenDialogHeader className="mb-6">
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Heart className="h-5 w-5 text-purple-600" />
           Comprehensive Wellness Assessment
@@ -22,7 +22,7 @@ export default function ComprehensiveWellnessPopOut() {
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
       
-      <FullScreenDialogBody>
+      <FullScreenDialogBody className="pt-6">
         <div className="max-w-4xl mx-auto w-full">
           <ComprehensiveWellnessAssessment />
         </div>

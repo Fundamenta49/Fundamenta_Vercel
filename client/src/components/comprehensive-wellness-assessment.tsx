@@ -699,7 +699,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     value={physicalAssessment.gender} 
                     onValueChange={(value) => updatePhysicalAssessment('gender', value)}
                   >
-                    <SelectTrigger id="gender">
+                    <SelectTrigger id="gender" className="z-20">
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                     <SelectContent>
@@ -767,7 +767,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   value={physicalAssessment.activityLevel} 
                   onValueChange={(value) => updatePhysicalAssessment('activityLevel', value)}
                 >
-                  <SelectTrigger id="activityLevel">
+                  <SelectTrigger id="activityLevel" className="z-20">
                     <SelectValue placeholder="Select activity level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -881,7 +881,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   value={physicalAssessment.currentDiet.mealFrequency.toString()} 
                   onValueChange={(value) => updatePhysicalAssessment('currentDiet.mealFrequency', parseInt(value))}
                 >
-                  <SelectTrigger id="mealFrequency">
+                  <SelectTrigger id="mealFrequency" className="z-20">
                     <SelectValue placeholder="Select meal frequency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1656,7 +1656,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       
       <FullScreenDialog open={isOpen} onOpenChange={setIsOpen}>
         <FullScreenDialogContent>
-          <FullScreenDialogHeader>
+          <FullScreenDialogHeader className="mb-6">
             <FullScreenDialogTitle className="flex items-center gap-2">
               <Heart className="h-6 w-6 text-purple-600" />
               Comprehensive Wellness Assessment
@@ -1674,7 +1674,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             </FullScreenDialogDescription>
           </FullScreenDialogHeader>
           
-          <FullScreenDialogBody>
+          <FullScreenDialogBody className="pt-6">
             <div className="max-w-4xl mx-auto w-full">
               <Card className="border shadow-sm">
                 {renderStepContent()}
