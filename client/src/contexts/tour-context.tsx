@@ -219,8 +219,20 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsTourActive(false);
     localStorage.setItem('hasSeenTour', 'true');
     setHasSeenTour(true);
-    // Remove tour-active class from body when tour ends
+    
+    // Remove tour-active class and mobile-specific class from body when tour ends
     document.body.classList.remove('tour-active');
+    document.body.classList.remove('tour-mobile-mode');
+    document.body.classList.remove('tour-vehicle-page');
+    document.body.classList.remove('tour-finance-page');
+    
+    // Reset Fundi's position to default
+    const fundiElement = document.querySelector('.robot-container');
+    if (fundiElement) {
+      // Reset position to its original default state
+      fundiElement.setAttribute('style', 'transform: none; x: 0; y: 0; top: 8px; right: 24px;');
+    }
+    
     // Reset location to home
     setLocation('/');
   }, [setLocation]);

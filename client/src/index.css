@@ -777,15 +777,15 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   /* Mobile-specific styles */
   .vehicle-maintenance-page {
     position: relative;
-    padding-top: 40px !important; /* Significantly reduced top padding on mobile */
-    margin-top: 20px !important; /* Less margin on mobile */
-    scroll-margin-top: 80px; /* Mobile-specific scroll margin */
+    padding-top: 20px !important; /* Significantly reduced top padding on mobile */
+    margin-top: 0 !important; /* No margin on mobile */
+    scroll-margin-top: 20px; /* Smaller scroll margin */
   }
   
   /* Make vehicle maintenance content more visible during tour on mobile */
   body.tour-active .vehicle-maintenance-page .course-content {
-    margin-top: 20px !important; /* Minimal top margin on mobile */
-    padding-top: 10px !important; /* Minimal padding on mobile */
+    margin-top: 5px !important; /* Minimal top margin on mobile */
+    padding-top: 5px !important; /* Minimal padding on mobile */
     border-top: 2px solid rgba(var(--primary-rgb), 0.3) !important; /* More visible separator on mobile */
     background-color: rgba(255, 255, 255, 0.6) !important; /* Enhanced background on mobile */
     box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.15) !important; /* Colored shadow for visibility */
@@ -793,8 +793,10 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
 
   /* Ensure content is visible above the fold on mobile */
   body.tour-mobile-mode .vehicle-maintenance-page .course-content {
-    transform: translateY(-60px) !important; /* Move content up on mobile to be immediately visible */
+    transform: translateY(-20px) !important; /* Slight move up for immediate visibility */
     transition: transform 0.3s ease-out !important;
+    margin-top: 0 !important; /* No margin on top */
+    padding-top: 10px !important; /* Small padding for spacing */
   }
 }
 
@@ -823,10 +825,11 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   body.tour-active.tour-finance-page .finance-tools,
   body.tour-active[data-tour-route="/finance"] .finance-tools,
   body.tour-active[data-tour-route="/finance/mortgage"] .finance-tools {
-    transform: translateY(-40px) !important; /* Move content up to be more visible */
-    margin-top: 10px !important;
+    transform: translateY(-10px) !important; /* Small shift up for visibility */
+    margin-top: 0 !important; /* No top margin */
+    padding-top: 10px !important; /* Small padding for spacing */
     border-top: 2px solid rgba(var(--financial-rgb), 0.3) !important;
-    background-color: rgba(255, 255, 255, 0.6) !important;
+    background-color: rgba(255, 255, 255, 0.8) !important; /* More opaque background */
     box-shadow: 0 4px 15px rgba(var(--financial-rgb), 0.15) !important;
   }
   
@@ -838,14 +841,15 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
     transition: all 0.3s ease !important;
   }
   
-  /* Vehicle page specific mobile enhancements using specific class */
+  /* Vehicle page specific mobile enhancements using specific class - extremely minimal spacing */
   body.tour-active.tour-vehicle-page .course-content,
   body.tour-active[data-tour-route*="vehicle-maintenance"] .course-content {
-    padding-top: 5px !important; /* Even less padding for immediate content visibility */
-    margin-top: 0 !important; /* Remove top margin for better positioning */
-    transform: translateY(-80px) !important; /* Aggressively move content up to be immediately visible */
-    transition: transform 0.3s ease-out !important;
-    border-top: 3px solid rgba(var(--learning-rgb), 0.4) !important; /* More visible separator with learning color */
+    padding-top: 0 !important; /* No padding for immediate content visibility */
+    margin-top: 0 !important; /* No margin for better positioning */
+    transform: translateY(0) !important; /* Don't move content - keep it visible at top */
+    position: relative !important; /* Ensure proper stacking */
+    top: 0 !important; /* Force to top */
+    border-top: 3px solid rgba(var(--learning-rgb), 0.4) !important; /* Visible separator with learning color */
     border-radius: 8px !important; 
     box-shadow: 0 8px 20px rgba(var(--learning-rgb), 0.15) !important;
   }
