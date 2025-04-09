@@ -91,7 +91,7 @@ const tourSteps: TourStep[] = [
     route: '/learning/courses/vehicle-maintenance',
     highlightSelector: '.course-content',
     skipScroll: true, // Prevent automatic scrolling for this step
-    fixedPosition: { x: 166, y: 120 }, // Keep Fundi at the top of the page
+    fixedPosition: { x: 80, y: 120 }, // Keep Fundi at the top of the page, moved left to stay on screen
   },
   
   // Financial Literacy section

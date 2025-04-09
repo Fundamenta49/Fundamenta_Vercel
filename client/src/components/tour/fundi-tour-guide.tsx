@@ -22,9 +22,10 @@ export default function FundiTourGuide() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [thinking, setThinking] = useState(false);
-  const [position, setPosition] = useState({ x: 166, y: 80 });
-  const [targetPosition, setTargetPosition] = useState({ x: 166, y: 80 });
-  console.log("FundiTourGuide mounted with initial position:", { x: 166, y: 80 });
+  // Initial position moved to left side to ensure Fundi stays fully on screen
+  const [position, setPosition] = useState({ x: 80, y: 80 });
+  const [targetPosition, setTargetPosition] = useState({ x: 80, y: 80 });
+  console.log("FundiTourGuide mounted with initial position:", { x: 80, y: 80 });
   const [animate, setAnimate] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
@@ -401,7 +402,7 @@ export default function FundiTourGuide() {
           }}
           style={{ 
             width: '300px', // Increased width for longer introduction text
-            maxWidth: `calc(100vw - 100px)`, // Responsive width that works on mobile
+            maxWidth: `calc(100vw - 140px)`, // Reduced max width to ensure it stays on screen
             height: 'auto', // Auto height based on content
             maxHeight: `calc(90vh - 100px)`, // Responsive max height
             boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
@@ -409,7 +410,7 @@ export default function FundiTourGuide() {
             transformOrigin: 'center top', // Consistent transform origin
             overflowY: 'auto', // Allow scrolling if content is too tall
             top: '0px', // Align with Fundi vertically
-            left: '85px', // Position to the right of Fundi
+            right: '85px', // Position to the left of Fundi (changed from left to right)
             fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' // Responsive font size
           }}
         >
