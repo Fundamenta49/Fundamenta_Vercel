@@ -250,8 +250,32 @@ export default function FundiTourGuide() {
         setTimeout(() => setSpeaking(false), 2000);
       }, 800);
       
-      // Detect mobile devices
+      // Enhanced mobile device detection - adds tour-mobile-mode class to body for CSS targeting
       const isMobile = window.innerWidth < 640;
+      
+      // Apply mobile mode class to body for consistent styling
+      if (isMobile) {
+        document.body.classList.add('tour-mobile-mode');
+        
+        // Special handling for vehicle maintenance page on mobile
+        if (currentStep.route?.includes('vehicle-maintenance')) {
+          console.log("Emergency fix applied for vehicle maintenance page");
+          // Add additional class for vehicle maintenance specific styling
+          document.body.classList.add('tour-vehicle-page');
+        } else if (currentStep.route?.includes('/finance')) {
+          console.log("Emergency fix applied for finance page");
+          // Add additional class for finance page specific styling  
+          document.body.classList.add('tour-finance-page');
+        } else {
+          // Remove special page classes when not needed
+          document.body.classList.remove('tour-vehicle-page');
+          document.body.classList.remove('tour-finance-page');
+        }
+      } else {
+        document.body.classList.remove('tour-mobile-mode');
+        document.body.classList.remove('tour-vehicle-page');
+        document.body.classList.remove('tour-finance-page');
+      }
       
       // Check if this step has special positioning needs
       if (currentStep.fixedPosition) {
@@ -264,9 +288,6 @@ export default function FundiTourGuide() {
         setPosition({ x: 0, y: 0 });
         setTargetPosition({ x: 0, y: 0 });
         console.log("Mobile device detected: Using CSS-controlled fixed position");
-        
-        // Add mobile-specific class to body for additional styling
-        document.body.classList.add('tour-mobile-mode');
       } else {
         // Normal positioning for desktop steps
         const position = getFundiPosition(stepIndex, isMobile);

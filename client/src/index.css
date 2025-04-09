@@ -776,10 +776,101 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   border-top: 2px solid rgba(0, 0, 0, 0.05); /* Visual separator */
 }
 
-/* Vehicle maintenance tour fix */
-.vehicle-maintenance-page {
-  position: relative;
-  padding-top: 150px; /* Add space at the top for Fundi */
+/* Vehicle maintenance tour fix - MOBILE ONLY */
+@media (max-width: 640px) {
+  /* Mobile-specific styles */
+  .vehicle-maintenance-page {
+    position: relative;
+    padding-top: 40px !important; /* Significantly reduced top padding on mobile */
+    margin-top: 20px !important; /* Less margin on mobile */
+    scroll-margin-top: 80px; /* Mobile-specific scroll margin */
+  }
+  
+  /* Make vehicle maintenance content more visible during tour on mobile */
+  body.tour-active .vehicle-maintenance-page .course-content {
+    margin-top: 20px !important; /* Minimal top margin on mobile */
+    padding-top: 10px !important; /* Minimal padding on mobile */
+    border-top: 2px solid rgba(var(--primary-rgb), 0.3) !important; /* More visible separator on mobile */
+    background-color: rgba(255, 255, 255, 0.6) !important; /* Enhanced background on mobile */
+    box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.15) !important; /* Colored shadow for visibility */
+  }
+
+  /* Ensure content is visible above the fold on mobile */
+  body.tour-mobile-mode .vehicle-maintenance-page .course-content {
+    transform: translateY(-60px) !important; /* Move content up on mobile to be immediately visible */
+    transition: transform 0.3s ease-out !important;
+  }
+}
+
+/* Desktop styles remain unchanged */
+@media (min-width: 641px) {
+  .vehicle-maintenance-page {
+    position: relative;
+    padding-top: 150px; /* Original desktop padding */
+  }
+}
+
+/* Finance and Vehicle tour fixes - MOBILE ONLY */
+@media (max-width: 640px) {
+  /* Finance page specific mobile optimizations - using body classes for better targeting */
+  body.tour-active.tour-finance-page .card,
+  body.tour-active.tour-finance-page .section-card,
+  body.tour-active[data-tour-route="/finance"] .card,
+  body.tour-active[data-tour-route="/finance"] .section-card {
+    margin-top: 20px !important; /* Reduced margin for mobile */
+    max-height: 80vh !important; /* Ensure content fits in viewport */
+    overflow-y: auto !important; /* Allow scrolling within cards */
+    padding-bottom: 20px !important; /* Add space at bottom */
+  }
+  
+  /* Financial tools specific fixes during tour */
+  body.tour-active.tour-finance-page .finance-tools,
+  body.tour-active[data-tour-route="/finance"] .finance-tools,
+  body.tour-active[data-tour-route="/finance/mortgage"] .finance-tools {
+    transform: translateY(-40px) !important; /* Move content up to be more visible */
+    margin-top: 10px !important;
+    border-top: 2px solid rgba(var(--financial-rgb), 0.3) !important;
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 4px 15px rgba(var(--financial-rgb), 0.15) !important;
+  }
+  
+  /* When finance content is highlighted, make it more prominent */
+  body.tour-active.tour-finance-page .tour-highlight,
+  body.tour-active[data-tour-route="/finance"] .tour-highlight {
+    box-shadow: 0 0 0 2px var(--financial-color), 0 0 20px rgba(var(--financial-rgb), 0.3) !important;
+    transform: translateY(-2px) !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  /* Vehicle page specific mobile enhancements using specific class */
+  body.tour-active.tour-vehicle-page .course-content,
+  body.tour-active[data-tour-route*="vehicle-maintenance"] .course-content {
+    padding-top: 5px !important; /* Even less padding for immediate content visibility */
+    margin-top: 0 !important; /* Remove top margin for better positioning */
+    transform: translateY(-80px) !important; /* Aggressively move content up to be immediately visible */
+    transition: transform 0.3s ease-out !important;
+    border-top: 3px solid rgba(var(--learning-rgb), 0.4) !important; /* More visible separator with learning color */
+    border-radius: 8px !important; 
+    box-shadow: 0 8px 20px rgba(var(--learning-rgb), 0.15) !important;
+  }
+  
+  /* Vehicle page first card specific enhancement */
+  body.tour-active.tour-vehicle-page .course-content > div:first-child,
+  body.tour-active[data-tour-route*="vehicle-maintenance"] .course-content > div:first-child {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    transform: translateY(-8px) !important;
+    border: 1px solid rgba(var(--learning-rgb), 0.2) !important;
+    padding-top: 0.5rem !important;
+    border-radius: 6px !important;
+  }
+  
+  /* Ensure Fundi stays at top during vehicle maintenance tour */
+  body.tour-active.tour-vehicle-page .robot-container,
+  body.tour-active[data-tour-route*="vehicle-maintenance"] .robot-container {
+    position: fixed !important;
+    top: 70px !important;
+    z-index: 99999 !important;
+  }
 }
 
 /* Enhanced visibility for tour highlighted elements */
