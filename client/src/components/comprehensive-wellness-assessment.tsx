@@ -1351,11 +1351,13 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               
               <div className="p-4 bg-white rounded-lg border">
                 <h3 className="text-lg font-medium mb-2">Dietary Changes</h3>
-                <ul className="list-disc list-inside space-y-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                   {results.recommendations.nutrition.dietaryChanges.map((change: string, index: number) => (
-                    <li key={index} className="text-sm">{change}</li>
+                    <div key={index} className="bg-white p-2 rounded-md border text-sm shadow-sm hover:shadow-md transition-shadow">
+                      {change}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
               
               <div className="p-4 bg-white rounded-lg border">
@@ -1405,11 +1407,13 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               
               <div className="p-4 bg-white rounded-lg border">
                 <h3 className="text-lg font-medium mb-2">Mental Wellness Recommendations</h3>
-                <ul className="list-disc list-inside space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                   {results.recommendations.mentalWellness.map((rec: string, index: number) => (
-                    <li key={index} className="text-sm">{rec}</li>
+                    <div key={index} className="bg-white p-2 rounded-md border text-sm shadow-sm hover:shadow-md transition-shadow">
+                      {rec}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
               
               {(results.mentalMetrics.depressionScore > 9 || results.mentalMetrics.anxietyScore > 9) && (
@@ -1435,11 +1439,13 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 <p className="text-sm mb-4">
                   These recommendations address the connection between your physical and mental health, creating a holistic approach to wellness.
                 </p>
-                <ul className="list-disc list-inside space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                   {results.recommendations.integratedWellness.map((rec: string, index: number) => (
-                    <li key={index} className="text-sm leading-relaxed">{rec}</li>
+                    <div key={index} className="bg-white p-3 rounded-md border text-sm shadow-sm hover:shadow-md transition-shadow">
+                      {rec}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
               
               <div className="p-4 bg-white rounded-lg border">
@@ -1579,7 +1585,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
   return (
     <Card className="w-full shadow-sm">
       <CardHeader className="pb-0">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
             <CardTitle className="text-2xl font-bold text-purple-700 flex items-center gap-2">
               <Heart className="h-6 w-6 text-purple-600 fill-purple-100" />
@@ -1593,7 +1599,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <Button 
             onClick={() => setIsOpen(true)}
             size="lg"
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 self-start mt-2 sm:mt-0 w-full sm:w-auto"
           >
             <Heart className="h-5 w-5 mr-2 fill-white/10" />
             <span>Start Assessment</span>
@@ -1615,12 +1621,18 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   <Apple className="h-5 w-5 text-green-500 mr-2" />
                   <h4 className="font-medium text-green-700">Physical Health</h4>
                 </div>
-                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                  <li>Analyze your diet & nutritional needs</li>
-                  <li>Determine optimal caloric intake</li>
-                  <li>Assess BMI & weight status</li>
-                  <li>Personalized diet recommendations</li>
-                </ul>
+                <div className="grid grid-cols-1 gap-1">
+                  {[
+                    "Analyze your diet & nutritional needs",
+                    "Determine optimal caloric intake",
+                    "Assess BMI & weight status",
+                    "Personalized diet recommendations"
+                  ].map((item, index) => (
+                    <div key={index} className="bg-white p-1.5 rounded border text-sm text-gray-600">
+                      {item}
+                    </div>
+                  ))}
+                </div>
               </div>
               
               <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm">
@@ -1628,12 +1640,18 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   <Brain className="h-5 w-5 text-blue-500 mr-2" />
                   <h4 className="font-medium text-blue-700">Mental Health</h4>
                 </div>
-                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                  <li>Screen for anxiety & depression</li>
-                  <li>Evidence-based questionnaires</li>
-                  <li>Identify stress patterns</li>
-                  <li>Personalized coping strategies</li>
-                </ul>
+                <div className="grid grid-cols-1 gap-1">
+                  {[
+                    "Screen for anxiety & depression",
+                    "Evidence-based questionnaires",
+                    "Identify stress patterns",
+                    "Personalized coping strategies"
+                  ].map((item, index) => (
+                    <div key={index} className="bg-white p-1.5 rounded border text-sm text-gray-600">
+                      {item}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             
