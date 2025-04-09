@@ -3,12 +3,14 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
+  // Separate state for login and signup forms to prevent state conflicts
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [formKey, setFormKey] = useState("login-form"); // Used to force form re-render when switching modes
   const { login, signUp, loading } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -108,7 +110,7 @@ export default function LoginPage() {
           </div>
         )}
         
-        <form onSubmit={handleSubmit} className="w-full space-y-3 md:space-y-4">
+        <form key={formKey} onSubmit={handleSubmit} className="w-full space-y-3 md:space-y-4">
           {isSignUp && (
             <input
               type="text"
@@ -180,14 +182,27 @@ export default function LoginPage() {
           <button
             type="button"
             className="text-orange-600 bg-orange-50 hover:bg-orange-100 font-medium py-2 px-6 rounded-full border border-orange-200 text-sm sm:text-base transition-all active:scale-95 touch-manipulation"
-            onClick={() => {
-              setIsSignUp(!isSignUp);
+            onClick={(e) => {
+              e.preventDefault(); // Prevent any default behavior
+              
+              // First reset error
               setError("");
-              // Clear form fields when switching modes
+              
+              // Clear form fields when switching from signup to login
               if (isSignUp) {
                 setName("");
                 setConfirmPassword("");
+                setFormKey("login-form"); // Change form key to force re-render
+              } else {
+                setFormKey("signup-form"); // Change form key to force re-render
               }
+              
+              // Reset all field values to ensure clean transition
+              setEmail("");
+              setPassword("");
+              
+              // Toggle signup state last to prevent race conditions
+              setIsSignUp((prevState) => !prevState);
             }}
           >
             {isSignUp ? "Log in instead" : "Create a new account"}

@@ -102,10 +102,15 @@ function FitnessRedirect() {
 }
 
 function Router() {
+  // Define a separate route configuration for the login page to prevent 
+  // tour and layout interference when switching between login and registration
   return (
     <Switch>
       <Route path="/login">
-        <LoginPage />
+        {/* Login page is completely separated from tour and app layout */}
+        <div className="login-container">
+          <LoginPage />
+        </div>
       </Route>
       <Route>
         <Layout>
