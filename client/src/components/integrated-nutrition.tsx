@@ -36,7 +36,7 @@ import NutritionAssessment from "@/components/nutrition-assessment";
 // Nutrition Guide Component
 function NutritionGuideContent() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 nutrition-guide-content">
       <div>
         <h3 className="text-lg font-medium mb-2 flex items-center">
           <Book className="h-5 w-5 mr-2 text-purple-500" />
@@ -46,24 +46,24 @@ function NutritionGuideContent() {
           Understanding the foundation of good nutrition helps you make better food choices every day.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="border-l-4 border-l-purple-400">
-            <CardContent className="p-4">
+          <Card className="border-l-4 border-l-purple-400 h-full flex flex-col">
+            <CardContent className="p-4 flex flex-col h-full">
               <h4 className="text-sm font-medium mb-1 flex items-center">
-                <Utensils className="h-4 w-4 mr-2 text-purple-500" />
-                Macronutrients
+                <Utensils className="h-4 w-4 mr-2 text-purple-500 flex-shrink-0" />
+                <span>Macronutrients</span>
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 mt-auto">
                 Carbohydrates, proteins, and fats are the three main macronutrients that provide energy and support bodily functions.
               </p>
             </CardContent>
           </Card>
-          <Card className="border-l-4 border-l-purple-400">
-            <CardContent className="p-4">
+          <Card className="border-l-4 border-l-purple-400 h-full flex flex-col">
+            <CardContent className="p-4 flex flex-col h-full">
               <h4 className="text-sm font-medium mb-1 flex items-center">
-                <Leaf className="h-4 w-4 mr-2 text-purple-500" />
-                Micronutrients
+                <Leaf className="h-4 w-4 mr-2 text-purple-500 flex-shrink-0" />
+                <span>Micronutrients</span>
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 mt-auto">
                 Vitamins and minerals are essential in smaller amounts for health, immunity, and preventing deficiencies.
               </p>
             </CardContent>
@@ -82,68 +82,68 @@ function NutritionGuideContent() {
           A balanced diet includes foods from all major groups in appropriate proportions.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          <Card className="border border-purple-100">
-            <CardContent className="p-3">
+          <Card className="border border-purple-100 h-full flex flex-col">
+            <CardContent className="p-3 flex flex-col h-full">
               <h4 className="text-sm font-medium mb-1 flex items-center">
-                <Wheat className="h-4 w-4 mr-1 text-amber-500" />
-                Grains
+                <Wheat className="h-4 w-4 mr-1 text-amber-500 flex-shrink-0" />
+                <span>Grains</span>
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 mt-auto">
                 Whole grains provide energy, fiber, and essential nutrients. Aim to make half your grains whole.
               </p>
             </CardContent>
           </Card>
-          <Card className="border border-purple-100">
-            <CardContent className="p-3">
+          <Card className="border border-purple-100 h-full flex flex-col">
+            <CardContent className="p-3 flex flex-col h-full">
               <h4 className="text-sm font-medium mb-1 flex items-center">
-                <Carrot className="h-4 w-4 mr-1 text-orange-500" />
-                Vegetables
+                <Carrot className="h-4 w-4 mr-1 text-orange-500 flex-shrink-0" />
+                <span>Vegetables</span>
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 mt-auto">
                 Diverse in color and nutrients, vegetables should fill a large portion of your plate.
               </p>
             </CardContent>
           </Card>
-          <Card className="border border-purple-100">
-            <CardContent className="p-3">
+          <Card className="border border-purple-100 h-full flex flex-col">
+            <CardContent className="p-3 flex flex-col h-full">
               <h4 className="text-sm font-medium mb-1 flex items-center">
-                <Apple className="h-4 w-4 mr-1 text-red-500" />
-                Fruits
+                <Apple className="h-4 w-4 mr-1 text-red-500 flex-shrink-0" />
+                <span>Fruits</span>
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 mt-auto">
                 Sweet natural treats packed with vitamins, minerals, and fiber. Aim for 2-4 servings daily.
               </p>
             </CardContent>
           </Card>
-          <Card className="border border-purple-100">
-            <CardContent className="p-3">
+          <Card className="border border-purple-100 h-full flex flex-col">
+            <CardContent className="p-3 flex flex-col h-full">
               <h4 className="text-sm font-medium mb-1 flex items-center">
-                <Milk className="h-4 w-4 mr-1 text-blue-400" />
-                Dairy
+                <Milk className="h-4 w-4 mr-1 text-blue-400 flex-shrink-0" />
+                <span>Dairy</span>
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 mt-auto">
                 Good sources of calcium and protein. Look for low-fat or non-fat options when possible.
               </p>
             </CardContent>
           </Card>
-          <Card className="border border-purple-100">
-            <CardContent className="p-3">
+          <Card className="border border-purple-100 h-full flex flex-col">
+            <CardContent className="p-3 flex flex-col h-full">
               <h4 className="text-sm font-medium mb-1 flex items-center">
-                <Fish className="h-4 w-4 mr-1 text-indigo-500" />
-                Protein
+                <Fish className="h-4 w-4 mr-1 text-indigo-500 flex-shrink-0" />
+                <span>Protein</span>
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 mt-auto">
                 Essential for building and repairing tissues. Choose lean meats, seafood, beans, nuts, and seeds.
               </p>
             </CardContent>
           </Card>
-          <Card className="border border-purple-100">
-            <CardContent className="p-3">
+          <Card className="border border-purple-100 h-full flex flex-col">
+            <CardContent className="p-3 flex flex-col h-full">
               <h4 className="text-sm font-medium mb-1 flex items-center">
-                <Coffee className="h-4 w-4 mr-1 text-yellow-700" />
-                Beverages
+                <Coffee className="h-4 w-4 mr-1 text-yellow-700 flex-shrink-0" />
+                <span>Beverages</span>
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 mt-auto">
                 Water is essential. Limit sugary drinks and alcohol. Unsweetened coffee and tea can be part of a healthy diet.
               </p>
             </CardContent>

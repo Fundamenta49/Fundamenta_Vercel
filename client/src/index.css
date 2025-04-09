@@ -1072,6 +1072,29 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   
   /* Fundamenta-specific component optimizations */
   
+  /* Nutrition card fixes for mobile tour mode */
+  body.tour-active .nutrition-guide-content [class*="Card"],
+  body.tour-active [class*="integrated-nutrition"] [class*="Card"] {
+    margin-bottom: 0.25rem !important;
+  }
+  
+  body.tour-active .nutrition-guide-content h4,
+  body.tour-active [class*="integrated-nutrition"] h4 {
+    font-size: 0.75rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  body.tour-active .nutrition-guide-content p,
+  body.tour-active [class*="integrated-nutrition"] p {
+    font-size: 0.7rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  body.tour-active .nutrition-guide-content [class*="CardContent"],
+  body.tour-active [class*="integrated-nutrition"] [class*="CardContent"] {
+    padding: 0.5rem !important;
+  }
+  
   /* Compact dashboard cards */
   body.tour-active .dashboard-card,
   body.tour-active .feature-card {
