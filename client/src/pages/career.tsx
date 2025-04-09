@@ -149,12 +149,13 @@ export default function Career() {
   }, []);
 
   return (
-    <div className="w-full h-full mx-auto p-0">
-      <h1 className="text-2xl font-bold tracking-tight text-center mb-2">
-        Career Development
-      </h1>
-      
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+    <div className="w-full h-full mx-auto p-0 md:p-2 lg:p-4 flex flex-col items-center">
+      <div className="w-full max-w-6xl">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-2 md:mb-4">
+          Career Development
+        </h1>
+        
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl border-rose-50 bg-white">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
@@ -211,30 +212,33 @@ export default function Career() {
           <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-blue-50 text-blue-800 rounded-md border-l-4 border-blue-500">
             Career Tools
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5 mt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 max-w-6xl mx-auto">
             {SECTIONS.map((section) => (
               <div key={section.id} className="flex flex-col h-full">
                 <button
                   onClick={() => setActiveDialog(section.id)}
-                  className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
+                  className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-500 min-h-[130px] sm:min-h-[160px] md:min-h-[180px] lg:min-h-[200px] w-full h-full"
                   aria-label={`Open ${section.title}`}
                 >
-                  <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
-                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 text-blue-500" />
+                  <div className="flex items-center justify-center h-12 sm:h-14 md:h-16 lg:h-20 w-full mb-2 md:mb-4">
+                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-blue-500" />
                   </div>
                   
-                  <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
+                  <span className="text-sm sm:text-base md:text-lg font-medium text-center line-clamp-2 w-full">{section.title}</span>
                   
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
-                    {section.description.length > 60 
-                      ? `${section.description.substring(0, 60)}...` 
-                      : section.description}
+                  <p className="text-xs md:text-sm text-gray-500 mt-1 md:mt-2 lg:mt-3 line-clamp-2 md:line-clamp-3 text-center hidden sm:block">
+                    {section.description.length > 80 && window.innerWidth > 768
+                      ? `${section.description.substring(0, 80)}...` 
+                      : section.description.length > 60
+                        ? `${section.description.substring(0, 60)}...`
+                        : section.description}
                   </p>
                 </button>
               </div>
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
