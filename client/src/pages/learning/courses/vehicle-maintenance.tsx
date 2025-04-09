@@ -119,7 +119,7 @@ export default function VehicleMaintenanceCourse() {
       </div>
 
       {activeTab === 'learn' && (
-        <div className="mb-6">
+        <div className="mb-6 course-content">
           <Card className="mb-6">
             <CardHeader>
               <CardTitle>Introduction to Vehicle Maintenance</CardTitle>
