@@ -1615,30 +1615,30 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               This comprehensive assessment combines nutrition and mental health analysis to create a holistic view of your wellbeing.
             </p>
             
-            <div className="grid grid-cols-2 gap-6 mt-6">
-              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm">
-                <div className="flex items-center mb-3">
-                  <Apple className="h-5 w-5 text-green-500 mr-2" />
-                  <h4 className="font-medium text-green-700">Physical Health</h4>
+            <div className="grid md:grid-cols-2 gap-8 mt-6">
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm">
+                <div className="flex items-center mb-4">
+                  <Apple className="h-6 w-6 text-green-500 mr-3" />
+                  <h4 className="font-medium text-green-700 text-lg">Physical Health</h4>
                 </div>
-                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                  <li>Analyze your diet & nutritional needs</li>
-                  <li>Determine optimal caloric intake</li>
-                  <li>Assess BMI & weight status</li>
-                  <li>Personalized diet recommendations</li>
+                <ul className="list-disc ml-5 text-sm text-gray-600 space-y-2">
+                  <li className="pl-1">Analyze your diet & nutritional needs</li>
+                  <li className="pl-1">Determine optimal caloric intake</li>
+                  <li className="pl-1">Assess BMI & weight status</li>
+                  <li className="pl-1">Personalized diet recommendations</li>
                 </ul>
               </div>
               
-              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm">
-                <div className="flex items-center mb-3">
-                  <Brain className="h-5 w-5 text-blue-500 mr-2" />
-                  <h4 className="font-medium text-blue-700">Mental Health</h4>
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm">
+                <div className="flex items-center mb-4">
+                  <Brain className="h-6 w-6 text-blue-500 mr-3" />
+                  <h4 className="font-medium text-blue-700 text-lg">Mental Health</h4>
                 </div>
-                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                  <li>Screen for anxiety & depression</li>
-                  <li>Evidence-based questionnaires</li>
-                  <li>Identify stress patterns</li>
-                  <li>Personalized coping strategies</li>
+                <ul className="list-disc ml-5 text-sm text-gray-600 space-y-2">
+                  <li className="pl-1">Screen for anxiety & depression</li>
+                  <li className="pl-1">Evidence-based questionnaires</li>
+                  <li className="pl-1">Identify stress patterns</li>
+                  <li className="pl-1">Personalized coping strategies</li>
                 </ul>
               </div>
             </div>
