@@ -217,18 +217,18 @@ export default function Finance() {
               >
                 <button
                   onClick={() => handleCardClick(section.id)}
-                  className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-500 min-h-[130px] sm:min-h-[180px] md:min-h-[200px] lg:min-h-[220px] w-full h-full ${section.id === 'bank' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[160px] md:min-h-[180px]' : ''}`}
+                  className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-500 min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'bank' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`}
                   aria-label={`Open ${section.title}`}
                   data-tour={section.id === 'budget' ? 'budget-calculator' : section.id === 'credit' ? 'credit-skills' : `finance-${section.id}`}
                 >
-                  <div className={`flex items-center justify-center h-12 sm:h-14 md:h-16 lg:h-20 ${section.id === 'bank' ? 'sm:mr-6' : 'w-full'} mb-2 md:mb-4`}>
-                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 text-green-500" />
+                  <div className={`flex items-center justify-center h-12 sm:h-14 md:h-14 ${section.id === 'bank' ? 'sm:mr-6' : 'w-full'} mb-2`}>
+                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 text-green-500" />
                   </div>
                   
-                  <div className={`flex flex-col ${section.id === 'bank' ? 'items-start' : 'items-center'} w-full`}>
-                    <span className="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-center line-clamp-2 w-full">{section.title}</span>
+                  <div className={`flex flex-col ${section.id === 'bank' ? 'sm:items-start items-center' : 'items-center'} w-full`}>
+                    <span className={`text-sm sm:text-base md:text-lg font-medium ${section.id === 'bank' ? 'sm:text-left text-center' : 'text-center'} line-clamp-2 w-full`}>{section.title}</span>
                     
-                    <p className={`text-xs sm:text-sm md:text-base text-gray-500 mt-1 md:mt-2 line-clamp-3 ${section.id === 'bank' ? 'text-left' : 'text-center'} ${section.id === 'bank' ? 'block' : 'block'}`}>
+                    <p className={`text-xs sm:text-sm text-gray-500 mt-1 md:mt-2 line-clamp-3 ${section.id === 'bank' ? 'sm:text-left text-center' : 'text-center'} block`}>
                       {section.description.length > (section.id === 'bank' ? 100 : 80) 
                         ? `${section.description.substring(0, section.id === 'bank' ? 100 : 80)}...` 
                         : section.description}
