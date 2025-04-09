@@ -213,17 +213,17 @@ export default function Wellness() {
                 >
                   <button
                     onClick={() => handleCardClick(section.id)}
-                    className={`relative flex flex-row sm:flex-col items-start sm:items-center justify-start sm:justify-between text-left sm:text-center p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[90px] sm:min-h-[180px] md:min-h-[200px] lg:min-h-[220px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[160px] md:min-h-[180px]' : ''}`}
+                    className={`relative flex flex-row sm:flex-col items-start sm:items-center justify-start sm:justify-between text-left sm:text-center p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[90px] sm:min-h-[180px] md:min-h-[180px] lg:min-h-[200px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[130px] md:min-h-[140px]' : ''}`}
                     aria-label={`Open ${section.title}`}
                   >
-                    <div className={`flex items-center justify-center h-14 w-14 mr-4 flex-shrink-0 ${section.id === 'shopping' ? 'sm:mr-6 sm:flex-shrink-0' : 'sm:w-full sm:h-16 md:h-20 lg:h-24 sm:mb-3 md:mb-4'}`}>
-                      <section.icon className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 text-purple-500" />
+                    <div className={`flex items-center justify-center h-12 w-12 mr-4 flex-shrink-0 ${section.id === 'shopping' ? 'sm:mr-5 sm:flex-shrink-0' : 'sm:w-full sm:h-14 md:h-16 lg:h-18 sm:mb-3 md:mb-4'}`}>
+                      <section.icon className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 text-purple-500" />
                     </div>
                     
                     <div className="flex flex-col items-start sm:items-center w-full">
                       <span className="text-base sm:text-lg md:text-xl font-medium text-left sm:text-center line-clamp-2 w-full">{section.title}</span>
                       
-                      <p className={`text-xs sm:text-sm md:text-base text-gray-500 mt-1 md:mt-2 ${section.id === 'shopping' ? 'line-clamp-3' : 'line-clamp-2 md:line-clamp-3'} text-left sm:text-center block ${section.id === 'shopping' ? 'sm:block' : 'sm:block'}`}>
+                      <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3 text-left sm:text-center w-full">
                         {section.description}
                       </p>
                     </div>
