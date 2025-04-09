@@ -3,17 +3,16 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
-  // Separate state for login and signup forms to prevent state conflicts
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [formKey, setFormKey] = useState("login-form"); // Used to force form re-render when switching modes
   const { login, signUp, loading } = useAuth();
   const [, setLocation] = useLocation();
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -88,6 +87,29 @@ export default function LoginPage() {
     }
   };
 
+  // Create an alternate version of the component depending on signup or login state
+  const showSignupForm = () => {
+    // Clear fields and set signup mode
+    setEmail("");
+    setPassword("");
+    setError("");
+    setIsSignUp(true);
+  };
+
+  const showLoginForm = () => {
+    // Clear fields and set login mode
+    setEmail("");
+    setPassword("");
+    setName("");
+    setConfirmPassword("");
+    setError("");
+    setIsSignUp(false);
+  };
+
+  // Conditionally render the login or signup form
+  // But we do this using a condition to select which form fields to show
+  // rather than using a different component for each
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 text-center p-4 sm:p-6">
       <div className="mb-6 sm:mb-10">
@@ -110,7 +132,9 @@ export default function LoginPage() {
           </div>
         )}
         
-        <form key={formKey} onSubmit={handleSubmit} className="w-full space-y-3 md:space-y-4">
+        {/* Single form that adapts based on isSignUp state */}
+        <form onSubmit={handleSubmit} className="w-full space-y-3 md:space-y-4">
+          {/* Name field only shown for signup */}
           {isSignUp && (
             <input
               type="text"
@@ -122,6 +146,7 @@ export default function LoginPage() {
             />
           )}
           
+          {/* Email field shown for both */}
           <input
             type="email"
             placeholder="Email"
@@ -132,6 +157,7 @@ export default function LoginPage() {
             autoComplete="email"
           />
           
+          {/* Password field shown for both */}
           <input
             type="password"
             placeholder="Password"
@@ -142,6 +168,7 @@ export default function LoginPage() {
             autoComplete={isSignUp ? "new-password" : "current-password"}
           />
           
+          {/* Confirm password field only shown for signup */}
           {isSignUp && (
             <input
               type="password"
@@ -154,6 +181,7 @@ export default function LoginPage() {
             />
           )}
           
+          {/* Submit button adapts text based on mode */}
           <button 
             type="submit" 
             className="w-full mt-4 bg-orange-600 text-white font-bold py-3 sm:py-4 px-4 text-base sm:text-lg rounded-xl hover:bg-orange-700 active:bg-orange-800 transition-all disabled:bg-orange-400 shadow-md hover:shadow-lg"
@@ -165,6 +193,7 @@ export default function LoginPage() {
           </button>
         </form>
         
+        {/* Demo credentials only shown on login */}
         {!isSignUp && (
           <div className="mt-4 text-xs text-gray-500">
             <p>For demo purposes:</p>
@@ -173,6 +202,7 @@ export default function LoginPage() {
           </div>
         )}
         
+        {/* Switch between login/signup mode */}
         <div className="flex flex-col items-center mt-6">
           <p className="text-sm mb-2 text-gray-500">
             {isSignUp 
@@ -182,28 +212,7 @@ export default function LoginPage() {
           <button
             type="button"
             className="text-orange-600 bg-orange-50 hover:bg-orange-100 font-medium py-2 px-6 rounded-full border border-orange-200 text-sm sm:text-base transition-all active:scale-95 touch-manipulation"
-            onClick={(e) => {
-              e.preventDefault(); // Prevent any default behavior
-              
-              // First reset error
-              setError("");
-              
-              // Clear form fields when switching from signup to login
-              if (isSignUp) {
-                setName("");
-                setConfirmPassword("");
-                setFormKey("login-form"); // Change form key to force re-render
-              } else {
-                setFormKey("signup-form"); // Change form key to force re-render
-              }
-              
-              // Reset all field values to ensure clean transition
-              setEmail("");
-              setPassword("");
-              
-              // Toggle signup state last to prevent race conditions
-              setIsSignUp((prevState) => !prevState);
-            }}
+            onClick={isSignUp ? showLoginForm : showSignupForm}
           >
             {isSignUp ? "Log in instead" : "Create a new account"}
           </button>
