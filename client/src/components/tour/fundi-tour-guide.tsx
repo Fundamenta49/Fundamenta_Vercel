@@ -158,47 +158,50 @@ export default function FundiTourGuide() {
   // Track when the component has mounted/updated for a given step
   const [hasRendered, setHasRendered] = useState(false);
   
-  // Special handler for vehicle maintenance page - keep Fundi fixed at the top of the viewport
+  // Special handler for any steps that need fixed positioning
   useEffect(() => {
-    // Only run for the specific step that needs fixing
-    if (isTourActive && currentStep?.route === '/learning/courses/vehicle-maintenance') {
-      // Set a fixed position for Fundi at the top of the viewport
-      const fixedPosition = {
-        x: 166, // Keep horizontal position the same
-        y: 120 // Fixed distance from the top
-      };
+    // Only run for active tour with a current step that has fixedPosition property
+    if (isTourActive && currentStep?.fixedPosition) {
+      // Use the explicitly defined fixed position
+      const fixedPosition = currentStep.fixedPosition;
       setPosition(fixedPosition);
-      console.log("Fixed position applied for vehicle maintenance page:", fixedPosition);
+      console.log(`Fixed position applied for step ${currentStepIndex}:`, fixedPosition);
       
-      // Instead of scroll event, use Intersection Observer to detect when the content is visible
-      const observer = new IntersectionObserver((entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting) {
-          // When the content is visible, highlight it
-          entry.target.classList.add('tour-highlight');
-          
-          // Make sure Fundi stays at the fixed position
-          setPosition(fixedPosition);
-        }
-      }, {
-        threshold: 0.1 // Trigger when at least 10% of the target is visible
-      });
-      
-      // Observe the course content
-      const element = document.querySelector('.course-content');
-      if (element) {
-        observer.observe(element);
-        element.classList.add('tour-highlight');
-      }
-      
-      return () => {
+      // For steps that specify to skip scroll, use Intersection Observer instead
+      if (currentStep.skipScroll && currentStep.highlightSelector) {
+        // Use Intersection Observer to detect when the content is visible
+        const observer = new IntersectionObserver((entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting) {
+            // When the content is visible, highlight it
+            entry.target.classList.add('tour-highlight');
+            
+            // Make sure Fundi stays at the fixed position
+            setPosition(fixedPosition);
+          }
+        }, {
+          threshold: 0.1 // Trigger when at least 10% of the target is visible
+        });
+        
+        // Observe the element
+        const element = document.querySelector(currentStep.highlightSelector);
         if (element) {
-          observer.unobserve(element);
-          element.classList.remove('tour-highlight');
+          observer.observe(element);
+          element.classList.add('tour-highlight');
+          
+          // Don't auto-scroll, but ensure the element is highlighted
+          console.log(`Using fixed positioning without auto-scroll for ${currentStep.highlightSelector}`);
         }
-      };
+        
+        return () => {
+          if (element) {
+            observer.unobserve(element);
+            element.classList.remove('tour-highlight');
+          }
+        };
+      }
     }
-  }, [isTourActive, currentStep?.route]);
+  }, [isTourActive, currentStep, currentStepIndex]);
 
   // Simple effect to update Fundi's position based on the current step
   useEffect(() => {
@@ -224,12 +227,11 @@ export default function FundiTourGuide() {
       // Use predefined positions
       const isMobile = window.innerWidth < 640;
       
-      // Special case for vehicle maintenance page to position Fundi near the top initially
-      if (currentStep.route === '/learning/courses/vehicle-maintenance') {
-        // Start Fundi at the top so it's visible, scroll listener will handle the rest
-        const position = { x: 166, y: 120 };
-        setPosition(position);
-        console.log(`Vehicle maintenance special positioning: x=${position.x}px, y=${position.y}px`);
+      // Check if this step has special positioning needs
+      if (currentStep.fixedPosition) {
+        // Use the explicitly defined fixed position from the step
+        setPosition(currentStep.fixedPosition);
+        console.log(`Using fixed position from step config: x=${currentStep.fixedPosition.x}px, y=${currentStep.fixedPosition.y}px`);
       } else {
         // Normal positioning for other steps
         const position = getFundiPosition(stepIndex, isMobile);
@@ -246,13 +248,14 @@ export default function FundiTourGuide() {
         timeoutRef.current = setTimeout(() => {
           const element = document.querySelector(currentStep.highlightSelector as string);
           if (element) {
-            // Scroll the element into view, but only if it's not the vehicle maintenance page
-            // (We handle that separately with the scroll listener)
-            if (currentStep.route !== '/learning/courses/vehicle-maintenance') {
+            // Only scroll if not explicitly disabled with skipScroll
+            if (!currentStep.skipScroll) {
               element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-              // For vehicle maintenance, highlight but don't auto-scroll
+              // For steps with skipScroll, highlight but don't auto-scroll
+              // Position the viewport at the top to ensure Fundi is visible
               window.scrollTo({ top: 0, behavior: 'smooth' });
+              console.log(`Skip scroll applied for step ${stepIndex}, highlighting without scrolling`);
             }
             element.classList.add('tour-highlight');
           }
@@ -326,6 +329,14 @@ export default function FundiTourGuide() {
           
           if (currentStepIndex < totalSteps - 1) {
             console.log("Overlay clicked - advancing to next step");
+            
+            // Special handling for vehicle maintenance step
+            if (currentStep?.route === '/learning/courses/vehicle-maintenance') {
+              console.log("EMERGENCY FIX: Advancing tour from step", currentStepIndex, "to", currentStepIndex + 1);
+              // Force scroll to top before advancing to keep Fundi visible
+              window.scrollTo({ top: 0, behavior: 'auto' });
+            }
+            
             // Only advance if we're not at the last step
             nextStep();
           }
@@ -499,6 +510,13 @@ export default function FundiTourGuide() {
                       button.disabled = false;
                     }
                   }, 800);
+                }
+                
+                // Special handling for vehicle maintenance step
+                if (currentStep?.route === '/learning/courses/vehicle-maintenance') {
+                  console.log("EMERGENCY FIX: Advancing from vehicle maintenance page");
+                  // Force scroll to top before advancing
+                  window.scrollTo({ top: 0, behavior: 'auto' });
                 }
                 
                 // Advance to next step

@@ -11,6 +11,9 @@ export interface TourStep {
   route?: string;
   highlightSelector?: string;
   category?: string;
+  // Special flags for vehicle maintenance tour fix
+  skipScroll?: boolean;
+  fixedPosition?: { x: number, y: number };
 }
 
 export interface TourContextType {
@@ -87,6 +90,8 @@ const tourSteps: TourStep[] = [
     category: 'general',
     route: '/learning/courses/vehicle-maintenance',
     highlightSelector: '.course-content',
+    skipScroll: true, // Prevent automatic scrolling for this step
+    fixedPosition: { x: 166, y: 120 }, // Keep Fundi at the top of the page
   },
   
   // Financial Literacy section

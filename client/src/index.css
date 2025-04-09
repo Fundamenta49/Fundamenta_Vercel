@@ -589,6 +589,22 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   z-index: 45; /* Higher than normal content but below tour guide */
   transform: translate3d(0, 0, 0); /* Force hardware acceleration */
   will-change: transform; /* Optimize for animations/transitions */
-  margin-top: 120px !important; /* Add space at the top for Fundi */
-  padding-top: 20px !important; /* Extra padding to ensure content is visible */
+  margin-top: 150px !important; /* Add space at the top for Fundi */
+  padding-top: 50px !important; /* Extra padding to ensure content is visible */
+  border-top: 2px solid rgba(0, 0, 0, 0.05); /* Visual separator */
+}
+
+/* Vehicle maintenance tour fix */
+.vehicle-maintenance-page {
+  position: relative;
+  padding-top: 150px; /* Add space at the top for Fundi */
+}
+
+/* Enhanced visibility for tour highlighted elements */
+.tour-highlight {
+  position: relative; /* Needed for z-index */
+  z-index: 10; /* Above other content */
+  box-shadow: 0 0 0 2px #2563eb, 0 0 20px rgba(37, 99, 235, 0.2) !important; /* Blue glow */
+  outline: none !important; /* Remove default outline */
+  border-radius: 0.375rem; /* Rounded corners */
 }
