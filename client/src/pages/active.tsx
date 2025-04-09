@@ -393,7 +393,7 @@ export default function Active() {
           <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-pink-50 text-pink-800 rounded-md border-l-4 border-pink-500">
             Fitness Tools
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5 mt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 max-w-6xl mx-auto">
             {SECTIONS.map((section) => {
               // Update props for Profile Manager
               if (section.id === 'activeyou') {
@@ -405,18 +405,18 @@ export default function Active() {
                   <FullScreenDialogTrigger asChild>
                     <div className="flex flex-col h-full">
                       <button
-                        className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-pink-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
+                        className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-pink-500 min-h-[130px] sm:min-h-[160px] md:min-h-[180px] lg:min-h-[200px] w-full h-full"
                         aria-label={`Open ${section.title}`}
                       >
-                        <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
-                          <section.icon className="w-9 h-9 sm:w-10 sm:h-10 text-pink-500" />
+                        <div className="flex items-center justify-center h-12 sm:h-14 md:h-16 w-full mb-2 md:mb-3">
+                          <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 text-pink-500" />
                         </div>
                         
-                        <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
+                        <span className="text-sm sm:text-base md:text-lg font-medium text-center line-clamp-2 w-full">{section.title}</span>
                         
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
-                          {section.description.length > 60 
-                            ? `${section.description.substring(0, 60)}...` 
+                        <p className="text-xs sm:text-sm text-gray-500 mt-1 md:mt-2 line-clamp-3 text-center block">
+                          {section.description.length > 80 
+                            ? `${section.description.substring(0, 80)}...` 
                             : section.description}
                         </p>
                       </button>
