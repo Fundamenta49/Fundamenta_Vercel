@@ -205,23 +205,23 @@ export default function Wellness() {
             <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-purple-50 text-purple-800 rounded-md border-l-4 border-purple-500">
               Wellness Tools
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-5 md:gap-6 lg:gap-8 mt-3 sm:mt-4 max-w-6xl mx-auto">
               {SECTIONS.map((section) => (
                 <div 
                   key={section.id} 
-                  className={`flex flex-col h-full ${section.id === 'shopping' ? 'col-span-2 sm:col-span-3 md:col-span-3 lg:col-span-4 xl:col-span-4' : ''}`}
+                  className={`flex flex-col h-full ${section.id === 'shopping' ? 'col-span-1 sm:col-span-3 md:col-span-3 lg:col-span-4 xl:col-span-4' : ''}`}
                 >
                   <button
                     onClick={() => handleCardClick(section.id)}
-                    className={`relative flex flex-row sm:flex-col items-start sm:items-center justify-start sm:justify-between text-left sm:text-center p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[90px] sm:min-h-[180px] md:min-h-[180px] lg:min-h-[200px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[130px] md:min-h-[140px]' : ''}`}
+                    className={`relative flex flex-row sm:flex-col items-center justify-start text-left sm:text-center py-3 px-3 sm:p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[80px] sm:min-h-[180px] md:min-h-[180px] lg:min-h-[200px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[130px] md:min-h-[140px]' : ''}`}
                     aria-label={`Open ${section.title}`}
                   >
-                    <div className={`flex items-center justify-center h-12 w-12 mr-4 flex-shrink-0 ${section.id === 'shopping' ? 'sm:mr-5 sm:flex-shrink-0' : 'sm:w-full sm:h-14 md:h-16 lg:h-18 sm:mb-3 md:mb-4'}`}>
-                      <section.icon className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 text-purple-500" />
+                    <div className={`flex items-center justify-center h-10 w-10 mr-3 flex-shrink-0 ${section.id === 'shopping' ? 'sm:mr-5 sm:flex-shrink-0' : 'sm:w-full sm:h-14 md:h-16 lg:h-18 sm:mb-3 md:mb-4'}`}>
+                      <section.icon className="w-6 h-6 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 text-purple-500" />
                     </div>
                     
-                    <div className="flex flex-col items-start sm:items-center w-full">
-                      <span className="text-base sm:text-lg md:text-xl font-medium text-left sm:text-center line-clamp-2 w-full">{section.title}</span>
+                    <div className="flex flex-col justify-center w-full">
+                      <span className="text-sm sm:text-lg md:text-xl font-medium text-left sm:text-center line-clamp-1 sm:line-clamp-2 w-full">{section.title}</span>
                       
                       <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3 text-left sm:text-center w-full">
                         {section.description}
