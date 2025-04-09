@@ -1621,18 +1621,12 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   <Apple className="h-5 w-5 text-green-500 mr-2" />
                   <h4 className="font-medium text-green-700">Physical Health</h4>
                 </div>
-                <div className="grid grid-cols-1 gap-1">
-                  {[
-                    "Analyze your diet & nutritional needs",
-                    "Determine optimal caloric intake",
-                    "Assess BMI & weight status",
-                    "Personalized diet recommendations"
-                  ].map((item, index) => (
-                    <div key={index} className="bg-white p-1.5 rounded border text-sm text-gray-600">
-                      {item}
-                    </div>
-                  ))}
-                </div>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>Analyze your diet & nutritional needs</li>
+                  <li>Determine optimal caloric intake</li>
+                  <li>Assess BMI & weight status</li>
+                  <li>Personalized diet recommendations</li>
+                </ul>
               </div>
               
               <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg shadow-sm">
@@ -1640,18 +1634,12 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   <Brain className="h-5 w-5 text-blue-500 mr-2" />
                   <h4 className="font-medium text-blue-700">Mental Health</h4>
                 </div>
-                <div className="grid grid-cols-1 gap-1">
-                  {[
-                    "Screen for anxiety & depression",
-                    "Evidence-based questionnaires",
-                    "Identify stress patterns",
-                    "Personalized coping strategies"
-                  ].map((item, index) => (
-                    <div key={index} className="bg-white p-1.5 rounded border text-sm text-gray-600">
-                      {item}
-                    </div>
-                  ))}
-                </div>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>Screen for anxiety & depression</li>
+                  <li>Evidence-based questionnaires</li>
+                  <li>Identify stress patterns</li>
+                  <li>Personalized coping strategies</li>
+                </ul>
               </div>
             </div>
             
