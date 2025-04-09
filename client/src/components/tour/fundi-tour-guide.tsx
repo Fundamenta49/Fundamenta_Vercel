@@ -158,37 +158,44 @@ export default function FundiTourGuide() {
   // Track when the component has mounted/updated for a given step
   const [hasRendered, setHasRendered] = useState(false);
   
-  // Special handler for vehicle maintenance page scroll repositioning
+  // Special handler for vehicle maintenance page - keep Fundi fixed at the top of the viewport
   useEffect(() => {
     // Only run for the specific step that needs fixing
     if (isTourActive && currentStep?.route === '/learning/courses/vehicle-maintenance') {
-      // Listen for scroll events to move Fundi with the page
-      const handleScroll = () => {
-        const element = document.querySelector('.course-content');
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          // Only reposition if the element is partially visible
-          if (rect.top < window.innerHeight && rect.bottom > 0) {
-            // Get the top of the element in the viewport
-            // Position Fundi near the top of the visible portion of the element
-            const visibleTop = Math.max(0, rect.top);
-            const newPosition = {
-              x: 166, // Keep horizontal position the same
-              y: Math.max(80, visibleTop + 60) // Keep Fundi just below the top of the card
-            };
-            setPosition(newPosition);
-          }
-        }
+      // Set a fixed position for Fundi at the top of the viewport
+      const fixedPosition = {
+        x: 166, // Keep horizontal position the same
+        y: 120 // Fixed distance from the top
       };
+      setPosition(fixedPosition);
+      console.log("Fixed position applied for vehicle maintenance page:", fixedPosition);
       
-      // Add scroll listener
-      window.addEventListener('scroll', handleScroll);
+      // Instead of scroll event, use Intersection Observer to detect when the content is visible
+      const observer = new IntersectionObserver((entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          // When the content is visible, highlight it
+          entry.target.classList.add('tour-highlight');
+          
+          // Make sure Fundi stays at the fixed position
+          setPosition(fixedPosition);
+        }
+      }, {
+        threshold: 0.1 // Trigger when at least 10% of the target is visible
+      });
       
-      // Initial positioning
-      setTimeout(handleScroll, 300);
+      // Observe the course content
+      const element = document.querySelector('.course-content');
+      if (element) {
+        observer.observe(element);
+        element.classList.add('tour-highlight');
+      }
       
       return () => {
-        window.removeEventListener('scroll', handleScroll);
+        if (element) {
+          observer.unobserve(element);
+          element.classList.remove('tour-highlight');
+        }
       };
     }
   }, [isTourActive, currentStep?.route]);

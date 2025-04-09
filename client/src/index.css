@@ -582,3 +582,13 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   z-index: 10;
   touch-action: none;
 }
+
+/* Special styling for course content areas */
+.course-content {
+  position: relative;
+  z-index: 45; /* Higher than normal content but below tour guide */
+  transform: translate3d(0, 0, 0); /* Force hardware acceleration */
+  will-change: transform; /* Optimize for animations/transitions */
+  margin-top: 120px !important; /* Add space at the top for Fundi */
+  padding-top: 20px !important; /* Extra padding to ensure content is visible */
+}
