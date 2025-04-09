@@ -715,7 +715,7 @@ export default function WellnessJournal() {
 
   return (
     <div className="w-full max-w-screen-xl mx-auto">
-      <FullScreenDialogHeader>
+      <FullScreenDialogHeader className="mb-6">
         <div className="flex items-center justify-between">
           <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
             <Book className="h-6 w-6 text-purple-600" />
@@ -738,7 +738,7 @@ export default function WellnessJournal() {
       
       <FullScreenDialogBody>
         {/* Journal entries view with filters and controls */}
-        <div className="mb-6 space-y-4">
+        <div className="mb-6 space-y-4 pt-6">
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <div className="flex items-center gap-2 flex-wrap">
               <div className="relative w-full sm:w-auto">
@@ -752,7 +752,7 @@ export default function WellnessJournal() {
               </div>
               
               <Select value={timeframe} onValueChange={(value) => setTimeframe(value as '7days' | '30days' | 'all')}>
-                <SelectTrigger className="w-full sm:w-36">
+                <SelectTrigger className="w-full sm:w-36 z-20">
                   <SelectValue placeholder="Timeframe" />
                 </SelectTrigger>
                 <SelectContent>
@@ -975,7 +975,7 @@ export default function WellnessJournal() {
                     value={selectedCategory}
                     onValueChange={handleCategoryChange}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="z-20">
                       <SelectValue placeholder="Choose a journaling focus" />
                     </SelectTrigger>
                     <SelectContent>
