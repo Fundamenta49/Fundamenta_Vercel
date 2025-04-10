@@ -390,7 +390,7 @@ export default function SimpleEmergencyChecklist() {
                 <Button
                   onClick={() => addNewItem(inputValue, items, setItems, category, tabPrefix)}
                   size="sm"
-                  className="h-8 px-2 bg-red-600 hover:bg-red-700"
+                  className="h-8 px-2 bg-red-400 hover:bg-red-500"
                 >
                   <Plus className="h-3 w-3" />
                 </Button>
@@ -496,7 +496,7 @@ export default function SimpleEmergencyChecklist() {
           </Button>
           <Button
             size="sm"
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-red-400 hover:bg-red-500"
             onClick={() => {
               toast({
                 title: "Checklist Saved",
