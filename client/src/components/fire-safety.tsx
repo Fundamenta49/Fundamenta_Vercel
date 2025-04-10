@@ -79,6 +79,12 @@ const FIRE_SAFETY_CONTENT = {
         url: "https://www.youtube.com/embed/9GMv4NsLr9o",
         source: "US Fire Administration",
         duration: "4:30"
+      },
+      {
+        title: "Fire Safety & Prevention Tips for Your Home",
+        url: "https://www.youtube.com/embed/Q3LDGOFxJAE",
+        source: "Safety Training",
+        duration: "2:12"
       }
     ]
   }
