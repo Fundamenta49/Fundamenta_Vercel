@@ -88,6 +88,11 @@ export async function orchestrateAIResponse(
     // Use the determined category to select the right system prompt
     const systemPrompt = constructSystemPrompt(categoryResult.category, context);
     
+    // FIRST - Reset the fallback strategy to ensure we're ALWAYS starting fresh
+    // This ensures we never get stuck in fallback mode
+    fallbackAIService.resetFailures();
+    console.log("🔄 ENTRY-POINT RESET: Forced reset of fallback system before every AI request");
+    
     // Generate the detailed response using dual API strategy
     const aiResponse = await fallbackAIService.generateResponse(message, systemPrompt, previousMessages);
     
@@ -253,6 +258,14 @@ function extractCapabilitiesFromPrompt(prompt: string): string {
     3. When users ask about features in other sections, suggest navigation but don't automatically redirect
     4. Always respect the user's current context and explain why another section might be helpful
     5. For financial questions specifically, suggest the finance section with relevant subsection
+    
+    CRITICAL FORMATTING RULES:
+    1. NEVER use asterisks (*) for emphasis or formatting in your responses
+    2. NEVER use markdown-style formatting like **bold** or *italic* text
+    3. NEVER use emoji or special characters for formatting
+    4. NEVER structure responses like a chatbot with bullet points and sections
+    5. Speak naturally like a helpful human mentor would, with a conversational tone
+    6. Write in paragraphs with natural pauses, not in a rigid structured format
     
     - "followUpQuestions": Array of 2-3 logical follow-up questions
     - "personality": How you're adapting to match user's communication style (formal, casual, technical, simple)
