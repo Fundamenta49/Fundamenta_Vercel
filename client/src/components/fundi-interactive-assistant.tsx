@@ -975,7 +975,7 @@ export default function FundiInteractiveAssistant({
   };
 
   return (
-    <div className={cn("fixed z-50", getPositionStyles(), className)}>
+    <div className={cn("fixed z-[9999]", getPositionStyles(), className)}>
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -989,7 +989,9 @@ export default function FundiInteractiveAssistant({
             }}
             style={{
               // Extra inline style to enforce position directly
-              transform: `translate(${fundiPosition.x}px, ${fundiPosition.y}px)`
+              transform: `translate(${fundiPosition.x}px, ${fundiPosition.y}px)`,
+              // Ensure pointer events are properly isolated
+              pointerEvents: 'auto'
             }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.2 }}
@@ -999,7 +1001,7 @@ export default function FundiInteractiveAssistant({
             dragConstraints={{ left: -500, right: 500, top: -300, bottom: 300 }}
             whileDrag={{ cursor: 'grabbing' }}
             // Immediately update cursor for drag state
-            className={isChatOpen ? "mb-2" : "mb-2 cursor-grab active:cursor-grabbing"}
+            className={isChatOpen ? "mb-2 fundi-draggable" : "mb-2 cursor-grab active:cursor-grabbing fundi-draggable"}
             // Update fundiPosition when the open chat window is dragged too
             onDragEnd={(e, info) => {
               setFundiPosition({
@@ -1007,13 +1009,15 @@ export default function FundiInteractiveAssistant({
                 y: fundiPosition.y + info.offset.y
               });
               console.log(`Chat window position: x=${fundiPosition.x + info.offset.x}, y=${fundiPosition.y + info.offset.y}`);
+              // Stop propagation to prevent affecting other components
+              e.stopPropagation();
             }}
           >
             {isChatOpen ? (
               // Chat interface
               <Card 
                 ref={chatCardRef}
-                className="shadow-xl border resize-handler overflow-hidden flex flex-col rounded-xl" 
+                className="shadow-xl border resize-handler overflow-hidden flex flex-col rounded-xl fundi-chat-window" 
                 style={{ 
                   borderColor: 'rgba(0,0,0,0.1)',
                   minWidth: '320px', 
@@ -1024,7 +1028,8 @@ export default function FundiInteractiveAssistant({
                   resize: 'both',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
-                  background: 'rgba(255, 255, 255, 0.85)'
+                  background: 'rgba(255, 255, 255, 0.85)',
+                  pointerEvents: 'auto'
                 }}
               >
                 <CardHeader 
@@ -1218,12 +1223,13 @@ export default function FundiInteractiveAssistant({
                 </CardFooter>
               </Card>
             ) : (
-              <Card className="w-72 shadow-xl border rounded-xl" 
+              <Card className="w-72 shadow-xl border rounded-xl fundi-chat-window" 
                 style={{
                   borderColor: 'rgba(0,0,0,0.1)',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
-                  background: 'rgba(255, 255, 255, 0.85)'
+                  background: 'rgba(255, 255, 255, 0.85)',
+                  pointerEvents: 'auto'
                 }}>
                 <CardHeader 
                   className="p-3 pb-2 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing border-b"
@@ -1401,8 +1407,10 @@ export default function FundiInteractiveAssistant({
             className="cursor-grab active:cursor-grabbing"
           >
             <div 
-              onClick={() => {
+              onClick={(e) => {
                 toggleOpen();
+                // Stop propagation to prevent affecting other components
+                e.stopPropagation();
                 console.log("DIRECT CLICK: Opening Fundi from closed state");
               }}
               style={{ cursor: 'pointer' }}
