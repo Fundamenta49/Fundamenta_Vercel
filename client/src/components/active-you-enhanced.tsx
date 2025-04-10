@@ -48,6 +48,7 @@ import MeditationGuide from "./meditation-guide";
 import FitnessProgress from "./fitness-progress";
 import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
+import RunnersCompass from "./runners-compass";
 import RunningSpecificExercises from "./running-specific-exercises";
 import HIITSpecificExercises from "./hiit-specific-exercises";
 import YogaSpecificExercises from "./yoga-specific-exercises";
@@ -1863,12 +1864,12 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
             </CardContent>
           </Card>
           
-          <RunningTracker />
+          <RunnersCompass />
           
-          {/* Runner-specific exercises */}
-          <Card className="overflow-hidden mt-4">
+          {/* We're now using the comprehensive RunnersCompass component instead of separate components */}
+          {/* <Card className="overflow-hidden mt-4">
             <CardHeader className="pb-0">
-              <CardTitle>Runner's Training Program</CardTitle>
+              <CardTitle>Runner's Training Program</CardTitle> */}
               <CardDescription>
                 Targeted exercises to improve running performance and prevent common injuries
               </CardDescription>
