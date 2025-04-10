@@ -109,11 +109,11 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
   return (
     <div 
       className={`relative w-full h-full overflow-hidden ${className}`}
-      style={{ width, height, aspectRatio: '16/9' }}
+      style={{ width, height }}
     >
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-learning-color"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
         </div>
       )}
       
@@ -127,7 +127,7 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
             href={`https://www.youtube.com/watch?v=${processedVideoId || videoId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 text-xs text-blue-600 hover:underline"
+            className="mt-2 text-xs text-red-600 hover:underline"
           >
             Try watching on YouTube
           </a>
@@ -142,9 +142,9 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
-          loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ objectFit: 'cover' }}
+          loading="eager" // Changed to eager for faster loading
+          className="absolute inset-0 w-full h-full object-contain"
+          style={{ objectFit: 'cover', position: 'absolute' }}
           onLoad={handleIframeLoad}
           onError={handleIframeError}
         />
