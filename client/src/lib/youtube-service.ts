@@ -497,7 +497,9 @@ export const searchSectionSpecificExerciseVideos = async (
   seed?: string
 ): Promise<YouTubeVideo[]> => {
   // Generate a cache key that includes the workout section and all relevant parameters
-  const cacheKey = `${workoutSection}_${exerciseName}_${equipment || ''}_${muscleGroups?.join('_') || ''}_${seed || ''}`;
+  // Make the cache key unique for each section/category to avoid showing the same videos
+  const uniqueSeed = seed || Math.random().toString(36).substring(2, 15);
+  const cacheKey = `${workoutSection}_${uniqueSeed}_${exerciseName}_${equipment || ''}_${muscleGroups?.join('_') || ''}`;
   
   // Check client-side cache first
   const cacheItem = clientCache[cacheKey];

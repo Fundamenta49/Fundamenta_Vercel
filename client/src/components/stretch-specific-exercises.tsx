@@ -351,7 +351,21 @@ export default function StretchSpecificExercises({
   maxExercises = 4,
 }: StretchSpecificExercisesProps) {
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<keyof typeof STRETCH_EXERCISE_SETS>('upperBody');
+  // Map the category prop to the actual category used in STRETCH_EXERCISE_SETS
+  const getCategoryMapping = (): keyof typeof STRETCH_EXERCISE_SETS => {
+    switch (category) {
+      case 'dynamic':
+        return 'upperBody';
+      case 'static':
+        return 'lowerBody';
+      case 'recovery':
+        return 'fullBody';
+      default:
+        return 'upperBody';
+    }
+  };
+  
+  const [selectedCategory, setSelectedCategory] = useState<keyof typeof STRETCH_EXERCISE_SETS>(getCategoryMapping());
   const [exerciseVideos, setExerciseVideos] = useState<Record<string, YouTubeVideo[]>>({});
   const [loadingVideos, setLoadingVideos] = useState<Record<string, boolean>>({});
 
@@ -394,12 +408,22 @@ export default function StretchSpecificExercises({
     }
   };
 
+  // Use the category and other props in the component
+  useEffect(() => {
+    // Update selected category when category prop changes
+    setSelectedCategory(getCategoryMapping());
+  }, [category]);
+
   // Render
   return (
     <div className="space-y-6">
+      <div className={`p-4 rounded-md ${backgroundColor}`}>
+        <h3 className="text-lg font-semibold">{title}</h3>
+        {description && <p className="text-sm text-zinc-600 dark:text-zinc-400">{description}</p>}
+      </div>
       <div className="flex flex-col space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Stretching Routines</h2>
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
           
           <div className="flex space-x-2">
             <Button 

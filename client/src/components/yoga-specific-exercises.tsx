@@ -281,7 +281,21 @@ export default function YogaSpecificExercises({
   maxExercises = 4,
 }: YogaSpecificExercisesProps) {
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<keyof typeof YOGA_EXERCISE_SETS>('beginnerPoses');
+  // Map the category prop to the actual category used in YOGA_EXERCISE_SETS
+  const getCategoryMapping = (): keyof typeof YOGA_EXERCISE_SETS => {
+    switch (category) {
+      case 'beginner':
+        return 'beginnerPoses';
+      case 'intermediate':
+        return 'standingPoses';
+      case 'advanced':
+        return 'balancePoses';
+      default:
+        return 'beginnerPoses';
+    }
+  };
+  
+  const [selectedCategory, setSelectedCategory] = useState<keyof typeof YOGA_EXERCISE_SETS>(getCategoryMapping());
   const [exerciseVideos, setExerciseVideos] = useState<Record<string, YouTubeVideo[]>>({});
   const [loadingVideos, setLoadingVideos] = useState<Record<string, boolean>>({});
 
@@ -324,12 +338,22 @@ export default function YogaSpecificExercises({
     }
   };
 
+  // Use the category and other props in the component
+  useEffect(() => {
+    // Update selected category when category prop changes
+    setSelectedCategory(getCategoryMapping());
+  }, [category]);
+
   // Render
   return (
     <div className="space-y-6">
+      <div className={`p-4 rounded-md ${backgroundColor}`}>
+        <h3 className="text-lg font-semibold">{title}</h3>
+        {description && <p className="text-sm text-zinc-600 dark:text-zinc-400">{description}</p>}
+      </div>
       <div className="flex flex-col space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Yoga Poses</h2>
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
           
           <div className="flex space-x-2">
             <Button 
