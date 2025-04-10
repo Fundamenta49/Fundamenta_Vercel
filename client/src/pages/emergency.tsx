@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Brain, Flame, Heart, PhoneCall, ClipboardList, Car } from "lucide-react";
+import { AlertCircle, Brain, Flame, Heart, PhoneCall, ClipboardList, Car, ShoppingBag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   FullScreenDialog,
@@ -14,6 +14,7 @@ import FireSafetyPopOut from "@/components/fire-safety-pop-out";
 import CPRGuidePopOut from "@/components/cpr-guide-pop-out";
 import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out";
 import AutoAccidentPopOut from "@/components/auto-accident-pop-out";
+import SimpleEmergencyChecklist from "@/components/simple-emergency-checklist";
 
 // Define section properties
 type SectionType = {
@@ -29,6 +30,12 @@ const SECTIONS: SectionType[] = [
     title: 'Emergency AI Assistant',
     description: 'Get immediate guidance for emergency situations',
     icon: Brain,
+  },
+  {
+    id: 'supplies',
+    title: 'Emergency Supplies',
+    description: 'Checklist of essential items for emergency preparedness',
+    icon: ShoppingBag,
   },
   {
     id: 'checklists',
@@ -73,6 +80,7 @@ export default function Emergency() {
   const [isCPRGuideOpen, setIsCPRGuideOpen] = useState(false);
   const [isChecklistsOpen, setIsChecklistsOpen] = useState(false);
   const [isAutoAccidentOpen, setIsAutoAccidentOpen] = useState(false);
+  const [isSuppliesOpen, setIsSuppliesOpen] = useState(false);
 
   useEffect(() => {
     // Show disclaimer as a dismissable toast
@@ -100,6 +108,16 @@ export default function Emergency() {
       toast({
         title: "AI Assistant Disclaimer",
         description: "For immediate emergency assistance, always call your local emergency services first. This AI assistant provides general guidance only.",
+        duration: 5000, // Reduced duration for better responsiveness
+      });
+    }
+    else if (sectionId === 'supplies') {
+      setIsSuppliesOpen(true);
+      
+      // Show Supplies Checklist disclaimer toast
+      toast({
+        title: "Emergency Supplies",
+        description: "Keep these essential supplies ready for emergencies. Check off items as you acquire them and add your own custom items.",
         duration: 5000, // Reduced duration for better responsiveness
       });
     }
@@ -189,6 +207,18 @@ export default function Emergency() {
       <FullScreenDialog open={isAutoAccidentOpen} onOpenChange={setIsAutoAccidentOpen}>
         <FullScreenDialogContent themeColor="#ef4444" className="overflow-x-hidden">
           <AutoAccidentPopOut />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isSuppliesOpen} onOpenChange={setIsSuppliesOpen}>
+        <FullScreenDialogContent themeColor="#ef4444">
+          <div className="p-4 md:p-6">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-red-500" />
+              Emergency Supplies Checklist
+            </h2>
+            <SimpleEmergencyChecklist />
+          </div>
         </FullScreenDialogContent>
       </FullScreenDialog>
 
