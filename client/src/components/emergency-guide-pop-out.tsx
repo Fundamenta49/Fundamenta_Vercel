@@ -117,7 +117,7 @@ export default function EmergencyGuidePopOut() {
 
   // Render videos section
   const renderVideos = () => (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <BackToMenuButton />
       
       <h2 className="text-lg sm:text-xl font-bold text-red-600 border-b-2 border-red-200 pb-2 flex items-center gap-2">
@@ -125,31 +125,36 @@ export default function EmergencyGuidePopOut() {
         Emergency Response Videos
       </h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {emergencyVideos.map(video => (
-          <div key={video.id} className="rounded-lg border border-red-200 overflow-hidden bg-white shadow hover:shadow-md transition-all">
-            <div className="relative pb-[56.25%] bg-gray-100">
-              {/* Fallback image display with custom styling */}
-              <div 
-                className="absolute inset-0 w-full h-full flex items-center justify-center bg-red-50 cursor-pointer" 
-                onClick={() => handlePlayVideo(video)}
-              >
-                <div className="text-center">
-                  <MonitorPlay className="h-12 w-12 text-red-400 mx-auto mb-2" />
-                  <div className="text-xs text-red-700 font-medium">Emergency Training Video</div>
+          <div 
+            key={video.id} 
+            className="rounded-lg border border-red-200 overflow-hidden bg-white shadow hover:shadow-md transition-all flex flex-col h-full"
+          >
+            <div 
+              className="relative aspect-video bg-red-50 cursor-pointer" 
+              onClick={() => handlePlayVideo(video)}
+            >
+              {/* Video thumbnail with play button overlay */}
+              <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center">
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="h-14 w-14 rounded-full bg-red-100 flex items-center justify-center mb-2 shadow-md hover:bg-red-200 transition-colors">
+                    <MonitorPlay className="h-8 w-8 text-red-600" />
+                  </div>
+                  <div className="text-xs font-medium text-red-700 bg-white/80 px-3 py-1 rounded-full shadow-sm">
+                    {video.duration}
+                  </div>
                 </div>
               </div>
-              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                {video.duration}
-              </div>
             </div>
-            <div className="p-3">
-              <h3 className="font-medium text-sm">{video.title}</h3>
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{video.description}</p>
+            
+            <div className="p-4 flex flex-col flex-grow">
+              <h3 className="font-medium text-base text-gray-800">{video.title}</h3>
+              <p className="text-sm text-gray-600 mt-2 line-clamp-2 flex-grow">{video.description}</p>
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="w-full mt-3 text-red-600 border-red-200 hover:bg-red-50"
+                className="w-full mt-4 text-red-600 border-red-200 hover:bg-red-50 font-medium"
                 onClick={() => handlePlayVideo(video)}
               >
                 Watch Video

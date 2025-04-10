@@ -41,27 +41,27 @@ export function VideoPlayerDialog({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full h-full fixed inset-0 max-w-none p-0 m-0 rounded-none border-none max-h-[100dvh] overflow-hidden">
+      <DialogContent className="w-full sm:w-[90vw] md:w-[80vw] lg:max-w-5xl xl:max-w-6xl h-auto max-h-[90vh] p-0 rounded-lg border overflow-hidden">
         {/* Ensure screen reader accessibility */}
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">{description || `Video: ${title}`}</DialogDescription>
         
         {/* Close button - improved positioning and z-index */}
-        <div className="absolute top-4 right-4 z-[100]">
+        <div className="absolute top-3 right-3 z-[100]">
           <Button 
             variant="outline"
             aria-label="Close video"
             onClick={() => onOpenChange(false)} 
-            className="h-10 w-10 p-0 rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 border-none"
+            className="h-8 w-8 p-0 rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 border-none"
           >
-            <X className="h-6 w-6 text-white" />
+            <X className="h-4 w-4 text-white" />
           </Button>
         </div>
         
         {/* Main container with mobile-first approach */}
-        <div className="w-full h-full flex flex-col md:flex-row">
+        <div className="w-full flex flex-col md:flex-row">
           {/* Video container - prioritize video size on mobile */}
-          <div className="w-full md:w-3/4 h-[70vh] sm:h-[75vh] md:h-full bg-black flex-shrink-0">
+          <div className="w-full md:w-2/3 aspect-video bg-black flex-shrink-0">
             {playerError ? (
               <div className="flex flex-col items-center justify-center text-white p-6 text-center h-full">
                 <AlertCircle className="h-12 w-12 mb-4 text-red-500" />
@@ -93,9 +93,9 @@ export function VideoPlayerDialog({
           
           {/* Description panel - smaller on mobile, collapsible */}
           {description && (
-            <div className="bg-white p-4 md:p-6 w-full md:w-1/4 border-t md:border-t-0 md:border-l shadow-sm flex flex-col h-[30vh] sm:h-[25vh] md:h-full overflow-hidden">
-              <h2 className="text-lg md:text-xl font-semibold pb-2 border-l-4 border-red-500 pl-3">{title}</h2>
-              <ScrollArea className="flex-grow mb-2 h-[100px] md:h-[calc(100%-120px)]">
+            <div className="bg-white p-4 md:p-5 w-full md:w-1/3 border-t md:border-t-0 md:border-l shadow-sm flex flex-col max-h-[200px] md:max-h-[inherit] md:h-auto overflow-hidden">
+              <h2 className="text-lg font-semibold pb-2 border-l-4 border-red-500 pl-3">{title}</h2>
+              <ScrollArea className="flex-grow mb-2 h-[100px] md:h-auto">
                 <div className="pr-4">
                   <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{description}</p>
                   
@@ -131,7 +131,7 @@ export function VideoPlayerDialog({
                 </div>
               </ScrollArea>
               <div className="pt-2 flex justify-between items-center mt-auto border-t border-gray-100">
-                <p className="text-xs text-gray-500 hidden md:block">
+                <p className="text-xs text-gray-500 hidden sm:block">
                   This content is provided for educational purposes
                 </p>
                 <Button 
