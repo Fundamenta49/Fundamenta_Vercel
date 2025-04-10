@@ -1017,7 +1017,7 @@ export default function FundiInteractiveAssistant({
               // Chat interface
               <Card 
                 ref={chatCardRef}
-                className="shadow-xl border resize-handler overflow-hidden flex flex-col rounded-xl fundi-chat-window" 
+                className="shadow-xl border resize-handler overflow-hidden flex flex-col rounded-xl" 
                 style={{ 
                   borderColor: 'rgba(0,0,0,0.1)',
                   minWidth: '320px', 
@@ -1028,8 +1028,7 @@ export default function FundiInteractiveAssistant({
                   resize: 'both',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
-                  background: 'rgba(255, 255, 255, 0.85)',
-                  pointerEvents: 'auto'
+                  background: 'rgba(255, 255, 255, 0.85)'
                 }}
               >
                 <CardHeader 
@@ -1223,13 +1222,12 @@ export default function FundiInteractiveAssistant({
                 </CardFooter>
               </Card>
             ) : (
-              <Card className="w-72 shadow-xl border rounded-xl fundi-chat-window" 
+              <Card className="w-72 shadow-xl border rounded-xl" 
                 style={{
                   borderColor: 'rgba(0,0,0,0.1)',
                   backdropFilter: 'blur(8px)',
                   WebkitBackdropFilter: 'blur(8px)',
-                  background: 'rgba(255, 255, 255, 0.85)',
-                  pointerEvents: 'auto'
+                  background: 'rgba(255, 255, 255, 0.85)'
                 }}>
                 <CardHeader 
                   className="p-3 pb-2 flex flex-row items-center justify-between space-y-0 cursor-grab active:cursor-grabbing border-b"
