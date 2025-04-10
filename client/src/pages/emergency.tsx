@@ -33,16 +33,18 @@ const SECTIONS: SectionType[] = [
   },
   {
     id: 'supplies',
-    title: 'Emergency Supplies',
+    title: 'Emergency Checklist',
     description: 'Checklist of essential items for emergency preparedness',
     icon: ShoppingBag,
   },
+  /* Removed duplicate checklist button 
   {
     id: 'checklists',
     title: 'Emergency Checklists',
     description: 'Preparation steps for different types of emergencies',
     icon: ClipboardList,
   },
+  */
   {
     id: 'guides',
     title: 'Emergency Guides',
@@ -114,9 +116,9 @@ export default function Emergency() {
     else if (sectionId === 'supplies') {
       setIsSuppliesOpen(true);
       
-      // Show Supplies Checklist disclaimer toast
+      // Show Emergency Checklist disclaimer toast
       toast({
-        title: "Emergency Supplies",
+        title: "Emergency Checklist",
         description: "Keep these essential supplies ready for emergencies. Check off items as you acquire them and add your own custom items.",
         duration: 5000, // Reduced duration for better responsiveness
       });
@@ -215,7 +217,7 @@ export default function Emergency() {
           <div className="p-4 md:p-6">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <ShoppingBag className="h-5 w-5 text-red-500" />
-              Emergency Supplies Checklist
+              Emergency Checklist
             </h2>
             <SimpleEmergencyChecklist />
           </div>
