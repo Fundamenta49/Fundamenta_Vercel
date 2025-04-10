@@ -1718,18 +1718,58 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               Track your runs, set goals, and improve your performance
             </p>
           </div>
+          
+          {/* Essential Running Warm-up Stretches */}
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-0">
+              <CardTitle>Pre-Run Warm-up Routine</CardTitle>
+              <CardDescription>
+                Essential dynamic stretches to prepare your body for a run
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-4">
+              <Alert className="bg-amber-50 border-amber-200 mb-4">
+                <AlertDescription className="text-amber-800">
+                  Always warm up properly before running to improve performance and reduce injury risk
+                </AlertDescription>
+              </Alert>
+              
+              <div className="mb-6">
+                <h3 className="font-medium text-lg my-3">Dynamic Warm-up Stretches</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">5-Minute Runner's Warm-up</div>
+                    <p className="text-sm text-muted-foreground mb-2">Complete this sequence before every run</p>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">1.</span> Ankle Rotations: 10 circles in each direction for both feet</div>
+                      <div><span className="font-medium">2.</span> Walking Knee Pulls: 10 steps, pulling knee to chest</div>
+                      <div><span className="font-medium">3.</span> Hip Circles: 10 rotations in each direction</div>
+                      <div><span className="font-medium">4.</span> Dynamic Leg Swings: 10 forward/back and 10 side-to-side for each leg</div>
+                      <div><span className="font-medium">5.</span> Calf Raises: 15 slow raises on each leg</div>
+                      <div><span className="font-medium">6.</span> Hamstring Sweeps: 10 per leg, gently sweeping hands toward toes</div>
+                      <div><span className="font-medium">7.</span> Gentle Arm Circles: 10 forward and 10 backward</div>
+                      <div><span className="font-medium">8.</span> Light Jogging: 2 minutes of very light jogging in place</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
           <RunningTracker />
+          
+          {/* Runner-specific exercises */}
           <Card className="overflow-hidden mt-4">
             <CardHeader className="pb-0">
-              <CardTitle>Running Support Exercises</CardTitle>
+              <CardTitle>Runner's Training Program</CardTitle>
               <CardDescription>
-                Strengthen key muscle groups to improve running performance and prevent injuries
+                Targeted exercises to improve running performance and prevent common injuries
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4 space-y-4">
               <Alert className="bg-blue-50 border-blue-200 mb-4">
                 <AlertDescription className="text-blue-800">
-                  Exercises to enhance running performance and prevent common injuries
+                  These exercises specifically benefit runners by targeting key muscles used in running
                 </AlertDescription>
               </Alert>
               
@@ -1737,15 +1777,32 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 <h3 className="font-medium text-lg my-3">Runner's Strength Routine</h3>
                 <div className="grid gap-4">
                   <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">Lower Body Support</div>
-                    <p className="text-sm text-muted-foreground mb-2">Perform 2-3 times per week to support running performance</p>
+                    <div className="font-medium text-lg mb-1">Running-Focused Strength Training</div>
+                    <p className="text-sm text-muted-foreground mb-2">Perform 2-3 times per week to improve running efficiency</p>
                     <div className="text-sm space-y-2">
-                      <div><span className="font-medium">1.</span> Lunges: Strengthens quadriceps and glutes</div>
-                      <div><span className="font-medium">2.</span> Calf Raises: Targets calf muscles for push-off power</div>
-                      <div><span className="font-medium">3.</span> Hamstring Curls: Focuses on hamstrings for injury prevention</div>
-                      <div><span className="font-medium">4.</span> Planks: Strengthens core for better running posture</div>
-                      <div><span className="font-medium">5.</span> Leg Swings: Enhances hip flexibility for stride length</div>
-                      <div><span className="font-medium">6.</span> Ankle Circles: Improves ankle mobility for varied terrain</div>
+                      <div><span className="font-medium">1.</span> Single-Leg Squats: Improves leg strength and stability for each stride</div>
+                      <div><span className="font-medium">2.</span> Walking Lunges: Mimics running motion while building strength</div>
+                      <div><span className="font-medium">3.</span> Step-Ups: Strengthens glutes and quadriceps for hill climbing</div>
+                      <div><span className="font-medium">4.</span> Calf Raises on Step: Develops push-off power and ankle stability</div>
+                      <div><span className="font-medium">5.</span> Planks with Leg Lifts: Enhances core stability while running</div>
+                      <div><span className="font-medium">6.</span> Glute Bridges: Activates hip extensors used in running stride</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <h3 className="font-medium text-lg my-3">Runner's Recovery Stretches</h3>
+                <div className="grid gap-4">
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div className="font-medium text-lg mb-1">Post-Run Recovery</div>
+                    <p className="text-sm text-muted-foreground mb-2">Hold each stretch for 30 seconds after your run</p>
+                    <div className="text-sm space-y-2">
+                      <div><span className="font-medium">1.</span> Standing Quad Stretch: Eases tension in quadriceps</div>
+                      <div><span className="font-medium">2.</span> Standing Calf Stretch: Releases tight calves</div>
+                      <div><span className="font-medium">3.</span> Seated Hamstring Stretch: Lengthens hamstrings after contraction</div>
+                      <div><span className="font-medium">4.</span> Figure Four Stretch: Opens tight hip rotators</div>
+                      <div><span className="font-medium">5.</span> Lying Spinal Twist: Releases lower back tension</div>
                     </div>
                   </div>
                 </div>
@@ -1755,7 +1812,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 muscleFilter="legs" 
                 equipmentFilter="body weight"
                 difficultyFilter="beginner"
-                keywordFilter="lunge"
+                keywordFilter="run"
                 showFilters={false}
                 compactView={true}
                 maxExercises={4}
