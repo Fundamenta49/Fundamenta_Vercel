@@ -88,18 +88,22 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
     if (onError) onError();
   };
 
-  // Create proper YouTube embed URL with origin
+  // Create proper YouTube embed URL with origin and mobile optimizations
   const createYouTubeEmbedUrl = () => {
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const params = new URLSearchParams({
       rel: '0', // Don't show related videos
       modestbranding: '1', // Minimal YouTube branding
       origin: origin,
-      enablejsapi: '1' // Enable JavaScript API
+      enablejsapi: '1', // Enable JavaScript API
+      playsinline: '1', // Ensures video plays inline on iOS devices instead of fullscreen
+      fs: '1', // Show fullscreen button
+      controls: '1' // Show video controls
     });
 
     if (autoplay) {
       params.append('autoplay', '1');
+      params.append('mute', '1'); // Mobile browsers require muted autoplay
     }
 
     // Always use the processed ID to ensure proper formatting
@@ -143,8 +147,14 @@ export const EmbeddedYouTubePlayer: React.FC<EmbeddedYouTubePlayerProps> = ({
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           loading="eager" // Changed to eager for faster loading
-          className="absolute inset-0 w-full h-full object-contain"
-          style={{ objectFit: 'cover', position: 'absolute' }}
+          className="absolute inset-0 w-full h-full"
+          style={{ 
+            objectFit: 'contain', 
+            position: 'absolute',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            aspectRatio: '16/9' // Ensures proper aspect ratio on mobile
+          }}
           onLoad={handleIframeLoad}
           onError={handleIframeError}
         />

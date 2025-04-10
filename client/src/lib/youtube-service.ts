@@ -375,6 +375,100 @@ const fallbackFitnessVideos: {[key: string]: YouTubeVideo[]} = {
   ]
 };
 
+/**
+ * Retrieve videos specifically for a workout section (Running, HIIT, Yoga, Stretch)
+ * @param workoutSection The specific workout section (running, hiit, yoga, stretch)
+ * @param exerciseName The name of the exercise
+ * @param equipment Any equipment needed for the exercise
+ * @param muscleGroups Muscle groups targeted
+ * @param seed Random seed for consistent results
+ * @returns Promise with YouTube videos for that specific workout section
+ */
+export const searchSectionSpecificExerciseVideos = async (
+  workoutSection: 'running' | 'hiit' | 'yoga' | 'stretch',
+  exerciseName: string, 
+  equipment?: string, 
+  muscleGroups?: string[],
+  seed?: string
+): Promise<YouTubeVideo[]> => {
+  // Generate a cache key that includes the workout section and all relevant parameters
+  const cacheKey = `${workoutSection}_${exerciseName}_${equipment || ''}_${muscleGroups?.join('_') || ''}_${seed || ''}`;
+  
+  // Check client-side cache first
+  const cacheItem = clientCache[cacheKey];
+  if (cacheItem && (Date.now() - cacheItem.timestamp < CACHE_TTL)) {
+    console.log(`Using cached ${workoutSection} videos for ${exerciseName}`);
+    return cacheItem.videos;
+  }
+  
+  // First try to get section-specific fallback videos
+  if (fallbackFitnessVideos[workoutSection]) {
+    console.log(`Using ${workoutSection}-specific fallback videos`);
+    
+    // Store in cache to avoid repeated lookups
+    clientCache[cacheKey] = {
+      videos: fallbackFitnessVideos[workoutSection],
+      timestamp: Date.now()
+    };
+    
+    return fallbackFitnessVideos[workoutSection];
+  }
+  
+  // Construct query with workout section specific terms
+  let query = '';
+  
+  switch(workoutSection) {
+    case 'running':
+      query = `running ${exerciseName} technique form`;
+      break;
+    case 'hiit':
+      query = `hiit ${exerciseName} workout tutorial`;
+      break;
+    case 'yoga':
+      query = `yoga ${exerciseName} pose tutorial`;
+      break;
+    case 'stretch':
+      query = `stretching ${exerciseName} tutorial mobility`;
+      break;
+    default:
+      query = `${exerciseName} exercise tutorial`;
+  }
+  
+  // Add equipment qualifier if provided
+  if (equipment && equipment !== 'none' && equipment !== 'bodyweight') {
+    query = `${query} with ${equipment}`;
+  }
+  
+  // Add muscle group focus for non-yoga/stretch workouts
+  if (['running', 'hiit'].includes(workoutSection) && muscleGroups && muscleGroups.length > 0) {
+    query = `${query} for ${muscleGroups[0]}`;
+  }
+  
+  try {
+    // Call the API with our specialized query
+    const response = await apiRequest(
+      'GET',
+      `/api/youtube/search?q=${encodeURIComponent(query)}&category=fitness&seed=${seed || ''}`
+    );
+    
+    const data = await response.json();
+    const videos = data.videos || [];
+    
+    // Store in cache
+    clientCache[cacheKey] = {
+      videos,
+      timestamp: Date.now()
+    };
+    
+    return videos;
+  } catch (error) {
+    console.error(`Error searching ${workoutSection} videos:`, error);
+    
+    // Return general fallback as last resort
+    return fallbackFitnessVideos['general'] || [];
+  }
+};
+
 export const searchExerciseVideos = async (
   exerciseName: string, 
   equipment?: string,

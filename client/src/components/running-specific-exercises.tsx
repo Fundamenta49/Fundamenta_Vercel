@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Info, ChevronDown, ChevronUp, Plus, ArrowRight } from "lucide-react";
+import { EmbeddedYouTubePlayer } from '@/components/embedded-youtube-player';
+import { searchSectionSpecificExerciseVideos, YouTubeVideo } from '@/lib/youtube-service';
 
 // Define Exercise interface with added fields to match ExerciseDetails in active-you-enhanced
 interface Exercise {
@@ -669,6 +671,10 @@ export default function RunningSpecificExercises({
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
   const exercises = RUNNING_EXERCISE_SETS[category];
   
+  // State for videos
+  const [exerciseVideos, setExerciseVideos] = useState<Record<string, YouTubeVideo[]>>({});
+  const [loadingVideos, setLoadingVideos] = useState<Record<string, boolean>>({});
+  
   // Function to get exercise data directly from our hardcoded data
   const getExerciseData = (index: number) => {
     // Simply return the exercise at the given index
@@ -681,10 +687,48 @@ export default function RunningSpecificExercises({
   // Create a loading state for a brief moment to simulate data fetching
   const [isDataLoading, setIsDataLoading] = useState(true);
   
+  // Function to load section-specific videos for an exercise
+  const loadExerciseVideo = async (exercise: Exercise) => {
+    // Skip if we're already loading videos for this exercise
+    if (loadingVideos[exercise.id]) return;
+    
+    // Skip if we already have videos for this exercise
+    if (exerciseVideos[exercise.id]?.length > 0) return;
+    
+    // Mark as loading
+    setLoadingVideos(prev => ({ ...prev, [exercise.id]: true }));
+    
+    try {
+      // Search for running-specific videos for this exercise
+      const videos = await searchSectionSpecificExerciseVideos(
+        'running',
+        exercise.name,
+        exercise.equipment?.[0],
+        exercise.muscleGroups,
+        exercise.id // Use exercise ID as seed for consistent results
+      );
+      
+      // Store the videos
+      if (videos && videos.length > 0) {
+        setExerciseVideos(prev => ({ ...prev, [exercise.id]: videos }));
+      }
+    } catch (error) {
+      console.error(`Error loading videos for ${exercise.name}:`, error);
+    } finally {
+      // Mark as done loading regardless of result
+      setLoadingVideos(prev => ({ ...prev, [exercise.id]: false }));
+    }
+  };
+  
   useEffect(() => {
     // Simulate data loading for a more natural UX
     const timer = setTimeout(() => {
       setIsDataLoading(false);
+      
+      // Preload videos for the first few exercises
+      exerciseData.slice(0, 2).forEach(exercise => {
+        loadExerciseVideo(exercise);
+      });
     }, 500);
     
     return () => clearTimeout(timer);
@@ -739,13 +783,39 @@ export default function RunningSpecificExercises({
                   
                   {isExpanded && (
                     <div className="mt-3 pt-3 border-t">
-                      {exercise.imageUrl && (
+                      {/* Show either the embedded YouTube video if available or fallback to image */}
+                      {exerciseVideos[exercise.id]?.length > 0 ? (
+                        <div className="mb-3 overflow-hidden rounded-md" style={{ aspectRatio: '16/9' }}>
+                          <EmbeddedYouTubePlayer
+                            videoId={exerciseVideos[exercise.id][0].id}
+                            title={`${exercise.name} tutorial`}
+                            height="100%"
+                            width="100%"
+                            className="rounded-md"
+                            onError={() => {
+                              // If video fails, load a different one
+                              const updatedVideos = [...exerciseVideos[exercise.id]];
+                              updatedVideos.shift(); // Remove the failed video
+                              setExerciseVideos({
+                                ...exerciseVideos,
+                                [exercise.id]: updatedVideos
+                              });
+                            }}
+                          />
+                        </div>
+                      ) : exercise.imageUrl && (
                         <div className="mb-3 overflow-hidden rounded-md">
                           <img 
                             src={exercise.imageUrl} 
                             alt={exercise.name} 
                             className="w-full object-cover h-40"
+                            onClick={() => !exerciseVideos[exercise.id] && loadExerciseVideo(exercise)}
                           />
+                          {loadingVideos[exercise.id] && (
+                            <div className="text-center mt-1">
+                              <span className="text-xs">Loading videos...</span>
+                            </div>
+                          )}
                         </div>
                       )}
                       
@@ -778,7 +848,20 @@ export default function RunningSpecificExercises({
                           </ol>
                         </div>
                         
-                        <div className="flex justify-end">
+                        <div className="flex justify-end space-x-2">
+                          {!exerciseVideos[exercise.id] && !loadingVideos[exercise.id] && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                loadExerciseVideo(exercise);
+                              }}
+                            >
+                              <AlertCircle className="h-3 w-3 mr-1" /> Load Video
+                            </Button>
+                          )}
                           <Button 
                             variant="outline" 
                             size="sm"
