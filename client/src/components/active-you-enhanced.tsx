@@ -1808,50 +1808,26 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Running-Specific Exercise Program With Proper Structure */}
+              {/* Running-Specific Exercise Program With Multiple Exercises Per Category */}
               <div className="mb-6 pt-2">
                 <h3 className="font-medium text-xl mb-4">Complete Runner's Training Program</h3>
                 
                 <div className="mb-6 pb-2 border-b border-gray-200">
                   <h4 className="font-medium text-lg mb-3">Pre-Run Warm-Up Routine</h4>
                   <p className="text-gray-700 mb-3">Always perform these dynamic stretches before running to prepare your muscles and prevent injury.</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <div className="border rounded-lg p-4 bg-blue-50">
-                      <h5 className="font-medium mb-2">Dynamic Warm-Ups</h5>
+                      <h5 className="font-medium mb-3">Dynamic Warm-Ups & Mobility Exercises</h5>
+                      
+                      {/* Using broader filter terms to get more variety */}
                       <FitnessExercises 
                         muscleFilter="legs" 
+                        equipmentFilter="body weight"
                         difficultyFilter="beginner"
-                        keywordFilter="lunge" 
+                        keywordFilter="dynamic" 
                         showFilters={false}
                         compactView={true}
-                        maxExercises={1}
-                      />
-                      <FitnessExercises 
-                        muscleFilter="legs" 
-                        difficultyFilter="beginner"
-                        keywordFilter="leg swing" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
-                      />
-                    </div>
-                    <div className="border rounded-lg p-4 bg-blue-50">
-                      <h5 className="font-medium mb-2">Joint Mobility</h5>
-                      <FitnessExercises 
-                        muscleFilter="core" 
-                        difficultyFilter="beginner"
-                        keywordFilter="rotation" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
-                      />
-                      <FitnessExercises 
-                        muscleFilter="legs" 
-                        equipmentFilter="body weight" 
-                        keywordFilter="ankle" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
+                        maxExercises={6}
                       />
                     </div>
                   </div>
@@ -1860,43 +1836,19 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 <div className="mb-6 pb-2 border-b border-gray-200">
                   <h4 className="font-medium text-lg mb-3">Strength Training for Runners</h4>
                   <p className="text-gray-700 mb-3">Perform these exercises 2-3 times per week to build strength that will improve your running performance.</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <div className="border rounded-lg p-4 bg-amber-50">
-                      <h5 className="font-medium mb-2">Lower Body Power</h5>
+                      <h5 className="font-medium mb-3">Core & Lower Body Strength</h5>
+                      
+                      {/* Using 'strength' category to return a variety of strength exercises */}
                       <FitnessExercises 
+                        categoryFilter="strength"
                         muscleFilter="legs" 
-                        categoryFilter="strength"
-                        keywordFilter="squat" 
+                        difficultyFilter="beginner"
+                        equipmentFilter="body weight"
                         showFilters={false}
                         compactView={true}
-                        maxExercises={1}
-                      />
-                      <FitnessExercises 
-                        muscleFilter="legs" 
-                        categoryFilter="strength"
-                        keywordFilter="deadlift" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
-                      />
-                    </div>
-                    <div className="border rounded-lg p-4 bg-amber-50">
-                      <h5 className="font-medium mb-2">Core Stability</h5>
-                      <FitnessExercises 
-                        muscleFilter="core" 
-                        categoryFilter="strength"
-                        keywordFilter="plank" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
-                      />
-                      <FitnessExercises 
-                        muscleFilter="core" 
-                        categoryFilter="strength"
-                        keywordFilter="bird" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
+                        maxExercises={6}
                       />
                     </div>
                   </div>
@@ -1905,41 +1857,19 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 <div className="mb-6 pb-2 border-b border-gray-200">
                   <h4 className="font-medium text-lg mb-3">Run-Specific Technique Drills</h4>
                   <p className="text-gray-700 mb-3">Incorporate these drills into your training to improve running form and efficiency.</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <div className="border rounded-lg p-4 bg-green-50">
-                      <h5 className="font-medium mb-2">Form & Cadence</h5>
-                      <FitnessExercises 
-                        muscleFilter="legs" 
-                        categoryFilter="plyometrics"
-                        keywordFilter="high knee" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
-                      />
-                      <FitnessExercises 
-                        muscleFilter="legs" 
-                        categoryFilter="plyometrics"
-                        keywordFilter="butt kick" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
-                      />
-                    </div>
-                    <div className="border rounded-lg p-4 bg-green-50">
-                      <h5 className="font-medium mb-2">Explosive Power</h5>
+                      <h5 className="font-medium mb-3">Speed & Plyometric Drills</h5>
+                      
+                      {/* Using plyometrics category for explosive power training */}
                       <FitnessExercises 
                         categoryFilter="plyometrics"
-                        keywordFilter="bound" 
+                        muscleFilter="full body" 
+                        difficultyFilter="intermediate"
+                        equipmentFilter="body weight"
                         showFilters={false}
                         compactView={true}
-                        maxExercises={1}
-                      />
-                      <FitnessExercises 
-                        categoryFilter="plyometrics"
-                        keywordFilter="jump" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
+                        maxExercises={6}
                       />
                     </div>
                   </div>
@@ -1948,39 +1878,18 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 <div>
                   <h4 className="font-medium text-lg mb-3">Post-Run Recovery Exercises</h4>
                   <p className="text-gray-700 mb-3">Essential stretches to perform after running to improve recovery and flexibility.</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <div className="border rounded-lg p-4 bg-purple-50">
-                      <h5 className="font-medium mb-2">Lower Body Stretches</h5>
+                      <h5 className="font-medium mb-3">Stretches for Runners</h5>
+                      
+                      {/* Using stretching category to return stretching exercises */}
                       <FitnessExercises 
                         categoryFilter="stretching"
-                        keywordFilter="hamstring" 
+                        muscleFilter="legs" 
+                        difficultyFilter="beginner"
                         showFilters={false}
                         compactView={true}
-                        maxExercises={1}
-                      />
-                      <FitnessExercises 
-                        categoryFilter="stretching"
-                        keywordFilter="quadriceps" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
-                      />
-                    </div>
-                    <div className="border rounded-lg p-4 bg-purple-50">
-                      <h5 className="font-medium mb-2">Hip & Back Release</h5>
-                      <FitnessExercises 
-                        categoryFilter="stretching"
-                        keywordFilter="hip" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
-                      />
-                      <FitnessExercises 
-                        categoryFilter="stretching"
-                        keywordFilter="calf" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={1}
+                        maxExercises={6}
                       />
                     </div>
                   </div>
