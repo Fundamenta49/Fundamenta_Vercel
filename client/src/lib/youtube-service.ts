@@ -126,17 +126,17 @@ export const searchVideos = async (query: string, category?: string): Promise<Yo
 const clientCache: Record<string, { videos: YouTubeVideo[], timestamp: number }> = {};
 const CACHE_TTL = 1000 * 60 * 60 * 2; // 2 hours
 
-// Default fallback videos for when the API fails or is rate-limited
+// Default exercise-specific fallback videos for when the YouTube API is rate-limited
 const fallbackFitnessVideos: {[key: string]: YouTubeVideo[]} = {
   // General fallbacks
   'general': [
     {
-      id: "ml6cT4AZdqI",
-      title: "30-Minute HIIT Workout - No Equipment with Modifications",
-      description: "Full body HIIT workout that's apartment-friendly with no equipment required.",
-      thumbnailUrl: "https://img.youtube.com/vi/ml6cT4AZdqI/maxresdefault.jpg",
-      channelTitle: "SELF",
-      publishedAt: "2020-03-15T00:00:00Z"
+      id: "UBMk30rjy0o",
+      title: "20 Minute Full Body Workout - Beginner Version",
+      description: "A beginner-friendly full body workout with no equipment required.",
+      thumbnailUrl: "https://img.youtube.com/vi/UBMk30rjy0o/maxresdefault.jpg",
+      channelTitle: "FitnessBlender",
+      publishedAt: "2020-04-15T00:00:00Z"
     },
     {
       id: "ltuLMm5NUM8",
@@ -371,6 +371,111 @@ const fallbackFitnessVideos: {[key: string]: YouTubeVideo[]} = {
       thumbnailUrl: "https://img.youtube.com/vi/nhoikoUEI8U/maxresdefault.jpg",
       channelTitle: "ATHLEAN-X",
       publishedAt: "2019-09-10T00:00:00Z"
+    }
+  ],
+  // Yoga specific fallbacks
+  'yoga': [
+    {
+      id: "v7AYKMP6rOE",
+      title: "Yoga For Complete Beginners - 20 Minute Home Yoga Workout",
+      description: "Beginner friendly yoga class with foundational poses and breathing techniques",
+      thumbnailUrl: "https://img.youtube.com/vi/v7AYKMP6rOE/maxresdefault.jpg",
+      channelTitle: "Yoga With Adriene",
+      publishedAt: "2019-04-30T00:00:00Z"
+    },
+    {
+      id: "b1H3xO3x_Js",
+      title: "Yoga Flow for Strength and Flexibility",
+      description: "Intermediate vinyasa yoga sequence to build strength and improve flexibility",
+      thumbnailUrl: "https://img.youtube.com/vi/b1H3xO3x_Js/maxresdefault.jpg",
+      channelTitle: "Yoga With Kassandra",
+      publishedAt: "2020-02-18T00:00:00Z"
+    },
+    {
+      id: "o8QGzKcLqYA",
+      title: "Gentle Yoga for Beginners - Relaxation and Stress Relief",
+      description: "Easy yoga poses perfect for stress management and relaxation",
+      thumbnailUrl: "https://img.youtube.com/vi/o8QGzKcLqYA/maxresdefault.jpg",
+      channelTitle: "Yoga With Bird",
+      publishedAt: "2020-05-10T00:00:00Z"
+    },
+    {
+      id: "5v1wt-EIgww",
+      title: "Sun Salutation Practice - Step-by-Step Tutorial",
+      description: "Learn the proper form and sequence for sun salutations",
+      thumbnailUrl: "https://img.youtube.com/vi/5v1wt-EIgww/maxresdefault.jpg",
+      channelTitle: "Yoga International",
+      publishedAt: "2018-11-12T00:00:00Z"
+    }
+  ],
+  // Stretch specific fallbacks
+  'stretch': [
+    {
+      id: "Z6T4SdHJwwE",
+      title: "15 Minute Full Body Stretching Routine",
+      description: "Complete stretching sequence for better flexibility and recovery",
+      thumbnailUrl: "https://img.youtube.com/vi/Z6T4SdHJwwE/maxresdefault.jpg",
+      channelTitle: "MadFit",
+      publishedAt: "2020-01-15T00:00:00Z"
+    },
+    {
+      id: "sTxC3J3gQEU",
+      title: "Lower Body Flexibility Routine - Hamstring & Hip Stretches",
+      description: "Targeted stretches for tight hamstrings, quads, and hip flexors",
+      thumbnailUrl: "https://img.youtube.com/vi/sTxC3J3gQEU/maxresdefault.jpg",
+      channelTitle: "Tom Merrick",
+      publishedAt: "2019-07-22T00:00:00Z"
+    },
+    {
+      id: "qULTwquOuT4",
+      title: "Upper Body Mobility Routine - Shoulders & Back",
+      description: "Improve upper body mobility with these targeted stretches",
+      thumbnailUrl: "https://img.youtube.com/vi/qULTwquOuT4/maxresdefault.jpg",
+      channelTitle: "FitnessBlender",
+      publishedAt: "2018-05-10T00:00:00Z"
+    },
+    {
+      id: "4pKly2JojMw",
+      title: "Post-Workout Cool Down Stretches",
+      description: "Essential stretches to do after any workout for better recovery",
+      thumbnailUrl: "https://img.youtube.com/vi/4pKly2JojMw/maxresdefault.jpg",
+      channelTitle: "Blogilates",
+      publishedAt: "2019-09-05T00:00:00Z"
+    }
+  ],
+  // Running specific fallbacks
+  'running': [
+    {
+      id: "brFHyOtTwH4",
+      title: "Proper Running Form - Technique for Better Running",
+      description: "Learn the proper running form and technique to run more efficiently",
+      thumbnailUrl: "https://img.youtube.com/vi/brFHyOtTwH4/maxresdefault.jpg",
+      channelTitle: "Global Triathlon Network",
+      publishedAt: "2019-02-25T00:00:00Z"
+    },
+    {
+      id: "kbe_DqMJfzg",
+      title: "Running Warmup Routine - Dynamic Stretches Before Running",
+      description: "Essential dynamic stretches to do before your run",
+      thumbnailUrl: "https://img.youtube.com/vi/kbe_DqMJfzg/maxresdefault.jpg",
+      channelTitle: "The Run Experience",
+      publishedAt: "2020-03-10T00:00:00Z"
+    },
+    {
+      id: "9L2b2khySLE",
+      title: "Beginner Running Tips - 5K Training Plan",
+      description: "Training tips and plan for beginners wanting to run a 5K",
+      thumbnailUrl: "https://img.youtube.com/vi/9L2b2khySLE/maxresdefault.jpg",
+      channelTitle: "Running Channel",
+      publishedAt: "2019-08-15T00:00:00Z"
+    },
+    {
+      id: "3ROpQpRlgvc",
+      title: "Running Drills for Speed and Technique",
+      description: "Essential running drills to improve your running form and speed",
+      thumbnailUrl: "https://img.youtube.com/vi/3ROpQpRlgvc/maxresdefault.jpg",
+      channelTitle: "Sage Running",
+      publishedAt: "2018-10-12T00:00:00Z"
     }
   ]
 };

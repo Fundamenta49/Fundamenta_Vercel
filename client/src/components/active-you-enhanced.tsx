@@ -50,6 +50,8 @@ import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
 import RunningSpecificExercises from "./running-specific-exercises";
 import HIITSpecificExercises from "./hiit-specific-exercises";
+import YogaSpecificExercises from "./yoga-specific-exercises";
+import StretchSpecificExercises from "./stretch-specific-exercises";
 import YogaPromptFlow, { YogaSession } from "./yoga-prompt-flow";
 // AI Coach functionality removed as Fundi now handles all AI interactions
 import {
@@ -674,6 +676,44 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         </p>
       </div>
       
+      {/* Yoga Specific Exercise Components */}
+      <div className="space-y-8 mt-6">
+        <Tabs defaultValue="beginner" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="beginner">Beginner</TabsTrigger>
+            <TabsTrigger value="intermediate">Intermediate</TabsTrigger>
+            <TabsTrigger value="advanced">Advanced</TabsTrigger>
+          </TabsList>
+          <TabsContent value="beginner" className="space-y-6 mt-4">
+            <YogaSpecificExercises 
+              category="beginner"
+              title="Foundation Yoga Poses"
+              description="Start with these basic poses to build a strong foundation for your yoga practice."
+              backgroundColor="bg-blue-50"
+              maxExercises={4}
+            />
+          </TabsContent>
+          <TabsContent value="intermediate" className="space-y-6 mt-4">
+            <YogaSpecificExercises 
+              category="intermediate"
+              title="Intermediate Yoga Sequences"
+              description="Build upon your foundation with these more challenging poses and sequences."
+              backgroundColor="bg-purple-50"
+              maxExercises={4}
+            />
+          </TabsContent>
+          <TabsContent value="advanced" className="space-y-6 mt-4">
+            <YogaSpecificExercises 
+              category="advanced"
+              title="Advanced Yoga Flows"
+              description="Challenge yourself with these advanced poses and flows for experienced practitioners."
+              backgroundColor="bg-green-50"
+              maxExercises={4}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+      
       {/* AI Pose Analysis Feature */}
       <Card className="overflow-hidden">
         <CardHeader className="pb-2">
@@ -1280,6 +1320,44 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         <p className="text-sm text-muted-foreground mt-1">
           Get personalized form corrections and guided stretching routines
         </p>
+      </div>
+      
+      {/* Stretch Specific Exercise Components */}
+      <div className="space-y-8 mt-6">
+        <Tabs defaultValue="dynamic" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="dynamic">Dynamic</TabsTrigger>
+            <TabsTrigger value="static">Static</TabsTrigger>
+            <TabsTrigger value="recovery">Recovery</TabsTrigger>
+          </TabsList>
+          <TabsContent value="dynamic" className="space-y-6 mt-4">
+            <StretchSpecificExercises 
+              category="dynamic"
+              title="Dynamic Stretching Exercises"
+              description="Active movements that prepare your muscles and joints for activity."
+              backgroundColor="bg-orange-50"
+              maxExercises={4}
+            />
+          </TabsContent>
+          <TabsContent value="static" className="space-y-6 mt-4">
+            <StretchSpecificExercises 
+              category="static"
+              title="Static Stretching Exercises"
+              description="Hold these stretches to improve overall flexibility and range of motion."
+              backgroundColor="bg-blue-50"
+              maxExercises={4}
+            />
+          </TabsContent>
+          <TabsContent value="recovery" className="space-y-6 mt-4">
+            <StretchSpecificExercises 
+              category="recovery"
+              title="Recovery Stretches"
+              description="Use these stretches after workouts to reduce soreness and improve recovery."
+              backgroundColor="bg-green-50"
+              maxExercises={4}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
       
       {/* AI Pose Analysis Feature */}
