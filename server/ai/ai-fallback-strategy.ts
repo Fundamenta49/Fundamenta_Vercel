@@ -873,6 +873,14 @@ export class FallbackAIService {
     systemPrompt: string,
     previousMessages: Message[]
   ): Promise<AIResponse> {
+    // AUTOMATICALLY RESET ON EVERY REQUEST - This is more aggressive than the health check
+    // to prevent getting stuck in the fallback/preset response mode
+    if (this.failureCount > 0 || this.forceUseFallback) {
+      console.log("🔄 AUTO-RESET: Proactively resetting AI fallback system on every request");
+      // Reset everything so we always try OpenAI first
+      this.resetFailures();
+    }
+    
     // Check if this is a simple greeting - this happens first, before any API calls
     // to ensure consistent handling of greetings regardless of API status
     const lowerMessage = message.toLowerCase().trim();
