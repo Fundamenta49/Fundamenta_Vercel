@@ -401,18 +401,8 @@ export const searchSectionSpecificExerciseVideos = async (
     return cacheItem.videos;
   }
   
-  // First try to get section-specific fallback videos
-  if (fallbackFitnessVideos[workoutSection]) {
-    console.log(`Using ${workoutSection}-specific fallback videos`);
-    
-    // Store in cache to avoid repeated lookups
-    clientCache[cacheKey] = {
-      videos: fallbackFitnessVideos[workoutSection],
-      timestamp: Date.now()
-    };
-    
-    return fallbackFitnessVideos[workoutSection];
-  }
+  // We'll only use fallbacks if the API request fails, not as a first option
+  // This ensures we get diverse, exercise-specific videos
   
   // Construct query with workout section specific terms
   let query = '';
@@ -451,21 +441,55 @@ export const searchSectionSpecificExerciseVideos = async (
       `/api/youtube/search?q=${encodeURIComponent(query)}&category=fitness&seed=${seed || ''}`
     );
     
+    if (!response.ok) {
+      // If we get a 403 or 429 (rate limit errors), use section-specific fallbacks
+      if (response.status === 403 || response.status === 429) {
+        console.error(`YouTube API error (${response.status}): Using ${workoutSection} fallbacks`);
+        
+        // Use section-specific fallbacks if available, otherwise general fallbacks
+        const fallbackVideos = fallbackFitnessVideos[workoutSection] || fallbackFitnessVideos['general'] || [];
+        
+        // Use deterministic selection based on exercise name to ensure variety
+        const hash = exerciseName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const shuffledVideos = [...fallbackVideos].sort((a, b) => {
+          const numA = a.id.charCodeAt(0) + hash;
+          const numB = b.id.charCodeAt(0) + hash;
+          return numA - numB;
+        });
+        
+        // Cache the selected fallbacks
+        clientCache[cacheKey] = {
+          videos: shuffledVideos,
+          timestamp: Date.now()
+        };
+        
+        return shuffledVideos;
+      }
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+    
     const data = await response.json();
     const videos = data.videos || [];
     
-    // Store in cache
-    clientCache[cacheKey] = {
-      videos,
-      timestamp: Date.now()
-    };
-    
-    return videos;
+    // Only cache if we got actual videos back
+    if (videos.length > 0) {
+      clientCache[cacheKey] = {
+        videos,
+        timestamp: Date.now()
+      };
+      return videos;
+    } else {
+      // No videos found, use appropriate fallbacks
+      console.log(`No videos found for ${exerciseName}, using ${workoutSection} fallbacks`);
+      const fallbackVideos = fallbackFitnessVideos[workoutSection] || fallbackFitnessVideos['general'] || [];
+      return fallbackVideos;
+    }
   } catch (error) {
     console.error(`Error searching ${workoutSection} videos:`, error);
     
-    // Return general fallback as last resort
-    return fallbackFitnessVideos['general'] || [];
+    // Use section-specific fallbacks if available, otherwise general fallbacks
+    const fallbackVideos = fallbackFitnessVideos[workoutSection] || fallbackFitnessVideos['general'] || [];
+    return fallbackVideos;
   }
 };
 
