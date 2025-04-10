@@ -1134,3 +1134,28 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Emergency toast styling */
+.emergency-toast {
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background-color: rgba(254, 242, 242, 0.95);
+}
+
+.emergency-toast > div {
+  color: rgb(153, 27, 27);
+}
+
+.emergency-toast > div > div:first-child {
+  color: rgb(220, 38, 38);
+  font-weight: 600;
+}
+
+/* Make toast easier to dismiss by adding explicit visual cues */
+.emergency-toast button {
+  transition: all 0.2s ease;
+}
+
+.emergency-toast button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}

@@ -91,7 +91,16 @@ export default function Emergency() {
         title: "Emergency Disclaimer",
         description: "In case of a life-threatening emergency, immediately call your local emergency services (911 in the US).",
         variant: "destructive",
-        duration: 15000, // 15 seconds
+        duration: 8000, // 8 seconds - reduced from 15
+        className: "emergency-toast border-2 border-red-500 shadow-lg", // Make the toast more prominent
+        action: (
+          <button 
+            onClick={() => dismiss()}
+            className="rounded-md px-3 py-1 bg-red-50 text-red-900 text-xs font-medium hover:bg-red-100"
+          >
+            Dismiss
+          </button>
+        ),
       });
       
       // Set up a cleanup function to track when the toast is dismissed
@@ -107,30 +116,57 @@ export default function Emergency() {
       setIsEmergencyAIOpen(true);
       
       // Show AI Assistant disclaimer toast
-      toast({
+      const { dismiss: dismissAI } = toast({
         title: "AI Assistant Disclaimer",
         description: "For immediate emergency assistance, always call your local emergency services first. This AI assistant provides general guidance only.",
-        duration: 5000, // Reduced duration for better responsiveness
+        duration: 4000, // Reduced duration for better responsiveness
+        className: "emergency-toast shadow-md",
+        action: (
+          <button 
+            onClick={() => dismissAI()}
+            className="rounded-md px-2 py-1 bg-slate-50 text-slate-900 text-xs font-medium hover:bg-slate-100"
+          >
+            Got it
+          </button>
+        ),
       });
     }
     else if (sectionId === 'supplies') {
       setIsSuppliesOpen(true);
       
       // Show Emergency Checklist disclaimer toast
-      toast({
+      const { dismiss: dismissChecklist } = toast({
         title: "Emergency Checklist",
         description: "Keep these essential supplies ready for emergencies. Check off items as you acquire them and add your own custom items.",
-        duration: 5000, // Reduced duration for better responsiveness
+        duration: 4000, // Reduced duration for better responsiveness
+        className: "emergency-toast shadow-md",
+        action: (
+          <button 
+            onClick={() => dismissChecklist()}
+            className="rounded-md px-2 py-1 bg-slate-50 text-slate-900 text-xs font-medium hover:bg-slate-100"
+          >
+            Got it
+          </button>
+        ),
       });
     }
     else if (sectionId === 'checklists') {
       setIsChecklistsOpen(true);
       
       // Show Emergency Checklists disclaimer toast
-      toast({
+      const { dismiss: dismissChecklists } = toast({
         title: "Emergency Checklists",
         description: "These checklists provide general preparation guidelines. Adapt them to your specific situation and local emergency protocols.",
-        duration: 5000, // Reduced duration for better responsiveness
+        duration: 4000, // Reduced duration for better responsiveness
+        className: "emergency-toast shadow-md",
+        action: (
+          <button 
+            onClick={() => dismissChecklists()}
+            className="rounded-md px-2 py-1 bg-slate-50 text-slate-900 text-xs font-medium hover:bg-slate-100"
+          >
+            Got it
+          </button>
+        ),
       });
     }
     else if (sectionId === 'guides') {
@@ -140,11 +176,20 @@ export default function Emergency() {
       setIsAutoAccidentOpen(true);
       
       // Show Auto Accident disclaimer toast
-      toast({
+      const { dismiss: dismissAccident } = toast({
         title: "Auto Accident Response",
         description: "In case of a serious accident with injuries, immediately call your local emergency services (911 in the US).",
         variant: "destructive",
-        duration: 5000, // Reduced duration for better responsiveness
+        duration: 4000, // Reduced duration for better responsiveness
+        className: "emergency-toast border-2 border-red-500 shadow-lg",
+        action: (
+          <button 
+            onClick={() => dismissAccident()}
+            className="rounded-md px-2 py-1 bg-red-50 text-red-900 text-xs font-medium hover:bg-red-100"
+          >
+            Got it
+          </button>
+        ),
       });
     }
     else if (sectionId === 'fire') {
@@ -154,10 +199,19 @@ export default function Emergency() {
       setIsCPRGuideOpen(true);
       
       // Show CPR Training disclaimer toast
-      toast({
+      const { dismiss: dismissCPR } = toast({
         title: "CPR Training Disclaimer",
         description: "This guide is not a substitute for professional CPR training. Please seek certified training for proper CPR techniques.",
-        duration: 5000, // Reduced duration for better responsiveness
+        duration: 4000, // Reduced duration for better responsiveness
+        className: "emergency-toast shadow-md",
+        action: (
+          <button 
+            onClick={() => dismissCPR()}
+            className="rounded-md px-2 py-1 bg-slate-50 text-slate-900 text-xs font-medium hover:bg-slate-100"
+          >
+            Got it
+          </button>
+        ),
       });
     }
   };
