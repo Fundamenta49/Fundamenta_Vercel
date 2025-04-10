@@ -1808,15 +1808,51 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              <FitnessExercises 
-                muscleFilter="legs" 
-                equipmentFilter="body weight"
-                difficultyFilter="beginner"
-                keywordFilter="run"
-                showFilters={false}
-                compactView={true}
-                maxExercises={4}
-              />
+              {/* Running-Specific Exercise Cards With Animations */}
+              <div className="space-y-4">
+                <h3 className="font-medium text-lg my-3">Running-Specific Exercise Demonstrations</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FitnessExercises 
+                    muscleFilter="legs" 
+                    equipmentFilter="body weight"
+                    difficultyFilter="beginner"
+                    keywordFilter="lunges"
+                    showFilters={false}
+                    compactView={true}
+                    maxExercises={2}
+                  />
+                  <FitnessExercises 
+                    muscleFilter="core" 
+                    equipmentFilter="body weight"
+                    difficultyFilter="beginner"
+                    keywordFilter="plank"
+                    showFilters={false}
+                    compactView={true}
+                    maxExercises={2}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <FitnessExercises 
+                    muscleFilter="full body" 
+                    equipmentFilter="body weight"
+                    difficultyFilter="beginner"
+                    keywordFilter="squat"
+                    showFilters={false}
+                    compactView={true}
+                    maxExercises={2}
+                  />
+                  <FitnessExercises 
+                    muscleFilter="legs" 
+                    equipmentFilter="body weight"
+                    difficultyFilter="beginner"
+                    keywordFilter="calf"
+                    showFilters={false}
+                    compactView={true}
+                    maxExercises={2}
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
