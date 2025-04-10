@@ -1809,44 +1809,103 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </div>
               
               {/* Running-Specific Exercise Cards With Animations */}
-              <div className="space-y-4">
-                <h3 className="font-medium text-lg my-3">Running-Specific Exercise Demonstrations</h3>
+              <div className="space-y-4 mb-2">
+                <h3 className="font-medium text-lg my-3">Running Form & Stride Mechanics Exercises</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Different leg exercises targeting hip & knee drive */}
                   <FitnessExercises 
                     muscleFilter="legs" 
                     equipmentFilter="body weight"
                     difficultyFilter="beginner"
-                    keywordFilter="lunges"
+                    keywordFilter="knee"
                     showFilters={false}
                     compactView={true}
                     maxExercises={2}
                   />
+                  {/* Glute strength exercises for power & stability */}
                   <FitnessExercises 
-                    muscleFilter="core" 
-                    equipmentFilter="body weight"
+                    muscleFilter="legs" 
+                    equipmentFilter="resistance band"
                     difficultyFilter="beginner"
-                    keywordFilter="plank"
+                    keywordFilter="glute"
                     showFilters={false}
                     compactView={true}
                     maxExercises={2}
                   />
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              </div>
+              
+              <div className="space-y-4 mb-6">
+                <h3 className="font-medium text-lg my-3">Runner's Core & Stability Exercises</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Core stability focused on rotational strength */}
                   <FitnessExercises 
-                    muscleFilter="full body" 
+                    muscleFilter="core" 
                     equipmentFilter="body weight"
                     difficultyFilter="beginner"
-                    keywordFilter="squat"
+                    keywordFilter="twist"
                     showFilters={false}
                     compactView={true}
                     maxExercises={2}
                   />
+                  {/* Lower back & posterior chain exercises */}
+                  <FitnessExercises 
+                    muscleFilter="back" 
+                    equipmentFilter="body weight"
+                    difficultyFilter="beginner"
+                    keywordFilter="extension"
+                    showFilters={false}
+                    compactView={true}
+                    maxExercises={2}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-4 mb-6">
+                <h3 className="font-medium text-lg my-3">Foot & Ankle Strength for Runners</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Single-leg balance exercises */}
                   <FitnessExercises 
                     muscleFilter="legs" 
                     equipmentFilter="body weight"
                     difficultyFilter="beginner"
-                    keywordFilter="calf"
+                    keywordFilter="balance"
+                    showFilters={false}
+                    compactView={true}
+                    maxExercises={2}
+                  />
+                  {/* Ankle mobility & strength exercises */}
+                  <FitnessExercises 
+                    muscleFilter="legs" 
+                    equipmentFilter="body weight"
+                    difficultyFilter="beginner"
+                    keywordFilter="ankle"
+                    showFilters={false}
+                    compactView={true}
+                    maxExercises={2}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="font-medium text-lg my-3">Running Economy & Explosive Power</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Plyometric exercises to improve explosive power */}
+                  <FitnessExercises 
+                    muscleFilter="legs" 
+                    equipmentFilter="body weight"
+                    difficultyFilter="intermediate"
+                    keywordFilter="jump"
+                    showFilters={false}
+                    compactView={true}
+                    maxExercises={2}
+                  />
+                  {/* Explosive exercises for hill training */}
+                  <FitnessExercises 
+                    muscleFilter="full body" 
+                    equipmentFilter="body weight"
+                    difficultyFilter="intermediate"
+                    keywordFilter="explosive"
                     showFilters={false}
                     compactView={true}
                     maxExercises={2}
