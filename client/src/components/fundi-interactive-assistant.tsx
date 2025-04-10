@@ -64,7 +64,7 @@ export default function FundiInteractiveAssistant({
       }
     });
     
-    // Set up a periodic health check every 10 minutes
+    // Set up a periodic health check every 2 minutes to prevent preset responses
     const healthCheckInterval = setInterval(() => {
       console.log('Performing scheduled AI health check...');
       performAIHealthCheck().then(result => {
@@ -72,7 +72,7 @@ export default function FundiInteractiveAssistant({
           console.log('AI system was automatically reset during scheduled health check', result);
         }
       });
-    }, 10 * 60 * 1000); // Every 10 minutes
+    }, 2 * 60 * 1000); // Every 2 minutes instead of 10 to be more aggressive
     
     // Also perform a health check before the user sends a message
     const preventFallback = () => {

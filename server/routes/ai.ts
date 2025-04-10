@@ -50,22 +50,26 @@ router.get("/health-check", async (req, res) => {
   try {
     const status = fallbackAIService.getFallbackStatus();
     
-    // If the system is in fallback mode (useFallback is true), reset it
-    if (status.useFallback) {
+    // Reset system if in fallback mode OR has any failure count
+    // This is more aggressive to prevent getting stuck in preset responses
+    if (status.useFallback || status.failureCount > 0) {
       fallbackAIService.resetFailures();
-      console.log("Health check: AI fallback system was in fallback mode - reset performed");
+      console.log("Health check: AI fallback system reset performed - useFallback:", 
+        status.useFallback, "failureCount:", status.failureCount);
       
       res.json({
         success: true,
-        message: "AI fallback system was in fallback mode and has been reset",
+        message: "AI fallback system has been reset preventively",
         previousStatus: status,
-        currentStatus: fallbackAIService.getFallbackStatus()
+        currentStatus: fallbackAIService.getFallbackStatus(),
+        action: "reset_performed"
       });
     } else {
       res.json({
         success: true,
         message: "AI fallback system is healthy",
-        status
+        status,
+        action: "none_needed"
       });
     }
   } catch (error: any) {

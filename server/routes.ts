@@ -1153,13 +1153,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const status = fallbackAIService.getFallbackStatus();
       
-      // If system is in fallback mode or has failures, automatically reset
+      // Reset system if in fallback mode OR has any failure count
+      // This is more aggressive to prevent getting stuck in preset responses
       if (status.useFallback || status.failureCount > 0) {
-        console.log("Health check detected failure state, performing auto-reset...");
+        console.log("Health check: AI fallback system reset performed - useFallback:", 
+          status.useFallback, "failureCount:", status.failureCount);
         const resetStatus = fallbackAIService.resetFailures();
         res.json({
           success: true,
-          message: "Automatic reset performed during health check",
+          message: "AI fallback system has been reset preventively",
           previousStatus: status,
           currentStatus: resetStatus,
           action: "reset_performed"
