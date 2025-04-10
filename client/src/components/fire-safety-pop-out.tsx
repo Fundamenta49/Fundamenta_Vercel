@@ -51,8 +51,8 @@ export default function FireSafetyPopOut() {
   // Access toast system
   const { toast } = useToast();
   
-  // State for section navigation
-  const [currentSection, setCurrentSection] = useState<SectionType>("menu");
+  // State for section navigation - set to "guide" to open directly to the Fire Safety Guide
+  const [currentSection, setCurrentSection] = useState<SectionType>("guide");
   
   // State for video player dialog
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
@@ -108,7 +108,7 @@ export default function FireSafetyPopOut() {
           onClick={() => setCurrentSection("videos")}
         >
           <MonitorPlay className="h-8 w-8 text-orange-500 mb-2" />
-          <h3 className="font-semibold text-orange-700">Safety Videos</h3>
+          <h3 className="font-semibold text-orange-700">Fire Safety Guide</h3>
           <p className="text-xs text-gray-500 mt-1">Visual guides for fire prevention and response</p>
         </div>
       </div>
