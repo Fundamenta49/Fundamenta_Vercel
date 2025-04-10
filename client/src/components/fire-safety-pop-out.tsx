@@ -108,7 +108,7 @@ export default function FireSafetyPopOut() {
           onClick={() => setCurrentSection("videos")}
         >
           <MonitorPlay className="h-8 w-8 text-orange-500 mb-2" />
-          <h3 className="font-semibold text-orange-700">Fire Safety Guide</h3>
+          <h3 className="font-semibold text-orange-700">Safety Videos</h3>
           <p className="text-xs text-gray-500 mt-1">Visual guides for fire prevention and response</p>
         </div>
       </div>
@@ -167,7 +167,7 @@ export default function FireSafetyPopOut() {
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Flame className="h-6 w-6 text-orange-500" />
-          Fire Safety
+          Fire Safety Guide
         </FullScreenDialogTitle>
         <FullScreenDialogDescription>
           Learn about fire prevention and emergency procedures
@@ -186,7 +186,6 @@ export default function FireSafetyPopOut() {
         {currentSection === "menu" && renderMenu()}
         {currentSection === "guide" && (
           <>
-            <BackToMenuButton />
             <FireSafety />
           </>
         )}

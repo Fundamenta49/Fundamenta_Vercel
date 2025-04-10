@@ -197,23 +197,6 @@ type SectionType = {
 
 const SECTIONS: SectionType[] = [
   {
-    id: 'coach',
-    title: 'Fitness AI Coach',
-    description: 'Get personalized workout plans and fitness advice',
-    icon: Brain,
-    component: ChatInterface,
-    props: { category: FITNESS_CATEGORY },
-    alert: (
-      <Alert className="mt-4 border-pink-500 bg-pink-50">
-        <AlertCircle className="h-4 w-4 text-pink-500" />
-        <AlertDescription className="text-pink-800 text-sm">
-          The AI coach provides general fitness guidance. Always consult with a healthcare 
-          professional before starting a new fitness program.
-        </AlertDescription>
-      </Alert>
-    )
-  },
-  {
     id: 'activeyou',
     title: 'ActiveYou Profile',
     description: 'Manage your fitness profile and track your progress',

@@ -26,12 +26,6 @@ type SectionType = {
 
 const SECTIONS: SectionType[] = [
   {
-    id: 'chat',
-    title: 'Emergency AI Assistant',
-    description: 'Get immediate guidance for emergency situations',
-    icon: Brain,
-  },
-  {
     id: 'supplies',
     title: 'Emergency Checklist',
     description: 'Checklist of essential items for emergency preparedness',
@@ -59,7 +53,7 @@ const SECTIONS: SectionType[] = [
   },
   {
     id: 'fire',
-    title: 'Fire Safety',
+    title: 'Fire Safety Guide',
     description: 'Learn about fire prevention and emergency procedures',
     icon: Flame,
   },
@@ -112,26 +106,7 @@ export default function Emergency() {
 
   const handleCardClick = (sectionId: string) => {
     // Open the appropriate dialog based on the section clicked
-    if (sectionId === 'chat') {
-      setIsEmergencyAIOpen(true);
-      
-      // Show AI Assistant disclaimer toast
-      const { dismiss: dismissAI } = toast({
-        title: "AI Assistant Disclaimer",
-        description: "For immediate emergency assistance, always call your local emergency services first. This AI assistant provides general guidance only.",
-        duration: 4000, // Reduced duration for better responsiveness
-        className: "emergency-toast shadow-md",
-        action: (
-          <button 
-            onClick={() => dismissAI()}
-            className="rounded-md px-2 py-1 bg-slate-50 text-slate-900 text-xs font-medium hover:bg-slate-100"
-          >
-            Got it
-          </button>
-        ),
-      });
-    }
-    else if (sectionId === 'supplies') {
+    if (sectionId === 'supplies') {
       setIsSuppliesOpen(true);
       
       // Show Emergency Checklist disclaimer toast
