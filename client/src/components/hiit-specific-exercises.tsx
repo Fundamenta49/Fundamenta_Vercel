@@ -15,6 +15,7 @@ interface Exercise {
   instructions: string[];
   imageUrl?: string;
   videoUrl?: string;
+  animationUrl?: string; // Adding support for instructional animations
   category?: string;
   benefits?: string[];
   tips?: string[];
@@ -41,6 +42,7 @@ const HIIT_EXERCISE_SETS = {
       ],
       imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/04/jump-squat.jpg",
       videoUrl: "https://www.youtube.com/watch?v=Azl5tkCzDcc",
+      animationUrl: "https://thumbs.gfycat.com/AlertAfraidAldabratortoise-max-1mb.gif",
       category: "tabata",
       benefits: [
         "Builds explosive power in the lower body",
@@ -171,6 +173,7 @@ const HIIT_EXERCISE_SETS = {
       ],
       imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2020/01/push-up.jpg",
       videoUrl: "https://www.youtube.com/watch?v=IODxDxX7oi4",
+      animationUrl: "https://thumbs.gfycat.com/FrighteningRepulsiveAyeaye-size_restricted.gif",
       category: "amrap",
       benefits: [
         "Builds upper body pushing strength",
@@ -433,6 +436,7 @@ const HIIT_EXERCISE_SETS = {
       ],
       imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/04/goblet-squat.jpg",
       videoUrl: "https://www.youtube.com/watch?v=mF5tnEBrdkc",
+      animationUrl: "https://thumbs.gfycat.com/HelplessBadHornedviper-size_restricted.gif",
       category: "circuit",
       benefits: [
         "Strengthens lower body while improving mobility",

@@ -113,6 +113,7 @@ interface ExerciseDetails {
   tips: string[];
   imageUrl?: string;
   videoUrl?: string;
+  animationUrl?: string; // Added to support instructional animations
 }
 
 // Interface for pose detection feedback
@@ -2104,13 +2105,17 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           className="relative aspect-video w-full overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-all duration-200" 
                           onClick={() => setVideoFullscreen(true)}
                         >
-                          <iframe 
-                            className="absolute inset-0 w-full h-full"
-                            src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
-                            title={`${selectedExercise.name} tutorial video`}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowFullScreen
-                          ></iframe>
+                          {/* Create responsive container for the video that works well on mobile */}
+                          <div className="relative pb-[56.25%] h-0 overflow-hidden">
+                            <iframe 
+                              className="absolute top-0 left-0 w-full h-full"
+                              src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
+                              title={`${selectedExercise.name} tutorial video`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                              allowFullScreen
+                              loading="lazy"
+                            ></iframe>
+                          </div>
                           <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 flex items-center justify-center transition-all duration-200">
                             <Maximize2 className="h-12 w-12 text-white opacity-0 hover:opacity-100 filter drop-shadow-lg" />
                           </div>
@@ -2138,6 +2143,26 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                       </div>
                     )}
                     
+                    {/* Display animation if available */}
+                    {selectedExercise?.animationUrl && (
+                      <div className="mt-6 mb-4">
+                        <h3 className="text-lg font-medium mb-3 text-gray-800">Animation Guide</h3>
+                        <div className="overflow-hidden rounded-lg border shadow-md">
+                          <div className="relative pb-[75%] h-0 overflow-hidden bg-gray-50 flex items-center justify-center">
+                            <img 
+                              src={selectedExercise.animationUrl}
+                              alt={`${selectedExercise.name} animation`}
+                              className="absolute top-0 left-0 w-full h-full object-contain"
+                              loading="lazy"
+                            />
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-2">
+                          This animation demonstrates proper form for the {selectedExercise.name.toLowerCase()}.
+                        </p>
+                      </div>
+                    )}
+                    
                     {/* Full-screen Video Dialog */}
                     {videoFullscreen && selectedExercise?.videoUrl && (
                       <Dialog 
@@ -2153,13 +2178,17 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                             Full screen video tutorial for {selectedExercise.name}
                           </DialogDescription>
                           <div className="relative w-full h-[90vh]">
-                            <iframe 
-                              className="absolute inset-0 w-full h-full"
-                              src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
-                              title={`${selectedExercise.name} tutorial video (fullscreen)`}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                              allowFullScreen
-                            ></iframe>
+                            {/* Responsive container for fullscreen video that works on mobile too */}
+                            <div className="relative pb-[56.25%] h-0 overflow-hidden">
+                              <iframe 
+                                className="absolute top-0 left-0 w-full h-full"
+                                src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
+                                title={`${selectedExercise.name} tutorial video (fullscreen)`}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowFullScreen
+                                loading="lazy"
+                              ></iframe>
+                            </div>
                             <Button 
                               className="absolute top-2 right-2 rounded-full p-2 h-10 w-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white"
                               onClick={() => setVideoFullscreen(false)}
