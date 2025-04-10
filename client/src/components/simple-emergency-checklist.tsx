@@ -168,10 +168,8 @@ export default function SimpleEmergencyChecklist() {
     return savedFoods ? JSON.parse(savedFoods) : defaultFoods;
   });
   
-  // State for adding new items
-  const [newSupplyText, setNewSupplyText] = useState("");
-  const [newFirstAidText, setNewFirstAidText] = useState("");
-  const [newFoodText, setNewFoodText] = useState("");
+  // State for adding new items - by category and tab
+  const [newItemTexts, setNewItemTexts] = useState<Record<string, string>>({});
   
   // Save to localStorage whenever checklists change
   useEffect(() => {
@@ -210,13 +208,13 @@ export default function SimpleEmergencyChecklist() {
     ));
   };
   
-  // Add a new item to a list
+  // Add a new item to a list for a specific category
   const addNewItem = (
     text: string,
     list: ChecklistItem[],
     setList: React.Dispatch<React.SetStateAction<ChecklistItem[]>>,
-    setNewText: React.Dispatch<React.SetStateAction<string>>,
-    prefix: string
+    category: string,
+    tabPrefix: string
   ) => {
     if (!text.trim()) {
       toast({
@@ -228,13 +226,18 @@ export default function SimpleEmergencyChecklist() {
     }
     
     const newItem: ChecklistItem = {
-      id: generateId(prefix),
+      id: generateId(category),
       text: text.trim(),
       completed: false
     };
     
     setList([...list, newItem]);
-    setNewText("");
+    
+    // Clear the input for this category
+    setNewItemTexts(prev => ({
+      ...prev,
+      [`${tabPrefix}-${category}`]: "" 
+    }));
     
     toast({
       title: "Item Added",
@@ -270,9 +273,7 @@ export default function SimpleEmergencyChecklist() {
   const renderChecklist = (
     items: ChecklistItem[],
     setItems: React.Dispatch<React.SetStateAction<ChecklistItem[]>>,
-    newItemText: string,
-    setNewItemText: React.Dispatch<React.SetStateAction<string>>,
-    prefix: string,
+    tabPrefix: string,
     completion: number
   ) => {
     // Group the items by their category (prefix before the first dash)
@@ -303,72 +304,97 @@ export default function SimpleEmergencyChecklist() {
           </div>
         </div>
         
-        {Object.entries(groupedItems).map(([category, categoryItems]) => (
-          <div key={category} className="border rounded-lg p-4 bg-card">
-            <h3 className="font-medium mb-2">
-              {category === "supply" ? "Basic Supplies" :
-               category === "firstaid" ? "First Aid Kit" :
-               category === "meds" ? "Medications" :
-               category === "comm" ? "Communication" :
-               category === "other" ? "Other Essentials" :
-               category === "food" ? "Non-perishable Foods" : 
-               category}
-            </h3>
-            <ul className="space-y-2">
-              {categoryItems.map(item => (
-                <li key={item.id} className="flex items-start gap-2">
-                  <Checkbox 
-                    id={item.id} 
-                    checked={item.completed}
-                    onCheckedChange={() => toggleItemCompletion(item.id, items, setItems)}
-                    className="mt-1"
-                  />
-                  <div className="flex-1">
-                    <Label 
-                      htmlFor={item.id}
-                      className={cn(
-                        "text-sm font-normal cursor-pointer",
-                        item.completed && "line-through text-muted-foreground"
-                      )}
+        {Object.entries(groupedItems).map(([category, categoryItems]) => {
+          // Create a key for this specific category input
+          const inputKey = `${tabPrefix}-${category}`;
+          const inputValue = newItemTexts[inputKey] || "";
+          
+          return (
+            <div key={category} className="border rounded-lg p-4 bg-card">
+              <h3 className="font-medium mb-2">
+                {category === "supply" ? "Basic Supplies" :
+                 category === "battery" ? "Batteries & Power" : 
+                 category === "light" ? "Lighting & Flashlights" :
+                 category === "elec" ? "Electronics & Communication" :
+                 category === "cook" ? "Cooking & Heating" :
+                 category === "water" ? "Water & Storage" :
+                 category === "firstaid" ? "First Aid Kit" :
+                 category === "aid" ? "Bandages & Wound Care" :
+                 category === "anti" ? "Antiseptics & Cleaners" :
+                 category === "med" ? "Medications" :
+                 category === "tool" ? "Tools & Equipment" :
+                 category === "other" ? "Other Essentials" :
+                 category === "food" ? "Non-perishable Foods" :
+                 category === "can" ? "Canned Goods" :
+                 category === "spread" ? "Spreads & Condiments" :
+                 category === "dry" ? "Dry Goods & Grains" :
+                 category === "snack" ? "Nuts, Fruits & Snacks" :
+                 category === "drink" ? "Beverages & Milk" :
+                 category}
+              </h3>
+              <ul className="space-y-2">
+                {categoryItems.map(item => (
+                  <li key={item.id} className="flex items-start gap-2">
+                    <Checkbox 
+                      id={item.id} 
+                      checked={item.completed}
+                      onCheckedChange={() => toggleItemCompletion(item.id, items, setItems)}
+                      className="mt-1"
+                    />
+                    <div className="flex-1">
+                      <Label 
+                        htmlFor={item.id}
+                        className={cn(
+                          "text-sm font-normal cursor-pointer",
+                          item.completed && "line-through text-muted-foreground"
+                        )}
+                      >
+                        {item.text}
+                      </Label>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => deleteItem(item.id, items, setItems)}
+                      className="h-6 w-6 opacity-50 hover:opacity-100"
                     >
-                      {item.text}
-                    </Label>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deleteItem(item.id, items, setItems)}
-                    className="h-6 w-6 opacity-50 hover:opacity-100"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-        
-        <div className="mt-4 space-y-2">
-          <div className="flex gap-2">
-            <Input
-              placeholder="Add new item..."
-              value={newItemText}
-              onChange={(e) => setNewItemText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  addNewItem(newItemText, items, setItems, setNewItemText, prefix);
-                }
-              }}
-              className="flex-1"
-            />
-            <Button
-              onClick={() => addNewItem(newItemText, items, setItems, setNewItemText, prefix)}
-              size="sm"
-            >
-              <Plus className="h-4 w-4 mr-1" /> Add
-            </Button>
-          </div>
-        </div>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+              
+              {/* Add per-category input field */}
+              <div className="mt-3 flex gap-2">
+                <Input
+                  placeholder={`Add ${category === "supply" ? "supply" : 
+                                    category === "firstaid" ? "first aid" : 
+                                    category === "food" ? "food" : 
+                                    "item"}...`}
+                  value={inputValue}
+                  onChange={(e) => setNewItemTexts(prev => ({
+                    ...prev,
+                    [inputKey]: e.target.value
+                  }))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      addNewItem(inputValue, items, setItems, category, tabPrefix);
+                    }
+                  }}
+                  className="flex-1 text-sm h-8"
+                  size={1}
+                />
+                <Button
+                  onClick={() => addNewItem(inputValue, items, setItems, category, tabPrefix)}
+                  size="sm"
+                  className="h-8 px-2"
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -415,9 +441,7 @@ export default function SimpleEmergencyChecklist() {
             {renderChecklist(
               supplies,
               setSupplies,
-              newSupplyText,
-              setNewSupplyText,
-              "supply",
+              "supplies",
               suppliesCompletion
             )}
           </TabsContent>
@@ -426,8 +450,6 @@ export default function SimpleEmergencyChecklist() {
             {renderChecklist(
               firstAid,
               setFirstAid,
-              newFirstAidText,
-              setNewFirstAidText,
               "firstaid",
               firstAidCompletion
             )}
@@ -437,8 +459,6 @@ export default function SimpleEmergencyChecklist() {
             {renderChecklist(
               foods,
               setFoods,
-              newFoodText,
-              setNewFoodText,
               "food",
               foodsCompletion
             )}
