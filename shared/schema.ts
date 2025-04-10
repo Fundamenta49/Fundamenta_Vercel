@@ -1,164 +1,155 @@
-import { pgTable, text, timestamp, integer, boolean, json, pgEnum, uuid } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean, integer, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// User goals
-export const userGoalTable = pgTable("user_goals", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  userId: text("user_id").notNull(),
+// User Table
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  password: text("password"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// User Info Table
+export const userInfo = pgTable("user_info", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  age: integer("age"),
+  gender: text("gender"),
+  occupation: text("occupation"),
+  interests: text("interests"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// User Goals Table
+export const userGoals = pgTable("user_goals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
   title: text("title").notNull(),
   description: text("description"),
-  category: text("category").notNull(), // "finance", "career", "wellness", etc.
+  category: text("category").notNull(),
+  isCompleted: boolean("is_completed").notNull().default(false),
   targetDate: timestamp("target_date"),
-  completed: boolean("completed").default(false),
-  progress: integer("progress").default(0), // 0-100 percent
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Notifications
-export const notificationTypeEnum = pgEnum("notification_type", [
-  "ACHIEVEMENT_UNLOCKED", 
-  "GOAL_PROGRESS", 
-  "GOAL_COMPLETED", 
-  "REMINDER",
-  "SYSTEM",
-  "FUNDI_COMMENT"
-]);
+// User Achievements Table
+export const userAchievements = pgTable("user_achievements", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category").notNull(),
+  unlockedAt: timestamp("unlocked_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
 
-export const notificationTable = pgTable("notifications", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  userId: text("user_id").notNull(),
-  type: notificationTypeEnum("type").notNull(),
+// Notifications Table
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
   title: text("title").notNull(),
   message: text("message").notNull(),
-  actionUrl: text("action_url"),
-  actionLabel: text("action_label"),
-  read: boolean("read").default(false),
-  timestamp: timestamp("timestamp").defaultNow(),
-  metadata: json("metadata").default({}), // For storing achievement/goal data if needed
-});
-
-// Achievement tracking for users
-export const userAchievementTable = pgTable("user_achievements", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  userId: text("user_id").notNull(),
-  achievementId: text("achievement_id").notNull(),
-  unlockedAt: timestamp("unlocked_at").defaultNow(),
-  shared: boolean("shared").default(false), // Whether the achievement has been shared to social media
-});
-
-// Users
-export const users = pgTable("users", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name"),
-  email: text("email").notNull().unique(),
-  preferences: json("preferences").default({}),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Session-based user info
-export const userInfo = pgTable("user_info", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  sessionId: text("session_id").notNull().unique(),
-  name: text("name"),
-  interests: json("interests").default({}),
-  preferences: json("preferences").default({}),
-  lastSeen: timestamp("last_seen").defaultNow(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// Sessions
-export const sessions = pgTable("sessions", {
-  sid: text("sid").primaryKey(),
-  sess: json("sess").notNull(),
-  expire: timestamp("expire").notNull(),
-});
-
-// Conversations
-export const conversations = pgTable("conversations", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userId: integer("user_id", { mode: "number" }),
-  title: text("title").notNull(),
+  isRead: boolean("is_read").notNull().default(false),
   category: text("category"),
-  lastMessageAt: timestamp("last_message_at").defaultNow(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Messages
-export const messages = pgTable("messages", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  conversationId: integer("conversation_id", { mode: "number" }).notNull(),
-  role: text("role").notNull(), // "user", "assistant", "system"
-  content: text("content").notNull(),
-  category: text("category"), // Optional category/topic
-  metadata: json("metadata").default({}),
-  timestamp: timestamp("timestamp").defaultNow(),
+// Basic Run Session Table
+export const runSessions = pgTable("run_sessions", {
+  id: serial("id").primaryKey(),
+  startTime: timestamp("start_time").notNull().defaultNow(),
+  endTime: timestamp("end_time"),
+  distance: real("distance").notNull().default(0), // in miles
+  duration: integer("duration").notNull().default(0), // in seconds
+  pace: real("pace"), // minutes per mile
+  userId: text("user_id").notNull(), // can be connected to your auth system
+  routeData: text("route_data"), // JSON stringified route points
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Schema validators
-export const insertUserGoalSchema = createInsertSchema(userGoalTable).omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true 
+// Running Goals and Milestone Tracking Table
+export const runningGoals = pgTable("running_goals", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  goalType: text("goal_type").notNull(), // "5K", "10K", "HALF_MARATHON", "MARATHON", "CUSTOM"
+  targetDistance: real("target_distance"), // in miles
+  targetTime: integer("target_time"), // in seconds
+  startDate: timestamp("start_date").notNull().defaultNow(),
+  targetDate: timestamp("target_date"),
+  completed: boolean("completed").notNull().default(false),
+  completedDate: timestamp("completed_date"),
+  trainingPlanId: integer("training_plan_id"), // reference to training plan if any
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const insertNotificationSchema = createInsertSchema(notificationTable).omit({
-  id: true,
-  timestamp: true
+// Training Plans Table for structured programs
+export const trainingPlans = pgTable("training_plans", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  goalType: text("goal_type").notNull(), // "5K", "10K", etc.
+  durationWeeks: integer("duration_weeks").notNull(),
+  difficulty: text("difficulty").notNull(), // "BEGINNER", "INTERMEDIATE", "ADVANCED"
+  planData: text("plan_data").notNull(), // JSON stringified training schedule
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const insertUserAchievementSchema = createInsertSchema(userAchievementTable).omit({
-  id: true,
-  unlockedAt: true
-});
+// Define Zod Schemas for validation
+export const insertUserSchema = createInsertSchema(users)
+  .omit({ id: true, createdAt: true, updatedAt: true });
 
-// Insert schema for users
-export const insertUserSchema = createInsertSchema(users).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
-});
+export const insertUserInfoSchema = createInsertSchema(userInfo)
+  .omit({ id: true, createdAt: true, updatedAt: true });
 
-// Insert schema for user info
-export const insertUserInfoSchema = createInsertSchema(userInfo).omit({
-  id: true,
-  lastSeen: true,
-  createdAt: true
-});
+export const insertUserGoalSchema = createInsertSchema(userGoals)
+  .omit({ id: true, createdAt: true, updatedAt: true });
 
-// Insert schema for conversations
-export const insertConversationSchema = createInsertSchema(conversations).omit({
-  id: true,
-  lastMessageAt: true,
-  createdAt: true
-});
+export const insertUserAchievementSchema = createInsertSchema(userAchievements)
+  .omit({ id: true, createdAt: true, updatedAt: true });
 
-// Insert schema for messages
-export const insertMessageSchema = createInsertSchema(messages).omit({
-  id: true,
-  timestamp: true
-});
+export const insertNotificationSchema = createInsertSchema(notifications)
+  .omit({ id: true, createdAt: true, updatedAt: true });
 
-// Type definitions
-export type UserGoal = typeof userGoalTable.$inferSelect;
-export type InsertUserGoal = z.infer<typeof insertUserGoalSchema>;
+export const insertRunSessionSchema = createInsertSchema(runSessions)
+  .omit({ id: true, createdAt: true, updatedAt: true });
 
-export type Notification = typeof notificationTable.$inferSelect;
-export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export const insertRunningGoalSchema = createInsertSchema(runningGoals)
+  .omit({ id: true, createdAt: true, updatedAt: true, completed: true, completedDate: true });
 
-export type UserAchievement = typeof userAchievementTable.$inferSelect;
-export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
+export const insertTrainingPlanSchema = createInsertSchema(trainingPlans)
+  .omit({ id: true, createdAt: true, updatedAt: true });
 
-export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
+// Define TypeScript types
+export type InsertUserType = z.infer<typeof insertUserSchema>;
+export type SelectUserType = typeof users.$inferSelect;
 
-export type UserInfo = typeof userInfo.$inferSelect;
-export type InsertUserInfo = z.infer<typeof insertUserInfoSchema>;
+export type InsertUserInfoType = z.infer<typeof insertUserInfoSchema>;
+export type SelectUserInfoType = typeof userInfo.$inferSelect;
 
-export type Conversation = typeof conversations.$inferSelect;
-export type InsertConversation = z.infer<typeof insertConversationSchema>;
+export type InsertUserGoalType = z.infer<typeof insertUserGoalSchema>;
+export type SelectUserGoalType = typeof userGoals.$inferSelect;
 
-export type Message = typeof messages.$inferSelect;
-export type InsertMessage = z.infer<typeof insertMessageSchema>;
+export type InsertUserAchievementType = z.infer<typeof insertUserAchievementSchema>;
+export type SelectUserAchievementType = typeof userAchievements.$inferSelect;
+
+export type InsertNotificationType = z.infer<typeof insertNotificationSchema>;
+export type SelectNotificationType = typeof notifications.$inferSelect;
+
+export type InsertRunSessionType = z.infer<typeof insertRunSessionSchema>;
+export type SelectRunSessionType = typeof runSessions.$inferSelect;
+
+export type InsertRunningGoalType = z.infer<typeof insertRunningGoalSchema>;
+export type SelectRunningGoalType = typeof runningGoals.$inferSelect;
+
+export type InsertTrainingPlanType = z.infer<typeof insertTrainingPlanSchema>;
+export type SelectTrainingPlanType = typeof trainingPlans.$inferSelect;
