@@ -1808,108 +1808,182 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Running-Specific Exercise Cards With Animations */}
-              <div className="space-y-4 mb-2">
-                <h3 className="font-medium text-lg my-3">Running Form & Stride Mechanics Exercises</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Different leg exercises targeting hip & knee drive */}
-                  <FitnessExercises 
-                    muscleFilter="legs" 
-                    equipmentFilter="body weight"
-                    difficultyFilter="beginner"
-                    keywordFilter="knee"
-                    showFilters={false}
-                    compactView={true}
-                    maxExercises={2}
-                  />
-                  {/* Glute strength exercises for power & stability */}
-                  <FitnessExercises 
-                    muscleFilter="legs" 
-                    equipmentFilter="resistance band"
-                    difficultyFilter="beginner"
-                    keywordFilter="glute"
-                    showFilters={false}
-                    compactView={true}
-                    maxExercises={2}
-                  />
+              {/* Running-Specific Exercise Program With Proper Structure */}
+              <div className="mb-6 pt-2">
+                <h3 className="font-medium text-xl mb-4">Complete Runner's Training Program</h3>
+                
+                <div className="mb-6 pb-2 border-b border-gray-200">
+                  <h4 className="font-medium text-lg mb-3">Pre-Run Warm-Up Routine</h4>
+                  <p className="text-gray-700 mb-3">Always perform these dynamic stretches before running to prepare your muscles and prevent injury.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-4 bg-blue-50">
+                      <h5 className="font-medium mb-2">Dynamic Warm-Ups</h5>
+                      <FitnessExercises 
+                        muscleFilter="legs" 
+                        difficultyFilter="beginner"
+                        keywordFilter="lunge" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                      <FitnessExercises 
+                        muscleFilter="legs" 
+                        difficultyFilter="beginner"
+                        keywordFilter="leg swing" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                    </div>
+                    <div className="border rounded-lg p-4 bg-blue-50">
+                      <h5 className="font-medium mb-2">Joint Mobility</h5>
+                      <FitnessExercises 
+                        muscleFilter="core" 
+                        difficultyFilter="beginner"
+                        keywordFilter="rotation" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                      <FitnessExercises 
+                        muscleFilter="legs" 
+                        equipmentFilter="body weight" 
+                        keywordFilter="ankle" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="space-y-4 mb-6">
-                <h3 className="font-medium text-lg my-3">Runner's Core & Stability Exercises</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Core stability focused on rotational strength */}
-                  <FitnessExercises 
-                    muscleFilter="core" 
-                    equipmentFilter="body weight"
-                    difficultyFilter="beginner"
-                    keywordFilter="twist"
-                    showFilters={false}
-                    compactView={true}
-                    maxExercises={2}
-                  />
-                  {/* Lower back & posterior chain exercises */}
-                  <FitnessExercises 
-                    muscleFilter="back" 
-                    equipmentFilter="body weight"
-                    difficultyFilter="beginner"
-                    keywordFilter="extension"
-                    showFilters={false}
-                    compactView={true}
-                    maxExercises={2}
-                  />
+                
+                <div className="mb-6 pb-2 border-b border-gray-200">
+                  <h4 className="font-medium text-lg mb-3">Strength Training for Runners</h4>
+                  <p className="text-gray-700 mb-3">Perform these exercises 2-3 times per week to build strength that will improve your running performance.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-4 bg-amber-50">
+                      <h5 className="font-medium mb-2">Lower Body Power</h5>
+                      <FitnessExercises 
+                        muscleFilter="legs" 
+                        categoryFilter="strength"
+                        keywordFilter="squat" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                      <FitnessExercises 
+                        muscleFilter="legs" 
+                        categoryFilter="strength"
+                        keywordFilter="deadlift" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                    </div>
+                    <div className="border rounded-lg p-4 bg-amber-50">
+                      <h5 className="font-medium mb-2">Core Stability</h5>
+                      <FitnessExercises 
+                        muscleFilter="core" 
+                        categoryFilter="strength"
+                        keywordFilter="plank" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                      <FitnessExercises 
+                        muscleFilter="core" 
+                        categoryFilter="strength"
+                        keywordFilter="bird" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="space-y-4 mb-6">
-                <h3 className="font-medium text-lg my-3">Foot & Ankle Strength for Runners</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Single-leg balance exercises */}
-                  <FitnessExercises 
-                    muscleFilter="legs" 
-                    equipmentFilter="body weight"
-                    difficultyFilter="beginner"
-                    keywordFilter="balance"
-                    showFilters={false}
-                    compactView={true}
-                    maxExercises={2}
-                  />
-                  {/* Ankle mobility & strength exercises */}
-                  <FitnessExercises 
-                    muscleFilter="legs" 
-                    equipmentFilter="body weight"
-                    difficultyFilter="beginner"
-                    keywordFilter="ankle"
-                    showFilters={false}
-                    compactView={true}
-                    maxExercises={2}
-                  />
+                
+                <div className="mb-6 pb-2 border-b border-gray-200">
+                  <h4 className="font-medium text-lg mb-3">Run-Specific Technique Drills</h4>
+                  <p className="text-gray-700 mb-3">Incorporate these drills into your training to improve running form and efficiency.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-4 bg-green-50">
+                      <h5 className="font-medium mb-2">Form & Cadence</h5>
+                      <FitnessExercises 
+                        muscleFilter="legs" 
+                        categoryFilter="plyometrics"
+                        keywordFilter="high knee" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                      <FitnessExercises 
+                        muscleFilter="legs" 
+                        categoryFilter="plyometrics"
+                        keywordFilter="butt kick" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                    </div>
+                    <div className="border rounded-lg p-4 bg-green-50">
+                      <h5 className="font-medium mb-2">Explosive Power</h5>
+                      <FitnessExercises 
+                        categoryFilter="plyometrics"
+                        keywordFilter="bound" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                      <FitnessExercises 
+                        categoryFilter="plyometrics"
+                        keywordFilter="jump" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="font-medium text-lg my-3">Running Economy & Explosive Power</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Plyometric exercises to improve explosive power */}
-                  <FitnessExercises 
-                    muscleFilter="legs" 
-                    equipmentFilter="body weight"
-                    difficultyFilter="intermediate"
-                    keywordFilter="jump"
-                    showFilters={false}
-                    compactView={true}
-                    maxExercises={2}
-                  />
-                  {/* Explosive exercises for hill training */}
-                  <FitnessExercises 
-                    muscleFilter="full body" 
-                    equipmentFilter="body weight"
-                    difficultyFilter="intermediate"
-                    keywordFilter="explosive"
-                    showFilters={false}
-                    compactView={true}
-                    maxExercises={2}
-                  />
+                
+                <div>
+                  <h4 className="font-medium text-lg mb-3">Post-Run Recovery Exercises</h4>
+                  <p className="text-gray-700 mb-3">Essential stretches to perform after running to improve recovery and flexibility.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-lg p-4 bg-purple-50">
+                      <h5 className="font-medium mb-2">Lower Body Stretches</h5>
+                      <FitnessExercises 
+                        categoryFilter="stretching"
+                        keywordFilter="hamstring" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                      <FitnessExercises 
+                        categoryFilter="stretching"
+                        keywordFilter="quadriceps" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                    </div>
+                    <div className="border rounded-lg p-4 bg-purple-50">
+                      <h5 className="font-medium mb-2">Hip & Back Release</h5>
+                      <FitnessExercises 
+                        categoryFilter="stretching"
+                        keywordFilter="hip" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                      <FitnessExercises 
+                        categoryFilter="stretching"
+                        keywordFilter="calf" 
+                        showFilters={false}
+                        compactView={true}
+                        maxExercises={1}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
