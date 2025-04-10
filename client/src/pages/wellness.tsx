@@ -15,7 +15,7 @@ import RiskAssessment from "@/components/risk-assessment";
 import BrainTap from "@/components/brain-tap";
 import ComprehensiveWellnessAssessment from "@/components/comprehensive-wellness-assessment";
 import IntegratedNutrition from "@/components/integrated-nutrition";
-import SimpleEmergencyChecklist from "@/components/simple-emergency-checklist";
+import EmergencyChecklist from "@/components/emergency-checklist";
 import JournalPopOut from "@/components/journal-pop-out";
 import RiskAssessmentPopOut from "@/components/risk-assessment-pop-out";
 import IntegratedNutritionPopOut from "@/components/integrated-nutrition-pop-out";
@@ -78,7 +78,7 @@ const SECTIONS: SectionType[] = [
     title: 'Emergency Checklist',
     description: 'Keep track of essential emergency supplies and recommended food items',
     icon: Shield,
-    component: SimpleEmergencyChecklist
+    component: EmergencyChecklist
   },
   {
     id: 'shopping',
@@ -214,7 +214,7 @@ export default function Wellness() {
         <FullScreenDialog open={isEmergencyOpen} onOpenChange={setIsEmergencyOpen}>
           <FullScreenDialogContent themeColor="#a855f7">
             <div className="p-4 max-w-4xl mx-auto">
-              <SimpleEmergencyChecklist />
+              <EmergencyChecklist />
             </div>
           </FullScreenDialogContent>
         </FullScreenDialog>
