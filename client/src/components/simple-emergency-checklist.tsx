@@ -310,8 +310,8 @@ export default function SimpleEmergencyChecklist() {
           const inputValue = newItemTexts[inputKey] || "";
           
           return (
-            <div key={category} className="border rounded-lg p-4 bg-card">
-              <h3 className="font-medium mb-2">
+            <div key={category} className="border border-red-100 rounded-lg p-4 bg-card">
+              <h3 className="font-medium mb-2 text-red-700 border-b border-red-100 pb-1">
                 {category === "supply" ? "Basic Supplies" :
                  category === "battery" ? "Batteries & Power" : 
                  category === "light" ? "Lighting & Flashlights" :
@@ -339,14 +339,17 @@ export default function SimpleEmergencyChecklist() {
                       id={item.id} 
                       checked={item.completed}
                       onCheckedChange={() => toggleItemCompletion(item.id, items, setItems)}
-                      className="mt-1"
+                      className={cn(
+                        "mt-1 border-red-300",
+                        item.completed && "bg-green-500 text-white border-green-500 data-[state=checked]:bg-green-500 data-[state=checked]:text-white"
+                      )}
                     />
                     <div className="flex-1">
                       <Label 
                         htmlFor={item.id}
                         className={cn(
-                          "text-sm font-normal cursor-pointer",
-                          item.completed && "line-through text-muted-foreground"
+                          "text-sm font-normal cursor-pointer text-red-900",
+                          item.completed && "line-through text-green-700"
                         )}
                       >
                         {item.text}
@@ -356,7 +359,7 @@ export default function SimpleEmergencyChecklist() {
                       variant="ghost"
                       size="icon"
                       onClick={() => deleteItem(item.id, items, setItems)}
-                      className="h-6 w-6 opacity-50 hover:opacity-100"
+                      className="h-6 w-6 opacity-50 hover:opacity-100 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -381,13 +384,13 @@ export default function SimpleEmergencyChecklist() {
                       addNewItem(inputValue, items, setItems, category, tabPrefix);
                     }
                   }}
-                  className="flex-1 text-sm h-8"
+                  className="flex-1 text-sm h-8 border-red-200 focus-visible:ring-red-400"
                   size={1}
                 />
                 <Button
                   onClick={() => addNewItem(inputValue, items, setItems, category, tabPrefix)}
                   size="sm"
-                  className="h-8 px-2"
+                  className="h-8 px-2 bg-red-600 hover:bg-red-700"
                 >
                   <Plus className="h-3 w-3" />
                 </Button>
@@ -400,38 +403,38 @@ export default function SimpleEmergencyChecklist() {
   };
   
   return (
-    <Card className="w-full border shadow-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-xl flex items-center gap-2">
-          <ListChecks className="h-5 w-5 text-primary" />
+    <Card className="w-full border shadow-sm border-red-100">
+      <CardHeader className="pb-3 bg-red-50/50 rounded-t-lg">
+        <CardTitle className="text-xl flex items-center gap-2 text-red-700">
+          <ListChecks className="h-5 w-5 text-red-600" />
           Emergency Preparedness Checklist
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-red-600/80">
           Keep track of essential supplies and recommended food items for emergency situations.
         </CardDescription>
       </CardHeader>
       
       <CardContent>
         <Tabs defaultValue="supplies" className="w-full">
-          <TabsList className="grid grid-cols-3 mb-4">
-            <TabsTrigger value="supplies" className="flex items-center gap-1">
+          <TabsList className="grid grid-cols-3 mb-4 bg-red-100/50">
+            <TabsTrigger value="supplies" className="flex items-center gap-1 data-[state=active]:bg-red-200/70 data-[state=active]:text-red-800">
               <ListChecks className="h-4 w-4" />
               <span>Supplies</span>
-              <Badge variant="outline" className="ml-1">
+              <Badge variant="outline" className="ml-1 bg-white/80">
                 {supplies.filter(i => i.completed).length}/{supplies.length}
               </Badge>
             </TabsTrigger>
-            <TabsTrigger value="firstaid" className="flex items-center gap-1">
+            <TabsTrigger value="firstaid" className="flex items-center gap-1 data-[state=active]:bg-red-200/70 data-[state=active]:text-red-800">
               <Heart className="h-4 w-4" />
               <span>First Aid</span>
-              <Badge variant="outline" className="ml-1">
+              <Badge variant="outline" className="ml-1 bg-white/80">
                 {firstAid.filter(i => i.completed).length}/{firstAid.length}
               </Badge>
             </TabsTrigger>
-            <TabsTrigger value="food" className="flex items-center gap-1">
+            <TabsTrigger value="food" className="flex items-center gap-1 data-[state=active]:bg-red-200/70 data-[state=active]:text-red-800">
               <ShoppingBag className="h-4 w-4" />
               <span>Food</span>
-              <Badge variant="outline" className="ml-1">
+              <Badge variant="outline" className="ml-1 bg-white/80">
                 {foods.filter(i => i.completed).length}/{foods.length}
               </Badge>
             </TabsTrigger>
@@ -466,8 +469,8 @@ export default function SimpleEmergencyChecklist() {
         </Tabs>
       </CardContent>
       
-      <CardFooter className="flex justify-between border-t pt-4">
-        <div className="text-sm text-muted-foreground">
+      <CardFooter className="flex justify-between border-t border-red-100 pt-4 bg-red-50/30">
+        <div className="text-sm text-red-700">
           {suppliesCompletion === 100 && firstAidCompletion === 100 && foodsCompletion === 100 
             ? "Great job! You're fully prepared." 
             : "Check off items as you acquire them."}
@@ -476,6 +479,7 @@ export default function SimpleEmergencyChecklist() {
           <Button
             variant="outline" 
             size="sm"
+            className="border-red-300 text-red-700 hover:bg-red-100"
             onClick={() => {
               if (window.confirm("Are you sure you want to reset all checklists to defaults?")) {
                 setSupplies(defaultSupplies);
@@ -492,6 +496,7 @@ export default function SimpleEmergencyChecklist() {
           </Button>
           <Button
             size="sm"
+            className="bg-red-600 hover:bg-red-700"
             onClick={() => {
               toast({
                 title: "Checklist Saved",
