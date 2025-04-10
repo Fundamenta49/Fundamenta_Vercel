@@ -48,6 +48,8 @@ import MeditationGuide from "./meditation-guide";
 import FitnessProgress from "./fitness-progress";
 import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
+import RunningSpecificExercises from "./running-specific-exercises";
+import HIITSpecificExercises from "./hiit-specific-exercises";
 import YogaPromptFlow, { YogaSession } from "./yoga-prompt-flow";
 // AI Coach functionality removed as Fundi now handles all AI interactions
 import {
@@ -605,6 +607,32 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     } else if (exerciseType === 'stretch') {
       setSelectedExercise(stretchExercises[exerciseKey]);
     }
+    setDialogOpen(true);
+  };
+  
+  // Function to show exercise details from running exercises component
+  const showExerciseDetails = (exercise: any) => {
+    // Convert the Exercise type from running-specific-exercises to ExerciseDetails if needed
+    const exerciseDetails: ExerciseDetails = {
+      name: exercise.name,
+      category: exercise.category || 'running',
+      description: exercise.description || '',
+      instructions: exercise.instructions || [],
+      benefits: exercise.benefits || [
+        "Improves running performance",
+        "Builds specific muscle groups needed for running",
+        "Enhances cardiovascular endurance"
+      ],
+      tips: exercise.tips || [
+        "Focus on proper form for maximum benefit",
+        "Maintain a consistent breathing pattern",
+        "Start with lower intensity and gradually increase"
+      ],
+      imageUrl: exercise.imageUrl,
+      videoUrl: exercise.videoUrl
+    };
+    
+    setSelectedExercise(exerciseDetails);
     setDialogOpen(true);
   };
   
@@ -1808,7 +1836,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              {/* Running-Specific Exercise Program With Multiple Exercises Per Category */}
+              {/* Specialized Running Training Program with Specific Exercises */}
               <div className="mb-6 pt-2">
                 <h3 className="font-medium text-xl mb-4">Complete Runner's Training Program</h3>
                 
@@ -1816,20 +1844,15 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <h4 className="font-medium text-lg mb-3">Pre-Run Warm-Up Routine</h4>
                   <p className="text-gray-700 mb-3">Always perform these dynamic stretches before running to prepare your muscles and prevent injury.</p>
                   <div className="grid grid-cols-1 gap-4">
-                    <div className="border rounded-lg p-4 bg-blue-50">
-                      <h5 className="font-medium mb-3">Dynamic Warm-Ups & Mobility Exercises</h5>
-                      
-                      {/* Using broader filter terms to get more variety */}
-                      <FitnessExercises 
-                        muscleFilter="legs" 
-                        equipmentFilter="body weight"
-                        difficultyFilter="beginner"
-                        keywordFilter="dynamic" 
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={6}
-                      />
-                    </div>
+                    {/* Using our custom component that targets specific running exercises */}
+                    <RunningSpecificExercises 
+                      category="warmUp"
+                      title="Dynamic Warm-Ups & Mobility Exercises"
+                      description="Perform these exercises for 30-60 seconds each before your run to warm up muscles and increase mobility."
+                      backgroundColor="bg-blue-50"
+                      maxExercises={5}
+                      onShowExerciseDetail={(exercise) => showExerciseDetails(exercise)}
+                    />
                   </div>
                 </div>
                 
@@ -1837,20 +1860,14 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <h4 className="font-medium text-lg mb-3">Strength Training for Runners</h4>
                   <p className="text-gray-700 mb-3">Perform these exercises 2-3 times per week to build strength that will improve your running performance.</p>
                   <div className="grid grid-cols-1 gap-4">
-                    <div className="border rounded-lg p-4 bg-amber-50">
-                      <h5 className="font-medium mb-3">Core & Lower Body Strength</h5>
-                      
-                      {/* Using 'strength' category to return a variety of strength exercises */}
-                      <FitnessExercises 
-                        categoryFilter="strength"
-                        muscleFilter="legs" 
-                        difficultyFilter="beginner"
-                        equipmentFilter="body weight"
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={6}
-                      />
-                    </div>
+                    <RunningSpecificExercises 
+                      category="strength"
+                      title="Core & Lower Body Strength Exercises"
+                      description="Complete 2-3 sets of 10-15 repetitions of each exercise to build running-specific strength."
+                      backgroundColor="bg-amber-50"
+                      maxExercises={5}
+                      onShowExerciseDetail={showExerciseDetails}
+                    />
                   </div>
                 </div>
                 
@@ -1858,20 +1875,14 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <h4 className="font-medium text-lg mb-3">Run-Specific Technique Drills</h4>
                   <p className="text-gray-700 mb-3">Incorporate these drills into your training to improve running form and efficiency.</p>
                   <div className="grid grid-cols-1 gap-4">
-                    <div className="border rounded-lg p-4 bg-green-50">
-                      <h5 className="font-medium mb-3">Speed & Plyometric Drills</h5>
-                      
-                      {/* Using plyometrics category for explosive power training */}
-                      <FitnessExercises 
-                        categoryFilter="plyometrics"
-                        muscleFilter="full body" 
-                        difficultyFilter="intermediate"
-                        equipmentFilter="body weight"
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={6}
-                      />
-                    </div>
+                    <RunningSpecificExercises 
+                      category="plyometric"
+                      title="Speed & Plyometric Drills"
+                      description="Add these explosive exercises to your routine 1-2 times per week to improve power and running economy."
+                      backgroundColor="bg-green-50"
+                      maxExercises={5}
+                      onShowExerciseDetail={showExerciseDetails}
+                    />
                   </div>
                 </div>
                 
@@ -1879,19 +1890,14 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <h4 className="font-medium text-lg mb-3">Post-Run Recovery Exercises</h4>
                   <p className="text-gray-700 mb-3">Essential stretches to perform after running to improve recovery and flexibility.</p>
                   <div className="grid grid-cols-1 gap-4">
-                    <div className="border rounded-lg p-4 bg-purple-50">
-                      <h5 className="font-medium mb-3">Stretches for Runners</h5>
-                      
-                      {/* Using stretching category to return stretching exercises */}
-                      <FitnessExercises 
-                        categoryFilter="stretching"
-                        muscleFilter="legs" 
-                        difficultyFilter="beginner"
-                        showFilters={false}
-                        compactView={true}
-                        maxExercises={6}
-                      />
-                    </div>
+                    <RunningSpecificExercises 
+                      category="coolDown"
+                      title="Recovery Stretches"
+                      description="Hold each stretch for 30-60 seconds after your run to improve flexibility and reduce soreness."
+                      backgroundColor="bg-purple-50"
+                      maxExercises={5}
+                      onShowExerciseDetail={showExerciseDetails}
+                    />
                   </div>
                 </div>
               </div>
@@ -1932,45 +1938,67 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               
               <div className="mb-6">
                 <h3 className="font-medium text-lg my-3">HIIT Protocols</h3>
-                <div className="grid gap-4">
-                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">Tabata Protocol</div>
-                    <p className="text-sm text-muted-foreground mb-2">20 seconds work, 10 seconds rest for 8 rounds (4 minutes total)</p>
-                    <div className="text-sm space-y-2">
-                      <div><span className="font-medium">Exercise 1:</span> Jump Squats (engages lower body, elevates heart rate)</div>
-                      <div><span className="font-medium">Exercise 2:</span> Burpees (full-body exercise for cardiovascular fitness)</div>
-                      <div><span className="font-medium">Exercise 3:</span> Mountain Climbers (targets core and legs)</div>
-                      <div><span className="font-medium">Exercise 4:</span> Push-ups (strengthens chest and triceps)</div>
-                      <div><span className="font-medium">Exercise 5:</span> High Knees (improves cardiovascular endurance)</div>
-                      <div><span className="font-medium">Exercise 6:</span> Plank to Shoulder Tap (engages core and shoulders)</div>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="mb-6 pb-2 border-b border-gray-200">
+                    <h4 className="font-medium text-lg mb-3">Tabata Protocol</h4>
+                    <p className="text-gray-700 mb-3">20 seconds work, 10 seconds rest for 8 rounds (4 minutes total)</p>
+                    <div className="grid grid-cols-1 gap-4">
+                      <HIITSpecificExercises 
+                        category="tabata"
+                        title="Tabata Workout Exercises"
+                        description="These exercises are perfect for Tabata timing - 20 seconds of maximum effort followed by 10 seconds of rest."
+                        backgroundColor="bg-red-50"
+                        maxExercises={4}
+                        onShowExerciseDetail={(exercise) => showExerciseDetails(exercise)}
+                      />
                     </div>
                   </div>
                   
-                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">30-30 Intervals</div>
-                    <p className="text-sm text-muted-foreground mb-2">30 seconds work, 30 seconds rest for 10-20 minutes</p>
-                    <div className="text-sm space-y-2">
-                      <div><span className="font-medium">Exercise 1:</span> Kettlebell Swings (builds posterior chain power)</div>
-                      <div><span className="font-medium">Exercise 2:</span> Box Jumps (develops explosive leg strength)</div>
-                      <div><span className="font-medium">Exercise 3:</span> Battle Ropes (challenges upper body endurance)</div>
-                      <div><span className="font-medium">Exercise 4:</span> Sprints (maximizes calorie burn)</div>
+                  <div className="mb-6 pb-2 border-b border-gray-200">
+                    <h4 className="font-medium text-lg mb-3">AMRAP (As Many Rounds As Possible)</h4>
+                    <p className="text-gray-700 mb-3">Complete as many rounds of a circuit as possible in a set time (typically 10-20 minutes)</p>
+                    <div className="grid grid-cols-1 gap-4">
+                      <HIITSpecificExercises 
+                        category="amrap"
+                        title="AMRAP Circuit Exercises"
+                        description="Perform these exercises in sequence, completing as many rounds as possible in your target time."
+                        backgroundColor="bg-orange-50"
+                        maxExercises={4}
+                        onShowExerciseDetail={(exercise) => showExerciseDetails(exercise)}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6 pb-2 border-b border-gray-200">
+                    <h4 className="font-medium text-lg mb-3">EMOM (Every Minute On the Minute)</h4>
+                    <p className="text-gray-700 mb-3">At the start of each minute, perform a specific exercise. Rest for the remainder of the minute.</p>
+                    <div className="grid grid-cols-1 gap-4">
+                      <HIITSpecificExercises 
+                        category="emom"
+                        title="EMOM Workout Exercises"
+                        description="Each exercise should be performed at the start of a minute, with rest in remaining time."
+                        backgroundColor="bg-yellow-50"
+                        maxExercises={4}
+                        onShowExerciseDetail={(exercise) => showExerciseDetails(exercise)}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium text-lg mb-3">Circuit Training</h4>
+                    <p className="text-gray-700 mb-3">Move through 5-10 exercises with minimal rest between movements.</p>
+                    <div className="grid grid-cols-1 gap-4">
+                      <HIITSpecificExercises 
+                        category="circuit"
+                        title="Circuit Training Exercises"
+                        description="Perform each exercise for 30-60 seconds before moving to the next with minimal rest."
+                        backgroundColor="bg-green-50"
+                        maxExercises={4}
+                        onShowExerciseDetail={(exercise) => showExerciseDetails(exercise)}
+                      />
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              <div>
-                <h3 className="font-medium text-lg mb-3">HIIT Exercises</h3>
-                <FitnessExercises 
-                  muscleFilter="full body" 
-                  equipmentFilter="body weight"
-                  difficultyFilter="intermediate"
-                  categoryFilter="hiit"
-                  keywordFilter="jump" 
-                  showFilters={false} 
-                  compactView={true}
-                  maxExercises={4}
-                />
               </div>
             </CardContent>
           </Card>
