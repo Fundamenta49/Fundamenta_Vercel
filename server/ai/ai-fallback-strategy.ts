@@ -1051,9 +1051,9 @@ export class FallbackAIService {
         previousMessages
       );
       
-      // Set up a timeout to start the fallback provider after a short delay
-      // This gives the primary provider a head start but ensures we don't wait too long
-      const FALLBACK_START_DELAY = 300; // ms - give primary provider a head start
+      // Set up a timeout to start the fallback provider after a delay
+      // This gives the primary provider enough time to respond before falling back
+      const FALLBACK_START_DELAY = 5000; // ms - give primary provider a 5-second head start
       
       fallbackStartTimeout = setTimeout(() => {
         if (!isResolved) {
