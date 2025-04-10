@@ -50,7 +50,10 @@ export async function orchestrateAIResponse(
 ): Promise<AIOrchestrationResponse> {
   try {
     // First, determine the user's intent and what category/advisor would be best
-    const categoryResult = await fallbackAIService.determineCategory(message, category);
+    // Force category from primary provider (OpenAI) or use provided category
+    const categoryResult = category 
+      ? { category, confidence: 1.0 } 
+      : await fallbackAIService.primaryProvider.determineCategory(message);
     
     // Check if this is a user guide or help-related question
     const isGuideQuestion = 

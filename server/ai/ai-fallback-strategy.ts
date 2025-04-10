@@ -765,8 +765,9 @@ export class HuggingFaceProvider implements AIProvider {
  * FallbackAIService that tries OpenAI first, then falls back to HuggingFace
  */
 export class FallbackAIService {
-  private primaryProvider: AIProvider;
-  private fallbackProvider: AIProvider;
+  // Change from private to public so orchestrator can use primary directly if needed
+  public primaryProvider: AIProvider;
+  public fallbackProvider: AIProvider;
   private lastFailureTime: number = 0;
   private failureCount: number = 0;
   private readonly COOLDOWN_PERIOD = 60000; // 1 minute cooldown
@@ -1053,7 +1054,7 @@ export class FallbackAIService {
       
       // Set up a timeout to start the fallback provider after a delay
       // This gives the primary provider enough time to respond before falling back
-      const FALLBACK_START_DELAY = 5000; // ms - give primary provider a 5-second head start
+      const FALLBACK_START_DELAY = 8000; // ms - give primary provider an 8-second head start
       
       fallbackStartTimeout = setTimeout(() => {
         if (!isResolved) {
@@ -1089,7 +1090,7 @@ export class FallbackAIService {
       }, FALLBACK_START_DELAY);
       
       // Set a timeout for the primary provider
-      const PRIMARY_TIMEOUT = 10000; // 10 seconds
+      const PRIMARY_TIMEOUT = 15000; // 15 seconds - increased from 10 seconds
       primaryTimeout = setTimeout(() => {
         if (!isResolved) {
           console.log("Primary AI provider timed out after", PRIMARY_TIMEOUT, "ms");
@@ -1229,7 +1230,7 @@ export class FallbackAIService {
       // Start the primary provider immediately
       primaryPromise = this.primaryProvider.determineCategory(message, preferredCategory);
       
-      // Start fallback with a short delay
+      // Start fallback with a longer delay to give primary provider time to respond
       setTimeout(() => {
         if (!isResolved) {
           console.log("Starting fallback for category determination as backup");
@@ -1253,7 +1254,7 @@ export class FallbackAIService {
               }
             });
         }
-      }, 200); // 200ms delay
+      }, 3000); // 3000ms (3 second) delay - increased from 200ms
       
       // Handle primary provider result
       primaryPromise
@@ -1322,7 +1323,7 @@ export class FallbackAIService {
           throw error;
         });
       
-      // Start the fallback with a slight delay to give priority to the specialized service
+      // Start the fallback with a significant delay to give priority to the specialized service
       fallbackPromise = new Promise(resolve => {
         setTimeout(() => {
           // Only run this if we haven't already gotten a result
@@ -1336,7 +1337,7 @@ export class FallbackAIService {
                 emotionScore: 0.5
               });
             });
-        }, 500); // 500ms delay gives the specialized service a head start
+        }, 2000); // 2000ms (2 second) delay - increased from 500ms
       });
       
       // Race between the two, with preference for the specialized one
