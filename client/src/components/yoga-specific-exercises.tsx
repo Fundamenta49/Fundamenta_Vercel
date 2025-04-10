@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Info, ChevronDown, ChevronUp, Plus, ArrowRight } from "lucide-react";
 import { EmbeddedYouTubePlayer } from '@/components/embedded-youtube-player';
 import { searchSectionSpecificExerciseVideos, YouTubeVideo } from '@/lib/youtube-service';
+import { getFallbackVideosForCategory } from '@/lib/section-fallbacks';
 
 // Define Exercise interface with added fields to match ExerciseDetails in active-you-enhanced
 interface Exercise {
@@ -318,14 +319,30 @@ export default function YogaSpecificExercises({
     setLoadingVideos(prev => ({ ...prev, [exerciseId]: true }));
     
     try {
-      // Use the specialized function for yoga exercise videos
-      const videos = await searchSectionSpecificExerciseVideos(
-        'yoga',
-        exercise.name,
-        exercise.equipment?.join(', '),
-        exercise.muscleGroups,
-        exerciseId // Use exercise ID as seed for consistent results
-      );
+      // First check if we need to use fallbacks due to YouTube API quota limits
+      // This simplifies the process by avoiding API calls when we know they might fail
+      let videos: YouTubeVideo[] = [];
+      
+      // Try to use the API first
+      try {
+        videos = await searchSectionSpecificExerciseVideos(
+          'yoga',
+          exercise.name,
+          exercise.equipment?.join(', '),
+          exercise.muscleGroups,
+          exerciseId // Use exercise ID as seed for consistent results
+        );
+      } catch (apiError) {
+        console.log('YouTube API error, using fallbacks:', apiError);
+        // API failed, use our category-specific fallbacks
+        videos = getFallbackVideosForCategory('yoga', category);
+      }
+      
+      // If we still don't have videos (API returned empty or failed), use fallbacks
+      if (!videos || videos.length === 0) {
+        console.log('No videos found, using fallbacks for category:', category);
+        videos = getFallbackVideosForCategory('yoga', category);
+      }
       
       setExerciseVideos(prev => ({
         ...prev,
@@ -333,6 +350,12 @@ export default function YogaSpecificExercises({
       }));
     } catch (error) {
       console.error('Error loading videos for yoga exercise:', error);
+      // Final fallback - if all else fails, use our category-specific fallbacks
+      const fallbackVideos = getFallbackVideosForCategory('yoga', category);
+      setExerciseVideos(prev => ({
+        ...prev,
+        [exerciseId]: fallbackVideos
+      }));
     } finally {
       setLoadingVideos(prev => ({ ...prev, [exerciseId]: false }));
     }
