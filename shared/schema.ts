@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, boolean, integer, real } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean, integer, real, jsonb, varchar, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -10,6 +10,26 @@ export const users = pgTable("users", {
   password: text("password"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Conversations Table for chat history
+export const conversations = pgTable("conversations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id"),
+  title: text("title").default("New Conversation"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  lastMessageAt: timestamp("last_message_at").notNull().defaultNow()
+});
+
+// Messages Table for individual chat messages
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  conversationId: integer("conversation_id").notNull(),
+  role: text("role").notNull(), // 'user' or 'assistant'
+  content: text("content").notNull(),
+  category: text("category").default("general"),
+  metadata: jsonb("metadata"), // For storing additional message data like sentiment, actions, etc.
+  timestamp: timestamp("timestamp").notNull().defaultNow()
 });
 
 // User Info Table
@@ -104,9 +124,22 @@ export const trainingPlans = pgTable("training_plans", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// Sessions Table for express-session with connect-pg-simple
+export const sessions = pgTable("sessions", {
+  sid: varchar("sid").notNull().primaryKey(),
+  sess: json("sess").notNull(),
+  expire: timestamp("expire").notNull()
+});
+
 // Define Zod Schemas for validation
 export const insertUserSchema = createInsertSchema(users)
   .omit({ id: true, createdAt: true, updatedAt: true });
+
+export const insertConversationSchema = createInsertSchema(conversations)
+  .omit({ id: true, createdAt: true, lastMessageAt: true });
+
+export const insertMessageSchema = createInsertSchema(messages)
+  .omit({ id: true, timestamp: true });
 
 export const insertUserInfoSchema = createInsertSchema(userInfo)
   .omit({ id: true, createdAt: true, updatedAt: true });
@@ -128,10 +161,20 @@ export const insertRunningGoalSchema = createInsertSchema(runningGoals)
 
 export const insertTrainingPlanSchema = createInsertSchema(trainingPlans)
   .omit({ id: true, createdAt: true, updatedAt: true });
+  
+export const insertSessionSchema = createInsertSchema(sessions);
 
 // Define TypeScript types
 export type InsertUserType = z.infer<typeof insertUserSchema>;
 export type SelectUserType = typeof users.$inferSelect;
+
+export type InsertConversationType = z.infer<typeof insertConversationSchema>;
+export type SelectConversationType = typeof conversations.$inferSelect;
+export type Conversation = typeof conversations.$inferSelect;
+
+export type InsertMessageType = z.infer<typeof insertMessageSchema>;
+export type SelectMessageType = typeof messages.$inferSelect;
+export type Message = typeof messages.$inferSelect;
 
 export type InsertUserInfoType = z.infer<typeof insertUserInfoSchema>;
 export type SelectUserInfoType = typeof userInfo.$inferSelect;
@@ -153,3 +196,7 @@ export type SelectRunningGoalType = typeof runningGoals.$inferSelect;
 
 export type InsertTrainingPlanType = z.infer<typeof insertTrainingPlanSchema>;
 export type SelectTrainingPlanType = typeof trainingPlans.$inferSelect;
+
+export type InsertSessionType = z.infer<typeof insertSessionSchema>;
+export type SelectSessionType = typeof sessions.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
