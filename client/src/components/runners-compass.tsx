@@ -1081,7 +1081,7 @@ export default function RunnersCompass() {
     // Get the current permission mode
     const permissionMode = localStorage.getItem('location_permission');
     
-    // For regular GPS tracking mode
+    // Check if location permission is granted
     if (permissionMode === 'granted') {
       if (!navigator.geolocation) {
         toast({
@@ -1155,85 +1155,9 @@ export default function RunnersCompass() {
           maximumAge: 0,
         }
       );
-    } 
-    // For demo mode
-    else if (permissionMode === 'demo') {
-      // Start with the initial demo location from localStorage
-      const storedLocation = localStorage.getItem('last_location');
-      let initialLocation = { latitude: 40.7128, longitude: -74.0060, timestamp: Date.now() };
-      
-      if (storedLocation) {
-        try {
-          initialLocation = JSON.parse(storedLocation);
-        } catch (e) {
-          console.error('Error parsing stored location', e);
-        }
-      }
-      
-      setIsTracking(true);
-      setCurrentSession({
-        startTime: Date.now(),
-        distance: 0,
-        duration: 0,
-        pace: 0,
-        route: [initialLocation],
-      });
-      
-      // Set up a simulated GPS tracker that moves the position slightly every few seconds
-      const simulatedTrackingInterval = setInterval(() => {
-        setCurrentSession((prev) => {
-          if (!prev || !prev.route || prev.route.length === 0) return prev;
-          
-          // Get the last point
-          const lastPoint = prev.route[prev.route.length - 1];
-          
-          // Create a new point with a small random offset (simulates movement)
-          const newPoint = {
-            latitude: lastPoint.latitude + (Math.random() * 0.0008 - 0.0004),
-            longitude: lastPoint.longitude + (Math.random() * 0.0008 - 0.0004),
-            timestamp: Date.now()
-          };
-          
-          const newRoute = [...prev.route, newPoint];
-          
-          // Calculate new distance
-          let distance = prev.distance;
-          const kmDistance = calculateDistance(
-            lastPoint.latitude,
-            lastPoint.longitude,
-            newPoint.latitude,
-            newPoint.longitude
-          );
-          distance += kmDistance * 0.621371; // Convert km to miles
-          
-          const duration = (Date.now() - prev.startTime) / 1000; // in seconds
-          
-          // Calculate a realistic pace (slightly variable)
-          // In demo mode, we aim for a typical jogging pace of around 9-10 min/mile
-          const basePace = 9.5; // 9:30 min/mile base pace
-          const variability = 0.5; // +/- 30 seconds variability
-          const pace = basePace + (Math.random() * variability * 2 - variability);
-          
-          return {
-            ...prev,
-            distance,
-            duration,
-            pace,
-            route: newRoute,
-          };
-        });
-      }, 3000); // Update every 3 seconds
-      
-      // Store the interval ID for cleanup
-      watchIdRef.current = simulatedTrackingInterval as unknown as number;
-      
-      toast({
-        title: "Demo Run Started",
-        description: "Using simulated GPS data to track your run.",
-      });
     } else {
-      // Ask for location permission or suggest using demo mode
-      runInDemoMode();
+      // Ask for location permission
+      requestLocationPermission();
     }
     
     // Mark that the user has run at least once
@@ -1242,15 +1166,9 @@ export default function RunnersCompass() {
   };
 
   const stopRun = () => {
-    const permissionMode = localStorage.getItem('location_permission');
-    
-    if (permissionMode === 'granted' && watchIdRef.current) {
+    if (watchIdRef.current) {
       // Clear real GPS watch
       navigator.geolocation.clearWatch(watchIdRef.current);
-      watchIdRef.current = null;
-    } else if (permissionMode === 'demo' && watchIdRef.current) {
-      // Clear demo interval
-      clearInterval(watchIdRef.current as unknown as number);
       watchIdRef.current = null;
     }
     
@@ -1320,9 +1238,9 @@ export default function RunnersCompass() {
     }
   };
   
-  const runInDemoMode = () => {
-    localStorage.setItem('location_permission', 'demo');
-    startRun();
+  // Always prioritize real GPS - no demo mode
+  const requestLocationPermission = () => {
+    checkLocationPermission();
   };
 
   const handleMilestoneCompleted = (milestone: string, time: number) => {
@@ -1414,7 +1332,7 @@ export default function RunnersCompass() {
             </TabsList>
             
             <TabsContent value="run" className="space-y-4 mt-4">
-              {!hasLocationPermission && localStorage.getItem('location_permission') !== 'demo' ? (
+              {!hasLocationPermission ? (
                 <div className="space-y-4">
                   <div className="p-5 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 shadow-md">
                     <div className="flex items-center justify-center mb-4">
@@ -1431,25 +1349,16 @@ export default function RunnersCompass() {
                     
                     <div className="flex flex-col gap-3">
                       <Button 
-                        onClick={checkLocationPermission}
+                        onClick={requestLocationPermission}
                         className="w-full bg-blue-600 hover:bg-blue-700"
                       >
                         <MapPin className="h-4 w-4 mr-2" />
                         Enable GPS Tracking
                       </Button>
-                      
-                      <Button 
-                        variant="outline"
-                        onClick={runInDemoMode}
-                        className="w-full"
-                      >
-                        <Activity className="h-4 w-4 mr-2" />
-                        Try Demo Mode
-                      </Button>
                     </div>
                     
                     <p className="text-xs text-center text-blue-600 mt-4">
-                      Demo mode uses simulated GPS data and is great for testing the app.
+                      Your location data is used only for tracking your runs and is never shared.
                     </p>
                   </div>
                 </div>
@@ -1502,18 +1411,7 @@ export default function RunnersCompass() {
                         {isTracking && (
                           <div className="absolute top-3 right-3 bg-white/90 rounded-md shadow-md px-3 py-2 flex items-center z-[1000] text-sm">
                             <div className="h-3 w-3 rounded-full bg-green-500 mr-2 animate-pulse"></div>
-                            <span>
-                              {localStorage.getItem('location_permission') === 'demo' 
-                                ? "Simulated GPS Data (Demo)" 
-                                : "Live GPS Tracking"}
-                            </span>
-                          </div>
-                        )}
-                        
-                        {/* Demo mode badge */}
-                        {localStorage.getItem('location_permission') === 'demo' && (
-                          <div className="absolute bottom-3 left-3 bg-orange-100 text-orange-800 rounded-md shadow-md px-3 py-1 flex items-center z-[1000] text-xs font-medium border border-orange-200">
-                            <span>Demo Mode</span>
+                            <span>Live GPS Tracking</span>
                           </div>
                         )}
                       </>
@@ -1833,7 +1731,7 @@ export default function RunnersCompass() {
                           <AlertDescription className="text-sm text-blue-700">
                             <p className="mb-2">Ready to start your running journey? Here's how:</p>
                             <ol className="list-decimal pl-5 space-y-1">
-                              <li>Give permission for GPS tracking (or try Demo Mode)</li>
+                              <li>Give permission for GPS tracking to enable the running tracker</li>
                               <li>Press the "Start Run" button to begin tracking</li>
                               <li>Optional: Select your music to play while running</li>
                               <li>Hit "Stop Run" when you're finished</li>
