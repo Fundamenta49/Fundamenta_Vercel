@@ -1585,7 +1585,7 @@ const ClosingCostCalculator: React.FC = () => {
                 </div>
               </div>
             </div>
-          </EnhancedScrollArea>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
       
@@ -1600,7 +1600,7 @@ const ClosingCostCalculator: React.FC = () => {
               Property taxes fund local services and vary significantly by location
             </DialogDescription>
           </DialogHeader>
-          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6">
+          <ScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6 touch-pan-y overscroll-contain">
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium">What are property taxes?</h4>
@@ -1734,7 +1734,7 @@ const ClosingCostCalculator: React.FC = () => {
                 </p>
               </div>
             </div>
-          </EnhancedScrollArea>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
       
@@ -1749,7 +1749,7 @@ const ClosingCostCalculator: React.FC = () => {
               Protecting your home, belongings, and financial security
             </DialogDescription>
           </DialogHeader>
-          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6">
+          <ScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6 touch-pan-y overscroll-contain">
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium">What is homeowners insurance?</h4>
@@ -1925,7 +1925,7 @@ const ClosingCostCalculator: React.FC = () => {
                 </p>
               </div>
             </div>
-          </EnhancedScrollArea>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
       
@@ -1940,7 +1940,7 @@ const ClosingCostCalculator: React.FC = () => {
               One-time fees and expenses paid at the closing of a real estate transaction
             </DialogDescription>
           </DialogHeader>
-          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6">
+          <ScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6 touch-pan-y overscroll-contain">
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium">What are closing costs?</h4>
@@ -2127,7 +2127,7 @@ const ClosingCostCalculator: React.FC = () => {
                 </p>
               </div>
             </div>
-          </EnhancedScrollArea>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </div>

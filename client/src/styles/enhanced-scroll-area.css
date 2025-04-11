@@ -1,0 +1,33 @@
+/* Enhanced scroll area styles for better mobile touch handling */
+
+.dialog-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  height: 100%;
+  width: 100%;
+}
+
+/* Prevent content from jumping when scrolling on mobile */
+.dialog-scroll-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dialog-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dialog-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+/* Ensure proper scroll behavior especially in dialog contexts */
+@media (max-width: 640px) {
+  .dialog-scroll-container {
+    overscroll-behavior-y: contain;
+    max-height: calc(100vh - 10rem);
+    padding-bottom: 1rem;
+  }
+}

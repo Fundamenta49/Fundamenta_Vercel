@@ -6,6 +6,7 @@
 @import './styles/calendar-desktop-fix.css';
 @import './styles/calendar-dialog-fix.css';
 @import './styles/direct-calendar-fix.css';
+@import './styles/enhanced-scroll-area.css';
 
 @tailwind base;
 @tailwind components;
