@@ -1,6 +1,7 @@
 import {
   Dialog,
-  DialogContent
+  DialogContent,
+  DialogOverlay
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,12 +15,13 @@ interface FounderMessageDialogProps {
 export default function FounderMessageDialog({ open, onOpenChange }: FounderMessageDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-transparent border-0 shadow-none overflow-y-auto p-0 max-w-2xl">
+      <DialogOverlay className="bg-black/30 backdrop-blur-sm" />
+      <DialogContent className="bg-transparent border-0 shadow-none overflow-y-auto p-0 max-w-2xl max-h-[85vh]" aria-labelledby="dialog-title" aria-describedby="dialog-description">
         {/* Decorative paperclip */}
         <div className="absolute -top-4 left-8 z-10 w-8 h-12 bg-gray-400 rounded-sm transform rotate-45 opacity-80"></div>
         
         {/* Letter styling with subtle paper texture and slight rotation */}
-        <div className="relative paper-texture letter-shadow border border-[#e9e4d5] transform rotate-[0.5deg] px-6 py-7 md:px-10 md:py-8 rounded-sm">
+        <div className="relative paper-texture letter-shadow border border-[#e9e4d5] transform rotate-[0.5deg] px-6 py-5 md:px-8 md:py-6 rounded-sm">
           {/* Custom close button */}
           <Button 
             variant="ghost" 
@@ -31,16 +33,16 @@ export default function FounderMessageDialog({ open, onOpenChange }: FounderMess
           </Button>
           
           {/* Letter header */}
-          <div className="text-center mb-6 border-b border-gray-300 pb-4">
-            <h2 className="text-3xl font-serif tracking-wide text-indigo-900">Why Fundamenta</h2>
-            <p className="italic text-lg mt-3">
+          <div className="text-center mb-4 border-b border-gray-300 pb-3">
+            <h2 id="dialog-title" className="text-2xl font-serif tracking-wide text-indigo-900">Why Fundamenta</h2>
+            <p className="italic text-base mt-2">
               "Knowing your Why is the only way to maintain lasting success and fulfillment in whatever you do."
             </p>
-            <p className="text-right font-medium text-sm mt-1">—Simon Sinek</p>
+            <p className="text-right font-medium text-xs mt-1">—Simon Sinek</p>
           </div>
           
           {/* Letter content with the look of a personal note */}
-          <div className="space-y-4 font-serif text-lg leading-relaxed text-gray-800">
+          <div id="dialog-description" className="space-y-3 font-serif text-base leading-relaxed text-gray-800 overflow-y-auto max-h-[40vh] pr-1">
             <p>
               I created Fundamenta because I believe every young person deserves the chance to move into adulthood with confidence—not confusion. 
               When I left home at 17 with $300 and a head full of ambition, I didn't lack motivation—I lacked direction. 
@@ -64,12 +66,12 @@ export default function FounderMessageDialog({ open, onOpenChange }: FounderMess
               to help you define success by your own values, and to give purpose the tools it needs to grow.
             </p>
             
-            <p className="font-medium text-center mt-6">
+            <p className="font-medium text-center mt-4">
               It's fun. It's fundamental. It's Fundamenta.
             </p>
             
             {/* Signature styling */}
-            <div className="mt-8 border-t border-gray-300 pt-4">
+            <div className="mt-4 border-t border-gray-300 pt-2">
               <p className="text-right italic">
                 —Matthew Bishop<br />
                 <span className="text-sm font-normal">Founder & CEO</span>
