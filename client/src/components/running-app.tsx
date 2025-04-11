@@ -20,6 +20,7 @@ import {
   CheckCircle2, 
   Clock,
   Flag,
+  Flame,
   Plus,
   ChevronDown,
   ChevronUp,
@@ -317,6 +318,55 @@ function MilestoneTracker({ currentDistance, bestTimes }: {
   );
 }
 
+// Warm-up exercises component
+function WarmUpSection() {
+  return (
+    <div className="space-y-3">      
+      <p className="text-xs text-slate-600">A proper warm-up prepares your body for exercise and helps prevent injuries.</p>
+      
+      <div className="space-y-2">
+        {/* Warm-up Exercise 1 */}
+        <div className="bg-orange-50 p-3 rounded-md border border-orange-100">
+          <div className="font-medium text-orange-800 mb-1">1. Dynamic Stretching (3 min)</div>
+          <ul className="text-xs space-y-1 text-slate-700 list-disc pl-4">
+            <li>Arm circles: 20 seconds forward, 20 seconds backward</li>
+            <li>Leg swings: 30 seconds each leg</li>
+            <li>Hip circles: 20 seconds each direction</li>
+            <li>Shoulder rolls: 20 seconds forward, 20 seconds backward</li>
+          </ul>
+        </div>
+        
+        {/* Warm-up Exercise 2 */}
+        <div className="bg-orange-50 p-3 rounded-md border border-orange-100">
+          <div className="font-medium text-orange-800 mb-1">2. Active Warm-Up (2 min)</div>
+          <ul className="text-xs space-y-1 text-slate-700 list-disc pl-4">
+            <li>Jumping jacks: 30 seconds</li>
+            <li>High knees: 30 seconds</li>
+            <li>Butt kicks: 30 seconds</li>
+            <li>Light jogging in place: 30 seconds</li>
+          </ul>
+        </div>
+        
+        {/* Warm-up Exercise 3 */}
+        <div className="bg-orange-50 p-3 rounded-md border border-orange-100">
+          <div className="font-medium text-orange-800 mb-1">3. Joint Mobilization (1 min)</div>
+          <ul className="text-xs space-y-1 text-slate-700 list-disc pl-4">
+            <li>Ankle rotations: 10 each direction, both ankles</li>
+            <li>Knee circles: 10 each direction, both knees</li>
+            <li>Wrist rotations: 10 each direction</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div className="text-xs bg-blue-50 p-2 rounded border border-blue-100">
+        <p className="text-blue-800">
+          <span className="font-medium">Tip:</span> Start your run with a slower pace for the first 5 minutes as an additional warm-up.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Function to generate Fundi encouragement based on run progress
 function getFundiEncouragement(distance: number, duration: number, isFirstRun: boolean) {
   if (isFirstRun) {
@@ -350,6 +400,7 @@ export default function RunningApp() {
   const [isFirstRun, setIsFirstRun] = useState(true);
   const [isStatsExpanded, setIsStatsExpanded] = useState(false);
   const [showMusicPlayer, setShowMusicPlayer] = useState(false);
+  const [showWarmUp, setShowWarmUp] = useState(false);
   
   const queryClient = useQueryClient();
   const watchIdRef = useRef<number | null>(null);
@@ -991,6 +1042,32 @@ export default function RunningApp() {
 
                 {/* Collapsible sections */}
                 <div className="space-y-2">
+                  {/* Warm-up Section */}
+                  <div className="border border-slate-200 rounded-lg overflow-hidden">
+                    <button 
+                      className="w-full flex items-center justify-between p-3 text-left bg-slate-50 hover:bg-slate-100 transition-colors"
+                      onClick={() => setShowWarmUp(!showWarmUp)}
+                    >
+                      <div className="flex items-center">
+                        <Flame className="h-4 w-4 text-orange-500 mr-2" />
+                        <span className="text-sm font-medium">Warm-Up Exercises</span>
+                      </div>
+                      <div>
+                        {showWarmUp ? (
+                          <ChevronUp className="h-4 w-4 text-slate-500" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 text-slate-500" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {showWarmUp && (
+                      <div className="p-3">
+                        <WarmUpSection />
+                      </div>
+                    )}
+                  </div>
+                
                   {/* Milestone Tracker Section */}
                   <div className="border border-slate-200 rounded-lg overflow-hidden">
                     <button 
