@@ -30,6 +30,12 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -1577,16 +1583,26 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </div>
               </div>
               
-              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                <div className="font-medium text-lg mb-1">Dynamic Warm-Up Routine</div>
-                <p className="text-sm text-muted-foreground mb-2">Perform before workouts to prepare muscles and joints</p>
-                <div className="text-sm space-y-2">
-                  <div><span className="font-medium">1.</span> Arm Circles: Gradually increases shoulder mobility</div>
-                  <div><span className="font-medium">2.</span> Leg Swings: Activates hip flexors and hamstrings</div>
-                  <div><span className="font-medium">3.</span> Bodyweight Squats: Warms up quads and knees</div>
-                  <div><span className="font-medium">4.</span> Walking Lunges: Engages multiple leg muscles</div>
-                  <div><span className="font-medium">5.</span> Torso Twists: Prepares core for rotation</div>
-                </div>
+              <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="warm-up-routine" className="border-none">
+                    <AccordionTrigger className="p-0 hover:no-underline">
+                      <div>
+                        <div className="font-medium text-lg">Dynamic Warm-Up Routine</div>
+                        <p className="text-sm text-muted-foreground">Perform before workouts to prepare muscles and joints</p>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="text-sm space-y-2 pt-2">
+                        <div><span className="font-medium">1.</span> Arm Circles: Gradually increases shoulder mobility</div>
+                        <div><span className="font-medium">2.</span> Leg Swings: Activates hip flexors and hamstrings</div>
+                        <div><span className="font-medium">3.</span> Bodyweight Squats: Warms up quads and knees</div>
+                        <div><span className="font-medium">4.</span> Walking Lunges: Engages multiple leg muscles</div>
+                        <div><span className="font-medium">5.</span> Torso Twists: Prepares core for rotation</div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </div>
             </div>
           </div>
