@@ -24,7 +24,7 @@ export default function WhyFundamenta() {
             —Simon Sinek
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-5 text-muted-foreground">
+        <CardContent className="space-y-5 prose text-muted-foreground max-w-none">
           <p>
             I created Fundamenta because I believe every young person deserves the chance to move into adulthood with confidence—not confusion. 
             When I left home at 17 with $300 and a head full of ambition, I didn't lack motivation—I lacked direction. 
@@ -43,19 +43,16 @@ export default function WhyFundamenta() {
             Whether you're just starting out or trying to get back on track, you don't have to do it alone.
           </p>
           
-          <div className="mt-6 bg-white bg-opacity-60 p-4 rounded-lg border border-indigo-100">
-            <p className="font-medium text-indigo-900">This is why Fundamenta exists.</p>
-            <ul className="list-disc pl-5 mt-2 space-y-1">
-              <li>To make sure knowing what to do next doesn't feel like a mystery.</li>
-              <li>To help you define success by your own values.</li>
-              <li>To give purpose the tools it needs to grow.</li>
-            </ul>
-          </div>
+          <p>
+            This is why Fundamenta exists: to make sure knowing what to do next doesn't feel like a mystery,
+            to help you define success by your own values, and to give purpose the tools it needs to grow.
+          </p>
           
-          <p className="font-medium text-lg text-indigo-900 text-center mt-4">
+          <p className="font-medium text-lg text-indigo-900 text-center mt-6">
             It's fun. It's fundamental. It's Fundamenta.
           </p>
-          <p className="text-right italic">
+          
+          <p className="text-right italic mt-8">
             —Matthew Bishop, Founder & CEO
           </p>
         </CardContent>
