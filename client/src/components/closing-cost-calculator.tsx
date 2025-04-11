@@ -1492,7 +1492,7 @@ const ClosingCostCalculator: React.FC = () => {
               PMI protects lenders when borrowers make smaller down payments
             </DialogDescription>
           </DialogHeader>
-          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6">
+          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6 touch-pan-y overscroll-contain">
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium">What is PMI?</h4>
@@ -1604,7 +1604,7 @@ const ClosingCostCalculator: React.FC = () => {
               Property taxes fund local services and vary significantly by location
             </DialogDescription>
           </DialogHeader>
-          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6">
+          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6 touch-pan-y overscroll-contain">
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium">What are property taxes?</h4>
@@ -1753,7 +1753,7 @@ const ClosingCostCalculator: React.FC = () => {
               Protecting your home, belongings, and financial security
             </DialogDescription>
           </DialogHeader>
-          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6">
+          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6 touch-pan-y overscroll-contain">
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium">What is homeowners insurance?</h4>
@@ -1944,7 +1944,7 @@ const ClosingCostCalculator: React.FC = () => {
               One-time fees and expenses paid at the closing of a real estate transaction
             </DialogDescription>
           </DialogHeader>
-          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6">
+          <EnhancedScrollArea className="h-[45vh] sm:h-[55vh] md:h-[65vh] overflow-y-auto pr-6 touch-pan-y overscroll-contain">
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium">What are closing costs?</h4>

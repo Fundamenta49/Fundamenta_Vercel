@@ -7,6 +7,7 @@
   touch-action: pan-y;
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 /* Prevent content from jumping when scrolling on mobile */
@@ -23,11 +24,31 @@
   border-radius: 10px;
 }
 
+/* Fix for touch scrolling on mobile devices */
+[data-radix-scroll-area-viewport] {
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  height: 100% !important;
+}
+
+/* Make sure the viewport and thumb are properly positioned */
+[data-radix-scroll-area-viewport] > div {
+  display: block !important;
+  min-height: 100% !important;
+  width: 100% !important;
+}
+
 /* Ensure proper scroll behavior especially in dialog contexts */
 @media (max-width: 640px) {
   .dialog-scroll-container {
     overscroll-behavior-y: contain;
     max-height: calc(100vh - 10rem);
     padding-bottom: 1rem;
+  }
+  
+  /* Additional mobile fixes */
+  [data-radix-scroll-area-viewport] {
+    max-height: calc(100vh - 10rem) !important;
   }
 }

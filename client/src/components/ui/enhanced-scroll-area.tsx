@@ -6,21 +6,47 @@ import { cn } from "@/lib/utils"
 const EnhancedScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => (
-  <ScrollAreaPrimitive.Root
-    ref={ref}
-    className={cn("relative overflow-hidden", className)}
-    {...props}
-  >
-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
-      <div className="dialog-scroll-container">
-        {children}
-      </div>
-    </ScrollAreaPrimitive.Viewport>
-    <ScrollBar />
-    <ScrollAreaPrimitive.Corner />
-  </ScrollAreaPrimitive.Root>
-))
+>(({ className, children, ...props }, ref) => {
+  // Use a ref to add touch event handling
+  const viewportRef = React.useRef<HTMLDivElement>(null);
+  
+  // Add touch event handler to improve mobile scrolling
+  React.useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    
+    const handleTouchStart = (e: TouchEvent) => {
+      // Allow default touch behavior for scrolling
+      e.stopPropagation();
+    };
+    
+    viewport.addEventListener('touchstart', handleTouchStart, { passive: true });
+    
+    return () => {
+      viewport.removeEventListener('touchstart', handleTouchStart);
+    };
+  }, []);
+  
+  return (
+    <ScrollAreaPrimitive.Root
+      ref={ref}
+      className={cn("relative overflow-hidden", className)}
+      {...props}
+    >
+      <ScrollAreaPrimitive.Viewport 
+        ref={viewportRef}
+        className="h-full w-full rounded-[inherit]"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
+        <div className="dialog-scroll-container">
+          {children}
+        </div>
+      </ScrollAreaPrimitive.Viewport>
+      <ScrollBar />
+      <ScrollAreaPrimitive.Corner />
+    </ScrollAreaPrimitive.Root>
+  );
+})
 EnhancedScrollArea.displayName = "EnhancedScrollArea"
 
 const ScrollBar = React.forwardRef<
@@ -31,7 +57,7 @@ const ScrollBar = React.forwardRef<
     ref={ref}
     orientation={orientation}
     className={cn(
-      "flex touch-none select-none transition-colors",
+      "flex select-none transition-colors",
       orientation === "vertical" &&
         "h-full w-2.5 border-l border-l-transparent p-[1px]",
       orientation === "horizontal" &&
