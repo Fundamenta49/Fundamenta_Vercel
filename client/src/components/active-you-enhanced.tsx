@@ -1792,17 +1792,27 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               <div className="mb-6">
                 <h3 className="font-medium text-lg my-3">Sample Routine</h3>
                 <div className="grid gap-4">
-                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">Full Body Strength</div>
-                    <p className="text-sm text-muted-foreground mb-2">Target all major muscle groups with compound movements</p>
-                    <div className="text-sm space-y-2">
-                      <div><span className="font-medium">1.</span> Barbell Squat: 3 sets of 8-10 reps</div>
-                      <div><span className="font-medium">2.</span> Deadlift: 3 sets of 6-8 reps</div>
-                      <div><span className="font-medium">3.</span> Bench Press: 3 sets of 8-10 reps</div>
-                      <div><span className="font-medium">4.</span> Bent-over Rows: 3 sets of 10-12 reps</div>
-                      <div><span className="font-medium">5.</span> Overhead Press: 3 sets of 8-10 reps</div>
-                      <div><span className="font-medium">6.</span> Bicep Curls: 3 sets of 12-15 reps</div>
-                    </div>
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="full-body-strength" className="border-none">
+                        <AccordionTrigger className="p-0 hover:no-underline">
+                          <div>
+                            <div className="font-medium text-lg">Full Body Strength</div>
+                            <p className="text-sm text-muted-foreground">Target all major muscle groups with compound movements</p>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="text-sm space-y-2 pt-2">
+                            <div><span className="font-medium">1.</span> Barbell Squat: 3 sets of 8-10 reps</div>
+                            <div><span className="font-medium">2.</span> Deadlift: 3 sets of 6-8 reps</div>
+                            <div><span className="font-medium">3.</span> Bench Press: 3 sets of 8-10 reps</div>
+                            <div><span className="font-medium">4.</span> Bent-over Rows: 3 sets of 10-12 reps</div>
+                            <div><span className="font-medium">5.</span> Overhead Press: 3 sets of 8-10 reps</div>
+                            <div><span className="font-medium">6.</span> Bicep Curls: 3 sets of 12-15 reps</div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 </div>
               </div>
@@ -1861,19 +1871,29 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               <div className="mb-6">
                 <h3 className="font-medium text-lg my-3">Dynamic Warm-up Stretches</h3>
                 <div className="grid gap-4">
-                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="font-medium text-lg mb-1">5-Minute Runner's Warm-up</div>
-                    <p className="text-sm text-muted-foreground mb-2">Complete this sequence before every run</p>
-                    <div className="text-sm space-y-2">
-                      <div><span className="font-medium">1.</span> Ankle Rotations: 10 circles in each direction for both feet</div>
-                      <div><span className="font-medium">2.</span> Walking Knee Pulls: 10 steps, pulling knee to chest</div>
-                      <div><span className="font-medium">3.</span> Hip Circles: 10 rotations in each direction</div>
-                      <div><span className="font-medium">4.</span> Dynamic Leg Swings: 10 forward/back and 10 side-to-side for each leg</div>
-                      <div><span className="font-medium">5.</span> Calf Raises: 15 slow raises on each leg</div>
-                      <div><span className="font-medium">6.</span> Hamstring Sweeps: 10 per leg, gently sweeping hands toward toes</div>
-                      <div><span className="font-medium">7.</span> Gentle Arm Circles: 10 forward and 10 backward</div>
-                      <div><span className="font-medium">8.</span> Light Jogging: 2 minutes of very light jogging in place</div>
-                    </div>
+                  <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="runner-warmup" className="border-none">
+                        <AccordionTrigger className="p-0 hover:no-underline">
+                          <div>
+                            <div className="font-medium text-lg">5-Minute Runner's Warm-up</div>
+                            <p className="text-sm text-muted-foreground">Complete this sequence before every run</p>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="text-sm space-y-2 pt-2">
+                            <div><span className="font-medium">1.</span> Ankle Rotations: 10 circles in each direction for both feet</div>
+                            <div><span className="font-medium">2.</span> Walking Knee Pulls: 10 steps, pulling knee to chest</div>
+                            <div><span className="font-medium">3.</span> Hip Circles: 10 rotations in each direction</div>
+                            <div><span className="font-medium">4.</span> Dynamic Leg Swings: 10 forward/back and 10 side-to-side for each leg</div>
+                            <div><span className="font-medium">5.</span> Calf Raises: 15 slow raises on each leg</div>
+                            <div><span className="font-medium">6.</span> Hamstring Sweeps: 10 per leg, gently sweeping hands toward toes</div>
+                            <div><span className="font-medium">7.</span> Gentle Arm Circles: 10 forward and 10 backward</div>
+                            <div><span className="font-medium">8.</span> Light Jogging: 2 minutes of very light jogging in place</div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 </div>
               </div>
