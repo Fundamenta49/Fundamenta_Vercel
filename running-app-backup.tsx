@@ -21,9 +21,6 @@ import {
   Clock,
   Flag,
   Plus,
-  ChevronDown,
-  ChevronUp,
-  X
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { MapContainer, TileLayer, Polyline, useMap } from "react-leaflet";
@@ -812,13 +809,16 @@ export default function RunningApp() {
   };
 
   return (
-    <div className="space-y-4">
-      <Card className="overflow-hidden shadow-sm border-0">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-xl">
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-primary" />
             Run Tracker
           </CardTitle>
+          <CardDescription>
+            Track your runs and achieve your 5K and 10K goals
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {showFundiEncouragement && currentSession && (
