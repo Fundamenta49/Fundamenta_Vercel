@@ -30,7 +30,7 @@ export const AIResponseSchema = z.object({
   suggestions: z.array(
     z.object({
       text: z.string(),
-      path: z.string().optional(),
+      path: z.union([z.string(), z.null()]).optional(),
       description: z.string().optional(),
       action: z.any().optional()
     })
