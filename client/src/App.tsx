@@ -52,6 +52,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
 import PersonalityTestPage from "@/pages/admin/personality-test";
 import ProtectedRoute from "@/components/protected-route";
+import { SkeletonDemoPage } from "@/components/SkeletonDemoPage";
 
 // Component to handle redirects from /wellness/* to /wellness?section=*
 function WellnessRedirect() {
@@ -200,6 +201,7 @@ function Router() {
             <Route path="/admin" component={AdminPage} />
             <Route path="/admin/personality-test" component={PersonalityTestPage} />
             <Route path="/design-showcase" component={DesignShowcasePage} />
+            <Route path="/ui/skeletons" component={SkeletonDemoPage} />
             <Route path="/learning">
               <ProtectedRoute>
                 <Learning />

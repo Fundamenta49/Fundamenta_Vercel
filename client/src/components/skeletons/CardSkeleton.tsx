@@ -1,55 +1,60 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 
 interface CardSkeletonProps {
   hasImage?: boolean;
-  hasFooter?: boolean;
   imageHeight?: string;
-  titleWidth?: string;
-  descriptionLines?: number;
+  hasHeader?: boolean;
+  hasFooter?: boolean;
+  hasDescription?: boolean;
+  hasAction?: boolean;
   className?: string;
 }
 
 /**
- * A skeleton loader for card components
+ * A skeleton loader for card layouts
  * 
- * @param hasImage Whether to include an image placeholder
- * @param hasFooter Whether to include a footer section
- * @param imageHeight Height of the image placeholder
- * @param titleWidth Width of the title placeholder
- * @param descriptionLines Number of description lines to show
- * @param className Additional classes to apply to the card
+ * @param hasImage Whether to show an image skeleton
+ * @param imageHeight Height of the image skeleton (e.g., "200px")
+ * @param hasHeader Whether to show a header skeleton
+ * @param hasFooter Whether to show a footer skeleton
+ * @param hasDescription Whether to show a description skeleton
+ * @param hasAction Whether to show an action button skeleton
+ * @param className Additional classes for the card
  */
 export function CardSkeleton({
   hasImage = true,
-  hasFooter = false,
-  imageHeight = "h-40",
-  titleWidth = "w-3/4",
-  descriptionLines = 2,
+  imageHeight = "200px",
+  hasHeader = true,
+  hasFooter = true,
+  hasDescription = true,
+  hasAction = true,
   className = "",
 }: CardSkeletonProps) {
   return (
-    <Card className={className}>
+    <Card className={`overflow-hidden ${className}`}>
       {hasImage && (
-        <Skeleton className={`rounded-b-none rounded-t-md ${imageHeight} w-full`} />
+        <Skeleton className={`w-full h-[200px]`} style={{ height: imageHeight }} />
       )}
-      <CardHeader className="pb-2">
-        <Skeleton className={`h-6 ${titleWidth} mb-2`} />
-        <Skeleton className="h-4 w-1/2" />
-      </CardHeader>
-      <CardContent className="pb-3">
-        {Array.from({ length: descriptionLines }).map((_, i) => (
-          <Skeleton 
-            key={i} 
-            className={`h-4 mb-2 ${i === descriptionLines - 1 ? "w-4/5" : "w-full"}`} 
-          />
-        ))}
+      
+      {hasHeader && (
+        <CardHeader className="p-4 pb-0">
+          <Skeleton className="h-5 w-full mb-2" />
+          {hasDescription && (
+            <Skeleton className="h-4 w-2/3" />
+          )}
+        </CardHeader>
+      )}
+      
+      <CardContent className="p-4">
+        <Skeleton className="h-4 w-full mb-2" />
+        <Skeleton className="h-4 w-4/5" />
       </CardContent>
-      {hasFooter && (
-        <CardFooter>
-          <Skeleton className="h-9 w-24 mr-2" />
-          <Skeleton className="h-9 w-24" />
+      
+      {hasFooter && hasAction && (
+        <CardFooter className="p-4 pt-0">
+          <Skeleton className="h-10 w-full rounded-md" />
         </CardFooter>
       )}
     </Card>

@@ -2,61 +2,58 @@ import React from "react";
 import { CardSkeleton } from "./CardSkeleton";
 import { VideoThumbnailSkeleton } from "./VideoThumbnailSkeleton";
 
+interface ColumnConfig {
+  sm?: number;
+  md?: number;
+  lg?: number;
+}
+
 interface GridSkeletonProps {
   count?: number;
-  type?: "card" | "video";
-  columns?: {
-    sm?: number;
-    md?: number;
-    lg?: number;
-  };
+  type?: "card" | "video" | "custom";
+  columns?: ColumnConfig;
   className?: string;
   itemClassName?: string;
+  customItem?: React.ReactNode;
 }
 
 /**
  * A skeleton loader for grid layouts
  * 
  * @param count Number of skeleton items to display
- * @param type Type of skeleton item to display ('card' or 'video')
- * @param columns Number of columns at different breakpoints
+ * @param type Type of skeleton item to display ("card" or "video")
+ * @param columns Column configuration for different breakpoints
  * @param className Additional classes for the grid container
- * @param itemClassName Additional classes for individual skeleton items
+ * @param itemClassName Additional classes for each grid item
+ * @param customItem Custom React node to use instead of built-in types
  */
 export function GridSkeleton({
-  count = 6,
+  count = 4,
   type = "card",
   columns = { sm: 1, md: 2, lg: 3 },
   className = "",
   itemClassName = "",
+  customItem,
 }: GridSkeletonProps) {
-  // Create the grid template columns CSS
-  const gridCols = `
-    grid-cols-${columns.sm || 1}
-    md:grid-cols-${columns.md || 2}
-    lg:grid-cols-${columns.lg || 3}
-  `;
+  // Build grid classes based on column configuration
+  const gridColClasses = [
+    columns.sm ? `grid-cols-${columns.sm}` : "grid-cols-1",
+    columns.md ? `md:grid-cols-${columns.md}` : "md:grid-cols-2",
+    columns.lg ? `lg:grid-cols-${columns.lg}` : "lg:grid-cols-3",
+  ].join(" ");
 
   return (
-    <div className={`grid gap-4 ${gridCols} ${className}`}>
-      {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className={itemClassName}>
-          {type === "card" ? (
-            <CardSkeleton 
-              hasImage={true}
-              hasFooter={false}
-              imageHeight="h-40"
-              descriptionLines={2}
-            />
-          ) : (
-            <VideoThumbnailSkeleton 
-              aspectRatio="video"
-              showTitle={true}
-              showChannel={true}
-            />
-          )}
-        </div>
-      ))}
+    <div className={`grid ${gridColClasses} gap-4 ${className}`}>
+      {Array.from({ length: count }).map((_, i) => {
+        if (type === "card") {
+          return <CardSkeleton key={i} className={itemClassName} />;
+        } else if (type === "video") {
+          return <VideoThumbnailSkeleton key={i} className={itemClassName} />;
+        } else if (customItem) {
+          return <React.Fragment key={i}>{customItem}</React.Fragment>;
+        }
+        return null;
+      })}
     </div>
   );
 }
