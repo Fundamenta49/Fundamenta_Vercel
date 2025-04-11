@@ -5,6 +5,7 @@ import multer from "multer";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { runMigrations } from "./db/index";
+import { initializeFundiCore } from "./fundi-core/fundi-integration";
 
 const startTime = Date.now();
 log("Starting server...");
@@ -140,6 +141,17 @@ app.get("/api/health", (_req, res) => {
         log(`Failed to setup static serving: ${error instanceof Error ? error.message : String(error)}`);
         throw error;
       }
+    }
+
+    // Initialize Fundi Core system
+    log("Initializing Fundi Core protection system...");
+    try {
+      await initializeFundiCore();
+      log(`Fundi Core initialized (${Date.now() - startTime}ms)`);
+    } catch (error) {
+      log(`Fundi Core initialization warning: ${error instanceof Error ? error.message : String(error)}`);
+      log("Server will continue with basic AI functionality");
+      // Continue even if Fundi Core initialization fails
     }
 
     log(`Server fully initialized (total startup time: ${Date.now() - startTime}ms)`);
