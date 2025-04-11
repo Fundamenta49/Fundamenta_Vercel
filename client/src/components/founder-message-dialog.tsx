@@ -1,7 +1,6 @@
 import {
   Dialog,
-  DialogContent,
-  DialogOverlay,
+  DialogContent
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,8 +14,7 @@ interface FounderMessageDialogProps {
 export default function FounderMessageDialog({ open, onOpenChange }: FounderMessageDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogOverlay className="bg-black/30 backdrop-blur-sm" />
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-none shadow-2xl mx-auto rounded-none">
+      <DialogContent className="bg-transparent border-0 shadow-none overflow-y-auto p-0 max-w-2xl">
         {/* Decorative paperclip */}
         <div className="absolute -top-4 left-8 z-10 w-8 h-12 bg-gray-400 rounded-sm transform rotate-45 opacity-80"></div>
         

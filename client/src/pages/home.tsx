@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, Info } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import RestartTourButton from "@/components/tour/restart-tour-button";
 import WeatherWidget from "@/components/weather-widget";
 import { useTour } from "@/contexts/tour-context";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FounderMessageDialog from "@/components/founder-message-dialog";
 
 const features = [
@@ -58,6 +58,20 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
   const { startTour } = useTour();
   const [founderMessageOpen, setFounderMessageOpen] = useState(false);
+  const [, params] = useLocation();
+  
+  // Check for query parameter to open the founder message dialog
+  useEffect(() => {
+    // Get query params from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldOpenDialog = urlParams.get('openFounderMessage');
+    
+    if (shouldOpenDialog === 'true') {
+      setFounderMessageOpen(true);
+      // Clear the parameter from URL to avoid reopening on page refresh
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   return (
     <div className="px-4 py-8">

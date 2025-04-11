@@ -84,6 +84,18 @@ function YogaRedirect() {
   return null;
 }
 
+// Component to handle redirects from /why-fundamenta to home page with dialog open
+function WhyFundamentaRedirect() {
+  const [, navigate] = useLocation();
+  
+  useEffect(() => {
+    // Redirect to home page with parameter to open the dialog
+    navigate('/?openFounderMessage=true');
+  }, [navigate]);
+  
+  return null;
+}
+
 // Component to handle redirects from /fitness/* to /active?section=*
 function FitnessRedirect() {
   const [, navigate] = useLocation();
@@ -123,7 +135,9 @@ function Router() {
                 <Home />
               </ProtectedRoute>
             </Route>
-            <Route path="/why-fundamenta" component={WhyFundamenta} />
+            <Route path="/why-fundamenta">
+              <WhyFundamentaRedirect />
+            </Route>
             <Route path="/partner" component={Partner} />
             <Route path="/privacy" component={Privacy} />
             <Route path="/invite" component={Invite} />
