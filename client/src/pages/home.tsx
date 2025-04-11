@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, Info } from "lucide-react";
 import { Link } from "wouter";
 import RestartTourButton from "@/components/tour/restart-tour-button";
 import WeatherWidget from "@/components/weather-widget";
 import { useTour } from "@/contexts/tour-context";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
-import { useEffect } from "react";
+import { useState } from "react";
+import FounderMessageDialog from "@/components/founder-message-dialog";
 
 const features = [
   {
@@ -56,6 +57,7 @@ const features = [
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const { startTour } = useTour();
+  const [founderMessageOpen, setFounderMessageOpen] = useState(false);
 
   return (
     <div className="px-4 py-8">
@@ -73,7 +75,24 @@ export default function Home() {
         <p className="text-lg text-muted-foreground">
           Your AI-powered assistant for life skills and wellness
         </p>
+        <div className="mt-4">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2 font-normal"
+            onClick={() => setFounderMessageOpen(true)}
+          >
+            <Info className="h-4 w-4 text-primary" />
+            Why Fundamenta?
+          </Button>
+        </div>
       </div>
+
+      {/* Founder Message Dialog */}
+      <FounderMessageDialog
+        open={founderMessageOpen}
+        onOpenChange={setFounderMessageOpen}
+      />
       
       {/* Weather Widget - optimized for mobile */}
       <div className="w-full px-2 sm:px-4 md:px-6 max-w-3xl mx-auto mb-8">
