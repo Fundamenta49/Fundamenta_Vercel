@@ -131,7 +131,7 @@ function MusicPlayerControls() {
       if ('mediaSession' in navigator) {
         toast({
           title: "Music Player",
-          description: "Please select music from your device to play during your run.",
+          description: "Select music to play during your run",
         });
         
         // Create a file input element
@@ -173,14 +173,14 @@ function MusicPlayerControls() {
         toast({
           variant: "destructive",
           title: "Media Not Supported",
-          description: "Your browser doesn't support the Media API features.",
+          description: "Your browser doesn't support the Media API features",
         });
       }
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Media Access Error",
-        description: "Unable to access your media files.",
+        description: "Unable to access your media files",
       });
     }
   };
@@ -200,44 +200,43 @@ function MusicPlayerControls() {
   };
 
   return (
-    <Card className="music-player">
-      <CardHeader className="py-3">
-        <CardTitle className="text-sm flex items-center">
-          <Music className="h-4 w-4 mr-2" />
-          Music Player
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pb-4">
-        <div className="text-center">
-          {currentTrack ? (
-            <div className="mb-3 text-sm font-medium truncate">{currentTrack}</div>
-          ) : (
-            <div className="mb-3 text-sm text-muted-foreground">Select music to play during your run</div>
-          )}
-          
-          <div className="flex justify-center gap-2 mt-1">
-            <Button 
-              onClick={togglePlayback} 
-              variant={isPlaying ? "outline" : "default"}
-              size="sm"
-            >
-              {isPlaying ? "Pause" : "Play"}
-            </Button>
-            
-            <Button
-              onClick={handleMediaAccess}
-              variant="outline"
-              size="sm"
-            >
-              Select Music
-            </Button>
-          </div>
+    <div className="rounded-lg bg-slate-50 p-3">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center">
+          <Music className="h-4 w-4 mr-2 text-slate-500" />
+          <span className="text-sm font-medium">Running Music</span>
         </div>
+      </div>
+      
+      {currentTrack ? (
+        <div className="mb-2 text-xs text-slate-600 truncate max-w-full">{currentTrack}</div>
+      ) : (
+        <div className="mb-2 text-xs text-slate-500">No track selected</div>
+      )}
+      
+      <div className="flex gap-2">
+        <Button 
+          onClick={togglePlayback} 
+          variant={isPlaying ? "outline" : "default"}
+          size="sm"
+          className="h-8 px-3 text-xs flex-1"
+        >
+          {isPlaying ? "Pause" : "Play"}
+        </Button>
         
-        {/* Hidden audio element */}
-        <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />
-      </CardContent>
-    </Card>
+        <Button
+          onClick={handleMediaAccess}
+          variant="outline"
+          size="sm"
+          className="h-8 px-3 text-xs flex-1"
+        >
+          Select Music
+        </Button>
+      </div>
+      
+      {/* Hidden audio element */}
+      <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />
+    </div>
   );
 }
 
@@ -265,71 +264,56 @@ function MilestoneTracker({ currentDistance, bestTimes }: {
   const dailyProgress = Math.min(100, (currentDistance / dailyGoalMiles) * 100);
 
   return (
-    <Card className="milestone-tracker">
-      <CardHeader className="py-3">
-        <CardTitle className="text-sm flex items-center">
-          <Trophy className="h-4 w-4 mr-2" />
-          Your Progress
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pb-3 space-y-4">
-        {/* Daily progress first */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <span className="text-sm font-medium">Today's Run</span>
-              {currentDistance >= dailyGoalMiles && (
-                <CheckCircle2 className="h-4 w-4 ml-2 text-green-500" />
-              )}
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {currentDistance >= dailyGoalMiles ? "Goal achieved!" : "Keep going!"}
-            </span>
+    <div className="space-y-3">
+      <div className="flex items-center mb-1">
+        <Trophy className="h-4 w-4 mr-2 text-slate-500" />
+        <span className="text-sm font-medium">Run Progress</span>
+      </div>
+      
+      {/* Daily goal progress */}
+      <div className="space-y-1 bg-slate-50 p-2 rounded-md">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <span className="text-xs font-medium">Today's Goal</span>
+            {currentDistance >= dailyGoalMiles && (
+              <CheckCircle2 className="h-3 w-3 ml-1 text-green-500" />
+            )}
           </div>
-          <Progress value={dailyProgress} className="h-2" />
-          <div className="text-xs text-right text-muted-foreground">
-            {currentDistance.toFixed(2)} / {dailyGoalMiles.toFixed(2)} miles
+          <div className="text-xs text-slate-500">
+            {currentDistance.toFixed(1)} / {dailyGoalMiles} mi
           </div>
         </div>
-        
-        {/* Milestone trackers next */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <span className="text-sm font-medium">5K Progress</span>
-              {currentDistance >= MILESTONE_5K && (
-                <CheckCircle2 className="h-4 w-4 ml-2 text-green-500" />
-              )}
-            </div>
-            <span className="text-sm text-muted-foreground">
-              Best Time: {formatTime(bestTimes.fiveK)}
-            </span>
-          </div>
-          <Progress value={fiveKProgress} className="h-2" />
-          <div className="text-xs text-right text-muted-foreground">
-            {currentDistance.toFixed(2)} / {MILESTONE_5K.toFixed(2)} miles
-          </div>
+        <Progress value={dailyProgress} className="h-1.5" />
+      </div>
+      
+      {/* 5K progress */}
+      <div className="space-y-1 bg-slate-50 p-2 rounded-md">
+        <div className="flex justify-between items-center">
+          <span className="text-xs font-medium">5K</span>
+          <span className="text-xs text-slate-500">
+            {bestTimes.fiveK ? formatTime(bestTimes.fiveK) : "--:--"}
+          </span>
         </div>
-        
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <span className="text-sm font-medium">10K Progress</span>
-              {currentDistance >= MILESTONE_10K && (
-                <CheckCircle2 className="h-4 w-4 ml-2 text-green-500" />
-              )}
-            </div>
-            <span className="text-sm text-muted-foreground">
-              Best Time: {formatTime(bestTimes.tenK)}
-            </span>
-          </div>
-          <Progress value={tenKProgress} className="h-2" />
-          <div className="text-xs text-right text-muted-foreground">
-            {currentDistance.toFixed(2)} / {MILESTONE_10K.toFixed(2)} miles
-          </div>
+        <Progress 
+          value={fiveKProgress} 
+          className={`h-1.5 ${currentDistance >= MILESTONE_5K ? "bg-green-100" : ""}`} 
+        />
+      </div>
+      
+      {/* 10K progress */}
+      <div className="space-y-1 bg-slate-50 p-2 rounded-md">
+        <div className="flex justify-between items-center">
+          <span className="text-xs font-medium">10K</span>
+          <span className="text-xs text-slate-500">
+            {bestTimes.tenK ? formatTime(bestTimes.tenK) : "--:--"}
+          </span>
         </div>
-      </CardContent>
-    </Card>
+        <Progress 
+          value={tenKProgress} 
+          className={`h-1.5 ${currentDistance >= MILESTONE_10K ? "bg-green-100" : ""}`} 
+        />
+      </div>
+    </div>
   );
 }
 
@@ -940,111 +924,149 @@ export default function RunningApp() {
                 <TabsTrigger value="goals">Goals & Milestones</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="run" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card>
-                    <CardHeader className="py-3">
-                      <CardTitle className="text-sm">Duration</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {currentSession ? formatDuration(currentSession.duration) : "00:00:00"}
-                      </div>
-                    </CardContent>
-                  </Card>
+              <TabsContent value="run" className="space-y-4">
+                {/* Big colorful metric cards at top */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-3 text-center">
+                    <div className="text-xs uppercase tracking-wide text-blue-600 mb-1 font-medium">Duration</div>
+                    <div className="text-xl font-bold text-blue-900">
+                      {currentSession ? formatDuration(currentSession.duration) : "00:00:00"}
+                    </div>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="py-3">
-                      <CardTitle className="text-sm">Distance</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {currentSession ? currentSession.distance.toFixed(2) : "0.00"} mi
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-3 text-center">
+                    <div className="text-xs uppercase tracking-wide text-green-600 mb-1 font-medium">Distance</div>
+                    <div className="text-xl font-bold text-green-900">
+                      {currentSession ? currentSession.distance.toFixed(2) : "0.00"} mi
+                    </div>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="py-3">
-                      <CardTitle className="text-sm">Current Pace</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {currentSession && currentSession.pace > 0 
-                          ? formatPace(currentSession.pace) 
-                          : "--:--"} min/mi
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-3 text-center">
+                    <div className="text-xs uppercase tracking-wide text-purple-600 mb-1 font-medium">Pace</div>
+                    <div className="text-xl font-bold text-purple-900">
+                      {currentSession && currentSession.pace > 0 
+                        ? formatPace(currentSession.pace) 
+                        : "--:--"}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="h-[400px] rounded-lg overflow-hidden border relative">
+                {/* Map section */}
+                <div className="h-[350px] rounded-lg overflow-hidden border border-slate-200 relative">
                   {currentSession && currentSession.route.length > 0 ? (
                     <>
                       <RouteMap route={currentSession.route} isTracking={isTracking} />
                       
                       {/* Real-time tracking indicator overlay */}
                       {isTracking && (
-                        <div className="absolute top-3 right-3 bg-white/90 rounded-md shadow-md px-3 py-2 flex items-center z-[1000] text-sm">
-                          <div className="h-3 w-3 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                        <div className="absolute top-3 right-3 bg-white/90 rounded-md shadow-md px-3 py-2 flex items-center z-[1000] text-xs">
+                          <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2 animate-pulse"></div>
                           <span>
                             {localStorage.getItem('location_permission') === 'demo' 
-                              ? "Simulated GPS Data (Demo)" 
-                              : "Live GPS Tracking"}
+                              ? "Simulated GPS" 
+                              : "Live Tracking"}
                           </span>
                         </div>
                       )}
                       
                       {/* Demo mode badge */}
                       {localStorage.getItem('location_permission') === 'demo' && (
-                        <div className="absolute bottom-3 left-3 bg-orange-100 text-orange-800 rounded-md shadow-md px-3 py-1 flex items-center z-[1000] text-xs font-medium border border-orange-200">
+                        <div className="absolute bottom-3 left-3 bg-orange-100 text-orange-800 rounded-md shadow-md px-2 py-1 flex items-center z-[1000] text-xs font-medium border border-orange-200">
                           <span>Demo Mode</span>
                         </div>
                       )}
                     </>
                   ) : (
                     <div className="h-full flex flex-col items-center justify-center text-center p-4 bg-slate-50">
-                      <MapPin className="h-12 w-12 text-slate-400 mb-4" />
-                      <h3 className="text-lg font-medium text-slate-700">GPS Map</h3>
-                      <p className="text-sm text-slate-500 max-w-xs">
+                      <MapPin className="h-10 w-10 text-slate-400 mb-3" />
+                      <h3 className="text-base font-medium text-slate-700 mb-1">GPS Map</h3>
+                      <p className="text-xs text-slate-500 max-w-xs">
                         {isTracking 
-                          ? "Waiting for GPS signal. Please make sure you're outside with clear sky view."
-                          : "Press start to begin tracking your route. Map will appear when GPS data is available."}
+                          ? "Waiting for GPS signal. Make sure you're outside with clear sky view."
+                          : "Press start to begin tracking your route."}
                       </p>
                     </div>
                   )}
                 </div>
-                
-                {/* Milestone Tracker */}
-                {currentSession && (
-                  <MilestoneTracker 
-                    currentDistance={currentSession.distance} 
-                    bestTimes={bestTimes}
-                  />
-                )}
-                
-                {/* Add music player integration */}
-                <MusicPlayerControls />
 
-                <div className="flex justify-center gap-4">
+                {/* Collapsible sections */}
+                <div className="space-y-2">
+                  {/* Milestone Tracker Section */}
+                  <div className="border border-slate-200 rounded-lg overflow-hidden">
+                    <button 
+                      className="w-full flex items-center justify-between p-3 text-left bg-slate-50 hover:bg-slate-100 transition-colors"
+                      onClick={() => setIsStatsExpanded(!isStatsExpanded)}
+                    >
+                      <div className="flex items-center">
+                        <Trophy className="h-4 w-4 text-slate-500 mr-2" />
+                        <span className="text-sm font-medium">Stats & Progress</span>
+                      </div>
+                      <div>
+                        {isStatsExpanded ? (
+                          <ChevronUp className="h-4 w-4 text-slate-500" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 text-slate-500" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {isStatsExpanded && currentSession && (
+                      <div className="p-3">
+                        <MilestoneTracker 
+                          currentDistance={currentSession.distance} 
+                          bestTimes={bestTimes}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Music Player Section */}
+                  <div className="border border-slate-200 rounded-lg overflow-hidden">
+                    <button 
+                      className="w-full flex items-center justify-between p-3 text-left bg-slate-50 hover:bg-slate-100 transition-colors"
+                      onClick={() => setShowMusicPlayer(!showMusicPlayer)}
+                    >
+                      <div className="flex items-center">
+                        <Music className="h-4 w-4 text-slate-500 mr-2" />
+                        <span className="text-sm font-medium">Music Controls</span>
+                      </div>
+                      <div>
+                        {showMusicPlayer ? (
+                          <ChevronUp className="h-4 w-4 text-slate-500" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 text-slate-500" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {showMusicPlayer && (
+                      <div className="p-3">
+                        <MusicPlayerControls />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Start/Stop Button */}
+                <div className="flex justify-center mt-4">
                   {!isTracking ? (
                     <Button
                       size="lg"
                       onClick={startRun}
-                      className="w-32"
+                      className="w-full max-w-xs bg-green-600 hover:bg-green-700 text-white"
                     >
                       <Play className="h-4 w-4 mr-2" />
-                      Start
+                      Start Run
                     </Button>
                   ) : (
                     <Button
                       size="lg"
                       variant="destructive"
                       onClick={stopRun}
-                      className="w-32"
+                      className="w-full max-w-xs"
                     >
                       <Square className="h-4 w-4 mr-2" />
-                      Stop
+                      Stop Run
                     </Button>
                   )}
                 </div>
@@ -1107,7 +1129,7 @@ export default function RunningApp() {
                             <Trophy className="h-4 w-4 mr-2 text-blue-500" />
                             10K Milestone
                           </CardTitle>
-                          <Badge variant={bestTimes.tenK ? "success" : "secondary"}>
+                          <Badge variant="secondary" className={bestTimes.tenK ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}>
                             {bestTimes.tenK ? "Achieved" : "In Progress"}
                           </Badge>
                         </div>
