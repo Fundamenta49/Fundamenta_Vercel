@@ -21,6 +21,7 @@ import { searchCookingVideos, getYouTubeEmbedUrl } from '@/lib/youtube-service';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RecipeDetailDialog } from '@/components/recipe-detail-dialog';
 import { VideoPlayerDialog } from '@/components/video-player-dialog';
+import { CardSkeleton, VideoThumbnailSkeleton, GridSkeleton } from '@/components/skeletons';
 
 interface YouTubeVideo {
   id: string;
