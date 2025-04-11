@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { EnhancedScrollArea } from '@/components/ui/enhanced-scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -1308,28 +1309,30 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
             <DialogHeader>
               <DialogTitle>Understanding PMI (Private Mortgage Insurance)</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 text-sm">
-              <p>
-                <strong>What is PMI?</strong> Private Mortgage Insurance protects the lender if you default on your loan.
-              </p>
-              <p>
-                <strong>When is it required?</strong> PMI is typically required when your down payment is less than 20% of the home's purchase price.
-              </p>
-              <p>
-                <strong>How much does it cost?</strong> PMI usually costs between 0.3% to 1.2% of your loan amount annually. In this calculator, we're using {DEFAULT_PMI_RATE.toFixed(2)}%.
-              </p>
-              <p>
-                <strong>How to avoid PMI:</strong>
-              </p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Make a down payment of at least 20%</li>
-                <li>Consider a piggyback loan (80-10-10 loan)</li>
-                <li>Look into lender-paid PMI options (higher interest rate)</li>
-              </ul>
-              <p>
-                <strong>How to remove PMI:</strong> Once you reach 20% equity in your home, you can request PMI removal. It's automatically terminated at 22% equity.
-              </p>
-            </div>
+            <EnhancedScrollArea className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What is PMI?</strong> Private Mortgage Insurance protects the lender if you default on your loan.
+                </p>
+                <p>
+                  <strong>When is it required?</strong> PMI is typically required when your down payment is less than 20% of the home's purchase price.
+                </p>
+                <p>
+                  <strong>How much does it cost?</strong> PMI usually costs between 0.3% to 1.2% of your loan amount annually. In this calculator, we're using {DEFAULT_PMI_RATE.toFixed(2)}%.
+                </p>
+                <p>
+                  <strong>How to avoid PMI:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Make a down payment of at least 20%</li>
+                  <li>Consider a piggyback loan (80-10-10 loan)</li>
+                  <li>Look into lender-paid PMI options (higher interest rate)</li>
+                </ul>
+                <p>
+                  <strong>How to remove PMI:</strong> Once you reach 20% equity in your home, you can request PMI removal. It's automatically terminated at 22% equity.
+                </p>
+              </div>
+            </EnhancedScrollArea>
           </DialogContent>
         </Dialog>
         
@@ -1338,30 +1341,32 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
             <DialogHeader>
               <DialogTitle>Understanding Property Taxes</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 text-sm">
-              <p>
-                <strong>What are property taxes?</strong> Property taxes are assessed by local governments to fund schools, infrastructure, public services, and more.
-              </p>
-              <p>
-                <strong>How are they calculated?</strong> Property taxes are typically a percentage of your home's assessed value. For {STATE_DATA[netSheet.selectedState].name}, we're using {STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}% annually, which is the average rate for this state.
-              </p>
-              <p>
-                <strong>How are they paid?</strong> Property taxes are usually paid:
-              </p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Through an escrow account with your mortgage payment</li>
-                <li>Directly to your county/municipality (typically annually or semi-annually)</li>
-              </ul>
-              <p>
-                <strong>Important considerations:</strong>
-              </p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Property tax rates vary significantly by location</li>
-                <li>Tax assessments may not match market value</li>
-                <li>You might qualify for exemptions (homestead, senior, etc.)</li>
-                <li>Property taxes typically increase over time</li>
-              </ul>
-            </div>
+            <EnhancedScrollArea className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What are property taxes?</strong> Property taxes are assessed by local governments to fund schools, infrastructure, public services, and more.
+                </p>
+                <p>
+                  <strong>How are they calculated?</strong> Property taxes are typically a percentage of your home's assessed value. For {STATE_DATA[netSheet.selectedState].name}, we're using {STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}% annually, which is the average rate for this state.
+                </p>
+                <p>
+                  <strong>How are they paid?</strong> Property taxes are usually paid:
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Through an escrow account with your mortgage payment</li>
+                  <li>Directly to your county/municipality (typically annually or semi-annually)</li>
+                </ul>
+                <p>
+                  <strong>Important considerations:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Property tax rates vary significantly by location</li>
+                  <li>Tax assessments may not match market value</li>
+                  <li>You might qualify for exemptions (homestead, senior, etc.)</li>
+                  <li>Property taxes typically increase over time</li>
+                </ul>
+              </div>
+            </EnhancedScrollArea>
           </DialogContent>
         </Dialog>
         
@@ -1370,37 +1375,39 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
             <DialogHeader>
               <DialogTitle>Understanding Homeowners Insurance</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 text-sm">
-              <p>
-                <strong>What is homeowners insurance?</strong> Homeowners insurance protects your home and belongings from damage, theft, and liability claims.
-              </p>
-              <p>
-                <strong>Why is it required?</strong> Mortgage lenders require homeowners insurance to protect their investment in your property.
-              </p>
-              <p>
-                <strong>What does it typically cover?</strong>
-              </p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Dwelling coverage (structure of your home)</li>
-                <li>Personal property (belongings)</li>
-                <li>Liability protection</li>
-                <li>Additional living expenses if your home is uninhabitable</li>
-              </ul>
-              <p>
-                <strong>What's NOT typically covered?</strong>
-              </p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Flood damage (requires separate flood insurance)</li>
-                <li>Earthquake damage (requires separate policy)</li>
-                <li>Normal wear and tear</li>
-              </ul>
-              <p>
-                <strong>Factors affecting premiums:</strong> Location, home value, deductible amount, credit score, claim history, and coverage options.
-              </p>
-              <p>
-                <strong>How to save:</strong> Bundle with auto insurance, increase deductibles, install security systems, or improve your home's resilience.
-              </p>
-            </div>
+            <EnhancedScrollArea className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What is homeowners insurance?</strong> Homeowners insurance protects your home and belongings from damage, theft, and liability claims.
+                </p>
+                <p>
+                  <strong>Why is it required?</strong> Mortgage lenders require homeowners insurance to protect their investment in your property.
+                </p>
+                <p>
+                  <strong>What does it typically cover?</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Dwelling coverage (structure of your home)</li>
+                  <li>Personal property (belongings)</li>
+                  <li>Liability protection</li>
+                  <li>Additional living expenses if your home is uninhabitable</li>
+                </ul>
+                <p>
+                  <strong>What's NOT typically covered?</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Flood damage (requires separate flood insurance)</li>
+                  <li>Earthquake damage (requires separate policy)</li>
+                  <li>Normal wear and tear</li>
+                </ul>
+                <p>
+                  <strong>Factors affecting premiums:</strong> Location, home value, deductible amount, credit score, claim history, and coverage options.
+                </p>
+                <p>
+                  <strong>How to save:</strong> Bundle with auto insurance, increase deductibles, install security systems, or improve your home's resilience.
+                </p>
+              </div>
+            </EnhancedScrollArea>
           </DialogContent>
         </Dialog>
         
@@ -1409,59 +1416,61 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
             <DialogHeader>
               <DialogTitle>Understanding Closing Costs</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 text-sm">
-              <p>
-                <strong>What are closing costs?</strong> Closing costs are fees and expenses you pay when finalizing your mortgage and home purchase.
-              </p>
-              <p>
-                <strong>How much are they?</strong> Typically, closing costs range from 2% to 5% of the loan amount. In {STATE_DATA[netSheet.selectedState].name}, transfer taxes are approximately {STATE_DATA[netSheet.selectedState].transferTaxRate.toFixed(2)}% of the property value.
-              </p>
-              <p>
-                <strong>Common closing costs include:</strong>
-              </p>
-              <div className="space-y-2">
-                <div>
-                  <p className="font-medium">Lender Fees:</p>
-                  <ul className="list-disc list-inside pl-4">
-                    <li>Loan origination fee (typically 0.5-1% of loan amount)</li>
-                    <li>Application fee</li>
-                    <li>Credit report fee</li>
-                    <li>Underwriting fee</li>
-                    <li>Loan processing fee</li>
-                  </ul>
+            <EnhancedScrollArea className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What are closing costs?</strong> Closing costs are fees and expenses you pay when finalizing your mortgage and home purchase.
+                </p>
+                <p>
+                  <strong>How much are they?</strong> Typically, closing costs range from 2% to 5% of the loan amount. In {STATE_DATA[netSheet.selectedState].name}, transfer taxes are approximately {STATE_DATA[netSheet.selectedState].transferTaxRate.toFixed(2)}% of the property value.
+                </p>
+                <p>
+                  <strong>Common closing costs include:</strong>
+                </p>
+                <div className="space-y-2">
+                  <div>
+                    <p className="font-medium">Lender Fees:</p>
+                    <ul className="list-disc list-inside pl-4">
+                      <li>Loan origination fee (typically 0.5-1% of loan amount)</li>
+                      <li>Application fee</li>
+                      <li>Credit report fee</li>
+                      <li>Underwriting fee</li>
+                      <li>Loan processing fee</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-medium">Third-Party Fees:</p>
+                    <ul className="list-disc list-inside pl-4">
+                      <li>Appraisal fee</li>
+                      <li>Home inspection fee</li>
+                      <li>Title search and insurance</li>
+                      <li>Survey fee</li>
+                      <li>Attorney fees</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-medium">Government Fees:</p>
+                    <ul className="list-disc list-inside pl-4">
+                      <li>Recording fees</li>
+                      <li>Transfer taxes</li>
+                      <li>Property tax prepayments</li>
+                    </ul>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium">Third-Party Fees:</p>
-                  <ul className="list-disc list-inside pl-4">
-                    <li>Appraisal fee</li>
-                    <li>Home inspection fee</li>
-                    <li>Title search and insurance</li>
-                    <li>Survey fee</li>
-                    <li>Attorney fees</li>
-                  </ul>
-                </div>
-                <div>
-                  <p className="font-medium">Government Fees:</p>
-                  <ul className="list-disc list-inside pl-4">
-                    <li>Recording fees</li>
-                    <li>Transfer taxes</li>
-                    <li>Property tax prepayments</li>
-                  </ul>
-                </div>
+                <p>
+                  <strong>Who pays closing costs?</strong> Typically the buyer pays most closing costs, but some may be negotiable with the seller.
+                </p>
+                <p>
+                  <strong>How to reduce closing costs:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Shop around for lenders and service providers</li>
+                  <li>Ask for seller concessions</li>
+                  <li>Close at the end of the month</li>
+                  <li>Look for lender credits (in exchange for a higher interest rate)</li>
+                </ul>
               </div>
-              <p>
-                <strong>Who pays closing costs?</strong> Typically the buyer pays most closing costs, but some may be negotiable with the seller.
-              </p>
-              <p>
-                <strong>How to reduce closing costs:</strong>
-              </p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Shop around for lenders and service providers</li>
-                <li>Ask for seller concessions</li>
-                <li>Close at the end of the month</li>
-                <li>Look for lender credits (in exchange for a higher interest rate)</li>
-              </ul>
-            </div>
+            </EnhancedScrollArea>
           </DialogContent>
         </Dialog>
       </SimpleFullScreenDialog>

@@ -7,23 +7,80 @@ const EnhancedScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
 >(({ className, children, ...props }, ref) => {
-  // Use a ref to add touch event handling
+  // Use refs to add touch event handling
   const viewportRef = React.useRef<HTMLDivElement>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const internalRootRef = React.useRef<HTMLDivElement>(null);
+  const [isScrollable, setIsScrollable] = React.useState(false);
   
-  // Add touch event handler to improve mobile scrolling
+  // Check if content is scrollable (to show visual indicators)
+  React.useEffect(() => {
+    const checkScrollable = () => {
+      const container = scrollContainerRef.current;
+      if (container) {
+        // Check if content is taller than container
+        const hasScroll = container.scrollHeight > container.clientHeight;
+        setIsScrollable(hasScroll);
+      }
+    };
+    
+    // Initial check
+    checkScrollable();
+    
+    // Also check after window resize or content changes
+    window.addEventListener('resize', checkScrollable);
+    const resizeObserver = new ResizeObserver(checkScrollable);
+    
+    if (scrollContainerRef.current) {
+      resizeObserver.observe(scrollContainerRef.current);
+    }
+    
+    return () => {
+      window.removeEventListener('resize', checkScrollable);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  // Enhanced touch handling for better mobile scrolling
   React.useEffect(() => {
     const viewport = viewportRef.current;
-    if (!viewport) return;
+    const container = scrollContainerRef.current;
     
+    if (!viewport || !container) return;
+    
+    // Prevent scroll propagation to the parent
     const handleTouchStart = (e: TouchEvent) => {
-      // Allow default touch behavior for scrolling
       e.stopPropagation();
     };
     
+    // Handle scrolling momentum
+    const handleTouchMove = (e: TouchEvent) => {
+      if (container.scrollHeight > container.clientHeight) {
+        e.stopPropagation();
+      }
+    };
+    
+    // Improve scroll responsiveness
     viewport.addEventListener('touchstart', handleTouchStart, { passive: true });
+    viewport.addEventListener('touchmove', handleTouchMove, { passive: true });
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: true });
+    
+    // Add wheel event handling for better desktop scrolling
+    const handleWheel = (e: WheelEvent) => {
+      if (container.scrollHeight > container.clientHeight) {
+        e.stopPropagation();
+      }
+    };
+    
+    viewport.addEventListener('wheel', handleWheel, { passive: true });
     
     return () => {
       viewport.removeEventListener('touchstart', handleTouchStart);
+      viewport.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      viewport.removeEventListener('wheel', handleWheel);
     };
   }, []);
   
@@ -36,9 +93,18 @@ const EnhancedScrollArea = React.forwardRef<
       <ScrollAreaPrimitive.Viewport 
         ref={viewportRef}
         className="h-full w-full rounded-[inherit]"
-        style={{ WebkitOverflowScrolling: 'touch' }}
+        style={{ 
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth'
+        }}
       >
-        <div className="dialog-scroll-container">
+        <div 
+          ref={scrollContainerRef}
+          className={cn(
+            "dialog-scroll-container",
+            isScrollable && "is-scrollable"
+          )}
+        >
           {children}
         </div>
       </ScrollAreaPrimitive.Viewport>
