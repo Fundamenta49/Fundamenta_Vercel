@@ -951,9 +951,9 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                 <CardContent className="pt-4">
                   <Tabs defaultValue="monthly" className="w-full">
                     <TabsList className="grid w-full grid-cols-3 bg-green-100 dark:bg-green-950">
-                      <TabsTrigger value="upfront" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Upfront Costs</TabsTrigger>
-                      <TabsTrigger value="monthly" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Monthly Payment</TabsTrigger>
-                      <TabsTrigger value="longterm" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Long-term Costs</TabsTrigger>
+                      <TabsTrigger value="upfront" className="text-xs whitespace-normal px-2 py-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Upfront</TabsTrigger>
+                      <TabsTrigger value="monthly" className="text-xs whitespace-normal px-2 py-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Monthly</TabsTrigger>
+                      <TabsTrigger value="longterm" className="text-xs whitespace-normal px-2 py-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Long-term</TabsTrigger>
                     </TabsList>
                     
                     <TabsContent value="upfront" className="pt-4">
