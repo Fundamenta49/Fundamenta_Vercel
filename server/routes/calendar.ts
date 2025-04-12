@@ -23,7 +23,8 @@ router.post("/process-intent", async (req, res) => {
     // Check if this is a calendar-related request
     const calendarKeywords = [
       'calendar', 'schedule', 'reminder', 'remind me', 
-      'appointment', 'event', 'set a', 'add to calendar',
+      'appointment', 'dentist', 'doctor', 'meeting', 'interview',
+      'event', 'set a', 'add to calendar', 'add a',
       'plan for', 'remember to'
     ];
     
@@ -73,10 +74,10 @@ router.post("/process-intent", async (req, res) => {
 
     // Determine category based on keywords in the message
     const categoryPatterns = [
-      { category: 'finance', keywords: ['money', 'budget', 'financial', 'mortgage', 'loan', 'invest'] },
-      { category: 'health', keywords: ['health', 'doctor', 'wellness', 'checkup', 'medicine'] },
-      { category: 'career', keywords: ['job', 'work', 'career', 'interview', 'resume'] },
-      { category: 'learning', keywords: ['learn', 'study', 'course', 'education', 'school'] }
+      { category: 'finance', keywords: ['money', 'budget', 'financial', 'mortgage', 'loan', 'invest', 'taxes', 'banking', 'payment'] },
+      { category: 'health', keywords: ['health', 'doctor', 'wellness', 'checkup', 'medicine', 'dentist', 'dental', 'therapy', 'medical', 'appointment'] },
+      { category: 'career', keywords: ['job', 'work', 'career', 'interview', 'resume', 'meeting', 'professional', 'business'] },
+      { category: 'learning', keywords: ['learn', 'study', 'course', 'education', 'school', 'class', 'training', 'workshop'] }
     ];
 
     for (const pattern of categoryPatterns) {

@@ -24,7 +24,8 @@ export default function ChatCalendarConnector() {
     const lowerMessage = currentMessage.toLowerCase();
     const calendarKeywords = [
       'calendar', 'schedule', 'reminder', 'remind me', 
-      'appointment', 'set a', 'add to calendar',
+      'appointment', 'dentist', 'doctor', 'meeting', 'interview',
+      'set a', 'add to calendar', 'add a', 'add an',
       'save the date', 'plan for', 'remember to'
     ];
     

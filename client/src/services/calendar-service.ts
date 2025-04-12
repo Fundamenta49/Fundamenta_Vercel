@@ -247,8 +247,8 @@ class CalendarServiceImpl {
       return new Date(targetYear, targetMonth, startDay);
     }
 
-    // Look for specific day of month pattern (like "the 15th" or "on the 21st")
-    const specificDayRegex = /(?:on|by)?\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?(?:\s+of)?/i;
+    // Look for specific day of month pattern (like "the 15th" or "on the 21st", "for the 23rd")
+    const specificDayRegex = /(?:on|by|for)?\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?(?:\s+of)?/i;
     const specificDayMatch = lowerText.match(specificDayRegex);
     
     if (specificDayMatch) {
@@ -619,8 +619,8 @@ class CalendarServiceImpl {
 
       // Try to determine category
       const categoryKeywords: Record<string, string[]> = {
-        'finance': ['finance', 'money', 'budget', 'mortgage', 'loan', 'invest', 'tax', 'taxes', 'banking', 'financial'],
-        'health': ['health', 'doctor', 'medical', 'wellness', 'checkup', 'medicine', 'therapy'],
+        'finance': ['finance', 'money', 'budget', 'mortgage', 'loan', 'invest', 'tax', 'taxes', 'banking', 'financial', 'payment'],
+        'health': ['health', 'doctor', 'medical', 'wellness', 'checkup', 'medicine', 'therapy', 'dentist', 'dental', 'appointment'],
         'career': ['career', 'job', 'work', 'interview', 'resume', 'professional', 'business', 'meeting'],
         'learning': ['learn', 'study', 'class', 'course', 'education', 'school', 'research', 'practice', 'training']
       };
