@@ -207,6 +207,18 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Import auth context to check authentication status and get user info
   const { isAuthenticated, loading: authLoading, user } = useAuth();
   
+  // Set user's name from auth if available
+  useEffect(() => {
+    if (isAuthenticated && user && user.name && !userName) {
+      // Only use the first name when setting from auth
+      const firstName = user.name.split(' ')[0];
+      setUserName(firstName);
+      
+      // Save to localStorage for persistence
+      localStorage.setItem('tourUserName', firstName);
+    }
+  }, [isAuthenticated, user, userName]);
+  
   // Tour control functions
   const startTour = useCallback(() => {
     setIsTourActive(true);
@@ -511,12 +523,15 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     // First try to use the name from the authenticated user profile
     if (user && user.name) {
-      setUserName(user.name);
-      localStorage.setItem('tourUserName', user.name);
+      // Extract first name only
+      const firstName = user.name.split(' ')[0];
+      setUserName(firstName); 
+      localStorage.setItem('tourUserName', firstName);
     } else {
       // Fall back to checking if user name is stored in localStorage
       const savedUserName = localStorage.getItem('tourUserName');
       if (savedUserName) {
+        // Use saved name as is (should already be first name only)
         setUserName(savedUserName);
       } else if (isAuthenticated && user && user.email) {
         // If we have an authenticated user with email but no name, use email username
@@ -582,8 +597,23 @@ export const TourProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .replace(' {userName}', '')
         .replace('{userName}', '');
     }
-    // Otherwise, use their name
-    return content.replace(/\{userName\}/g, userName);
+    
+    // Extract the first name only
+    const firstName = userName.split(' ')[0];
+    
+    // Only show name in the first and last steps
+    if (currentStepIndex === 0 || currentStepIndex === tourSteps.length - 1) {
+      // Use first name only in these steps
+      return content.replace(/\{userName\}/g, firstName);
+    } else {
+      // Remove name references in all middle steps
+      return content
+        .replace('{userName}!!', '!')
+        .replace('{userName},', '')
+        .replace('{userName} ', '')
+        .replace(' {userName}', '')
+        .replace('{userName}', '');
+    }
   };
 
   // Process current step to include user name

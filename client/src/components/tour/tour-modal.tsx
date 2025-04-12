@@ -115,8 +115,11 @@ const TourModal = () => {
   const handleUserNameSubmit = useCallback(() => {
     if (!userNameInput.trim()) return;
     
+    // Extract only the first name when user enters their name
+    const firstName = userNameInput.trim().split(' ')[0];
+    
     // Set name and add a small timeout before advancing to allow state to update
-    setUserName(userNameInput.trim());
+    setUserName(firstName);
     setUserNameInput('');
     setShowUserNameInput(false);
     setIsTransitioning(true);
@@ -196,17 +199,17 @@ const TourModal = () => {
           <div className="py-3">
             <div className="mb-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
               <label htmlFor="user-name-input" className="block text-sm font-medium text-orange-800 mb-2">
-                Please enter your name to continue:
+                Please enter your first name to continue:
               </label>
               <Input
                 id="user-name-input"
-                placeholder="Your name"
+                placeholder="Your first name"
                 value={userNameInput}
                 onChange={(e) => setUserNameInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleUserNameSubmit()}
                 autoFocus
                 className="mb-2 border-orange-300 focus:border-orange-500 focus:ring focus:ring-orange-200"
-                aria-label="Enter your name"
+                aria-label="Enter your first name"
               />
             </div>
             <Button 
