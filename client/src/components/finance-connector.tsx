@@ -151,14 +151,14 @@ export default function FinanceConnector() {
         action = {
           type: 'navigate',
           payload: {
-            route: '/finance/budget-planner',
+            route: '/finance/budget',
             permissionGranted: true,
             reason: 'Opening Budget Planner'
           }
         };
         
         // Create form filling action if we extracted budget data
-        if (extractedData.income || extractedData.expense) {
+        if (extractedData.income || extractedData.expense || extractedData.rent) {
           const formData: Record<string, any> = {};
           
           if (extractedData.income) {
@@ -166,14 +166,45 @@ export default function FinanceConnector() {
             responseText += ` I've set your monthly income to ${formatCurrency(extractedData.income)}.`;
           }
           
+          // Add housing/rent as an expense if found
+          if (extractedData.rent) {
+            formData.housingExpense = extractedData.rent;
+            responseText += ` I've updated your housing expense to ${formatCurrency(extractedData.rent)}.`;
+            
+            // Find or create a Housing category expense
+            const expenseData = {
+              id: "1", // Housing is typically the first expense
+              category: "Housing",
+              amount: extractedData.rent
+            };
+            formData.expenses = [expenseData];
+          }
+          
+          // Add general expense if found
           if (extractedData.expense && extractedData.expenseCategory) {
             responseText += ` I've added ${formatCurrency(extractedData.expense)} for ${extractedData.expenseCategory}.`;
+            
+            // If we already have expenses array from rent, add to it
+            if (formData.expenses) {
+              formData.expenses.push({
+                id: String(Date.now()), // Generate a unique ID
+                category: extractedData.expenseCategory,
+                amount: extractedData.expense
+              });
+            } else {
+              // Otherwise create a new expenses array
+              formData.expenses = [{
+                id: String(Date.now()),
+                category: extractedData.expenseCategory,
+                amount: extractedData.expense
+              }];
+            }
           }
           
           formAction = {
             type: 'fill_form',
             payload: {
-              formId: 'budget-planner-form',
+              formId: 'budget-calculator-form',
               formData,
               autoFocus: true
             }
@@ -465,6 +496,7 @@ export default function FinanceConnector() {
     income?: number;
     expense?: number;
     expenseCategory?: string;
+    rent?: number;
     homePrice?: number;
     downPayment?: number;
     loanAmount?: number;
@@ -481,6 +513,15 @@ export default function FinanceConnector() {
     const incomeMatch = lowerMessage.match(/(?:income|salary|make|earn)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
     if (incomeMatch && incomeMatch[1]) {
       data.income = parseFloat(incomeMatch[1].replace(/[$,]/g, ''));
+    }
+    
+    // Match rent/housing amount
+    const rentMatch = lowerMessage.match(/(?:rent|lease|apartment|housing)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (rentMatch && rentMatch[1]) {
+      data.rent = parseFloat(rentMatch[1].replace(/[$,]/g, ''));
+      // Also set as an expense with the category "Housing"
+      data.expense = parseFloat(rentMatch[1].replace(/[$,]/g, ''));
+      data.expenseCategory = "Housing";
     }
     
     // Match expense amount and category
@@ -548,20 +589,25 @@ export default function FinanceConnector() {
     // Extract the most likely finance request type based on keywords
     const lowerMessage = message.toLowerCase();
     
-    if (lowerMessage.includes('budget') || lowerMessage.includes('spending') || lowerMessage.includes('track expense')) {
-      handleBudgetRequest({ type: 'budget' });
+    if (lowerMessage.includes('budget') || 
+        lowerMessage.includes('spending') || 
+        lowerMessage.includes('track expense') || 
+        lowerMessage.includes('rent') || 
+        lowerMessage.includes('lease') || 
+        lowerMessage.includes('apartment')) {
+      handleBudgetRequest({ type: 'budget', message });
     } else if (lowerMessage.includes('mortgage') || lowerMessage.includes('home buy') || lowerMessage.includes('house payment')) {
-      handleMortgageRequest({ type: 'mortgage' });
+      handleMortgageRequest({ type: 'mortgage', message });
     } else if (lowerMessage.includes('tax') || lowerMessage.includes('fica') || lowerMessage.includes('income tax')) {
-      handleTaxRequest({ type: 'tax' });
+      handleTaxRequest({ type: 'tax', message });
     } else if (lowerMessage.includes('invest') || lowerMessage.includes('stock') || lowerMessage.includes('portfolio')) {
-      handleInvestmentRequest({ type: 'investment' });
+      handleInvestmentRequest({ type: 'investment', message });
     } else if (lowerMessage.includes('loan') || lowerMessage.includes('compare') || lowerMessage.includes('interest rate')) {
-      handleLoanRequest({ type: 'loan' });
+      handleLoanRequest({ type: 'loan', message });
     } else if (lowerMessage.includes('retire') || lowerMessage.includes('future plan') || lowerMessage.includes('savings')) {
-      handleRetirementRequest({ type: 'retirement' });
+      handleRetirementRequest({ type: 'retirement', message });
     } else if (lowerMessage.includes('debt') || lowerMessage.includes('payoff') || lowerMessage.includes('credit card')) {
-      handleDebtRequest({ type: 'debt' });
+      handleDebtRequest({ type: 'debt', message });
     } else {
       // Generic finance request
       navigate('/finance');
@@ -585,8 +631,17 @@ export default function FinanceConnector() {
    * Individual handlers for specific finance request types
    */
   const handleBudgetRequest = (info: any) => {
-    // Navigate to budget planner
-    navigate('/finance/budget-planner');
+    // Extract any budget data from the message if it exists
+    if (info && info.message) {
+      const extractedData = extractFinancialData(info.message);
+      
+      // Update info object with extracted data
+      info.extractedData = extractedData;
+    }
+    
+    // Navigate to budget planner (check if we need to use budget or budget-planner)
+    const budgetRoute = '/finance/budget';
+    navigate(budgetRoute);
     
     // Show a toast notification
     toast({
