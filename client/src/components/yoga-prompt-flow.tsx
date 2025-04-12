@@ -668,25 +668,27 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
             
             {/* Audio player - shown for all sessions */}
             {audioTrack && (
-              <div className="border rounded-md p-3 bg-slate-50 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={() => setAudioPlaying(!audioPlaying)}
-                    className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
-                  >
-                    {audioPlaying ? (
-                      <PauseCircle className="h-5 w-5" />
-                    ) : (
-                      <Play className="h-5 w-5" />
-                    )}
-                  </button>
-                  <div className="text-sm">
-                    {audioPlaying ? 'Playing...' : 'Paused'}
+              <div className="border rounded-md p-3 bg-slate-50">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => setAudioPlaying(!audioPlaying)}
+                      className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                    >
+                      {audioPlaying ? (
+                        <PauseCircle className="h-5 w-5" />
+                      ) : (
+                        <Play className="h-5 w-5" />
+                      )}
+                    </button>
+                    <div className="text-sm">
+                      {audioPlaying ? 'Playing...' : 'Paused'}
+                    </div>
                   </div>
-                </div>
-                
-                <div className="flex gap-2">
-                  <Volume2 className="h-4 w-4 text-muted-foreground" />
+                  
+                  <div className="flex gap-2">
+                    <Volume2 className="h-4 w-4 text-muted-foreground" />
+                  </div>
                 </div>
                 
                 <div className="mt-2 p-2 bg-yellow-50 text-yellow-800 rounded text-xs">
@@ -727,38 +729,39 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
             {/* Audio-only guided session view */}
             {selectedSession.isAudioOnly && selectedSession.guidedInstructions && (
               <div className="border rounded-md overflow-hidden">
-                <div className="aspect-video w-full overflow-hidden relative">
+                <div className={`${isMobile ? 'h-48' : 'aspect-video'} w-full overflow-hidden relative`}>
                   <img 
                     src={selectedSession.imageUrl} 
                     alt={selectedSession.title} 
                     className="w-full h-full object-cover opacity-50"
                   />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                    <Headphones className="h-12 w-12 mb-4 text-primary" />
-                    <h3 className="text-lg font-medium mb-2">Audio-Guided Session</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Follow the instructions below while listening to the guided audio</p>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 text-center">
+                    <Headphones className={`${isMobile ? 'h-8 w-8 mb-2' : 'h-12 w-12 mb-4'} text-primary`} />
+                    <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-medium mb-1 sm:mb-2`}>Audio-Guided Session</h3>
                     
-                    <div className="bg-white/90 p-4 rounded-md max-w-md w-full shadow-sm">
-                      <p className="font-medium text-primary">Current Instruction:</p>
-                      <p className="mt-2 text-base">
+                    <div className="bg-white/90 p-3 sm:p-4 rounded-md w-full max-w-md shadow-sm">
+                      <p className="font-medium text-primary text-sm sm:text-base">Current Instruction:</p>
+                      <p className="mt-1 sm:mt-2 text-sm sm:text-base">
                         {selectedSession.guidedInstructions[activeInstructionIndex]}
                       </p>
-                      <div className="mt-3 p-2 bg-yellow-50 text-yellow-800 rounded text-xs">
-                        <AlertCircle className="h-3 w-3 inline mr-1" />
-                        Note: In a production app, these instructions would be voiced in the audio and timed to match the session flow.
-                      </div>
+                      {!isMobile && (
+                        <div className="mt-3 p-2 bg-yellow-50 text-yellow-800 rounded text-xs">
+                          <AlertCircle className="h-3 w-3 inline mr-1" />
+                          Note: In a production app, these instructions would be voiced in the audio.
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
                 
-                <div className="p-4 bg-slate-50">
+                <div className="p-3 sm:p-4 bg-slate-50">
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-sm font-medium">Sequence of Instructions</h4>
                     <Badge variant="outline" className="text-xs">
                       {activeInstructionIndex + 1} of {selectedSession.guidedInstructions.length}
                     </Badge>
                   </div>
-                  <div className="space-y-3 max-h-40 overflow-y-auto pr-2">
+                  <div className={`space-y-2 overflow-y-auto pr-2 ${isMobile ? 'max-h-28' : 'max-h-40'}`}>
                     {selectedSession.guidedInstructions.map((instruction, index) => (
                       <div 
                         key={index} 
@@ -828,10 +831,13 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         className={`
           p-0 overflow-y-auto
           ${isMobile 
-            ? "w-[95%] max-w-[95%] max-h-[85vh] fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] rounded-lg shadow-lg border bg-background" 
+            ? "w-[95%] max-w-[95%] max-h-[90vh] fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] rounded-lg shadow-lg border bg-background" 
             : "max-w-md md:max-w-lg max-h-[90vh]"}
         `}
       >
+        {/* Hidden DialogTitle for accessibility */}
+        <DialogTitle className="sr-only">Yoga Session Flow</DialogTitle>
+        <DialogDescription className="sr-only">Personalized yoga sessions and prompts</DialogDescription>
         {renderPrompt()}
       </DialogContent>
     </Dialog>
