@@ -2,7 +2,8 @@ import {
   Dialog,
   DialogContent,
   DialogOverlay,
-  DialogTitle
+  DialogTitle,
+  DialogClose
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ export default function FounderMessageDialog({ open, onOpenChange }: FounderMess
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/20 backdrop-blur-[1px]" />
-      <DialogContent className="bg-transparent border-0 shadow-none p-0 w-[90vw] sm:w-auto md:max-w-4xl xl:max-w-5xl">
+      <DialogContent className="bg-transparent border-0 shadow-none p-0 w-[90vw] sm:w-auto md:max-w-4xl xl:max-w-5xl has-custom-close">
         <VisuallyHidden>
           <DialogTitle>Why Fundamenta</DialogTitle>
         </VisuallyHidden>
