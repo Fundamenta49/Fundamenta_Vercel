@@ -782,10 +782,9 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   border-top: 2px solid rgba(0, 0, 0, 0.05); /* Visual separator */
 }
 
-/* LAST RESORT - CRITICAL EMERGENCY FIX */
-/* Force all tour dialogs to be visible no matter what */
-[data-tour-dialog], 
-[data-radix-dialog-content] {
+/* CRITICAL TOUR GUIDE EMERGENCY FIX */
+/* Part 1: Force selected dialogs to be visible with constrained viewport */
+.tour-fix-dialog {
   position: fixed !important;
   right: 10px !important;
   bottom: 10px !important;
@@ -793,13 +792,49 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   top: auto !important;
   z-index: 999999 !important;
   max-width: calc(100vw - 20px) !important;
-  max-height: 80vh !important;
-  width: 320px !important;
+  max-height: 70vh !important;
   transform: none !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  background-color: white !important;
   overflow: auto !important;
+}
+
+/* Part 2: Last resort catchall for any dialog with tour attribute */
+[data-tour-dialog] {
+  position: fixed !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  left: auto !important;
+  top: auto !important;
+  z-index: 999999 !important;
+  max-width: calc(100vw - 40px) !important;
+  max-height: 70vh !important;
+  transform: none !important;
+  overflow: auto !important;
+  animation: none !important;
+}
+
+/* Fix tour dialog buttons so they're all visible */
+[data-tour-dialog] .DialogFooter {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 5px !important;
+  justify-content: space-between !important;
+}
+
+[data-tour-dialog] button {
+  margin: 2px !important;
+  min-height: 28px !important;
+}
+
+/* Ensure content doesn't overflow */
+[data-tour-dialog] img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Fix animation issues that might cause positioning problems */
+[data-tour-dialog] {
+  animation-duration: 0s !important;
+  transition: none !important;
 }
 
 /* Vehicle maintenance tour fix - MOBILE ONLY */

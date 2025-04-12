@@ -60,13 +60,47 @@ const TourModal = () => {
       // Add a class to body to indicate we're in tour mode
       document.body.classList.add('tour-active');
       
-      // Force any existing modals to have proper mobile positioning
+      // CRITICAL EMERGENCY FIX:
+      // Force any existing modal to be properly positioned with our CSS classes
       const dialogs = document.querySelectorAll('[data-tour-dialog]');
       dialogs.forEach(dialog => {
+        // Ensure our emergency fix class is applied
+        dialog.classList.add('tour-fix-dialog');
+        
         if (window.innerWidth <= 640) {
           dialog.classList.add('mobile-tour-dialog');
+          
+          // EMERGENCY FIX: Force the dialog to bottom-right for mobile
+          if (dialog instanceof HTMLElement) {
+            dialog.style.position = 'fixed';
+            dialog.style.bottom = '10px';
+            dialog.style.right = '10px';
+            dialog.style.left = 'auto';
+            dialog.style.top = 'auto';
+            dialog.style.maxWidth = 'calc(100vw - 20px)';
+            dialog.style.maxHeight = '70vh';
+            dialog.style.width = '320px';
+            dialog.style.transform = 'none';
+            dialog.style.overflow = 'auto';
+            dialog.style.zIndex = '999999';
+          }
         } else {
           dialog.classList.remove('mobile-tour-dialog');
+          
+          // EMERGENCY FIX: Force the dialog to bottom-right for desktop
+          if (dialog instanceof HTMLElement) {
+            dialog.style.position = 'fixed';
+            dialog.style.bottom = '20px';
+            dialog.style.right = '20px';
+            dialog.style.left = 'auto';
+            dialog.style.top = 'auto';
+            dialog.style.maxWidth = 'calc(100vw - 40px)';
+            dialog.style.maxHeight = '70vh';
+            dialog.style.minWidth = '320px';
+            dialog.style.transform = 'none';
+            dialog.style.overflow = 'auto';
+            dialog.style.zIndex = '999999';
+          }
         }
       });
     } else {
@@ -76,7 +110,7 @@ const TourModal = () => {
     return () => {
       document.body.classList.remove('tour-active');
     };
-  }, [isTourActive]);
+  }, [isTourActive, currentStepIndex]); // Added currentStepIndex to reapply fix on step change
 
   // Debounced navigation to prevent rapid transitions
   const handleNextStep = useCallback(() => {
@@ -143,9 +177,21 @@ const TourModal = () => {
   
   // Adjust position based on which step we're on and device size
   const getPosition = () => {
-    // *** CRITICAL EMERGENCY FIX: Force all modals to have same safe position ***
-    // Always position at bottom-right with safety margin regardless of step or device
-    return "fixed bottom-[20px] right-[20px] max-h-[70vh] min-w-[320px] max-w-[320px] w-[320px] overflow-y-auto critical-fix-dialog";
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    
+    // First two steps should be centered for welcome experience,
+    // but we'll add safety CSS to ensure they don't go off-screen
+    if (isInitialStep) {
+      return isMobile 
+        ? "max-w-[90vw] max-h-[60vh] overflow-y-auto tour-mobile-modal tour-fix-dialog" 
+        : "tour-fix-dialog"; // Default centered position with safety CSS
+    }
+    
+    // After step 2, position to bottom-right with special mobile styling
+    // Use the tour-fix-dialog class which has our emergency positioning CSS
+    return isMobile
+      ? "fixed bottom-[10px] right-[10px] max-h-[50vh] overflow-y-auto tour-mobile-modal tour-compact-modal tour-fix-dialog"
+      : "fixed bottom-[20px] right-[20px] max-h-[70vh] min-w-[300px] max-w-[95vw] overflow-y-auto tour-fix-dialog";
   };
   
   // Make sure we have aria-attributes to avoid warnings
