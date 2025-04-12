@@ -85,18 +85,22 @@ export default function SmartCalendar() {
   };
 
   const renderHeader = () => {
+    // Use shorter month format on smallest screens
+    const isMobile = window.innerWidth < 380;
+    const dateFormat = isMobile ? 'MMM yyyy' : 'MMMM yyyy';
+
     return (
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">
-          {format(currentDate, 'MMMM yyyy')}
+      <div className="flex justify-between items-center mb-2 sm:mb-4">
+        <h2 className="text-base sm:text-xl font-semibold">
+          {format(currentDate, dateFormat)}
         </h2>
         <div className="flex gap-1">
-          <Button variant="outline" size="icon" onClick={prevMonth}>
-            <ChevronLeft className="h-4 w-4" />
+          <Button variant="outline" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 p-0" onClick={prevMonth}>
+            <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
-          <Button variant="outline" size="sm" onClick={goToday}>Today</Button>
-          <Button variant="outline" size="icon" onClick={nextMonth}>
-            <ChevronRight className="h-4 w-4" />
+          <Button variant="outline" size="sm" className="text-xs sm:text-sm h-8 sm:h-10 px-2 sm:px-3" onClick={goToday}>Today</Button>
+          <Button variant="outline" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 p-0" onClick={nextMonth}>
+            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         </div>
       </div>
@@ -105,18 +109,19 @@ export default function SmartCalendar() {
 
   const renderDays = () => {
     const days = [];
-    const dateFormat = "EEE";
+    // Use shorter format on mobile
+    const dateFormat = window.innerWidth < 640 ? "E" : "EEE";
     const startDate = startOfWeek(currentDate);
 
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div key={i} className="text-center font-medium py-2">
+        <div key={i} className="text-center font-medium py-1 sm:py-2 text-xs sm:text-sm">
           {format(addDays(startDate, i), dateFormat)}
         </div>
       );
     }
 
-    return <div className="grid grid-cols-7 mb-2">{days}</div>;
+    return <div className="grid grid-cols-7 mb-1 sm:mb-2">{days}</div>;
   };
 
   const renderCells = () => {
@@ -137,10 +142,14 @@ export default function SmartCalendar() {
           event => isSameDay(new Date(event.date), cloneDay)
         );
 
+        // Responsive cell height
+        const isMobile = window.innerWidth < 640;
+        const cellHeight = isMobile ? "min-h-[40px] md:min-h-[60px] lg:min-h-[80px]" : "min-h-[80px]";
+
         days.push(
           <div
             key={day.toString()}
-            className={`p-1 min-h-[80px] border border-border ${
+            className={`p-0.5 sm:p-1 ${cellHeight} border border-border ${
               !isSameMonth(day, monthStart) ? 'text-muted-foreground' : ''
             } ${isSameDay(day, selectedDate) ? 'bg-primary/10' : ''}`}
             onClick={() => {
@@ -148,13 +157,14 @@ export default function SmartCalendar() {
               setNewEvent({...newEvent, date: cloneDay});
             }}
           >
-            <div className="font-medium text-sm">{formattedDate}</div>
+            <div className="font-medium text-xs sm:text-sm">{formattedDate}</div>
             {dayEvents.length > 0 && (
-              <div className="mt-1 space-y-1">
-                {dayEvents.slice(0, 2).map((event) => (
+              <div className="mt-0.5 sm:mt-1 space-y-0.5 sm:space-y-1">
+                {/* Show fewer events on mobile */}
+                {dayEvents.slice(0, isMobile ? 1 : 2).map((event) => (
                   <div 
                     key={event.id} 
-                    className={`text-xs p-1 rounded truncate cursor-pointer
+                    className={`text-[10px] sm:text-xs p-0.5 sm:p-1 rounded truncate cursor-pointer
                       ${event.category === 'finance' ? 'bg-green-100 text-green-800' : 
                       event.category === 'health' ? 'bg-blue-100 text-blue-800' : 
                       event.category === 'career' ? 'bg-purple-100 text-purple-800' : 
@@ -170,9 +180,9 @@ export default function SmartCalendar() {
                     {event.title}
                   </div>
                 ))}
-                {dayEvents.length > 2 && (
-                  <div className="text-xs text-muted-foreground px-1">
-                    +{dayEvents.length - 2} more
+                {dayEvents.length > (isMobile ? 1 : 2) && (
+                  <div className="text-[8px] sm:text-xs text-muted-foreground px-0.5 sm:px-1">
+                    +{dayEvents.length - (isMobile ? 1 : 2)} more
                   </div>
                 )}
               </div>
@@ -188,7 +198,7 @@ export default function SmartCalendar() {
       );
       days = [];
     }
-    return <div className="space-y-1">{rows}</div>;
+    return <div className="space-y-0.5 sm:space-y-1">{rows}</div>;
   };
 
   const renderEventsList = () => {
@@ -208,57 +218,59 @@ export default function SmartCalendar() {
     });
 
     return (
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle className="text-lg">Your Schedule</CardTitle>
-          <CardDescription>Today and upcoming events</CardDescription>
+      <Card className="mt-2 sm:mt-4">
+        <CardHeader className="px-3 py-2 sm:p-6">
+          <CardTitle className="text-base sm:text-lg">Your Schedule</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Today and upcoming events</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+        <CardContent className="px-3 pb-3 sm:p-6 pt-0">
+          <div className="space-y-3 sm:space-y-4">
             <div>
-              <h3 className="font-medium mb-2">Today</h3>
+              <h3 className="text-sm sm:text-base font-medium mb-1 sm:mb-2">Today</h3>
               {todayEvents.length > 0 ? (
-                <ScrollArea className="h-[100px]">
-                  <div className="space-y-2">
+                <ScrollArea className="h-[80px] sm:h-[100px]">
+                  <div className="space-y-1 sm:space-y-2">
                     {todayEvents.map(event => (
-                      <div key={event.id} className="flex justify-between items-center p-2 rounded border">
+                      <div key={event.id} className="flex justify-between items-center p-1.5 sm:p-2 rounded border text-xs sm:text-sm">
                         <div>
-                          <div className="font-medium">{event.title}</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="font-medium line-clamp-1">{event.title}</div>
+                          <div className="text-xs text-muted-foreground">
                             {format(new Date(event.date), 'h:mm a')}
                           </div>
                         </div>
-                        <Badge variant="outline">{event.category}</Badge>
+                        <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 h-5 sm:h-6">{event.category}</Badge>
                       </div>
                     ))}
                   </div>
                 </ScrollArea>
               ) : (
-                <div className="text-muted-foreground">No events today</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">No events today</div>
               )}
             </div>
             
             <div>
-              <h3 className="font-medium mb-2">Upcoming</h3>
+              <h3 className="text-sm sm:text-base font-medium mb-1 sm:mb-2">Upcoming</h3>
               {upcomingEvents.length > 0 ? (
-                <ScrollArea className="h-[150px]">
-                  <div className="space-y-2">
+                <ScrollArea className="h-[120px] sm:h-[150px]">
+                  <div className="space-y-1 sm:space-y-2">
                     {upcomingEvents.map(event => (
-                      <div key={event.id} className="flex justify-between items-center p-2 rounded border">
-                        <div>
-                          <div className="font-medium">{event.title}</div>
-                          <div className="text-sm text-muted-foreground">
+                      <div key={event.id} className="flex justify-between items-center p-1.5 sm:p-2 rounded border text-xs sm:text-sm">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium line-clamp-1">{event.title}</div>
+                          <div className="text-xs text-muted-foreground">
                             {format(new Date(event.date), 'EEE, MMM d')}
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline">{event.category}</Badge>
+                        <div className="flex items-center gap-1 sm:gap-2 ml-1">
+                          <Badge variant="outline" className="text-[10px] sm:text-xs px-1 sm:px-2 h-5 sm:h-6 whitespace-nowrap">{event.category}</Badge>
                           <Button 
                             variant="ghost" 
-                            size="sm" 
+                            size="sm"
+                            className="h-6 w-6 sm:h-8 sm:w-auto p-0 sm:px-2"
                             onClick={() => deleteEvent(event.id)}
                           >
-                            Delete
+                            <span className="hidden sm:inline">Delete</span>
+                            <span className="sm:hidden">×</span>
                           </Button>
                         </div>
                       </div>
@@ -266,7 +278,7 @@ export default function SmartCalendar() {
                   </div>
                 </ScrollArea>
               ) : (
-                <div className="text-muted-foreground">No upcoming events</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">No upcoming events</div>
               )}
             </div>
           </div>
@@ -281,14 +293,19 @@ export default function SmartCalendar() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle>Fundamenta Smart Calendar</CardTitle>
-              <CardDescription>Plan your learning and activities</CardDescription>
+              <CardTitle className="text-base sm:text-xl">Fundamenta Smart Calendar</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Plan your learning and activities</CardDescription>
             </div>
-            <Button onClick={() => {
-              setNewEvent({...newEvent, date: selectedDate});
-              setShowModal(true);
-            }}>
-              <Plus className="h-4 w-4 mr-2" /> Add Event
+            <Button 
+              onClick={() => {
+                setNewEvent({...newEvent, date: selectedDate});
+                setShowModal(true);
+              }}
+              className="text-xs sm:text-sm h-8 sm:h-10"
+            >
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden xs:inline">Add Event</span>
+              <span className="xs:hidden">Add</span>
             </Button>
           </div>
         </CardHeader>
@@ -301,61 +318,61 @@ export default function SmartCalendar() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add New Event</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-base sm:text-lg">Add New Event</DialogTitle>
+            <DialogDescription className="text-xs sm:text-sm">
               Create a new event on your calendar
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="event-title" className="text-right">Title</label>
+          <div className="grid gap-3 sm:gap-4 py-3 sm:py-4">
+            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
+              <label htmlFor="event-title" className="text-right text-xs sm:text-sm">Title</label>
               <Input
                 id="event-title"
-                className="col-span-3"
+                className="col-span-3 h-8 sm:h-10 text-xs sm:text-sm"
                 value={newEvent.title}
                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
                 placeholder="Event title"
               />
             </div>
             
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="event-category" className="text-right">Category</label>
+            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
+              <label htmlFor="event-category" className="text-right text-xs sm:text-sm">Category</label>
               <Select 
                 value={newEvent.category}
                 onValueChange={(value) => setNewEvent({ ...newEvent, category: value })}
               >
-                <SelectTrigger className="col-span-3">
+                <SelectTrigger className="col-span-3 h-8 sm:h-10 text-xs sm:text-sm">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="general">General</SelectItem>
-                  <SelectItem value="health">Health</SelectItem>
-                  <SelectItem value="finance">Finance</SelectItem>
-                  <SelectItem value="career">Career</SelectItem>
-                  <SelectItem value="learning">Learning</SelectItem>
+                  <SelectItem value="general" className="text-xs sm:text-sm">General</SelectItem>
+                  <SelectItem value="health" className="text-xs sm:text-sm">Health</SelectItem>
+                  <SelectItem value="finance" className="text-xs sm:text-sm">Finance</SelectItem>
+                  <SelectItem value="career" className="text-xs sm:text-sm">Career</SelectItem>
+                  <SelectItem value="learning" className="text-xs sm:text-sm">Learning</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="event-date" className="text-right">Date</label>
+            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
+              <label htmlFor="event-date" className="text-right text-xs sm:text-sm">Date</label>
               <Input
                 id="event-date"
-                className="col-span-3"
+                className="col-span-3 h-8 sm:h-10 text-xs sm:text-sm"
                 type="date"
                 value={format(newEvent.date, 'yyyy-MM-dd')}
                 onChange={(e) => setNewEvent({ ...newEvent, date: new Date(e.target.value) })}
               />
             </div>
             
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="event-description" className="text-right">Description</label>
+            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
+              <label htmlFor="event-description" className="text-right text-xs sm:text-sm">Description</label>
               <Input
                 id="event-description"
-                className="col-span-3"
+                className="col-span-3 h-8 sm:h-10 text-xs sm:text-sm"
                 value={newEvent.description || ''}
                 onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                 placeholder="Event description (optional)"
@@ -363,9 +380,9 @@ export default function SmartCalendar() {
             </div>
           </div>
           
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
-            <Button onClick={handleAddEvent}>Save Event</Button>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" size="sm" className="text-xs sm:text-sm h-8 sm:h-10" onClick={() => setShowModal(false)}>Cancel</Button>
+            <Button size="sm" className="text-xs sm:text-sm h-8 sm:h-10" onClick={handleAddEvent}>Save Event</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
