@@ -139,7 +139,7 @@ export default function SmartCalendar() {
       );
     }
 
-    return <div className="grid grid-cols-7 gap-0.5 mb-1 sm:mb-2">{days}</div>;
+    return <div className="grid grid-cols-7 gap-0">{days}</div>;
   };
 
   const renderCells = () => {
@@ -160,15 +160,13 @@ export default function SmartCalendar() {
           event => isSameDay(new Date(event.date), cloneDay)
         );
 
-        // Responsive cell height based on state - adjusted to be more square
-        const cellHeight = isMobile ? "aspect-square min-h-[40px]" : "aspect-square min-h-[80px]";
-
         days.push(
           <div
             key={day.toString()}
-            className={`p-0.5 sm:p-1 ${cellHeight} border border-border ${
+            className={`p-0.5 border border-border text-center ${
               !isSameMonth(day, monthStart) ? 'text-muted-foreground' : ''
             } ${isSameDay(day, selectedDate) ? 'bg-primary/10' : ''}`}
+            style={{ height: isMobile ? '40px' : '60px', overflow: 'hidden' }}
             onClick={() => {
               setSelectedDate(cloneDay);
               setNewEvent({...newEvent, date: cloneDay});
@@ -176,12 +174,12 @@ export default function SmartCalendar() {
           >
             <div className="font-medium text-xs sm:text-sm">{formattedDate}</div>
             {dayEvents.length > 0 && (
-              <div className="mt-0.5 sm:mt-1 space-y-0.5 sm:space-y-1">
+              <div className="mt-0.5 sm:mt-1 space-y-0.5 overflow-hidden">
                 {/* Show fewer events on mobile */}
                 {dayEvents.slice(0, isMobile ? 1 : 2).map((event) => (
                   <div 
                     key={event.id} 
-                    className={`text-[10px] sm:text-xs p-0.5 sm:p-1 rounded truncate cursor-pointer
+                    className={`text-[8px] sm:text-xs p-0.5 rounded truncate cursor-pointer
                       ${event.category === 'finance' ? 'bg-green-100 text-green-800' : 
                       event.category === 'health' ? 'bg-blue-100 text-blue-800' : 
                       event.category === 'career' ? 'bg-purple-100 text-purple-800' : 
@@ -198,7 +196,7 @@ export default function SmartCalendar() {
                   </div>
                 ))}
                 {dayEvents.length > (isMobile ? 1 : 2) && (
-                  <div className="text-[8px] sm:text-xs text-muted-foreground px-0.5 sm:px-1">
+                  <div className="text-[8px] text-muted-foreground">
                     +{dayEvents.length - (isMobile ? 1 : 2)} more
                   </div>
                 )}
@@ -209,13 +207,13 @@ export default function SmartCalendar() {
         day = addDays(day, 1);
       }
       rows.push(
-        <div key={day.toString()} className="grid grid-cols-7 gap-0.5">
+        <div key={day.toString()} className="grid grid-cols-7 gap-0">
           {days}
         </div>
       );
       days = [];
     }
-    return <div className="grid gap-0.5">{rows}</div>;
+    return <div className="grid gap-0">{rows}</div>;
   };
 
   const renderEventsList = () => {
@@ -305,9 +303,9 @@ export default function SmartCalendar() {
   };
 
   return (
-    <div className="mx-auto p-4">
-      <Card className="max-w-3xl mx-auto">
-        <CardHeader>
+    <div className="mx-auto p-2 sm:p-4">
+      <Card className="max-w-[800px] mx-auto">
+        <CardHeader className="pb-2">
           <div className="flex justify-between items-center">
             <div>
               <CardTitle className="text-base sm:text-xl">Fundamenta Smart Calendar</CardTitle>
@@ -326,7 +324,7 @@ export default function SmartCalendar() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="px-2 sm:px-4">
+        <CardContent className="px-1 sm:px-4">
           {renderHeader()}
           {renderDays()}
           {renderCells()}
