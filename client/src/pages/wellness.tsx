@@ -15,7 +15,7 @@ import RiskAssessment from "@/components/risk-assessment";
 import BrainTap from "@/components/brain-tap";
 import ComprehensiveWellnessAssessment from "@/components/comprehensive-wellness-assessment";
 import IntegratedNutrition from "@/components/integrated-nutrition";
-import EmergencyChecklist from "@/components/emergency-checklist";
+// Emergency checklist has been moved to the Emergency section
 import JournalPopOut from "@/components/journal-pop-out";
 import RiskAssessmentPopOut from "@/components/risk-assessment-pop-out";
 import IntegratedNutritionPopOut from "@/components/integrated-nutrition-pop-out";
@@ -74,13 +74,6 @@ const SECTIONS: SectionType[] = [
     component: NutritionTracker
   },
   {
-    id: 'emergency',
-    title: 'Emergency Checklist',
-    description: 'Keep track of essential emergency supplies and recommended food items',
-    icon: Shield,
-    component: EmergencyChecklist
-  },
-  {
     id: 'shopping',
     title: 'Shopping Buddy',
     description: 'Get help with grocery planning and healthy food choices',
@@ -99,7 +92,6 @@ export default function Wellness() {
   const [isShoppingOpen, setIsShoppingOpen] = useState(false);
   const [isCoachOpen, setIsCoachOpen] = useState(false);
   const [isComprehensiveOpen, setIsComprehensiveOpen] = useState(false);
-  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
   
   // Check URL for parameters to automatically open certain sections
   const { search } = window.location;
@@ -145,9 +137,7 @@ export default function Wellness() {
     else if (sectionId === 'comprehensive') {
       setIsComprehensiveOpen(true);
     }
-    else if (sectionId === 'emergency') {
-      setIsEmergencyOpen(true);
-    }
+    // Emergency section removed - now only in Emergency page
     else if (sectionId === 'stress-management') {
       // Map stress management to the coach with a stress management focus
       setIsCoachOpen(true);
@@ -211,13 +201,7 @@ export default function Wellness() {
           </FullScreenDialogContent>
         </FullScreenDialog>
         
-        <FullScreenDialog open={isEmergencyOpen} onOpenChange={setIsEmergencyOpen}>
-          <FullScreenDialogContent themeColor="#a855f7">
-            <div className="p-4 max-w-4xl mx-auto">
-              <EmergencyChecklist />
-            </div>
-          </FullScreenDialogContent>
-        </FullScreenDialog>
+        {/* Emergency checklist has been moved to the Emergency section */}
 
         {/* Grid-style cards layout (similar to Learning section) */}
         <div className="px-2">
