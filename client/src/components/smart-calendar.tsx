@@ -333,7 +333,7 @@ export default function SmartCalendar() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto w-[95%] p-3 sm:p-6">
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto w-[95%] p-3 sm:p-6 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed rounded-lg shadow-lg">
           <DialogHeader className="p-0 sm:p-0">
             <DialogTitle className="text-base sm:text-lg">Add New Event</DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
@@ -363,7 +363,7 @@ export default function SmartCalendar() {
                 <SelectTrigger className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent className="text-xs">
+                <SelectContent className="text-xs max-h-[200px]">
                   <SelectItem value="general" className="text-xs">General</SelectItem>
                   <SelectItem value="health" className="text-xs">Health</SelectItem>
                   <SelectItem value="finance" className="text-xs">Finance</SelectItem>
