@@ -3,6 +3,7 @@ import TourHighlight from './tour-highlight';
 import FundiTourGuide from './fundi-tour-guide';
 import TourEmergencyFix from './tour-emergency-fix';
 import VehicleTourFix from './vehicle-tour-fix'; // Import the aggressive emergency fix
+import FundiMegaFix from './fundi-mega-fix'; // Import our new definitive fix
 import { useTour } from '@/contexts/tour-context';
 
 // Main tour component that includes all tour-related subcomponents
@@ -77,8 +78,9 @@ const Tour = () => {
 
   return (
     <>
+      <FundiMegaFix /> {/* Our new definitive fix - will take precedence over all other fixes */}
       <TourEmergencyFix />
-      <VehicleTourFix /> {/* Add our special emergency fix for vehicle maintenance */}
+      <VehicleTourFix /> {/* Special emergency fix for vehicle maintenance */}
       <FundiTourGuide />
       <TourHighlight />
     </>
