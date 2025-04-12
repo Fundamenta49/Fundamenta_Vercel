@@ -71,7 +71,18 @@ export default function FinanceConnector() {
         }
         
         // Handle the finance request based on the type
-        handleFinanceRequest(data.financeInfo);
+        const financeInfo = {
+          ...data.financeInfo,
+          message: currentMessage // Always include the current message for client-side extraction
+        };
+        
+        // Use extracted data from server if available, otherwise extract client-side
+        if (data.financeInfo.extractedData) {
+          console.log("Using server-extracted financial data:", data.financeInfo.extractedData);
+          financeInfo.extractedData = data.financeInfo.extractedData;
+        }
+        
+        handleFinanceRequest(financeInfo);
         
       } catch (error) {
         console.error('Error processing finance request:', error);
@@ -142,8 +153,18 @@ export default function FinanceConnector() {
     let action: AIAction | undefined;
     let formAction: AIAction | undefined = undefined;
     
-    // Extract financial data from user message
-    const extractedData = extractFinancialData(currentMessage || '');
+    // Use server-extracted data if available, otherwise extract client-side
+    let extractedData: any = {};
+    
+    if (financeInfo.extractedData) {
+      // We have server-extracted data
+      extractedData = financeInfo.extractedData;
+      console.log("Using server-extracted financial data in response creation:", extractedData);
+    } else {
+      // Fall back to client-side extraction
+      extractedData = extractFinancialData(financeInfo.message || currentMessage || '');
+      console.log("Using client-extracted financial data in response creation:", extractedData);
+    }
     
     switch (financeInfo.type) {
       case 'budget':

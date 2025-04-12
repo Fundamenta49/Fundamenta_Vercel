@@ -3,6 +3,99 @@ import { z } from 'zod';
 
 const router = express.Router();
 
+/**
+ * Extract financial data from a message
+ */
+function extractFinancialData(message: string): {
+  income?: number;
+  expense?: number;
+  expenseCategory?: string;
+  rent?: number;
+  homePrice?: number;
+  downPayment?: number;
+  loanAmount?: number;
+  interestRate?: number;
+  loanTerm?: number;
+  debtAmount?: number;
+  savingsAmount?: number;
+  retirementAge?: number;
+} {
+  const data: any = {};
+  const lowerMessage = message.toLowerCase();
+  
+  // Match income
+  const incomeMatch = lowerMessage.match(/(?:income|salary|make|earn)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+  if (incomeMatch && incomeMatch[1]) {
+    data.income = parseFloat(incomeMatch[1].replace(/[$,]/g, ''));
+  }
+  
+  // Match rent/housing amount
+  const rentMatch = lowerMessage.match(/(?:rent|lease|apartment|housing)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+  if (rentMatch && rentMatch[1]) {
+    data.rent = parseFloat(rentMatch[1].replace(/[$,]/g, ''));
+    // Also set as an expense with the category "Housing"
+    data.expense = parseFloat(rentMatch[1].replace(/[$,]/g, ''));
+    data.expenseCategory = "Housing";
+  }
+  
+  // Match expense amount and category
+  const expenseMatch = lowerMessage.match(/(?:spend|expense|cost|pay|budget)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)[^\d]*(?:for|on)\s+([a-z\s]+)/i);
+  if (expenseMatch && expenseMatch[1] && expenseMatch[2]) {
+    data.expense = parseFloat(expenseMatch[1].replace(/[$,]/g, ''));
+    data.expenseCategory = expenseMatch[2].trim();
+  }
+  
+  // Match home price
+  const homePriceMatch = lowerMessage.match(/(?:home|house|property)[^\d]*(?:price|cost|worth|value)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+  if (homePriceMatch && homePriceMatch[1]) {
+    data.homePrice = parseFloat(homePriceMatch[1].replace(/[$,]/g, ''));
+  }
+  
+  // Match down payment
+  const downPaymentMatch = lowerMessage.match(/(?:down payment|downpayment)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+  if (downPaymentMatch && downPaymentMatch[1]) {
+    data.downPayment = parseFloat(downPaymentMatch[1].replace(/[$,]/g, ''));
+  }
+  
+  // Match loan amount
+  const loanMatch = lowerMessage.match(/(?:loan|borrow)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+  if (loanMatch && loanMatch[1]) {
+    data.loanAmount = parseFloat(loanMatch[1].replace(/[$,]/g, ''));
+  }
+  
+  // Match interest rate
+  const interestMatch = lowerMessage.match(/(?:interest|rate)[^\d]*(\d+(?:\.\d{1,2})?)(?:\s*%)?/i);
+  if (interestMatch && interestMatch[1]) {
+    data.interestRate = parseFloat(interestMatch[1]);
+  }
+  
+  // Match loan term
+  const termMatch = lowerMessage.match(/(\d+)(?:\s*[-])?\s*(?:year|yr)/i);
+  if (termMatch && termMatch[1]) {
+    data.loanTerm = parseInt(termMatch[1], 10);
+  }
+  
+  // Match debt amount
+  const debtMatch = lowerMessage.match(/(?:debt|owe)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+  if (debtMatch && debtMatch[1]) {
+    data.debtAmount = parseFloat(debtMatch[1].replace(/[$,]/g, ''));
+  }
+  
+  // Match savings amount
+  const savingsMatch = lowerMessage.match(/(?:saved|savings)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+  if (savingsMatch && savingsMatch[1]) {
+    data.savingsAmount = parseFloat(savingsMatch[1].replace(/[$,]/g, ''));
+  }
+  
+  // Match retirement age
+  const retirementMatch = lowerMessage.match(/(?:retire|retirement)[^\d]*(?:at|age)[^\d]*(\d+)/i);
+  if (retirementMatch && retirementMatch[1]) {
+    data.retirementAge = parseInt(retirementMatch[1], 10);
+  }
+  
+  return data;
+}
+
 // Schema for finance intent requests
 const FinanceIntentRequestSchema = z.object({
   message: z.string()
@@ -22,7 +115,7 @@ router.post('/process-intent', async (req, res) => {
     const lowerMessage = message.toLowerCase();
     
     // Define common patterns for different financial tools
-    const budgetPatterns = ['budget', 'spending', 'track expense', 'income and expense', 'money management'];
+    const budgetPatterns = ['budget', 'spending', 'track expense', 'income and expense', 'money management', 'rent', 'lease', 'apartment', 'housing'];
     const mortgagePatterns = ['mortgage', 'home buy', 'house payment', 'property', 'real estate', 'amortization'];
     const taxPatterns = ['tax', 'fica', 'income tax', 'take home pay', 'tax bracket', 'filing status'];
     const investmentPatterns = ['invest', 'stock', 'portfolio', 'market', 'fund', 'dividend', 'brokerage'];
@@ -72,13 +165,17 @@ router.post('/process-intent', async (req, res) => {
       financeType = 'general';
     }
     
-    // Return the finance request information
+    // Extract financial data from the message
+    const extractedData = extractFinancialData(message);
+    
+    // Return the finance request information with extracted data
     return res.json({
       success: true,
       isFinanceRequest: true,
       financeInfo: {
         type: financeType,
-        rawMessage: message
+        rawMessage: message,
+        extractedData
       }
     });
     
