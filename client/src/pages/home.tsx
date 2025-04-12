@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, Info } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import RestartTourButton from "@/components/tour/restart-tour-button";
 import WeatherWidget from "@/components/weather-widget";
 import { useTour } from "@/contexts/tour-context";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useEffect } from "react";
 import FounderMessageDialog from "@/components/founder-message-dialog";
@@ -89,17 +88,6 @@ export default function Home() {
         <p className="text-lg text-muted-foreground">
           Your AI-powered assistant for life skills and wellness
         </p>
-        <div className="mt-4">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="gap-2 font-normal"
-            onClick={() => setFounderMessageOpen(true)}
-          >
-            <Info className="h-4 w-4 text-primary" />
-            Why Fundamenta?
-          </Button>
-        </div>
       </div>
 
       {/* Founder Message Dialog */}
