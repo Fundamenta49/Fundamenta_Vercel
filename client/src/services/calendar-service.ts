@@ -397,6 +397,18 @@ class CalendarServiceImpl {
       let description = '';
       let category = 'general';
       let dateText = 'today';
+      
+      // Look for time information in the text (like 9am, 3:30pm)
+      const timeRegex = /\b(1[0-2]|0?[1-9])(?::([0-5][0-9]))?\s*(am|pm)\b/i;
+      const timeMatch = text.match(timeRegex);
+      
+      if (timeMatch) {
+        // Include the time in the date text so it gets parsed properly
+        const fullTimeStr = timeMatch[0];
+        description = `Time: ${fullTimeStr}`;
+        
+        // We'll add the time to dateText later
+      }
 
       // Handle learning schedule request special case
       if (text.toLowerCase().includes('learning schedule') || 
@@ -535,25 +547,44 @@ class CalendarServiceImpl {
           'reminder to', 'reminder for', 'set a reminder', 
           'schedule', 'add event', 'add to calendar',
           'create event', 'plan for', 'meeting for',
-          'appointment for'
+          'appointment for', 'set a', 'set an', 'add a', 'add an',
+          'put', 'schedule a', 'create a'
         ];
 
-        // Try to extract a title
+        // First try to handle "Put X on my calendar", "Add X to calendar" patterns
         let extractedTitle = '';
-        for (const indicator of titleIndicators) {
-          if (text.toLowerCase().includes(indicator)) {
-            const parts = text.toLowerCase().split(indicator);
-            if (parts.length > 1) {
-              extractedTitle = parts[1].trim();
-              // If title contains words like "on", "at", "tomorrow", try to extract just the title part
-              const dateMarkers = [' on ', ' at ', ' tomorrow', ' next ', ' this ', ' in '];
-              for (const marker of dateMarkers) {
-                if (extractedTitle.includes(marker)) {
-                  extractedTitle = extractedTitle.split(marker)[0].trim();
-                  break;
+        const calendarPatterns = [
+          /put\s+(.+?)\s+(?:on|in)(?:\s+my)?\s+calendar/i,
+          /add\s+(.+?)\s+(?:to|on|in)(?:\s+my)?\s+calendar/i,
+          /schedule\s+(?:a|an)?\s+(.+?)(?:\s+on|\s+in|\s+for)/i,
+          /set\s+(?:a|an)?\s+(.+?)(?:\s+on|\s+in|\s+for)/i
+        ];
+        
+        for (const pattern of calendarPatterns) {
+          const match = text.match(pattern);
+          if (match && match[1]) {
+            extractedTitle = match[1].trim();
+            break;
+          }
+        }
+        
+        // If no direct match, try the previous approach with indicators
+        if (!extractedTitle) {
+          for (const indicator of titleIndicators) {
+            if (text.toLowerCase().includes(indicator)) {
+              const parts = text.toLowerCase().split(indicator);
+              if (parts.length > 1) {
+                extractedTitle = parts[1].trim();
+                // If title contains words like "on", "at", "tomorrow", try to extract just the title part
+                const dateMarkers = [' on ', ' at ', ' tomorrow', ' next ', ' this ', ' in ', ' for '];
+                for (const marker of dateMarkers) {
+                  if (extractedTitle.includes(marker)) {
+                    extractedTitle = extractedTitle.split(marker)[0].trim();
+                    break;
+                  }
                 }
+                break;
               }
-              break;
             }
           }
         }
@@ -562,8 +593,15 @@ class CalendarServiceImpl {
         if (extractedTitle) {
           title = extractedTitle.charAt(0).toUpperCase() + extractedTitle.slice(1);
         } else {
-          // Fallback to using the entire text as title
-          title = text;
+          // Last resort: Look for nouns in the beginning of the text that could be an event
+          // This helps with commands like "Dance recital for the 22nd"
+          const simpleExtraction = text.split(/\s+(?:on|at|for|in|this|next|tomorrow)/i)[0].trim();
+          if (simpleExtraction && simpleExtraction.length < text.length / 2) {
+            title = simpleExtraction;
+          } else {
+            // Fallback to using a generic title rather than the whole text
+            title = "Calendar Event";
+          }
         }
       }
 
