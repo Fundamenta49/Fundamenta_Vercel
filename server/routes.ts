@@ -28,6 +28,7 @@ import cookingRoutes from './routes/cooking';
 import fitnessRoutes from './routes/fitness';
 import yogaRoutes from './routes/yoga';
 import repairRoutes from './routes/repair';
+import calendarRoutes from './routes/calendar';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { userGuideService } from './services/user-guide-service';
@@ -1092,6 +1093,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // AI routes for fallback management and route validation
   app.use('/api/ai', aiRoutes);
+  
+  // Calendar routes for Fundi calendar integration
+  app.use('/api/calendar', calendarRoutes);
   
   // Dual AI API endpoints - admin controls for fallback mode
   app.post("/api/ai/toggle-fallback", (req, res) => {
