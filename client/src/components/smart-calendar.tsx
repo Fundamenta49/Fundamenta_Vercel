@@ -333,62 +333,77 @@ export default function SmartCalendar() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto w-[95%] p-3 sm:p-6 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed rounded-lg shadow-lg">
-          <DialogHeader className="p-0 sm:p-0">
-            <DialogTitle className="text-base sm:text-lg">Add New Event</DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm">
-              Create a new event on your calendar
-            </DialogDescription>
+        <DialogContent className="bg-white dark:bg-gray-900 sm:max-w-md max-h-[85vh] overflow-y-auto w-[90%] p-3 sm:p-6 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <DialogHeader className="p-0 sm:p-0 sticky top-0 bg-white dark:bg-gray-900 z-10 pb-2">
+            <div className="flex justify-between items-center">
+              <div>
+                <DialogTitle className="text-base sm:text-lg">Add New Event</DialogTitle>
+                <DialogDescription className="text-xs sm:text-sm">
+                  Create a new event on your calendar
+                </DialogDescription>
+              </div>
+              {isMobile && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 rounded-full"
+                  onClick={() => setShowModal(false)}
+                >
+                  <span className="sr-only">Close</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </Button>
+              )}
+            </div>
           </DialogHeader>
           
-          <div className="grid gap-2 sm:gap-4 py-2 sm:py-4">
+          <div className="grid gap-3 py-2 sm:py-4">
             {/* For mobile screens, use a stacked layout */}
-            <div className={isMobile ? "grid grid-cols-1 gap-1" : "grid grid-cols-4 items-center gap-2 sm:gap-4"}>
-              <label htmlFor="event-title" className={isMobile ? "text-xs font-medium" : "text-right text-xs sm:text-sm"}>Title</label>
+            <div className="grid grid-cols-1 gap-1">
+              <label htmlFor="event-title" className="text-xs font-medium">Title</label>
               <Input
                 id="event-title"
-                className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}
+                className="h-9 text-sm"
                 value={newEvent.title}
                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
                 placeholder="Event title"
               />
             </div>
             
-            <div className={isMobile ? "grid grid-cols-1 gap-1" : "grid grid-cols-4 items-center gap-2 sm:gap-4"}>
-              <label htmlFor="event-category" className={isMobile ? "text-xs font-medium" : "text-right text-xs sm:text-sm"}>Category</label>
+            <div className="grid grid-cols-1 gap-1">
+              <label htmlFor="event-category" className="text-xs font-medium">Category</label>
               <Select 
                 value={newEvent.category}
                 onValueChange={(value) => setNewEvent({ ...newEvent, category: value })}
               >
-                <SelectTrigger className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}>
+                <SelectTrigger className="h-9 text-sm">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent className="text-xs max-h-[200px]">
-                  <SelectItem value="general" className="text-xs">General</SelectItem>
-                  <SelectItem value="health" className="text-xs">Health</SelectItem>
-                  <SelectItem value="finance" className="text-xs">Finance</SelectItem>
-                  <SelectItem value="career" className="text-xs">Career</SelectItem>
-                  <SelectItem value="learning" className="text-xs">Learning</SelectItem>
+                <SelectContent position="popper" className="max-h-[200px]">
+                  <SelectItem value="general">General</SelectItem>
+                  <SelectItem value="health">Health</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
+                  <SelectItem value="career">Career</SelectItem>
+                  <SelectItem value="learning">Learning</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
-            <div className={isMobile ? "grid grid-cols-1 gap-1" : "grid grid-cols-4 items-center gap-2 sm:gap-4"}>
-              <label htmlFor="event-date" className={isMobile ? "text-xs font-medium" : "text-right text-xs sm:text-sm"}>Date</label>
+            <div className="grid grid-cols-1 gap-1">
+              <label htmlFor="event-date" className="text-xs font-medium">Date</label>
               <Input
                 id="event-date"
-                className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}
+                className="h-9 text-sm"
                 type="date"
                 value={format(newEvent.date, 'yyyy-MM-dd')}
                 onChange={(e) => setNewEvent({ ...newEvent, date: new Date(e.target.value) })}
               />
             </div>
             
-            <div className={isMobile ? "grid grid-cols-1 gap-1" : "grid grid-cols-4 items-center gap-2 sm:gap-4"}>
-              <label htmlFor="event-description" className={isMobile ? "text-xs font-medium" : "text-right text-xs sm:text-sm"}>Description</label>
+            <div className="grid grid-cols-1 gap-1">
+              <label htmlFor="event-description" className="text-xs font-medium">Description</label>
               <Input
                 id="event-description"
-                className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}
+                className="h-9 text-sm"
                 value={newEvent.description || ''}
                 onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                 placeholder="Event description (optional)"
@@ -396,9 +411,11 @@ export default function SmartCalendar() {
             </div>
           </div>
           
-          <DialogFooter className="flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
-            <Button variant="outline" size="sm" className="text-xs h-8 w-full sm:w-auto" onClick={() => setShowModal(false)}>Cancel</Button>
-            <Button size="sm" className="text-xs h-8 w-full sm:w-auto" onClick={handleAddEvent}>Save Event</Button>
+          <DialogFooter className="flex-col gap-2 mt-3">
+            <Button size="sm" className="h-9 w-full" onClick={handleAddEvent}>Save Event</Button>
+            {!isMobile && (
+              <Button variant="outline" size="sm" className="h-9 w-full" onClick={() => setShowModal(false)}>Cancel</Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
