@@ -503,6 +503,38 @@ body.tour-active .feature-card {
   [data-state="open"] .fixed[role="dialog"] {
     align-items: center;
   }
+
+  /* Desktop-specific tour dialog positioning - prevent off-screen display */
+  body.tour-active [data-tour-dialog] {
+    position: fixed !important;
+    right: 20px !important;
+    bottom: 80px !important; /* Ensure it stays visible at bottom of screen */
+    left: auto !important;
+    top: auto !important;
+    max-width: 400px !important; /* Wider for desktop */
+    max-height: 70vh !important;
+    transform: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    z-index: 999999 !important;
+  }
+  
+  /* Desktop-specific override for the tour-fix-dialog class */
+  .tour-fix-dialog {
+    right: 20px !important;
+    bottom: 80px !important;
+    max-width: 400px !important;
+    max-height: 70vh !important;
+  }
+
+  /* Force tour dialog to always be visible within viewport */
+  [data-tour-dialog] {
+    max-height: 70vh !important;
+    height: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
   
   /* Desktop-specific element highlight with more pronounced effect */
   .tour-highlight {
@@ -875,11 +907,29 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   }
 }
 
-/* Desktop styles remain unchanged */
+/* Desktop styles for vehicle maintenance page */
 @media (min-width: 641px) {
   .vehicle-maintenance-page {
     position: relative;
     padding-top: 150px; /* Original desktop padding */
+  }
+  
+  /* DESKTOP SPECIFIC FIX: Interactive courses dialog positioning for desktop */
+  body.tour-active[data-tour-route*="vehicle-maintenance"] [data-tour-dialog],
+  body.tour-active.tour-vehicle-page [data-tour-dialog],
+  body[data-tour-active="true"][data-tour-route*="interactive-courses"] [data-tour-dialog] {
+    position: fixed !important;
+    right: 20px !important;
+    bottom: 80px !important; /* Increase bottom margin to prevent overlap */
+    left: auto !important;
+    top: auto !important;
+    width: 400px !important; /* Wider for desktop */
+    max-width: 400px !important;
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+    z-index: 999999 !important;
+    transform: none !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
   }
 }
 
@@ -1122,6 +1172,26 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
     width: calc(100vw - 10px) !important;
   }
   
+  /* Desktop-specific tour modal positioning */
+  @media (min-width: 640px) {
+    .tour-mobile-modal,
+    .tour-compact-modal,
+    [data-tour="content"] {
+      position: fixed !important;
+      bottom: 80px !important;
+      right: 20px !important;
+      max-width: 400px !important;
+      width: auto !important;
+      max-height: 70vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      z-index: 999999 !important;
+      left: auto !important;
+      top: auto !important;
+      transform: none !important;
+    }
+  }
+  
   .tour-mobile-modal .tour-title {
     font-size: 0.95rem !important;
     margin-bottom: 0.25rem !important;
@@ -1296,12 +1366,13 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
     max-height: 400px !important;
     overflow: auto !important;
     position: fixed !important;
-    right: 10px !important;
+    right: 20px !important;
     left: auto !important;
-    bottom: 10px !important;
+    bottom: 80px !important; /* Increased bottom margin to prevent overlap */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
     border: 2px solid rgba(var(--primary-rgb), 0.5) !important;
     background-color: white !important;
+    z-index: 999999 !important; /* Ensure it's above other elements */
   }
   
   /* Fix for "Interactive Courses" dialog buttons */
