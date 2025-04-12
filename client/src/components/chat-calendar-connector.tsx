@@ -15,10 +15,18 @@ export default function ChatCalendarConnector() {
   const { toast } = useToast();
   const [showRecurrenceDialog, setShowRecurrenceDialog] = useState(false);
   const [createdEvent, setCreatedEvent] = useState<CalendarEvent | null>(null);
-
+  const [processedMessageId, setProcessedMessageId] = useState<string | null>(null);
+  
   useEffect(() => {
     // Only process if we have both a user message and a response
     if (!currentMessage || !lastResponse?.response) return;
+    
+    // Create a unique ID for this message/response pair to avoid reprocessing
+    const messageResponseId = `${currentMessage}-${lastResponse.response.substring(0, 20)}`;
+    
+    // Skip if we've already processed this message
+    if (processedMessageId === messageResponseId) return;
+    setProcessedMessageId(messageResponseId);
 
     // Check if this might be a calendar-related request
     const lowerMessage = currentMessage.toLowerCase();
@@ -118,7 +126,7 @@ export default function ChatCalendarConnector() {
     };
 
     processCalendarRequest();
-  }, [lastResponse, currentMessage, toast, setLastResponse]);
+  }, [lastResponse, currentMessage, toast, setLastResponse, processedMessageId]);
   
   // Handle dialog close
   const handleRecurrenceComplete = () => {

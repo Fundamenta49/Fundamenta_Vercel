@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -23,6 +23,26 @@ export function CalendarEventRecurrenceDialog({
   const [frequency, setFrequency] = useState<RecurringFrequency>('none');
   const { toast } = useToast();
   
+  // Reset frequency when dialog opens with a new event
+  useEffect(() => {
+    if (open && event) {
+      setFrequency('none');
+    }
+  }, [open, event]);
+  
+  // Add auto-close timer to prevent dialog being stuck
+  useEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        console.log("Auto-closing recurrence dialog after timeout");
+        onOpenChange(false);
+        onComplete();
+      }, 30000); // Auto-close after 30 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [open, onOpenChange, onComplete]);
+  
   if (!event) return null;
 
   const handleSetRecurrence = () => {
@@ -41,6 +61,7 @@ export function CalendarEventRecurrenceDialog({
         });
       }
       
+      // Close the dialog and complete the process
       onOpenChange(false);
       onComplete();
     } catch (error) {
@@ -50,6 +71,10 @@ export function CalendarEventRecurrenceDialog({
         description: 'There was a problem setting up recurring events',
         variant: 'destructive',
       });
+      
+      // Close the dialog on error as well
+      onOpenChange(false);
+      onComplete();
     }
   };
 
