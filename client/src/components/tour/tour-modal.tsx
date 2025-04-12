@@ -155,14 +155,14 @@ const TourModal = () => {
     // After step 2, position to bottom with special mobile styling
     return isMobile
       ? "fixed bottom-2 left-0 right-0 mx-2 max-h-[50vh] overflow-y-auto tour-mobile-modal tour-compact-modal"
-      : "fixed tour-modal-position max-h-[380px] overflow-y-auto";
+      : "fixed right-[20px] bottom-[20px] max-h-[380px] min-w-[330px] overflow-y-auto";
   };
   
   // Make sure we have aria-attributes to avoid warnings
   const dialogContentProps = {
     className: `${isInitialStep 
       ? "sm:max-w-[500px] max-w-[95vw]" 
-      : "sm:max-w-[320px] max-w-[95vw] max-h-[65vh] shadow-2xl"} ${getPosition()}`,
+      : "sm:max-w-[340px] w-[340px] max-w-[95vw] max-h-[65vh] shadow-2xl"} ${getPosition()}`,
     "aria-describedby": "tour-description",
     style: {
       backgroundColor: 'white',
@@ -248,25 +248,27 @@ const TourModal = () => {
             <>
               <Button 
                 variant="ghost" 
-                size="icon" 
+                size="sm" 
                 onClick={handlePrevStep}
                 disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
-                className="h-5 w-5 p-0 opacity-40 hover:opacity-70"
+                className="h-6 px-1 opacity-60 hover:opacity-100"
                 aria-label="Back"
               >
-                <ChevronLeft className="h-2.5 w-2.5" />
+                <ChevronLeft className="h-3 w-3 mr-1" />
+                <span className="text-xs">Back</span>
               </Button>
               
-              <div className="flex gap-1">
+              <div className="flex gap-2">
                 <Button 
                   variant="ghost" 
-                  size="icon" 
+                  size="sm" 
                   onClick={skipTour}
                   disabled={showUserNameInput || isTransitioning}
-                  className="h-5 w-5 p-0 opacity-40 hover:opacity-70"
-                  aria-label="Cancel Tour"
+                  className="h-6 px-1 opacity-60 hover:opacity-100"
+                  aria-label="Skip"
                 >
-                  <X className="h-2.5 w-2.5" />
+                  <X className="h-3 w-3 mr-1" />
+                  <span className="text-xs">Skip</span>
                 </Button>
                 
                 {/* We're hiding the Next button since tour progresses via click anywhere */}
