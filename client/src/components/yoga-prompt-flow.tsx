@@ -19,7 +19,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight, Play, PauseCircle, Headphones, Volume1 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight, Play, PauseCircle, Headphones, Volume1, X } from "lucide-react";
 
 // Define types for the various options
 export interface YogaSession {
@@ -801,9 +801,10 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
               ))}
             </div>
             
-            <div className="flex justify-between pt-4">
+            <div className="flex justify-between pt-2 sm:pt-4 gap-2">
               <Button 
                 variant="outline" 
+                size={isMobile ? "sm" : "default"}
                 onClick={() => {
                   setCurrentPrompt('results');
                   setAudioPlaying(false);
@@ -815,9 +816,9 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
                   }
                 }}
               >
-                Back to Sessions
+                {isMobile ? 'Back' : 'Back to Sessions'}
               </Button>
-              <Button onClick={onClose}>
+              <Button size={isMobile ? "sm" : "default"} onClick={onClose}>
                 Done
               </Button>
             </div>
@@ -847,12 +848,14 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
         <DialogTitle className="sr-only">Yoga Session Flow</DialogTitle>
         <DialogDescription className="sr-only">Personalized yoga sessions and prompts</DialogDescription>
         
-        {/* Custom swipe indicator that won't get cut off */}
+        {/* Close button at top right for mobile */}
         {isMobile && (
-          <div className="w-full flex flex-col items-center pt-2 pb-2 bg-background sticky top-0 z-10 border-b">
-            <div className="w-12 h-1 rounded-full bg-gray-300" />
-            <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
-          </div>
+          <button 
+            onClick={() => onClose && onClose()}
+            className="absolute right-3 top-3 z-10 rounded-full h-8 w-8 bg-gray-100 flex items-center justify-center"
+          >
+            <X className="h-4 w-4" />
+          </button>
         )}
         
         {renderPrompt()}
