@@ -1052,6 +1052,9 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   .tour-mobile-modal {
     font-size: 0.85rem !important;
     padding: 0.5rem !important;
+    right: 5px !important;
+    max-width: calc(100vw - 10px) !important;
+    width: calc(100vw - 10px) !important;
   }
   
   .tour-mobile-modal .tour-title {
@@ -1072,6 +1075,9 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   .tour-compact-modal {
     min-height: auto !important;
     max-height: 40vh !important;
+    right: 5px !important; 
+    left: 5px !important;
+    width: calc(100vw - 10px) !important;
   }
   
   /* Fix dialog animations on mobile */
@@ -1197,6 +1203,21 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
     flex-direction: column !important;
     max-height: 100% !important;
     overflow: visible !important;
+    width: calc(100% - 20px) !important;
+    max-width: calc(100% - 20px) !important;
+    left: 10px !important;
+    right: 10px !important;
+  }
+  
+  /* Specific fix for interactive courses dialog */
+  [data-radix-dialog-content] .tour-speech-bubble,
+  [data-tour-dialog] {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: calc(100% - 20px) !important; 
+    max-width: calc(100% - 20px) !important;
+    right: 10px !important;
+    left: 10px !important;
   }
 }
 

@@ -152,10 +152,10 @@ const TourModal = () => {
         : ""; // Default centered position
     }
     
-    // After step 2, position to bottom with special mobile styling
+    // After step 2, position to bottom with special mobile styling, ensure fits on screen
     return isMobile
-      ? "fixed bottom-2 left-0 right-0 mx-2 max-h-[50vh] overflow-y-auto tour-mobile-modal tour-compact-modal"
-      : "fixed right-[20px] bottom-[20px] max-h-[380px] min-w-[330px] overflow-y-auto";
+      ? "fixed bottom-2 left-2 right-2 max-h-[50vh] overflow-y-auto tour-mobile-modal tour-compact-modal"
+      : "fixed right-[40px] bottom-[40px] max-h-[380px] min-w-[330px] max-w-[95vw] overflow-y-auto";
   };
   
   // Make sure we have aria-attributes to avoid warnings
@@ -242,7 +242,7 @@ const TourModal = () => {
           <Progress value={progressPercentage} className="h-1" />
         </div>
 
-        <DialogFooter className={`flex justify-between items-center ${isInitialStep ? "" : "pt-2"}`}>
+        <DialogFooter className={`flex justify-between items-center gap-3 ${isInitialStep ? "" : "pt-2"}`}>
           {/* Simpler controls when not in initial steps */}
           {!isInitialStep ? (
             <>
@@ -276,15 +276,15 @@ const TourModal = () => {
             </>
           ) : (
             <>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={handlePrevStep}
                   disabled={currentStepIndex === 0 || showUserNameInput || isTransitioning}
-                  className="h-8 md:h-9"
+                  className="h-8 md:h-9 text-xs sm:text-sm px-2"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Back
                 </Button>
                 
@@ -293,9 +293,9 @@ const TourModal = () => {
                   size="sm" 
                   onClick={skipTour}
                   disabled={showUserNameInput || isTransitioning}
-                  className="h-8 md:h-9"
+                  className="h-8 md:h-9 text-xs sm:text-sm px-2"
                 >
-                  <X className="h-4 w-4 mr-1" />
+                  <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Skip
                 </Button>
               </div>
