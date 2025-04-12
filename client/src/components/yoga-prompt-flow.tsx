@@ -15,6 +15,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  FullScreenDialog,
+  FullScreenDialogContent,
+  FullScreenDialogTitle,
+  FullScreenDialogDescription,
+  FullScreenDialogBody,
+  FullScreenDialogHeader,
+} from "@/components/ui/full-screen-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
