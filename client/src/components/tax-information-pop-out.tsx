@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { AlertCircle, DollarSign, Briefcase, Home, FileText, ScrollText, Award, Star, BookOpen, CheckCircle2, TrendingUp, Clock, CalendarDays } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Home, FileText, ScrollText, Award, Star, BookOpen, CheckCircle2, TrendingUp, Clock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
