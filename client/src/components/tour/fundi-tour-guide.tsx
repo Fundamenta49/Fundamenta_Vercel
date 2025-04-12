@@ -40,6 +40,50 @@ export default function FundiTourGuide() {
   // Calculate progress
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
   
+  // EMERGENCY FIX: Apply direct DOM manipulations to ensure tour displays correctly
+  useEffect(() => {
+    if (isTourActive) {
+      // Add observer to watch for any tour dialogs appearing and fix their position
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.addedNodes.length) {
+            // Check for any added tour dialogs
+            mutation.addedNodes.forEach((node) => {
+              if (node instanceof HTMLElement && 
+                  (node.hasAttribute('data-tour-dialog') || 
+                   node.querySelector('[data-tour-dialog]'))) {
+                
+                // Apply fix
+                const dialogEl = node.hasAttribute('data-tour-dialog') ? 
+                  node : node.querySelector('[data-tour-dialog]');
+                
+                if (dialogEl && dialogEl instanceof HTMLElement) {
+                  // Force to bottom-right corner
+                  dialogEl.style.position = 'fixed';
+                  dialogEl.style.bottom = '10px';
+                  dialogEl.style.right = '10px';
+                  dialogEl.style.left = 'auto';
+                  dialogEl.style.top = 'auto';
+                  dialogEl.style.maxWidth = '90vw';
+                  dialogEl.style.width = '320px';
+                  dialogEl.style.zIndex = '999999';
+                  
+                  console.log('Emergency position fix applied to tour dialog');
+                }
+              }
+            });
+          }
+        });
+      });
+      
+      // Start observing the document
+      observer.observe(document.body, { childList: true, subtree: true });
+      
+      // Cleanup observer on dismount
+      return () => observer.disconnect();
+    }
+  }, [isTourActive]);
+  
   // Get positions based on feature cards on the page and tour step
   const getFundiPosition = (stepIndex: number, isMobile: boolean) => {
     const viewportWidth = window.innerWidth;

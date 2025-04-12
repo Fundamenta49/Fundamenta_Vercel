@@ -24,6 +24,24 @@ export const TourEmergencyFix: React.FC = () => {
     // Force tour active style
     if (isTourActive) {
       document.body.classList.add('tour-active');
+      
+      // EMERGENCY FIX: Add this to ensure ALL tour dialogs stay visible
+      setTimeout(() => {
+        // Apply to any active tour dialog
+        const tourDialogs = document.querySelectorAll('[data-tour-dialog], [data-radix-dialog-content]');
+        tourDialogs.forEach(dialog => {
+          const dialogEl = dialog as HTMLElement;
+          if (dialogEl) {
+            // Ensure dialog fits on screen by constraining max width and centering
+            dialogEl.style.maxWidth = 'calc(100vw - 20px)';
+            dialogEl.style.width = 'calc(100vw - 20px)';
+            dialogEl.style.left = '10px';
+            dialogEl.style.right = '10px';
+            dialogEl.style.marginLeft = 'auto';
+            dialogEl.style.marginRight = 'auto';
+          }
+        });
+      }, 100);
     }
     
     // Check if we need to apply vehicle maintenance fix
@@ -69,7 +87,39 @@ export function applyVehicleMaintenanceFix(): void {
       (tourFundi as HTMLElement).style.transform = 'translate(166px, 120px)';
     }
     
-    console.log('Emergency fix applied for vehicle maintenance page');
+    // CRITICAL FIX: Ensure all tour dialogs are visible by applying styles directly
+    setTimeout(() => {
+      // Find any tutorial dialogs
+      const tourDialogs = document.querySelectorAll('[data-tour-dialog]');
+      tourDialogs.forEach(dialog => {
+        const dialogEl = dialog as HTMLElement;
+        
+        // Force dialog to be centered on screen with adequate margins
+        dialogEl.style.position = 'fixed';
+        dialogEl.style.maxWidth = 'calc(100vw - 40px)';
+        dialogEl.style.width = '320px'; 
+        dialogEl.style.right = '20px';
+        dialogEl.style.left = 'auto';
+        dialogEl.style.top = 'auto';
+        dialogEl.style.bottom = '20px';
+        dialogEl.style.zIndex = '999999';
+        dialogEl.style.maxHeight = '400px';
+        dialogEl.style.overflow = 'auto';
+        
+        // Ensure buttons are visible
+        const buttons = dialogEl.querySelectorAll('button');
+        buttons.forEach(button => {
+          button.style.display = 'inline-flex';
+          button.style.margin = '5px';
+          button.style.padding = '0 8px';
+          button.style.fontSize = '12px';
+          button.style.height = '28px';
+          button.style.minWidth = '0';
+        });
+      });
+    }, 300);
+    
+    console.log('Emergency fix applied for vehicle maintenance page with enhanced dialog fixes');
   }
 }
 
