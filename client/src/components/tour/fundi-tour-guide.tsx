@@ -73,10 +73,12 @@ export default function FundiTourGuide() {
     const SAFE_RIGHT_MARGIN = FUNDI_WIDTH + 20; // Fundi width + safety margin
     
     // For safety, modify margin based on window width
-    // Larger screens can accommodate more complex positioning
-    const safetyMargin = viewportWidth < 768 ? viewportWidth * 0.4 : 250;
+    // Larger screens can accommodate more complex positioning, but we need a bigger margin
+    // Increase the safety margin for all screens to ensure content stays visible
+    const safetyMargin = viewportWidth < 768 ? viewportWidth * 0.5 : 350;
     
     // Maximum allowed X position - prevents Fundi from getting too close to the right edge 
+    // This ensures both Fundi and the speech bubble remain fully visible on screen
     const maxSafeX = viewportWidth - SAFE_RIGHT_MARGIN - safetyMargin;
     console.log(`Screen size: ${viewportWidth}x${viewportHeight}, Safe max X position: ${maxSafeX}`);
     
