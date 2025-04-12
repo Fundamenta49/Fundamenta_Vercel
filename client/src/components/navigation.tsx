@@ -17,7 +17,6 @@ import {
   Home,
   Sparkles,
   HelpCircle,
-  CalendarDays,
   Trophy,
   Gamepad2
 } from "lucide-react";
@@ -232,7 +231,7 @@ export default function Navigation() {
               </button>
             ))}
             
-            {/* Separator and Calendar */}
+            {/* Separator and Arcade */}
             <div className="mt-4 mb-2">
               <div className="px-3">
                 <Separator className={cn(borderColor)} />
@@ -240,16 +239,8 @@ export default function Navigation() {
               
               <div className="mt-2">
                 <button 
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left text-gray-700 hover:bg-gray-50"
-                  onClick={() => handleNavigation("/learning-calendar")}
-                >
-                  <CalendarDays className="h-5 w-5 text-gray-600" />
-                  <span className="font-medium">Learning Calendar</span>
-                </button>
-                
-                <button 
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left mt-1",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
                     isNavItemActive("/arcade")
                       ? `${activeItemBg} ${activeItemText}`
                       : `text-gray-700 hover:bg-gray-50`
@@ -338,7 +329,7 @@ export default function Navigation() {
           </button>
         ))}
         
-        {/* Separator and Calendar */}
+        {/* Separator and Arcade */}
         <div className="mt-4 mb-2">
           {!isMinimized && (
             <div className="px-3 py-2">
@@ -346,20 +337,12 @@ export default function Navigation() {
             </div>
           )}
           
-          {/* Learning Calendar Link */}
+          {/* Arcade Link */}
           {!isMinimized ? (
             <div className="mt-2">
               <button 
-                className="flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left text-gray-700 hover:bg-gray-50"
-                onClick={() => handleNavigation("/learning-calendar")}
-              >
-                <CalendarDays className="h-5 w-5 text-gray-600" />
-                <span className="font-medium">Learning Calendar</span>
-              </button>
-              
-              <button 
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left mt-1",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
                   isNavItemActive("/arcade")
                     ? `${activeItemBg} ${activeItemText}`
                     : `text-gray-700 hover:bg-gray-50`
@@ -371,15 +354,7 @@ export default function Navigation() {
               </button>
             </div>
           ) : (
-            <div className="mt-3 flex flex-col items-center gap-3">
-              <button
-                onClick={() => handleNavigation("/learning-calendar")}
-                className="p-2 rounded-md hover:bg-gray-100"
-                title="Learning Calendar"
-              >
-                <CalendarDays className="h-5 w-5 text-gray-600" />
-              </button>
-              
+            <div className="mt-3 flex flex-col items-center">
               <button
                 onClick={() => handleNavigation("/arcade")}
                 className={cn(
