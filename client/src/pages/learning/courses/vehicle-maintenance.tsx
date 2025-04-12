@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Car, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import VehicleGuide from '@/components/vehicle-guide';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
 import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
+import InteractiveCoursesFix from '@/components/tour/interactive-courses-fix';
 
 export default function VehicleMaintenanceCourse() {
   const [, navigate] = useLocation();
@@ -54,8 +55,22 @@ export default function VehicleMaintenanceCourse() {
     }
   ];
 
+  // Apply emergency fix to ensure tour dialogs stay on screen
+  useEffect(() => {
+    // Add special data attribute on the body to trigger CSS fixes
+    document.body.setAttribute('data-tour-route', '/learning/courses/vehicle-maintenance');
+    
+    // When component unmounts, remove the attribute
+    return () => {
+      document.body.removeAttribute('data-tour-route');
+    };
+  }, []);
+  
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
+      {/* Emergency fix for tour dialogs */}
+      <InteractiveCoursesFix />
+      
       <div className="flex items-center mb-6">
         <Button 
           variant="ghost" 
