@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useEffect } from 'react';
 import TourHighlight from './tour-highlight';
 import FundiTourGuide from './fundi-tour-guide';
 import TourEmergencyFix from './tour-emergency-fix';
+import VehicleTourFix from './vehicle-tour-fix'; // Import the aggressive emergency fix
 import { useTour } from '@/contexts/tour-context';
 
 // Main tour component that includes all tour-related subcomponents
@@ -77,6 +78,7 @@ const Tour = () => {
   return (
     <>
       <TourEmergencyFix />
+      <VehicleTourFix /> {/* Add our special emergency fix for vehicle maintenance */}
       <FundiTourGuide />
       <TourHighlight />
     </>

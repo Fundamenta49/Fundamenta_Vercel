@@ -1437,3 +1437,33 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   transform: scale(1.05);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+/* EMERGENCY FIX FOR FUNDI CHARACTER ON VEHICLE MAINTENANCE - ALWAYS FORCE POSITION */
+body[data-tour-route*="vehicle-maintenance"] .robot-container,
+body.tour-vehicle-page .robot-container,
+body[data-tour-fixed="true"] .robot-container,
+body[data-tour-active="true"] .robot-container,
+body[data-emergency-fix="true"] .robot-container {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  z-index: 999999 !important;
+}
+
+/* Desktop specific position for Fundi in vehicle maintenance */
+@media (min-width: 641px) {
+  body[data-tour-route*="vehicle-maintenance"] .robot-container,
+  body.tour-vehicle-page .robot-container,
+  body[data-tour-fixed="true"] .robot-container,
+  body[data-tour-active="true"] .robot-container,
+  body[data-emergency-fix="true"] .robot-container {
+    position: fixed !important;
+    top: 40px !important; 
+    right: 40px !important;
+    transform: none !important;
+    z-index: 999999 !important;
+  }
+}
