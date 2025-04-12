@@ -836,38 +836,46 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
   };
 
   return (
-    <Dialog 
-      open={true} 
-      onOpenChange={() => onClose && onClose()}
-    >
-      <DialogContent 
-        className={`
-          p-0 rounded-lg border bg-background
-          ${isMobile 
-            ? "w-[95%] max-w-[95%] h-auto max-h-[85vh]" 
-            : "max-w-md md:max-w-lg max-h-[90vh]"}
-        `}
-        style={{
-          overflowY: 'auto',
-          overscrollBehavior: 'contain'
-        }}
-      >
-        {/* Hidden DialogTitle for accessibility */}
-        <DialogTitle className="sr-only">Yoga Session Flow</DialogTitle>
-        <DialogDescription className="sr-only">Personalized yoga sessions and prompts</DialogDescription>
-        
-        {/* Close button at top right for mobile */}
-        {isMobile && (
-          <button 
-            onClick={() => onClose && onClose()}
-            className="absolute right-3 top-3 z-10 rounded-full h-8 w-8 bg-gray-100 flex items-center justify-center"
+    <>
+      {isMobile ? (
+        <FullScreenDialog
+          open={true}
+          onOpenChange={() => onClose && onClose()}
+        >
+          <FullScreenDialogContent
+            className="bg-background p-0"
+            themeColor="#8a63d2" /* Purple theme color for yoga flow */
           >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-        
-        {renderPrompt()}
-      </DialogContent>
-    </Dialog>
+            <FullScreenDialogHeader className="border-b">
+              <FullScreenDialogTitle className="text-xl font-semibold">Yoga Session Flow</FullScreenDialogTitle>
+              <FullScreenDialogDescription>Personalized yoga sessions and prompts</FullScreenDialogDescription>
+            </FullScreenDialogHeader>
+            
+            <FullScreenDialogBody>
+              {renderPrompt()}
+            </FullScreenDialogBody>
+          </FullScreenDialogContent>
+        </FullScreenDialog>
+      ) : (
+        <Dialog 
+          open={true} 
+          onOpenChange={() => onClose && onClose()}
+        >
+          <DialogContent 
+            className="p-0 rounded-lg border bg-background max-w-md md:max-w-lg max-h-[90vh]"
+            style={{
+              overflowY: 'auto',
+              overscrollBehavior: 'contain'
+            }}
+          >
+            {/* Hidden DialogTitle for accessibility */}
+            <DialogTitle className="sr-only">Yoga Session Flow</DialogTitle>
+            <DialogDescription className="sr-only">Personalized yoga sessions and prompts</DialogDescription>
+            
+            {renderPrompt()}
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 }
