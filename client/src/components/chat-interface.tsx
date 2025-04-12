@@ -257,21 +257,69 @@ export default function ChatInterface({
   const checkForFinancialInfo = (message: string) => {
     const lowerMessage = message.toLowerCase().trim();
     
+    // Special case for the common "I know make" typo (for "I now make")
+    const knowMakeMatch = lowerMessage.match(/i know make (\$?[\d,]+(?:\.\d{1,2})?)(?:\s+per\s+(?:year|month|week|hour))?/i);
+    if (knowMakeMatch && knowMakeMatch[1]) {
+      const income = parseFloat(knowMakeMatch[1].replace(/[$,]/g, ''));
+      if (!isNaN(income) && income > 0) {
+        console.log("DIRECT INCOME MATCH DETECTED (KNOW MAKE):", income);
+        
+        // Create financial data object for the budget handler
+        const financeInfo = {
+          type: 'budget',
+          message: message,
+          rawMessage: message,
+          extractedData: { income }
+        };
+        
+        // Trigger the finance connector's budget handler directly
+        window.dispatchEvent(new CustomEvent('financeAction', { 
+          detail: { action: 'budget', data: financeInfo }
+        }));
+        
+        return true; // Indicate we found and handled financial info
+      }
+    }
+    
     // Check for income/salary mentions with direct pattern matching
     const incomePatterns = [
-      /i (make|earn|get paid|receive) (\$?[\d,]+(?:\.\d{1,2})?)/i,
-      /my (income|salary|wage) is (\$?[\d,]+(?:\.\d{1,2})?)/i,
-      /i now make (\$?[\d,]+(?:\.\d{1,2})?)/i,
-      /i know make (\$?[\d,]+(?:\.\d{1,2})?)/i // Common typo for "now make"
+      /i (make|earn|get paid|receive) (\$?[\d,]+(?:\.\d{1,2})?)(?:\s+per\s+(?:year|month|week|hour))?/i,
+      /my (income|salary|wage) is (\$?[\d,]+(?:\.\d{1,2})?)(?:\s+per\s+(?:year|month|week|hour))?/i,
+      /i now make (\$?[\d,]+(?:\.\d{1,2})?)(?:\s+per\s+(?:year|month|week|hour))?/i,
+      /(\$?[\d,]+(?:\.\d{1,2})?)\s+per\s+(?:year|month|week|hour)/i // Matches "100,000 per year" etc.
     ];
     
     // Try each pattern for income
     for (const pattern of incomePatterns) {
       const match = lowerMessage.match(pattern);
-      if (match && match[2]) {
+      
+      // First, check if this is the standalone pattern with just the number and "per year/month"
+      if (pattern.toString().includes('per\\s+(?:year|month|week|hour)') && match && match[1]) {
+        const income = parseFloat(match[1].replace(/[$,]/g, ''));
+        if (!isNaN(income) && income > 0) {
+          console.log("DIRECT INCOME MATCH DETECTED (STANDALONE):", income, "from pattern:", pattern.toString());
+          
+          // Create financial data object for the budget handler
+          const financeInfo = {
+            type: 'budget',
+            message: message,
+            rawMessage: message,
+            extractedData: { income }
+          };
+          
+          // Trigger the finance connector's budget handler directly
+          window.dispatchEvent(new CustomEvent('financeAction', { 
+            detail: { action: 'budget', data: financeInfo }
+          }));
+          
+          return true; // Indicate we found and handled financial info
+        }
+      }
+      // Then check the standard patterns
+      else if (match && match[2]) {
         const income = parseFloat(match[2].replace(/[$,]/g, ''));
         if (!isNaN(income) && income > 0) {
-          console.log("DIRECT INCOME MATCH DETECTED:", income);
+          console.log("DIRECT INCOME MATCH DETECTED:", income, "from pattern:", pattern.toString());
           
           // Create financial data object for the budget handler
           const financeInfo = {
