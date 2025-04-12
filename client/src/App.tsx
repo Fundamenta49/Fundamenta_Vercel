@@ -23,7 +23,7 @@ import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";
 import YogaProgressionPage from "@/pages/yoga-progression";
 import Arcade from "@/pages/arcade";
-// All calendar components removed
+import CalendarPage from "@/pages/calendar";
 import EconomicsCourse from "@/pages/learning/courses/economics";
 import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenance";
 // We're using the main wellness page with URL parameters instead of separate pages
@@ -221,7 +221,11 @@ function Router() {
                 <Learning />
               </ProtectedRoute>
             </Route>
-            {/* Learning calendar route removed */}
+            <Route path="/calendar">
+              <ProtectedRoute>
+                <CalendarPage />
+              </ProtectedRoute>
+            </Route>
             <Route path="/learning/courses/vehicle-maintenance">
               <ProtectedRoute>
                 <VehicleMaintenanceCourse />

@@ -18,7 +18,8 @@ import {
   Sparkles,
   HelpCircle,
   Trophy,
-  Gamepad2
+  Gamepad2,
+  Calendar
 } from "lucide-react";
 import {
   Sheet,
@@ -47,6 +48,7 @@ const featureNavItems = [
   { href: "/wellness", label: "Wellness & Nutrition", icon: Heart },
   { href: "/active", label: "Active You", icon: Activity },
   { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
+  { href: "/calendar", label: "Smart Calendar", icon: Calendar },
 ];
 
 export default function Navigation() {
@@ -70,6 +72,7 @@ export default function Navigation() {
     if (href === '/active' && (location.includes('/active') || location.includes('/fitness'))) return true;
     if (href === '/emergency' && location.includes('/emergency')) return true;
     if (href === '/arcade' && location.includes('/arcade')) return true;
+    if (href === '/calendar' && location.includes('/calendar')) return true;
     
     return false;
   };
@@ -158,6 +161,15 @@ export default function Navigation() {
         hoverBg: "hover:bg-amber-50",
         iconColor: "text-amber-700",
         borderColor: "border-amber-300"
+      };
+    } else if (location.includes('/calendar')) {
+      // Indigo for Smart Calendar
+      return {
+        activeItemBg: "bg-indigo-100",
+        activeItemText: "text-indigo-700",
+        hoverBg: "hover:bg-indigo-50",
+        iconColor: "text-indigo-700",
+        borderColor: "border-indigo-300"
       };
     }
     
