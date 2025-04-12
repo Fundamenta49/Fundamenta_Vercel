@@ -23,10 +23,37 @@ function extractFinancialData(message: string): {
   const data: any = {};
   const lowerMessage = message.toLowerCase();
   
-  // Match income
-  const incomeMatch = lowerMessage.match(/(?:income|salary|make|earn)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
-  if (incomeMatch && incomeMatch[1]) {
-    data.income = parseFloat(incomeMatch[1].replace(/[$,]/g, ''));
+  // Match income - enhanced patterns to handle multiple formats
+  console.log("Server-side extracting financial data:", message);
+  
+  // Try specific patterns for income first
+  if (lowerMessage.includes('make') && lowerMessage.includes('per year')) {
+    const directMatch = lowerMessage.match(/make\s+(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (directMatch && directMatch[1]) {
+      const amount = parseFloat(directMatch[1].replace(/[$,]/g, ''));
+      console.log("SERVER INCOME DIRECT MATCH:", amount);
+      data.income = amount;
+    }
+  }
+  
+  // Special case for "I know make" (common typo for "I now make")
+  if (!data.income && lowerMessage.includes('know make')) {
+    const knowMakeMatch = lowerMessage.match(/know\s+make\s+(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (knowMakeMatch && knowMakeMatch[1]) {
+      const amount = parseFloat(knowMakeMatch[1].replace(/[$,]/g, ''));
+      console.log("SERVER INCOME KNOW MAKE MATCH:", amount);
+      data.income = amount;
+    }
+  }
+  
+  // General income pattern as fallback
+  if (!data.income) {
+    const incomeMatch = lowerMessage.match(/(?:income|salary|make|earn)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (incomeMatch && incomeMatch[1]) {
+      const amount = parseFloat(incomeMatch[1].replace(/[$,]/g, ''));
+      console.log("SERVER INCOME GENERAL MATCH:", amount);
+      data.income = amount;
+    }
   }
   
   // Match rent/housing amount
@@ -115,7 +142,10 @@ router.post('/process-intent', async (req, res) => {
     const lowerMessage = message.toLowerCase();
     
     // Define common patterns for different financial tools
-    const budgetPatterns = ['budget', 'spending', 'track expense', 'income and expense', 'money management', 'rent', 'lease', 'apartment', 'housing'];
+    const budgetPatterns = [
+      'budget', 'spending', 'track expense', 'income and expense', 'money management', 
+      'rent', 'lease', 'apartment', 'housing', 'income', 'salary', 'make', 'earn', 'raise'
+    ];
     const mortgagePatterns = ['mortgage', 'home buy', 'house payment', 'property', 'real estate', 'amortization'];
     const taxPatterns = ['tax', 'fica', 'income tax', 'take home pay', 'tax bracket', 'filing status'];
     const investmentPatterns = ['invest', 'stock', 'portfolio', 'market', 'fund', 'dividend', 'brokerage'];
@@ -147,7 +177,13 @@ router.post('/process-intent', async (req, res) => {
     
     // Determine the specific type of finance request
     let financeType = '';
-    if (budgetPatterns.some(pattern => lowerMessage.includes(pattern))) {
+    
+    // Extract financial data to help with type determination
+    const extractedData = extractFinancialData(message);
+    
+    // Use extracted data as an additional signal
+    if (budgetPatterns.some(pattern => lowerMessage.includes(pattern)) || 
+        extractedData.income !== undefined) {
       financeType = 'budget';
     } else if (mortgagePatterns.some(pattern => lowerMessage.includes(pattern))) {
       financeType = 'mortgage';
@@ -165,8 +201,7 @@ router.post('/process-intent', async (req, res) => {
       financeType = 'general';
     }
     
-    // Extract financial data from the message
-    const extractedData = extractFinancialData(message);
+    // We've already extracted the data above
     
     // Return the finance request information with extracted data
     return res.json({

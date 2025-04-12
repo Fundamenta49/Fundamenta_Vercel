@@ -207,6 +207,12 @@ export default function FinanceConnector() {
             formData.expenses = [expenseData];
           }
           
+          // Add income if found
+          if (extractedData.income) {
+            formData.income = extractedData.income;
+            responseText += ` I've set your monthly income to ${formatCurrency(extractedData.income)}.`;
+          }
+          
           // Add general expense if found
           if (extractedData.expense && extractedData.expenseCategory) {
             responseText += ` I've added ${formatCurrency(extractedData.expense)} for ${extractedData.expenseCategory}.`;
@@ -536,10 +542,37 @@ export default function FinanceConnector() {
     const data: any = {};
     const lowerMessage = message.toLowerCase();
     
-    // Match income
-    const incomeMatch = lowerMessage.match(/(?:income|salary|make|earn)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
-    if (incomeMatch && incomeMatch[1]) {
-      data.income = parseFloat(incomeMatch[1].replace(/[$,]/g, ''));
+    // Match income - improved pattern with direct debug 
+    console.log("DEBUG - Extracting financial data from:", message);
+    
+    // Try specific patterns for income first
+    if (lowerMessage.includes('make') && lowerMessage.includes('per year')) {
+      const directMatch = lowerMessage.match(/make\s+(\$?[\d,]+(?:\.\d{1,2})?)/i);
+      if (directMatch && directMatch[1]) {
+        const amount = parseFloat(directMatch[1].replace(/[$,]/g, ''));
+        console.log("INCOME DIRECT MATCH:", amount);
+        data.income = amount;
+      }
+    }
+    
+    // Special case for "I know make" (common typo for "I now make")
+    if (!data.income && lowerMessage.includes('know make')) {
+      const knowMakeMatch = lowerMessage.match(/know\s+make\s+(\$?[\d,]+(?:\.\d{1,2})?)/i);
+      if (knowMakeMatch && knowMakeMatch[1]) {
+        const amount = parseFloat(knowMakeMatch[1].replace(/[$,]/g, ''));
+        console.log("INCOME KNOW MAKE MATCH:", amount);
+        data.income = amount;
+      }
+    }
+    
+    // General income pattern as fallback
+    if (!data.income) {
+      const incomeMatch = lowerMessage.match(/(?:income|salary|make|earn)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+      if (incomeMatch && incomeMatch[1]) {
+        const amount = parseFloat(incomeMatch[1].replace(/[$,]/g, ''));
+        console.log("INCOME GENERAL MATCH:", amount);
+        data.income = amount;
+      }
     }
     
     // Match rent/housing amount - improved pattern to catch more cases
@@ -642,13 +675,21 @@ export default function FinanceConnector() {
       extractedData: extractedData
     };
     
+    // Enhanced detection for income and budget-related keywords
     if (lowerMessage.includes('budget') || 
         lowerMessage.includes('spending') || 
         lowerMessage.includes('track expense') || 
         lowerMessage.includes('rent') || 
         lowerMessage.includes('lease') || 
         lowerMessage.includes('apartment') ||
-        lowerMessage.includes('housing')) {
+        lowerMessage.includes('housing') ||
+        lowerMessage.includes('income') ||
+        lowerMessage.includes('salary') ||
+        lowerMessage.includes('make') ||
+        lowerMessage.includes('earn') ||
+        (extractedData && extractedData.income)) {
+      
+      console.log("Budget category detected with data:", extractedData);
       handleFinanceRequest({ ...financeInfo, type: 'budget' });
     } else if (lowerMessage.includes('mortgage') || lowerMessage.includes('home buy') || lowerMessage.includes('house payment')) {
       handleFinanceRequest({ ...financeInfo, type: 'mortgage' });
