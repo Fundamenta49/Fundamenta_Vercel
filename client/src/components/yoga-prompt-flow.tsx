@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -42,6 +43,9 @@ interface YogaPromptFlowProps {
 }
 
 export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowProps) {
+  // Check if the device is mobile
+  const isMobile = useIsMobile();
+  
   // State for tracking the current prompt
   const [currentPrompt, setCurrentPrompt] = useState<'welcome' | 'mood' | 'time' | 'sound' | 'results' | 'session'>('welcome');
   
