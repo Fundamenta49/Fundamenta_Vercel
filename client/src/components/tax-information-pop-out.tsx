@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { AlertCircle, DollarSign, Briefcase, Home, FileText, ScrollText, Award, Star, BookOpen, CheckCircle2, TrendingUp, Clock } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Home, FileText, ScrollText, Award, Star, BookOpen, CheckCircle2, TrendingUp, Clock, Calendar } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -503,7 +503,40 @@ export default function TaxInformationPopOut() {
     }
   }, [calculatorState, activeTab]);
   
-  // Calendar functionality removed
+  // Calendar integration functionality
+  const addTaxDeadlineToCalendar = () => {
+    const deadlineDate = new Date();
+    // Set to April 15th of next year
+    deadlineDate.setFullYear(deadlineDate.getFullYear() + 1);
+    deadlineDate.setMonth(3); // April (0-indexed)
+    deadlineDate.setDate(15);
+    
+    // Create calendar event
+    const taxDeadlineEvent = {
+      id: `tax-deadline-${Date.now()}`,
+      title: `Tax Filing Deadline - ${STATE_TAX_DATA[selectedState].name}`,
+      category: "finance",
+      date: deadlineDate,
+      description: `Federal and ${STATE_TAX_DATA[selectedState].name} tax filing deadline. Don't forget to file your taxes!`
+    };
+    
+    // Get existing events or initialize empty array
+    const existingEvents = localStorage.getItem('fundamentaCalendarEvents');
+    let events = [];
+    
+    if (existingEvents) {
+      events = JSON.parse(existingEvents);
+    }
+    
+    // Add new event
+    events.push(taxDeadlineEvent);
+    
+    // Save back to localStorage
+    localStorage.setItem('fundamentaCalendarEvents', JSON.stringify(events));
+    
+    // Show success message
+    alert("Tax deadline added to your Smart Calendar!");
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
@@ -919,7 +952,19 @@ export default function TaxInformationPopOut() {
                   <AccordionItem value="item-4">
                     <AccordionTrigger>Tax Filing Tips</AccordionTrigger>
                     <AccordionContent>
-                      <p className="mb-3">In {STATE_TAX_DATA[selectedState].name}, the tax filing deadline is typically {STATE_TAX_DATA[selectedState].filingDeadline}.</p>
+                      <p className="mb-2">In {STATE_TAX_DATA[selectedState].name}, the tax filing deadline is typically {STATE_TAX_DATA[selectedState].filingDeadline}.</p>
+                      
+                      <div className="mb-4 flex items-center">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="border-indigo-400 text-indigo-600 hover:bg-indigo-50"
+                          onClick={addTaxDeadlineToCalendar}
+                        >
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Add Tax Deadline to Calendar
+                        </Button>
+                      </div>
                       
                       <h4 className="font-bold mt-3 mb-2">Common Deductions</h4>
                       <ul className="list-disc pl-5 mb-4">
