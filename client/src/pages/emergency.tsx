@@ -261,23 +261,25 @@ export default function Emergency() {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5 mt-4">
             {SECTIONS.map((section) => (
-              <div key={section.id} className="flex flex-col h-full">
+              <div key={section.id} className={`flex flex-col h-full ${section.id === 'cpr' ? 'col-span-2' : ''}`}>
                 <button
                   onClick={() => handleCardClick(section.id)}
-                  className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-red-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
+                  className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-red-500 min-h-[130px] sm:min-h-[160px] w-full h-full ${section.id === 'cpr' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start' : ''}`}
                   aria-label={`Open ${section.title}`}
                 >
-                  <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
+                  <div className={`flex items-center justify-center h-12 sm:h-14 ${section.id === 'cpr' ? 'sm:mr-6' : 'w-full'} mb-2`}>
                     <section.icon className="w-9 h-9 sm:w-10 sm:h-10 text-red-500" />
                   </div>
                   
-                  <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
-                  
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
-                    {section.description.length > 60 
-                      ? `${section.description.substring(0, 60)}...` 
-                      : section.description}
-                  </p>
+                  <div className={`flex flex-col ${section.id === 'cpr' ? 'sm:items-start items-center' : 'items-center'} w-full`}>
+                    <span className={`text-sm sm:text-base font-medium ${section.id === 'cpr' ? 'sm:text-left text-center' : 'text-center'} line-clamp-2 w-full`}>{section.title}</span>
+                    
+                    <p className={`text-xs text-gray-500 mt-1 ${section.id === 'cpr' ? 'line-clamp-3 sm:block' : 'line-clamp-2 hidden sm:block'} ${section.id === 'cpr' ? 'sm:text-left text-center' : 'text-center'}`}>
+                      {section.description.length > (section.id === 'cpr' ? 100 : 60) 
+                        ? `${section.description.substring(0, section.id === 'cpr' ? 100 : 60)}...` 
+                        : section.description}
+                    </p>
+                  </div>
                 </button>
               </div>
             ))}
