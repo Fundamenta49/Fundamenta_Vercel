@@ -143,19 +143,9 @@ const TourModal = () => {
   
   // Adjust position based on which step we're on and device size
   const getPosition = () => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    
-    // First two steps are centered (welcome and intro)
-    if (isInitialStep) {
-      return isMobile 
-        ? "max-w-[90vw] max-h-[60vh] overflow-y-auto tour-mobile-modal" 
-        : ""; // Default centered position
-    }
-    
-    // After step 2, position to bottom with special mobile styling, ensure fits on screen
-    return isMobile
-      ? "fixed bottom-2 left-2 right-2 max-h-[50vh] overflow-y-auto tour-mobile-modal tour-compact-modal"
-      : "fixed right-[40px] bottom-[40px] max-h-[380px] min-w-[330px] max-w-[95vw] overflow-y-auto";
+    // *** CRITICAL EMERGENCY FIX: Force all modals to have same safe position ***
+    // Always position at bottom-right with safety margin regardless of step or device
+    return "fixed bottom-[20px] right-[20px] max-h-[70vh] min-w-[320px] max-w-[320px] w-[320px] overflow-y-auto critical-fix-dialog";
   };
   
   // Make sure we have aria-attributes to avoid warnings
@@ -180,7 +170,7 @@ const TourModal = () => {
       <DialogContent 
         {...dialogContentProps} 
         data-tour-dialog 
-        className={`${dialogContentProps.className} bg-white border rounded-md shadow-md`}>
+        className={`${dialogContentProps.className} bg-white border rounded-md shadow-md tour-fix-dialog`}>
         <DialogHeader className={`${isInitialStep ? "" : "pb-2"} ${window.innerWidth < 640 ? "!p-2" : ""}`}>
           <DialogTitle className="flex items-center gap-2 text-base">
             <HelpCircle className={`h-4 w-4 text-primary ${window.innerWidth < 640 ? "!h-3 !w-3" : ""}`} />
