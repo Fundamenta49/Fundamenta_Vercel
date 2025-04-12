@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Info, ChevronDown, ChevronUp, Plus, ArrowRight } from "lucide-react";
 import { EmbeddedYouTubePlayer } from '@/components/embedded-youtube-player';
-import { searchSectionSpecificExerciseVideos, YouTubeVideo } from '@/lib/youtube-service';
+import { YouTubeVideo } from '@/lib/youtube-service';
+import { searchSectionSpecificExerciseVideos } from '@/lib/temp-fix';
 import { getFallbackVideosForCategory } from '@/lib/section-fallbacks';
 
 // Define Exercise interface with added fields to match ExerciseDetails in active-you-enhanced
@@ -330,7 +331,8 @@ export default function YogaSpecificExercises({
           exercise.name,
           exercise.equipment?.join(', '),
           exercise.muscleGroups,
-          exerciseId // Use exercise ID as seed for consistent results
+          exerciseId, // Use exercise ID as seed for consistent results
+          category // Pass the category (beginner, intermediate, advanced)
         );
       } catch (apiError) {
         console.log('YouTube API error, using fallbacks:', apiError);
@@ -375,15 +377,15 @@ export default function YogaSpecificExercises({
         {description && <p className="text-sm text-zinc-600 dark:text-zinc-400">{description}</p>}
       </div>
       <div className="flex flex-col space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
           <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
           
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <Button 
               variant="outline" 
               size="sm" 
               onClick={() => setSelectedCategory('beginnerPoses')}
-              className={selectedCategory === 'beginnerPoses' ? 'bg-zinc-200 dark:bg-zinc-800' : ''}
+              className={`${selectedCategory === 'beginnerPoses' ? 'bg-zinc-200 dark:bg-zinc-800' : ''} min-w-[80px]`}
             >
               Beginner
             </Button>
@@ -391,7 +393,7 @@ export default function YogaSpecificExercises({
               variant="outline" 
               size="sm" 
               onClick={() => setSelectedCategory('standingPoses')}
-              className={selectedCategory === 'standingPoses' ? 'bg-zinc-200 dark:bg-zinc-800' : ''}
+              className={`${selectedCategory === 'standingPoses' ? 'bg-zinc-200 dark:bg-zinc-800' : ''} min-w-[80px]`}
             >
               Standing
             </Button>
@@ -399,7 +401,7 @@ export default function YogaSpecificExercises({
               variant="outline" 
               size="sm" 
               onClick={() => setSelectedCategory('balancePoses')}
-              className={selectedCategory === 'balancePoses' ? 'bg-zinc-200 dark:bg-zinc-800' : ''}
+              className={`${selectedCategory === 'balancePoses' ? 'bg-zinc-200 dark:bg-zinc-800' : ''} min-w-[80px]`}
             >
               Balance
             </Button>
