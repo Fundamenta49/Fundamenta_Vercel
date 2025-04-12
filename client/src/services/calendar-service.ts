@@ -186,6 +186,7 @@ class CalendarServiceImpl {
   parseDateFromText(dateText: string): Date | null {
     const today = new Date();
     const lowerText = dateText.toLowerCase();
+    console.log(`Attempting to parse date from: "${lowerText}"`);
 
     // Handle common expressions
     if (lowerText.includes('today')) {
@@ -202,6 +203,90 @@ class CalendarServiceImpl {
       const nextWeek = new Date(today);
       nextWeek.setDate(today.getDate() + 7);
       return nextWeek;
+    }
+
+    // Try to handle date ranges (e.g., "from 14th to 18th")
+    // For date ranges, we'll take the start date
+    const dateRangeRegex = /(?:from|between)\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?\s+(?:to|until|and|through|-)(?:\s+(?:the\s+)?)(\d{1,2})(?:st|nd|rd|th)?/i;
+    const dateRangeMatch = lowerText.match(dateRangeRegex);
+    
+    if (dateRangeMatch) {
+      console.log("Found date range pattern:", dateRangeMatch);
+      const startDay = parseInt(dateRangeMatch[1]);
+      // Find which month we're talking about
+      const currentMonth = today.getMonth();
+      const currentYear = today.getFullYear();
+      
+      // Look for month name in the text
+      const months = [
+        'january', 'february', 'march', 'april', 'may', 'june', 
+        'july', 'august', 'september', 'october', 'november', 'december'
+      ];
+      
+      let targetMonth = currentMonth;
+      let targetYear = currentYear;
+      
+      // Check if a month is mentioned
+      for (let i = 0; i < months.length; i++) {
+        if (lowerText.includes(months[i])) {
+          targetMonth = i;
+          console.log(`Found month: ${months[i]} (${i})`);
+          break;
+        }
+      }
+      
+      // If the day has already passed this month, assume next month
+      if (startDay < today.getDate() && targetMonth === currentMonth) {
+        targetMonth++;
+        if (targetMonth > 11) {
+          targetMonth = 0;
+          targetYear++;
+        }
+      }
+      
+      return new Date(targetYear, targetMonth, startDay);
+    }
+
+    // Look for specific day of month pattern (like "the 15th" or "on the 21st")
+    const specificDayRegex = /(?:on|by)?\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?(?:\s+of)?/i;
+    const specificDayMatch = lowerText.match(specificDayRegex);
+    
+    if (specificDayMatch) {
+      console.log("Found specific day pattern:", specificDayMatch);
+      const day = parseInt(specificDayMatch[1]);
+      
+      // Find which month we're talking about (default to current)
+      const currentMonth = today.getMonth();
+      const currentYear = today.getFullYear();
+      
+      let targetMonth = currentMonth;
+      let targetYear = currentYear;
+      
+      // Look for month name in the text
+      const months = [
+        'january', 'february', 'march', 'april', 'may', 'june', 
+        'july', 'august', 'september', 'october', 'november', 'december'
+      ];
+      
+      // Check if a month is mentioned
+      for (let i = 0; i < months.length; i++) {
+        if (lowerText.includes(months[i])) {
+          targetMonth = i;
+          console.log(`Found month: ${months[i]} (${i})`);
+          break;
+        }
+      }
+      
+      // If the day has already passed this month, assume next month
+      if (day < today.getDate() && targetMonth === currentMonth) {
+        targetMonth++;
+        if (targetMonth > 11) {
+          targetMonth = 0;
+          targetYear++;
+        }
+      }
+      
+      return new Date(targetYear, targetMonth, day);
     }
 
     // Handle day of week
@@ -264,11 +349,39 @@ class CalendarServiceImpl {
           }
         }
       }
+      
+      // Look for just numbers that might be days of the month
+      const justDayRegex = /\b(\d{1,2})(?:st|nd|rd|th)?\b/;
+      const justDayMatch = lowerText.match(justDayRegex);
+      
+      if (justDayMatch) {
+        const day = parseInt(justDayMatch[1]);
+        // Only use if it looks like a valid day (1-31)
+        if (day >= 1 && day <= 31) {
+          const currentMonth = today.getMonth();
+          const currentYear = today.getFullYear();
+          
+          let targetMonth = currentMonth;
+          let targetYear = currentYear;
+          
+          // If the day has already passed this month, assume next month
+          if (day < today.getDate()) {
+            targetMonth++;
+            if (targetMonth > 11) {
+              targetMonth = 0;
+              targetYear++;
+            }
+          }
+          
+          return new Date(targetYear, targetMonth, day);
+        }
+      }
     } catch (error) {
       console.error('Error parsing date:', error);
     }
 
     // Default to today if we can't parse the date
+    console.log("Could not parse date from text, using today as default");
     return today;
   }
 
@@ -289,19 +402,133 @@ class CalendarServiceImpl {
       if (text.toLowerCase().includes('learning schedule') || 
           text.toLowerCase().includes('study schedule') ||
           text.toLowerCase().includes('learn about')) {
+        console.log("Handling learning schedule request");
+        
         // Extract topics from the request
+        let topics = "";
         const topicsMatch = text.match(/learn about\s+(.+?)(?:\s+for|\s+on|\s+make|\s+at|$)/i);
         if (topicsMatch && topicsMatch[1]) {
-          title = `Study schedule: ${topicsMatch[1].trim()}`;
+          topics = topicsMatch[1].trim();
+        } else {
+          // Try another pattern
+          const altTopicsMatch = text.match(/I want to learn about\s+(.+?)(?:\.|\s+for|\s+on|\s+make|\s+at|$)/i);
+          if (altTopicsMatch && altTopicsMatch[1]) {
+            topics = altTopicsMatch[1].trim();
+          }
+        }
+        
+        if (topics) {
+          title = `Study schedule: ${topics}`;
         } else {
           title = 'Learning schedule';
         }
         
-        // Look for date information
-        const weekMatch = text.match(/week of\s+([^\.]+)/i);
-        if (weekMatch && weekMatch[1]) {
-          dateText = weekMatch[1].trim();
+        // Look for date information with various patterns
+        let foundDate = false;
+        
+        // Check for "week of April 14-18" pattern - prioritize this for learning schedules
+        const weekRangePatterns = [
+          /week of\s+(?:the\s+)?(?:([a-z]+)\s+)?(\d{1,2})(?:st|nd|rd|th)?[-–](\d{1,2})(?:st|nd|rd|th)?/i,
+          /for the week of\s+(?:the\s+)?(?:([a-z]+)\s+)?(\d{1,2})(?:st|nd|rd|th)?[-–](\d{1,2})(?:st|nd|rd|th)?/i,
+          /make these for the week of\s+(?:the\s+)?(?:([a-z]+)\s+)?(\d{1,2})(?:st|nd|rd|th)?[-–](\d{1,2})(?:st|nd|rd|th)?/i
+        ];
+        
+        let foundWeekRange = false;
+        
+        for (const pattern of weekRangePatterns) {
+          const weekRangeMatch = text.match(pattern);
+          if (weekRangeMatch) {
+            console.log("Found week range:", weekRangeMatch);
+            const month = weekRangeMatch[1] ? weekRangeMatch[1].toLowerCase() : null;
+            const startDay = parseInt(weekRangeMatch[2]);
+            const endDay = parseInt(weekRangeMatch[3]);
+            
+            // Format it properly for the date parser
+            if (month) {
+              dateText = `from ${startDay} ${month} to ${endDay} ${month}`;
+            } else {
+              // Extract month from surrounding text
+              const months = ['january', 'february', 'march', 'april', 'may', 'june', 
+                'july', 'august', 'september', 'october', 'november', 'december'];
+              
+              let detectedMonth = null;
+              for (const m of months) {
+                if (text.toLowerCase().includes(m)) {
+                  detectedMonth = m;
+                  break;
+                }
+              }
+              
+              if (detectedMonth) {
+                dateText = `from ${startDay} ${detectedMonth} to ${endDay} ${detectedMonth}`;
+                console.log(`Detected month ${detectedMonth} from context`);
+              } else {
+                dateText = `from ${startDay} to ${endDay}`;
+              }
+            }
+            foundDate = true;
+            foundWeekRange = true;
+            break;
+          }
         }
+        
+        // Specifically handle "april 14-18th" pattern
+        if (!foundWeekRange) {
+          const directDateRangePattern = /(?:([a-z]+)\s+)?(\d{1,2})(?:st|nd|rd|th)?[-–](\d{1,2})(?:st|nd|rd|th)?/i;
+          const directMatch = text.match(directDateRangePattern);
+          
+          if (directMatch) {
+            console.log("Found direct date range:", directMatch);
+            const month = directMatch[1] ? directMatch[1].toLowerCase() : null;
+            const startDay = parseInt(directMatch[2]);
+            const endDay = parseInt(directMatch[3]);
+            
+            if (month) {
+              dateText = `from ${startDay} ${month} to ${endDay} ${month}`;
+            } else {
+              // Look for month in surrounding text
+              const months = ['january', 'february', 'march', 'april', 'may', 'june', 
+                'july', 'august', 'september', 'october', 'november', 'december'];
+              
+              let detectedMonth = null;
+              for (const m of months) {
+                if (text.toLowerCase().includes(m)) {
+                  detectedMonth = m;
+                  break;
+                }
+              }
+              
+              if (detectedMonth) {
+                dateText = `from ${startDay} ${detectedMonth} to ${endDay} ${detectedMonth}`;
+                console.log(`Detected month ${detectedMonth} from context`);
+              } else {
+                dateText = `from ${startDay} to ${endDay}`;
+              }
+            }
+            foundDate = true;
+          }
+        }
+        
+        // Check for "week of April 14" pattern
+        if (!foundDate) {
+          const weekMatch = text.match(/week of\s+([^\.]+)/i);
+          if (weekMatch && weekMatch[1]) {
+            dateText = weekMatch[1].trim();
+            foundDate = true;
+          }
+        }
+        
+        // Check for date range pattern
+        if (!foundDate) {
+          const dateRangeMatch = text.match(/(?:from|between)\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?(?:\s+(?:of\s+)?([a-z]+))?\s+(?:to|until|and|through|-)(?:\s+(?:the\s+)?)(\d{1,2})(?:st|nd|rd|th)?(?:\s+(?:of\s+)?([a-z]+))?/i);
+          if (dateRangeMatch) {
+            console.log("Found date range:", dateRangeMatch);
+            dateText = dateRangeMatch[0];
+            foundDate = true;
+          }
+        }
+        
+        console.log("Extracted date text for learning schedule:", dateText);
       } else {
         // Common phrases that indicate an event's title for other types of events
         const titleIndicators = [
@@ -346,23 +573,46 @@ class CalendarServiceImpl {
         title = title.substring(0, 97) + '...';
       }
 
-      // Try to extract a date
-      const dateIndicators = ['on', 'for', 'at', 'tomorrow', 'next', 'this', 'coming'];
-      for (const indicator of dateIndicators) {
-        if (text.toLowerCase().includes(` ${indicator} `)) {
-          const parts = text.toLowerCase().split(` ${indicator} `);
-          if (parts.length > 1) {
-            // Extract everything after the indicator
-            let datePart = parts[1].trim();
-            // If there are more words after the date, cut them off
-            const cutoffs = [' at ', ' to ', ' with ', ' for ', ' because '];
-            for (const cutoff of cutoffs) {
-              if (datePart.includes(cutoff)) {
-                datePart = datePart.split(cutoff)[0].trim();
+      // Only use general date extraction if we don't already have a date from the learning schedule special case
+      if (!text.toLowerCase().includes('learning schedule') && 
+          !text.toLowerCase().includes('study schedule') &&
+          !text.toLowerCase().includes('learn about')) {
+          
+        // First check if there is a date range in the text
+        const dateRangeRegex = /(?:from|between)\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?\s+(?:to|until|and|through|-)(?:\s+(?:the\s+)?)(\d{1,2})(?:st|nd|rd|th)?/i;
+        const dateRangeMatch = text.toLowerCase().match(dateRangeRegex);
+        
+        if (dateRangeMatch) {
+          console.log("Found date range in full text:", dateRangeMatch);
+          // Use the entire matching section as dateText
+          dateText = dateRangeMatch[0];
+        } else {
+          // Try to extract a date using indicators
+          const dateIndicators = ['on', 'for', 'at', 'tomorrow', 'next', 'this', 'coming', 'from', 'between'];
+          for (const indicator of dateIndicators) {
+            if (text.toLowerCase().includes(` ${indicator} `)) {
+              const parts = text.toLowerCase().split(` ${indicator} `);
+              if (parts.length > 1) {
+                // Extract everything after the indicator
+                let datePart = parts[1].trim();
+                // If there are more words after the date, cut them off
+                const cutoffs = [' at ', ' with ', ' because ', ' every '];
+                for (const cutoff of cutoffs) {
+                  if (datePart.includes(cutoff)) {
+                    datePart = datePart.split(cutoff)[0].trim();
+                  }
+                }
+                
+                // Special handling for "to" - only cut off if not part of a date range
+                if (datePart.includes(' to ') && !datePart.match(/\d+(?:st|nd|rd|th)?\s+to\s+\d+/)) {
+                  datePart = datePart.split(' to ')[0].trim();
+                }
+                
+                dateText = `${indicator} ${datePart}`;
+                console.log(`Extracted date text using indicator "${indicator}": "${dateText}"`);
+                break;
               }
             }
-            dateText = datePart;
-            break;
           }
         }
       }
@@ -387,8 +637,12 @@ class CalendarServiceImpl {
         if (category !== 'general') break;
       }
 
+      console.log(`Final dateText before parsing: "${dateText}"`);
+
       // Parse the date from text
       const eventDate = this.parseDateFromText(dateText) || new Date();
+      console.log(`Parsed date: ${eventDate.toISOString()}`);
+      
 
       // Create the event
       const newEvent = this.addEvent({
