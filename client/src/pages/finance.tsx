@@ -209,11 +209,11 @@ export default function Finance() {
           <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-green-50 text-green-800 rounded-md border-l-4 border-green-500">
             Financial Tools
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 max-w-6xl mx-auto" data-tour="finance-grid">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 max-w-6xl mx-auto" data-tour="finance-grid">
             {SECTIONS.map((section) => (
               <div 
                 key={section.id} 
-                className={`flex flex-col h-full ${section.id === 'bank' ? 'col-span-2 sm:col-span-3 md:col-span-3 lg:col-span-3 xl:col-span-3' : ''}`}
+                className={`flex flex-col h-full ${section.id === 'bank' ? 'col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-4 xl:col-span-4' : ''}`}
               >
                 <button
                   onClick={() => handleCardClick(section.id)}
