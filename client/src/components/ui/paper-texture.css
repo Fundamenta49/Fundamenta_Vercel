@@ -10,6 +10,6 @@
 }
 
 /* Hide the default close button when we have our own custom close button */
-.has-custom-close [class*="DialogPrimitive-Close"] {
+[class*="DialogContent"] > button:has(svg) {
   display: none !important;
 }

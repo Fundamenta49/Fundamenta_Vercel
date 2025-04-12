@@ -1,14 +1,27 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogOverlay,
-  DialogTitle,
-  DialogClose
-} from "@/components/ui/dialog";
+import * as React from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import "@/components/ui/paper-texture.css";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
+// Custom Dialog Content without default close button
+const NoCloseDialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Portal>
+    <DialogPrimitive.Overlay 
+      className="fixed inset-0 z-50 bg-black/20 backdrop-blur-[1px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" 
+    />
+    <DialogPrimitive.Content
+      ref={ref}
+      className={`fixed left-[50%] top-[50%] z-50 grid w-[90vw] max-w-3xl xl:max-w-4xl translate-x-[-50%] translate-y-[-50%] gap-4 bg-transparent p-0 shadow-none duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg border-0 ${className}`}
+      {...props}
+    />
+  </DialogPrimitive.Portal>
+));
+NoCloseDialogContent.displayName = "NoCloseDialogContent";
 
 interface FounderMessageDialogProps {
   open: boolean;
@@ -18,12 +31,7 @@ interface FounderMessageDialogProps {
 export default function FounderMessageDialog({ open, onOpenChange }: FounderMessageDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogOverlay className="bg-black/20 backdrop-blur-[1px]" />
-      <DialogContent className="bg-transparent border-0 shadow-none p-0 w-[90vw] sm:w-auto md:max-w-4xl xl:max-w-5xl has-custom-close">
-        <VisuallyHidden>
-          <DialogTitle>Why Fundamenta</DialogTitle>
-        </VisuallyHidden>
-        
+      <NoCloseDialogContent>
         {/* Decorative paperclip */}
         <div className="absolute -top-4 left-8 z-10 w-8 h-12 bg-gray-400 rounded-sm transform rotate-45 opacity-80"></div>
         
@@ -78,7 +86,7 @@ export default function FounderMessageDialog({ open, onOpenChange }: FounderMess
             </div>
           </div>
         </div>
-      </DialogContent>
+      </NoCloseDialogContent>
     </Dialog>
   );
 }
