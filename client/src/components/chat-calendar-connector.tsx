@@ -11,7 +11,7 @@ import { CalendarEventRecurrenceDialog } from '@/components/calendar-event-recur
  * It doesn't render anything visible aside from dialogs for user interaction.
  */
 export default function ChatCalendarConnector() {
-  const { lastResponse, currentMessage } = useAIEventStore();
+  const { lastResponse, currentMessage, setLastResponse } = useAIEventStore();
   const { toast } = useToast();
   const [showRecurrenceDialog, setShowRecurrenceDialog] = useState(false);
   const [createdEvent, setCreatedEvent] = useState<CalendarEvent | null>(null);
@@ -82,6 +82,33 @@ export default function ChatCalendarConnector() {
           
           // Log success
           console.log("Successfully added event to calendar");
+          
+          // Override Fundi's response with a calendar-aware response
+          if (lastResponse && setLastResponse) {
+            const eventDate = new Date(newEvent.date).toLocaleDateString('en-US', {
+              weekday: 'long', 
+              month: 'long', 
+              day: 'numeric',
+              year: 'numeric'
+            });
+            
+            const timeInfo = newEvent.description?.includes('Time:') 
+              ? ` at ${newEvent.description.split('Time:')[1].trim()}` 
+              : '';
+            
+            // Create a new response that acknowledges the calendar action
+            const updatedResponse = {
+              ...lastResponse,
+              response: `I've added "${newEvent.title}" to your calendar for ${eventDate}${timeInfo}. Is there anything else you'd like me to help you schedule?`,
+              suggestions: [
+                ...(lastResponse.suggestions || []),
+                { text: "Would you like to view your calendar?" }
+              ]
+            };
+            
+            // Update the response
+            setLastResponse(updatedResponse);
+          }
         } else {
           console.log("Failed to create event from text");
         }
@@ -91,7 +118,7 @@ export default function ChatCalendarConnector() {
     };
 
     processCalendarRequest();
-  }, [lastResponse, currentMessage, toast]);
+  }, [lastResponse, currentMessage, toast, setLastResponse]);
   
   // Handle dialog close
   const handleRecurrenceComplete = () => {

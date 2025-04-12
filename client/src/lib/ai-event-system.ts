@@ -52,6 +52,7 @@ interface AIEventState {
   // Actions
   setProcessing: (isProcessing: boolean) => void;
   setResponse: (response: AIResponse) => void;
+  setLastResponse: (response: AIResponse) => void; // Add function to update the last response
   clearResponse: () => void;
   addPendingAction: (action: AIAction) => void;
   removePendingAction: (index: number) => void;
@@ -73,6 +74,12 @@ export const useAIEventStore = create<AIEventState>((set, get) => ({
   setProcessing: (isProcessing) => set({ isProcessing }),
   
   setCurrentMessage: (message) => set({ currentMessage: message }),
+  
+  setLastResponse: (response) => {
+    set({
+      lastResponse: response
+    });
+  },
   
   setResponse: (response) => {
     set({
