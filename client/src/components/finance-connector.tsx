@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAIEventStore } from '@/lib/ai-event-system';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
-import { AIAction } from '@/lib/ai-event-system';
+import { AIAction, AppSuggestion, AIResponse } from '@/lib/ai-event-system';
 
 /**
  * This component serves as a connector between Fundi AI chat and the financial tools.
@@ -116,7 +116,7 @@ export default function FinanceConnector() {
     }
     
     // Override Fundi's response with a finance-aware response
-    if (lastResponse && setLastResponse) {
+    if (setLastResponse) {
       // Create a new response that acknowledges the finance action
       const updatedResponse = createUpdatedResponse(financeInfo);
       
@@ -128,11 +128,22 @@ export default function FinanceConnector() {
   /**
    * Creates an updated AI response that acknowledges the financial action
    */
-  const createUpdatedResponse = (financeInfo: any) => {
-    if (!lastResponse) return lastResponse;
+  const createUpdatedResponse = (financeInfo: any): AIResponse => {
+    if (!lastResponse) {
+      // Create default response if lastResponse is null
+      return {
+        response: "I'll help you with your finance questions.",
+        actions: [],
+        suggestions: []
+      };
+    }
     
     let responseText = '';
     let action: AIAction | undefined;
+    let formAction: AIAction | undefined = undefined;
+    
+    // Extract financial data from user message
+    const extractedData = extractFinancialData(currentMessage || '');
     
     switch (financeInfo.type) {
       case 'budget':
@@ -145,7 +156,31 @@ export default function FinanceConnector() {
             reason: 'Opening Budget Planner'
           }
         };
+        
+        // Create form filling action if we extracted budget data
+        if (extractedData.income || extractedData.expense) {
+          const formData: Record<string, any> = {};
+          
+          if (extractedData.income) {
+            formData.income = extractedData.income;
+            responseText += ` I've set your monthly income to ${formatCurrency(extractedData.income)}.`;
+          }
+          
+          if (extractedData.expense && extractedData.expenseCategory) {
+            responseText += ` I've added ${formatCurrency(extractedData.expense)} for ${extractedData.expenseCategory}.`;
+          }
+          
+          formAction = {
+            type: 'fill_form',
+            payload: {
+              formId: 'budget-planner-form',
+              formData,
+              autoFocus: true
+            }
+          };
+        }
         break;
+        
       case 'mortgage':
         responseText = `I've opened the Mortgage Calculator to help you with your home buying calculations. Would you like me to guide you through using it?`;
         action = {
@@ -156,7 +191,49 @@ export default function FinanceConnector() {
             reason: 'Opening Mortgage Calculator'
           }
         };
+        
+        // Create form filling action if we extracted mortgage data
+        if (extractedData.homePrice || extractedData.downPayment || extractedData.interestRate || extractedData.loanTerm) {
+          const formData: Record<string, any> = {};
+          let dataAdded = false;
+          
+          if (extractedData.homePrice) {
+            formData.homePrice = extractedData.homePrice;
+            responseText += ` I've set the home price to ${formatCurrency(extractedData.homePrice)}.`;
+            dataAdded = true;
+          }
+          
+          if (extractedData.downPayment) {
+            formData.downPayment = extractedData.downPayment;
+            responseText += ` I've set the down payment to ${formatCurrency(extractedData.downPayment)}.`;
+            dataAdded = true;
+          }
+          
+          if (extractedData.interestRate) {
+            formData.interestRate = extractedData.interestRate;
+            responseText += ` I've set the interest rate to ${extractedData.interestRate}%.`;
+            dataAdded = true;
+          }
+          
+          if (extractedData.loanTerm) {
+            formData.loanTerm = extractedData.loanTerm;
+            responseText += ` I've set the loan term to ${extractedData.loanTerm} years.`;
+            dataAdded = true;
+          }
+          
+          if (dataAdded) {
+            formAction = {
+              type: 'fill_form',
+              payload: {
+                formId: 'mortgage-calculator-form',
+                formData,
+                autoFocus: true
+              }
+            };
+          }
+        }
         break;
+        
       case 'tax':
         responseText = `I've opened the Tax Calculator for you. You can estimate your tax burden and even earn badges by completing the interactive learning modules!`;
         action = {
@@ -167,7 +244,24 @@ export default function FinanceConnector() {
             reason: 'Opening Tax Calculator'
           }
         };
+        
+        // Create form filling action if we extracted tax data
+        if (extractedData.income) {
+          responseText += ` I've set your annual income to ${formatCurrency(extractedData.income)}.`;
+          
+          formAction = {
+            type: 'fill_form',
+            payload: {
+              formId: 'tax-calculator-form',
+              formData: {
+                income: extractedData.income
+              },
+              autoFocus: true
+            }
+          };
+        }
         break;
+        
       case 'investment':
         responseText = `I've opened the Investment Tracker to help you monitor your portfolio performance. What would you like to know about your investments?`;
         action = {
@@ -179,6 +273,7 @@ export default function FinanceConnector() {
           }
         };
         break;
+        
       case 'loan':
         responseText = `I've opened the Loan Comparison tool to help you compare different loan options and terms. Is there a specific loan type you're interested in?`;
         action = {
@@ -189,7 +284,43 @@ export default function FinanceConnector() {
             reason: 'Opening Loan Comparison'
           }
         };
+        
+        // Create form filling action if we extracted loan data
+        if (extractedData.loanAmount || extractedData.interestRate || extractedData.loanTerm) {
+          const formData: Record<string, any> = {};
+          let dataAdded = false;
+          
+          if (extractedData.loanAmount) {
+            formData.loanAmount = extractedData.loanAmount;
+            responseText += ` I've set the loan amount to ${formatCurrency(extractedData.loanAmount)}.`;
+            dataAdded = true;
+          }
+          
+          if (extractedData.interestRate) {
+            formData.interestRate = extractedData.interestRate;
+            responseText += ` I've set the interest rate to ${extractedData.interestRate}%.`;
+            dataAdded = true;
+          }
+          
+          if (extractedData.loanTerm) {
+            formData.loanTerm = extractedData.loanTerm;
+            responseText += ` I've set the loan term to ${extractedData.loanTerm} years.`;
+            dataAdded = true;
+          }
+          
+          if (dataAdded) {
+            formAction = {
+              type: 'fill_form',
+              payload: {
+                formId: 'loan-comparison-form',
+                formData,
+                autoFocus: true
+              }
+            };
+          }
+        }
         break;
+        
       case 'retirement':
         responseText = `I've opened the Retirement Calculator to help you with your future planning. Would you like to see how your current savings might grow over time?`;
         action = {
@@ -200,7 +331,43 @@ export default function FinanceConnector() {
             reason: 'Opening Retirement Calculator'
           }
         };
+        
+        // Create form filling action if we extracted retirement data
+        if (extractedData.income || extractedData.savingsAmount || extractedData.retirementAge) {
+          const formData: Record<string, any> = {};
+          let dataAdded = false;
+          
+          if (extractedData.income) {
+            formData.currentIncome = extractedData.income;
+            responseText += ` I've set your current income to ${formatCurrency(extractedData.income)}.`;
+            dataAdded = true;
+          }
+          
+          if (extractedData.savingsAmount) {
+            formData.currentSavings = extractedData.savingsAmount;
+            responseText += ` I've set your current savings to ${formatCurrency(extractedData.savingsAmount)}.`;
+            dataAdded = true;
+          }
+          
+          if (extractedData.retirementAge) {
+            formData.retirementAge = extractedData.retirementAge;
+            responseText += ` I've set your retirement age to ${extractedData.retirementAge}.`;
+            dataAdded = true;
+          }
+          
+          if (dataAdded) {
+            formAction = {
+              type: 'fill_form',
+              payload: {
+                formId: 'retirement-calculator-form',
+                formData,
+                autoFocus: true
+              }
+            };
+          }
+        }
         break;
+        
       case 'debt':
         responseText = `I've opened the Debt Payoff Planner to help you create a debt elimination strategy. Would you like to compare the snowball vs. avalanche methods?`;
         action = {
@@ -211,7 +378,37 @@ export default function FinanceConnector() {
             reason: 'Opening Debt Payoff Planner'
           }
         };
+        
+        // Create form filling action if we extracted debt data
+        if (extractedData.debtAmount || extractedData.interestRate) {
+          const formData: Record<string, any> = {};
+          let dataAdded = false;
+          
+          if (extractedData.debtAmount) {
+            formData.debtAmount = extractedData.debtAmount;
+            responseText += ` I've set your debt amount to ${formatCurrency(extractedData.debtAmount)}.`;
+            dataAdded = true;
+          }
+          
+          if (extractedData.interestRate) {
+            formData.interestRate = extractedData.interestRate;
+            responseText += ` I've set the interest rate to ${extractedData.interestRate}%.`;
+            dataAdded = true;
+          }
+          
+          if (dataAdded) {
+            formAction = {
+              type: 'fill_form',
+              payload: {
+                formId: 'debt-payoff-form',
+                formData,
+                autoFocus: true
+              }
+            };
+          }
+        }
         break;
+        
       default:
         responseText = `I've opened the Financial Literacy section to help you with your finance questions. What specific aspect of personal finance would you like to explore?`;
         action = {
@@ -225,7 +422,7 @@ export default function FinanceConnector() {
     }
     
     // Create the updated response
-    const updatedResponse = {
+    const updatedResponse: AIResponse = {
       ...lastResponse,
       response: responseText,
       actions: [
@@ -241,7 +438,107 @@ export default function FinanceConnector() {
       ]
     };
     
+    // Add form filling action if applicable
+    if (formAction) {
+      updatedResponse.actions = [...(updatedResponse.actions || []), formAction];
+    }
+    
     return updatedResponse;
+  };
+  
+  /**
+   * Format currency values
+   */
+  const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+  
+  /**
+   * Extract financial data from user message
+   */
+  const extractFinancialData = (message: string): {
+    income?: number;
+    expense?: number;
+    expenseCategory?: string;
+    homePrice?: number;
+    downPayment?: number;
+    loanAmount?: number;
+    interestRate?: number;
+    loanTerm?: number;
+    debtAmount?: number;
+    savingsAmount?: number;
+    retirementAge?: number;
+  } => {
+    const data: any = {};
+    const lowerMessage = message.toLowerCase();
+    
+    // Match income
+    const incomeMatch = lowerMessage.match(/(?:income|salary|make|earn)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (incomeMatch && incomeMatch[1]) {
+      data.income = parseFloat(incomeMatch[1].replace(/[$,]/g, ''));
+    }
+    
+    // Match expense amount and category
+    const expenseMatch = lowerMessage.match(/(?:spend|expense|cost|pay|budget)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)[^\d]*(?:for|on)\s+([a-z\s]+)/i);
+    if (expenseMatch && expenseMatch[1] && expenseMatch[2]) {
+      data.expense = parseFloat(expenseMatch[1].replace(/[$,]/g, ''));
+      data.expenseCategory = expenseMatch[2].trim();
+    }
+    
+    // Match home price
+    const homePriceMatch = lowerMessage.match(/(?:home|house|property)[^\d]*(?:price|cost|worth|value)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (homePriceMatch && homePriceMatch[1]) {
+      data.homePrice = parseFloat(homePriceMatch[1].replace(/[$,]/g, ''));
+    }
+    
+    // Match down payment
+    const downPaymentMatch = lowerMessage.match(/(?:down payment|downpayment)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (downPaymentMatch && downPaymentMatch[1]) {
+      data.downPayment = parseFloat(downPaymentMatch[1].replace(/[$,]/g, ''));
+    }
+    
+    // Match loan amount
+    const loanMatch = lowerMessage.match(/(?:loan|borrow)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (loanMatch && loanMatch[1]) {
+      data.loanAmount = parseFloat(loanMatch[1].replace(/[$,]/g, ''));
+    }
+    
+    // Match interest rate
+    const interestMatch = lowerMessage.match(/(?:interest|rate)[^\d]*(\d+(?:\.\d{1,2})?)(?:\s*%)?/i);
+    if (interestMatch && interestMatch[1]) {
+      data.interestRate = parseFloat(interestMatch[1]);
+    }
+    
+    // Match loan term
+    const termMatch = lowerMessage.match(/(\d+)(?:\s*[-])?\s*(?:year|yr)/i);
+    if (termMatch && termMatch[1]) {
+      data.loanTerm = parseInt(termMatch[1], 10);
+    }
+    
+    // Match debt amount
+    const debtMatch = lowerMessage.match(/(?:debt|owe)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (debtMatch && debtMatch[1]) {
+      data.debtAmount = parseFloat(debtMatch[1].replace(/[$,]/g, ''));
+    }
+    
+    // Match savings amount
+    const savingsMatch = lowerMessage.match(/(?:saved|savings)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    if (savingsMatch && savingsMatch[1]) {
+      data.savingsAmount = parseFloat(savingsMatch[1].replace(/[$,]/g, ''));
+    }
+    
+    // Match retirement age
+    const retirementMatch = lowerMessage.match(/(?:retire|retirement)[^\d]*(?:at|age)[^\d]*(\d+)/i);
+    if (retirementMatch && retirementMatch[1]) {
+      data.retirementAge = parseInt(retirementMatch[1], 10);
+    }
+    
+    return data;
   };
   
   /**
