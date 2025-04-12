@@ -10,6 +10,7 @@ import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
 import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
 import InteractiveCoursesFix from '@/components/tour/interactive-courses-fix';
 import FundiEmergencyFix from '@/components/fundi-emergency-fix';
+import FundiStaticPosition from '@/components/tour/fundi-static-position';
 
 export default function VehicleMaintenanceCourse() {
   const [, navigate] = useLocation();
@@ -139,6 +140,9 @@ export default function VehicleMaintenanceCourse() {
       
       {/* ULTRA EMERGENCY FIX: Import our new component that completely detaches Fundi from the DOM flow */}
       <FundiEmergencyFix />
+      
+      {/* FINAL EMERGENCY SOLUTION: Force a static Fundi at a specific location */}
+      <FundiStaticPosition />
       
       <div className="flex items-center mb-6">
         <Button 
