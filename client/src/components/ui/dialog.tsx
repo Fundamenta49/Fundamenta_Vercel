@@ -63,8 +63,9 @@ const DialogContent = React.forwardRef<
             left: '50%',
             top: '50%',
             zIndex: 50,
-            width: '100%',
-            maxWidth: '100%',
+            width: '90%',
+            maxWidth: '450px',
+            maxHeight: '85vh',
             transform: 'translate(-50%, -50%)',
             overflow: 'hidden'
           }}
@@ -72,10 +73,10 @@ const DialogContent = React.forwardRef<
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={0.2}
           onDragEnd={handleDragEnd}
-          className="sm:rounded-lg border bg-background shadow-lg"
+          className="rounded-lg border bg-background shadow-lg"
         >
           {/* Swipe handle indicator */}
-          <div className="w-full flex flex-col items-center pt-2 pb-2 bg-background">
+          <div className="w-full flex flex-col items-center pt-2 pb-2 bg-background sticky top-0 z-10">
             <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
             <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
           </div>
@@ -83,9 +84,10 @@ const DialogContent = React.forwardRef<
           <DialogPrimitive.Content
             ref={ref}
             className={cn(
-              "grid w-full gap-4 p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+              "grid w-full gap-3 p-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto",
               className
             )}
+            style={{ maxHeight: 'calc(85vh - 40px)' }}
             {...props}
           >
             {children}

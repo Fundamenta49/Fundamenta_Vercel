@@ -660,41 +660,45 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
       case 'session':
         if (!selectedSession) return null;
         return (
-          <div className="flex flex-col p-4 space-y-4">
+          <div className={`flex flex-col ${isMobile ? 'p-3' : 'p-4'} space-y-3 sm:space-y-4`}>
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold">{selectedSession.title}</h2>
+              <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold`}>{selectedSession.title}</h2>
               <Badge>{selectedSession.duration} min</Badge>
             </div>
             
             {/* Audio player - shown for all sessions */}
             {audioTrack && (
               <div className="border rounded-md p-3 bg-slate-50">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={() => setAudioPlaying(!audioPlaying)}
-                      className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
-                    >
-                      {audioPlaying ? (
-                        <PauseCircle className="h-5 w-5" />
-                      ) : (
-                        <Play className="h-5 w-5" />
-                      )}
-                    </button>
-                    <div className="text-sm">
-                      {audioPlaying ? 'Playing...' : 'Paused'}
-                    </div>
+                <div className="flex items-center gap-3 mb-2">
+                  <button 
+                    onClick={() => setAudioPlaying(!audioPlaying)}
+                    className="h-8 w-8 flex-shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                  >
+                    {audioPlaying ? (
+                      <PauseCircle className="h-5 w-5" />
+                    ) : (
+                      <Play className="h-5 w-5" />
+                    )}
+                  </button>
+                  <div className="text-sm flex-grow">
+                    {audioPlaying ? 'Playing Audio Session...' : 'Audio Paused'}
                   </div>
-                  
-                  <div className="flex gap-2">
+                  <div className="flex-shrink-0">
                     <Volume2 className="h-4 w-4 text-muted-foreground" />
                   </div>
                 </div>
                 
-                <div className="mt-2 p-2 bg-yellow-50 text-yellow-800 rounded text-xs">
-                  <AlertCircle className="h-3 w-3 inline mr-1" />
-                  Note: Audio is silent. In a production app, this would be replaced with actual meditation music and guided voice instructions.
-                </div>
+                {isMobile ? (
+                  <div className="mt-1 p-1.5 bg-yellow-50 text-yellow-800 rounded text-xs">
+                    <AlertCircle className="h-3 w-3 inline mr-1" />
+                    Demo: Silent audio placeholder
+                  </div>
+                ) : (
+                  <div className="mt-2 p-2 bg-yellow-50 text-yellow-800 rounded text-xs">
+                    <AlertCircle className="h-3 w-3 inline mr-1" />
+                    Note: Audio is silent. In a production app, this would be replaced with actual meditation music and guided voice instructions.
+                  </div>
+                )}
                 <audio 
                   ref={audioRef} 
                   src={audioTrack} 
@@ -829,15 +833,28 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
     >
       <DialogContent 
         className={`
-          p-0 overflow-y-auto
+          p-0 rounded-lg border bg-background
           ${isMobile 
-            ? "w-[95%] max-w-[95%] max-h-[90vh] fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] rounded-lg shadow-lg border bg-background" 
+            ? "w-[95%] max-w-[95%] h-auto max-h-[85vh]" 
             : "max-w-md md:max-w-lg max-h-[90vh]"}
         `}
+        style={{
+          overflowY: 'auto',
+          overscrollBehavior: 'contain'
+        }}
       >
         {/* Hidden DialogTitle for accessibility */}
         <DialogTitle className="sr-only">Yoga Session Flow</DialogTitle>
         <DialogDescription className="sr-only">Personalized yoga sessions and prompts</DialogDescription>
+        
+        {/* Custom swipe indicator that won't get cut off */}
+        {isMobile && (
+          <div className="w-full flex flex-col items-center pt-2 pb-2 bg-background sticky top-0 z-10 border-b">
+            <div className="w-12 h-1 rounded-full bg-gray-300" />
+            <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
+          </div>
+        )}
+        
         {renderPrompt()}
       </DialogContent>
     </Dialog>
