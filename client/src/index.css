@@ -1,11 +1,6 @@
 @import '@fontsource/lora/400.css';
 @import '@fontsource/lora/700.css';
-@import './styles/calendar-overrides.css';
-@import './styles/calendar-redesigned-fix.css';
-@import './styles/calendar-emergency-fix.css';
-@import './styles/calendar-desktop-fix.css';
-@import './styles/calendar-dialog-fix.css';
-@import './styles/direct-calendar-fix.css';
+/* Calendar CSS imports removed */
 @import './styles/enhanced-scroll-area.css';
 
 @tailwind base;
