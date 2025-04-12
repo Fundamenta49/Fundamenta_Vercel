@@ -316,41 +316,46 @@ export default function Learning() {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5 mt-4">
             {LIFE_SKILLS.map((course) => (
-              <div key={course.id} className="flex flex-col h-full">
+              <div 
+                key={course.id} 
+                className={`flex flex-col h-full ${course.id === 'forming-positive-habits' ? 'col-span-2 sm:col-span-1' : ''}`}
+              >
                 <button
                   onClick={() => handleCardClick(course.id)}
-                  className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500 min-h-[130px] sm:min-h-[160px] w-full h-full"
+                  className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-orange-500 min-h-[130px] sm:min-h-[160px] w-full h-full ${course.id === 'forming-positive-habits' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start' : ''}`}
                   aria-label={`Open ${course.title}`}
                 >
-                  <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
+                  <div className={`flex items-center justify-center h-12 sm:h-14 ${course.id === 'forming-positive-habits' ? 'sm:mr-3 sm:w-auto' : 'w-full'} mb-2`}>
                     <course.icon className="w-9 h-9 sm:w-10 sm:h-10 text-orange-500" />
                   </div>
                   
-                  <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{course.title}</span>
-                  
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
-                    {course.description.length > 60 
-                      ? `${course.description.substring(0, 60)}...` 
-                      : course.description}
-                  </p>
-                  
-                  <div className="flex justify-center gap-1 mt-2">
-                    {course.popular && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                        Popular
+                  <div className={`flex flex-col ${course.id === 'forming-positive-habits' ? 'sm:items-start' : ''} w-full`}>
+                    <span className={`text-sm sm:text-base font-medium ${course.id === 'forming-positive-habits' ? 'sm:text-left' : 'text-center'} line-clamp-2 w-full`}>{course.title}</span>
+                    
+                    <p className={`text-xs text-gray-500 mt-1 line-clamp-2 ${course.id === 'forming-positive-habits' ? 'text-center sm:text-left block' : 'text-center hidden sm:block'}`}>
+                      {course.description.length > (course.id === 'forming-positive-habits' ? 80 : 60) 
+                        ? `${course.description.substring(0, course.id === 'forming-positive-habits' ? 80 : 60)}...` 
+                        : course.description}
+                    </p>
+                    
+                    <div className={`flex ${course.id === 'forming-positive-habits' ? 'sm:justify-start' : 'justify-center'} gap-1 mt-2`}>
+                      {course.popular && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                          Popular
+                        </span>
+                      )}
+                      {course.new && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                          New
+                        </span>
+                      )}
+                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium 
+                        ${course.level === 'beginner' ? 'bg-green-100 text-green-800' : 
+                          course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' : 
+                          'bg-red-100 text-red-800'}`}>
+                        {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
                       </span>
-                    )}
-                    {course.new && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
-                        New
-                      </span>
-                    )}
-                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium 
-                      ${course.level === 'beginner' ? 'bg-green-100 text-green-800' : 
-                        course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'}`}>
-                      {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                    </span>
+                    </div>
                   </div>
                 </button>
               </div>
