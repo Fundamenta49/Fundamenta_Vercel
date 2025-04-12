@@ -1,15 +1,10 @@
-import { CalendarEvent, calendarService } from './calendar-service';
 import { toast } from '@/hooks/use-toast';
-import { addMinutes, isBefore, isAfter, isSameDay, format } from 'date-fns';
 import * as React from 'react';
 
-// Notification types
+// Notification types (calendar types removed)
 export enum NotificationType {
-  UPCOMING_EVENT = 'upcoming-event',
-  LEARNING_REMINDER = 'learning-reminder',
-  EVENT_STARTED = 'event-started',
   FUNDI_COMMENT = 'fundi-comment',
-  ACHIEVEMENT_UNLOCKED = 'achievement-unlocked',
+  ACHIEVEMENT_UNLOCKED = 'achievement-unlocked'
 }
 
 export interface Notification {
@@ -21,219 +16,49 @@ export interface Notification {
   actionLabel?: string;
   timestamp: Date;
   read: boolean;
-  eventId?: string;
   userId?: string;
   metadata?: Record<string, any>;
 }
 
 class NotificationService {
   private notifications: Notification[] = [];
-  private checkInterval: number = 60000; // Check every minute
-  private intervalId: NodeJS.Timeout | null = null;
-  private reminderTimes: number[] = [15, 60]; // Remind 15 minutes and 1 hour before events
 
   constructor() {
     this.loadFromStorage();
   }
 
-  // Start monitoring for events that need notifications
+  // Start monitoring for notifications
   public startMonitoring(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-    
-    // Immediately check for notifications on startup
-    this.checkForEventNotifications();
-    
-    // Set up interval for checking
-    this.intervalId = setInterval(() => {
-      this.checkForEventNotifications();
-    }, this.checkInterval);
-
-    console.log('Notification monitoring started');
+    console.log('Notification monitoring started (calendar functionality removed)');
   }
 
   // Stop monitoring
   public stopMonitoring(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-      console.log('Notification monitoring stopped');
-    }
-  }
-
-  // Check for events that need notifications
-  private checkForEventNotifications(): void {
-    // Get events from calendar service
-    let events: CalendarEvent[] = [];
-    try {
-      // Use the already imported calendarService
-      events = calendarService.getEvents();
-    } catch (error) {
-      console.error('Error loading events for notifications:', error);
-      return;
-    }
-
-    const now = new Date();
-    
-    // Check each event
-    events.forEach(event => {
-      // Skip past events
-      if (!event.startTime || isBefore(event.startTime, now)) {
-        return;
-      }
-      
-      // Check if event is today
-      if (isSameDay(event.date, now)) {
-        // Check for upcoming reminders
-        this.reminderTimes.forEach(minutes => {
-          const reminderTime = addMinutes(event.startTime!, -minutes);
-          
-          // If we're within 1 minute of the reminder time, create notification
-          if (
-            isAfter(now, addMinutes(reminderTime, -1)) && 
-            isBefore(now, addMinutes(reminderTime, 1))
-          ) {
-            this.createEventReminder(event, minutes);
-          }
-        });
-        
-        // Check if event is just starting (within the last minute)
-        if (
-          isAfter(now, addMinutes(event.startTime!, -1)) && 
-          isBefore(now, addMinutes(event.startTime!, 1))
-        ) {
-          this.createEventStartedNotification(event);
-        }
-      }
-    });
-  }
-
-  // Create a reminder notification for an upcoming event
-  private createEventReminder(event: CalendarEvent, minutesBefore: number): void {
-    // Check if we already sent this notification
-    const existingNotification = this.notifications.find(
-      n => n.eventId === event.id && 
-           n.type === NotificationType.UPCOMING_EVENT &&
-           n.message.includes(`${minutesBefore} minute`)
-    );
-    
-    if (existingNotification) {
-      return;
-    }
-
-    const isLearningEvent = !!event.learningResourceId;
-    const notificationType = isLearningEvent 
-      ? NotificationType.LEARNING_REMINDER 
-      : NotificationType.UPCOMING_EVENT;
-    
-    const title = isLearningEvent 
-      ? 'Learning Session Reminder' 
-      : 'Upcoming Event';
-    
-    const message = isLearningEvent
-      ? `Your "${event.title}" learning session is scheduled to start in ${minutesBefore} minute${minutesBefore !== 1 ? 's' : ''}. Would you like to start now?`
-      : `Your event "${event.title}" starts in ${minutesBefore} minute${minutesBefore !== 1 ? 's' : ''}.`;
-    
-    const actionUrl = isLearningEvent 
-      ? `/learning/courses/${event.learningResourceId}` 
-      : undefined;
-    
-    const actionLabel = isLearningEvent ? 'Start Learning' : undefined;
-
-    const notification: Notification = {
-      id: `${event.id}-reminder-${minutesBefore}-${new Date().getTime()}`,
-      type: notificationType,
-      title,
-      message,
-      actionUrl,
-      actionLabel,
-      timestamp: new Date(),
-      read: false,
-      eventId: event.id,
-    };
-
-    this.addNotification(notification);
-    
-    // Show toast for the notification
-    toast({
-      title,
-      description: message,
-      duration: 10000, // 10 seconds
-      action: actionLabel && actionUrl ? (
-        <button 
-          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs"
-          onClick={() => {
-            window.location.href = actionUrl;
-            this.markAsRead(notification.id);
-          }}
-        >
-          {actionLabel}
-        </button>
-      ) : undefined,
-    });
-  }
-
-  // Create a notification for an event that just started
-  private createEventStartedNotification(event: CalendarEvent): void {
-    // Check if we already sent this notification
-    const existingNotification = this.notifications.find(
-      n => n.eventId === event.id && n.type === NotificationType.EVENT_STARTED
-    );
-    
-    if (existingNotification) {
-      return;
-    }
-    
-    const isLearningEvent = !!event.learningResourceId;
-    const title = isLearningEvent ? 'Learning Session Started' : 'Event Started';
-    const message = isLearningEvent
-      ? `Your "${event.title}" learning session is starting now. Would you like to begin?`
-      : `Your event "${event.title}" is starting now.`;
-    
-    const actionUrl = isLearningEvent 
-      ? `/learning/courses/${event.learningResourceId}` 
-      : undefined;
-    
-    const actionLabel = isLearningEvent ? 'Start Learning' : undefined;
-
-    const notification: Notification = {
-      id: `${event.id}-started-${new Date().getTime()}`,
-      type: NotificationType.EVENT_STARTED,
-      title,
-      message,
-      actionUrl,
-      actionLabel,
-      timestamp: new Date(),
-      read: false,
-      eventId: event.id,
-    };
-
-    this.addNotification(notification);
-    
-    // Show toast for the notification
-    toast({
-      title,
-      description: message,
-      duration: 10000, // 10 seconds
-      action: actionLabel && actionUrl ? (
-        <button 
-          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs"
-          onClick={() => {
-            window.location.href = actionUrl;
-            this.markAsRead(notification.id);
-          }}
-        >
-          {actionLabel}
-        </button>
-      ) : undefined,
-    });
+    console.log('Notification monitoring stopped');
   }
 
   // Add a notification to the list
   public addNotification(notification: Notification): void {
     this.notifications.unshift(notification); // Add to the beginning
     this.saveToStorage();
+    
+    // Show toast for the notification
+    toast({
+      title: notification.title,
+      description: notification.message,
+      duration: 10000, // 10 seconds
+      action: notification.actionLabel && notification.actionUrl ? (
+        <button 
+          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs"
+          onClick={() => {
+            window.location.href = notification.actionUrl!;
+            this.markAsRead(notification.id);
+          }}
+        >
+          {notification.actionLabel}
+        </button>
+      ) : undefined,
+    });
   }
 
   // Get all notifications
