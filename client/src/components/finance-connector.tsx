@@ -156,14 +156,20 @@ export default function FinanceConnector() {
     // Use server-extracted data if available, otherwise extract client-side
     let extractedData: any = {};
     
-    if (financeInfo.extractedData) {
-      // We have server-extracted data
-      extractedData = financeInfo.extractedData;
-      console.log("Using server-extracted financial data in response creation:", extractedData);
-    } else {
-      // Fall back to client-side extraction
-      extractedData = extractFinancialData(financeInfo.message || currentMessage || '');
-      console.log("Using client-extracted financial data in response creation:", extractedData);
+    try {
+      if (financeInfo.extractedData) {
+        // We have server-extracted data
+        extractedData = financeInfo.extractedData;
+        console.log("Using server-extracted financial data in response creation:", extractedData);
+      } else {
+        // Fall back to client-side extraction
+        extractedData = extractFinancialData(financeInfo.message || currentMessage || '');
+        console.log("Using client-extracted financial data in response creation:", extractedData);
+      }
+    } catch (error) {
+      console.error("Error processing extracted financial data:", error);
+      // Ensure we have a fallback extraction if anything goes wrong
+      extractedData = extractFinancialData(currentMessage || '');
     }
     
     switch (financeInfo.type) {
@@ -536,8 +542,21 @@ export default function FinanceConnector() {
       data.income = parseFloat(incomeMatch[1].replace(/[$,]/g, ''));
     }
     
-    // Match rent/housing amount
-    const rentMatch = lowerMessage.match(/(?:rent|lease|apartment|housing)[^\d]*(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    // Match rent/housing amount - improved pattern to catch more cases
+    let rentMatch = lowerMessage.match(/(?:rent|lease|apartment|housing)(?:[^\d]*|\s+(?:is|of|at|for|will be|would be))(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    
+    // Alternative pattern for catching "apartment that will be $X per month" structure
+    if (!rentMatch) {
+      rentMatch = lowerMessage.match(/apartment\s+that\s+will\s+be\s+(\$?[\d,]+(?:\.\d{1,2})?)/i);
+    }
+    
+    // General numerical extraction as last resort
+    if (!rentMatch && (lowerMessage.includes('apartment') || lowerMessage.includes('rent'))) {
+      const generalNumberMatch = lowerMessage.match(/(\$?[\d,]+(?:\.\d{1,2})?)\s+per\s+month/i);
+      if (generalNumberMatch) {
+        rentMatch = generalNumberMatch;
+      }
+    }
     if (rentMatch && rentMatch[1]) {
       data.rent = parseFloat(rentMatch[1].replace(/[$,]/g, ''));
       // Also set as an expense with the category "Housing"
