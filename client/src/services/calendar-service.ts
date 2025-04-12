@@ -1,4 +1,7 @@
-import { format, parse, isSameDay } from 'date-fns';
+import { isSameDay, addDays, addWeeks, addMonths } from 'date-fns';
+
+// Recurring event frequency
+export type RecurringFrequency = 'none' | 'daily' | 'weekly' | 'biweekly' | 'monthly';
 
 // Event interface (matches CalendarEvent from smart-calendar.tsx)
 export interface CalendarEvent {
@@ -7,9 +10,11 @@ export interface CalendarEvent {
   category: string;
   date: Date;
   description?: string;
+  recurring?: RecurringFrequency;
+  endDate?: Date; // For recurring events
 }
 
-export class CalendarService {
+class CalendarServiceImpl {
   private STORAGE_KEY = 'fundamentaCalendarEvents';
 
   /**
@@ -48,6 +53,86 @@ export class CalendarService {
     } catch (error) {
       console.error('Error adding calendar event:', error);
       throw new Error('Failed to add event to calendar');
+    }
+  }
+
+  /**
+   * Create recurring events based on a given event
+   * @param event Base event
+   * @param frequency Frequency of recurrence (daily, weekly, etc.)
+   * @param endDate End date for recurring events
+   * @returns Array of created events including the original
+   */
+  addRecurringEvents(event: CalendarEvent, frequency: RecurringFrequency, endDate?: Date): CalendarEvent[] {
+    try {
+      if (frequency === 'none') {
+        return [event]; // No recurrence needed
+      }
+
+      const events = this.getAllEvents();
+      const startDate = new Date(event.date);
+      const finalEndDate = endDate || new Date(startDate.getFullYear(), startDate.getMonth() + 3, startDate.getDate()); // Default to 3 months
+      const createdEvents: CalendarEvent[] = [event]; // Include the original
+
+      // Add the original event to the list with recurring metadata
+      const recurringEvent: CalendarEvent = {
+        ...event,
+        recurring: frequency,
+        endDate: finalEndDate
+      };
+      
+      // Update the original event in the events list
+      const eventIndex = events.findIndex(e => e.id === event.id);
+      if (eventIndex !== -1) {
+        events[eventIndex] = recurringEvent;
+      } else {
+        events.push(recurringEvent);
+      }
+      
+      // Calculate number of occurrences based on frequency and date range
+      let currentDate = new Date(startDate);
+      
+      // Generator for the next date based on frequency
+      const getNextDate = () => {
+        switch (frequency) {
+          case 'daily':
+            currentDate = addDays(currentDate, 1);
+            break;
+          case 'weekly':
+            currentDate = addDays(currentDate, 7);
+            break;
+          case 'biweekly':
+            currentDate = addDays(currentDate, 14);
+            break;
+          case 'monthly':
+            currentDate = addMonths(currentDate, 1);
+            break;
+        }
+        return new Date(currentDate);
+      };
+
+      // Generate recurring instances
+      let nextDate = getNextDate();
+      while (nextDate <= finalEndDate) {
+        const recurrenceInstance: CalendarEvent = {
+          ...event,
+          id: `${event.id}-${nextDate.getTime()}`, // Create a new ID for each instance
+          date: new Date(nextDate),
+          recurring: frequency,
+          endDate: finalEndDate
+        };
+        
+        events.push(recurrenceInstance);
+        createdEvents.push(recurrenceInstance);
+        nextDate = getNextDate();
+      }
+
+      // Save all events
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(events));
+      return createdEvents;
+    } catch (error) {
+      console.error('Error creating recurring events:', error);
+      return [event]; // Return at least the original event
     }
   }
 
@@ -200,40 +285,59 @@ export class CalendarService {
       let category = 'general';
       let dateText = 'today';
 
-      // Common phrases that indicate an event's title
-      const titleIndicators = [
-        'reminder to', 'reminder for', 'set a reminder', 
-        'schedule', 'add event', 'add to calendar',
-        'create event', 'plan for', 'meeting for',
-        'appointment for'
-      ];
+      // Handle learning schedule request special case
+      if (text.toLowerCase().includes('learning schedule') || 
+          text.toLowerCase().includes('study schedule') ||
+          text.toLowerCase().includes('learn about')) {
+        // Extract topics from the request
+        const topicsMatch = text.match(/learn about\s+(.+?)(?:\s+for|\s+on|\s+make|\s+at|$)/i);
+        if (topicsMatch && topicsMatch[1]) {
+          title = `Study schedule: ${topicsMatch[1].trim()}`;
+        } else {
+          title = 'Learning schedule';
+        }
+        
+        // Look for date information
+        const weekMatch = text.match(/week of\s+([^\.]+)/i);
+        if (weekMatch && weekMatch[1]) {
+          dateText = weekMatch[1].trim();
+        }
+      } else {
+        // Common phrases that indicate an event's title for other types of events
+        const titleIndicators = [
+          'reminder to', 'reminder for', 'set a reminder', 
+          'schedule', 'add event', 'add to calendar',
+          'create event', 'plan for', 'meeting for',
+          'appointment for'
+        ];
 
-      // Try to extract a title
-      let extractedTitle = '';
-      for (const indicator of titleIndicators) {
-        if (text.toLowerCase().includes(indicator)) {
-          const parts = text.toLowerCase().split(indicator);
-          if (parts.length > 1) {
-            extractedTitle = parts[1].trim();
-            // If title contains words like "on", "at", "tomorrow", try to extract just the title part
-            const dateMarkers = [' on ', ' at ', ' tomorrow', ' next ', ' this ', ' in '];
-            for (const marker of dateMarkers) {
-              if (extractedTitle.includes(marker)) {
-                extractedTitle = extractedTitle.split(marker)[0].trim();
-                break;
+        // Try to extract a title
+        let extractedTitle = '';
+        for (const indicator of titleIndicators) {
+          if (text.toLowerCase().includes(indicator)) {
+            const parts = text.toLowerCase().split(indicator);
+            if (parts.length > 1) {
+              extractedTitle = parts[1].trim();
+              // If title contains words like "on", "at", "tomorrow", try to extract just the title part
+              const dateMarkers = [' on ', ' at ', ' tomorrow', ' next ', ' this ', ' in '];
+              for (const marker of dateMarkers) {
+                if (extractedTitle.includes(marker)) {
+                  extractedTitle = extractedTitle.split(marker)[0].trim();
+                  break;
+                }
               }
+              break;
             }
-            break;
           }
         }
-      }
-      
-      // If we found a title, use it
-      if (extractedTitle) {
-        title = extractedTitle.charAt(0).toUpperCase() + extractedTitle.slice(1);
-      } else {
-        // Fallback to using the entire text as title
-        title = text;
+        
+        // If we found a title, use it
+        if (extractedTitle) {
+          title = extractedTitle.charAt(0).toUpperCase() + extractedTitle.slice(1);
+        } else {
+          // Fallback to using the entire text as title
+          title = text;
+        }
       }
 
       // Limit title length
@@ -303,4 +407,4 @@ export class CalendarService {
 }
 
 // Create and export a singleton instance
-export const calendarService = new CalendarService();
+export const calendarService = new CalendarServiceImpl();

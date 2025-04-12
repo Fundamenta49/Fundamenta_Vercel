@@ -1,17 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAIEventStore } from '@/lib/ai-event-system';
-import { calendarService } from '@/services/calendar-service';
+import { CalendarEvent, calendarService } from '@/services/calendar-service';
 import { useToast } from '@/hooks/use-toast';
+import { CalendarEventRecurrenceDialog } from '@/components/calendar-event-recurrence-dialog';
 
 /**
  * This component serves as a connector between Fundi AI chat and the calendar system.
  * It listens for chat responses containing calendar-related requests and handles them.
  * 
- * It doesn't render anything visible - it just provides the connection logic.
+ * It doesn't render anything visible aside from dialogs for user interaction.
  */
 export default function ChatCalendarConnector() {
   const { lastResponse, currentMessage } = useAIEventStore();
   const { toast } = useToast();
+  const [showRecurrenceDialog, setShowRecurrenceDialog] = useState(false);
+  const [createdEvent, setCreatedEvent] = useState<CalendarEvent | null>(null);
 
   useEffect(() => {
     // Only process if we have both a user message and a response
@@ -35,6 +38,8 @@ export default function ChatCalendarConnector() {
     // Process the calendar request on the server
     const processCalendarRequest = async () => {
       try {
+        console.log("Processing potential calendar request:", currentMessage);
+        
         const response = await fetch('/api/calendar/process-intent', {
           method: 'POST',
           headers: {
@@ -48,20 +53,36 @@ export default function ChatCalendarConnector() {
         }
 
         const data = await response.json();
+        console.log("Calendar API response:", data);
         
         // If it's not a calendar request after server analysis, ignore it
-        if (!data.isCalendarRequest) return;
+        if (!data.isCalendarRequest) {
+          console.log("Not identified as a calendar request by the server");
+          return;
+        }
 
+        console.log("Creating calendar event from text:", currentMessage);
         // If it is a calendar request, try to create an event
-        const createdEvent = calendarService.createEventFromText(currentMessage);
+        const newEvent = calendarService.createEventFromText(currentMessage);
+        console.log("Created event:", newEvent);
         
-        if (createdEvent) {
+        if (newEvent) {
+          setCreatedEvent(newEvent);
+          
           // Show a success toast
           toast({
             title: "Event Added to Calendar",
-            description: `"${createdEvent.title}" added for ${new Date(createdEvent.date).toLocaleDateString()}`,
+            description: `"${newEvent.title}" added for ${new Date(newEvent.date).toLocaleDateString()}`,
             variant: "default",
           });
+          
+          // Open the recurrence dialog to ask if this should be a recurring event
+          setShowRecurrenceDialog(true);
+          
+          // Log success
+          console.log("Successfully added event to calendar");
+        } else {
+          console.log("Failed to create event from text");
         }
       } catch (error) {
         console.error('Error processing calendar request:', error);
@@ -70,7 +91,22 @@ export default function ChatCalendarConnector() {
 
     processCalendarRequest();
   }, [lastResponse, currentMessage, toast]);
+  
+  // Handle dialog close
+  const handleRecurrenceComplete = () => {
+    // Reset state
+    setCreatedEvent(null);
+  };
 
-  // This is a connector component that doesn't render anything
-  return null;
+  return (
+    <>
+      {/* Dialog for asking about event recurrence */}
+      <CalendarEventRecurrenceDialog
+        event={createdEvent}
+        open={showRecurrenceDialog}
+        onOpenChange={setShowRecurrenceDialog}
+        onComplete={handleRecurrenceComplete}
+      />
+    </>
+  );
 }
