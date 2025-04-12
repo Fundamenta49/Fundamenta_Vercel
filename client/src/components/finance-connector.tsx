@@ -607,28 +607,42 @@ export default function FinanceConnector() {
    * Client-side fallback for processing finance requests
    */
   const handleFinanceRequestClientSide = (message: string) => {
+    if (!message) return;
+    
     // Extract the most likely finance request type based on keywords
     const lowerMessage = message.toLowerCase();
+    
+    // Extract financial data
+    const extractedData = extractFinancialData(message);
+    console.log("Client-side fallback - extracted financial data:", extractedData);
+    
+    // Prepare finance info object with extracted data
+    const financeInfo = {
+      message: message,
+      rawMessage: message,
+      extractedData: extractedData
+    };
     
     if (lowerMessage.includes('budget') || 
         lowerMessage.includes('spending') || 
         lowerMessage.includes('track expense') || 
         lowerMessage.includes('rent') || 
         lowerMessage.includes('lease') || 
-        lowerMessage.includes('apartment')) {
-      handleBudgetRequest({ type: 'budget', message });
+        lowerMessage.includes('apartment') ||
+        lowerMessage.includes('housing')) {
+      handleFinanceRequest({ ...financeInfo, type: 'budget' });
     } else if (lowerMessage.includes('mortgage') || lowerMessage.includes('home buy') || lowerMessage.includes('house payment')) {
-      handleMortgageRequest({ type: 'mortgage', message });
+      handleFinanceRequest({ ...financeInfo, type: 'mortgage' });
     } else if (lowerMessage.includes('tax') || lowerMessage.includes('fica') || lowerMessage.includes('income tax')) {
-      handleTaxRequest({ type: 'tax', message });
+      handleFinanceRequest({ ...financeInfo, type: 'tax' });
     } else if (lowerMessage.includes('invest') || lowerMessage.includes('stock') || lowerMessage.includes('portfolio')) {
-      handleInvestmentRequest({ type: 'investment', message });
+      handleFinanceRequest({ ...financeInfo, type: 'investment' });
     } else if (lowerMessage.includes('loan') || lowerMessage.includes('compare') || lowerMessage.includes('interest rate')) {
-      handleLoanRequest({ type: 'loan', message });
+      handleFinanceRequest({ ...financeInfo, type: 'loan' });
     } else if (lowerMessage.includes('retire') || lowerMessage.includes('future plan') || lowerMessage.includes('savings')) {
-      handleRetirementRequest({ type: 'retirement', message });
+      handleFinanceRequest({ ...financeInfo, type: 'retirement' });
     } else if (lowerMessage.includes('debt') || lowerMessage.includes('payoff') || lowerMessage.includes('credit card')) {
-      handleDebtRequest({ type: 'debt', message });
+      handleFinanceRequest({ ...financeInfo, type: 'debt' });
     } else {
       // Generic finance request
       navigate('/finance');
@@ -642,7 +656,7 @@ export default function FinanceConnector() {
       
       // Override Fundi's response
       if (lastResponse && setLastResponse) {
-        const updatedResponse = createUpdatedResponse({ type: 'general' });
+        const updatedResponse = createUpdatedResponse({ ...financeInfo, type: 'general' });
         setLastResponse(updatedResponse);
       }
     }
@@ -652,95 +666,94 @@ export default function FinanceConnector() {
    * Individual handlers for specific finance request types
    */
   const handleBudgetRequest = (info: any) => {
-    // Extract any budget data from the message if it exists
-    if (info && info.message) {
-      const extractedData = extractFinancialData(info.message);
-      
-      // Update info object with extracted data
-      info.extractedData = extractedData;
+    // Ensure we have extracted data
+    if (info && info.message && !info.extractedData) {
+      info.extractedData = extractFinancialData(info.message);
+      console.log("Budget handler - extracted data:", info.extractedData);
     }
     
-    // Navigate to budget planner (check if we need to use budget or budget-planner)
-    const budgetRoute = '/finance/budget';
-    navigate(budgetRoute);
-    
-    // Show a toast notification
-    toast({
-      title: "Budget Planner",
-      description: "Opening the Budget Planner to help track your income and expenses.",
-      variant: "default"
+    // Pass to main handler 
+    handleFinanceRequest({
+      ...info,
+      type: 'budget'
     });
   };
   
   const handleMortgageRequest = (info: any) => {
-    // Navigate to mortgage calculator
-    navigate('/finance/mortgage-calculator');
+    // Ensure we have extracted data
+    if (info && info.message && !info.extractedData) {
+      info.extractedData = extractFinancialData(info.message);
+    }
     
-    // Show a toast notification
-    toast({
-      title: "Mortgage Calculator",
-      description: "Opening the Mortgage Calculator to help with home buying calculations.",
-      variant: "default"
+    // Pass to main handler
+    handleFinanceRequest({
+      ...info, 
+      type: 'mortgage'
     });
   };
   
   const handleTaxRequest = (info: any) => {
-    // Navigate to tax calculator
-    navigate('/finance/tax-calculator');
+    // Ensure we have extracted data
+    if (info && info.message && !info.extractedData) {
+      info.extractedData = extractFinancialData(info.message);
+    }
     
-    // Show a toast notification
-    toast({
-      title: "Tax Calculator",
-      description: "Opening the Tax Calculator to estimate your tax burden and learn about tax concepts.",
-      variant: "default"
+    // Pass to main handler
+    handleFinanceRequest({
+      ...info,
+      type: 'tax'
     });
   };
   
   const handleInvestmentRequest = (info: any) => {
-    // Navigate to investment tracker
-    navigate('/finance/investment-tracker');
+    // Ensure we have extracted data
+    if (info && info.message && !info.extractedData) {
+      info.extractedData = extractFinancialData(info.message);
+    }
     
-    // Show a toast notification
-    toast({
-      title: "Investment Tracker",
-      description: "Opening the Investment Tracker to monitor your portfolio performance.",
-      variant: "default"
+    // Pass to main handler
+    handleFinanceRequest({
+      ...info,
+      type: 'investment'
     });
   };
   
   const handleLoanRequest = (info: any) => {
-    // Navigate to loan comparison
-    navigate('/finance/loan-comparison');
+    // Ensure we have extracted data
+    if (info && info.message && !info.extractedData) {
+      info.extractedData = extractFinancialData(info.message);
+    }
     
-    // Show a toast notification
-    toast({
-      title: "Loan Comparison",
-      description: "Opening the Loan Comparison tool to compare different loan options and terms.",
-      variant: "default"
+    // Pass to main handler
+    handleFinanceRequest({
+      ...info,
+      type: 'loan'
     });
   };
   
   const handleRetirementRequest = (info: any) => {
-    // Navigate to retirement calculator
-    navigate('/finance/retirement-calculator');
+    // Ensure we have extracted data
+    if (info && info.message && !info.extractedData) {
+      info.extractedData = extractFinancialData(info.message);
+    }
     
-    // Show a toast notification
-    toast({
-      title: "Retirement Calculator",
-      description: "Opening the Retirement Calculator to help with future planning and projections.",
-      variant: "default"
+    // Pass to main handler
+    handleFinanceRequest({
+      ...info,
+      type: 'retirement'
     });
   };
   
   const handleDebtRequest = (info: any) => {
-    // Navigate to debt payoff planner
-    navigate('/finance/debt-payoff-planner');
+    // Ensure we have extracted data
+    if (info && info.message && !info.extractedData) {
+      info.extractedData = extractFinancialData(info.message);
+    }
     
-    // Show a toast notification
-    toast({
-      title: "Debt Payoff Planner",
-      description: "Opening the Debt Payoff Planner to create a debt elimination strategy.",
-      variant: "default"
+    // Pass to main handler
+    handleFinanceRequest({
+      ...info,
+      type: 'debt'
     });
   };
   
