@@ -23,6 +23,8 @@ export default function SmartCalendar() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [newEvent, setNewEvent] = useState<CalendarEvent>({
     id: '',
     title: '',
@@ -30,6 +32,23 @@ export default function SmartCalendar() {
     date: new Date(),
     description: ''
   });
+  
+  // Handle responsive design with window resize
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 640);
+      setIsSmallScreen(window.innerWidth < 380);
+    };
+    
+    // Initial check
+    checkScreenSize();
+    
+    // Add listener for resize
+    window.addEventListener('resize', checkScreenSize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Load events from localStorage on component mount
   useEffect(() => {
@@ -86,8 +105,7 @@ export default function SmartCalendar() {
 
   const renderHeader = () => {
     // Use shorter month format on smallest screens
-    const isMobile = window.innerWidth < 380;
-    const dateFormat = isMobile ? 'MMM yyyy' : 'MMMM yyyy';
+    const dateFormat = isSmallScreen ? 'MMM yyyy' : 'MMMM yyyy';
 
     return (
       <div className="flex justify-between items-center mb-2 sm:mb-4">
@@ -110,7 +128,7 @@ export default function SmartCalendar() {
   const renderDays = () => {
     const days = [];
     // Use shorter format on mobile
-    const dateFormat = window.innerWidth < 640 ? "E" : "EEE";
+    const dateFormat = isMobile ? "E" : "EEE";
     const startDate = startOfWeek(currentDate);
 
     for (let i = 0; i < 7; i++) {
@@ -142,8 +160,7 @@ export default function SmartCalendar() {
           event => isSameDay(new Date(event.date), cloneDay)
         );
 
-        // Responsive cell height
-        const isMobile = window.innerWidth < 640;
+        // Responsive cell height based on state
         const cellHeight = isMobile ? "min-h-[40px] md:min-h-[60px] lg:min-h-[80px]" : "min-h-[80px]";
 
         days.push(
@@ -304,8 +321,8 @@ export default function SmartCalendar() {
               className="text-xs sm:text-sm h-8 sm:h-10"
             >
               <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden xs:inline">Add Event</span>
-              <span className="xs:hidden">Add</span>
+              <span className="hidden sm:inline">Add Event</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           </div>
         </CardHeader>
