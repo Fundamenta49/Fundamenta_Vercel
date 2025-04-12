@@ -333,61 +333,62 @@ export default function SmartCalendar() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto w-[95%] p-3 sm:p-6">
+          <DialogHeader className="p-0 sm:p-0">
             <DialogTitle className="text-base sm:text-lg">Add New Event</DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
               Create a new event on your calendar
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid gap-3 sm:gap-4 py-3 sm:py-4">
-            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
-              <label htmlFor="event-title" className="text-right text-xs sm:text-sm">Title</label>
+          <div className="grid gap-2 sm:gap-4 py-2 sm:py-4">
+            {/* For mobile screens, use a stacked layout */}
+            <div className={isMobile ? "grid grid-cols-1 gap-1" : "grid grid-cols-4 items-center gap-2 sm:gap-4"}>
+              <label htmlFor="event-title" className={isMobile ? "text-xs font-medium" : "text-right text-xs sm:text-sm"}>Title</label>
               <Input
                 id="event-title"
-                className="col-span-3 h-8 sm:h-10 text-xs sm:text-sm"
+                className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}
                 value={newEvent.title}
                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
                 placeholder="Event title"
               />
             </div>
             
-            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
-              <label htmlFor="event-category" className="text-right text-xs sm:text-sm">Category</label>
+            <div className={isMobile ? "grid grid-cols-1 gap-1" : "grid grid-cols-4 items-center gap-2 sm:gap-4"}>
+              <label htmlFor="event-category" className={isMobile ? "text-xs font-medium" : "text-right text-xs sm:text-sm"}>Category</label>
               <Select 
                 value={newEvent.category}
                 onValueChange={(value) => setNewEvent({ ...newEvent, category: value })}
               >
-                <SelectTrigger className="col-span-3 h-8 sm:h-10 text-xs sm:text-sm">
+                <SelectTrigger className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general" className="text-xs sm:text-sm">General</SelectItem>
-                  <SelectItem value="health" className="text-xs sm:text-sm">Health</SelectItem>
-                  <SelectItem value="finance" className="text-xs sm:text-sm">Finance</SelectItem>
-                  <SelectItem value="career" className="text-xs sm:text-sm">Career</SelectItem>
-                  <SelectItem value="learning" className="text-xs sm:text-sm">Learning</SelectItem>
+                <SelectContent className="text-xs">
+                  <SelectItem value="general" className="text-xs">General</SelectItem>
+                  <SelectItem value="health" className="text-xs">Health</SelectItem>
+                  <SelectItem value="finance" className="text-xs">Finance</SelectItem>
+                  <SelectItem value="career" className="text-xs">Career</SelectItem>
+                  <SelectItem value="learning" className="text-xs">Learning</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
-            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
-              <label htmlFor="event-date" className="text-right text-xs sm:text-sm">Date</label>
+            <div className={isMobile ? "grid grid-cols-1 gap-1" : "grid grid-cols-4 items-center gap-2 sm:gap-4"}>
+              <label htmlFor="event-date" className={isMobile ? "text-xs font-medium" : "text-right text-xs sm:text-sm"}>Date</label>
               <Input
                 id="event-date"
-                className="col-span-3 h-8 sm:h-10 text-xs sm:text-sm"
+                className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}
                 type="date"
                 value={format(newEvent.date, 'yyyy-MM-dd')}
                 onChange={(e) => setNewEvent({ ...newEvent, date: new Date(e.target.value) })}
               />
             </div>
             
-            <div className="grid grid-cols-4 items-center gap-2 sm:gap-4">
-              <label htmlFor="event-description" className="text-right text-xs sm:text-sm">Description</label>
+            <div className={isMobile ? "grid grid-cols-1 gap-1" : "grid grid-cols-4 items-center gap-2 sm:gap-4"}>
+              <label htmlFor="event-description" className={isMobile ? "text-xs font-medium" : "text-right text-xs sm:text-sm"}>Description</label>
               <Input
                 id="event-description"
-                className="col-span-3 h-8 sm:h-10 text-xs sm:text-sm"
+                className={isMobile ? "h-8 text-xs" : "col-span-3 h-8 sm:h-10 text-xs sm:text-sm"}
                 value={newEvent.description || ''}
                 onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                 placeholder="Event description (optional)"
@@ -395,9 +396,9 @@ export default function SmartCalendar() {
             </div>
           </div>
           
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" size="sm" className="text-xs sm:text-sm h-8 sm:h-10" onClick={() => setShowModal(false)}>Cancel</Button>
-            <Button size="sm" className="text-xs sm:text-sm h-8 sm:h-10" onClick={handleAddEvent}>Save Event</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
+            <Button variant="outline" size="sm" className="text-xs h-8 w-full sm:w-auto" onClick={() => setShowModal(false)}>Cancel</Button>
+            <Button size="sm" className="text-xs h-8 w-full sm:w-auto" onClick={handleAddEvent}>Save Event</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
