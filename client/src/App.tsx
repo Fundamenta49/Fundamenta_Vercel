@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Layout from "@/components/layout";
 import NotFound from "@/pages/not-found";
 import RobotFundi from "@/components/robot-fundi";
+import ChatCalendarConnector from "@/components/chat-calendar-connector";
 import { ForceRestartTour } from "@/components/tour/force-restart-tour";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
@@ -324,6 +325,7 @@ function Router() {
             <Route component={NotFound} />
           </Switch>
           <Toaster />
+          <ChatCalendarConnector />
         </Layout>
       </Route>
     </Switch>
