@@ -79,7 +79,7 @@ const FullScreenDialogContent = React.forwardRef<
             zIndex: 45,
             width: '100%',
             height: '100%',
-            overflow: 'auto',
+            overflow: 'visible',
             backgroundColor: 'white',
             // Ensure full-screen dialog doesn't block the sidebar menu button
             boxSizing: 'border-box',
@@ -95,10 +95,15 @@ const FullScreenDialogContent = React.forwardRef<
           <DialogPrimitive.Content
             ref={ref}
             className={cn(
-              "w-full h-full bg-white dark:bg-gray-950 shadow-xl duration-200 overflow-auto",
+              "w-full h-full bg-white dark:bg-gray-950 shadow-xl duration-200 overflow-auto mobile-dialog-content",
               className
             )}
-            style={{ pointerEvents: 'auto' }} // This re-enables pointer events for the inner content
+            style={{ 
+              pointerEvents: 'auto',
+              maxHeight: 'calc(100% - 40px)',
+              overscrollBehavior: 'contain',
+              WebkitOverflowScrolling: 'touch'
+            }} // This re-enables pointer events for the inner content and improves mobile scrolling
             {...props}
           >
             {/* Swipe handle indicator */}
@@ -162,9 +167,15 @@ const FullScreenDialogHeader = ({
     <div
       className={cn(
         "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b",
-        isMobile ? "top-14 mt-2" : "top-0 pt-6", // Increased top value to avoid overlap with the swipe indicator
+        isMobile ? "top-14 mt-2 mobile-dialog-header" : "top-0 pt-6", // Increased top value to avoid overlap with the swipe indicator
         className
       )}
+      style={isMobile ? {
+        width: '100%',
+        boxSizing: 'border-box',
+        left: 0,
+        right: 0
+      } : undefined}
       {...props}
     />
   );
@@ -219,9 +230,16 @@ const FullScreenDialogBody = ({
     <div
       className={cn(
         "px-6 py-4", 
-        isMobile ? "pb-24" : "", // Add bottom padding on mobile for better scrolling experience
+        isMobile ? "pb-24 mobile-dialog-body" : "", // Add bottom padding on mobile for better scrolling experience
         className
       )}
+      style={isMobile ? {
+        width: '100%',
+        maxWidth: '100%',
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch'
+      } : undefined}
       {...props}
     />
   );
