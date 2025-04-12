@@ -22,19 +22,19 @@ export default function FundiEmergencyFix() {
       // Apply emergency positioning to Fundi
       fundiElements.forEach(el => {
         if (el instanceof HTMLElement) {
-          // Directly override all styles using !important - CENTER POSITION
+          // Directly override all styles using !important - CENTER POSITION (matching screenshot)
           el.style.cssText = `
             position: fixed !important;
-            top: 150px !important;
+            top: 290px !important;
             left: 50% !important;
             transform: translateX(-50%) !important;
             right: auto !important;
             bottom: auto !important;
             z-index: 999999 !important;
-            width: 120px !important;
-            height: 120px !important;
-            max-width: 120px !important;
-            max-height: 120px !important;
+            width: 86px !important;
+            height: 86px !important;
+            max-width: 86px !important;
+            max-height: 86px !important;
             pointer-events: auto !important;
           `;
           
@@ -52,23 +52,25 @@ export default function FundiEmergencyFix() {
       
       tourDialogs.forEach(dialog => {
         if (dialog instanceof HTMLElement) {
-          // Direct style override with !important for maximum specificity
+          // Direct style override with !important for maximum specificity (matching screenshot)
           dialog.style.cssText = `
             position: fixed !important;
-            max-width: ${isDesktop ? '400px' : 'calc(100vw - 40px)'} !important;
-            width: ${isDesktop ? '400px' : '320px'} !important; 
-            right: 20px !important;
-            left: auto !important;
-            top: auto !important;
-            bottom: ${isDesktop ? '80px' : '20px'} !important;
+            max-width: 320px !important;
+            width: 320px !important; 
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
+            top: 140px !important;
+            bottom: auto !important;
             z-index: 999999 !important;
-            max-height: ${isDesktop ? '70vh' : '400px'} !important;
+            max-height: 500px !important;
             overflow-y: auto !important;
             overflow-x: hidden !important;
-            transform: none !important;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-            border: 2px solid rgba(var(--primary-rgb, 59, 130, 246), 0.5) !important;
+            border: none !important;
             background-color: white !important;
+            border-radius: 8px !important;
+            padding: 20px !important;
           `;
           
           // Add data attributes for CSS targeting
