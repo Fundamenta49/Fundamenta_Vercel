@@ -7,6 +7,26 @@
 export const appFeaturesKnowledge = `
 # Fundamenta App - Complete Feature Knowledge Base
 
+## Special Features
+
+### Smart Calendar (Calendar integration)
+Fundi can help users manage their schedule and set up calendar events directly from conversations.
+
+- **Calendar Event Creation**: Fundi can understand and process natural language requests to create calendar events.
+  * Users can ask Fundi to add events to their calendar
+  * Supports various event types: appointments, meetings, reminders, classes, etc.
+  * Extracts date, time, and event details from conversation
+  * Example requests:
+    - "Add a doctor's appointment to my calendar for next Tuesday at 3pm"
+    - "Schedule a job interview on the 15th at 10am"
+    - "Put dance recital on my calendar for the 22nd"
+    - "Set a tax lesson for the 30th"
+
+- **Event Customization**:
+  * Users can specify if events should repeat (one-time, daily, weekly, etc.)
+  * Events are categorized automatically (health, finance, career, learning, general)
+  * Includes time-specific details when provided
+
 ## Main Feature Categories
 
 ### 1. Finance Coach
