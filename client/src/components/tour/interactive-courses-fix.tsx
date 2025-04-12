@@ -18,21 +18,43 @@ export function InteractiveCoursesFix() {
       if (dialogElements.length > 0) {
         console.log(`Found ${dialogElements.length} tour dialogs to fix`);
         
+        // Check if we're in vehicle maintenance or interactive courses
+        const isVehicleMaintenance = window.location.pathname.includes('vehicle-maintenance') || 
+                                     document.body.classList.contains('tour-vehicle-page') ||
+                                     document.body.getAttribute('data-tour-route')?.includes('vehicle-maintenance');
+        
+        // For desktop, use a larger safety margin from bottom
+        const isDesktop = window.innerWidth >= 640;
+        const bottomMargin = isDesktop ? '80px' : '10px';
+        
         dialogElements.forEach((dialog) => {
           const dialogEl = dialog as HTMLElement;
           
           // Apply critical fixes to ensure dialog stays on screen
           dialogEl.style.position = 'fixed';
-          dialogEl.style.bottom = '10px';
-          dialogEl.style.right = '10px';
+          dialogEl.style.bottom = bottomMargin; // Higher position for desktop
+          dialogEl.style.right = '20px'; // More space on the right
           dialogEl.style.left = 'auto';
           dialogEl.style.top = 'auto';
           dialogEl.style.zIndex = '999999';
-          dialogEl.style.maxWidth = '90vw';
-          dialogEl.style.width = '320px';
+          
+          // Special handling for vehicle maintenance section
+          if (isVehicleMaintenance) {
+            console.log('CRITICAL FIX: Vehicle maintenance dialog detected');
+            dialogEl.style.maxWidth = isDesktop ? '400px' : '90vw';
+            dialogEl.style.width = isDesktop ? '400px' : '320px';
+            dialogEl.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+            dialogEl.style.border = '2px solid rgba(var(--primary-rgb, 59, 130, 246), 0.5)';
+            dialogEl.style.backgroundColor = 'white';
+          } else {
+            dialogEl.style.maxWidth = '90vw';
+            dialogEl.style.width = '320px';
+          }
+          
+          // Common fixes for all dialogs
           dialogEl.style.transform = 'none';
           dialogEl.style.overflow = 'auto';
-          dialogEl.style.maxHeight = '80vh';
+          dialogEl.style.maxHeight = isDesktop ? '70vh' : '80vh';
           
           // Fix any buttons to ensure they fit
           const buttons = dialogEl.querySelectorAll('button');
