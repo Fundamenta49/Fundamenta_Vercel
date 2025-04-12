@@ -47,6 +47,7 @@ interface AIEventState {
   suggestedActions: AppSuggestion[];
   followUpQuestions: string[];
   currentCategory: string;
+  currentMessage: string | null; // Store the current user message for additional processing
   
   // Actions
   setProcessing: (isProcessing: boolean) => void;
@@ -56,6 +57,7 @@ interface AIEventState {
   removePendingAction: (index: number) => void;
   executeNextAction: () => AIAction | null;
   clearActions: () => void;
+  setCurrentMessage: (message: string) => void; // Add method to set current message
 }
 
 // Create the store with Zustand
@@ -66,8 +68,11 @@ export const useAIEventStore = create<AIEventState>((set, get) => ({
   suggestedActions: [],
   followUpQuestions: [],
   currentCategory: 'general',
+  currentMessage: null,
   
   setProcessing: (isProcessing) => set({ isProcessing }),
+  
+  setCurrentMessage: (message) => set({ currentMessage: message }),
   
   setResponse: (response) => {
     set({
@@ -88,6 +93,7 @@ export const useAIEventStore = create<AIEventState>((set, get) => ({
     pendingActions: [],
     suggestedActions: [],
     followUpQuestions: [],
+    currentMessage: null,
     isProcessing: false
   }),
   

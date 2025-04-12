@@ -121,7 +121,8 @@ export default function ChatInterface({
   const { 
     isProcessing, 
     setProcessing, 
-    setResponse, 
+    setResponse,
+    setCurrentMessage,
     suggestedActions, 
     followUpQuestions,
     currentCategory
@@ -255,6 +256,9 @@ export default function ChatInterface({
   // Handle sending a message
   const handleSendMessage = async () => {
     if (!input.trim() || isProcessing) return;
+    
+    // Store the current message for potential calendar event detection
+    setCurrentMessage(input.trim());
     
     // Make sure we have an active conversation
     if (!activeConversationId) {
