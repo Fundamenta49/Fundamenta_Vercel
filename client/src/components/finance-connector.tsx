@@ -16,6 +16,40 @@ export default function FinanceConnector() {
   const [, navigate] = useLocation();
   const [processedMessageId, setProcessedMessageId] = useState<string | null>(null);
   
+  // Listen for direct financial actions from chat interface
+  useEffect(() => {
+    // Handle direct finance action events
+    const handleFinanceAction = (event: CustomEvent) => {
+      console.log("Finance action event received:", event.detail);
+      const { action, data } = event.detail;
+      
+      if (action === 'budget') {
+        handleBudgetRequest(data);
+      } else if (action === 'mortgage') {
+        handleMortgageRequest(data);
+      } else if (action === 'tax') {
+        handleTaxRequest(data);
+      } else if (action === 'investment') {
+        handleInvestmentRequest(data);
+      } else if (action === 'loan') {
+        handleLoanRequest(data);
+      } else if (action === 'retirement') {
+        handleRetirementRequest(data);
+      } else if (action === 'debt') {
+        handleDebtRequest(data);
+      }
+    };
+    
+    // Add event listener for direct financial actions
+    window.addEventListener('financeAction', handleFinanceAction as EventListener);
+    
+    // Cleanup function
+    return () => {
+      window.removeEventListener('financeAction', handleFinanceAction as EventListener);
+    };
+  }, [navigate]);
+  
+  // Process finance messages from AI responses
   useEffect(() => {
     // Only process if we have both a user message and a response
     if (!currentMessage || !lastResponse?.response) return;
@@ -667,6 +701,20 @@ export default function FinanceConnector() {
     // Extract financial data
     const extractedData = extractFinancialData(message);
     console.log("Client-side fallback - extracted financial data:", extractedData);
+    
+    // Force process income information if it exists but no server-side detection triggered
+    if (extractedData.income !== undefined) {
+      console.log("INCOME DETECTED - Forcing budget handler with income:", extractedData.income);
+      
+      handleFinanceRequest({
+        type: 'budget',
+        message: message,
+        rawMessage: message,
+        extractedData: extractedData
+      });
+      
+      return; // We've handled the request
+    }
     
     // Prepare finance info object with extracted data
     const financeInfo = {

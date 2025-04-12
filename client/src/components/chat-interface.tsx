@@ -253,9 +253,93 @@ export default function ChatInterface({
     }
   }, [activeConversationId, messagesByConversation, category]);
 
+  // Directly check for financial information in user messages
+  const checkForFinancialInfo = (message: string) => {
+    const lowerMessage = message.toLowerCase().trim();
+    
+    // Check for income/salary mentions with direct pattern matching
+    const incomePatterns = [
+      /i (make|earn|get paid|receive) (\$?[\d,]+(?:\.\d{1,2})?)/i,
+      /my (income|salary|wage) is (\$?[\d,]+(?:\.\d{1,2})?)/i,
+      /i now make (\$?[\d,]+(?:\.\d{1,2})?)/i,
+      /i know make (\$?[\d,]+(?:\.\d{1,2})?)/i // Common typo for "now make"
+    ];
+    
+    // Try each pattern for income
+    for (const pattern of incomePatterns) {
+      const match = lowerMessage.match(pattern);
+      if (match && match[2]) {
+        const income = parseFloat(match[2].replace(/[$,]/g, ''));
+        if (!isNaN(income) && income > 0) {
+          console.log("DIRECT INCOME MATCH DETECTED:", income);
+          
+          // Create financial data object for the budget handler
+          const financeInfo = {
+            type: 'budget',
+            message: message,
+            rawMessage: message,
+            extractedData: { income }
+          };
+          
+          // Trigger the finance connector's budget handler directly
+          window.dispatchEvent(new CustomEvent('financeAction', { 
+            detail: { action: 'budget', data: financeInfo }
+          }));
+          
+          return true; // Indicate we found and handled financial info
+        }
+      }
+    }
+    
+    // Check for rent/housing mentions
+    const rentPatterns = [
+      /my (rent|lease|apartment|housing) (cost|is|costs) (\$?[\d,]+(?:\.\d{1,2})?)/i,
+      /i pay (\$?[\d,]+(?:\.\d{1,2})?) (for|in) (rent|housing|apartment)/i
+    ];
+    
+    // Try each pattern for rent
+    for (const pattern of rentPatterns) {
+      const match = lowerMessage.match(pattern);
+      if (match) {
+        // The rent amount could be in position 1 or 3 depending on the pattern
+        const rentIndex = pattern.toString().includes('i pay') ? 1 : 3;
+        if (match[rentIndex]) {
+          const rent = parseFloat(match[rentIndex].replace(/[$,]/g, ''));
+          if (!isNaN(rent) && rent > 0) {
+            console.log("DIRECT RENT MATCH DETECTED:", rent);
+            
+            // Create financial data object for the budget handler
+            const financeInfo = {
+              type: 'budget',
+              message: message,
+              rawMessage: message,
+              extractedData: { 
+                rent,
+                expense: rent,
+                expenseCategory: "Housing" 
+              }
+            };
+            
+            // Trigger the finance connector's budget handler directly
+            window.dispatchEvent(new CustomEvent('financeAction', { 
+              detail: { action: 'budget', data: financeInfo }
+            }));
+            
+            return true; // Indicate we found and handled financial info
+          }
+        }
+      }
+    }
+    
+    return false; // No financial info detected
+  };
+
   // Handle sending a message
   const handleSendMessage = async () => {
     if (!input.trim() || isProcessing) return;
+    
+    // Check for financial information first
+    const financialInfoDetected = checkForFinancialInfo(input.trim());
     
     // Store the current message for potential calendar event detection
     setCurrentMessage(input.trim());

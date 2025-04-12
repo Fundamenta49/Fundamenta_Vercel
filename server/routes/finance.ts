@@ -175,11 +175,12 @@ router.post('/process-intent', async (req, res) => {
       });
     }
     
+    // Extract financial data for decision making and response
+    const extractedData = extractFinancialData(message);
+    console.log("Extracted financial data for routing:", extractedData);
+    
     // Determine the specific type of finance request
     let financeType = '';
-    
-    // Extract financial data to help with type determination
-    const extractedData = extractFinancialData(message);
     
     // Use extracted data as an additional signal
     if (budgetPatterns.some(pattern => lowerMessage.includes(pattern)) || 
@@ -200,8 +201,6 @@ router.post('/process-intent', async (req, res) => {
     } else {
       financeType = 'general';
     }
-    
-    // We've already extracted the data above
     
     // Return the finance request information with extracted data
     return res.json({
