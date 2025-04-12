@@ -67,18 +67,23 @@ export default function VehicleMaintenanceCourse() {
     const applyEmergencyFixes = () => {
       console.log("SUPER EMERGENCY FIX: Applying to Vehicle Maintenance page");
       
-      // Force Fundi to stay in a fixed position
-      const fundiElements = document.querySelectorAll('.robot-container, .fixed.z-\\[99999\\]');
+      // Force Fundi to stay in a fixed CENTERED position
+      const fundiElements = document.querySelectorAll('.robot-container, .fixed.z-\\[99999\\], .fundi-container, [data-fundi="true"]');
       fundiElements.forEach(el => {
         if (el instanceof HTMLElement) {
           el.style.cssText = `
             position: fixed !important;
-            top: 20px !important;
-            right: 20px !important;
-            left: auto !important;
+            top: 150px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            right: auto !important;
             bottom: auto !important;
-            transform: none !important;
             z-index: 999999 !important;
+            width: 120px !important;
+            height: 120px !important;
+            max-width: 120px !important;
+            max-height: 120px !important;
+            pointer-events: auto !important;
           `;
         }
       });

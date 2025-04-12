@@ -1438,32 +1438,45 @@ body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* EMERGENCY FIX FOR FUNDI CHARACTER ON VEHICLE MAINTENANCE - ALWAYS FORCE POSITION */
+/* EMERGENCY FIX FOR FUNDI CHARACTER ON VEHICLE MAINTENANCE - ALWAYS FORCE CENTER POSITION */
 body[data-tour-route*="vehicle-maintenance"] .robot-container,
 body.tour-vehicle-page .robot-container,
 body[data-tour-fixed="true"] .robot-container,
 body[data-tour-active="true"] .robot-container,
-body[data-emergency-fix="true"] .robot-container {
+body[data-emergency-fix="true"] .robot-container,
+.robot-container,
+.fundi-container {
   position: fixed !important;
-  top: 20px !important;
-  right: 20px !important;
-  left: auto !important;
+  top: 150px !important; /* Much lower position */
+  left: 50% !important; /* Center horizontally */
+  transform: translateX(-50%) !important; /* Ensure true center */
+  right: auto !important;
   bottom: auto !important;
-  transform: none !important;
   z-index: 999999 !important;
+  width: 120px !important;
+  height: 120px !important;
+  max-width: 120px !important;
+  max-height: 120px !important;
+  pointer-events: auto !important;
 }
 
-/* Desktop specific position for Fundi in vehicle maintenance */
-@media (min-width: 641px) {
+/* Mobile specific position for Fundi in vehicle maintenance */
+@media (max-width: 640px) {
   body[data-tour-route*="vehicle-maintenance"] .robot-container,
   body.tour-vehicle-page .robot-container,
   body[data-tour-fixed="true"] .robot-container,
   body[data-tour-active="true"] .robot-container,
-  body[data-emergency-fix="true"] .robot-container {
+  body[data-emergency-fix="true"] .robot-container,
+  .robot-container,
+  .fundi-container {
     position: fixed !important;
-    top: 40px !important; 
-    right: 40px !important;
-    transform: none !important;
+    top: 150px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100px !important;
+    height: 100px !important;
+    max-width: 100px !important;
+    max-height: 100px !important;
     z-index: 999999 !important;
   }
 }

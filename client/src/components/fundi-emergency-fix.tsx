@@ -22,15 +22,20 @@ export default function FundiEmergencyFix() {
       // Apply emergency positioning to Fundi
       fundiElements.forEach(el => {
         if (el instanceof HTMLElement) {
-          // Directly override all styles using !important
+          // Directly override all styles using !important - CENTER POSITION
           el.style.cssText = `
             position: fixed !important;
-            top: 20px !important;
-            right: 20px !important;
-            left: auto !important;
+            top: 150px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            right: auto !important;
             bottom: auto !important;
-            transform: none !important;
             z-index: 999999 !important;
+            width: 120px !important;
+            height: 120px !important;
+            max-width: 120px !important;
+            max-height: 120px !important;
+            pointer-events: auto !important;
           `;
           
           // Add a data attribute for CSS targeting
