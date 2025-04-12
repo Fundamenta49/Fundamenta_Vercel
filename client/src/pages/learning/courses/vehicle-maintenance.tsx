@@ -9,6 +9,7 @@ import VehicleGuide from '@/components/vehicle-guide';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
 import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
 import InteractiveCoursesFix from '@/components/tour/interactive-courses-fix';
+import FundiEmergencyFix from '@/components/fundi-emergency-fix';
 
 export default function VehicleMaintenanceCourse() {
   const [, navigate] = useLocation();
@@ -55,21 +56,84 @@ export default function VehicleMaintenanceCourse() {
     }
   ];
 
-  // Apply emergency fix to ensure tour dialogs stay on screen
+  // Apply SUPER EMERGENCY fix to ensure tour dialogs stay on screen
   useEffect(() => {
-    // Add special data attribute on the body to trigger CSS fixes
+    // Add special data attributes on the body to trigger CSS fixes
     document.body.setAttribute('data-tour-route', '/learning/courses/vehicle-maintenance');
+    document.body.setAttribute('data-emergency-fix', 'true');
+    document.body.classList.add('tour-vehicle-page');
     
-    // When component unmounts, remove the attribute
+    // SUPER CRITICAL: Apply direct fixes to any elements that might already exist
+    const applyEmergencyFixes = () => {
+      console.log("SUPER EMERGENCY FIX: Applying to Vehicle Maintenance page");
+      
+      // Force Fundi to stay in a fixed position
+      const fundiElements = document.querySelectorAll('.robot-container, .fixed.z-\\[99999\\]');
+      fundiElements.forEach(el => {
+        if (el instanceof HTMLElement) {
+          el.style.cssText = `
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            left: auto !important;
+            bottom: auto !important;
+            transform: none !important;
+            z-index: 999999 !important;
+          `;
+        }
+      });
+      
+      // Force any tour dialogs to stay fixed at bottom right
+      const tourDialogs = document.querySelectorAll(
+        '[data-tour-dialog], [data-radix-dialog-content], .tour-speech-bubble'
+      );
+      
+      const isDesktop = window.innerWidth >= 640;
+      
+      tourDialogs.forEach(dialog => {
+        if (dialog instanceof HTMLElement) {
+          dialog.style.cssText = `
+            position: fixed !important;
+            max-width: ${isDesktop ? '400px' : 'calc(100vw - 40px)'} !important;
+            width: ${isDesktop ? '400px' : '320px'} !important; 
+            right: 20px !important;
+            left: auto !important;
+            top: auto !important;
+            bottom: ${isDesktop ? '80px' : '20px'} !important;
+            z-index: 999999 !important;
+            max-height: ${isDesktop ? '70vh' : '400px'} !important;
+            overflow-y: auto !important;
+            transform: none !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+            border: 2px solid rgba(var(--primary-rgb, 59, 130, 246), 0.5) !important;
+            background-color: white !important;
+          `;
+        }
+      });
+    };
+    
+    // Run the emergency fix immediately
+    applyEmergencyFixes();
+    
+    // Set an interval to continuously apply fixes
+    const fixInterval = setInterval(applyEmergencyFixes, 200);
+    
+    // When component unmounts, clean up
     return () => {
+      clearInterval(fixInterval);
       document.body.removeAttribute('data-tour-route');
+      document.body.removeAttribute('data-emergency-fix');
+      document.body.classList.remove('tour-vehicle-page');
     };
   }, []);
   
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl">
+    <div className="container mx-auto px-4 py-6 max-w-6xl relative" style={{ overflowX: 'hidden' }}>
       {/* Emergency fix for tour dialogs */}
       <InteractiveCoursesFix />
+      
+      {/* ULTRA EMERGENCY FIX: Import our new component that completely detaches Fundi from the DOM flow */}
+      <FundiEmergencyFix />
       
       <div className="flex items-center mb-6">
         <Button 
