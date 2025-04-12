@@ -243,11 +243,29 @@ export default function Navigation() {
               </button>
             ))}
             
-            {/* Separator and Arcade */}
+            {/* Separator, Calendar and Arcade */}
             <div className="mt-4 mb-2">
               <div className="px-3">
                 <Separator className={cn(borderColor)} />
               </div>
+              
+              {/* Calendar Link (when on home page) */}
+              {isHomePage && (
+                <div className="mt-2">
+                  <button 
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
+                      isNavItemActive("/calendar")
+                        ? `${activeItemBg} ${activeItemText}`
+                        : `text-gray-700 hover:bg-gray-50`
+                    )}
+                    onClick={() => handleNavigation("/calendar")}
+                  >
+                    <Calendar className={cn("h-5 w-5", isNavItemActive("/calendar") ? themeColors.iconColor : "text-gray-600")} />
+                    <span className="font-medium">Smart Calendar</span>
+                  </button>
+                </div>
+              )}
               
               <div className="mt-2">
                 <button 
@@ -341,13 +359,49 @@ export default function Navigation() {
           </button>
         ))}
         
-        {/* Separator and Arcade */}
+        {/* Separator, Calendar and Arcade */}
         <div className="mt-4 mb-2">
           {!isMinimized && (
             <div className="px-3 py-2">
               <Separator className="h-px bg-gray-200" />
             </div>
           )}
+          
+          {/* Calendar Link (when on home page) */}
+          {isHomePage && (!isMinimized ? (
+            <div className="mt-2 mb-2">
+              <button 
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
+                  isNavItemActive("/calendar")
+                    ? `${activeItemBg} ${activeItemText}`
+                    : `text-gray-700 hover:bg-gray-50`
+                )}
+                onClick={() => handleNavigation("/calendar")}
+              >
+                <Calendar className={cn("h-5 w-5", isNavItemActive("/calendar") ? themeColors.iconColor : "text-gray-600")} />
+                <span className="font-medium">Smart Calendar</span>
+              </button>
+            </div>
+          ) : (
+            <div className="mt-3 mb-3 flex flex-col items-center">
+              <button
+                onClick={() => handleNavigation("/calendar")}
+                className={cn(
+                  "p-2 rounded-md",
+                  isNavItemActive("/calendar")
+                    ? activeItemBg
+                    : "hover:bg-gray-100"
+                )}
+                title="Smart Calendar"
+              >
+                <Calendar className={cn(
+                  "h-5 w-5", 
+                  isNavItemActive("/calendar") ? themeColors.iconColor : "text-gray-600"
+                )} />
+              </button>
+            </div>
+          ))}
           
           {/* Arcade Link */}
           {!isMinimized ? (
