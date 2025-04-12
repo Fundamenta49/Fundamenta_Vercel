@@ -824,7 +824,14 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
       open={true} 
       onOpenChange={() => onClose && onClose()}
     >
-      <DialogContent className="max-w-md md:max-w-lg p-0 max-h-[90vh] overflow-y-auto">
+      <DialogContent 
+        className={`
+          p-0 overflow-y-auto
+          ${isMobile 
+            ? "w-[95%] max-w-[95%] max-h-[85vh] fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] rounded-lg shadow-lg border bg-background" 
+            : "max-w-md md:max-w-lg max-h-[90vh]"}
+        `}
+      >
         {renderPrompt()}
       </DialogContent>
     </Dialog>
