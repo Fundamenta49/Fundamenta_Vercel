@@ -62,50 +62,43 @@ const FullScreenDialogContent = React.forwardRef<
     }
   };
   
+  // Apply mobile fullscreen fix
+  React.useEffect(() => {
+    if (isMobile) {
+      // Force full viewport dimensions on mobile
+      document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+      
+      const updateHeight = () => {
+        document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+      };
+      
+      window.addEventListener('resize', updateHeight);
+      return () => window.removeEventListener('resize', updateHeight);
+    }
+  }, [isMobile]);
+  
   return (
     <FullScreenDialogPortal>
       <FullScreenDialogOverlay />
       {isMobile ? (
-        <motion.div
+        <DialogPrimitive.Content
+          ref={ref}
+          className={cn(
+            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content",
+            className
+          )}
           style={{ 
-            y,
-            opacity,
-            scale,
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 45,
-            width: '100%',
-            height: '100%',
-            overflow: 'visible',
-            backgroundColor: 'white',
-            // Ensure full-screen dialog doesn't block the sidebar menu button
-            boxSizing: 'border-box',
-            // Instead of completely disabling pointer events, we'll use a clip-path
-            // to create a clickable area in the top-left corner for the menu button
-            clipPath: 'polygon(48px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 48px, 48px 48px)'
+            pointerEvents: 'auto',
+            margin: 0,
+            padding: 0,
+            width: '100vw',
+            height: '100vh',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            boxSizing: 'border-box'
           }}
-          drag="y"
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.2}
-          onDragEnd={handleDragEnd}
+          {...props}
         >
-          <DialogPrimitive.Content
-            ref={ref}
-            className={cn(
-              "w-full h-full bg-white dark:bg-gray-950 shadow-xl duration-200 overflow-auto mobile-dialog-content",
-              className
-            )}
-            style={{ 
-              pointerEvents: 'auto',
-              maxHeight: 'calc(100% - 40px)',
-              overscrollBehavior: 'contain',
-              WebkitOverflowScrolling: 'touch'
-            }} // This re-enables pointer events for the inner content and improves mobile scrolling
-            {...props}
-          >
             {/* Swipe handle indicator */}
             <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-6 bg-white dark:bg-gray-950">
               <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
@@ -130,7 +123,6 @@ const FullScreenDialogContent = React.forwardRef<
               <span className="sr-only">Close</span>
             </DialogPrimitive.Close>
           </DialogPrimitive.Content>
-        </motion.div>
       ) : (
         <DialogPrimitive.Content
           ref={ref}
