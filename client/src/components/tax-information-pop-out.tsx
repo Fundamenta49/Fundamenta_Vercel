@@ -177,8 +177,8 @@ const getStateIncomeTaxRate = (stateInfo: StateTaxInfo): number => {
   return stateInfo.incomeTaxRange.toLowerCase().includes('no state income tax') ? 0 : 0.05; // Default to 5% if parsing fails
 };
 
-// Define an interface for learning events that will integrate with the Learning Calendar
-interface TaxLearningEvent {
+// Define an interface for learning modules (calendar functionality removed)
+interface TaxLearningModule {
   id: string;
   title: string;
   category: "skill" | "goal" | "project" | "webinar" | "other";
@@ -188,8 +188,8 @@ interface TaxLearningEvent {
   description: string;
 }
 
-// Create tax learning modules that can be tracked in the learning calendar
-const TAX_LEARNING_MODULES: TaxLearningEvent[] = [
+// Tax learning modules (calendar tracking functionality removed)
+const TAX_LEARNING_MODULES: TaxLearningModule[] = [
   {
     id: "tax-basics-101",
     title: "Tax Basics 101",
@@ -264,8 +264,7 @@ export default function TaxInformationPopOut() {
   const [showAchievement, setShowAchievement] = useState<boolean>(false);
   const [recentAchievement, setRecentAchievement] = useState<string>("");
   
-  // Track when modules were added to the learning calendar
-  const [addedToCalendar, setAddedToCalendar] = useState<string[]>([]);
+  // Calendar functionality removed
   
   // Tax calculator state
   const [calculatorState, setCalculatorState] = useState<TaxCalculatorState>({
@@ -301,7 +300,7 @@ export default function TaxInformationPopOut() {
     // Load from localStorage on component mount
     const savedProgress = localStorage.getItem('taxLearningProgress');
     const savedBadges = localStorage.getItem('taxLearningBadges');
-    const savedAddedToCalendar = localStorage.getItem('taxModulesInCalendar');
+    // Calendar functionality removed
     
     if (savedProgress) {
       setCompletedLessons(JSON.parse(savedProgress));
@@ -317,19 +316,17 @@ export default function TaxInformationPopOut() {
       setUserBadges(JSON.parse(savedBadges));
     }
     
-    if (savedAddedToCalendar) {
-      setAddedToCalendar(JSON.parse(savedAddedToCalendar));
-    }
+    // Calendar functionality removed
   }, []);
   
   // Save progress to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('taxLearningProgress', JSON.stringify(completedLessons));
     localStorage.setItem('taxLearningBadges', JSON.stringify(userBadges));
-    localStorage.setItem('taxModulesInCalendar', JSON.stringify(addedToCalendar));
+    // Calendar functionality removed
     
-    // Create a custom event to notify other components (like the Learning Calendar)
-    // that tax learning progress has been updated
+    // Create a custom event to notify other components
+    // Calendar references removed
     if (typeof window !== 'undefined') {
       const progressEvent = new CustomEvent('taxLearningProgressUpdated', {
         detail: {
@@ -340,7 +337,7 @@ export default function TaxInformationPopOut() {
       });
       window.dispatchEvent(progressEvent);
     }
-  }, [completedLessons, userBadges, userPoints, addedToCalendar]);
+  }, [completedLessons, userBadges, userPoints]);
   
   // Handle completing a section and award points
   const completeSection = (sectionId: string) => {
@@ -506,29 +503,7 @@ export default function TaxInformationPopOut() {
     }
   }, [calculatorState, activeTab]);
   
-  // Add a module to the learning calendar
-  const addToLearningCalendar = (moduleId: string) => {
-    if (!addedToCalendar.includes(moduleId)) {
-      setAddedToCalendar(prev => [...prev, moduleId]);
-      
-      // Create event to add this to Learning Calendar
-      if (typeof window !== 'undefined') {
-        const module = TAX_LEARNING_MODULES.find(m => m.id === moduleId);
-        if (module) {
-          const calendarEvent = new CustomEvent('addToLearningCalendar', {
-            detail: {
-              id: module.id,
-              title: module.title,
-              category: module.category,
-              date: new Date(Date.now() + 86400000), // Schedule for tomorrow
-              completed: completedLessons.includes(moduleId)
-            }
-          });
-          window.dispatchEvent(calendarEvent);
-        }
-      }
-    }
-  };
+  // Calendar functionality removed
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
@@ -1278,26 +1253,26 @@ export default function TaxInformationPopOut() {
                           </Button>
                         )}
                         
-                        {!addedToCalendar.includes(module.id) ? (
-                          <Button 
-                            variant="outline"
-                            size="sm"
-                            onClick={() => addToLearningCalendar(module.id)}
-                          >
-                            <CalendarDays className="h-4 w-4 mr-1" />
-                            Add to Calendar
-                          </Button>
-                        ) : (
-                          <Button 
-                            variant="outline"
-                            size="sm"
-                            className="border-blue-200 text-blue-800 bg-blue-50"
-                            disabled
-                          >
-                            <CheckCircle2 className="h-4 w-4 mr-1" />
-                            Added to Calendar
-                          </Button>
-                        )}
+                        {/* Calendar functionality removed */}
+                        <Button 
+                          variant="outline"
+                          size="sm"
+                          onClick={() => !completedLessons.includes(module.id) && completeSection(module.id)}
+                          className={completedLessons.includes(module.id) ? "border-green-200 text-green-800 bg-green-50" : ""}
+                          disabled={completedLessons.includes(module.id)}
+                        >
+                          {completedLessons.includes(module.id) ? (
+                            <>
+                              <CheckCircle2 className="h-4 w-4 mr-1" />
+                              Completed
+                            </>
+                          ) : (
+                            <>
+                              <BookOpen className="h-4 w-4 mr-1" />
+                              Start Learning
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </div>
                   ))}
