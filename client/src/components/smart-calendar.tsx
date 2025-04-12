@@ -139,7 +139,7 @@ export default function SmartCalendar() {
       );
     }
 
-    return <div className="grid grid-cols-7 mb-1 sm:mb-2">{days}</div>;
+    return <div className="grid grid-cols-7 gap-0.5 mb-1 sm:mb-2">{days}</div>;
   };
 
   const renderCells = () => {
@@ -160,8 +160,8 @@ export default function SmartCalendar() {
           event => isSameDay(new Date(event.date), cloneDay)
         );
 
-        // Responsive cell height based on state
-        const cellHeight = isMobile ? "min-h-[40px] md:min-h-[60px] lg:min-h-[80px]" : "min-h-[80px]";
+        // Responsive cell height based on state - adjusted to be more square
+        const cellHeight = isMobile ? "aspect-square min-h-[40px]" : "aspect-square min-h-[80px]";
 
         days.push(
           <div
@@ -209,13 +209,13 @@ export default function SmartCalendar() {
         day = addDays(day, 1);
       }
       rows.push(
-        <div key={day.toString()} className="grid grid-cols-7">
+        <div key={day.toString()} className="grid grid-cols-7 gap-0.5">
           {days}
         </div>
       );
       days = [];
     }
-    return <div className="space-y-0.5 sm:space-y-1">{rows}</div>;
+    return <div className="grid gap-0.5">{rows}</div>;
   };
 
   const renderEventsList = () => {
@@ -306,7 +306,7 @@ export default function SmartCalendar() {
 
   return (
     <div className="mx-auto p-4">
-      <Card>
+      <Card className="max-w-3xl mx-auto">
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
@@ -326,7 +326,7 @@ export default function SmartCalendar() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-2 sm:px-4">
           {renderHeader()}
           {renderDays()}
           {renderCells()}
