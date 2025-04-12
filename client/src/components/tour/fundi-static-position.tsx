@@ -34,7 +34,7 @@ export default function FundiStaticPosition() {
         width: 86px !important;
         height: 86px !important;
         bottom: auto !important;
-        top: 270px !important;
+        top: 290px !important;
         right: auto !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
@@ -80,7 +80,7 @@ export default function FundiStaticPosition() {
         max-width: 320px !important;
         min-height: 100px !important;
         max-height: 500px !important;
-        top: 180px !important;
+        top: 140px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         background-color: white !important;
