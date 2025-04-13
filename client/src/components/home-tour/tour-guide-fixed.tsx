@@ -11,8 +11,26 @@ const TourGuide: React.FC = () => {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour } = useTour();
   const tourSteps = useTourSteps();
   const [animationKey, setAnimationKey] = useState(0);
+  const [tourButtonPosition, setTourButtonPosition] = useState({ top: 200, left: '50%' });
 
   // Set up step positioning only when current step changes
+  // Find the tour button and its position
+  useEffect(() => {
+    if (isTourActive) {
+      // Find the tour button element
+      const tourButtonElement = document.querySelector('.tour-button');
+      if (tourButtonElement) {
+        const rect = tourButtonElement.getBoundingClientRect();
+        // Get the center of the button
+        const top = rect.top + window.scrollY;
+        setTourButtonPosition({ 
+          top, 
+          left: '50%' // Keep horizontally centered
+        });
+      }
+    }
+  }, [isTourActive]);
+  
   useEffect(() => {
     if (!isTourActive || currentStep >= tourSteps.length) return;
 
@@ -141,13 +159,15 @@ const TourGuide: React.FC = () => {
              }}>
           <motion.div
             key={`tour-step-${currentStep}`}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.8, y: -50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="fixed left-1/2 -translate-x-1/2"
             style={{
               zIndex: 100001,
+              top: currentStep === 0 ? tourButtonPosition.top + 100 : '50%',
+              transform: currentStep === 0 ? 'translateX(-50%)' : 'translate(-50%, -50%)'
             }}
           >
             {/* Tour Content */}
