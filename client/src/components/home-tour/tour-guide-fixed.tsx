@@ -230,8 +230,8 @@ const TourGuide: React.FC = () => {
               {/* Blur effect behind card */}
               <div className="absolute -inset-[5px] rounded-xl bg-white/10 backdrop-blur-sm -z-10"></div>
               
-              {/* Fundi Character - Mobile adjustments for better positioning */}
-              <div className="absolute -top-[70px] left-1/2 transform -translate-x-1/2 z-10 hidden md:block">
+              {/* Fundi Character - Desktop adjustments for better positioning */}
+              <div className="absolute -top-[90px] left-1/2 transform -translate-x-1/2 z-10 hidden md:flex" style={{ pointerEvents: 'none' }}>
                 {currentTourStep?.showFundiAnimation ? (
                   <motion.div
                     key={`fundi-animation-${currentStep}-${animationKey}`}
@@ -273,7 +273,7 @@ const TourGuide: React.FC = () => {
               </div>
               
               {/* Mobile Fundi Character - ABOVE the card instead of inside */}
-              <div className="flex md:hidden justify-center absolute -top-20 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="flex md:hidden justify-center absolute -top-32 left-1/2 transform -translate-x-1/2 z-10" style={{ pointerEvents: 'none' }}>
                 {currentTourStep?.showFundiAnimation ? (
                   <motion.div
                     key={`fundi-animation-mobile-${currentStep}-${animationKey}`}

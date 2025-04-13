@@ -58,3 +58,14 @@ body.mobile-tour-active .tour-tooltip {
 .mobile-tour-active [data-tour-dialog="true"] > div {
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
+
+/* Fix for Fundi character positioning in tour dialog */
+div[data-tour-dialog="true"] {
+  overflow: visible !important;
+  z-index: 999999 !important;
+}
+
+/* Make sure Fundi character is never cut off */
+.fundi-character {
+  overflow: visible !important;
+}
