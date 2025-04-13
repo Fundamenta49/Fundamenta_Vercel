@@ -7,12 +7,13 @@ export interface TourStep {
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'center';
   highlightColor?: string;
   showFundiAnimation?: boolean;
-  animationType?: 'wave' | 'jump' | 'spin' | 'dance' | 'nod';
+  animationType?: 'wave' | 'jump' | 'spin' | 'dance' | 'nod' | 'point';
 }
 
 export const useTourSteps = () => {
   const { user } = useAuth();
-  const firstName = user?.firstName || user?.displayName?.split(' ')[0] || 'friend';
+  // Since the user type might not have firstName or displayName, we'll use a fallback
+  const firstName = user?.name?.split(' ')[0] || 'friend';
   
   const tourSteps: TourStep[] = [
     // Step 1: Welcome greeting with user's first name

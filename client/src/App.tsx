@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import Layout from "@/components/layout";
 import NotFound from "@/pages/not-found";
+import { TourProvider } from "@/components/home-tour";
 import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
 import Home from "@/pages/home";
@@ -330,7 +331,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router />
+        <TourProvider>
+          <Router />
+        </TourProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

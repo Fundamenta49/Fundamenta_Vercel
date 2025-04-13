@@ -1,10 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
+import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import WeatherWidget from "@/components/weather-widget";
 import { useAuth } from "@/lib/auth-context";
-import { useState, useEffect } from "react";
 import FounderMessageDialog from "@/components/founder-message-dialog";
+import { TourGuide, TourButton } from "@/components/home-tour";
 
 const features = [
   {
@@ -79,10 +80,13 @@ export default function Home() {
           Your AI-powered assistant for life skills and wellness
         </p>
         
-        {/* Tour Button removed for clean implementation */}
+        {/* Tour Button - centered below title */}
         <div className="flex justify-center mt-4">
-          {/* Clean tour implementation will be added here later */}
+          <TourButton />
         </div>
+        
+        {/* Tour Guide - will be rendered when tour is active */}
+        <TourGuide />
       </div>
 
       {/* Founder Message Dialog */}
