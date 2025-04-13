@@ -110,14 +110,7 @@ export const initialTour: Tour = {
       content: "Before you go, our founder has a special message about why we created Fundamenta. It's worth checking out!",
       placement: 'center',
       showSkipButton: false,
-      fundiPosition: { x: 150, y: 150 },
-      onComplete: () => {
-        // Open the founder message dialog when this step completes
-        // We'll trigger this via URL parameter
-        window.history.replaceState({}, document.title, window.location.pathname + '?openFounderMessage=true');
-        // Force a reload of the URL parameters
-        window.dispatchEvent(new Event('popstate'));
-      }
+      fundiPosition: { x: 150, y: 150 }
     }
   ]
 };

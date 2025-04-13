@@ -309,8 +309,16 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children, tours }) =
     
     const nextIndex = currentStepIndex + 1;
     
-    // If we're at the last step, end the tour
+    // If we're at the last step, end the tour and show the founder message
     if (nextIndex >= currentTour.steps.length) {
+      // Show the Founder Message dialog by adding URL parameter
+      // This will trigger the FounderMessage component to open
+      window.history.pushState({}, document.title, `${window.location.pathname}?openFounderMessage=true`);
+      
+      // Trigger a popstate event to ensure the message displays
+      window.dispatchEvent(new Event('popstate'));
+      
+      // End the tour
       endTour();
       return;
     }
