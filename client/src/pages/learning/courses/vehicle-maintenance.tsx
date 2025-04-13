@@ -56,78 +56,19 @@ export default function VehicleMaintenanceCourse() {
     }
   ];
 
-  // Apply SUPER EMERGENCY fix to ensure tour dialogs stay on screen
+  // Apply minimal fixes to mark this as the Vehicle Maintenance page
   useEffect(() => {
-    // Add special data attributes on the body to trigger CSS fixes
+    // Only add marker classes, but don't apply direct styles
     document.body.setAttribute('data-tour-route', '/learning/courses/vehicle-maintenance');
-    document.body.setAttribute('data-emergency-fix', 'true');
     document.body.classList.add('tour-vehicle-page');
     
-    // SUPER CRITICAL: Apply direct fixes to any elements that might already exist
-    const applyEmergencyFixes = () => {
-      console.log("SUPER EMERGENCY FIX: Applying to Vehicle Maintenance page");
-      
-      // Force Fundi to stay in a fixed CENTERED position
-      const fundiElements = document.querySelectorAll('.robot-container, .fixed.z-\\[99999\\], .fundi-container, [data-fundi="true"]');
-      fundiElements.forEach(el => {
-        if (el instanceof HTMLElement) {
-          el.style.cssText = `
-            position: fixed !important;
-            top: 150px !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            right: auto !important;
-            bottom: auto !important;
-            z-index: 999999 !important;
-            width: 120px !important;
-            height: 120px !important;
-            max-width: 120px !important;
-            max-height: 120px !important;
-            pointer-events: auto !important;
-          `;
-        }
-      });
-      
-      // Force any tour dialogs to stay fixed at bottom right
-      const tourDialogs = document.querySelectorAll(
-        '[data-tour-dialog], [data-radix-dialog-content], .tour-speech-bubble'
-      );
-      
-      const isDesktop = window.innerWidth >= 640;
-      
-      tourDialogs.forEach(dialog => {
-        if (dialog instanceof HTMLElement) {
-          dialog.style.cssText = `
-            position: fixed !important;
-            max-width: ${isDesktop ? '400px' : 'calc(100vw - 40px)'} !important;
-            width: ${isDesktop ? '400px' : '320px'} !important; 
-            right: 20px !important;
-            left: auto !important;
-            top: auto !important;
-            bottom: ${isDesktop ? '80px' : '20px'} !important;
-            z-index: 999999 !important;
-            max-height: ${isDesktop ? '70vh' : '400px'} !important;
-            overflow-y: auto !important;
-            transform: none !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-            border: 2px solid rgba(var(--primary-rgb, 59, 130, 246), 0.5) !important;
-            background-color: white !important;
-          `;
-        }
-      });
-    };
+    console.log("Vehicle Maintenance page detected - using cooperative tour fixes");
     
-    // Run the emergency fix immediately
-    applyEmergencyFixes();
-    
-    // Set an interval to continuously apply fixes
-    const fixInterval = setInterval(applyEmergencyFixes, 200);
+    // IMPORTANT: We are now using the mega-fix system instead of direct manipulation
     
     // When component unmounts, clean up
     return () => {
-      clearInterval(fixInterval);
       document.body.removeAttribute('data-tour-route');
-      document.body.removeAttribute('data-emergency-fix');
       document.body.classList.remove('tour-vehicle-page');
     };
   }, []);
