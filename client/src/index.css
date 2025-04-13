@@ -7,85 +7,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tour global styling - basic rules that apply to all tour elements */
-body.tour-active {
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Add a subtle background overlay when tour is active - NO BLUR */
-body.tour-active::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.02),
-    rgba(var(--primary-rgb), 0.015)
-  );
-  pointer-events: none;
-  z-index: 9000;
-  transition: all 0.4s ease-in-out;
-  /* Removed blur effect as requested */
-}
-
-/* Enhanced background for tour active state */
-body.tour-active .card,
-body.tour-active .section-card,
-body.tour-active .feature-card {
-  transform: translate3d(0, 0, 0); /* Force hardware acceleration */
-  transition: transform 0.4s ease-out, box-shadow 0.4s ease, border-color 0.4s ease !important;
-}
-
-/* Add a very subtle hint behind Fundi without animation or blur */
-.tour-fundi-robot::before {
-  content: '';
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: radial-gradient(circle, 
-    rgba(var(--primary-rgb), 0.05) 0%, 
-    rgba(var(--primary-rgb), 0.02) 40%, 
-    rgba(var(--primary-rgb), 0) 70%
-  );
-  z-index: -1;
-  top: 50%;
-}
-
-/* Fundi draggable isolation fix */
-.fundi-draggable {
-  isolation: isolate;
-  z-index: 9999 !important;
-  pointer-events: auto !important;
-  touch-action: pan-x pan-y !important;
-  position: relative;
-}
-
-/* Onboarding tour styles */
-.onboarding-target {
-  position: relative;
-  z-index: 55;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.4);
-  transition: all 0.3s ease;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
-  }
-}
-
 :root {
   --primary-rgb: 99, 102, 241;
 }
@@ -358,222 +279,6 @@ body.tour-active .feature-card {
   }
 }
 
-/* Mobile tour modal positioning */
-.tour-modal-position {
-  bottom: 0.5rem;
-  left: -1.5rem; /* Shifted farther to the left of the screen */
-  transform: translate(0, 0);
-}
-
-/* On small screens, make the tour modal take up most of the width */
-@media (max-width: 639px) {
-  .tour-modal-position {
-    left: 0.5rem !important;
-    right: 0.5rem !important;
-    bottom: 0.5rem !important;
-    width: calc(100% - 1rem) !important;
-    margin: 0 auto !important;
-    transform: none !important;
-  }
-  
-  [data-tour-dialog] {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  .mobile-tour-dialog {
-    position: fixed !important;
-    left: 0.5rem !important;
-    right: 0.5rem !important;
-    bottom: 80px !important; /* Increased to prevent overlap with controls */
-    width: calc(100% - 1rem) !important;
-    transform: none !important;
-    top: auto !important;
-    background-color: white !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-    border-radius: 0.5rem !important;
-    height: auto !important;
-    max-height: 50vh !important; /* Reduced height to fit better on screen */
-    overflow-y: auto !important; /* Ensure content can scroll if needed */
-    overflow-x: hidden !important; /* Prevent horizontal overflow */
-  }
-  
-  /* Tour active utility - when tour is active, ensure dialog is visible and properly positioned */
-  body.tour-active [data-tour-dialog] {
-    position: fixed !important;
-    left: 0.5rem !important;
-    right: 0.5rem !important;
-    bottom: 80px !important; /* Increased to match other styles */
-    width: calc(100% - 1rem) !important;
-    margin: 0 auto !important;
-    transform: none !important;
-    top: auto !important;
-    z-index: 999 !important; /* Lowered from 9999 to stay below robot-fundi */
-    background-color: white !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-    border-radius: 0.5rem !important;
-    max-height: 60vh !important; /* Added to prevent overflow */
-    overflow-y: auto !important; /* Ensure content scrolls if needed */
-    overflow-x: hidden !important; /* Prevent horizontal overflow */
-  }
-  
-  /* Ensure Fundi tour elements are visible and properly positioned on mobile */
-  body.tour-active .fixed.z-\[99999\] {
-    /* For Fundi robot */
-    visibility: visible !important;
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-    /* Improved mobile positioning - anchor to bottom of screen */
-    position: fixed !important;
-    bottom: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    top: auto !important;
-    right: auto !important;
-  }
-  
-  body.tour-active .fixed.z-\[99998\] {
-    /* For speech bubble */
-    visibility: visible !important;
-    opacity: 1 !important;
-    max-width: calc(100vw - 40px) !important;
-    width: auto !important;
-    min-width: 240px !important;
-    transition: none !important;
-    /* Improved mobile positioning - ensure it doesn't overlap the Fundi robot */
-    position: fixed !important;
-    top: auto !important;
-    bottom: 100px !important;  /* Position above robot */
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    right: auto !important;
-    margin: 0 auto !important;
-  }
-  
-  /* Ensure the tour stays within viewport on mobile */
-  .tour-highlight {
-    position: relative !important;
-    z-index: 50 !important;
-    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.4) !important;
-    animation: highlight-pulse 2s infinite alternate !important;
-  }
-  
-  @keyframes highlight-pulse {
-    0% {
-      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.3) !important;
-    }
-    100% {
-      box-shadow: 0 0 0 6px rgba(var(--primary-rgb), 0.6) !important;
-    }
-  }
-  
-  /* Highlight card that Fundi is positioned near */
-  .tour-card-highlight {
-    position: relative !important;
-    z-index: 45 !important; 
-    box-shadow: 0 0 12px 4px rgba(var(--primary-rgb), 0.5) !important;
-    transform: translateY(-3px) !important;
-    transition: all 0.3s ease-in-out !important;
-    border-color: rgba(var(--primary-rgb), 0.3) !important;
-    animation: card-glow 2s infinite alternate !important;
-  }
-  
-  @keyframes card-glow {
-    0% {
-      box-shadow: 0 0 12px 2px rgba(var(--primary-rgb), 0.3);
-    }
-    100% {
-      box-shadow: 0 0 16px 6px rgba(var(--primary-rgb), 0.6);
-    }
-  }
-  
-  /* Dialog container position for mobile */
-  [data-state="open"] .fixed[role="dialog"] {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 1rem;
-  }
-}
-
-@media (min-width: 640px) {
-  [data-state="open"] .fixed[role="dialog"] {
-    align-items: center;
-  }
-
-  /* Desktop-specific tour dialog positioning - prevent off-screen display */
-  body.tour-active [data-tour-dialog] {
-    position: fixed !important;
-    right: 20px !important;
-    bottom: 80px !important; /* Ensure it stays visible at bottom of screen */
-    left: auto !important;
-    top: auto !important;
-    max-width: 400px !important; /* Wider for desktop */
-    max-height: 70vh !important;
-    transform: none !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-    z-index: 999999 !important;
-  }
-  
-  /* Desktop-specific override for the tour-fix-dialog class */
-  .tour-fix-dialog {
-    right: 20px !important;
-    bottom: 80px !important;
-    max-width: 400px !important;
-    max-height: 70vh !important;
-  }
-
-  /* Force tour dialog to always be visible within viewport */
-  [data-tour-dialog] {
-    max-height: 70vh !important;
-    height: auto !important;
-    transition: none !important;
-    animation: none !important;
-  }
-  
-  /* Desktop-specific element highlight with more pronounced effect */
-  .tour-highlight {
-    position: relative !important;
-    z-index: 50 !important;
-    box-shadow: 0 0 0 5px rgba(var(--primary-rgb), 0.5) !important;
-    animation: desktop-highlight-pulse 2.5s infinite alternate !important;
-  }
-  
-  @keyframes desktop-highlight-pulse {
-    0% {
-      box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.4) !important;
-    }
-    100% {
-      box-shadow: 0 0 0 8px rgba(var(--primary-rgb), 0.7) !important;
-    }
-  }
-  
-  /* Desktop-specific card highlight with more pronounced effect */
-  .tour-card-highlight {
-    position: relative !important;
-    z-index: 45 !important; 
-    box-shadow: 0 0 18px 6px rgba(var(--primary-rgb), 0.6) !important;
-    transform: translateY(-5px) scale(1.02) !important;
-    transition: all 0.4s ease-in-out !important;
-    border-color: rgba(var(--primary-rgb), 0.4) !important;
-    animation: desktop-card-glow 2.5s infinite alternate !important;
-  }
-  
-  @keyframes desktop-card-glow {
-    0% {
-      box-shadow: 0 0 15px 4px rgba(var(--primary-rgb), 0.4);
-    }
-    100% {
-      box-shadow: 0 0 22px 8px rgba(var(--primary-rgb), 0.7);
-    }
-  }
-}
-
 /* Ensure robot-fundi is always visible and above all other elements */
 .robot-fundi {
   z-index: 99999 !important;
@@ -581,902 +286,403 @@ body.tour-active .feature-card {
   pointer-events: auto !important;
 }
 
-/* Always show restart tour button */
-[data-tour="restart-tour"] {
-  z-index: 10000 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-  opacity: 1 !important;
+/* Category-specific accent colors */
+.accent-financial {
+  color: var(--financial-color);
 }
 
-/* Remove background from question mark icons */
-.restart-tour-button-container,
-.restart-tour-button-container svg,
-span[title="Take a tour!"] svg,
-[aria-label="Restart tour"] svg {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  background-color: transparent !important;
+.accent-wellness {
+  color: var(--wellness-color);
 }
 
-/* Hide the standard Fundi robot and its speech bubble during tours */
-body.tour-active .floating-chat-container,
-body.tour-active .speech-bubble-container {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+.accent-career {
+  color: var(--career-color);
 }
 
-/* Enhanced tour styling for better visual connection */
-/* Style for the speech bubble during tours */
-body.tour-active .fixed.z-\[99998\] {
-  box-shadow: 0 10px 25px -5px rgba(var(--primary-rgb), 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid rgba(var(--primary-rgb), 0.2) !important;
+.accent-learning {
+  color: var(--learning-color);
 }
 
-/* Create a subtle connection between Fundi and speech bubble */
-body.tour-active .fixed.z-\[99998\]::before {
-  content: '';
-  position: absolute;
-  width: 50px;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.4), rgba(var(--primary-rgb), 0.1));
-  z-index: -1;
-  top: 40%;
+.accent-emergency {
+  color: var(--emergency-color);
 }
 
-/* When speech bubble is to the left of Fundi */
-body.tour-active .fixed.z-\[99998\][style*="transform: translate"][style*="translateX(-"]::before {
-  right: -30px;
-  transform: rotate(-20deg);
+.bg-financial {
+  background-color: var(--financial-color);
 }
 
-/* When speech bubble is to the right of Fundi */
-body.tour-active .fixed.z-\[99998\][style*="transform: translate"]:not([style*="translateX(-"])::before {
-  left: -30px;
-  transform: rotate(20deg);
+.bg-wellness {
+  background-color: var(--wellness-color);
 }
 
-/* Mobile-specific connection line */
-@media (max-width: 639px) {
-  body.tour-active .fixed.z-\[99998\]::before {
-    /* Change to horizontal connecting line for Fundi at left of chat bubble */
-    width: 30px;
-    height: 2px;
-    left: -30px;
-    top: 50%;
-    bottom: auto;
-    transform: none !important;
-    background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.1), rgba(var(--primary-rgb), 0.4));
-  }
-  
-  /* Mobile tour-specific styles for Fundi */
-  .mobile-tour-fundi {
-    position: fixed !important;
-    bottom: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    top: auto !important; 
-    right: auto !important;
-  }
-  
-  /* Improve button spacing and sizing in mobile tour */
-  [data-tour-button] {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
-  }
-  
-  /* Make sure the Fundi robot stays at the bottom on mobile - with !important flag for all properties */
-  body.tour-active .mobile-tour-fundi {
-    bottom: 20px !important;
-    left: 50% !important;
-    right: auto !important;
-    top: auto !important;
-    transform: translateX(-50%) !important;
-    position: fixed !important;
-    x: 0 !important;
-    y: 0 !important;
-  }
-  
-  /* Fix for Fundi positioning calculations on mobile */
-  body.tour-active .fixed.z-\[99999\][style*="transform"] {
-    transform: translateX(-50%) !important;
-    x: 0 !important;
-    y: 0 !important;
-  }
-  
-  /* Position Fundi at the top-left of the tour box in mobile mode */
-  body.tour-mobile-mode .fixed.z-\[99999\] {
-    /* Position in the bottom corner of the screen */
-    bottom: 120px !important;
-    left: 20px !important;
-    right: auto !important;
-    top: auto !important;
-    transform: none !important;
-    position: fixed !important;
-    x: 0 !important;
-    y: 0 !important;
-  }
-  
-  /* Position speech bubble to the right of Fundi instead of above */
-  body.tour-mobile-mode .fixed.z-\[99999\] > div[style*="width"] {
-    bottom: 120px !important;
-    left: 100px !important;
-    transform: none !important;
-    max-width: calc(100vw - 120px) !important;
-  }
-  
-  /* Ensure speech bubble always stays on screen */
-  .z-\[99999\] .z-\[99998\], .tour-speech-bubble {
-    transform: none !important; /* Don't transform X for desktop */
-    max-width: 250px !important; /* Limit the width to avoid overflow */
-    box-sizing: border-box !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-  }
-  
-  /* Make sure the chat is always visible on screen */
-  @media (min-width: 641px) {
-    /* DESKTOP-SPECIFIC STYLES - these should not be affected by mobile optimizations */
-    .z-\[99999\]:not(.mobile-tour-fundi) .z-\[99998\] {
-      left: -250px !important; /* Position to the inside/left of Fundi */
-      right: auto !important; /* Don't use right positioning */
-    }
-    
-    /* Desktop-only: When Fundi is on the left side, put bubble on the right */
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 0"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 1"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 2"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 3"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 4"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 5"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 6"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 7"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 8"] .z-\[99998\],
-    body:not(.tour-mobile-mode) .z-\[99999\][style*="left: 9"] .z-\[99998\] {
-      left: 80px !important; /* Position to the right of Fundi when Fundi is on left edge */
-    }
-  
-    /* Desktop-only: Ensure the bubble is fully on screen by limiting its max-width */
-    body:not(.tour-mobile-mode) .tour-speech-bubble {
-      max-width: min(250px, calc(100vw - 100px)) !important;
-      font-size: 0.85rem !important;
-      word-break: break-word !important;
-      overflow-wrap: break-word !important;
-      white-space: normal !important;
-      left: -200px !important; /* Position closer to Fundi */
-      width: 200px !important;
-    }
-    
-    /* Desktop animation settings */
-    body:not(.tour-mobile-mode) .fixed.z-\[99999\],
-    body:not(.tour-mobile-mode) .fixed.z-\[99998\] {
-      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-    }
-  }
+.bg-career {
+  background-color: var(--career-color);
 }
 
-/* Chat resizing styles */
-.user-select-none {
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  cursor: se-resize !important;
+.bg-learning {
+  background-color: var(--learning-color);
 }
 
-.resizable-chat {
-  transition: width 0.05s ease, height 0.05s ease;
-  resize: both;
-  max-height: 80vh !important; /* Ensure chat doesn't get too large */
+.bg-emergency {
+  background-color: var(--emergency-color);
 }
 
-/* Mobile specific chat sizing - Both Portrait and Landscape modes use identical fixed sizing */
-@media (max-width: 768px) {
-  .resizable-chat {
-    max-height: 350px !important; /* Fixed height */
-    height: 350px !important; /* Force height to be fixed */
-    max-width: 300px !important; /* Fixed width */
-    width: 300px !important; /* Force width to be fixed */
-    right: 10px !important; /* Position from right edge */
-  }
-  
-  /* Ensure chat messages don't overflow on mobile */
-  .chat-message-content {
-    max-width: 220px !important;
-    overflow-wrap: break-word !important;
-    word-break: break-word !important;
-    hyphens: auto !important;
-  }
+.border-financial {
+  border-color: var(--financial-color);
 }
 
-.resizable-chat.user-select-none {
-  transition: none;
-  cursor: se-resize !important;
-  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.4) !important;
+.border-wellness {
+  border-color: var(--wellness-color);
 }
 
-/* Bigger resize handle for better touch target */
-.resize-handle {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  cursor: se-resize !important;
-  z-index: 10;
-  touch-action: none;
+.border-career {
+  border-color: var(--career-color);
 }
 
-/* Special styling for course content areas */
-.course-content {
+.border-learning {
+  border-color: var(--learning-color);
+}
+
+.border-emergency {
+  border-color: var(--emergency-color);
+}
+
+/* Code highlighting styles */
+code {
+  @apply bg-gray-100 rounded px-1 py-0.5 text-sm;
+}
+
+pre {
+  @apply bg-gray-100 rounded p-3 overflow-x-auto text-sm;
+}
+
+pre code {
+  @apply bg-transparent p-0;
+}
+
+.code-block {
+  @apply bg-gray-100 rounded-md p-4 my-3 overflow-x-auto text-sm;
+}
+
+/* Button sizes with matching UI */
+.button-xs {
+  @apply px-2 py-1 text-xs rounded;
+}
+
+.button-sm {
+  @apply px-3 py-1.5 text-sm rounded-md;
+}
+
+.button-md {
+  @apply px-4 py-2 text-base rounded-md;
+}
+
+.button-lg {
+  @apply px-5 py-2.5 text-lg rounded-lg;
+}
+
+.button-xl {
+  @apply px-6 py-3 text-xl rounded-lg;
+}
+
+/* Truncate text with ellipsis */
+.truncate-1-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-2-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-3-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Specialized form styling */
+.form-field {
+  @apply mb-4;
+}
+
+.form-label {
+  @apply block text-sm font-medium mb-1;
+}
+
+.form-input {
+  @apply block w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.form-error {
+  @apply text-red-600 text-sm mt-1;
+}
+
+.form-help {
+  @apply text-gray-500 text-xs mt-1;
+}
+
+/* Vehicle page specific CSS that doesn't involve tour */
+.vehicle-maintenance-page {
   position: relative;
-  z-index: 45; /* Higher than normal content but below tour guide */
-  transform: translate3d(0, 0, 0); /* Force hardware acceleration */
-  will-change: transform; /* Optimize for animations/transitions */
-  margin-top: 150px !important; /* Add space at the top for Fundi */
-  padding-top: 50px !important; /* Extra padding to ensure content is visible */
-  border-top: 2px solid rgba(0, 0, 0, 0.05); /* Visual separator */
+  padding-top: 20px;
 }
 
-/* CRITICAL TOUR GUIDE EMERGENCY FIX */
-/* Part 1: Force selected dialogs to be visible with constrained viewport */
-.tour-fix-dialog {
-  position: fixed !important;
-  right: 10px !important;
-  bottom: 80px !important; /* Increased bottom margin to prevent overlap */
-  left: auto !important;
-  top: auto !important;
-  z-index: 999999 !important;
-  max-width: calc(100vw - 20px) !important;
-  max-height: 60vh !important; /* Reduced height to prevent overflow */
-  transform: none !important;
-  overflow: auto !important;
-  /* Ensure content doesn't overflow */
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-}
-
-/* Part 2: Last resort catchall for any dialog with tour attribute */
-[data-tour-dialog] {
-  position: fixed !important;
-  right: 20px !important;
-  bottom: 80px !important; /* Increased bottom margin to prevent overlap */
-  left: auto !important;
-  top: auto !important;
-  z-index: 999999 !important;
-  max-width: calc(100vw - 40px) !important;
-  max-height: 60vh !important; /* Reduced height to prevent overflow */
-  transform: none !important;
-  overflow: auto !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  animation: none !important;
-}
-
-/* Fix tour dialog buttons so they're all visible */
-[data-tour-dialog] .DialogFooter {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 5px !important;
-  justify-content: space-between !important;
-}
-
-[data-tour-dialog] button {
-  margin: 2px !important;
-  min-height: 28px !important;
-}
-
-/* Ensure content doesn't overflow */
-[data-tour-dialog] img {
-  max-width: 100% !important;
-  height: auto !important;
-}
-
-/* Fix animation issues that might cause positioning problems */
-[data-tour-dialog] {
-  animation-duration: 0s !important;
-  transition: none !important;
-}
-
-/* Vehicle maintenance tour fix - MOBILE ONLY */
-@media (max-width: 640px) {
-  /* Mobile-specific styles */
-  .vehicle-maintenance-page {
-    position: relative;
-    padding-top: 20px !important; /* Significantly reduced top padding on mobile */
-    margin-top: 0 !important; /* No margin on mobile */
-    scroll-margin-top: 20px; /* Smaller scroll margin */
-  }
-  
-  /* Make vehicle maintenance content more visible during tour on mobile */
-  body.tour-active .vehicle-maintenance-page .course-content {
-    margin-top: 5px !important; /* Minimal top margin on mobile */
-    padding-top: 5px !important; /* Minimal padding on mobile */
-    border-top: 2px solid rgba(var(--primary-rgb), 0.3) !important; /* More visible separator on mobile */
-    background-color: rgba(255, 255, 255, 0.6) !important; /* Enhanced background on mobile */
-    box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.15) !important; /* Colored shadow for visibility */
-  }
-
-  /* Ensure content is visible above the fold on mobile */
-  body.tour-mobile-mode .vehicle-maintenance-page .course-content {
-    transform: translateY(-20px) !important; /* Slight move up for immediate visibility */
-    transition: transform 0.3s ease-out !important;
-    margin-top: 0 !important; /* No margin on top */
-    padding-top: 10px !important; /* Small padding for spacing */
-  }
-}
-
-/* Desktop styles for vehicle maintenance page */
 @media (min-width: 641px) {
   .vehicle-maintenance-page {
     position: relative;
     padding-top: 150px; /* Original desktop padding */
   }
-  
-  /* DESKTOP SPECIFIC FIX: Interactive courses dialog positioning for desktop */
-  body.tour-active[data-tour-route*="vehicle-maintenance"] [data-tour-dialog],
-  body.tour-active.tour-vehicle-page [data-tour-dialog],
-  body[data-tour-active="true"][data-tour-route*="interactive-courses"] [data-tour-dialog] {
-    position: fixed !important;
-    right: 20px !important;
-    bottom: 80px !important; /* Increase bottom margin to prevent overlap */
-    left: auto !important;
-    top: auto !important;
-    width: 400px !important; /* Wider for desktop */
-    max-width: 400px !important;
-    max-height: 70vh !important;
-    overflow-y: auto !important;
-    z-index: 999999 !important;
-    transform: none !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-  }
 }
 
-/* Finance and Vehicle tour fixes - MOBILE ONLY */
-@media (max-width: 640px) {
-  /* Finance page specific mobile optimizations - using body classes for better targeting */
-  body.tour-active.tour-finance-page .card,
-  body.tour-active.tour-finance-page .section-card,
-  body.tour-active[data-tour-route="/finance"] .card,
-  body.tour-active[data-tour-route="/finance"] .section-card {
-    margin-top: 20px !important; /* Reduced margin for mobile */
-    max-height: 80vh !important; /* Ensure content fits in viewport */
-    overflow-y: auto !important; /* Allow scrolling within cards */
-    padding-bottom: 20px !important; /* Add space at bottom */
-  }
-  
-  /* Financial tools specific fixes during tour */
-  body.tour-active.tour-finance-page .finance-tools,
-  body.tour-active[data-tour-route="/finance"] .finance-tools,
-  body.tour-active[data-tour-route="/finance/mortgage"] .finance-tools {
-    transform: translateY(-10px) !important; /* Small shift up for visibility */
-    margin-top: 0 !important; /* No top margin */
-    padding-top: 10px !important; /* Small padding for spacing */
-    border-top: 2px solid rgba(var(--financial-rgb), 0.3) !important;
-    background-color: rgba(255, 255, 255, 0.8) !important; /* More opaque background */
-    box-shadow: 0 4px 15px rgba(var(--financial-rgb), 0.15) !important;
-  }
-  
-  /* When finance content is highlighted, make it more prominent */
-  body.tour-active.tour-finance-page .tour-highlight,
-  body.tour-active[data-tour-route="/finance"] .tour-highlight {
-    box-shadow: 0 0 0 2px var(--financial-color), 0 0 20px rgba(var(--financial-rgb), 0.3) !important;
-    transform: translateY(-2px) !important;
-    transition: all 0.3s ease !important;
-  }
-  
-  /* Vehicle page specific mobile enhancements using specific class - extremely minimal spacing */
-  body.tour-active.tour-vehicle-page .course-content,
-  body.tour-active[data-tour-route*="vehicle-maintenance"] .course-content {
-    padding-top: 0 !important; /* No padding for immediate content visibility */
-    margin-top: 0 !important; /* No margin for better positioning */
-    transform: translateY(0) !important; /* Don't move content - keep it visible at top */
-    position: relative !important; /* Ensure proper stacking */
-    top: 0 !important; /* Force to top */
-    border-top: 3px solid rgba(var(--learning-rgb), 0.4) !important; /* Visible separator with learning color */
-    border-radius: 8px !important; 
-    box-shadow: 0 8px 20px rgba(var(--learning-rgb), 0.15) !important;
-  }
-  
-  /* Vehicle page first card specific enhancement */
-  body.tour-active.tour-vehicle-page .course-content > div:first-child,
-  body.tour-active[data-tour-route*="vehicle-maintenance"] .course-content > div:first-child {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    transform: translateY(-8px) !important;
-    border: 1px solid rgba(var(--learning-rgb), 0.2) !important;
-    padding-top: 0.5rem !important;
-    border-radius: 6px !important;
-  }
-  
-  /* Ensure Fundi stays at top during vehicle maintenance tour */
-  body.tour-active.tour-vehicle-page .robot-container,
-  body.tour-active[data-tour-route*="vehicle-maintenance"] .robot-container {
-    position: fixed !important;
-    top: 70px !important;
-    z-index: 99999 !important;
-  }
+/* Regular image styling */
+.img-fluid {
+  max-width: 100%;
+  height: auto;
 }
 
-/* Enhanced visibility for tour highlighted elements */
-.tour-highlight {
-  position: relative; /* Needed for z-index */
-  z-index: 10; /* Above other content */
-  box-shadow: 0 0 0 2px #2563eb, 0 0 20px rgba(37, 99, 235, 0.2) !important; /* Blue glow */
-  outline: none !important; /* Remove default outline */
-  border-radius: 0.375rem; /* Rounded corners */
+.img-thumbnail {
+  @apply rounded-md border border-gray-200;
+  max-width: 100%;
+  height: auto;
 }
 
-/* MOBILE CONTENT OPTIMIZATION DURING TOUR */
-@media (max-width: 640px) {
-  /* Global content optimization for tour mode - reduce all whitespace */
-  body.tour-active {
-    /* Reduce all vertical spacing on mobile */
-    --global-vertical-spacing: 0.5rem !important;
-  }
-  
-  /* Compress all cards and content containers */
-  body.tour-active .card,
-  body.tour-active .section-card,
-  body.tour-active .course-content,
-  body.tour-active .content-section {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-    padding: 0.5rem !important;
-  }
-  
-  /* Reduce all headings size on mobile during tour */
-  body.tour-active h1 {
-    font-size: 1.5rem !important;
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  body.tour-active h2 {
-    font-size: 1.25rem !important;
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  body.tour-active h3, 
-  body.tour-active h4,
-  body.tour-active h5,
-  body.tour-active h6 {
-    font-size: 1rem !important;
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.25rem !important;
-  }
-  
-  /* Reduce paragraph spacing and size */
-  body.tour-active p {
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.25rem !important;
-    font-size: 0.9rem !important;
-    line-height: 1.3 !important;
-  }
-  
-  /* Condense large hero areas and banners */
-  body.tour-active .hero-section,
-  body.tour-active .banner,
-  body.tour-active .large-section {
-    min-height: auto !important;
-    padding: 0.75rem !important;
-    margin: 0.5rem 0 !important;
-  }
-  
-  /* Hide or minimize decorative elements */
-  body.tour-active .decorative-element,
-  body.tour-active .accent-graphic {
-    display: none !important;
-  }
-  
-  /* Make all grid layouts more compact */
-  body.tour-active .grid {
-    gap: 0.5rem !important;
-  }
-  
-  /* Ensure content is immediately visible - extra rule for top margins */
-  body.tour-active .main-content, 
-  body.tour-active .page-content,
-  body.tour-active .section-content {
-    margin-top: 0 !important;
-  }
-  
-  /* Specialized fixes for each tour page type */
-  /* 1. Vehicle Maintenance extra optimizations */
-  body.tour-active[data-tour-route*="vehicle-maintenance"] .course-heading {
-    font-size: 1.25rem !important;
-    margin: 0.25rem 0 !important;
-  }
-  
-  body.tour-active[data-tour-route*="vehicle-maintenance"] img {
-    max-height: 120px !important;
-    margin: 0.25rem auto !important;
-  }
-  
-  /* 2. Financial page optimization */
-  body.tour-active[data-tour-route="/finance"] .card,
-  body.tour-active[data-tour-route*="/finance/mortgage"] .card {
-    padding: 0.5rem !important;
-    margin: 0.25rem 0 !important;
-  }
-  
-  /* 3. Career page optimization */
-  body.tour-active[data-tour-route*="/career"] .resume-section {
-    padding: 0.5rem !important;
-    margin: 0.25rem 0 !important;
-  }
-  
-  /* Make lists more compact */
-  body.tour-active ul, 
-  body.tour-active ol {
-    padding-left: 1rem !important;
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.25rem !important;
-  }
-  
-  body.tour-active li {
-    margin-bottom: 0.25rem !important;
-  }
-  
-  /* Force all images to be reasonable size */
-  body.tour-active img {
-    max-height: 150px !important;
-    object-fit: contain !important;
-  }
-  
-  /* Reduce excess whitespace in forms during tour */
-  body.tour-active .form-field,
-  body.tour-active .form-group {
-    margin-bottom: 0.5rem !important;
-  }
-  
-  /* Reduce max-height of scrollable containers to minimize page length */
-  body.tour-active .scrollable-container,
-  body.tour-active [style*="overflow-y: auto"],
-  body.tour-active [style*="overflow: auto"],
-  body.tour-active .overflow-y-auto,
-  body.tour-active .overflow-auto {
-    max-height: 200px !important;
-    overflow-y: auto !important;
-  }
-  
-  /* Collapse any accordion-like components to reduce vertical space */
-  body.tour-active .accordion-content,
-  body.tour-active .collapsible-content,
-  body.tour-active .expandable-section {
-    display: none !important;
-  }
-  
-  /* Hide any non-essential page elements during tour */
-  body.tour-active .secondary-content,
-  body.tour-active .optional-content,
-  body.tour-active .extended-info,
-  body.tour-active aside:not(.tour-highlight) {
-    display: none !important;
-  }
-  
-  /* Ensure no fixed height elements create excess space */
-  body.tour-active [style*="height:"],
-  body.tour-active [style*="min-height:"] {
-    height: auto !important;
-    min-height: 0 !important;
-  }
-  
-  /* Tour modal specific adjustments for mobile */
-  .tour-mobile-modal {
-    font-size: 0.85rem !important;
-    padding: 0.5rem !important;
-    right: 5px !important;
-    max-width: calc(100vw - 10px) !important;
-    width: calc(100vw - 10px) !important;
-  }
-  
-  /* Desktop-specific tour modal positioning */
-  @media (min-width: 640px) {
-    .tour-mobile-modal,
-    .tour-compact-modal,
-    [data-tour="content"] {
-      position: fixed !important;
-      bottom: 80px !important;
-      right: 20px !important;
-      max-width: 400px !important;
-      width: auto !important;
-      max-height: 70vh !important;
-      overflow-y: auto !important;
-      overflow-x: hidden !important;
-      z-index: 999999 !important;
-      left: auto !important;
-      top: auto !important;
-      transform: none !important;
-    }
-  }
-  
-  .tour-mobile-modal .tour-title {
-    font-size: 0.95rem !important;
-    margin-bottom: 0.25rem !important;
-  }
-  
-  .tour-mobile-modal button {
-    font-size: 0.75rem !important;
-    padding: 0.25rem 0.5rem !important;
-    height: auto !important;
-  }
-  
-  .tour-mobile-modal .progress-container {
-    margin: 0.25rem 0 !important;
-  }
-  
-  .tour-compact-modal {
-    min-height: auto !important;
-    max-height: 40vh !important;
-    right: 5px !important; 
-    left: 5px !important;
-    width: calc(100vw - 10px) !important;
-  }
-  
-  /* Fix dialog animations on mobile */
-  body.tour-active .dialog-overlay,
-  body.tour-active [data-tour-dialog] {
-    animation-duration: 0.15s !important;
-  }
-  
-  /* Fundamenta-specific component optimizations */
-  
-  /* Nutrition card fixes for mobile tour mode */
-  body.tour-active .nutrition-guide-content [class*="Card"],
-  body.tour-active [class*="integrated-nutrition"] [class*="Card"] {
-    margin-bottom: 0.25rem !important;
-  }
-  
-  body.tour-active .nutrition-guide-content h4,
-  body.tour-active [class*="integrated-nutrition"] h4 {
-    font-size: 0.75rem !important;
-    margin-bottom: 0 !important;
-  }
-  
-  body.tour-active .nutrition-guide-content p,
-  body.tour-active [class*="integrated-nutrition"] p {
-    font-size: 0.7rem !important;
-    line-height: 1.2 !important;
-  }
-  
-  body.tour-active .nutrition-guide-content [class*="CardContent"],
-  body.tour-active [class*="integrated-nutrition"] [class*="CardContent"] {
-    padding: 0.5rem !important;
-  }
-  
-  /* Compact dashboard cards */
-  body.tour-active .dashboard-card,
-  body.tour-active .feature-card {
-    padding: 0.5rem !important;
-    margin: 0.25rem !important;
-    max-height: 150px !important;
-    overflow: hidden !important;
-  }
-  
-  /* Force calendar to be smaller during tour */
-  body.tour-active .calendar-container {
-    max-height: 200px !important;
-    overflow-y: auto !important;
-  }
-  
-  /* Minimize graphics and images in learning modules */
-  body.tour-active .module-graphic,
-  body.tour-active .course-banner {
-    max-height: 80px !important;
-    padding: 0 !important;
-    margin: 0.25rem 0 !important;
-  }
-  
-  /* Shrink nav bars and menus */
-  body.tour-active nav:not(.tour-highlight) {
-    padding: 0.25rem !important;
-  }
-  
-  /* Make search results more compact */
-  body.tour-active .search-results {
-    max-height: 150px !important;
-    overflow-y: auto !important;
-  }
-  
-  /* Ensure grid columns collapse to single column on mobile */
-  body.tour-active .grid {
-    grid-template-columns: 1fr !important;
-  }
-  
-  /* Fix for full screen dialog pop-outs on mobile */
-  .mobile-dialog-content {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: var(--app-height, 100vh) !important;
-    max-height: var(--app-height, 100vh) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    transform: none !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    inset: 0 !important;
-    border-radius: 0 !important;
-    z-index: 9999 !important;
-  }
-
-  /* Use viewport units for mobile dialogs */
-  :root {
-    --app-height: 100vh;
-  }
-  
-  /* Additional mobile dialog fixes */
-  .mobile-dialog-header {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 30 !important;
-    background-color: white !important;
-    padding-top: 1rem !important;
-    padding-bottom: 0.5rem !important;
-    width: 100% !important;
-  }
-  
-  .mobile-dialog-body {
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    flex: 1 !important;
-    padding-bottom: 6rem !important; /* Extra padding to ensure content is not cut off */
-  }
-  
-  /* Ensure guided flo content is always visible on mobile */
-  [data-radix-dialog-content] {
-    display: flex !important;
-    flex-direction: column !important;
-    max-height: 100% !important;
-    overflow: visible !important;
-    width: calc(100% - 20px) !important;
-    max-width: calc(100% - 20px) !important;
-    left: 10px !important;
-    right: 10px !important;
-  }
-  
-  /* Specific fix for interactive courses dialog - CRITICAL FIX */
-  [data-radix-dialog-content] .tour-speech-bubble,
-  [data-tour-dialog] {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    width: calc(100% - 20px) !important; 
-    max-width: calc(100% - 20px) !important;
-    right: 10px !important;
-    left: 10px !important;
-    z-index: 999999 !important;
-    position: fixed !important;
-    bottom: 20px !important;
-    top: auto !important;
-  }
-  
-  /* CRITICAL EMERGENCY FIX FOR VEHICLE COURSE */
-  body[data-tour-active="true"] [data-tour-dialog],
-  body[data-tour-fixed="true"] [data-tour-dialog],
-  body.tour-vehicle-page [data-tour-dialog],
-  body[data-tour-route*="vehicle-maintenance"] [data-tour-dialog] {
-    width: 320px !important;
-    max-width: 90vw !important;
-    max-height: 400px !important;
-    overflow: auto !important;
-    position: fixed !important;
-    right: 20px !important;
-    left: auto !important;
-    bottom: 80px !important; /* Increased bottom margin to prevent overlap */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-    border: 2px solid rgba(var(--primary-rgb), 0.5) !important;
-    background-color: white !important;
-    z-index: 999999 !important; /* Ensure it's above other elements */
-    transform: none !important; /* CRITICAL: Prevent any transform from affecting position */
-  }
-  
-  /* Additional emergency selector to capture all possible tour dialogs */
-  [data-tour-fixed="true"],
-  [data-tour="dialog"],
-  [data-tour="content"],
-  [data-tour-dialog] {
-    position: fixed !important;
-    bottom: 80px !important;
-    right: 20px !important;
-    left: auto !important;
-    top: auto !important;
-    max-width: 90vw !important;
-    width: 320px !important;
-    max-height: 70vh !important;
-    overflow-y: auto !important;
-    z-index: 999999 !important;
-    transform: none !important;
-  }
-  
-  /* Fix for "Interactive Courses" dialog buttons */
-  body[data-tour-active="true"] [data-tour-dialog] .flex.justify-between {
-    gap: 5px !important;
-    flex-wrap: wrap !important;
-  }
-  
-  body[data-tour-active="true"] [data-tour-dialog] button {
-    font-size: 0.75rem !important;
-    margin: 3px !important;
-    padding: 0 8px !important;
-    height: 28px !important;
-    min-width: 0 !important;
-    white-space: nowrap !important;
-  }
+.img-circle {
+  @apply rounded-full;
 }
 
-/* Emergency toast styling */
-.emergency-toast {
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  background-color: rgba(254, 242, 242, 0.95);
+.img-shadow {
+  @apply shadow-md;
 }
 
-.emergency-toast > div {
-  color: rgb(153, 27, 27);
+/* Table styling */
+.table-container {
+  @apply overflow-x-auto;
 }
 
-.emergency-toast > div > div:first-child {
-  color: rgb(220, 38, 38);
-  font-weight: 600;
+.table-basic {
+  @apply min-w-full divide-y divide-gray-200;
 }
 
-/* Make toast easier to dismiss by adding explicit visual cues */
-.emergency-toast button {
-  transition: all 0.2s ease;
+.table-basic th {
+  @apply px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50;
 }
 
-.emergency-toast button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.table-basic td {
+  @apply px-4 py-3 text-sm text-gray-500;
 }
 
-/* EMERGENCY FIX FOR FUNDI CHARACTER ON VEHICLE MAINTENANCE - ALWAYS FORCE CENTER POSITION */
-body[data-tour-route*="vehicle-maintenance"] .robot-container,
-body.tour-vehicle-page .robot-container,
-body[data-tour-fixed="true"] .robot-container,
-body[data-tour-active="true"] .robot-container,
-body[data-emergency-fix="true"] .robot-container,
-.robot-container,
+.table-basic tr {
+  @apply bg-white;
+}
+
+.table-basic tr:nth-child(even) {
+  @apply bg-gray-50;
+}
+
+.table-bordered {
+  @apply border border-gray-200;
+}
+
+.table-bordered th,
+.table-bordered td {
+  @apply border border-gray-200;
+}
+
+/* Fix dialog overlay */
+.dialog-overlay {
+  @apply bg-black/50 backdrop-blur-sm;
+}
+
+/* Fundi robot positioning and general styling */
 .fundi-container {
-  position: fixed !important;
-  top: 150px !important; /* Much lower position */
-  left: 50% !important; /* Center horizontally */
-  transform: translateX(-50%) !important; /* Ensure true center */
-  right: auto !important;
-  bottom: auto !important;
-  z-index: 999999 !important;
-  width: 120px !important;
-  height: 120px !important;
-  max-width: 120px !important;
-  max-height: 120px !important;
-  pointer-events: auto !important;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
 }
 
-/* Mobile specific position for Fundi in vehicle maintenance */
+.fundi-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.fundi-button:hover {
+  transform: scale(1.1);
+}
+
+.fundi-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.speech-bubble {
+  position: absolute;
+  bottom: 65px;
+  right: 0;
+  max-width: 320px;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Media query for mobile */
 @media (max-width: 640px) {
-  body[data-tour-route*="vehicle-maintenance"] .robot-container,
-  body.tour-vehicle-page .robot-container,
-  body[data-tour-fixed="true"] .robot-container,
-  body[data-tour-active="true"] .robot-container,
-  body[data-emergency-fix="true"] .robot-container,
-  .robot-container,
   .fundi-container {
-    position: fixed !important;
-    top: 150px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 100px !important;
-    height: 100px !important;
-    max-width: 100px !important;
-    max-height: 100px !important;
-    z-index: 999999 !important;
+    bottom: 1rem;
+    right: 1rem;
   }
+  
+  .speech-bubble {
+    max-width: 280px;
+    right: 0;
+  }
+}
+
+/* Home page specific styling */
+.hero-section {
+  @apply py-10 md:py-20 text-center relative;
+}
+
+.features-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.feature-card {
+  @apply bg-white rounded-lg p-6 shadow-sm transition-all duration-300;
+}
+
+.feature-card:hover {
+  @apply shadow-md;
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  @apply w-12 h-12 mx-auto mb-4 text-primary;
+}
+
+/* Dashboard-specific styling */
+.stats-card {
+  @apply rounded-lg shadow-sm p-4 bg-white;
+}
+
+.stats-value {
+  @apply text-2xl font-bold;
+}
+
+.stats-label {
+  @apply text-sm text-gray-500;
+}
+
+.progress-bar {
+  @apply bg-gray-200 rounded-full h-2 overflow-hidden;
+}
+
+.progress-bar-fill {
+  @apply h-full rounded-full;
+}
+
+/* Fix tab panel height */
+[role="tabpanel"] {
+  @apply min-h-[200px];
+}
+
+/* Calendar event styling - simplified */
+.calendar-event {
+  @apply rounded px-2 py-1 text-xs truncate w-full;
+}
+
+.calendar-grid {
+  @apply grid grid-cols-7 text-center;
+}
+
+.calendar-day {
+  @apply border border-gray-200 min-h-[80px] p-1;
+}
+
+/* Vehicle maintenance page layout */
+.maintenance-layout {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-4;
+}
+
+.maintenance-sidebar {
+  @apply lg:col-span-1;
+}
+
+.maintenance-content {
+  @apply lg:col-span-2;
+}
+
+/* Fix for dark mode compatibility */
+:root.dark {
+  --background: 0 0% 10%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 12%;
+  --card-foreground: 0 0% 95%;
+  --muted: 208 26% 20%;
+  --muted-foreground: 0 0% 70%;
+  --primary: 215 70% 60%;
+  --primary-foreground: 0 0% 98%;
+}
+
+/* Fitness tracker specific styling */
+.workout-card {
+  @apply rounded-lg p-4 bg-white shadow-sm border border-gray-200 mb-4;
+}
+
+.workout-header {
+  @apply font-bold text-lg mb-2 flex justify-between;
+}
+
+.workout-stats {
+  @apply grid grid-cols-3 gap-2 text-center mb-3;
+}
+
+.stat-box {
+  @apply rounded bg-gray-100 p-2;
+}
+
+.stat-value {
+  @apply font-bold text-lg;
+}
+
+.stat-label {
+  @apply text-xs text-gray-500;
+}
+
+/* Fundi's container styling */
+.floating-chat-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.speech-bubble-container {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 300px;
+  max-width: 90vw;
+  background: white;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
 }

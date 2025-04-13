@@ -7,7 +7,6 @@ import Layout from "@/components/layout";
 import NotFound from "@/pages/not-found";
 import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
-import { ForceRestartTour } from "@/components/tour/force-restart-tour";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
 import Partner from "@/pages/partner";
@@ -46,8 +45,6 @@ import IdentityDocumentsPage from "@/pages/learning/identity-documents";
 import CompletedCoursesPage from "@/pages/learning/completed";
 import LearningPathwaysPage from "@/pages/learning/pathways";
 import DesignShowcasePage from "@/pages/design-showcase";
-import { TourProvider } from "./contexts/tour-context";
-import Tour from "./components/tour";
 import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
@@ -116,20 +113,17 @@ function FitnessRedirect() {
 }
 
 function Router() {
-  // Define a separate route configuration for the login page to prevent 
-  // tour and layout interference when switching between login and registration
+  // Define a separate route configuration for the login page
   return (
     <Switch>
       <Route path="/login">
-        {/* Login page is completely separated from tour and app layout */}
+        {/* Login page is completely separated from app layout */}
         <div className="login-container">
           <LoginPage />
         </div>
       </Route>
       <Route>
         <Layout>
-          <Tour />
-          <ForceRestartTour />
           <Switch>
             <Route path="/">
               <ProtectedRoute>
@@ -336,9 +330,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TourProvider>
-          <Router />
-        </TourProvider>
+        <Router />
       </AuthProvider>
     </QueryClientProvider>
   );
