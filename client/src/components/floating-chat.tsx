@@ -8,7 +8,7 @@ import RobotFundi from '@/components/robot-fundi';
 import FundiPersonalityAdapter from '@/components/fundi-personality-adapter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAIEventStore } from '@/lib/ai-event-system';
-import { useTour } from '@/contexts/tour-context';
+import { useTour } from '@/contexts/tours/tour-context';
 
 interface FloatingChatProps {
   category?: string;
