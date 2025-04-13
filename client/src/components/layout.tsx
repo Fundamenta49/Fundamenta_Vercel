@@ -8,6 +8,7 @@ import { ReactNode } from "react";
 import ErrorEmergencyFix from "@/components/error-emergency-fix";
 import SelectorErrorSuppressor from "@/components/selector-error-suppressor";
 import NuclearFix from "@/components/nuclear-fix";
+import FundiReplacement from "@/components/fundi-replacement";
 
 interface LayoutProps {
   children: ReactNode;
@@ -38,6 +39,7 @@ export default function Layout({ children }: LayoutProps) {
       <ErrorEmergencyFix />
       <SelectorErrorSuppressor />
       <NuclearFix />
+      <FundiReplacement />
       <div data-tour="main-nav">
         <Navigation />
       </div>
@@ -59,7 +61,8 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </main>
       
-      <div data-tour="fundi-assistant">
+      {/* Hide the standard Fundi components as we're replacing them */}
+      <div data-tour="fundi-assistant" style={{ display: 'none' }}>
         <FloatingChat category={currentCategory} />
       </div>
     </div>
