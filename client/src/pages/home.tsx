@@ -80,9 +80,9 @@ export default function Home() {
           Your AI-powered assistant for life skills and wellness
         </p>
         
-        {/* Simple Tour Button - centered below title */}
+        {/* Tour Button - centered below title */}
         <div className="flex justify-center mt-4">
-          <SimpleTourButton />
+          <TourButton tourId="initial-tour" />
         </div>
       </div>
 
