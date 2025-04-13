@@ -34,9 +34,10 @@ export default function TourButton({
   
   // Size mapping for lucide icon
   const iconSizes = {
+    default: 20,
     sm: 16,
-    md: 20,
     lg: 24,
+    icon: 18,
   };
   
   // Handle button click
@@ -62,9 +63,9 @@ export default function TourButton({
           >
             <HelpCircle 
               size={iconSizes[size]} 
-              className={size === 'sm' ? 'mr-0' : 'mr-1'} 
+              className={size === 'sm' || size === 'icon' ? 'mr-0' : 'mr-1'} 
             />
-            {size !== 'sm' && <span>Tour</span>}
+            {size !== 'sm' && size !== 'icon' && <span>Tour</span>}
           </Button>
         </TooltipTrigger>
         <TooltipContent side="left">

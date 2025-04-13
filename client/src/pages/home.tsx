@@ -5,6 +5,7 @@ import WeatherWidget from "@/components/weather-widget";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useEffect } from "react";
 import FounderMessageDialog from "@/components/founder-message-dialog";
+import { TourButton } from "@/components/tours/new";
 
 const features = [
   {
@@ -71,13 +72,30 @@ export default function Home() {
 
   return (
     <div className="px-4 py-8">
+      {/* Floating Tour Button for mobile and long pages */}
+      <TourButton 
+        tooltipText="Need help? Take a tour" 
+        variant="default"
+        position="fixed"
+        size="icon"
+        className="md:hidden" // Only show on mobile
+      />
+      
       <div className="text-center mb-8 relative">
         <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
           Welcome to Fundamenta
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-lg text-muted-foreground mb-4">
           Your AI-powered assistant for life skills and wellness
         </p>
+        
+        {/* Tour Button - centered below title, hidden on mobile */}
+        <div className="hidden md:flex justify-center mt-4">
+          <TourButton 
+            tooltipText="Take a guided tour" 
+            variant="default"
+          />
+        </div>
       </div>
 
       {/* Founder Message Dialog */}
