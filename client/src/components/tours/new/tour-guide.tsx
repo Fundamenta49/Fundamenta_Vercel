@@ -33,17 +33,23 @@ export default function TourGuide() {
   // Calculate progress percentage
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
   
-  // Handle window resize
+  // Handle window resize and apply mobile mode as needed
   useEffect(() => {
     const handleResize = () => {
-      // Update position based on screen size
-      if (window.innerWidth < 640) {
+      // Check if device is mobile (both by viewport width or touch capability)
+      const isMobileDevice = window.innerWidth < 640 || window.matchMedia('(pointer: coarse)').matches;
+      
+      if (isMobileDevice) {
         // Mobile - position Fundi at the bottom center
         setPosition({ 
           x: Math.max(window.innerWidth / 2 - 40, 0), 
           y: Math.max(window.innerHeight - 200, 20) 
         });
+        // Apply mobile mode class to body for CSS targeting
         document.body.classList.add('tour-mobile-mode');
+        
+        // Log to debug
+        console.log("Mobile mode applied for tour");
       } else {
         // Desktop - position Fundi based on current step or default
         document.body.classList.remove('tour-mobile-mode');
@@ -63,7 +69,7 @@ export default function TourGuide() {
       window.removeEventListener('resize', handleResize);
       document.body.classList.remove('tour-mobile-mode');
     };
-  }, [currentStep]);
+  }, [currentStep, defaultPosition]);
   
   // Update position when step changes
   useEffect(() => {
@@ -122,8 +128,8 @@ export default function TourGuide() {
   // Only render when tour is active and we have a current step
   if (!isTourActive || !currentStep) return null;
   
-  // Determine if on mobile
-  const isMobile = window.innerWidth < 640;
+  // Determine if on mobile (using same detection as in the effect)
+  const isMobile = window.innerWidth < 640 || window.matchMedia('(pointer: coarse)').matches;
   
   // Determine dialog placement
   const placement = currentStep.placement || 'bottom';
