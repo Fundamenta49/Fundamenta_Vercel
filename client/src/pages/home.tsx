@@ -100,7 +100,10 @@ export default function Home() {
       <div className="grid md:grid-cols-2 gap-6">
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href}>
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200">
+            <Card 
+              className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200"
+              data-tour-id={`card-${feature.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+            >
               <CardHeader>
                 <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
                 <CardTitle className="text-[#1C3D5A] text-balance">{feature.title}</CardTitle>

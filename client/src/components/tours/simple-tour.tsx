@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { 
   ChevronRight, HelpCircle, X, GraduationCap, DollarSign, 
-  Briefcase, Heart, Activity, AlertCircle 
+  Briefcase, Heart, Activity, AlertCircle, Calendar, Gamepad2
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
@@ -16,6 +16,7 @@ export function SimpleTourButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const { user } = useAuth();
+  const [highlightedCard, setHighlightedCard] = useState<string | null>(null);
   
   // Get user's actual name
   const userName = user?.name 
@@ -27,46 +28,103 @@ export function SimpleTourButton() {
     {
       title: `Welcome to Fundamenta, ${userName}!`,
       content: 'I\'m Fundi, your AI guide to a more confident life! I\'m here to show you around and help you get the most out of Fundamenta. Let\'s explore the features together!',
-      icon: <HelpCircle className="h-6 w-6 text-blue-500" />
+      icon: <HelpCircle className="h-6 w-6 text-blue-500" />,
+      highlightCard: null
     },
     {
       title: 'Life Skills',
       content: 'Learn essential skills for daily life, boost your personal development, and discover resources for continuous learning. This is your hub for becoming more confident in everyday situations.',
-      icon: <GraduationCap className="h-6 w-6 text-orange-500" />
+      icon: <GraduationCap className="h-6 w-6 text-orange-500" />,
+      highlightCard: 'card-life-skills'
     },
     {
       title: 'Financial Literacy',
       content: 'Take control of your money with budgeting tools, savings strategies, and long-term financial planning. Become financially independent with personalized guidance.',
-      icon: <DollarSign className="h-6 w-6 text-green-500" />
+      icon: <DollarSign className="h-6 w-6 text-green-500" />,
+      highlightCard: 'card-financial-literacy'
     },
     {
       title: 'Career Development',
       content: 'Build an outstanding resume, prepare for job interviews, and develop professional skills that make you stand out to employers.',
-      icon: <Briefcase className="h-6 w-6 text-blue-500" />
+      icon: <Briefcase className="h-6 w-6 text-blue-500" />,
+      highlightCard: 'card-career-development'
     },
     {
       title: 'Wellness & Nutrition',
       content: 'Support your mental health with meditation guides, stress management tools, and nutrition advice tailored to your lifestyle goals.',
-      icon: <Heart className="h-6 w-6 text-purple-500" />
+      icon: <Heart className="h-6 w-6 text-purple-500" />,
+      highlightCard: 'card-wellness-nutrition'
     },
     {
       title: 'Active You',
       content: 'Get personalized AI-powered workout plans, track your fitness progress, and stay motivated with custom exercise routines.',
-      icon: <Activity className="h-6 w-6 text-pink-500" />
+      icon: <Activity className="h-6 w-6 text-pink-500" />,
+      highlightCard: 'card-active-you'
     },
     {
       title: 'Emergency Guidance',
       content: 'Access step-by-step guidance for handling emergency situations confidently. Be prepared for the unexpected with clear instructions.',
-      icon: <AlertCircle className="h-6 w-6 text-red-500" />
+      icon: <AlertCircle className="h-6 w-6 text-red-500" />,
+      highlightCard: 'card-emergency-guidance'
+    },
+    {
+      title: 'Smart Calendar',
+      content: 'Schedule your activities, set reminders, and manage your time effectively with our intelligent calendar that adapts to your lifestyle needs.',
+      icon: <Calendar className="h-6 w-6 text-cyan-500" />,
+      highlightCard: null
+    },
+    {
+      title: 'Arcade',
+      content: 'Take a break and have some fun with educational games that also help improve your cognitive skills while you relax and enjoy yourself.',
+      icon: <Gamepad2 className="h-6 w-6 text-indigo-500" />,
+      highlightCard: null
     },
     {
       title: `You're All Set, ${userName}!`,
       content: 'That\'s it! You\'ve seen all the amazing features Fundamenta has to offer. After you close this tour, feel free to click on any card to explore that feature. I\'m here whenever you need me. Let\'s make life more LIFEABLE together!',
-      icon: <HelpCircle className="h-6 w-6 text-blue-500" />
+      icon: <HelpCircle className="h-6 w-6 text-blue-500" />,
+      highlightCard: null
     }
   ];
   
-  // Simple tour control functions without navigation
+  // Add card highlighting when step changes
+  useEffect(() => {
+    if (isOpen) {
+      // Clear any previous highlight
+      document.querySelectorAll('[data-tour-id]').forEach(card => {
+        card.classList.remove('ring-4', 'ring-blue-400', 'ring-offset-2');
+        card.classList.remove('z-10', 'relative');
+      });
+      
+      // Set the new highlight
+      const highlightId = steps[currentStep].highlightCard;
+      if (highlightId) {
+        setHighlightedCard(highlightId);
+        const card = document.querySelector(`[data-tour-id="${highlightId}"]`);
+        if (card) {
+          card.classList.add('ring-4', 'ring-blue-400', 'ring-offset-2');
+          card.classList.add('z-10', 'relative');
+          
+          // Scroll the card into view
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      } else {
+        setHighlightedCard(null);
+      }
+    }
+  }, [currentStep, isOpen]);
+  
+  // Clean up highlights when tour closes
+  useEffect(() => {
+    if (!isOpen) {
+      document.querySelectorAll('[data-tour-id]').forEach(card => {
+        card.classList.remove('ring-4', 'ring-blue-400', 'ring-offset-2');
+        card.classList.remove('z-10', 'relative');
+      });
+    }
+  }, [isOpen]);
+  
+  // Simple tour control functions
   const startTour = () => {
     setCurrentStep(0);
     setIsOpen(true);
