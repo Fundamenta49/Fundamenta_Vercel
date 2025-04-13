@@ -18,7 +18,7 @@ export const initialTour: Tour = {
       id: 'navigation',
       title: 'Easy Navigation',
       content: 'Use these navigation buttons to explore different areas of Fundamenta - from finances to fitness to life skills!',
-      targetSelector: 'nav',
+      targetSelector: 'header',
       placement: 'bottom',
       highlightSize: 'md',
     },
@@ -29,7 +29,7 @@ export const initialTour: Tour = {
       targetSelector: '.grid',
       placement: 'top',
       highlightSize: 'lg',
-      fundiPosition: { x: 20, y: window.innerHeight / 2 - 100 },
+      fundiPosition: { x: 20, y: 300 },
     },
     {
       id: 'fundi-avatar',
@@ -38,7 +38,7 @@ export const initialTour: Tour = {
       targetSelector: '[data-fundi-robot]',
       placement: 'left',
       highlightSize: 'sm',
-      fundiPosition: { x: window.innerWidth - 150, y: 30 },
+      fundiPosition: { x: 250, y: 30 },
     },
     {
       id: 'conclusion',
@@ -46,7 +46,7 @@ export const initialTour: Tour = {
       content: 'That\'s it! You\'re ready to start building life skills with Fundamenta. Remember, I\'m always here if you need me. Let\'s make life more LIFEABLE together!',
       placement: 'center',
       showSkipButton: false,
-      fundiPosition: { x: window.innerWidth / 2 - 150, y: window.innerHeight / 2 - 100 },
+      fundiPosition: { x: 100, y: 200 },
     }
   ]
 };

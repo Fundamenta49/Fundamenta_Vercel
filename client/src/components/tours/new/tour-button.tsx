@@ -40,9 +40,15 @@ export default function TourButton({
     icon: 18,
   };
   
-  // Handle button click
+  // Handle button click with debugging
   const handleClick = () => {
+    console.log("Starting tour with ID:", tourId);
     startTour(tourId);
+    
+    // Add a fallback to ensure tour starts
+    setTimeout(() => {
+      startTour(tourId);
+    }, 300);
   };
   
   return (
