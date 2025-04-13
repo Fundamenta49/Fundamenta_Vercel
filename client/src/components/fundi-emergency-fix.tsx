@@ -76,25 +76,25 @@ export default function FundiEmergencyFix() {
           // Direct style override with !important for maximum specificity
           // Different styling for desktop vs mobile
           if (isDesktop) {
-            // Desktop sizing: Made 5 pixels bigger all around and positioned closer to center
+            // Desktop sizing: Made 5 pixels bigger all around and positioned exactly in center
             dialog.style.cssText = `
               position: fixed !important;
-              max-width: 330px !important;
-              width: 330px !important; 
+              max-width: 370px !important; /* +5px on both sides = +10px */
+              width: 370px !important; 
               left: 50% !important;
               right: auto !important;
               transform: translateX(-50%) !important;
               top: 150px !important;
               bottom: auto !important;
               z-index: 999999 !important;
-              max-height: 510px !important;
+              max-height: 520px !important; /* +5px on top and bottom = +10px */
               overflow-y: auto !important;
               overflow-x: hidden !important;
               box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
               border: none !important;
               background-color: white !important;
               border-radius: 8px !important;
-              padding: 25px !important;
+              padding: 30px !important; /* +5px all around (was 25px) */
             `;
           } else {
             // Mobile sizing: Larger and more accessible on smaller screens
