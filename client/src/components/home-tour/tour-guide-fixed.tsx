@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import RobotFundi from '@/components/robot-fundi';
 import { useTour } from './tour-context';
 import { useTourSteps } from './tour-steps';
+import './tour-mobile.css';
 
 const TourGuide: React.FC = () => {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour } = useTour();
@@ -50,14 +51,24 @@ const TourGuide: React.FC = () => {
     // Update position initially
     updateTourButtonPosition();
     
-    // Update position on scroll
+    // Update position on scroll, resize, and orientation change
     window.addEventListener('scroll', updateTourButtonPosition);
     window.addEventListener('resize', updateTourButtonPosition);
+    window.addEventListener('orientationchange', updateTourButtonPosition);
+    
+    // Add special class to body for mobile tour
+    if (window.innerWidth < 768) {
+      document.body.classList.add('mobile-tour-active');
+    } else {
+      document.body.classList.remove('mobile-tour-active');
+    }
     
     // Cleanup
     return () => {
       window.removeEventListener('scroll', updateTourButtonPosition);
       window.removeEventListener('resize', updateTourButtonPosition);
+      window.removeEventListener('orientationchange', updateTourButtonPosition);
+      document.body.classList.remove('mobile-tour-active');
     };
   }, [isTourActive, currentStep]);
   
@@ -196,13 +207,26 @@ const TourGuide: React.FC = () => {
             className="fixed left-1/2 -translate-x-1/2"
             style={{
               zIndex: 100001,
-              // Positioning for both mobile and desktop - directly above the tour button
-              top: window.innerWidth < 768 ? tourButtonPosition.top - 220 : tourButtonPosition.top - 80,
-              transform: 'translateX(-50%)'
+              ...(window.innerWidth < 768 
+                ? {
+                    // Mobile positioning: fixed to the center of the screen
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  } 
+                : {
+                    // Desktop positioning: above the tour button (unchanged)
+                    top: tourButtonPosition.top - 80,
+                    transform: 'translateX(-50%)'
+                  }
+              )
             }}
           >
             {/* Tour Content */}
-            <Card className="w-[70vw] max-w-[210px] md:max-w-[320px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
+            <Card 
+              data-tour-dialog="true"
+              className="w-[85vw] max-w-[280px] md:max-w-[320px] shadow-lg border-2 border-[#1C3D5A] relative bg-white overflow-hidden">
               {/* Blur effect behind card */}
               <div className="absolute -inset-[5px] rounded-xl bg-white/10 backdrop-blur-sm -z-10"></div>
               
@@ -290,7 +314,7 @@ const TourGuide: React.FC = () => {
                 )}
               </div>
               
-              <CardContent className="pt-1 md:pt-16 pb-5 px-3 md:px-6">
+              <CardContent className="pt-3 md:pt-16 pb-4 px-4 md:px-6">
                 {/* Close Button */}
                 <Button 
                   variant="ghost" 
