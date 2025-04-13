@@ -49,24 +49,21 @@ export default function TourButton({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant={variant}
-            size={size}
+          <div
             onClick={handleClick}
             className={cn(
-              'rounded-full',
-              'hover:scale-105 transition-transform',
-              position === 'fixed' && 'fixed bottom-20 right-6 z-50 shadow-md',
+              'cursor-pointer text-primary',
+              'hover:scale-110 transition-transform',
+              position === 'fixed' && 'fixed bottom-20 right-6 z-50 bg-white p-2 rounded-full shadow-md',
               className
             )}
             aria-label={tooltipText}
           >
             <HelpCircle 
               size={iconSizes[size]} 
-              className={size === 'sm' || size === 'icon' ? 'mr-0' : 'mr-1'} 
+              className="hover:text-primary/80"
             />
-            {size !== 'sm' && size !== 'icon' && <span>Tour</span>}
-          </Button>
+          </div>
         </TooltipTrigger>
         <TooltipContent side="left">
           <p>{tooltipText}</p>
