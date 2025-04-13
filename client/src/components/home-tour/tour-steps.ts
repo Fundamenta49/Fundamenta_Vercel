@@ -69,7 +69,7 @@ export const useTourSteps = () => {
       animationType: 'nod'
     },
     
-    // Step 6: Wellness & Nutrition card
+    // Step 6: Wellness & Nutrition card - Fixed highlight color
     {
       title: 'Wellness Wonderland',
       content: `Because you can't pour from an empty cup! ✨ Discover meditation that doesn't make you fall asleep, nutrition that's about joy (not just kale), and self-care that fits your real life. Your mind and body will high-five you!`,
@@ -80,7 +80,29 @@ export const useTourSteps = () => {
       animationType: 'nod'
     },
     
-    // Step 7: Show smart calendar in sidebar
+    // Step 7: Active You Fitness card - Added
+    {
+      title: 'Active You Fitness',
+      content: `Ready to get moving? 🏃‍♀️ No gym membership required! From quick home workouts to yoga flows that won't tie you in knots, we'll make fitness fun, accessible, and best of all - actually doable for your real life!`,
+      target: 'card-active-you',
+      placement: 'bottom',
+      highlightColor: '#ec4899', // pink
+      showFundiAnimation: true,
+      animationType: 'jump'
+    },
+    
+    // Step 8: Emergency Prep card - Added
+    {
+      title: 'Emergency Preparedness',
+      content: `Better safe than sorry! 🚨 Let's make sure you're ready for anything life throws your way - from first aid basics to what to do when your car breaks down. Small preparations now can make a huge difference when it matters most!`,
+      target: 'card-emergency-guidance',
+      placement: 'bottom',
+      highlightColor: '#ef4444', // red
+      showFundiAnimation: true,
+      animationType: 'nod'
+    },
+    
+    // Step 9: Show smart calendar in sidebar
     {
       title: 'Your Smart Calendar',
       content: `Psst! 📅 Over here in the sidebar! This magical calendar keeps track of your learning journey without you having to remember everything. It's like having a personal assistant who never judges your procrastination habits!`,
@@ -91,7 +113,7 @@ export const useTourSteps = () => {
       animationType: 'point'
     },
     
-    // Step 8: Show arcade in sidebar
+    // Step 10: Show arcade in sidebar
     {
       title: 'Fun Break Station',
       content: `All learn and no play? Not on my watch! 🎮 Our Arcade is where serious skills meet serious fun. Games that teach while you play! Think of it as "productive procrastination" – your brain will thank you for the refreshing break!`,
@@ -102,7 +124,7 @@ export const useTourSteps = () => {
       animationType: 'jump'
     },
     
-    // Step 9: Closing with user's name again
+    // Step 11: Closing with user's name again
     {
       title: `High Five, ${firstName}!`,
       content: `You're officially ready to rock this Fundamenta journey! 🙌 I'll be hanging out in the corner of your screen whenever you need a helping hand (or just someone to chat with). Before you dive in, our founder has a special message for you...`,
@@ -112,7 +134,7 @@ export const useTourSteps = () => {
       animationType: 'wave'
     },
     
-    // Step 10: Why Fundamenta letter from the CEO
+    // Step 12: Why Fundamenta letter from the CEO
     {
       title: 'A Note From Our Founder',
       content: `At Fundamenta, we believe everyone deserves access to practical life skills – the kind school forgot to teach us! We've created this space where you can learn at your own pace, make mistakes without judgment, and build confidence in areas that matter. Welcome to our community – we're thrilled you're here!`,

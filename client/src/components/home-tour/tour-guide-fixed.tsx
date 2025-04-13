@@ -151,12 +151,12 @@ const TourGuide: React.FC = () => {
             }}
           >
             {/* Tour Content */}
-            <Card className="w-[350px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
-              {/* Larger box by 5px all around */}
+            <Card className="w-[340px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
+              {/* Blur effect behind card */}
               <div className="absolute -inset-[5px] rounded-xl bg-white/10 backdrop-blur-sm -z-10"></div>
               
-              {/* Fundi Character - Positioned at the center top of the card */}
-              <div className="absolute -top-[65px] left-1/2 transform -translate-x-1/2 z-10">
+              {/* Fundi Character - Positioned at the center top of the card, moved up 5px */}
+              <div className="absolute -top-[70px] left-1/2 transform -translate-x-1/2 z-10">
                 {currentTourStep?.showFundiAnimation ? (
                   <motion.div
                     key={`fundi-animation-${currentStep}-${animationKey}`}
