@@ -28,8 +28,8 @@ export default function TourGuide() {
   
   // Default positions with safety margins - centered for desktop
   const defaultPosition = useRef({ 
-    x: Math.max(window.innerWidth / 2 - 150, 20), 
-    y: Math.max(window.innerHeight / 2 - 200, 20) 
+    x: Math.max(window.innerWidth / 2 - 200, 20), 
+    y: Math.max(window.innerHeight / 2 - 300, 20) 
   });
   const [position, setPosition] = useState(defaultPosition.current);
   
@@ -215,21 +215,21 @@ export default function TourGuide() {
           damping: 16
         }}
         style={{ 
-          width: isMobile ? '60px' : '100px', 
-          height: isMobile ? '60px' : '100px',
+          width: isMobile ? '60px' : '140px', 
+          height: isMobile ? '60px' : '140px',
           willChange: 'transform'
         }}
       >
         {/* Fundi Character */}
         <div className={cn(
-          isMobile ? "w-16 h-16" : "w-24 h-24",
+          isMobile ? "w-16 h-16" : "w-32 h-32",
           "tour-fundi-robot"
         )}>
           <FundiPersonalityAdapter>
             <RobotFundi
               speaking={speaking}
               thinking={thinking}
-              size={isMobile ? "sm" : "md"}
+              size={isMobile ? "sm" : "lg"}
               interactive={false}
               emotion="happy"
               category="tour"
@@ -244,11 +244,11 @@ export default function TourGuide() {
               "absolute bg-white rounded-xl shadow-xl p-5 text-sm md:text-base md:p-6 border border-gray-100",
               "w-64 sm:w-80 md:w-96 max-w-[calc(100vw-40px)]",
               isMobile ? "mobile-speech-bubble" : "",
-              placement === 'right' && "left-24 top-0",
-              placement === 'left' && "right-24 top-0",
-              placement === 'top' && "bottom-20 left-0",
-              placement === 'bottom' && "top-20 left-0",
-              placement === 'center' && "top-20 left-0"
+              placement === 'right' && isMobile ? "left-24 top-0" : "left-32 top-0",
+              placement === 'left' && isMobile ? "right-24 top-0" : "right-32 top-0",
+              placement === 'top' && isMobile ? "bottom-20 left-0" : "bottom-32 left-0",
+              placement === 'bottom' && isMobile ? "top-20 left-0" : "top-32 left-0",
+              placement === 'center' && isMobile ? "top-20 left-0" : "top-32 left-0"
             )}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
