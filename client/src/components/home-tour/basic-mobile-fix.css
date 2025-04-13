@@ -1,0 +1,51 @@
+/* Basic mobile fix for tour dialog */
+
+/* General fixes for all screen sizes */
+[data-tour-dialog="true"] {
+  overflow: visible !important;
+}
+
+/* Tour dialog's content */
+.tour-card-content {
+  padding-top: 1.5rem !important;
+}
+
+/* Fundi character (robot) container */
+.fundi-tour-wrapper {
+  position: absolute !important;
+  top: -110px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 999999 !important;
+  pointer-events: none !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Mobile specific fixes */
+@media (max-width: 767px) {
+  /* Make dialog smaller */
+  [data-tour-dialog="true"] {
+    max-width: 240px !important;
+    transform: scale(0.95) !important;
+  }
+  
+  /* Adjust tour width */
+  .w-\[85vw\] {
+    width: 75vw !important; 
+  }
+  
+  /* Position Fundi higher on small screens */
+  .fundi-tour-wrapper {
+    top: -135px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+  }
+  
+  /* Lighten the background */
+  .bg-black\/30 {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+  }
+}

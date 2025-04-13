@@ -7,8 +7,7 @@ import RobotFundi from '@/components/robot-fundi';
 import { useTour } from './tour-context';
 import { useTourSteps } from './tour-steps';
 import './tour-mobile.css';
-import './fix-fundi-display.css'; // For general display fixes
-import './mobile-fundi-fix.css'; // Specific mobile fixes
+import './basic-mobile-fix.css';
 
 const TourGuide: React.FC = () => {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour } = useTour();
@@ -300,7 +299,7 @@ const TourGuide: React.FC = () => {
                 )}
               </div>
               
-              <CardContent className="pt-4 md:pt-16 pb-4 px-4 md:px-6 tour-card-content">
+              <CardContent className="pt-6 md:pt-16 pb-4 px-4 md:px-6 tour-card-content">
                 {/* Close Button */}
                 <Button 
                   variant="ghost" 
