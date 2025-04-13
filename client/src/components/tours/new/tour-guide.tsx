@@ -91,8 +91,21 @@ export default function TourGuide() {
     // Handle element highlighting
     if (currentStep.targetSelector) {
       // Clean up any existing highlights
-      document.querySelectorAll('.tour-highlight').forEach(el => {
+      document.querySelectorAll(
+        '.tour-highlight, .tour-highlight-sm, .tour-highlight-md, .tour-highlight-lg, .tour-highlight-life-skills, .tour-highlight-finance, .tour-highlight-career, .tour-highlight-wellness, .tour-highlight-active, .tour-highlight-emergency, .tour-highlight-calendar, .tour-highlight-arcade'
+      ).forEach(el => {
         el.classList.remove('tour-highlight');
+        el.classList.remove('tour-highlight-sm');
+        el.classList.remove('tour-highlight-md');
+        el.classList.remove('tour-highlight-lg');
+        el.classList.remove('tour-highlight-life-skills');
+        el.classList.remove('tour-highlight-finance');
+        el.classList.remove('tour-highlight-career');
+        el.classList.remove('tour-highlight-wellness');
+        el.classList.remove('tour-highlight-active');
+        el.classList.remove('tour-highlight-emergency');
+        el.classList.remove('tour-highlight-calendar');
+        el.classList.remove('tour-highlight-arcade');
       });
       
       // Add highlight to target element
@@ -103,6 +116,26 @@ export default function TourGuide() {
         // Get highlight size from step or default to medium
         const highlightSize = currentStep.highlightSize || 'md';
         targetElement.classList.add(`tour-highlight-${highlightSize}`);
+        
+        // Add category-specific highlight based on step ID
+        const stepId = currentStep.id.toLowerCase();
+        if (stepId.includes('life-skills')) {
+          targetElement.classList.add('tour-highlight-life-skills');
+        } else if (stepId.includes('finance')) {
+          targetElement.classList.add('tour-highlight-finance');
+        } else if (stepId.includes('career')) {
+          targetElement.classList.add('tour-highlight-career');
+        } else if (stepId.includes('wellness')) {
+          targetElement.classList.add('tour-highlight-wellness');
+        } else if (stepId.includes('active')) {
+          targetElement.classList.add('tour-highlight-active');
+        } else if (stepId.includes('emergency')) {
+          targetElement.classList.add('tour-highlight-emergency');
+        } else if (stepId.includes('calendar')) {
+          targetElement.classList.add('tour-highlight-calendar');
+        } else if (stepId.includes('arcade')) {
+          targetElement.classList.add('tour-highlight-arcade');
+        }
         
         // Scroll to element
         setTimeout(() => {
@@ -116,11 +149,21 @@ export default function TourGuide() {
     
     // Clean up function
     return () => {
-      document.querySelectorAll('.tour-highlight, .tour-highlight-sm, .tour-highlight-md, .tour-highlight-lg').forEach(el => {
+      document.querySelectorAll(
+        '.tour-highlight, .tour-highlight-sm, .tour-highlight-md, .tour-highlight-lg, .tour-highlight-life-skills, .tour-highlight-finance, .tour-highlight-career, .tour-highlight-wellness, .tour-highlight-active, .tour-highlight-emergency, .tour-highlight-calendar, .tour-highlight-arcade'
+      ).forEach(el => {
         el.classList.remove('tour-highlight');
         el.classList.remove('tour-highlight-sm');
         el.classList.remove('tour-highlight-md');
         el.classList.remove('tour-highlight-lg');
+        el.classList.remove('tour-highlight-life-skills');
+        el.classList.remove('tour-highlight-finance');
+        el.classList.remove('tour-highlight-career');
+        el.classList.remove('tour-highlight-wellness');
+        el.classList.remove('tour-highlight-active');
+        el.classList.remove('tour-highlight-emergency');
+        el.classList.remove('tour-highlight-calendar');
+        el.classList.remove('tour-highlight-arcade');
       });
     };
   }, [isTourActive, currentStep, currentStepIndex]);
