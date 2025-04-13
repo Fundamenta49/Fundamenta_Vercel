@@ -34,6 +34,9 @@ const TourGuide: React.FC = () => {
           top: window.innerHeight / 2 - 150,
           left: window.innerWidth / 2 - 175,
         });
+        
+        // Make sure we're at the top if using center placement
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
       
@@ -90,6 +93,43 @@ const TourGuide: React.FC = () => {
       if (top > viewportHeight - 200) top = viewportHeight - 200;
       
       setPosition({ top, left });
+      
+      // Ensure the element is in view by scrolling to it
+      const elementTop = rect.top + window.scrollY;
+      const elementBottom = rect.bottom + window.scrollY;
+      const halfViewportHeight = window.innerHeight / 2;
+      
+      // Calculate where to scroll to ensure both the target element and the tooltip are visible
+      let scrollTo;
+      
+      switch (step.placement) {
+        case 'top':
+          // Scroll to have the element at the bottom half of the screen
+          scrollTo = elementTop - halfViewportHeight + (rect.height / 2);
+          break;
+        case 'bottom': 
+          // Scroll to have the element at the top half of the screen
+          scrollTo = elementTop - halfViewportHeight + (rect.height / 2);
+          break;
+        case 'left':
+        case 'right':
+          // Center the element vertically
+          scrollTo = elementTop - halfViewportHeight + (rect.height / 2);
+          break;
+        default:
+          // Ensure the element is visible in the viewport
+          scrollTo = elementTop - 100;
+      }
+      
+      // Ensure we don't scroll below or above the document
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      scrollTo = Math.max(0, Math.min(scrollTo, maxScroll));
+      
+      // Perform smooth scrolling
+      window.scrollTo({
+        top: scrollTo,
+        behavior: 'smooth'
+      });
       
       // Highlight the element if needed
       if (step.highlightColor && targetElement) {
