@@ -37,19 +37,19 @@ export default function TourGuide() {
   useEffect(() => {
     const handleResize = () => {
       // Check if device is mobile (both by viewport width or touch capability)
-      const isMobileDevice = window.innerWidth < 640 || window.matchMedia('(pointer: coarse)').matches;
+      const isMobileDevice = window.innerWidth < 768 || window.matchMedia('(any-pointer: coarse)').matches;
       
       if (isMobileDevice) {
-        // Mobile - position Fundi at the bottom center
+        // Mobile - position Fundi at the bottom left
         setPosition({ 
-          x: Math.max(window.innerWidth / 2 - 40, 0), 
-          y: Math.max(window.innerHeight - 200, 20) 
+          x: 10,
+          y: Math.max(window.innerHeight - 100, 10) 
         });
         // Apply mobile mode class to body for CSS targeting
         document.body.classList.add('tour-mobile-mode');
         
         // Log to debug
-        console.log("Mobile mode applied for tour");
+        console.log(`Mobile tour mode: width=${window.innerWidth}, height=${window.innerHeight}`);
       } else {
         // Desktop - position Fundi based on current step or default
         document.body.classList.remove('tour-mobile-mode');
@@ -129,7 +129,7 @@ export default function TourGuide() {
   if (!isTourActive || !currentStep) return null;
   
   // Determine if on mobile (using same detection as in the effect)
-  const isMobile = window.innerWidth < 640 || window.matchMedia('(pointer: coarse)').matches;
+  const isMobile = window.innerWidth < 768 || window.matchMedia('(any-pointer: coarse)').matches;
   
   // Determine dialog placement
   const placement = currentStep.placement || 'bottom';
@@ -161,18 +161,21 @@ export default function TourGuide() {
           damping: 16
         }}
         style={{ 
-          width: '80px', 
-          height: '80px',
+          width: isMobile ? '60px' : '80px', 
+          height: isMobile ? '60px' : '80px',
           willChange: 'transform'
         }}
       >
         {/* Fundi Character */}
-        <div className="w-20 h-20 tour-fundi-robot">
+        <div className={cn(
+          isMobile ? "w-16 h-16" : "w-20 h-20",
+          "tour-fundi-robot"
+        )}>
           <FundiPersonalityAdapter>
             <RobotFundi
               speaking={speaking}
               thinking={thinking}
-              size="md"
+              size={isMobile ? "sm" : "md"}
               interactive={false}
               emotion="happy"
               category="tour"
