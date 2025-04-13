@@ -192,7 +192,7 @@ const TourGuide: React.FC = () => {
   return (
     <AnimatePresence>
       {isTourActive && (
-        <div className="fixed inset-0 z-[100000] bg-black/30 flex items-center justify-center"
+        <div className="fixed inset-0 z-[100000] bg-black/20 md:bg-black/30 flex items-center justify-center"
              onClick={(e) => {
                // Only close if clicking the backdrop
                if (e.target === e.currentTarget) {
@@ -227,7 +227,7 @@ const TourGuide: React.FC = () => {
             {/* Tour Content */}
             <Card 
               data-tour-dialog="true"
-              className="w-[85vw] max-w-[280px] md:max-w-[320px] shadow-lg border-2 border-[#1C3D5A] relative bg-white overflow-hidden">
+              className="w-[80vw] max-w-[240px] md:w-[85vw] md:max-w-[320px] shadow-lg border-2 border-[#1C3D5A] relative bg-white md:bg-white overflow-hidden">
               {/* Blur effect behind card */}
               <div className="absolute -inset-[5px] rounded-xl bg-white/10 backdrop-blur-sm -z-10"></div>
               

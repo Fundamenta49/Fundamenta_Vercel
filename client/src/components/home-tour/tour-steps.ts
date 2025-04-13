@@ -19,7 +19,7 @@ export const useTourSteps = () => {
     // Step 1: Welcome greeting with user's first name
     {
       title: `Hey there, ${firstName}! 👋`,
-      content: `I'm Fundi, your personal AI sidekick on this adventure! Think of me as your friendly guide to all those life skills nobody taught you in school. Ready for a quick tour of what we can do together?`,
+      content: `I'm Fundi, your personal AI sidekick on this adventure! Think of me as your friendly guide to all those life skills nobody taught you in school. You can always find me in the top-right corner of your screen. Ready for a quick tour?`,
       target: 'body',
       placement: 'center',
       showFundiAnimation: true,
@@ -29,7 +29,7 @@ export const useTourSteps = () => {
     // Step 2: Introduce Fundi with fun animations
     {
       title: 'Your Personal Life Coach!',
-      content: `Whenever you need me, I'll pop up with personalized advice, answer your questions (even the embarrassing ones!), and cheer you on like your biggest fan. No judgment, just helpful guidance with a side of fun!`,
+      content: `Whenever you need me, I'll pop up with personalized advice, answer your questions (even the embarrassing ones!), and cheer you on like your biggest fan. Just tap me in the corner of your screen anytime you need help!`,
       target: 'body',
       placement: 'center',
       showFundiAnimation: true,
@@ -127,7 +127,7 @@ export const useTourSteps = () => {
     // Step 11: Closing with user's name again
     {
       title: `High Five, ${firstName}!`,
-      content: `You're officially ready to rock this Fundamenta journey! 🙌 I'll be hanging out in the corner of your screen whenever you need a helping hand (or just someone to chat with). Before you dive in, our founder has a special message for you...`,
+      content: `You're officially ready to rock this Fundamenta journey! 🙌 Remember, I'm always in the top-right corner of your screen, ready to help! Just tap my icon whenever you need assistance or want to chat. Before you dive in, our founder has a special message...`,
       target: 'body',
       placement: 'center',
       showFundiAnimation: true,
