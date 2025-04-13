@@ -20,23 +20,45 @@ export default function FundiEmergencyFix() {
       );
       
       // Apply emergency positioning to Fundi
+      const isDesktop = window.innerWidth >= 640;
+      
       fundiElements.forEach(el => {
         if (el instanceof HTMLElement) {
-          // Directly override all styles using !important - CENTER POSITION (matching screenshot)
-          el.style.cssText = `
-            position: fixed !important;
-            top: 290px !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            right: auto !important;
-            bottom: auto !important;
-            z-index: 999999 !important;
-            width: 86px !important;
-            height: 86px !important;
-            max-width: 86px !important;
-            max-height: 86px !important;
-            pointer-events: auto !important;
-          `;
+          if (isDesktop) {
+            // Desktop positioning
+            // Directly override all styles using !important - CENTER POSITION (matching screenshot)
+            // Adjusted position to match the dialog box positioning
+            el.style.cssText = `
+              position: fixed !important;
+              top: 300px !important;
+              left: 50% !important;
+              transform: translateX(-50%) !important;
+              right: auto !important;
+              bottom: auto !important;
+              z-index: 999999 !important;
+              width: 96px !important;
+              height: 96px !important;
+              max-width: 96px !important;
+              max-height: 96px !important;
+              pointer-events: auto !important;
+            `;
+          } else {
+            // Mobile positioning - slightly smaller Fundi, positioned differently
+            el.style.cssText = `
+              position: fixed !important;
+              top: 240px !important;
+              left: 50% !important;
+              transform: translateX(-50%) !important;
+              right: auto !important;
+              bottom: auto !important;
+              z-index: 999999 !important;
+              width: 80px !important;
+              height: 80px !important;
+              max-width: 80px !important;
+              max-height: 80px !important;
+              pointer-events: auto !important;
+            `;
+          }
           
           // Add a data attribute for CSS targeting
           el.setAttribute('data-fundi-fixed', 'true');
@@ -52,26 +74,51 @@ export default function FundiEmergencyFix() {
       
       tourDialogs.forEach(dialog => {
         if (dialog instanceof HTMLElement) {
-          // Direct style override with !important for maximum specificity (matching screenshot)
-          dialog.style.cssText = `
-            position: fixed !important;
-            max-width: 320px !important;
-            width: 320px !important; 
-            left: 50% !important;
-            right: auto !important;
-            transform: translateX(-50%) !important;
-            top: 140px !important;
-            bottom: auto !important;
-            z-index: 999999 !important;
-            max-height: 500px !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-            border: none !important;
-            background-color: white !important;
-            border-radius: 8px !important;
-            padding: 20px !important;
-          `;
+          // Direct style override with !important for maximum specificity
+          // Different styling for desktop vs mobile
+          if (isDesktop) {
+            // Desktop sizing: Made 5 pixels bigger all around and positioned closer to center
+            dialog.style.cssText = `
+              position: fixed !important;
+              max-width: 330px !important;
+              width: 330px !important; 
+              left: 50% !important;
+              right: auto !important;
+              transform: translateX(-50%) !important;
+              top: 150px !important;
+              bottom: auto !important;
+              z-index: 999999 !important;
+              max-height: 510px !important;
+              overflow-y: auto !important;
+              overflow-x: hidden !important;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+              border: none !important;
+              background-color: white !important;
+              border-radius: 8px !important;
+              padding: 25px !important;
+            `;
+          } else {
+            // Mobile sizing: Larger and more accessible on smaller screens
+            dialog.style.cssText = `
+              position: fixed !important;
+              max-width: calc(100vw - 30px) !important;
+              width: calc(100vw - 30px) !important; 
+              left: 50% !important;
+              right: auto !important;
+              transform: translateX(-50%) !important;
+              top: 120px !important;
+              bottom: auto !important;
+              z-index: 999999 !important;
+              max-height: 60vh !important;
+              overflow-y: auto !important;
+              overflow-x: hidden !important;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+              border: none !important;
+              background-color: white !important;
+              border-radius: 8px !important;
+              padding: 20px !important;
+            `;
+          }
           
           // Add data attributes for CSS targeting
           dialog.setAttribute('data-tour-fixed', 'true');
