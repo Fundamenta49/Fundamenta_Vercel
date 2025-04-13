@@ -14,10 +14,12 @@ const TourGuide: React.FC = () => {
   const [tourButtonPosition, setTourButtonPosition] = useState({ top: 200, left: '50%' });
 
   // Set up step positioning only when current step changes
-  // Find the tour button and its position
+  // Find and track the tour button's position
   useEffect(() => {
-    if (isTourActive) {
-      // Find the tour button element
+    if (!isTourActive) return;
+    
+    // Find the tour button element
+    const updateTourButtonPosition = () => {
       const tourButtonElement = document.querySelector('.tour-button');
       if (tourButtonElement) {
         const rect = tourButtonElement.getBoundingClientRect();
@@ -28,8 +30,21 @@ const TourGuide: React.FC = () => {
           left: '50%' // Keep horizontally centered
         });
       }
-    }
-  }, [isTourActive]);
+    };
+    
+    // Update position initially
+    updateTourButtonPosition();
+    
+    // Update position on scroll
+    window.addEventListener('scroll', updateTourButtonPosition);
+    window.addEventListener('resize', updateTourButtonPosition);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('scroll', updateTourButtonPosition);
+      window.removeEventListener('resize', updateTourButtonPosition);
+    };
+  }, [isTourActive, currentStep]);
   
   useEffect(() => {
     if (!isTourActive || currentStep >= tourSteps.length) return;
@@ -166,8 +181,8 @@ const TourGuide: React.FC = () => {
             className="fixed left-1/2 -translate-x-1/2"
             style={{
               zIndex: 100001,
-              top: currentStep === 0 ? tourButtonPosition.top + 100 : '50%',
-              transform: currentStep === 0 ? 'translateX(-50%)' : 'translate(-50%, -50%)'
+              top: tourButtonPosition.top + 100,
+              transform: 'translateX(-50%)'
             }}
           >
             {/* Tour Content */}
