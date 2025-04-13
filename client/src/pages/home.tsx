@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
+import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity, Calendar, Gamepad2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import WeatherWidget from "@/components/weather-widget";
 import { useAuth } from "@/lib/auth-context";
@@ -49,6 +49,20 @@ const features = [
     icon: AlertCircle,
     href: "/emergency",
     color: "text-red-500",
+  },
+  {
+    title: "Smart Calendar",
+    description: "Schedule your activities, set reminders, and manage your time effectively",
+    icon: Calendar,
+    href: "/calendar",
+    color: "text-cyan-500",
+  },
+  {
+    title: "Arcade",
+    description: "Take a break and have fun with educational games that improve your cognitive skills",
+    icon: Gamepad2,
+    href: "/arcade",
+    color: "text-indigo-500",
   },
 ];
 

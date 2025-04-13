@@ -71,13 +71,13 @@ export function SimpleTourButton() {
       title: 'Smart Calendar',
       content: 'Schedule your activities, set reminders, and manage your time effectively with our intelligent calendar that adapts to your lifestyle needs.',
       icon: <Calendar className="h-6 w-6 text-cyan-500" />,
-      highlightCard: null
+      highlightCard: 'card-smart-calendar'
     },
     {
       title: 'Arcade',
       content: 'Take a break and have some fun with educational games that also help improve your cognitive skills while you relax and enjoy yourself.',
       icon: <Gamepad2 className="h-6 w-6 text-indigo-500" />,
-      highlightCard: null
+      highlightCard: 'card-arcade'
     },
     {
       title: `You're All Set, ${userName}!`,
@@ -87,13 +87,29 @@ export function SimpleTourButton() {
     }
   ];
   
+  // Highlight colors for each section
+  const highlightColors: Record<string, string> = {
+    'card-life-skills': 'ring-orange-500',
+    'card-financial-literacy': 'ring-green-500',
+    'card-career-development': 'ring-blue-500',
+    'card-wellness-nutrition': 'ring-purple-500',
+    'card-active-you': 'ring-pink-500',
+    'card-emergency-guidance': 'ring-red-500',
+    'card-smart-calendar': 'ring-cyan-500',
+    'card-arcade': 'ring-indigo-500'
+  };
+
   // Add card highlighting when step changes
   useEffect(() => {
     if (isOpen) {
       // Clear any previous highlight
       document.querySelectorAll('[data-tour-id]').forEach(card => {
-        card.classList.remove('ring-4', 'ring-blue-400', 'ring-offset-2');
-        card.classList.remove('z-10', 'relative');
+        card.classList.remove('ring-4');
+        // Remove all possible highlight colors
+        Object.values(highlightColors).forEach(color => {
+          card.classList.remove(color);
+        });
+        card.classList.remove('ring-offset-2', 'z-10', 'relative');
       });
       
       // Set the new highlight
@@ -102,7 +118,8 @@ export function SimpleTourButton() {
         setHighlightedCard(highlightId);
         const card = document.querySelector(`[data-tour-id="${highlightId}"]`);
         if (card) {
-          card.classList.add('ring-4', 'ring-blue-400', 'ring-offset-2');
+          const ringColor = highlightColors[highlightId] || 'ring-blue-400';
+          card.classList.add('ring-4', ringColor, 'ring-offset-2');
           card.classList.add('z-10', 'relative');
           
           // Scroll the card into view
@@ -118,11 +135,15 @@ export function SimpleTourButton() {
   useEffect(() => {
     if (!isOpen) {
       document.querySelectorAll('[data-tour-id]').forEach(card => {
-        card.classList.remove('ring-4', 'ring-blue-400', 'ring-offset-2');
+        card.classList.remove('ring-4', 'ring-offset-2');
+        // Remove all possible highlight colors
+        Object.values(highlightColors).forEach(color => {
+          card.classList.remove(color);
+        });
         card.classList.remove('z-10', 'relative');
       });
     }
-  }, [isOpen]);
+  }, [isOpen, highlightColors]);
   
   // Simple tour control functions
   const startTour = () => {
