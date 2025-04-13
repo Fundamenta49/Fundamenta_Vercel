@@ -27,8 +27,8 @@ export default function TourGuide() {
   const [thinking, setThinking] = useState(false);
   
   // Default positions with safety margins
-  const defaultPosition = { x: 20, y: 20 };
-  const [position, setPosition] = useState(defaultPosition);
+  const defaultPosition = useRef({ x: 20, y: 20 });
+  const [position, setPosition] = useState(defaultPosition.current);
   
   // Calculate progress percentage
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
@@ -56,7 +56,7 @@ export default function TourGuide() {
         if (currentStep?.fundiPosition) {
           setPosition(currentStep.fundiPosition);
         } else {
-          setPosition(defaultPosition);
+          setPosition(defaultPosition.current);
         }
       }
     };
@@ -69,7 +69,7 @@ export default function TourGuide() {
       window.removeEventListener('resize', handleResize);
       document.body.classList.remove('tour-mobile-mode');
     };
-  }, [currentStep, defaultPosition]);
+  }, [currentStep]);
   
   // Update position when step changes
   useEffect(() => {

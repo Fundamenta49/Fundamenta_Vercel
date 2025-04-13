@@ -5,7 +5,7 @@ import WeatherWidget from "@/components/weather-widget";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useEffect } from "react";
 import FounderMessageDialog from "@/components/founder-message-dialog";
-import SimpleTourButton from "@/components/tours/simple-tour";
+import { TourButton } from "@/components/tours/new";
 
 const features = [
   {
