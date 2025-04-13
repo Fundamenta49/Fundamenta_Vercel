@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Car, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,10 +6,8 @@ import FloatingChat from '@/components/floating-chat';
 import { LEARNING_CATEGORY } from '@/components/chat-interface';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import VehicleGuide from '@/components/vehicle-guide';
-import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
+import QuizComponent from '@/components/quiz-component';
 import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
-import TourGuide from '@/components/clean-tour-guide';
-import { vehicleMaintenanceTourSteps } from '@/components/clean-tour-guide/vehicle-tour-steps';
 
 export default function VehicleMaintenanceCourse() {
   const [, navigate] = useLocation();
@@ -55,25 +53,9 @@ export default function VehicleMaintenanceCourse() {
       description: "Estimate repair costs and find reliable mechanics in your area"
     }
   ];
-
-  // Initial state for the tour
-  const [showTour, setShowTour] = useState(true);
-  
-  // If tour completes or is skipped
-  const handleTourComplete = () => {
-    setShowTour(false);
-  };
   
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl relative" style={{ overflowX: 'hidden' }}>
-      {/* Clean Tour Implementation */}
-      {showTour && (
-        <TourGuide 
-          steps={vehicleMaintenanceTourSteps} 
-          onComplete={handleTourComplete}
-          onSkip={handleTourComplete}
-        />
-      )}
       
       <div className="flex items-center mb-6">
         <Button 
