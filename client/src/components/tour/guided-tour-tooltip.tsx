@@ -38,6 +38,25 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
     left: 0,
     transformOrigin: 'center center',
   });
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Listen for window resize events
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
 
   // Content with personalization
   const personalizedContent = () => {
@@ -82,6 +101,16 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
     // Default position (bottom)
     let finalPosition = step.position || 'bottom';
     
+    // For mobile devices, force position to bottom center or top center to avoid going off screen
+    if (isMobile) {
+      // If the target is in the bottom half of the screen, position above it
+      if (targetRect.top > window.innerHeight / 2) {
+        finalPosition = 'top';
+      } else {
+        finalPosition = 'bottom';
+      }
+    }
+    
     // Calculate positions for each possible placement
     const positions = {
       top: {
@@ -111,11 +140,47 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
       },
     };
 
-    // Use the specified position
-    setPosition(positions[finalPosition as keyof typeof positions]);
+    // Start with the specified position
+    let pos = positions[finalPosition as keyof typeof positions];
+    
+    // Ensure tooltip stays within viewport bounds
+    const viewportPadding = isMobile ? 16 : 20;
+    
+    // Constrain horizontal position
+    if (pos.left < viewportPadding) {
+      pos.left = viewportPadding;
+    } else if (pos.left + tooltipRect.width > window.innerWidth - viewportPadding) {
+      pos.left = window.innerWidth - tooltipRect.width - viewportPadding;
+    }
+    
+    // Constrain vertical position
+    if (pos.top < viewportPadding) {
+      pos.top = viewportPadding;
+    } else if (pos.top + tooltipRect.height > window.innerHeight - viewportPadding) {
+      pos.top = window.innerHeight - tooltipRect.height - viewportPadding;
+    }
+    
+    // On mobile, if the tooltip is still too big, position it at the center bottom of the screen
+    if (isMobile && (pos.top < 0 || pos.top + tooltipRect.height > window.innerHeight || 
+                     pos.left < 0 || pos.left + tooltipRect.width > window.innerWidth)) {
+      pos = {
+        top: window.innerHeight - tooltipRect.height - 20,
+        left: window.innerWidth / 2 - tooltipRect.width / 2,
+        transformOrigin: 'bottom center',
+      };
+    }
+
+    setPosition(pos);
 
     // Add highlight to the target element
     target.classList.add('tour-highlight');
+    
+    // Add mobile mode class to body if on mobile
+    if (isMobile) {
+      document.body.classList.add('tour-mobile-mode');
+    } else {
+      document.body.classList.remove('tour-mobile-mode');
+    }
     
     // Scroll the element into view if needed
     if (
@@ -131,8 +196,9 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
     // Cleanup highlight when component unmounts
     return () => {
       target.classList.remove('tour-highlight');
+      document.body.classList.remove('tour-mobile-mode');
     };
-  }, [step, step.targetSelector, step.position]);
+  }, [step, step.targetSelector, step.position, isMobile]);
 
   return (
     <AnimatePresence>
@@ -148,31 +214,31 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
           left: position.left,
           transformOrigin: position.transformOrigin,
           zIndex: 9999,
-          maxWidth: '400px',
-          width: '90%',
+          maxWidth: isMobile ? '90vw' : '400px',
+          width: isMobile ? 'calc(100% - 32px)' : '90%',
         }}
-        className="tour-tooltip"
+        className={cn("tour-tooltip", isMobile && "mobile-speech-bubble")}
       >
         <Card className="border-2 border-primary/20 shadow-lg">
-          <CardHeader className="pb-2">
+          <CardHeader className={cn("pb-2", isMobile && "p-3")}>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium">{step.title}</CardTitle>
+              <CardTitle className={cn("text-lg font-medium", isMobile && "text-base")}>{step.title}</CardTitle>
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8" 
+                className={cn("h-8 w-8", isMobile && "h-6 w-6")} 
                 onClick={onClose}
               >
-                <X className="h-4 w-4" />
+                <X className={cn("h-4 w-4", isMobile && "h-3 w-3")} />
               </Button>
             </div>
           </CardHeader>
           
-          <CardContent className="prose prose-sm max-w-none pt-0 pb-2">
+          <CardContent className={cn("prose prose-sm max-w-none pt-0 pb-2", isMobile && "p-3 pt-0")}>
             <p>{personalizedContent()}</p>
           </CardContent>
           
-          <CardFooter className="flex justify-between pt-2 flex-wrap gap-2">
+          <CardFooter className={cn("flex justify-between pt-2 flex-wrap gap-2", isMobile && "p-3 pt-1")}>
             <div className="flex items-center space-x-1">
               {Array.from({ length: totalSteps }).map((_, index) => (
                 <div
@@ -191,7 +257,7 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
                   variant="ghost" 
                   size="sm" 
                   onClick={onSkip} 
-                  className="h-8 text-xs"
+                  className={cn("h-8 text-xs", isMobile && "h-7 text-xs px-2")}
                 >
                   Skip
                 </Button>
@@ -202,9 +268,9 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
                   variant="outline" 
                   size="sm" 
                   onClick={onPrev} 
-                  className="h-8"
+                  className={cn("h-8", isMobile && "h-7 text-xs px-2")}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  <ChevronLeft className={cn("h-4 w-4 mr-1", isMobile && "h-3 w-3")} />
                   Back
                 </Button>
               )}
@@ -213,10 +279,12 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
                 variant="default" 
                 size="sm" 
                 onClick={onNext} 
-                className="h-8"
+                className={cn("h-8", isMobile && "h-7 text-xs px-2")}
               >
                 {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
-                {currentStepIndex !== totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-1" />}
+                {currentStepIndex !== totalSteps - 1 && 
+                  <ChevronRight className={cn("h-4 w-4 ml-1", isMobile && "h-3 w-3")} />
+                }
               </Button>
             </div>
           </CardFooter>

@@ -37,15 +37,65 @@
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
+/* Mobile mode specific styles */
+.tour-mobile-mode .mobile-speech-bubble {
+  font-size: 0.875rem !important;
+  max-height: 70vh !important;
+  overflow-y: auto !important;
+}
+
+/* Prevent tooltips from going off screen on mobile */
+.tour-mobile-mode .tour-tooltip {
+  max-width: 90vw !important;
+  width: calc(100% - 32px) !important;
+}
+
+/* Make buttons more compact on mobile */
+.tour-mobile-mode .tour-tooltip button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Responsive adjustments for all screen sizes */
+@media (max-width: 768px) {
   .tour-tooltip {
     width: calc(100% - 32px) !important;
-    max-width: calc(100% - 32px) !important;
+    max-width: 90vw !important;
   }
   
   .tour-highlight {
     outline-offset: 2px;
+  }
+  
+  /* Smaller padding and font size on mobile */
+  .tour-tooltip .card-header {
+    padding: 0.75rem !important;
+  }
+  
+  .tour-tooltip .card-content {
+    padding: 0.75rem !important;
+    padding-top: 0 !important;
+  }
+  
+  .tour-tooltip .card-footer {
+    padding: 0.75rem !important;
+    padding-top: 0.5rem !important;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .tour-tooltip {
+    max-width: calc(100% - 24px) !important;
+  }
+  
+  /* Force bottom positioning for very small screens */
+  .tour-tooltip {
+    bottom: 20px !important;
+    left: 12px !important;
+    top: auto !important;
+    right: auto !important;
+    width: calc(100% - 24px) !important;
   }
 }
 
