@@ -40,10 +40,11 @@ export default function TourGuide() {
       const isMobileDevice = window.innerWidth < 768 || window.matchMedia('(any-pointer: coarse)').matches;
       
       if (isMobileDevice) {
-        // Mobile - position Fundi at the bottom left
+        // For mobile, we'll use CSS positioning instead of JavaScript
+        // Just set a fixed position that will be overridden by CSS
         setPosition({ 
           x: 10,
-          y: Math.max(window.innerHeight - 100, 10) 
+          y: 10
         });
         // Apply mobile mode class to body for CSS targeting
         document.body.classList.add('tour-mobile-mode');
@@ -281,14 +282,14 @@ export default function TourGuide() {
             
             {/* Controls */}
             <div className="flex justify-between items-center">
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2">
                 {/* Previous button (conditionally shown) */}
                 {currentStepIndex > 0 && currentStep.showPrevButton !== false && (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={prevStep}
-                    className="gap-1"
+                    className="gap-1 px-2 sm:px-3"
                   >
                     <ChevronLeft className="h-4 w-4" />
                     <span className="hidden sm:inline">Previous</span>
@@ -301,9 +302,9 @@ export default function TourGuide() {
                     variant="ghost"
                     size="sm"
                     onClick={skipTour}
-                    className="text-gray-500"
+                    className="text-gray-500 px-2 sm:px-3"
                   >
-                    <X className="h-4 w-4 mr-1" />
+                    <X className="h-4 w-4" />
                     <span className="hidden sm:inline">Skip</span>
                   </Button>
                 )}
@@ -314,7 +315,7 @@ export default function TourGuide() {
                 variant="default"
                 size="sm"
                 onClick={nextStep}
-                className="gap-1"
+                className="gap-1 px-2 sm:px-3"
               >
                 {currentStepIndex === totalSteps - 1 ? (
                   <>

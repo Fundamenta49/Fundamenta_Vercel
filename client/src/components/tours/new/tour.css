@@ -29,14 +29,14 @@
 
 /* Fundi positioning for mobile */
 .tour-mobile-mode .mobile-tour-fundi {
-  bottom: 20px !important;
+  bottom: 80px !important;
   left: 20px !important;
   transform: none !important;
   top: auto !important;
   right: auto !important;
   position: fixed !important;
   z-index: 99999 !important;
-  transform: scale(0.9) !important;
+  transform: scale(0.7) !important;
   transform-origin: bottom left !important;
   transition: all 0.3s ease-in-out !important;
 }
@@ -44,19 +44,21 @@
 /* Speech bubble positioning for mobile */
 .tour-mobile-mode .mobile-speech-bubble {
   width: calc(100vw - 40px) !important;
-  max-width: 300px !important;
-  bottom: 90px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
+  max-width: 270px !important;
+  bottom: 140px !important;
+  left: 20px !important;
+  transform: none !important;
   top: auto !important;
   right: auto !important;
   position: fixed !important;
   max-height: 40vh !important;
   overflow-y: auto !important;
-  font-size: 0.95rem !important;
+  font-size: 0.9rem !important;
   z-index: 99990 !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
-  border: 1px solid rgba(220, 220, 220, 0.5) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid rgba(229, 231, 235, 0.8) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(4px) !important;
 }
 
 /* Make buttons more compact on mobile */
