@@ -16,7 +16,22 @@ const TourGuide: React.FC = () => {
   // Set up step positioning only when current step changes
   // Find and track the tour button's position
   useEffect(() => {
-    if (!isTourActive) return;
+    // If tour is active, hide the docked Fundi character
+    const fundiDockElements = document.querySelectorAll('.fundi-dock-wrapper');
+    if (isTourActive) {
+      fundiDockElements.forEach(el => {
+        if (el instanceof HTMLElement) {
+          el.style.display = 'none';
+        }
+      });
+    } else {
+      fundiDockElements.forEach(el => {
+        if (el instanceof HTMLElement) {
+          el.style.display = '';
+        }
+      });
+      return; // Exit early if tour isn't active
+    }
     
     // Find the tour button element
     const updateTourButtonPosition = () => {
@@ -181,8 +196,8 @@ const TourGuide: React.FC = () => {
             className="fixed left-1/2 -translate-x-1/2"
             style={{
               zIndex: 100001,
-              // Positioning for both mobile and desktop - always relative to tour button
-              top: tourButtonPosition.top + 70,
+              // Positioning for both mobile and desktop - directly above the tour button
+              top: window.innerWidth < 768 ? tourButtonPosition.top - 220 : tourButtonPosition.top - 80,
               transform: 'translateX(-50%)'
             }}
           >
