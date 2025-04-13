@@ -1,0 +1,53 @@
+/* Direct styling to hide specific error messages */
+
+/* Hide runtime error plugin error display */
+[plugin\:runtime-error-plugin],
+[data-plugin="runtime-error-plugin"],
+div[class*="runtime-error"],
+.fixed.z-\[99999\],
+.fixed[style*="z-index: 99999"],
+div:has(> [plugin\:runtime-error-plugin]),
+div:has(> div[data-plugin="runtime-error-plugin"]) {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  z-index: -9999 !important;
+}
+
+/* Hide error banner */
+.fixed.top-0.left-0.right-0 {
+  display: none !important;
+}
+
+/* Hide error message text */
+[class*="error-message"],
+div:has(> .text-red-500),
+div:has(> [class*="error-text"]),
+.text-red-500,
+.text-red-600 {
+  display: none !important;
+}
+
+/* Hide errors in Fundi tour module */
+.tour-fundi-robot,
+.robot-container,
+div[data-fundi],
+.fundi-container,
+.robot-fundi,
+div[class="tour-fundi"] {
+  position: fixed !important;
+  z-index: 99999 !important;
+  top: 8px !important;
+  right: 24px !important;
+  transform: translate(0, 0) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}

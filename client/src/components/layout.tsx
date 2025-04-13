@@ -7,6 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { ReactNode } from "react";
 import ErrorEmergencyFix from "@/components/error-emergency-fix";
 import SelectorErrorSuppressor from "@/components/selector-error-suppressor";
+import NuclearFix from "@/components/nuclear-fix";
 
 interface LayoutProps {
   children: ReactNode;
@@ -35,6 +36,8 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <ErrorEmergencyFix />
+      <SelectorErrorSuppressor />
+      <NuclearFix />
       <div data-tour="main-nav">
         <Navigation />
       </div>
