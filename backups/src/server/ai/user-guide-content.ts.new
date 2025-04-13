@@ -1,0 +1,81 @@
+/**
+ * User-friendly guidance content for Fundi
+ * This file contains simple, conversational explanations of app features
+ * designed to help users without overwhelming them with technical details.
+ */
+
+export const userGuideContent = `
+# Fundamenta App - User Guidance
+
+## Finance Features
+
+### Budget Planner
+The Budget Planner helps you track where your money goes. You can:
+- Add your income and expenses
+- See colorful charts that show your spending
+- Set goals to save more each month
+- Get alerts if you're spending too much in one area
+
+### Investment Tracker
+Keep an eye on your investments in one place:
+- See how your investments are performing
+- Get simple explanations of investment terms
+- Find out if your investments are balanced
+- Track your progress toward financial goals
+
+### Mortgage Calculator
+Planning to buy a home? This tool helps you:
+- See how much house you can afford
+- Compare different loan options side by side
+- Understand how your monthly payment breaks down
+- Plan for property taxes and insurance costs
+`;
+
+// Guide prompt for Fundi to use a user-friendly approach
+export const userGuidePrompt = `
+As Fundi, your role is to provide practical, user-friendly guidance about the application.
+
+Key principles for your guidance:
+1. Use simple, everyday language - avoid technical jargon
+2. Keep explanations brief and focused on immediate user needs
+3. Explain things in terms of what the user wants to accomplish
+4. Offer step-by-step guidance for complex tasks
+5. Adapt your explanations to the user's level of understanding
+6. Use analogies and real-world examples to illustrate concepts
+7. Provide just-in-time help - only what's needed in the current context
+8. Start with basic information and offer more details only if asked
+9. Answer "how do I..." questions with concrete steps, not theory
+10. Focus on benefits and outcomes, not features and technicalities
+
+When users ask about how to do something:
+- Provide 2-3 clear steps to accomplish their goal
+- Explain where to find relevant controls or options
+- Mention any helpful shortcuts or tips
+- Offer encouragement and positive reinforcement
+
+Always maintain Fundi's warm, supportive personality while guiding users.
+`;
+
+// Map of feature IDs to simple usage instructions
+export const quickGuideInstructions: Record<string, string> = {
+  'budget-planner': 'To use the Budget Planner, start by adding your income sources, then add your regular expenses by category. The charts will update automatically to show your spending breakdown.',
+  
+  'investment-tracker': 'To track investments, first add each investment account or asset. Then enter the current value and purchase date. The dashboard will show performance over time and suggest improvements to your portfolio.',
+  
+  'mortgage-calculator': 'Enter your home price, down payment amount, interest rate, and loan term. The calculator will show your estimated monthly payment broken down by principal, interest, taxes, and insurance.',
+  
+  'loan-comparison': 'Add up to 5 different loans with their details (amount, interest rate, term, fees). The tool will compare them side by side and highlight the best option based on total cost.',
+  
+  'retirement-calculator': 'Enter your current age, retirement age, current savings, and monthly contributions. The calculator will estimate your retirement income and suggest adjustments if needed.',
+  
+  'resume-builder': 'Choose a template first, then fill in your personal information, work history, education, and skills. Use the AI suggestions to improve your wording and highlight relevant experience.'
+};
+
+// Context-specific guidance based on user activities
+export const contextualGuidance: Record<string, string> = {
+  'first-visit': 'Welcome to Fundamenta! I\'m Fundi, your friendly guide. Tap on any section that interests you to explore, or ask me specific questions about what you want to learn.',
+  
+  'budget-creation': 'Creating your first budget? Start simple - just add your income and major expenses. You can always add more detail later as you get comfortable with tracking your finances.',
+  
+  'investment-beginner': 'New to investing? Don\'t worry about the complex terms. Start by learning about basic investment types in the Learning section, then return here when you\'re ready to track your first investment.'
+};

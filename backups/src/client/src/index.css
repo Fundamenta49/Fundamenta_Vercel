@@ -1,0 +1,688 @@
+@import '@fontsource/lora/400.css';
+@import '@fontsource/lora/700.css';
+/* Calendar CSS imports removed */
+@import './styles/enhanced-scroll-area.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-rgb: 99, 102, 241;
+}
+
+/* Design System Colors */
+:root {
+  /* Section-Specific Colors */
+  --emergency-color: #b91c1c;
+  --financial-color: #3b82f6;
+  --wellness-color: #10b981;
+  --career-color: #8b5cf6;
+  --learning-color: #f59e0b;
+  
+  /* For backward compatibility */
+  --emergency-rgb: 185, 28, 28;
+  --financial-rgb: 59, 130, 246;
+  --wellness-rgb: 16, 185, 129;
+  --career-rgb: 139, 92, 246;
+  --learning-rgb: 245, 158, 11;
+}
+
+/* Legacy category colors for backward compatibility */
+[data-category="finance"] {
+  --primary-rgb: 34, 197, 94;
+}
+
+[data-category="career"] {
+  --primary-rgb: 59, 130, 246;
+}
+
+[data-category="wellness"] {
+  --primary-rgb: 168, 85, 247;
+}
+
+[data-category="learning"] {
+  --primary-rgb: 249, 115, 22;
+}
+
+[data-category="fitness"] {
+  --primary-rgb: 236, 72, 153;
+}
+
+[data-category="emergency"] {
+  --primary-rgb: 239, 68, 68;
+}
+
+/* Custom utilities */
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* Section-specific border utilities */
+  .border-emergency {
+    border-color: #b91c1c;
+  }
+  
+  .border-financial {
+    border-color: #3b82f6;
+  }
+  
+  .border-wellness {
+    border-color: #10b981;
+  }
+  
+  .border-career {
+    border-color: #8b5cf6;
+  }
+  
+  .border-learning {
+    border-color: #f59e0b;
+  }
+}
+
+@layer base {
+  :root {
+    --sidebar-width: 16rem;
+    --primary: 200 27% 23%;
+    --primary-foreground: 0 0% 96%;
+    --background: 0 0% 96%;
+    --foreground: 0 0% 18%;
+    --muted: 208 26% 48%;
+    --muted-foreground: 0 0% 18%;
+    --card: 0 0% 96%;
+    --card-foreground: 0 0% 18%;
+    --accent: 177 23% 71%;
+    --accent-foreground: 200 27% 23%;
+    --wood: 26 19% 69%;
+    --wood-light: 25 31% 75%;
+    --wood-dark: 26 19% 59%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 26 19% 69%;
+    --input: 0 0% 96%;
+    --ring: 208 26% 48%;
+    --radius: 0.75rem;
+  }
+
+  body {
+    @apply bg-texture font-serif text-navy-600;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  /* Add a new class for input text color */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  textarea {
+    @apply text-black placeholder:text-navy-300;
+  }
+
+  main {
+    flex: 1;
+    padding: 1rem;
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    transition: margin-left 0.3s ease;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  body.sidebar-minimized {
+    --sidebar-width: 5rem;
+  }
+
+  nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 50;
+    transition: width 0.3s ease;
+    background-color: #1C3D5A;
+  }
+
+  .card {
+    @apply rounded-lg transition-all duration-300 p-4;
+    border: 1px solid rgba(92, 64, 51, 0.1);
+    background-color: #F5F5F5 !important;
+    color: #2E2E2E !important;
+    width: 100%;
+  }
+
+  .card:hover {
+    @apply shadow-md;
+    border-color: rgba(92, 64, 51, 0.2);
+  }
+
+  .tabs-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 0.5rem;
+    margin-bottom: -0.5rem;
+  }
+
+  .tabs-container [role="tablist"] {
+    display: inline-flex;
+    min-width: min-content;
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  h1 {
+    @apply text-2xl font-bold text-center mb-6;
+  }
+
+  @media (min-width: 640px) {
+    h1 {
+      @apply text-3xl;
+    }
+    .card {
+      @apply p-6;
+    }
+  }
+
+  .max-w-4xl {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .bg-texture {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: auto;
+    background-position: center;
+  }
+
+  @media (max-width: 639px) {
+    main {
+      margin-left: 0;
+      width: 100%;
+      padding: 1rem 0.5rem;
+      overflow-x: hidden;
+    }
+    
+    .card {
+      padding: 0.75rem;
+    }
+    
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .grid {
+      grid-gap: 0.75rem;
+    }
+    
+    [role="dialog"] {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+  }
+
+  .scroll-container-x::-webkit-scrollbar,
+  .tabs-container::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .scroll-container-x::-webkit-scrollbar-track,
+  .tabs-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scroll-container-x::-webkit-scrollbar-thumb,
+  .tabs-container::-webkit-scrollbar-thumb {
+    background: var(--wood);
+    border-radius: 4px;
+  }
+
+  .scroll-container-x::-webkit-scrollbar-thumb:hover,
+  .tabs-container::-webkit-scrollbar-thumb:hover {
+    background: var(--wood-light);
+  }
+  
+  /* Fix for full-screen dialogs */
+  [role="dialog"] > div {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+}
+
+/* Ensure robot-fundi is always visible and above all other elements */
+.robot-fundi {
+  z-index: 99999 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Category-specific accent colors */
+.accent-financial {
+  color: var(--financial-color);
+}
+
+.accent-wellness {
+  color: var(--wellness-color);
+}
+
+.accent-career {
+  color: var(--career-color);
+}
+
+.accent-learning {
+  color: var(--learning-color);
+}
+
+.accent-emergency {
+  color: var(--emergency-color);
+}
+
+.bg-financial {
+  background-color: var(--financial-color);
+}
+
+.bg-wellness {
+  background-color: var(--wellness-color);
+}
+
+.bg-career {
+  background-color: var(--career-color);
+}
+
+.bg-learning {
+  background-color: var(--learning-color);
+}
+
+.bg-emergency {
+  background-color: var(--emergency-color);
+}
+
+.border-financial {
+  border-color: var(--financial-color);
+}
+
+.border-wellness {
+  border-color: var(--wellness-color);
+}
+
+.border-career {
+  border-color: var(--career-color);
+}
+
+.border-learning {
+  border-color: var(--learning-color);
+}
+
+.border-emergency {
+  border-color: var(--emergency-color);
+}
+
+/* Code highlighting styles */
+code {
+  @apply bg-gray-100 rounded px-1 py-0.5 text-sm;
+}
+
+pre {
+  @apply bg-gray-100 rounded p-3 overflow-x-auto text-sm;
+}
+
+pre code {
+  @apply bg-transparent p-0;
+}
+
+.code-block {
+  @apply bg-gray-100 rounded-md p-4 my-3 overflow-x-auto text-sm;
+}
+
+/* Button sizes with matching UI */
+.button-xs {
+  @apply px-2 py-1 text-xs rounded;
+}
+
+.button-sm {
+  @apply px-3 py-1.5 text-sm rounded-md;
+}
+
+.button-md {
+  @apply px-4 py-2 text-base rounded-md;
+}
+
+.button-lg {
+  @apply px-5 py-2.5 text-lg rounded-lg;
+}
+
+.button-xl {
+  @apply px-6 py-3 text-xl rounded-lg;
+}
+
+/* Truncate text with ellipsis */
+.truncate-1-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-2-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-3-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Specialized form styling */
+.form-field {
+  @apply mb-4;
+}
+
+.form-label {
+  @apply block text-sm font-medium mb-1;
+}
+
+.form-input {
+  @apply block w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.form-error {
+  @apply text-red-600 text-sm mt-1;
+}
+
+.form-help {
+  @apply text-gray-500 text-xs mt-1;
+}
+
+/* Vehicle page specific CSS that doesn't involve tour */
+.vehicle-maintenance-page {
+  position: relative;
+  padding-top: 20px;
+}
+
+@media (min-width: 641px) {
+  .vehicle-maintenance-page {
+    position: relative;
+    padding-top: 150px; /* Original desktop padding */
+  }
+}
+
+/* Regular image styling */
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+.img-thumbnail {
+  @apply rounded-md border border-gray-200;
+  max-width: 100%;
+  height: auto;
+}
+
+.img-circle {
+  @apply rounded-full;
+}
+
+.img-shadow {
+  @apply shadow-md;
+}
+
+/* Table styling */
+.table-container {
+  @apply overflow-x-auto;
+}
+
+.table-basic {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+.table-basic th {
+  @apply px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50;
+}
+
+.table-basic td {
+  @apply px-4 py-3 text-sm text-gray-500;
+}
+
+.table-basic tr {
+  @apply bg-white;
+}
+
+.table-basic tr:nth-child(even) {
+  @apply bg-gray-50;
+}
+
+.table-bordered {
+  @apply border border-gray-200;
+}
+
+.table-bordered th,
+.table-bordered td {
+  @apply border border-gray-200;
+}
+
+/* Fix dialog overlay */
+.dialog-overlay {
+  @apply bg-black/50 backdrop-blur-sm;
+}
+
+/* Fundi robot positioning and general styling */
+.fundi-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+}
+
+.fundi-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.fundi-button:hover {
+  transform: scale(1.1);
+}
+
+.fundi-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.speech-bubble {
+  position: absolute;
+  bottom: 65px;
+  right: 0;
+  max-width: 320px;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Media query for mobile */
+@media (max-width: 640px) {
+  .fundi-container {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  
+  .speech-bubble {
+    max-width: 280px;
+    right: 0;
+  }
+}
+
+/* Home page specific styling */
+.hero-section {
+  @apply py-10 md:py-20 text-center relative;
+}
+
+.features-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.feature-card {
+  @apply bg-white rounded-lg p-6 shadow-sm transition-all duration-300;
+}
+
+.feature-card:hover {
+  @apply shadow-md;
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  @apply w-12 h-12 mx-auto mb-4 text-primary;
+}
+
+/* Dashboard-specific styling */
+.stats-card {
+  @apply rounded-lg shadow-sm p-4 bg-white;
+}
+
+.stats-value {
+  @apply text-2xl font-bold;
+}
+
+.stats-label {
+  @apply text-sm text-gray-500;
+}
+
+.progress-bar {
+  @apply bg-gray-200 rounded-full h-2 overflow-hidden;
+}
+
+.progress-bar-fill {
+  @apply h-full rounded-full;
+}
+
+/* Fix tab panel height */
+[role="tabpanel"] {
+  @apply min-h-[200px];
+}
+
+/* Calendar event styling - simplified */
+.calendar-event {
+  @apply rounded px-2 py-1 text-xs truncate w-full;
+}
+
+.calendar-grid {
+  @apply grid grid-cols-7 text-center;
+}
+
+.calendar-day {
+  @apply border border-gray-200 min-h-[80px] p-1;
+}
+
+/* Vehicle maintenance page layout */
+.maintenance-layout {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-4;
+}
+
+.maintenance-sidebar {
+  @apply lg:col-span-1;
+}
+
+.maintenance-content {
+  @apply lg:col-span-2;
+}
+
+/* Fix for dark mode compatibility */
+:root.dark {
+  --background: 0 0% 10%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 12%;
+  --card-foreground: 0 0% 95%;
+  --muted: 208 26% 20%;
+  --muted-foreground: 0 0% 70%;
+  --primary: 215 70% 60%;
+  --primary-foreground: 0 0% 98%;
+}
+
+/* Fitness tracker specific styling */
+.workout-card {
+  @apply rounded-lg p-4 bg-white shadow-sm border border-gray-200 mb-4;
+}
+
+.workout-header {
+  @apply font-bold text-lg mb-2 flex justify-between;
+}
+
+.workout-stats {
+  @apply grid grid-cols-3 gap-2 text-center mb-3;
+}
+
+.stat-box {
+  @apply rounded bg-gray-100 p-2;
+}
+
+.stat-value {
+  @apply font-bold text-lg;
+}
+
+.stat-label {
+  @apply text-xs text-gray-500;
+}
+
+/* Fundi's container styling */
+.floating-chat-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.speech-bubble-container {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 300px;
+  max-width: 90vw;
+  background: white;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}

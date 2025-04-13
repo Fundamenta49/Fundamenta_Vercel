@@ -1,0 +1,54 @@
+/* Custom resize handle styles */
+.resize-handler {
+  resize: both;
+  overflow: auto;
+}
+
+.resize-handler::-webkit-resizer {
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent #cbd5e1 #cbd5e1 transparent;
+  background-color: white;
+  border-radius: 2px;
+}
+
+/* Animation styles for glow effects */
+@keyframes glow {
+  0% { filter: drop-shadow(0 0 2px var(--glow-color)); }
+  50% { filter: drop-shadow(0 0 8px var(--glow-color)); }
+  100% { filter: drop-shadow(0 0 2px var(--glow-color)); }
+}
+
+.animate-glow-finance {
+  --glow-color: #22c55e;
+  animation: glow 2s infinite;
+}
+
+.animate-glow-career {
+  --glow-color: #3b82f6;
+  animation: glow 2s infinite;
+}
+
+.animate-glow-wellness {
+  --glow-color: #a855f7;
+  animation: glow 2s infinite;
+}
+
+.animate-glow-learning {
+  --glow-color: #f97316;
+  animation: glow 2s infinite;
+}
+
+.animate-glow-general {
+  --glow-color: #6366f1;
+  animation: glow 2s infinite;
+}
+
+/* Cursor styles for dragging */
+.cursor-grab {
+  cursor: grab;
+}
+
+.cursor-grabbing {
+  cursor: grabbing;
+}

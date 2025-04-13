@@ -1,0 +1,128 @@
+/* Enhanced scroll area styles for better mobile touch handling */
+
+.dialog-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  padding-right: 10px; /* Add padding to avoid content touching the edge */
+  padding-bottom: 20px; /* Add more space at the bottom for better scrolling */
+}
+
+/* Improve scroll area targeting - make it easier to grab */
+.dialog-scroll-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  z-index: 10;
+  cursor: ns-resize; /* Indicate scrollability */
+  opacity: 0; /* Invisible but provides better touch target */
+}
+
+/* Prevent content from jumping when scrolling on mobile */
+.dialog-scroll-container::-webkit-scrollbar {
+  width: 6px; /* Slightly wider scrollbar */
+}
+
+.dialog-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.dialog-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25); /* Slightly darker for better visibility */
+  border-radius: 8px;
+}
+
+/* Fix for touch scrolling on mobile devices */
+[data-radix-scroll-area-viewport] {
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  height: 100% !important;
+  scroll-behavior: smooth !important; /* Smoother scrolling experience */
+}
+
+/* Make sure the viewport and thumb are properly positioned */
+[data-radix-scroll-area-viewport] > div {
+  display: block !important;
+  min-height: 100% !important;
+  width: 100% !important;
+}
+
+/* Override default touchAction to ensure content is scrollable */
+[data-radix-scroll-area-viewport] * {
+  touch-action: auto !important; /* Allow scrolling by default */
+}
+
+/* Add a subtle indicator at the top and bottom to show scrollable content */
+.dialog-scroll-container.is-scrollable::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20px;
+  background: linear-gradient(to top, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Visual feedback for scrollable areas - subtle animation to indicate scrollability */
+.dialog-scroll-container.is-scrollable {
+  position: relative;
+}
+
+.dialog-scroll-container.is-scrollable::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 20px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* Subtle animation for scroll indicator on mobile */
+@media (max-width: 640px) {
+  .dialog-scroll-container.is-scrollable::after {
+    animation: pulseIndicator 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulseIndicator {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.2; }
+  }
+}
+
+/* Ensure proper scroll behavior especially in dialog contexts */
+@media (max-width: 640px) {
+  .dialog-scroll-container {
+    overscroll-behavior-y: contain;
+    max-height: calc(100vh - 9rem); /* Slightly more space */
+    padding-bottom: 1.5rem;
+  }
+  
+  /* Additional mobile fixes */
+  [data-radix-scroll-area-viewport] {
+    max-height: calc(100vh - 9rem) !important;
+  }
+  
+  /* Make scrollable areas more obvious on mobile */
+  .dialog-scroll-container {
+    mask-image: linear-gradient(to bottom, 
+                 transparent 0,
+                 black 10px,
+                 black calc(100% - 30px),
+                 transparent 100%);
+  }
+}
