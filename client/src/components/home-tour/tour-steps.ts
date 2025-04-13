@@ -69,7 +69,7 @@ export const useTourSteps = () => {
       animationType: 'nod'
     },
     
-    // Step 6: Wellness & Nutrition card - Fixed highlight color
+    // Step 6: Wellness & Nutrition card - Fixed highlight color with corrected target ID
     {
       title: 'Wellness Wonderland',
       content: `Because you can't pour from an empty cup! ✨ Discover meditation that doesn't make you fall asleep, nutrition that's about joy (not just kale), and self-care that fits your real life. Your mind and body will high-five you!`,
