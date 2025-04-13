@@ -326,11 +326,16 @@ function Router() {
   );
 }
 
+// Import our new tour system
+import TourSystem from '@/components/tours/new';
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router />
+        <TourSystem>
+          <Router />
+        </TourSystem>
       </AuthProvider>
     </QueryClientProvider>
   );
