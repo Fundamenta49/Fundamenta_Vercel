@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { 
@@ -6,113 +6,82 @@ import {
   Briefcase, Heart, Activity, AlertCircle 
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { Link, useLocation } from 'wouter';
 
 /**
  * A simplified, direct implementation of a tour system.
- * This avoids the complexity of context providers and multiple files.
+ * This keeps the user on the home page and focuses on explaining 
+ * the different feature cards without navigating between pages.
  */
 export function SimpleTourButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const { user } = useAuth();
-  const [location, setLocation] = useLocation();
   
   // Get user's actual name
   const userName = user?.name 
     ? user.name.split(' ')[0] // Get first name only
     : 'there';
   
-  // Tour steps with actual navigation and card explanations
+  // Tour steps that explain each card but don't navigate
   const steps = [
     {
       title: `Welcome to Fundamenta, ${userName}!`,
       content: 'I\'m Fundi, your AI guide to a more confident life! I\'m here to show you around and help you get the most out of Fundamenta. Let\'s explore the features together!',
-      path: '/',
       icon: <HelpCircle className="h-6 w-6 text-blue-500" />
     },
     {
       title: 'Life Skills',
       content: 'Learn essential skills for daily life, boost your personal development, and discover resources for continuous learning. This is your hub for becoming more confident in everyday situations.',
-      path: '/learning',
       icon: <GraduationCap className="h-6 w-6 text-orange-500" />
     },
     {
       title: 'Financial Literacy',
       content: 'Take control of your money with budgeting tools, savings strategies, and long-term financial planning. Become financially independent with personalized guidance.',
-      path: '/finance',
       icon: <DollarSign className="h-6 w-6 text-green-500" />
     },
     {
       title: 'Career Development',
       content: 'Build an outstanding resume, prepare for job interviews, and develop professional skills that make you stand out to employers.',
-      path: '/career',
       icon: <Briefcase className="h-6 w-6 text-blue-500" />
     },
     {
       title: 'Wellness & Nutrition',
       content: 'Support your mental health with meditation guides, stress management tools, and nutrition advice tailored to your lifestyle goals.',
-      path: '/wellness',
       icon: <Heart className="h-6 w-6 text-purple-500" />
     },
     {
       title: 'Active You',
       content: 'Get personalized AI-powered workout plans, track your fitness progress, and stay motivated with custom exercise routines.',
-      path: '/active',
       icon: <Activity className="h-6 w-6 text-pink-500" />
     },
     {
       title: 'Emergency Guidance',
       content: 'Access step-by-step guidance for handling emergency situations confidently. Be prepared for the unexpected with clear instructions.',
-      path: '/emergency',
       icon: <AlertCircle className="h-6 w-6 text-red-500" />
     },
     {
       title: `You're All Set, ${userName}!`,
-      content: 'That\'s it! You\'ve seen all the amazing features Fundamenta has to offer. I\'m here whenever you need me. Let\'s make life more LIFEABLE together!',
-      path: '/',
+      content: 'That\'s it! You\'ve seen all the amazing features Fundamenta has to offer. After you close this tour, feel free to click on any card to explore that feature. I\'m here whenever you need me. Let\'s make life more LIFEABLE together!',
       icon: <HelpCircle className="h-6 w-6 text-blue-500" />
     }
   ];
   
-  // Keep track of the original location
-  const [startLocation] = useState(location);
-  
-  // Start the tour
+  // Simple tour control functions without navigation
   const startTour = () => {
     setCurrentStep(0);
     setIsOpen(true);
-    // Navigate to home for the first step
-    if (location !== '/') {
-      setLocation('/');
-    }
   };
   
-  // Go to the next step or finish the tour
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
-      // Go to next step
-      const nextIdx = currentStep + 1;
-      setCurrentStep(nextIdx);
-      
-      // Navigate to the next path if it's different
-      if (location !== steps[nextIdx].path) {
-        setLocation(steps[nextIdx].path);
-      }
+      setCurrentStep(currentStep + 1);
     } else {
-      // Tour finished
       setIsOpen(false);
     }
   };
   
-  // Close the tour
   const closeTour = () => {
     setIsOpen(false);
-    
-    // Return to original location if tour is closed early
-    if (location !== startLocation && currentStep < steps.length - 1) {
-      setLocation(startLocation);
-    }
   };
   
   return (
@@ -155,7 +124,7 @@ export function SimpleTourButton() {
               </button>
               
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-full bg-opacity-10 bg-current">
+                <div className={`p-2 rounded-full bg-slate-100 flex items-center justify-center`}>
                   {steps[currentStep].icon}
                 </div>
                 <h3 className="text-xl font-bold">{steps[currentStep].title}</h3>
