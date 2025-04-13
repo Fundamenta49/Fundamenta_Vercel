@@ -183,18 +183,18 @@ const TourGuide: React.FC = () => {
               zIndex: 100001,
               // Desktop position - always relative to tour button
               top: window.innerWidth > 768 ? tourButtonPosition.top + 100 : 
-              // Mobile position - prevent from going off-screen
-                Math.min(tourButtonPosition.top + 100, window.innerHeight * 0.5),
+              // Mobile position - place in the top third of screen, but not too close to the top
+                window.innerHeight * 0.25,
               transform: 'translateX(-50%)'
             }}
           >
             {/* Tour Content */}
-            <Card className="w-[90vw] max-w-[340px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
+            <Card className="w-[85vw] max-w-[280px] md:max-w-[340px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
               {/* Blur effect behind card */}
               <div className="absolute -inset-[5px] rounded-xl bg-white/10 backdrop-blur-sm -z-10"></div>
               
-              {/* Fundi Character - Positioned at the center top of the card, moved up 5px */}
-              <div className="absolute -top-[70px] left-1/2 transform -translate-x-1/2 z-10">
+              {/* Fundi Character - Mobile adjustments for better positioning */}
+              <div className="absolute -top-[70px] left-1/2 transform -translate-x-1/2 z-10 hidden md:block">
                 {currentTourStep?.showFundiAnimation ? (
                   <motion.div
                     key={`fundi-animation-${currentStep}-${animationKey}`}
@@ -235,7 +235,49 @@ const TourGuide: React.FC = () => {
                 )}
               </div>
               
-              <CardContent className="pt-16 pb-6 px-6">
+              {/* Mobile Fundi Character - inside the card */}
+              <div className="flex md:hidden justify-center mb-2 mt-3">
+                {currentTourStep?.showFundiAnimation ? (
+                  <motion.div
+                    key={`fundi-animation-mobile-${currentStep}-${animationKey}`}
+                    initial={{ y: 0 }}
+                    animate={
+                      currentTourStep.animationType === 'wave' 
+                        ? { rotate: [0, 15, -15, 15, -15, 0] }
+                        : currentTourStep.animationType === 'jump' 
+                          ? { y: [0, -10, 0, -5, 0] }
+                          : currentTourStep.animationType === 'spin' 
+                            ? { rotate: [0, 360] }
+                            : currentTourStep.animationType === 'dance' 
+                              ? { x: [0, 5, -5, 5, -5, 0], y: [0, -3, 0, -3, 0] }
+                              : currentTourStep.animationType === 'nod' 
+                                ? { y: [0, 3, 0, 3, 0] }
+                                : currentTourStep.animationType === 'point' 
+                                  ? { x: [0, 10, 0] }
+                                  : {}
+                    }
+                    transition={{ 
+                      duration: 1.5, 
+                      repeat: currentTourStep.animationType === 'dance' ? 1 : 0,
+                      ease: "easeInOut" 
+                    }}
+                  >
+                    <RobotFundi 
+                      size="md"
+                      category={fundiCategory}
+                      emotion="happy"
+                    />
+                  </motion.div>
+                ) : (
+                  <RobotFundi 
+                    size="md"
+                    category={fundiCategory}
+                    emotion="happy"
+                  />
+                )}
+              </div>
+              
+              <CardContent className="pt-2 md:pt-16 pb-6 px-4 md:px-6">
                 {/* Close Button */}
                 <Button 
                   variant="ghost" 
@@ -257,27 +299,28 @@ const TourGuide: React.FC = () => {
                 </div>
                 
                 {/* Tour Navigation */}
-                <div className="flex justify-between items-center mt-6 flex-wrap gap-2">
-                  <div className="flex space-x-1 overflow-x-auto max-w-[150px] sm:max-w-none">
+                <div className="flex justify-between items-center mt-4 md:mt-6 flex-wrap gap-2">
+                  <div className="flex space-x-1 overflow-x-auto max-w-[120px] xs:max-w-[150px] sm:max-w-none">
                     {Array.from({ length: totalSteps }).map((_, i) => (
                       <div
                         key={`dot-${i}`}
-                        className={`h-2 w-2 flex-shrink-0 rounded-full ${
+                        className={`h-1.5 w-1.5 md:h-2 md:w-2 flex-shrink-0 rounded-full ${
                           i === currentStep ? 'bg-primary' : 'bg-gray-300'
                         }`}
                       />
                     ))}
                   </div>
                   
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-1 md:space-x-2">
                     {currentStep > 0 && (
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={prevStep}
-                        className="flex items-center text-xs sm:text-sm"
+                        className="h-7 px-2 md:h-9 md:px-3 flex items-center text-xs"
                       >
-                        <ChevronLeft className="h-4 w-4 mr-1" /> Back
+                        <ChevronLeft className="h-3 w-3 md:h-4 md:w-4 mr-0.5 md:mr-1" /> 
+                        <span className="hidden xs:inline">Back</span>
                       </Button>
                     )}
                     
@@ -285,9 +328,19 @@ const TourGuide: React.FC = () => {
                       variant="default"
                       size="sm"
                       onClick={nextStep}
-                      className="flex items-center text-xs sm:text-sm"
+                      className="h-7 px-2 md:h-9 md:px-3 flex items-center text-xs"
                     >
-                      {currentStep === totalSteps - 1 ? 'Finish' : 'Next'} <ChevronRight className="h-4 w-4 ml-1" />
+                      {currentStep === totalSteps - 1 ? 
+                        <>
+                          <span className="hidden xs:inline">Finish</span>
+                          <span className="xs:hidden">Done</span>
+                        </> : 
+                        <>
+                          <span className="hidden xs:inline">Next</span>
+                          <span className="xs:hidden">Next</span>
+                        </>
+                      } 
+                      <ChevronRight className="h-3 w-3 md:h-4 md:w-4 ml-0.5 md:ml-1" />
                     </Button>
                   </div>
                 </div>
