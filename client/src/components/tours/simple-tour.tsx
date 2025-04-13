@@ -152,6 +152,16 @@ export function SimpleTourButton() {
       // Find the content text that mentions Fundi in the first step
       const fundiMention = document.querySelector('.tour-content-text');
       
+      // Highlight the word "Fundi" in the text
+      if (fundiMention) {
+        const content = fundiMention.innerHTML;
+        const highlightedContent = content.replace(
+          /Fundi/g, 
+          '<span class="font-bold text-blue-500">Fundi</span>'
+        );
+        fundiMention.innerHTML = highlightedContent;
+      }
+      
       // Add animation to Fundi avatar
       const fundiAvatar = document.querySelector('[data-fundi-robot]');
       if (fundiAvatar) {
