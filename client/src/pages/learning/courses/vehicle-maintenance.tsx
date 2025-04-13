@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import VehicleGuide from '@/components/vehicle-guide';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
 import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
-import InteractiveCoursesFix from '@/components/tour/interactive-courses-fix';
+// Old tour component removed
 import FundiEmergencyFix from '@/components/fundi-emergency-fix';
 
 export default function VehicleMaintenanceCourse() {
@@ -134,10 +134,7 @@ export default function VehicleMaintenanceCourse() {
   
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl relative" style={{ overflowX: 'hidden' }}>
-      {/* Emergency fix for tour dialogs */}
-      <InteractiveCoursesFix />
-      
-      {/* Use the original FundiEmergencyFix component only */}
+      {/* Old tour components removed */}
       <FundiEmergencyFix />
       
       <div className="flex items-center mb-6">
