@@ -1,6 +1,7 @@
 import React from 'react';
 import { TourProvider } from '@/contexts/tours/tour-context';
 import TourGuide from './tour-guide';
+import FounderMessage from './founder-message';
 import { availableTours } from './tour-data';
 import './tour.css';
 
@@ -13,6 +14,7 @@ export default function TourSystem({ children }: { children: React.ReactNode }) 
     <TourProvider tours={availableTours}>
       {children}
       <TourGuide />
+      <FounderMessage />
     </TourProvider>
   );
 }

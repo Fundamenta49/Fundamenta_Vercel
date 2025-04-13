@@ -156,7 +156,8 @@
   box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.5) !important; /* Blue */
 }
 
-.tour-highlight-wellness {
+.tour-highlight-wellness,
+.tour-highlight-wellness-nutrition {
   box-shadow: 0 0 0 6px rgba(147, 51, 234, 0.5) !important; /* Purple */
 }
 
