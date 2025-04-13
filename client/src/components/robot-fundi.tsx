@@ -323,12 +323,9 @@ export default function RobotFundi({
       )}
       style={{
         position: 'fixed',
-        top: document.body.classList.contains('fundi-mega-fixed') ? '290px' : '8px', // Use mega fix position if active
-        left: document.body.classList.contains('fundi-mega-fixed') ? '50%' : 'auto', // Center if mega fix active
-        right: document.body.classList.contains('fundi-mega-fixed') ? 'auto' : '24px', // Only use right if mega fix inactive
-        transform: document.body.classList.contains('fundi-mega-fixed') 
-          ? 'translateX(-50%)' // Center transform if mega fix active
-          : `translate(${position.x}px, ${position.y}px)`, // Regular transform otherwise
+        top: '8px',
+        right: '24px',
+        transform: `translate(${position.x}px, ${position.y}px)`,
         zIndex: 9999,
         touchAction: 'none',
         userSelect: 'none',

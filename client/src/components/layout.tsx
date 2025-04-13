@@ -5,10 +5,6 @@ import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ReactNode } from "react";
-import ErrorEmergencyFix from "@/components/error-emergency-fix";
-import SelectorErrorSuppressor from "@/components/selector-error-suppressor";
-import NuclearFix from "@/components/nuclear-fix";
-import FundiReplacement from "@/components/fundi-replacement";
 
 interface LayoutProps {
   children: ReactNode;
@@ -36,10 +32,6 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <ErrorEmergencyFix />
-      <SelectorErrorSuppressor />
-      <NuclearFix />
-      <FundiReplacement />
       <div data-tour="main-nav">
         <Navigation />
       </div>
@@ -61,8 +53,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </main>
       
-      {/* Hide the standard Fundi components as we're replacing them */}
-      <div data-tour="fundi-assistant" style={{ display: 'none' }}>
+      <div data-tour="fundi-assistant">
         <FloatingChat category={currentCategory} />
       </div>
     </div>

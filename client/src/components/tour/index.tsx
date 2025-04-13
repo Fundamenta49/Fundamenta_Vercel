@@ -2,9 +2,7 @@ import React, { useLayoutEffect, useEffect } from 'react';
 import TourHighlight from './tour-highlight';
 import FundiTourGuide from './fundi-tour-guide';
 import TourEmergencyFix from './tour-emergency-fix';
-import VehicleTourFix from './vehicle-tour-fix'; // Import the vehicle emergency fix
-import FundiMegaFix from './fundi-mega-fix'; // Our definitive fix
-import FundiUltraFix from './fundi-ultra-fix'; // Nuclear option that overrides everything
+import VehicleTourFix from './vehicle-tour-fix'; // Import the aggressive emergency fix
 import { useTour } from '@/contexts/tour-context';
 
 // Main tour component that includes all tour-related subcomponents
@@ -79,10 +77,8 @@ const Tour = () => {
 
   return (
     <>
-      <FundiUltraFix /> {/* Our nuclear solution that disables other fixes */}
-      <FundiMegaFix /> {/* Backup definitive fix */}
       <TourEmergencyFix />
-      <VehicleTourFix /> {/* Special emergency fix for vehicle maintenance */}
+      <VehicleTourFix /> {/* Add our special emergency fix for vehicle maintenance */}
       <FundiTourGuide />
       <TourHighlight />
     </>
