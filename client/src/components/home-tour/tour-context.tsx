@@ -66,11 +66,9 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
   
   // Show the founder message (final step)
   const showFounderMessage = () => {
-    // We'll trigger the founder message dialog via URL params
-    window.history.replaceState({}, document.title, window.location.pathname + '?openFounderMessage=true');
-    
-    // Force a reload to ensure the dialog opens
-    window.location.reload();
+    // Dispatch a custom event to open the founder message without page reload
+    const customEvent = new CustomEvent('openFounderMessage', { detail: { open: true } });
+    document.dispatchEvent(customEvent);
   };
   
   // Go to next step

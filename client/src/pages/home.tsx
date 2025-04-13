@@ -57,9 +57,9 @@ export default function Home() {
   const [founderMessageOpen, setFounderMessageOpen] = useState(false);
   const [, params] = useLocation();
   
-  // Check for query parameter to open the founder message dialog
+  // Listen for custom event to open the founder message dialog
   useEffect(() => {
-    // Get query params from URL
+    // Check URL params first (for compatibility with existing links)
     const urlParams = new URLSearchParams(window.location.search);
     const shouldOpenDialog = urlParams.get('openFounderMessage');
     
@@ -68,6 +68,21 @@ export default function Home() {
       // Clear the parameter from URL to avoid reopening on page refresh
       window.history.replaceState({}, document.title, window.location.pathname);
     }
+    
+    // Listen for the custom event from the tour
+    const handleOpenFounderMessage = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.open) {
+        setFounderMessageOpen(true);
+      }
+    };
+    
+    document.addEventListener('openFounderMessage', handleOpenFounderMessage);
+    
+    // Clean up the event listener
+    return () => {
+      document.removeEventListener('openFounderMessage', handleOpenFounderMessage);
+    };
   }, []);
 
   return (
