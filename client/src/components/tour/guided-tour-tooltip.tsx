@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { GuidedTourStep } from '@/contexts/guided-tour-context';
+import '@/components/tours/new/tour.css';
 
 interface GuidedTourTooltipProps {
   step: GuidedTourStep;
@@ -200,6 +201,117 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
     };
   }, [step, step.targetSelector, step.position, isMobile]);
 
+  // For mobile, use an emergency-style approach with direct DOM positioning
+  // to ensure the tour is displayed correctly regardless of CSS conflicts
+  if (isMobile) {
+    return (
+      <AnimatePresence>
+        <motion.div
+          ref={tooltipRef}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.2 }}
+          style={{
+            position: 'fixed',
+            top: 'auto',
+            bottom: '100px',
+            left: '50%',
+            right: 'auto',
+            transform: 'translateX(-50%)',
+            zIndex: 9999999,
+            maxWidth: '320px',
+            width: 'calc(100% - 32px)',
+            margin: '0 auto',
+          }}
+          className="tour-tooltip"
+        >
+          <Card className="border-2 border-primary/20 shadow-lg">
+            <CardHeader className="p-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">{step.title}</CardTitle>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6" 
+                  onClick={onClose}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="p-3 pt-0 prose prose-sm max-w-none">
+              <p>{personalizedContent()}</p>
+            </CardContent>
+            
+            <CardFooter className="p-3 pt-1 flex justify-between flex-wrap gap-2">
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: totalSteps }).map((_, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "h-1.5 w-1.5 rounded-full transition-all",
+                      index === currentStepIndex ? "bg-primary scale-125" : "bg-primary/30"
+                    )}
+                  />
+                ))}
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                {step.showSkipButton && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={onSkip} 
+                    className="h-7 text-xs px-2"
+                  >
+                    Skip
+                  </Button>
+                )}
+                
+                {step.showPrevButton && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={onPrev} 
+                    className="h-7 text-xs px-2"
+                  >
+                    <ChevronLeft className="h-3 w-3 mr-1" />
+                    Back
+                  </Button>
+                )}
+                
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={onNext} 
+                  className="h-7 text-xs px-2"
+                >
+                  {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
+                  {currentStepIndex !== totalSteps - 1 && 
+                    <ChevronRight className="h-3 w-3 ml-1" />
+                  }
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+        </motion.div>
+        
+        {targetElement && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.15 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black pointer-events-none"
+            style={{ zIndex: 9990 }}
+          />
+        )}
+      </AnimatePresence>
+    );
+  }
+  
+  // Desktop version (unchanged)
   return (
     <AnimatePresence>
       <motion.div
@@ -214,31 +326,31 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
           left: position.left,
           transformOrigin: position.transformOrigin,
           zIndex: 9999,
-          maxWidth: isMobile ? '90vw' : '400px',
-          width: isMobile ? 'calc(100% - 32px)' : '90%',
+          maxWidth: '400px',
+          width: '90%',
         }}
-        className={cn("tour-tooltip", isMobile && "mobile-speech-bubble")}
+        className="tour-tooltip"
       >
         <Card className="border-2 border-primary/20 shadow-lg">
-          <CardHeader className={cn("pb-2", isMobile && "p-3")}>
+          <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className={cn("text-lg font-medium", isMobile && "text-base")}>{step.title}</CardTitle>
+              <CardTitle className="text-lg font-medium">{step.title}</CardTitle>
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className={cn("h-8 w-8", isMobile && "h-6 w-6")} 
+                className="h-8 w-8" 
                 onClick={onClose}
               >
-                <X className={cn("h-4 w-4", isMobile && "h-3 w-3")} />
+                <X className="h-4 w-4" />
               </Button>
             </div>
           </CardHeader>
           
-          <CardContent className={cn("prose prose-sm max-w-none pt-0 pb-2", isMobile && "p-3 pt-0")}>
+          <CardContent className="prose prose-sm max-w-none pt-0 pb-2">
             <p>{personalizedContent()}</p>
           </CardContent>
           
-          <CardFooter className={cn("flex justify-between pt-2 flex-wrap gap-2", isMobile && "p-3 pt-1")}>
+          <CardFooter className="flex justify-between pt-2 flex-wrap gap-2">
             <div className="flex items-center space-x-1">
               {Array.from({ length: totalSteps }).map((_, index) => (
                 <div
@@ -257,7 +369,7 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
                   variant="ghost" 
                   size="sm" 
                   onClick={onSkip} 
-                  className={cn("h-8 text-xs", isMobile && "h-7 text-xs px-2")}
+                  className="h-8 text-xs"
                 >
                   Skip
                 </Button>
@@ -268,9 +380,9 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
                   variant="outline" 
                   size="sm" 
                   onClick={onPrev} 
-                  className={cn("h-8", isMobile && "h-7 text-xs px-2")}
+                  className="h-8"
                 >
-                  <ChevronLeft className={cn("h-4 w-4 mr-1", isMobile && "h-3 w-3")} />
+                  <ChevronLeft className="h-4 w-4 mr-1" />
                   Back
                 </Button>
               )}
@@ -279,11 +391,11 @@ export const GuidedTourTooltip: React.FC<GuidedTourTooltipProps> = ({
                 variant="default" 
                 size="sm" 
                 onClick={onNext} 
-                className={cn("h-8", isMobile && "h-7 text-xs px-2")}
+                className="h-8"
               >
                 {currentStepIndex === totalSteps - 1 ? 'Finish' : 'Next'}
                 {currentStepIndex !== totalSteps - 1 && 
-                  <ChevronRight className={cn("h-4 w-4 ml-1", isMobile && "h-3 w-3")} />
+                  <ChevronRight className="h-4 w-4 ml-1" />
                 }
               </Button>
             </div>
