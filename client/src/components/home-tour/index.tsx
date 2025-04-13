@@ -1,4 +1,4 @@
-import TourGuide from './tour-guide';
+import TourGuide from './tour-guide-fixed';
 import TourButton from './tour-button';
 import { TourProvider, useTour } from './tour-context';
 

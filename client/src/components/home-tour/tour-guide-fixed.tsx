@@ -1,38 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import RobotFundi from '@/components/robot-fundi';
 import { useTour } from './tour-context';
-import { useTourSteps, TourStep } from './tour-steps';
+import { useTourSteps } from './tour-steps';
 
 const TourGuide: React.FC = () => {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour } = useTour();
   const tourSteps = useTourSteps();
-  const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [position, setPosition] = useState({ top: window.innerHeight / 2 - 150, left: window.innerWidth / 2 - 175 });
   const [animationKey, setAnimationKey] = useState(0);
+  const positionRef = useRef(position);
 
-  // Function to get the target element
-  const getTargetElement = (step: TourStep) => {
-    if (step.target === 'body') return document.body;
-    return document.querySelector(`[data-tour-id="${step.target}"]`);
-  };
+  // Update the ref whenever position changes
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
 
-  // Calculate position for the current step
+  // Set up step positioning only when current step changes
   useEffect(() => {
     if (!isTourActive || currentStep >= tourSteps.length) return;
-    
+
     const step = tourSteps[currentStep];
-    const element = getTargetElement(step) as HTMLElement;
-    
-    if (!element) return;
-    
-    setTargetElement(element);
     
     const calculatePosition = () => {
-      if (step.target === 'body' || step.placement === 'center') {
+      let targetElement: HTMLElement | null = null;
+      
+      if (step.target === 'body') {
         // Center in the viewport
         setPosition({
           top: window.innerHeight / 2 - 150,
@@ -40,12 +36,25 @@ const TourGuide: React.FC = () => {
         });
         return;
       }
+      
+      // Find the target element
+      targetElement = document.querySelector(`[data-tour-id="${step.target}"]`) as HTMLElement;
+      
+      if (!targetElement) {
+        console.warn(`Target element not found: ${step.target}`);
+        // Default to center
+        setPosition({
+          top: window.innerHeight / 2 - 150,
+          left: window.innerWidth / 2 - 175,
+        });
+        return;
+      }
 
-      const rect = element.getBoundingClientRect();
+      const rect = targetElement.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       
-      // Default positions (can be adjusted as needed)
+      // Default positions
       let top = rect.top;
       let left = rect.left;
 
@@ -67,6 +76,11 @@ const TourGuide: React.FC = () => {
           top = rect.top + rect.height / 2 - 100;
           left = rect.right + 20; // To the right
           break;
+        case 'center':
+          // Center in the viewport
+          top = window.innerHeight / 2 - 150;
+          left = window.innerWidth / 2 - 175;
+          break;
       }
       
       // Ensure the popup stays within viewport bounds
@@ -76,39 +90,54 @@ const TourGuide: React.FC = () => {
       if (top > viewportHeight - 200) top = viewportHeight - 200;
       
       setPosition({ top, left });
+      
+      // Highlight the element if needed
+      if (step.highlightColor && targetElement) {
+        const originalBorder = targetElement.style.border;
+        const originalBoxShadow = targetElement.style.boxShadow;
+        
+        targetElement.style.border = `2px solid ${step.highlightColor}`;
+        targetElement.style.boxShadow = `0 0 15px ${step.highlightColor}`;
+        
+        return () => {
+          if (targetElement) {
+            targetElement.style.border = originalBorder;
+            targetElement.style.boxShadow = originalBoxShadow;
+          }
+        };
+      }
     };
 
     calculatePosition();
-    
-    // Highlight the target element if color is provided
-    if (step.highlightColor && element !== document.body) {
-      const originalBorder = element.style.border;
-      const originalBoxShadow = element.style.boxShadow;
-      
-      element.style.border = `2px solid ${step.highlightColor}`;
-      element.style.boxShadow = `0 0 15px ${step.highlightColor}`;
-      
-      return () => {
-        element.style.border = originalBorder;
-        element.style.boxShadow = originalBoxShadow;
-      };
-    }
-    
-    // Register resize event to recalculate positions on window resize
-    window.addEventListener('resize', calculatePosition);
-    return () => window.removeEventListener('resize', calculatePosition);
-  }, [isTourActive, currentStep]);
 
-  // Trigger animation for Fundi
-  useEffect(() => {
-    if (isTourActive) {
-      setAnimationKey(prev => prev + 1);
-    }
+    // Reset the animation key to trigger animation
+    setAnimationKey(prev => prev + 1);
+    
+    // Handle window resize
+    const handleResize = () => calculatePosition();
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [currentStep, isTourActive]);
 
   if (!isTourActive) return null;
 
-  const currentTourStep = tourSteps[currentStep];
+  // Ensure we don't go beyond the array bounds
+  const stepIndex = Math.min(currentStep, tourSteps.length - 1);
+  const currentTourStep = tourSteps[stepIndex];
+  
+  // Determine the category based on highlight color
+  let fundiCategory = 'general';
+  if (currentTourStep?.highlightColor) {
+    if (currentTourStep.highlightColor === '#f97316') fundiCategory = 'learning';
+    else if (currentTourStep.highlightColor === '#22c55e') fundiCategory = 'finance';
+    else if (currentTourStep.highlightColor === '#3b82f6') fundiCategory = 'career';
+    else if (currentTourStep.highlightColor === '#a855f7') fundiCategory = 'wellness';
+    else if (currentTourStep.highlightColor === '#ec4899') fundiCategory = 'fitness';
+    else if (currentTourStep.highlightColor === '#ef4444') fundiCategory = 'emergency';
+  }
   
   return (
     <AnimatePresence>
@@ -140,38 +169,11 @@ const TourGuide: React.FC = () => {
               
               {/* Fundi Character - Positioned at the center top of the card */}
               <div className="absolute -top-[65px] left-1/2 transform -translate-x-1/2 z-10">
-                <motion.div
-                  key={`fundi-animation-${animationKey}`}
-                  animate={
-                    currentTourStep.showFundiAnimation ? 
-                    (currentTourStep.animationType === 'wave' ? { rotateZ: [0, 10, -10, 10, 0] } :
-                     currentTourStep.animationType === 'jump' ? { y: [0, -15, 0, -10, 0] } :
-                     currentTourStep.animationType === 'spin' ? { rotateY: [0, 180, 360] } :
-                     currentTourStep.animationType === 'dance' ? { 
-                       x: [0, 10, -10, 10, -10, 0],
-                       y: [0, -5, 0, -5, 0]
-                     } :
-                     currentTourStep.animationType === 'nod' ? { rotateX: [0, 20, 0, 20, 0] } :
-                     {}) 
-                    : {}
-                  }
-                  transition={{ duration: 1.5, ease: "easeInOut" }}
-                >
-                  <RobotFundi 
-                    size="lg"
-                    category={currentTourStep.highlightColor ? 
-                      // If we have a highlight color, choose the matching category
-                      (currentTourStep.highlightColor === '#f97316' ? 'learning' :
-                       currentTourStep.highlightColor === '#22c55e' ? 'finance' :
-                       currentTourStep.highlightColor === '#3b82f6' ? 'career' :
-                       currentTourStep.highlightColor === '#a855f7' ? 'wellness' :
-                       currentTourStep.highlightColor === '#ec4899' ? 'fitness' :
-                       currentTourStep.highlightColor === '#ef4444' ? 'emergency' : 'general')
-                      : 'general'
-                    }
-                    emotion="happy"
-                  />
-                </motion.div>
+                <RobotFundi 
+                  size="lg"
+                  category={fundiCategory}
+                  emotion="happy"
+                />
               </div>
               
               <CardContent className="pt-16 pb-6 px-6">
@@ -188,10 +190,10 @@ const TourGuide: React.FC = () => {
                 {/* Content */}
                 <div className="space-y-4">
                   <h3 className="text-xl font-bold text-center text-[#1C3D5A]">
-                    {currentTourStep.title}
+                    {currentTourStep?.title || 'Welcome to Fundamenta'}
                   </h3>
                   <p className="text-sm text-center text-gray-700">
-                    {currentTourStep.content}
+                    {currentTourStep?.content || 'Let me guide you through our platform!'}
                   </p>
                 </div>
                 
