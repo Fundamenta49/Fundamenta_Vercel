@@ -10,14 +10,7 @@ import { useTourSteps } from './tour-steps';
 const TourGuide: React.FC = () => {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour } = useTour();
   const tourSteps = useTourSteps();
-  const [position, setPosition] = useState({ top: window.innerHeight / 2 - 150, left: window.innerWidth / 2 - 175 });
   const [animationKey, setAnimationKey] = useState(0);
-  const positionRef = useRef(position);
-
-  // Update the ref whenever position changes
-  useEffect(() => {
-    positionRef.current = position;
-  }, [position]);
 
   // Set up step positioning only when current step changes
   useEffect(() => {
@@ -25,140 +18,97 @@ const TourGuide: React.FC = () => {
 
     const step = tourSteps[currentStep];
     
-    const calculatePosition = () => {
-      let targetElement: HTMLElement | null = null;
-      
+    // Reset the animation key to trigger animation
+    setAnimationKey(prev => prev + 1);
+    
+    let cleanupFunction: (() => void) | undefined;
+    
+    const highlightTargetElement = () => {
+      // Skip highlighting for body-centered steps
       if (step.target === 'body') {
-        // Center in the viewport
-        setPosition({
-          top: window.innerHeight / 2 - 150,
-          left: window.innerWidth / 2 - 175,
-        });
-        
-        // Make sure we're at the top if using center placement
+        // Reset scroll position for centered tour steps
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
       
       // Find the target element
-      targetElement = document.querySelector(`[data-tour-id="${step.target}"]`) as HTMLElement;
+      const targetElement = document.querySelector(`[data-tour-id="${step.target}"]`) as HTMLElement;
       
       if (!targetElement) {
         console.warn(`Target element not found: ${step.target}`);
-        // Default to center
-        setPosition({
-          top: window.innerHeight / 2 - 150,
-          left: window.innerWidth / 2 - 175,
-        });
         return;
       }
-
+      
+      // Store original styles
+      const originalStyles = {
+        border: targetElement.style.border,
+        boxShadow: targetElement.style.boxShadow,
+        transition: targetElement.style.transition,
+        zIndex: targetElement.style.zIndex,
+        position: targetElement.style.position
+      };
+      
+      // Scroll the element into view
       const rect = targetElement.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      // Default positions
-      let top = rect.top;
-      let left = rect.left;
-
-      // Adjust based on placement
-      switch (step.placement) {
-        case 'top':
-          top = rect.top - 225; // Above the element
-          left = rect.left + rect.width / 2 - 175;
-          break;
-        case 'bottom':
-          top = rect.bottom + 20; // Below the element
-          left = rect.left + rect.width / 2 - 175;
-          break;
-        case 'left':
-          top = rect.top + rect.height / 2 - 100;
-          left = rect.left - 375; // To the left
-          break;
-        case 'right':
-          top = rect.top + rect.height / 2 - 100;
-          left = rect.right + 20; // To the right
-          break;
-        case 'center':
-          // Center in the viewport
-          top = window.innerHeight / 2 - 150;
-          left = window.innerWidth / 2 - 175;
-          break;
-      }
-      
-      // Ensure the popup stays within viewport bounds
-      if (left < 20) left = 20;
-      if (left > viewportWidth - 370) left = viewportWidth - 370;
-      if (top < 20) top = 20;
-      if (top > viewportHeight - 200) top = viewportHeight - 200;
-      
-      setPosition({ top, left });
-      
-      // Ensure the element is in view by scrolling to it
       const elementTop = rect.top + window.scrollY;
-      const elementBottom = rect.bottom + window.scrollY;
-      const halfViewportHeight = window.innerHeight / 2;
       
-      // Calculate where to scroll to ensure both the target element and the tooltip are visible
-      let scrollTo;
-      
-      switch (step.placement) {
-        case 'top':
-          // Scroll to have the element at the bottom half of the screen
-          scrollTo = elementTop - halfViewportHeight + (rect.height / 2);
-          break;
-        case 'bottom': 
-          // Scroll to have the element at the top half of the screen
-          scrollTo = elementTop - halfViewportHeight + (rect.height / 2);
-          break;
-        case 'left':
-        case 'right':
-          // Center the element vertically
-          scrollTo = elementTop - halfViewportHeight + (rect.height / 2);
-          break;
-        default:
-          // Ensure the element is visible in the viewport
-          scrollTo = elementTop - 100;
-      }
+      // Calculate where to scroll to center the element in the viewport
+      const scrollPosition = elementTop - (window.innerHeight / 2) + (rect.height / 2);
       
       // Ensure we don't scroll below or above the document
       const maxScroll = document.body.scrollHeight - window.innerHeight;
-      scrollTo = Math.max(0, Math.min(scrollTo, maxScroll));
+      const safeScrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
       
       // Perform smooth scrolling
       window.scrollTo({
-        top: scrollTo,
+        top: safeScrollPosition,
         behavior: 'smooth'
       });
       
-      // Highlight the element if needed
-      if (step.highlightColor && targetElement) {
-        const originalBorder = targetElement.style.border;
-        const originalBoxShadow = targetElement.style.boxShadow;
-        
+      // Apply highlight styles with transition
+      targetElement.style.transition = 'all 0.3s ease-in-out';
+      targetElement.style.position = originalStyles.position || '';
+      targetElement.style.zIndex = '1000';
+      
+      // Apply highlight styling if color is provided
+      if (step.highlightColor) {
         targetElement.style.border = `2px solid ${step.highlightColor}`;
-        targetElement.style.boxShadow = `0 0 15px ${step.highlightColor}`;
-        
-        return () => {
-          if (targetElement) {
-            targetElement.style.border = originalBorder;
-            targetElement.style.boxShadow = originalBoxShadow;
-          }
-        };
+        targetElement.style.boxShadow = `0 0 20px ${step.highlightColor}`;
       }
+      
+      // Return cleanup function
+      return () => {
+        if (targetElement) {
+          targetElement.style.border = originalStyles.border;
+          targetElement.style.boxShadow = originalStyles.boxShadow;
+          targetElement.style.transition = originalStyles.transition;
+          targetElement.style.zIndex = originalStyles.zIndex;
+          targetElement.style.position = originalStyles.position;
+        }
+      };
     };
-
-    calculatePosition();
-
-    // Reset the animation key to trigger animation
-    setAnimationKey(prev => prev + 1);
+    
+    // Set up highlighting with a small delay to allow for smooth transitions
+    const timer = setTimeout(() => {
+      cleanupFunction = highlightTargetElement();
+    }, 100);
     
     // Handle window resize
-    const handleResize = () => calculatePosition();
+    const handleResize = () => {
+      if (cleanupFunction) {
+        cleanupFunction();
+      }
+      cleanupFunction = highlightTargetElement();
+    };
+    
     window.addEventListener('resize', handleResize);
     
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('resize', handleResize);
+      if (cleanupFunction) {
+        cleanupFunction();
+      }
     };
   }, [currentStep, isTourActive]);
 
@@ -195,10 +145,8 @@ const TourGuide: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.3 }}
-            className="absolute"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{
-              top: `${position.top}px`,
-              left: `${position.left}px`,
               zIndex: 100001,
             }}
           >
