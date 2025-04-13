@@ -53,7 +53,7 @@ export function SimpleTourButton() {
       title: 'Wellness & Nutrition',
       content: 'Support your mental health with meditation guides, stress management tools, and nutrition advice tailored to your lifestyle goals.',
       icon: <Heart className="h-6 w-6 text-purple-500" />,
-      highlightCard: 'card-wellness-nutrition'
+      highlightCard: 'card-wellness---nutrition'
     },
     {
       title: 'Active You',
@@ -92,7 +92,7 @@ export function SimpleTourButton() {
     'card-life-skills': 'ring-orange-500',
     'card-financial-literacy': 'ring-green-500',
     'card-career-development': 'ring-blue-500',
-    'card-wellness-nutrition': 'ring-purple-500',
+    'card-wellness---nutrition': 'ring-purple-500',
     'card-active-you': 'ring-pink-500',
     'card-emergency-guidance': 'ring-red-500',
     'nav-smart-calendar': 'ring-cyan-500',
