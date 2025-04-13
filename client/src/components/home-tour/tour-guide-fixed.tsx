@@ -7,7 +7,8 @@ import RobotFundi from '@/components/robot-fundi';
 import { useTour } from './tour-context';
 import { useTourSteps } from './tour-steps';
 import './tour-mobile.css';
-import './fix-fundi-display.css'; // Import the new CSS fix
+import './fix-fundi-display.css'; // For general display fixes
+import './mobile-fundi-fix.css'; // Specific mobile fixes
 
 const TourGuide: React.FC = () => {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour } = useTour();
@@ -26,12 +27,31 @@ const TourGuide: React.FC = () => {
           el.style.display = 'none';
         }
       });
+      
+      // Force mobile fix - add special class to the body
+      if (window.innerWidth < 768) {
+        document.body.classList.add('mobile-tour-active');
+        
+        // Add a small delay and force the Fundi character to be visible
+        setTimeout(() => {
+          const fundiElements = document.querySelectorAll('.fundi-tour-wrapper');
+          fundiElements.forEach(el => {
+            if (el instanceof HTMLElement) {
+              el.style.display = 'flex';
+              el.style.visibility = 'visible';
+              el.style.opacity = '1';
+              el.style.zIndex = '9999999';
+            }
+          });
+        }, 100);
+      }
     } else {
       fundiDockElements.forEach(el => {
         if (el instanceof HTMLElement) {
           el.style.display = '';
         }
       });
+      document.body.classList.remove('mobile-tour-active');
       return; // Exit early if tour isn't active
     }
     
@@ -205,12 +225,12 @@ const TourGuide: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.3 }}
-            className="fixed left-1/2 -translate-x-1/2"
+            className="fixed left-1/2 -translate-x-1/2 tour-dialog-motion"
             style={{
               zIndex: 100001,
               ...(window.innerWidth < 768 
                 ? {
-                    // Mobile positioning: fixed to the center of the screen
+                    // Mobile positioning: fixed to the center of the screen but smaller
                     position: 'fixed',
                     top: '50%',
                     left: '50%',
@@ -254,8 +274,13 @@ const TourGuide: React.FC = () => {
                     }
                     transition={{ 
                       duration: 1.5, 
-                      repeat: currentTourStep.animationType === 'dance' ? 1 : 0,
+                      repeat: window.innerWidth < 768 ? 2 : (currentTourStep.animationType === 'dance' ? 1 : 0),
                       ease: "easeInOut" 
+                    }}
+                    style={{
+                      display: 'flex', 
+                      visibility: 'visible', 
+                      opacity: 1
                     }}
                   >
                     <RobotFundi 
@@ -265,11 +290,13 @@ const TourGuide: React.FC = () => {
                     />
                   </motion.div>
                 ) : (
-                  <RobotFundi 
-                    size="lg"
-                    category={fundiCategory}
-                    emotion="happy"
-                  />
+                  <div style={{ display: 'flex', visibility: 'visible', opacity: 1 }}>
+                    <RobotFundi 
+                      size="lg"
+                      category={fundiCategory}
+                      emotion="happy"
+                    />
+                  </div>
                 )}
               </div>
               

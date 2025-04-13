@@ -1,0 +1,61 @@
+/* Mobile Fundi display fixes */
+
+/* Make sure Fundi is visible on mobile */
+@media (max-width: 767px) {
+  /* Force Fundi to show on mobile */
+  .fundi-tour-wrapper {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    top: -150px !important;
+    z-index: 2000000 !important;
+  }
+  
+  /* Make the dialog smaller on mobile */
+  [data-tour-dialog="true"] {
+    max-width: 240px !important;
+    opacity: 0.92 !important;
+    transform: scale(0.92) !important;
+    height: auto !important;
+  }
+  
+  /* Fix modal positioning */
+  .tour-dialog-motion {
+    max-width: 240px !important;
+  }
+  
+  /* Reduce the width of the card on mobile */
+  .w-\[85vw\] {
+    width: 75vw !important;
+  }
+  
+  /* Add extra padding at the bottom of the dialog to see content behind */
+  .tour-card-content {
+    padding-bottom: 0.75rem !important;
+    padding-top: 1rem !important;
+  }
+  
+  /* Make buttons smaller */
+  .tour-dialog-motion button {
+    font-size: 0.75rem !important;
+  }
+  
+  /* Make text smaller */
+  .tour-dialog-motion h3 {
+    font-size: 0.95rem !important;
+  }
+  
+  .tour-dialog-motion p {
+    font-size: 0.8rem !important;
+  }
+  
+  /* Make the background slightly more transparent */
+  .bg-black\/30 {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+  }
+  
+  /* Hide docked Fundi while tour is active */
+  body.mobile-tour-active .fundi-dock-wrapper {
+    display: none !important;
+  }
+}
