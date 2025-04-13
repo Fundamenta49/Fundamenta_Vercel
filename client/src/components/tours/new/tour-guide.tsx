@@ -22,6 +22,16 @@ export default function TourGuide() {
     skipTour,
   } = useTour();
   
+  // Check if we're on the vehicle maintenance page - if so, don't show this tour guide
+  // as it will conflict with the emergency fix
+  const isVehicleMaintenancePage = typeof window !== 'undefined' && 
+    window.location.pathname.includes('/learning/courses/vehicle-maintenance');
+  
+  // If we're on the vehicle maintenance page, don't render anything
+  if (isVehicleMaintenancePage) {
+    return null;
+  }
+  
   // State to track animation and interaction
   const [speaking, setSpeaking] = useState(false);
   const [thinking, setThinking] = useState(false);
