@@ -14,20 +14,20 @@ export default function FundiEmergencyFix() {
     
     // Apply immediate fix to force Fundi position 
     function forceFixFundi() {
+      // Detect screen size once for both element types
+      const isDesktop = window.innerWidth >= 640;
+      
+      // ===== FUNDI ROBOT POSITIONING =====
       // Find Fundi elements using various possible selectors
       const fundiElements = document.querySelectorAll(
         '.robot-container, .fixed.z-\\[99999\\], .fundi-container, [data-fundi="true"]'
       );
       
       // Apply emergency positioning to Fundi
-      const isDesktop = window.innerWidth >= 640;
-      
       fundiElements.forEach(el => {
         if (el instanceof HTMLElement) {
           if (isDesktop) {
-            // Desktop positioning
-            // Directly override all styles using !important - CENTER POSITION (matching screenshot)
-            // Adjusted position to match the dialog box positioning
+            // Desktop positioning - larger Fundi centered on screen
             el.style.cssText = `
               position: fixed !important;
               top: 300px !important;
@@ -65,12 +65,11 @@ export default function FundiEmergencyFix() {
         }
       });
       
+      // ===== TOUR DIALOG POSITIONING =====
       // Fix any tour dialogs to stay at bottom right
       const tourDialogs = document.querySelectorAll(
         '[data-tour-dialog], [data-radix-dialog-content], .tour-speech-bubble, [data-tour="content"]'
       );
-      
-      const isDesktop = window.innerWidth >= 640;
       
       tourDialogs.forEach(dialog => {
         if (dialog instanceof HTMLElement) {
