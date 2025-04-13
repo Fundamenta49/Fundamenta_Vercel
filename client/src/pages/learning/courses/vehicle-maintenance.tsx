@@ -8,8 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import VehicleGuide from '@/components/vehicle-guide';
 import QuizComponent, { QuizQuestion } from '@/components/quiz-component';
 import SimpleResourceLinks, { SimpleResource } from '@/components/simple-resource-links';
-// Old tour component removed
-import FundiEmergencyFix from '@/components/fundi-emergency-fix';
+import TourGuide from '@/components/clean-tour-guide';
+import { vehicleMaintenanceTourSteps } from '@/components/clean-tour-guide/vehicle-tour-steps';
 
 export default function VehicleMaintenanceCourse() {
   const [, navigate] = useLocation();
@@ -56,28 +56,24 @@ export default function VehicleMaintenanceCourse() {
     }
   ];
 
-  // Mark this page for the emergency fix component
-  useEffect(() => {
-    // Add special data attributes on the body to trigger CSS fixes
-    document.body.setAttribute('data-tour-route', '/learning/courses/vehicle-maintenance');
-    document.body.setAttribute('data-emergency-fix', 'true');
-    document.body.classList.add('tour-vehicle-page');
-    
-    // Let FundiEmergencyFix component handle the positioning
-    // No need for duplicate fixes here
-    
-    // When component unmounts, clean up
-    return () => {
-      document.body.removeAttribute('data-tour-route');
-      document.body.removeAttribute('data-emergency-fix');
-      document.body.classList.remove('tour-vehicle-page');
-    };
-  }, []);
+  // Initial state for the tour
+  const [showTour, setShowTour] = useState(true);
+  
+  // If tour completes or is skipped
+  const handleTourComplete = () => {
+    setShowTour(false);
+  };
   
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl relative" style={{ overflowX: 'hidden' }}>
-      {/* Old tour components removed */}
-      <FundiEmergencyFix />
+      {/* Clean Tour Implementation */}
+      {showTour && (
+        <TourGuide 
+          steps={vehicleMaintenanceTourSteps} 
+          onComplete={handleTourComplete}
+          onSkip={handleTourComplete}
+        />
+      )}
       
       <div className="flex items-center mb-6">
         <Button 
