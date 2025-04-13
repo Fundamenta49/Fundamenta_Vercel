@@ -136,10 +136,13 @@ export default function TourGuide() {
   
   return (
     <>
-      {/* Semi-transparent overlay */}
-      <div 
-        className="fixed inset-0 bg-black/30 z-[9990]"
+      {/* Semi-transparent overlay with subtle blur effect */}
+      <motion.div 
+        className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[9990]"
         onClick={skipTour}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
       />
       
       {/* Fundi Avatar */}
@@ -187,7 +190,7 @@ export default function TourGuide() {
         <AnimatePresence>
           <motion.div
             className={cn(
-              "absolute bg-white rounded-lg shadow-lg p-4 text-sm",
+              "absolute bg-white rounded-xl shadow-xl p-5 text-sm border border-gray-100",
               "w-64 sm:w-72 md:w-80 max-w-[calc(100vw-40px)]",
               isMobile ? "mobile-speech-bubble" : "",
               placement === 'right' && "left-24 top-0",
@@ -200,12 +203,30 @@ export default function TourGuide() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.3 }}
+            style={{
+              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
+              backdropFilter: 'blur(8px)'
+            }}
           >
             {/* Title */}
-            <h3 className="font-bold text-lg mb-2">{currentStep.title}</h3>
+            <motion.h3 
+              className="font-bold text-lg mb-2"
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.3 }}
+            >
+              {currentStep.title}
+            </motion.h3>
             
             {/* Content */}
-            <p className="mb-4">{currentStep.content}</p>
+            <motion.p 
+              className="mb-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+            >
+              {currentStep.content}
+            </motion.p>
             
             {/* Progress Bar */}
             <div className="w-full h-1 bg-gray-200 rounded-full mb-4">

@@ -18,6 +18,7 @@ export interface TourStep {
   isMobile?: boolean; // Whether this step is mobile-optimized
   isDesktop?: boolean; // Whether this step is desktop-optimized
   fundiPosition?: { x: number; y: number }; // Custom position for Fundi
+  onComplete?: () => void; // Callback executed when this step is completed
 }
 
 /**
@@ -225,8 +226,16 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children, tours }) =
   };
   
   const endTour = () => {
-    if (currentTour && !completedTours.includes(currentTour.id)) {
-      setCompletedTours([...completedTours, currentTour.id]);
+    // Execute onComplete callback for current step if defined
+    if (currentTour) {
+      const currentStep = currentTour.steps[currentStepIndex];
+      if (currentStep?.onComplete) {
+        currentStep.onComplete();
+      }
+      
+      if (!completedTours.includes(currentTour.id)) {
+        setCompletedTours([...completedTours, currentTour.id]);
+      }
     }
     
     setIsTourActive(false);
@@ -241,6 +250,12 @@ export const TourProvider: React.FC<TourProviderProps> = ({ children, tours }) =
   
   const nextStep = () => {
     if (!currentTour) return;
+    
+    // Execute onComplete callback for current step if defined
+    const currentStep = currentTour.steps[currentStepIndex];
+    if (currentStep?.onComplete) {
+      currentStep.onComplete();
+    }
     
     const nextIndex = currentStepIndex + 1;
     
