@@ -84,8 +84,9 @@ export const useTourSteps = () => {
     {
       title: 'Smart Calendar',
       content: `Don't miss our Smart Calendar feature in the sidebar! It helps you organize your learning journey and keeps track of your progress. Stay organized, stay motivated!`,
-      target: 'sidebar-calendar',
+      target: 'nav-smart-calendar',
       placement: 'right',
+      highlightColor: '#6366f1', // indigo
       showFundiAnimation: true,
       animationType: 'point'
     },
@@ -94,8 +95,9 @@ export const useTourSteps = () => {
     {
       title: 'Fundamenta Arcade',
       content: `Need a brain break? Check out our Arcade section! Learning through play is one of the best ways to reinforce new skills. Plus, it's just plain fun!`,
-      target: 'sidebar-arcade',
+      target: 'nav-arcade',
       placement: 'right',
+      highlightColor: '#f59e0b', // amber
       showFundiAnimation: true,
       animationType: 'jump'
     },
@@ -108,6 +110,16 @@ export const useTourSteps = () => {
       placement: 'center',
       showFundiAnimation: true,
       animationType: 'wave'
+    },
+    
+    // Step 10: Why Fundamenta letter from the CEO
+    {
+      title: 'Why Fundamenta?',
+      content: `At Fundamenta, we believe life skills shouldn't be a mystery. Our mission is to empower you with practical knowledge that traditional education often misses. From financial literacy to everyday tasks, we're here to help you build confidence through personalized learning. Thank you for joining us on this journey!`,
+      target: 'body',
+      placement: 'center',
+      highlightColor: '#1C3D5A',
+      showFundiAnimation: false
     }
   ];
   
