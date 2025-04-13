@@ -18,8 +18,8 @@ export const useTourSteps = () => {
   const tourSteps: TourStep[] = [
     // Step 1: Welcome greeting with user's first name
     {
-      title: `Welcome, ${firstName}! 👋`,
-      content: `I'm Fundi, your personal AI guide to essential life skills! I'm excited to show you around our platform and help you get started on your journey to personal growth.`,
+      title: `Hey there, ${firstName}! 👋`,
+      content: `I'm Fundi, your personal AI sidekick on this adventure! Think of me as your friendly guide to all those life skills nobody taught you in school. Ready for a quick tour of what we can do together?`,
       target: 'body',
       placement: 'center',
       showFundiAnimation: true,
@@ -28,8 +28,8 @@ export const useTourSteps = () => {
     
     // Step 2: Introduce Fundi with fun animations
     {
-      title: 'Let Me Show You Around!',
-      content: `I'll be with you throughout your Fundamenta journey, offering personalized guidance, answering questions, and cheering you on as you learn new skills. Let's explore what we can do together!`,
+      title: 'Your Personal Life Coach!',
+      content: `Whenever you need me, I'll pop up with personalized advice, answer your questions (even the embarrassing ones!), and cheer you on like your biggest fan. No judgment, just helpful guidance with a side of fun!`,
       target: 'body',
       placement: 'center',
       showFundiAnimation: true,
@@ -38,8 +38,8 @@ export const useTourSteps = () => {
     
     // Step 3: Life Skills card
     {
-      title: 'Life Skills',
-      content: `Want to master essential everyday skills? This section offers courses on everything from vehicle maintenance to cooking basics. Think of it as your go-to resource for practical knowledge!`,
+      title: 'Life Skills Academy',
+      content: `Ever stared blankly at a car's engine or burned pasta? 😅 This is your no-judgment zone for mastering everyday essentials! From fixing stuff to cooking meals that don't set off smoke alarms, I've got your back!`,
       target: 'card-life-skills',
       placement: 'bottom',
       highlightColor: '#f97316', // orange
@@ -49,8 +49,8 @@ export const useTourSteps = () => {
     
     // Step 4: Financial Literacy card
     {
-      title: 'Financial Literacy',
-      content: `Need help managing money? Dive into budgeting, savings strategies, and financial planning. I'll help you build financial confidence, one step at a time!`,
+      title: 'Money Mastery',
+      content: `Adulting is expensive, right? 💰 Let's decode the money mystery together! From "where did it all go?" budgeting to "future you will thank you" investing, we'll turn financial stress into financial success!`,
       target: 'card-financial-literacy',
       placement: 'bottom',
       highlightColor: '#22c55e', // green
@@ -60,8 +60,8 @@ export const useTourSteps = () => {
     
     // Step 5: Career Development card
     {
-      title: 'Career Development',
-      content: `Ready to level up professionally? Get help with resume building, interview prep, and career planning. Your dream job is waiting!`,
+      title: 'Career Launchpad',
+      content: `Ready to dazzle employers and climb that career ladder? 🚀 From crafting resumes that don't get ghosted to interview skills that'll make you memorable (in the good way!), your professional glow-up starts here!`,
       target: 'card-career-development',
       placement: 'bottom',
       highlightColor: '#3b82f6', // blue
@@ -71,8 +71,8 @@ export const useTourSteps = () => {
     
     // Step 6: Wellness & Nutrition card
     {
-      title: 'Wellness & Nutrition',
-      content: `Take care of your mental and physical health with meditation guides, nutrition advice, and wellness tips. Remember, a healthy mind lives in a healthy body!`,
+      title: 'Wellness Wonderland',
+      content: `Because you can't pour from an empty cup! ✨ Discover meditation that doesn't make you fall asleep, nutrition that's about joy (not just kale), and self-care that fits your real life. Your mind and body will high-five you!`,
       target: 'card-wellness-nutrition',
       placement: 'bottom',
       highlightColor: '#a855f7', // purple
@@ -82,8 +82,8 @@ export const useTourSteps = () => {
     
     // Step 7: Show smart calendar in sidebar
     {
-      title: 'Smart Calendar',
-      content: `Don't miss our Smart Calendar feature in the sidebar! It helps you organize your learning journey and keeps track of your progress. Stay organized, stay motivated!`,
+      title: 'Your Smart Calendar',
+      content: `Psst! 📅 Over here in the sidebar! This magical calendar keeps track of your learning journey without you having to remember everything. It's like having a personal assistant who never judges your procrastination habits!`,
       target: 'nav-smart-calendar',
       placement: 'right',
       highlightColor: '#6366f1', // indigo
@@ -93,8 +93,8 @@ export const useTourSteps = () => {
     
     // Step 8: Show arcade in sidebar
     {
-      title: 'Fundamenta Arcade',
-      content: `Need a brain break? Check out our Arcade section! Learning through play is one of the best ways to reinforce new skills. Plus, it's just plain fun!`,
+      title: 'Fun Break Station',
+      content: `All learn and no play? Not on my watch! 🎮 Our Arcade is where serious skills meet serious fun. Games that teach while you play! Think of it as "productive procrastination" – your brain will thank you for the refreshing break!`,
       target: 'nav-arcade',
       placement: 'right',
       highlightColor: '#f59e0b', // amber
@@ -104,8 +104,8 @@ export const useTourSteps = () => {
     
     // Step 9: Closing with user's name again
     {
-      title: `You're All Set, ${firstName}!`,
-      content: `I'm so excited to be your guide on this journey! Remember, I'm always here to help - just look for me in the corner of your screen. Before you go, I'd like to share our founder's vision for Fundamenta.`,
+      title: `High Five, ${firstName}!`,
+      content: `You're officially ready to rock this Fundamenta journey! 🙌 I'll be hanging out in the corner of your screen whenever you need a helping hand (or just someone to chat with). Before you dive in, our founder has a special message for you...`,
       target: 'body',
       placement: 'center',
       showFundiAnimation: true,
@@ -114,8 +114,8 @@ export const useTourSteps = () => {
     
     // Step 10: Why Fundamenta letter from the CEO
     {
-      title: 'Why Fundamenta?',
-      content: `At Fundamenta, we believe life skills shouldn't be a mystery. Our mission is to empower you with practical knowledge that traditional education often misses. From financial literacy to everyday tasks, we're here to help you build confidence through personalized learning. Thank you for joining us on this journey!`,
+      title: 'A Note From Our Founder',
+      content: `At Fundamenta, we believe everyone deserves access to practical life skills – the kind school forgot to teach us! We've created this space where you can learn at your own pace, make mistakes without judgment, and build confidence in areas that matter. Welcome to our community – we're thrilled you're here!`,
       target: 'body',
       placement: 'center',
       highlightColor: '#1C3D5A',

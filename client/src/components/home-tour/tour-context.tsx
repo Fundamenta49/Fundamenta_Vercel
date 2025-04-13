@@ -18,7 +18,7 @@ interface TourContextType {
 const defaultContext: TourContextType = {
   isTourActive: false,
   currentStep: 0,
-  totalSteps: 8, // Total number of steps in our tour
+  totalSteps: 10, // Total number of steps in our tour (updated with Why Fundamenta final step)
   startTour: () => {},
   endTour: () => {},
   nextStep: () => {},
@@ -115,4 +115,6 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
 };
 
 // Custom hook to use the tour context
-export const useTour = () => useContext(TourContext);
+export function useTour() {
+  return useContext(TourContext);
+}

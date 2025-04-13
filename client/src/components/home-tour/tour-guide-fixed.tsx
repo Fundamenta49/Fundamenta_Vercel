@@ -169,11 +169,44 @@ const TourGuide: React.FC = () => {
               
               {/* Fundi Character - Positioned at the center top of the card */}
               <div className="absolute -top-[65px] left-1/2 transform -translate-x-1/2 z-10">
-                <RobotFundi 
-                  size="lg"
-                  category={fundiCategory}
-                  emotion="happy"
-                />
+                {currentTourStep?.showFundiAnimation ? (
+                  <motion.div
+                    key={`fundi-animation-${currentStep}-${animationKey}`}
+                    initial={{ y: 0 }}
+                    animate={
+                      currentTourStep.animationType === 'wave' 
+                        ? { rotate: [0, 15, -15, 15, -15, 0] }
+                        : currentTourStep.animationType === 'jump' 
+                          ? { y: [0, -20, 0, -10, 0] }
+                          : currentTourStep.animationType === 'spin' 
+                            ? { rotate: [0, 360] }
+                            : currentTourStep.animationType === 'dance' 
+                              ? { x: [0, 10, -10, 10, -10, 0], y: [0, -5, 0, -5, 0] }
+                              : currentTourStep.animationType === 'nod' 
+                                ? { y: [0, 5, 0, 5, 0] }
+                                : currentTourStep.animationType === 'point' 
+                                  ? { x: [0, 15, 0] }
+                                  : {}
+                    }
+                    transition={{ 
+                      duration: 1.5, 
+                      repeat: currentTourStep.animationType === 'dance' ? 1 : 0,
+                      ease: "easeInOut" 
+                    }}
+                  >
+                    <RobotFundi 
+                      size="lg"
+                      category={fundiCategory}
+                      emotion="happy"
+                    />
+                  </motion.div>
+                ) : (
+                  <RobotFundi 
+                    size="lg"
+                    category={fundiCategory}
+                    emotion="happy"
+                  />
+                )}
               </div>
               
               <CardContent className="pt-16 pb-6 px-6">
