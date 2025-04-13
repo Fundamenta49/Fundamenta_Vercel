@@ -3,11 +3,11 @@ import { useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import Layout from "@/components/layout";
+import CleanLayout from "@/components/clean-layout"; // Use our clean layout instead
 import NotFound from "@/pages/not-found";
-import RobotFundi from "@/components/robot-fundi";
+// Remove problematic RobotFundi import
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
-import { ForceRestartTour } from "@/components/tour/force-restart-tour";
+// Remove problematic ForceRestartTour import
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
 import Partner from "@/pages/partner";
@@ -127,9 +127,8 @@ function Router() {
         </div>
       </Route>
       <Route>
-        <Layout>
-          <Tour />
-          <ForceRestartTour />
+        <CleanLayout>
+          {/* Removed Tour and ForceRestartTour components to fix positioning issues */}
           <Switch>
             <Route path="/">
               <ProtectedRoute>
@@ -326,7 +325,7 @@ function Router() {
           </Switch>
           <Toaster />
           <ChatCalendarConnector />
-        </Layout>
+        </CleanLayout>
       </Route>
     </Switch>
   );

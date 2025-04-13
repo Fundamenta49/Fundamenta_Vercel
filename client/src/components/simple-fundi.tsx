@@ -1,105 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { Card } from './ui/card';
-import { Button } from './ui/button';
-import { AvatarImage, Avatar } from './ui/avatar';
-import { cn } from '@/lib/utils';
+/**
+ * Simple Fixed Fundi Component
+ * 
+ * This is an extremely simplified Fundi component that:
+ * 1. Uses no external dependencies or complex tour logic
+ * 2. Has a fixed position in the top-right corner (not drag-and-drop)
+ * 3. Does not attempt to display complex tour steps or animations
+ * 
+ * This is meant as a temporary fix until a proper tour system can be implemented
+ */
 
-interface FundiModule {
-  id: string;
-  title: string;
-  component: React.ComponentType<any>;
-  icon?: string;
-}
+import React, { useEffect } from 'react';
 
-const SimpleFundi: React.FC = () => {
-  const [activeModule, setActiveModule] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [avatarStyle, setAvatarStyle] = useState('minimal');
-
-  const toggleExpansion = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  const switchModule = (moduleId: string) => {
-    setActiveModule(moduleId);
-  };
-
+export default function SimpleFundi() {
+  useEffect(() => {
+    // Clean up any existing Fundi elements that might be causing issues
+    const cleanup = () => {
+      try {
+        // Add a simple style to hide problematic elements
+        const style = document.createElement('style');
+        style.textContent = `
+          .tour-fundi-robot, 
+          .robot-container, 
+          div[data-fundi="true"], 
+          .fundi-container, 
+          .robot-fundi, 
+          [class*="tour-fundi"],
+          .fixed.z-[99999] {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+          }
+        `;
+        document.head.appendChild(style);
+        
+        return () => {
+          style.remove();
+        };
+      } catch (e) {
+        console.error('Error in SimpleFundi cleanup:', e);
+      }
+    };
+    
+    return cleanup();
+  }, []);
+  
   return (
-    <div className={cn(
-      "fixed bottom-4 right-4 z-50 transition-all duration-300",
-      isExpanded ? "w-96" : "w-16"
-    )}>
-      <div className="relative">
-        {/* Avatar Button */}
-        <Button
-          onClick={toggleExpansion}
-          className={cn(
-            "rounded-full p-0 w-16 h-16 bg-gradient-to-b from-gray-50 to-white shadow-lg hover:shadow-xl transition-all",
-            isExpanded ? "opacity-100" : "opacity-90 hover:opacity-100"
-          )}
-        >
-          <div className="relative w-full h-full rounded-full bg-gradient-to-b from-gray-50 to-white overflow-hidden border-2 border-gray-100">
-            {/* Robot Face */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Eyes Container */}
-              <div className="flex gap-3">
-                {/* Left Eye */}
-                <div className="w-5 h-5 rounded-full bg-blue-400 animate-pulse" 
-                     style={{boxShadow: '0 0 15px #60A5FA, inset 0 0 10px rgba(255,255,255,0.8)'}}/>
-                {/* Right Eye */}
-                <div className="w-5 h-5 rounded-full bg-blue-400 animate-pulse"
-                     style={{boxShadow: '0 0 15px #60A5FA, inset 0 0 10px rgba(255,255,255,0.8)'}}/>
-              </div>
-            </div>
-            {/* Smile */}
-            <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 w-7 h-2.5">
-              <div className="w-full h-full rounded-t-full bg-blue-200"/>
-            </div>
-          </div>
-        </Button>
-
-        {/* Expanded Interface */}
-        {isExpanded && (
-          <Card className="absolute bottom-20 right-0 w-96 p-4 shadow-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">How can I help you?</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {/* Module Selection Buttons */}
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => switchModule('financial')}
-                >
-                  Financial
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => switchModule('career')}
-                >
-                  Career
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => switchModule('wellness')}
-                >
-                  Wellness
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => switchModule('emergency')}
-                >
-                  Emergency
-                </Button>
-              </div>
-            </div>
-          </Card>
-        )}
+    <div
+      style={{
+        position: 'fixed',
+        top: '16px',
+        right: '24px',
+        width: '64px',
+        height: '64px',
+        zIndex: 9999,
+        borderRadius: '50%',
+        backgroundColor: '#f5f7ff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        border: '2px solid #6366F1',
+        cursor: 'pointer',
+      }}
+      aria-label="Fundi Assistant"
+      role="button"
+    >
+      <div style={{ width: '48px', height: '48px' }}>
+        <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="24" fill="#6366F1" />
+          <circle cx="24" cy="24" r="4" fill="white" />
+          <circle cx="40" cy="24" r="4" fill="white" />
+          <path d="M22 40C26 45 38 45 42 40" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        </svg>
       </div>
     </div>
   );
-};
-
-export default SimpleFundi;
+}

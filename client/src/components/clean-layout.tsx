@@ -1,0 +1,64 @@
+/**
+ * This is a clean, minimal layout that doesn't have any of the problematic
+ * Fundi tour guides or other components that might be causing positioning issues
+ */
+
+import Navigation from "@/components/navigation";
+import { AIFallbackNotice } from "@/components/ai-fallback-notice";
+import { useLocation } from "wouter";
+import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ReactNode } from "react";
+import SimpleFundi from "@/components/simple-fundi";
+
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export default function CleanLayout({ children }: LayoutProps) {
+  const [location] = useLocation();
+  const isMobile = useIsMobile();
+  const isHomePage = location === "/" || location === "/home";
+  
+  // Determine current category based on the URL path
+  const getCurrentCategory = () => {
+    if (location.includes('/finance')) return 'finance';
+    if (location.includes('/career')) return 'career';
+    if (location.includes('/wellness')) return 'wellness';
+    if (location.includes('/learning')) return 'learning';
+    if (location.includes('/emergency')) return 'emergency';
+    if (location.includes('/cooking')) return 'cooking';
+    if (location.includes('/fitness')) return 'fitness';
+    return 'general';
+  };
+  
+  const currentCategory = getCurrentCategory();
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Add our simplified Fundi component */}
+      <SimpleFundi />
+      
+      <div data-tour="main-nav">
+        <Navigation />
+      </div>
+      
+      <main className={cn(
+        "transition-all duration-300 bg-background min-h-screen",
+        isMobile ? "ml-0 p-4 pt-16" : "ml-64 p-6", 
+        document.body.classList.contains("sidebar-minimized") && !isMobile ? "ml-16" : ""
+      )}>
+        {/* All headers are now handled directly in each page component */}
+        
+        <div className={cn(
+          "pb-24", // Add padding at bottom to accommodate floating chat
+          isHomePage ? "mt-0" : "mt-4"
+        )}>
+          {/* Display notice when in fallback mode */}
+          <AIFallbackNotice />
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+}
