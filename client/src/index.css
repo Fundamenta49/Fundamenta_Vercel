@@ -7,6 +7,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global skeleton disabler - prevents animation issues that might interfere with Fundi positioning */
+.animate-pulse {
+  animation: none !important;
+}
+
+/* Override any skeleton-related styles to prevent layout shifts */
+div[class*="skeleton"],
+.skeleton,
+[data-skeleton="true"],
+div[class*="Skeleton"] {
+  background-color: transparent !important;
+  animation: none !important;
+  opacity: 0.5 !important;
+  border: 1px dashed rgba(0,0,0,0.1) !important;
+}
+
 /* Tour global styling - basic rules that apply to all tour elements */
 body.tour-active {
   overflow-x: hidden;
