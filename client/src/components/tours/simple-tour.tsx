@@ -71,13 +71,13 @@ export function SimpleTourButton() {
       title: 'Smart Calendar',
       content: 'Schedule your activities, set reminders, and manage your time effectively with our intelligent calendar that adapts to your lifestyle needs.',
       icon: <Calendar className="h-6 w-6 text-cyan-500" />,
-      highlightCard: 'card-smart-calendar'
+      highlightCard: 'nav-smart-calendar'
     },
     {
       title: 'Arcade',
       content: 'Take a break and have some fun with educational games that also help improve your cognitive skills while you relax and enjoy yourself.',
       icon: <Gamepad2 className="h-6 w-6 text-indigo-500" />,
-      highlightCard: 'card-arcade'
+      highlightCard: 'nav-arcade'
     },
     {
       title: `You're All Set, ${userName}!`,
@@ -95,8 +95,8 @@ export function SimpleTourButton() {
     'card-wellness-nutrition': 'ring-purple-500',
     'card-active-you': 'ring-pink-500',
     'card-emergency-guidance': 'ring-red-500',
-    'card-smart-calendar': 'ring-cyan-500',
-    'card-arcade': 'ring-indigo-500'
+    'nav-smart-calendar': 'ring-cyan-500',
+    'nav-arcade': 'ring-amber-500'
   };
 
   // Add card highlighting when step changes

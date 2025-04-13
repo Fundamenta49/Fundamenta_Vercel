@@ -378,6 +378,7 @@ export default function Navigation() {
                     : `text-gray-700 hover:bg-gray-50`
                 )}
                 onClick={() => handleNavigation("/calendar")}
+                data-tour-id="nav-smart-calendar"
               >
                 <Calendar className={cn("h-5 w-5", isNavItemActive("/calendar") ? themeColors.iconColor : "text-gray-600")} />
                 <span className="font-medium">Smart Calendar</span>
@@ -394,6 +395,7 @@ export default function Navigation() {
                     : "hover:bg-gray-100"
                 )}
                 title="Smart Calendar"
+                data-tour-id="nav-smart-calendar"
               >
                 <Calendar className={cn(
                   "h-5 w-5", 
@@ -414,6 +416,7 @@ export default function Navigation() {
                     : `text-gray-700 hover:bg-gray-50`
                 )}
                 onClick={() => handleNavigation("/arcade")}
+                data-tour-id="nav-arcade"
               >
                 <Gamepad2 className={cn("h-5 w-5", isNavItemActive("/arcade") ? themeColors.iconColor : "text-gray-600")} />
                 <span className="font-medium">Arcade</span>
@@ -430,6 +433,7 @@ export default function Navigation() {
                     : "hover:bg-gray-100"
                 )}
                 title="Arcade"
+                data-tour-id="nav-arcade"
               >
                 <Gamepad2 className={cn(
                   "h-5 w-5", 
