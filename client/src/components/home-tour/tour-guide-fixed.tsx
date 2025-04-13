@@ -181,15 +181,13 @@ const TourGuide: React.FC = () => {
             className="fixed left-1/2 -translate-x-1/2"
             style={{
               zIndex: 100001,
-              // Desktop position - always relative to tour button
-              top: window.innerWidth > 768 ? tourButtonPosition.top + 100 : 
-              // Mobile position - place in the top third of screen, but not too close to the top
-                window.innerHeight * 0.25,
+              // Positioning for both mobile and desktop - always relative to tour button
+              top: tourButtonPosition.top + 70,
               transform: 'translateX(-50%)'
             }}
           >
             {/* Tour Content */}
-            <Card className="w-[85vw] max-w-[280px] md:max-w-[340px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
+            <Card className="w-[70vw] max-w-[210px] md:max-w-[320px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
               {/* Blur effect behind card */}
               <div className="absolute -inset-[5px] rounded-xl bg-white/10 backdrop-blur-sm -z-10"></div>
               
@@ -235,8 +233,8 @@ const TourGuide: React.FC = () => {
                 )}
               </div>
               
-              {/* Mobile Fundi Character - inside the card */}
-              <div className="flex md:hidden justify-center mb-2 mt-3">
+              {/* Mobile Fundi Character - at the top of the card */}
+              <div className="flex md:hidden justify-center mb-1 mt-2">
                 {currentTourStep?.showFundiAnimation ? (
                   <motion.div
                     key={`fundi-animation-mobile-${currentStep}-${animationKey}`}
@@ -277,7 +275,7 @@ const TourGuide: React.FC = () => {
                 )}
               </div>
               
-              <CardContent className="pt-2 md:pt-16 pb-6 px-4 md:px-6">
+              <CardContent className="pt-1 md:pt-16 pb-5 px-3 md:px-6">
                 {/* Close Button */}
                 <Button 
                   variant="ghost" 
@@ -289,11 +287,11 @@ const TourGuide: React.FC = () => {
                 </Button>
                 
                 {/* Content */}
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-center text-[#1C3D5A]">
+                <div className="space-y-2 md:space-y-4">
+                  <h3 className="text-lg md:text-xl font-bold text-center text-[#1C3D5A]">
                     {currentTourStep?.title || 'Welcome to Fundamenta'}
                   </h3>
-                  <p className="text-sm text-center text-gray-700">
+                  <p className="text-xs md:text-sm text-center text-gray-700">
                     {currentTourStep?.content || 'Let me guide you through our platform!'}
                   </p>
                 </div>
