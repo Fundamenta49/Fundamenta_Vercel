@@ -181,12 +181,15 @@ const TourGuide: React.FC = () => {
             className="fixed left-1/2 -translate-x-1/2"
             style={{
               zIndex: 100001,
-              top: tourButtonPosition.top + 100,
+              // Desktop position - always relative to tour button
+              top: window.innerWidth > 768 ? tourButtonPosition.top + 100 : 
+              // Mobile position - prevent from going off-screen
+                Math.min(tourButtonPosition.top + 100, window.innerHeight * 0.5),
               transform: 'translateX(-50%)'
             }}
           >
             {/* Tour Content */}
-            <Card className="w-[340px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
+            <Card className="w-[90vw] max-w-[340px] shadow-lg border-2 border-[#1C3D5A] relative bg-white">
               {/* Blur effect behind card */}
               <div className="absolute -inset-[5px] rounded-xl bg-white/10 backdrop-blur-sm -z-10"></div>
               
@@ -254,12 +257,12 @@ const TourGuide: React.FC = () => {
                 </div>
                 
                 {/* Tour Navigation */}
-                <div className="flex justify-between items-center mt-6">
-                  <div className="flex space-x-1">
+                <div className="flex justify-between items-center mt-6 flex-wrap gap-2">
+                  <div className="flex space-x-1 overflow-x-auto max-w-[150px] sm:max-w-none">
                     {Array.from({ length: totalSteps }).map((_, i) => (
                       <div
                         key={`dot-${i}`}
-                        className={`h-2 w-2 rounded-full ${
+                        className={`h-2 w-2 flex-shrink-0 rounded-full ${
                           i === currentStep ? 'bg-primary' : 'bg-gray-300'
                         }`}
                       />
@@ -272,7 +275,7 @@ const TourGuide: React.FC = () => {
                         variant="outline"
                         size="sm"
                         onClick={prevStep}
-                        className="flex items-center"
+                        className="flex items-center text-xs sm:text-sm"
                       >
                         <ChevronLeft className="h-4 w-4 mr-1" /> Back
                       </Button>
@@ -282,7 +285,7 @@ const TourGuide: React.FC = () => {
                       variant="default"
                       size="sm"
                       onClick={nextStep}
-                      className="flex items-center"
+                      className="flex items-center text-xs sm:text-sm"
                     >
                       {currentStep === totalSteps - 1 ? 'Finish' : 'Next'} <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>

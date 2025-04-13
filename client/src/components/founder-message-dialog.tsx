@@ -44,11 +44,11 @@ export default function FounderMessageDialog({ open, onOpenChange }: FounderMess
           A letter from the founder of Fundamenta explaining the mission and purpose of the platform
         </DialogDescription>
         
-        {/* Decorative paperclip */}
-        <div className="absolute -top-4 left-8 z-10 w-8 h-12 bg-gray-400 rounded-sm transform rotate-45 opacity-80"></div>
+        {/* Decorative paperclip - hidden on very small screens */}
+        <div className="absolute -top-4 left-8 z-10 w-8 h-12 bg-gray-400 rounded-sm transform rotate-45 opacity-80 hidden xs:block"></div>
         
         {/* Letter styling with subtle paper texture and slight rotation */}
-        <div className="relative paper-texture letter-shadow border border-[#e9e4d5] transform rotate-[0.5deg] px-4 py-4 sm:px-10 sm:py-7 rounded-sm">
+        <div className="relative paper-texture letter-shadow border border-[#e9e4d5] transform rotate-[0.5deg] px-3 py-3 xs:px-4 xs:py-4 sm:px-10 sm:py-7 rounded-sm max-h-[85vh]">
           {/* Custom close button */}
           <Button 
             variant="ghost" 
