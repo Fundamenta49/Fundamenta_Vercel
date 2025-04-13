@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { 
@@ -17,6 +17,7 @@ export function SimpleTourButton() {
   const [currentStep, setCurrentStep] = useState(0);
   const { user } = useAuth();
   const [highlightedCard, setHighlightedCard] = useState<string | null>(null);
+  const [fundiAnimating, setFundiAnimating] = useState(false);
   
   // Get user's actual name
   const userName = user?.name 
@@ -145,6 +146,29 @@ export function SimpleTourButton() {
     }
   }, [isOpen, highlightColors]);
   
+  // Create a silly animation for Fundi when mentioned in the first step
+  useEffect(() => {
+    if (isOpen && currentStep === 0) {
+      // Find the content text that mentions Fundi in the first step
+      const fundiMention = document.querySelector('.tour-content-text');
+      
+      // Add animation to Fundi avatar
+      const fundiAvatar = document.querySelector('[data-fundi-robot]');
+      if (fundiAvatar) {
+        setFundiAnimating(true);
+        
+        // Add the animation class
+        fundiAvatar.classList.add('fundi-silly-animation');
+        
+        // Remove it after animation completes
+        setTimeout(() => {
+          fundiAvatar.classList.remove('fundi-silly-animation');
+          setFundiAnimating(false);
+        }, 3000);
+      }
+    }
+  }, [isOpen, currentStep]);
+  
   // Simple tour control functions
   const startTour = () => {
     setCurrentStep(0);
@@ -208,7 +232,7 @@ export function SimpleTourButton() {
                 </div>
                 <h3 className="text-xl font-bold">{steps[currentStep].title}</h3>
               </div>
-              <p className="mb-6">{steps[currentStep].content}</p>
+              <p className="mb-6 tour-content-text">{steps[currentStep].content}</p>
               
               {/* Progress indicator */}
               <div className="w-full h-1 bg-gray-200 rounded-full mb-4">
