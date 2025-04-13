@@ -7,6 +7,7 @@ import Layout from "@/components/layout";
 import NotFound from "@/pages/not-found";
 import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
+import TourSystem from "@/components/tours/new";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
 import Partner from "@/pages/partner";
@@ -330,7 +331,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router />
+        {/* Wrap the entire application with the TourSystem component */}
+        <TourSystem>
+          <Router />
+        </TourSystem>
       </AuthProvider>
     </QueryClientProvider>
   );
