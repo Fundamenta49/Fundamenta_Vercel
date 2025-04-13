@@ -26,8 +26,11 @@ export default function TourGuide() {
   const [speaking, setSpeaking] = useState(false);
   const [thinking, setThinking] = useState(false);
   
-  // Default positions with safety margins
-  const defaultPosition = useRef({ x: 20, y: 20 });
+  // Default positions with safety margins - centered for desktop
+  const defaultPosition = useRef({ 
+    x: Math.max(window.innerWidth / 2 - 150, 20), 
+    y: Math.max(window.innerHeight / 2 - 200, 20) 
+  });
   const [position, setPosition] = useState(defaultPosition.current);
   
   // Calculate progress percentage
@@ -208,14 +211,14 @@ export default function TourGuide() {
           damping: 16
         }}
         style={{ 
-          width: isMobile ? '60px' : '80px', 
-          height: isMobile ? '60px' : '80px',
+          width: isMobile ? '60px' : '100px', 
+          height: isMobile ? '60px' : '100px',
           willChange: 'transform'
         }}
       >
         {/* Fundi Character */}
         <div className={cn(
-          isMobile ? "w-16 h-16" : "w-20 h-20",
+          isMobile ? "w-16 h-16" : "w-24 h-24",
           "tour-fundi-robot"
         )}>
           <FundiPersonalityAdapter>
@@ -234,8 +237,8 @@ export default function TourGuide() {
         <AnimatePresence>
           <motion.div
             className={cn(
-              "absolute bg-white rounded-xl shadow-xl p-5 text-sm border border-gray-100",
-              "w-64 sm:w-72 md:w-80 max-w-[calc(100vw-40px)]",
+              "absolute bg-white rounded-xl shadow-xl p-5 text-sm md:text-base md:p-6 border border-gray-100",
+              "w-64 sm:w-80 md:w-96 max-w-[calc(100vw-40px)]",
               isMobile ? "mobile-speech-bubble" : "",
               placement === 'right' && "left-24 top-0",
               placement === 'left' && "right-24 top-0",
@@ -254,7 +257,7 @@ export default function TourGuide() {
           >
             {/* Title */}
             <motion.h3 
-              className="font-bold text-lg mb-2"
+              className="font-bold text-lg md:text-xl mb-2 md:mb-3"
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.3 }}

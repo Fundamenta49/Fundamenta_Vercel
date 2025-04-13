@@ -52,7 +52,7 @@ export const initialTour: Tour = {
       fundiPosition: { x: 20, y: 400 },
     },
     {
-      id: 'wellness',
+      id: 'wellness-nutrition',
       title: 'Wellness & Nutrition',
       content: "Your physical and mental wellbeing matters! From meditation guides to nutrition tips, we've got tools to help you feel your best inside and out.",
       targetSelector: '[data-tour-id="card-wellness-nutrition"]',
