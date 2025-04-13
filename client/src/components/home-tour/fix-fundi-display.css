@@ -1,0 +1,72 @@
+/* Fix tour dialog display issues for Fundi robot */
+
+/* Make sure the entire dialog has proper overflow to display Fundi's head */
+[data-tour-dialog="true"] {
+  overflow: visible !important;
+  height: auto !important;
+  box-sizing: content-box !important;
+}
+
+/* Specific fix for Fundi character on both mobile and desktop */
+.fundi-tour-wrapper {
+  position: absolute !important;
+  top: -130px !important; /* Pull Fundi higher up */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 999999 !important;
+  pointer-events: none !important; /* Let click events pass through */
+  width: 112px !important; /* For lg size Fundi */
+  height: 112px !important;
+  overflow: visible !important;
+}
+
+/* Override any container styles that might clip Fundi */
+.fundi-tour-wrapper svg,
+.fundi-tour-wrapper > div,
+.fundi-tour-wrapper > div > svg {
+  overflow: visible !important;
+}
+
+/* Padding for the card content to make room for Fundi */
+.tour-card-content {
+  padding-top: 1.5rem !important;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 767px) {
+  .fundi-tour-wrapper {
+    top: -140px !important; /* Even more space on mobile */
+  }
+  
+  /* Add additional padding to the top of the content for mobile */
+  .tour-card-content {
+    padding-top: 2rem !important;
+  }
+}
+
+/* Fix for edge cases like text entry and keyboard appearance */
+@media (max-height: 500px) {
+  .fundi-tour-wrapper {
+    top: -110px !important; /* Adjust for very short screens */
+  }
+}
+
+/* Fix for modal positioning in base styles */
+[data-tour-dialog="true"] {
+  position: relative !important;
+  margin-top: 40px !important; /* Give room for the Fundi character */
+}
+
+/* Fix for overflow issues in parent containers */
+[class*="tour-dialog"],
+[data-tour-dialog="true"] > *,
+[data-tour-dialog="true"] > * > * {
+  overflow: visible !important;
+}
+
+/* Reset for a specific device */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .md\\:pt-16 {
+    padding-top: 5rem !important;
+  }
+}

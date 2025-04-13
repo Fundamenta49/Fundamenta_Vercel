@@ -7,6 +7,7 @@ import RobotFundi from '@/components/robot-fundi';
 import { useTour } from './tour-context';
 import { useTourSteps } from './tour-steps';
 import './tour-mobile.css';
+import './fix-fundi-display.css'; // Import the new CSS fix
 
 const TourGuide: React.FC = () => {
   const { isTourActive, currentStep, totalSteps, nextStep, prevStep, endTour } = useTour();
@@ -230,8 +231,8 @@ const TourGuide: React.FC = () => {
               {/* Blur effect behind card */}
               <div className="absolute -inset-[5px] rounded-xl bg-white/10 backdrop-blur-sm -z-10"></div>
               
-              {/* Fundi Character - Desktop adjustments for better positioning */}
-              <div className="absolute -top-[90px] left-1/2 transform -translate-x-1/2 z-10 hidden md:flex" style={{ pointerEvents: 'none' }}>
+              {/* Fundi Character Container - for both desktop and mobile */}
+              <div className="fundi-tour-wrapper">
                 {currentTourStep?.showFundiAnimation ? (
                   <motion.div
                     key={`fundi-animation-${currentStep}-${animationKey}`}
@@ -272,49 +273,7 @@ const TourGuide: React.FC = () => {
                 )}
               </div>
               
-              {/* Mobile Fundi Character - ABOVE the card instead of inside */}
-              <div className="flex md:hidden justify-center absolute -top-32 left-1/2 transform -translate-x-1/2 z-10" style={{ pointerEvents: 'none' }}>
-                {currentTourStep?.showFundiAnimation ? (
-                  <motion.div
-                    key={`fundi-animation-mobile-${currentStep}-${animationKey}`}
-                    initial={{ y: 0 }}
-                    animate={
-                      currentTourStep.animationType === 'wave' 
-                        ? { rotate: [0, 15, -15, 15, -15, 0] }
-                        : currentTourStep.animationType === 'jump' 
-                          ? { y: [0, -10, 0, -5, 0] }
-                          : currentTourStep.animationType === 'spin' 
-                            ? { rotate: [0, 360] }
-                            : currentTourStep.animationType === 'dance' 
-                              ? { x: [0, 5, -5, 5, -5, 0], y: [0, -3, 0, -3, 0] }
-                              : currentTourStep.animationType === 'nod' 
-                                ? { y: [0, 3, 0, 3, 0] }
-                                : currentTourStep.animationType === 'point' 
-                                  ? { x: [0, 10, 0] }
-                                  : {}
-                    }
-                    transition={{ 
-                      duration: 1.5, 
-                      repeat: currentTourStep.animationType === 'dance' ? 1 : 0,
-                      ease: "easeInOut" 
-                    }}
-                  >
-                    <RobotFundi 
-                      size="lg"
-                      category={fundiCategory}
-                      emotion="happy"
-                    />
-                  </motion.div>
-                ) : (
-                  <RobotFundi 
-                    size="lg"
-                    category={fundiCategory}
-                    emotion="happy"
-                  />
-                )}
-              </div>
-              
-              <CardContent className="pt-4 md:pt-16 pb-4 px-4 md:px-6">
+              <CardContent className="pt-4 md:pt-16 pb-4 px-4 md:px-6 tour-card-content">
                 {/* Close Button */}
                 <Button 
                   variant="ghost" 
