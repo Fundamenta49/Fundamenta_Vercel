@@ -51,11 +51,6 @@ import AdminPage from "@/pages/admin";
 import PersonalityTestPage from "@/pages/admin/personality-test";
 import ProtectedRoute from "@/components/protected-route";
 import { SkeletonDemoPage } from "@/components/SkeletonDemoPage";
-// Guided Tour imports
-import { GuidedTourProvider } from "@/contexts/guided-tour-context";
-import { availableTours } from "@/lib/tour-controller";
-import GuidedTour from "@/components/tour/guided-tour";
-import useStartTour from "@/hooks/use-start-tour";
 
 // Component to handle redirects from /wellness/* to /wellness?section=*
 function WellnessRedirect() {
@@ -331,22 +326,11 @@ function Router() {
   );
 }
 
-// TourController component to hook up tour events
-function TourController() {
-  // Use the hook to enable tour starting
-  useStartTour();
-  return null;
-}
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <GuidedTourProvider tours={availableTours}>
-          <Router />
-          <GuidedTour />
-          <TourController />
-        </GuidedTourProvider>
+        <Router />
       </AuthProvider>
     </QueryClientProvider>
   );

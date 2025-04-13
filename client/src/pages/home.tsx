@@ -1,9 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import RestartTourButton from "@/components/tour/restart-tour-button";
 import WeatherWidget from "@/components/weather-widget";
-import { useTour } from "@/contexts/tour-context";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useEffect } from "react";
 import FounderMessageDialog from "@/components/founder-message-dialog";
@@ -55,7 +53,6 @@ const features = [
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
-  const { startTour } = useTour();
   const [founderMessageOpen, setFounderMessageOpen] = useState(false);
   const [, params] = useLocation();
   
@@ -77,13 +74,6 @@ export default function Home() {
       <div className="text-center mb-8 relative">
         <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
           Welcome to Fundamenta
-          <span className="inline-block ml-2 sm:ml-2 -mt-1 sm:-mt-1 relative transform transition-all hover:scale-110" title="Take a tour!">
-            <RestartTourButton 
-              position="relative" 
-              className="scale-[0.85] sm:scale-90" 
-              tooltipText="Start Tour Guide" 
-            />
-          </span>
         </h1>
         <p className="text-lg text-muted-foreground">
           Your AI-powered assistant for life skills and wellness
