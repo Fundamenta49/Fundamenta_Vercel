@@ -13,9 +13,9 @@ export function SimpleTourButton() {
   const [currentStep, setCurrentStep] = useState(0);
   const { user } = useAuth();
   
-  // Get user's first name
-  const userName = user?.email 
-    ? user.email.split('@')[0].charAt(0).toUpperCase() + user.email.split('@')[0].slice(1)
+  // Get user's actual name
+  const userName = user?.name 
+    ? user.name.split(' ')[0] // Get first name only
     : 'there';
   
   // Tour steps - simple and direct
@@ -85,7 +85,7 @@ export function SimpleTourButton() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               className="fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] 
-                        bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-2"
+                        bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-2 border border-blue-100/50"
             >
               <button 
                 onClick={closeTour}
