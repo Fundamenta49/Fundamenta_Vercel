@@ -8,7 +8,6 @@ import RobotFundi from '@/components/robot-fundi';
 import FundiPersonalityAdapter from '@/components/fundi-personality-adapter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAIEventStore } from '@/lib/ai-event-system';
-import { useTour } from '@/contexts/tours/tour-context';
 
 interface FloatingChatProps {
   category?: string;
@@ -21,7 +20,8 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   const [isThinking, setIsThinking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { lastResponse, currentCategory } = useAIEventStore();
-  const { isTourActive } = useTour();
+  // Tour context removed to prevent conflicts
+  const isTourActive = false;
 
   const categoryColors: Record<string, string> = {
     finance: '#22c55e', 

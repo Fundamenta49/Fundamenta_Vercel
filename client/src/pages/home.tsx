@@ -5,7 +5,6 @@ import WeatherWidget from "@/components/weather-widget";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useEffect } from "react";
 import FounderMessageDialog from "@/components/founder-message-dialog";
-import { TourButton } from "@/components/tours/new";
 
 const features = [
   {
@@ -80,9 +79,9 @@ export default function Home() {
           Your AI-powered assistant for life skills and wellness
         </p>
         
-        {/* Tour Button - centered below title */}
+        {/* Tour Button removed for clean implementation */}
         <div className="flex justify-center mt-4">
-          <TourButton tourId="initial-tour" />
+          {/* Clean tour implementation will be added here later */}
         </div>
       </div>
 
