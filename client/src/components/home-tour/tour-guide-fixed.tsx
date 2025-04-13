@@ -272,8 +272,8 @@ const TourGuide: React.FC = () => {
                 )}
               </div>
               
-              {/* Mobile Fundi Character - at the top of the card */}
-              <div className="flex md:hidden justify-center mb-1 mt-2">
+              {/* Mobile Fundi Character - ABOVE the card instead of inside */}
+              <div className="flex md:hidden justify-center absolute -top-20 left-1/2 transform -translate-x-1/2 z-10">
                 {currentTourStep?.showFundiAnimation ? (
                   <motion.div
                     key={`fundi-animation-mobile-${currentStep}-${animationKey}`}
@@ -300,21 +300,21 @@ const TourGuide: React.FC = () => {
                     }}
                   >
                     <RobotFundi 
-                      size="md"
+                      size="lg"
                       category={fundiCategory}
                       emotion="happy"
                     />
                   </motion.div>
                 ) : (
                   <RobotFundi 
-                    size="md"
+                    size="lg"
                     category={fundiCategory}
                     emotion="happy"
                   />
                 )}
               </div>
               
-              <CardContent className="pt-3 md:pt-16 pb-4 px-4 md:px-6">
+              <CardContent className="pt-4 md:pt-16 pb-4 px-4 md:px-6">
                 {/* Close Button */}
                 <Button 
                   variant="ghost" 

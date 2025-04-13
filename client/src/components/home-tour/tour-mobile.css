@@ -15,6 +15,7 @@ body.mobile-tour-active .tour-tooltip {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
   background-color: white !important;
   border-radius: 8px !important;
+  margin-top: 20px !important; /* Add space for Fundi at the top */
 }
 
 /* Ensure all tour buttons and actions are tappable */
@@ -46,9 +47,14 @@ body.mobile-tour-active .tour-tooltip {
   .mobile-tour-active [class*="tour-dialog"],
   body.mobile-tour-active .tour-tooltip {
     position: fixed !important;
-    top: 20px !important;
+    top: 80px !important; /* Increased to make space for Fundi at the top */
     transform: translateX(-50%) !important;
     height: auto !important;
-    max-height: calc(100vh - 40px) !important;
+    max-height: calc(100vh - 100px) !important;
   }
+}
+
+/* Add drop shadow and glow to Fundi in mobile view to make it more visible */
+.mobile-tour-active [data-tour-dialog="true"] > div {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
