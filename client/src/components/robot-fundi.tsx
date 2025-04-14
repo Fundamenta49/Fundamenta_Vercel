@@ -42,8 +42,11 @@ export default function RobotFundi({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [showClickIndicator, setShowClickIndicator] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [clickLocked, setClickLocked] = useState(false); // NEW: dedicated state for click locking
+  const [dragEndTime, setDragEndTime] = useState(0);
   const { lastResponse } = useAIEventStore();
+  
+  // Track if this is the first render to avoid auto-opening immediately after page load
+  const isFirstRender = React.useRef(true);
   
   // Removed emergency click handlers since they were causing auto-opening after dragging
   useEffect(() => {
@@ -132,51 +135,43 @@ export default function RobotFundi({
     
     // If we've been dragging, we need to prevent the click event that will follow
     if (wasDragged) {
-      // Store the last drag time on the window object for reference
+      // Store the last drag time and record it
       const now = Date.now();
+      setDragEndTime(now);
       (window as any).lastDragTime = now;
       (window as any).disableClicks = true;
+      
+      // Save Fundi's position to localStorage immediately after drag ends
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('fundiPosition', JSON.stringify(position));
+          console.log('Saved Fundi position to localStorage after drag');
+        } catch (e) {
+          console.error('Failed to save position to localStorage', e);
+        }
+      }
       
       // Calculate drag distance for logging
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
       console.log(`Drag ended with distance: ${dragDistance.toFixed(0)}px`);
       
-      // TRIPLE LAYER OF PROTECTION:
-      // 1. Capture the immediate click event
-      const preventImmediateClick = (event: MouseEvent) => {
+      // Super aggressive click prevention after drag
+      const preventClick = (event: MouseEvent) => {
+        console.log('Prevented post-drag click');
         event.stopPropagation();
         event.preventDefault();
-        console.log('Prevented immediate click after drag');
-        document.removeEventListener('click', preventImmediateClick, true);
+        return false;
       };
       
-      // 2. Add a slightly longer-lived listener for delayed clicks
-      const preventDelayedClick = (event: MouseEvent) => {
-        const clickTime = Date.now();
-        const timeSinceDrag = clickTime - now;
-        
-        // Only block clicks that happen within 500ms of drag end
-        if (timeSinceDrag < 500) {
-          event.stopPropagation();
-          event.preventDefault();
-          console.log(`Prevented delayed click after drag (${timeSinceDrag}ms after drag)`);
-        } else {
-          document.removeEventListener('click', preventDelayedClick, true);
-          (window as any).disableClicks = false;
-          console.log('Removed click prevention - delay exceeded');
-        }
-      };
+      // Block ALL clicks for 1.5 seconds after drag
+      document.addEventListener('click', preventClick, true);
       
-      // Add capturing click listeners to block clicks
-      document.addEventListener('click', preventImmediateClick, true);
-      document.addEventListener('click', preventDelayedClick, true);
-      
-      // 3. Set a timeout to re-enable clicks after 500ms as a fallback
+      // Remove the click prevention after a longer delay (1.5 seconds)
       setTimeout(() => {
+        document.removeEventListener('click', preventClick, true);
         (window as any).disableClicks = false;
-        document.removeEventListener('click', preventDelayedClick, true);
-        console.log('Re-enabled clicks after timeout');
-      }, 500);
+        console.log('Re-enabled clicks after extended timeout');
+      }, 1500);
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
@@ -188,56 +183,54 @@ export default function RobotFundi({
     
     // If we've been dragging, we need to prevent the touch events that will follow
     if (wasDragged) {
-      // Store the last drag time on the window object for reference
+      // Store the last drag time and record it
       const now = Date.now();
+      setDragEndTime(now);
       (window as any).lastDragTime = now;
       (window as any).disableClicks = true;
+      
+      // Save Fundi's position to localStorage immediately after drag ends
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('fundiPosition', JSON.stringify(position));
+          console.log('Saved Fundi position to localStorage after touch drag');
+        } catch (e) {
+          console.error('Failed to save position to localStorage', e);
+        }
+      }
       
       // Calculate drag distance for logging
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
       console.log(`Touch drag ended with distance: ${dragDistance.toFixed(0)}px`);
       
-      // TRIPLE LAYER OF PROTECTION FOR TOUCH EVENTS:
-      // 1. Capture the immediate touchend/click events
-      const preventImmediateEvent = (event: MouseEvent | TouchEvent) => {
+      // Super aggressive touch/click prevention after drag
+      const preventTouch = (event: TouchEvent) => {
+        console.log('Prevented post-drag touch');
         event.stopPropagation();
         event.preventDefault();
-        console.log('Prevented immediate touch/click after drag');
-        document.removeEventListener('click', preventImmediateEvent, true);
-        document.removeEventListener('touchend', preventImmediateEvent, true);
+        return false;
       };
       
-      // 2. Add longer-lived listeners for delayed events
-      const preventDelayedEvent = (event: MouseEvent | TouchEvent) => {
-        const eventTime = Date.now();
-        const timeSinceDrag = eventTime - now;
-        
-        // Only block events that happen within 500ms of drag end
-        if (timeSinceDrag < 500) {
-          event.stopPropagation();
-          event.preventDefault();
-          console.log(`Prevented delayed touch/click after drag (${timeSinceDrag}ms after drag)`);
-        } else {
-          document.removeEventListener('click', preventDelayedEvent, true);
-          document.removeEventListener('touchend', preventDelayedEvent, true);
-          (window as any).disableClicks = false;
-          console.log('Removed touch/click prevention - delay exceeded');
-        }
+      const preventClick = (event: MouseEvent) => {
+        console.log('Prevented post-drag click from touch');
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
       };
       
-      // Add capturing event listeners
-      document.addEventListener('click', preventImmediateEvent, true);
-      document.addEventListener('touchend', preventImmediateEvent, true);
-      document.addEventListener('click', preventDelayedEvent, true);
-      document.addEventListener('touchend', preventDelayedEvent, true);
+      // Block ALL touches and clicks for 1.5 seconds after drag
+      document.addEventListener('touchend', preventTouch, true);
+      document.addEventListener('touchstart', preventTouch, true);
+      document.addEventListener('click', preventClick, true);
       
-      // 3. Set a timeout to re-enable events after 500ms as a fallback
+      // Remove the touch/click prevention after a longer delay (1.5 seconds)
       setTimeout(() => {
+        document.removeEventListener('touchend', preventTouch, true);
+        document.removeEventListener('touchstart', preventTouch, true);
+        document.removeEventListener('click', preventClick, true);
         (window as any).disableClicks = false;
-        document.removeEventListener('click', preventDelayedEvent, true);
-        document.removeEventListener('touchend', preventDelayedEvent, true);
-        console.log('Re-enabled touch/click events after timeout');
-      }, 500);
+        console.log('Re-enabled touch/click events after extended timeout');
+      }, 1500);
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }

@@ -36,18 +36,34 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   };
 
   // Listen for forced open events that include position info
+  // Load Fundi's position from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedPosition = localStorage.getItem('fundiPosition');
+      if (savedPosition) {
+        const position = JSON.parse(savedPosition);
+        // Pre-position the chat based on stored Fundi position
+        const offset = 120; // px offset from Fundi
+        setChatPosition({ 
+          top: Math.max(0, 8 + position.y), 
+          right: Math.max(0, 24 - position.x + offset)
+        });
+      }
+    } catch (e) {
+      console.error('Error loading saved Fundi position', e);
+    }
+  }, []);
+  
+  // Listen for forced open events that include position info
   useEffect(() => {
     const handleForcedOpen = (event: Event) => {
       if ((event as CustomEvent)?.detail?.position) {
         const { x, y } = (event as CustomEvent).detail.position;
         // Use Fundi's current position to determine chat placement
-        // Fundi is at top:8px, right:24px with translation of (x,y)
-        // Place chat at the same location (no auto-opening)
         console.log(`Received position from Fundi: (${x}, ${y})`);
         
-        // Apply some offset so it doesn't cover Fundi but is still near it
-        // Adjust these values as needed for better positioning
-        const offset = 120; // px offset from Fundi, about the width of the chat
+        // Apply offset so it doesn't cover Fundi but is still near it
+        const offset = 120; // px offset from Fundi
         
         setChatPosition({ 
           top: Math.max(0, 8 + y), 
