@@ -29,63 +29,14 @@ export default function RobotFundi({
   const [isHovered, setIsHovered] = useState(false);
   const { lastResponse } = useAIEventStore();
   
-  // EMERGENCY: Force direct open on mount and clicks
+  // Removed emergency click handlers since they were causing auto-opening after dragging
   useEffect(() => {
-    // Create a direct function for emergency handling - with added safeguards to prevent auto-opening
-    const forceOpenFundi = (e: any) => {
-      // Only open if it's been at least 500ms since the last drag operation
-      // This is to prevent accidental opening immediately after drag ends
-      const lastDragTime = (window as any).lastDragTime || 0;
-      const timeSinceLastDrag = Date.now() - lastDragTime;
-      
-      // Added strict timing check to prevent auto-opening
-      const canOpen = !isDragging && timeSinceLastDrag > 500;
-      
-      console.log(`Click handler triggered, canOpen=${canOpen}, timeSinceLastDrag=${timeSinceLastDrag}`);
-      
-      if (canOpen && onOpen) {
-        // Direct open - this is the emergency path
-        onOpen();
-        
-        // Dispatch custom event with position information
-        if (typeof window !== 'undefined') {
-          const openFundiEvent = new CustomEvent('forceFundiOpen', { 
-            detail: { 
-              position: {
-                x: position.x,
-                y: position.y
-              }
-            }
-          });
-          window.dispatchEvent(openFundiEvent);
-          console.log(`Emergency: Dispatched forceFundiOpen event with position: (${position.x}, ${position.y})`);
-        }
-      }
-      
-      // Stop propagation if we have an event
-      if (e && e.stopPropagation) {
-        e.stopPropagation();
-        e.preventDefault(); // Added to prevent default behavior
-      }
-    };
+    // Log for debugging
+    console.log("Emergency click handlers disabled - using only standard click handling");
     
-    // Find all Fundi elements and attach direct click handlers
-    setTimeout(() => {
-      const fundiElements = document.querySelectorAll('[data-fundi-robot]');
-      fundiElements.forEach(element => {
-        element.addEventListener('click', forceOpenFundi);
-      });
-      console.log(`Added emergency click handlers to ${fundiElements.length} Fundi elements`);
-    }, 1000);
-    
-    return () => {
-      // Clean up handlers if component unmounts
-      const fundiElements = document.querySelectorAll('[data-fundi-robot]');
-      fundiElements.forEach(element => {
-        element.removeEventListener('click', forceOpenFundi);
-      });
-    };
-  }, [onOpen]);
+    // Empty cleanup function
+    return () => {};
+  }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!interactive) return;
@@ -304,7 +255,7 @@ export default function RobotFundi({
     // Increase delay after dragging to prevent auto-opening
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
-    const canOpen = !isDragging && timeSinceLastDrag > 500; // Stricter timing to prevent auto-opening
+    const canOpen = !isDragging && timeSinceLastDrag > 800; // Even stricter timing to prevent auto-opening
     
     if (canOpen && onOpen) {
       console.log("Opening chat - conditions satisfied");

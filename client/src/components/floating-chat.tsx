@@ -40,11 +40,19 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     const handleForcedOpen = (event: Event) => {
       if ((event as CustomEvent)?.detail?.position) {
         const { x, y } = (event as CustomEvent).detail.position;
-        // If we have a position, adjust chatPosition to be near Fundi
+        // Use Fundi's current position to determine chat placement
         // Fundi is at top:8px, right:24px with translation of (x,y)
-        // We'll place chat nearby
+        // Place chat at the same location (no auto-opening)
         console.log(`Received position from Fundi: (${x}, ${y})`);
-        setChatPosition({ top: 8 + y, right: 24 - x });
+        
+        // Apply some offset so it doesn't cover Fundi but is still near it
+        // Adjust these values as needed for better positioning
+        const offset = 120; // px offset from Fundi, about the width of the chat
+        
+        setChatPosition({ 
+          top: Math.max(0, 8 + y), 
+          right: Math.max(0, 24 - x + offset)
+        });
       }
     };
     
