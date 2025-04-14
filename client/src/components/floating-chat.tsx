@@ -42,8 +42,8 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       const savedPosition = localStorage.getItem('fundiPosition');
       if (savedPosition) {
         const position = JSON.parse(savedPosition);
-        // Pre-position the chat based on stored Fundi position
-        const offset = 120; // px offset from Fundi
+        // Pre-position the chat based on stored Fundi position - smaller offset for better proximity
+        const offset = 75; // Reduced offset from 120px to position closer to Fundi
         setChatPosition({ 
           top: Math.max(0, 8 + position.y), 
           right: Math.max(0, 24 - position.x + offset)
@@ -63,7 +63,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
         console.log(`Received position from Fundi: (${x}, ${y})`);
         
         // Apply offset so it doesn't cover Fundi but is still near it
-        const offset = 120; // px offset from Fundi
+        const offset = 75; // Reduced offset for better proximity to Fundi
         
         setChatPosition({ 
           top: Math.max(0, 8 + y), 
@@ -72,12 +72,21 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       }
     };
     
-    // Add the event listener
+    // Event handler for when Fundi is being restored from minimized state
+    const handlePreventChatOpen = () => {
+      // Prevent the chat from opening
+      setIsExpanded(false);
+      console.log('Prevented chat from opening after Fundi was restored');
+    };
+    
+    // Add the event listeners
     window.addEventListener('forceFundiOpen', handleForcedOpen);
+    window.addEventListener('preventFundiChatOpen', handlePreventChatOpen);
     
     // Clean up on unmount
     return () => {
       window.removeEventListener('forceFundiOpen', handleForcedOpen);
+      window.removeEventListener('preventFundiChatOpen', handlePreventChatOpen);
     };
   }, []);
 
@@ -150,7 +159,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               top: 'auto',
               maxWidth: '95vw',
               maxHeight: '80vh',
-              width: '370px',
+              width: '366px', // Reduced size by 4px as requested
               transform: 'none' // Force no transform to prevent inheriting Fundi's position
             }}
           >

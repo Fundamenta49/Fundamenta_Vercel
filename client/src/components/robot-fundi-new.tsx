@@ -274,7 +274,14 @@ export default function RobotFundi({
       // If we're transitioning from minimized to normal, don't automatically open chat
       if (previousState === true && isMinimized === false) {
         console.log('Fundi restored from minimized state - not opening chat automatically');
-        // We could dispatch a custom event here if needed for other components
+        
+        // Dispatch an event to prevent chat opening
+        if (typeof window !== 'undefined') {
+          const preventChatOpenEvent = new CustomEvent('preventFundiChatOpen', {
+            detail: { timestamp: Date.now() }
+          });
+          window.dispatchEvent(preventChatOpenEvent);
+        }
       }
     }
   }, [isMinimized]);
