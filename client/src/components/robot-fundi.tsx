@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useAIEventStore } from '@/lib/ai-event-system';
 
@@ -36,6 +36,21 @@ export default function RobotFundi({
     return { x: 63, y: 8 }; // Default position
   };
   
+  // Get stored minimized state from localStorage or use default
+  const getStoredMinimizedState = () => {
+    if (typeof window !== 'undefined') {
+      const storedState = localStorage.getItem('fundiMinimized');
+      if (storedState) {
+        try {
+          return JSON.parse(storedState) === true;
+        } catch (e) {
+          console.error('Failed to parse stored minimized state', e);
+        }
+      }
+    }
+    return false; // Default to not minimized
+  };
+  
   const [position, setPosition] = useState(getStoredPosition());
   const [isDragging, setIsDragging] = useState(false);
   const [wasDragged, setWasDragged] = useState(false);
@@ -43,7 +58,11 @@ export default function RobotFundi({
   const [showClickIndicator, setShowClickIndicator] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [dragEndTime, setDragEndTime] = useState(0);
+  const [isMinimized, setIsMinimized] = useState(getStoredMinimizedState());
   const { lastResponse } = useAIEventStore();
+  
+  // For double tap detection
+  const lastTapTimeRef = useRef(0);
   
   // Track if this is the first render to avoid auto-opening immediately after page load
   const isFirstRender = React.useRef(true);
@@ -70,6 +89,27 @@ export default function RobotFundi({
   
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!interactive) return;
+    
+    // Check for double tap
+    const now = Date.now();
+    const timeDiff = now - lastTapTimeRef.current;
+    
+    // If double tap detected (time between taps is less than 300ms)
+    if (timeDiff < 300) {
+      // Toggle minimize state
+      setIsMinimized(prev => !prev);
+      console.log(`Double-tap detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
+      e.stopPropagation();
+      e.preventDefault();
+      // Reset last tap time
+      lastTapTimeRef.current = 0;
+      return;
+    }
+    
+    // Store the time of this tap
+    lastTapTimeRef.current = now;
+    
+    // Continue with normal touch handling for dragging
     setIsDragging(true);
     setDragStart({
       x: e.touches[0].clientX - position.x,
@@ -86,6 +126,25 @@ export default function RobotFundi({
       return;
     }
     
+    // Check for double click
+    const now = Date.now();
+    const timeDiff = now - lastTapTimeRef.current;
+    
+    // If double click detected (time between clicks is less than 300ms)
+    if (timeDiff < 300) {
+      // Toggle minimize state
+      setIsMinimized(prev => !prev);
+      console.log(`Double-click detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
+      e.stopPropagation();
+      e.preventDefault();
+      // Reset last click time
+      lastTapTimeRef.current = 0;
+      return;
+    }
+    
+    // Store the time of this click for potential double-click detection
+    lastTapTimeRef.current = now;
+    
     // Get the last drag time and distance moved since drag started
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
@@ -98,11 +157,11 @@ export default function RobotFundi({
       (timeSinceLastDrag > 250);
     
     // Open chat if it's an actual click
-    if (isActualClick && onOpen) {
+    if (isActualClick && onOpen && !isMinimized) {
       onOpen();
       console.log("Opening Fundi chat - click detected");
     } else {
-      console.log("Click suppressed - detected as part of drag operation");
+      console.log("Click suppressed - detected as part of drag operation or Fundi is minimized");
     }
     
     e.stopPropagation();
@@ -255,6 +314,14 @@ export default function RobotFundi({
     
     return () => clearTimeout(timer);
   }, []);
+  
+  // Save minimized state to localStorage when it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('fundiMinimized', JSON.stringify(isMinimized));
+      console.log(`Saved Fundi minimized state (${isMinimized}) to localStorage`);
+    }
+  }, [isMinimized]);
 
   // Much smaller size variants
   const sizeVariants = {
@@ -283,6 +350,24 @@ export default function RobotFundi({
   const openChatOnly = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event from bubbling to parent elements
     
+    // Check for double click first
+    const now = Date.now();
+    const timeDiff = now - lastTapTimeRef.current;
+    
+    // If double click detected (time between clicks is less than 300ms)
+    if (timeDiff < 300) {
+      // Toggle minimize state
+      setIsMinimized(prev => !prev);
+      console.log(`Double-click detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
+      e.preventDefault();
+      // Reset last click time
+      lastTapTimeRef.current = 0;
+      return;
+    }
+    
+    // Store the time of this click for potential double-click detection
+    lastTapTimeRef.current = now;
+    
     // Reset ALL global flags to ensure clickability
     (window as any).disableClicks = false;
     (window as any).lastDragTime = 0;
@@ -295,10 +380,16 @@ export default function RobotFundi({
       return;
     }
     
+    // If minimized, don't open chat on single click
+    if (isMinimized) {
+      console.log('Chat opening suppressed - Fundi is minimized');
+      return;
+    }
+    
     // Force reset drag state
     setWasDragged(false);
     
-    // ALWAYS open the chat - GUARANTEED to work
+    // ALWAYS open the chat - GUARANTEED to work (unless minimized)
     if (onOpen) {
       onOpen();
       console.log("FUNDI CHAT OPENED - Click handled by inner button (GUARANTEED CLICK)");
@@ -325,11 +416,34 @@ export default function RobotFundi({
     e.stopPropagation();
     e.preventDefault(); // ALWAYS prevent default
     
+    // Check for double click first
+    const now = Date.now();
+    const timeDiff = now - lastTapTimeRef.current;
+    
+    // If double click detected (time between clicks is less than 300ms)
+    if (timeDiff < 300) {
+      // Toggle minimize state
+      setIsMinimized(prev => !prev);
+      console.log(`Double-click detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
+      // Reset last click time
+      lastTapTimeRef.current = 0;
+      return;
+    }
+    
+    // Store the time of this click for potential double-click detection
+    lastTapTimeRef.current = now;
+    
     // ULTRA SIMPLIFIED PROTECTION - Almost no checks at all
     
     // 1. Only check if we're currently in a drag operation
     if (isDragging) {
       console.log('Click rejected - currently dragging');
+      return;
+    }
+    
+    // If minimized, don't open chat on single click
+    if (isMinimized) {
+      console.log('Chat opening suppressed - Fundi is minimized');
       return;
     }
     
@@ -343,7 +457,7 @@ export default function RobotFundi({
     // Force reset any drag-related flags to ensure we can click
     setWasDragged(false);
     
-    // Call the onOpen callback - ALWAYS open chat
+    // Call the onOpen callback - ALWAYS open chat (unless minimized)
     if (onOpen) {
       onOpen();
       
@@ -377,16 +491,18 @@ export default function RobotFundi({
         position: 'fixed',
         top: '8px',
         right: '24px',
-        transform: `translate(${position.x}px, ${position.y}px)`,
         zIndex: 9999,
         touchAction: 'none',
         userSelect: 'none',
         width: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         height: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         minWidth: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
-        minHeight: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px'
+        minHeight: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
+        opacity: isMinimized ? 0.3 : 1,
+        transform: `translate(${position.x}px, ${position.y}px) scale(${isMinimized ? 0.5 : 1})`,
+        transition: 'opacity 0.3s ease, transform 0.3s ease',
       }}
-      title="Drag to reposition Fundi"
+      title={isMinimized ? "Double-tap to restore Fundi" : "Drag to reposition Fundi or double-tap to minimize"}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onMouseEnter={() => setIsHovered(true)}
