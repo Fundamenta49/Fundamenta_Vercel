@@ -110,47 +110,62 @@ export default function RobotFundi({
     });
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: MouseEvent) => {
     // Set isDragging to false immediately
     setIsDragging(false);
     
-    // We'll always treat it as a regular click unless the wasDragged state is already true
-    // This makes the chat more accessible by ensuring clicking works, while still
-    // allowing dragging for positioning
+    // If we've been dragging, we need to prevent the click event that will follow
     if (wasDragged) {
       // Store the last drag time on the window object for reference
-      (window as any).lastDragTime = Date.now();
+      const now = Date.now();
+      (window as any).lastDragTime = now;
       
-      // Calculate drag distance but only use for logging
+      // Calculate drag distance for logging
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-      // No longer extending drag prevention regardless of distance
       console.log(`Drag ended with distance: ${dragDistance.toFixed(0)}px`);
       
-      // Always set the same lastDragTime regardless of distance
-      (window as any).lastDragTime = Date.now();
+      // CRITICAL: Prevent click events immediately after dragging by capturing the
+      // next click event and stopping it. This handles synthetic clicks from pointerup events.
+      const preventNextClick = (event: MouseEvent) => {
+        event.stopPropagation();
+        event.preventDefault();
+        console.log('Prevented click after drag');
+        document.removeEventListener('click', preventNextClick, true);
+      };
+      
+      // Add capturing click listener to block the first click after dragging
+      document.addEventListener('click', preventNextClick, true);
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: TouchEvent) => {
     // Set isDragging to false immediately
     setIsDragging(false);
     
-    // We'll always treat it as a regular click unless the wasDragged state is already true
-    // This makes the chat more accessible by ensuring clicking works, while still
-    // allowing dragging for positioning
+    // If we've been dragging, we need to prevent the touch events that will follow
     if (wasDragged) {
       // Store the last drag time on the window object for reference
-      (window as any).lastDragTime = Date.now();
+      const now = Date.now();
+      (window as any).lastDragTime = now;
       
-      // Calculate drag distance but only use for logging
+      // Calculate drag distance for logging
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-      // No longer extending drag prevention regardless of distance
       console.log(`Touch drag ended with distance: ${dragDistance.toFixed(0)}px`);
       
-      // Always set the same lastDragTime regardless of distance
-      (window as any).lastDragTime = Date.now();
+      // CRITICAL: Prevent touchend/click events immediately after dragging
+      const preventNextClick = (event: MouseEvent | TouchEvent) => {
+        event.stopPropagation();
+        event.preventDefault();
+        console.log('Prevented touch click after drag');
+        document.removeEventListener('click', preventNextClick, true);
+        document.removeEventListener('touchend', preventNextClick, true);
+      };
+      
+      // Add capturing click and touch listeners to block the first touch after dragging
+      document.addEventListener('click', preventNextClick, true);
+      document.addEventListener('touchend', preventNextClick, true);
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
@@ -249,13 +264,22 @@ export default function RobotFundi({
     console.log("Handle Open Chat called");
     e.stopPropagation();
     
-    // Calculate drag distance (removed as a blocking factor)
-    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-    
-    // Increase delay after dragging to prevent auto-opening
+    // CRITICAL: If the click is too close to the end of a drag, completely ignore it
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
-    const canOpen = !isDragging && timeSinceLastDrag > 800; // Even stricter timing to prevent auto-opening
+    const minClickDelay = 300; // ms - minimum time after a drag before accepting clicks
+    
+    if (timeSinceLastDrag < minClickDelay) {
+      console.log(`Click rejected - too soon after drag (${timeSinceLastDrag}ms < ${minClickDelay}ms)`);
+      e.preventDefault();
+      return;
+    }
+    
+    // Calculate drag distance (for logging only)
+    const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+    
+    // Only allow opening if not currently dragging
+    const canOpen = !isDragging && !wasDragged;
     
     if (canOpen && onOpen) {
       console.log("Opening chat - conditions satisfied");
@@ -276,7 +300,7 @@ export default function RobotFundi({
         console.log(`Dispatched forceFundiOpen event with position: (${position.x}, ${position.y})`);
       }
     } else {
-      console.log(`Chat not opened - conditions not met: wasDragged=${wasDragged}, timeSinceLastDrag=${timeSinceLastDrag}ms, dragDistance=${dragDistance.toFixed(0)}px`);
+      console.log(`Chat not opened - conditions not met: isDragging=${isDragging}, wasDragged=${wasDragged}, timeSinceLastDrag=${timeSinceLastDrag}ms`);
     }
   };
 
@@ -485,7 +509,7 @@ export default function RobotFundi({
           height="100" 
           fill="transparent"
           onClick={handleOpenChat}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
         />
       </svg>
     </div>
