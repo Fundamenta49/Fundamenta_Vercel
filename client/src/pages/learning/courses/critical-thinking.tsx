@@ -612,11 +612,9 @@ export default function CriticalThinkingCourse() {
         </Button>
       </div>
 
-      {/* Always show either the pop-out chat or the floating chat */}
-      {showChat ? (
+      {/* Only show the pop-out chat when active to prevent duplicate Fundi robots */}
+      {showChat && (
         <LearningCoachPopOut onClose={() => setShowChat(false)} />
-      ) : (
-        <FloatingChat category={LEARNING_CATEGORY} />
       )}
     </div>
   );
