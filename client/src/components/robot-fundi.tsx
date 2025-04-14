@@ -31,35 +31,41 @@ export default function RobotFundi({
   
   // EMERGENCY: Force direct open on mount and clicks
   useEffect(() => {
-    // Create a direct function for emergency handling - with drag distance check
+    // Create a direct function for emergency handling - with added safeguards to prevent auto-opening
     const forceOpenFundi = (e: any) => {
-      console.log("DIRECT FORCE OPEN: Emergency click handler");
-      
-      // Simplified safety checks - be more permissive to ensure Fundi can be clicked
-      const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
+      // Only open if it's been at least 500ms since the last drag operation
+      // This is to prevent accidental opening immediately after drag ends
       const lastDragTime = (window as any).lastDragTime || 0;
       const timeSinceLastDrag = Date.now() - lastDragTime;
       
-      // Modified: Allow opening even after dragging - only check if we're currently dragging
-      const canOpen = !isDragging && timeSinceLastDrag > 100; // Much more permissive
+      // Added strict timing check to prevent auto-opening
+      const canOpen = !isDragging && timeSinceLastDrag > 500;
+      
+      console.log(`Click handler triggered, canOpen=${canOpen}, timeSinceLastDrag=${timeSinceLastDrag}`);
       
       if (canOpen && onOpen) {
-        console.log("Emergency open permitted - drag distance checks passed");
         // Direct open - this is the emergency path
         onOpen();
         
-        // Also dispatch custom event
+        // Dispatch custom event with position information
         if (typeof window !== 'undefined') {
-          const openFundiEvent = new CustomEvent('forceFundiOpen');
+          const openFundiEvent = new CustomEvent('forceFundiOpen', { 
+            detail: { 
+              position: {
+                x: position.x,
+                y: position.y
+              }
+            }
+          });
           window.dispatchEvent(openFundiEvent);
+          console.log(`Emergency: Dispatched forceFundiOpen event with position: (${position.x}, ${position.y})`);
         }
-      } else {
-        console.log(`Emergency open prevented - drag checks failed: wasDragged=${wasDragged}, dragDistance=${dragDistance.toFixed(0)}px`);
       }
       
       // Stop propagation if we have an event
       if (e && e.stopPropagation) {
         e.stopPropagation();
+        e.preventDefault(); // Added to prevent default behavior
       }
     };
     
@@ -271,11 +277,18 @@ export default function RobotFundi({
       onOpen();
       console.log("FUNDI CHAT OPENED - Click handled by inner button");
       
-      // Also dispatch the force open event for redundancy
+      // Also dispatch the force open event with position data
       if (typeof window !== 'undefined') {
-        const openFundiEvent = new CustomEvent('forceFundiOpen');
+        const openFundiEvent = new CustomEvent('forceFundiOpen', { 
+          detail: { 
+            position: {
+              x: position.x,
+              y: position.y
+            }
+          }
+        });
         window.dispatchEvent(openFundiEvent);
-        console.log("Dispatched forceFundiOpen event from openChatOnly");
+        console.log(`Dispatched forceFundiOpen event from openChatOnly with position: (${position.x}, ${position.y})`);
       }
     }
   };
@@ -288,21 +301,28 @@ export default function RobotFundi({
     // Calculate drag distance (removed as a blocking factor)
     const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
     
-    // Modified: Allow opening even after dragging - only check if we're currently dragging
+    // Increase delay after dragging to prevent auto-opening
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
-    const canOpen = !isDragging && timeSinceLastDrag > 100; // Much more permissive
+    const canOpen = !isDragging && timeSinceLastDrag > 500; // Stricter timing to prevent auto-opening
     
     if (canOpen && onOpen) {
       console.log("Opening chat - conditions satisfied");
       // Call the onOpen callback
       onOpen();
       
-      // Also dispatch the custom event for systems listening for it
+      // Dispatch custom event with current position so the chat can appear near the Fundi robot
       if (typeof window !== 'undefined') {
-        const openFundiEvent = new CustomEvent('forceFundiOpen');
+        const openFundiEvent = new CustomEvent('forceFundiOpen', { 
+          detail: { 
+            position: {
+              x: position.x,
+              y: position.y
+            }
+          }
+        });
         window.dispatchEvent(openFundiEvent);
-        console.log("Dispatched forceFundiOpen event from handleOpenChat");
+        console.log(`Dispatched forceFundiOpen event with position: (${position.x}, ${position.y})`);
       }
     } else {
       console.log(`Chat not opened - conditions not met: wasDragged=${wasDragged}, timeSinceLastDrag=${timeSinceLastDrag}ms, dragDistance=${dragDistance.toFixed(0)}px`);

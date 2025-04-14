@@ -19,6 +19,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [chatPosition, setChatPosition] = useState({ right: 24, top: 8 });
   const { lastResponse, currentCategory } = useAIEventStore();
   // Tour context removed to prevent conflicts
   const isTourActive = false;
@@ -33,6 +34,28 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     fitness: '#06b6d4',
     general: '#6366f1',
   };
+
+  // Listen for forced open events that include position info
+  useEffect(() => {
+    const handleForcedOpen = (event: Event) => {
+      if ((event as CustomEvent)?.detail?.position) {
+        const { x, y } = (event as CustomEvent).detail.position;
+        // If we have a position, adjust chatPosition to be near Fundi
+        // Fundi is at top:8px, right:24px with translation of (x,y)
+        // We'll place chat nearby
+        console.log(`Received position from Fundi: (${x}, ${y})`);
+        setChatPosition({ top: 8 + y, right: 24 - x });
+      }
+    };
+    
+    // Add the event listener
+    window.addEventListener('forceFundiOpen', handleForcedOpen);
+    
+    // Clean up on unmount
+    return () => {
+      window.removeEventListener('forceFundiOpen', handleForcedOpen);
+    };
+  }, []);
 
   // Add random animations to make the robot feel more alive, but only when not in a tour
   useEffect(() => {
@@ -91,12 +114,17 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       <AnimatePresence>
         {isExpanded ? (
           <motion.div 
-            className="fixed md:absolute right-2 sm:right-4 md:right-10 top-2 sm:top-2 md:top-2 z-[999999] flex items-end justify-end"
+            className="fixed z-[999999] flex items-end justify-end"
             initial={{ opacity: 0, scale: 0.8, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
             transition={{ duration: 0.3 }}
-            style={{ transform: 'none' }} // Force no transform to prevent inheriting Fundi's position
+            style={{ 
+              position: 'fixed',
+              right: `${chatPosition.right}px`,
+              top: `${chatPosition.top}px`,
+              transform: 'none' // Force no transform to prevent inheriting Fundi's position
+            }}
           >
             <ChatInterface 
               category={category}
