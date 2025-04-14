@@ -179,18 +179,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               width: "60px",
               height: "60px",
               minWidth: "60px", 
-              minHeight: "60px",
-              position: "fixed",
-              right: "24px",
-              top: "8px",
-              transform: "none", /* Override any transform that might be hiding Fundy */
-              visibility: "visible",
-              pointerEvents: "auto",
-              marginRight: "0px",
-              marginTop: "0px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
+              minHeight: "60px"
             }}
           >
             <Button

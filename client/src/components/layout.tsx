@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ReactNode } from "react";
 
-
 interface LayoutProps {
   children: ReactNode;
 }
