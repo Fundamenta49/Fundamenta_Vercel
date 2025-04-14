@@ -133,13 +133,15 @@ export default function RobotFundi({
     // Set isDragging to false immediately
     setIsDragging(false);
     
-    // If we've been dragging, we need to prevent the click event that will follow
+    // If we've been dragging, save the position but don't block any clicks
     if (wasDragged) {
-      // Store the last drag time and record it
+      // Store the last drag time for reference
       const now = Date.now();
       setDragEndTime(now);
       (window as any).lastDragTime = now;
-      (window as any).disableClicks = true;
+      
+      // Important: NEVER set disableClicks to true anymore
+      (window as any).disableClicks = false;
       
       // Save Fundi's position to localStorage immediately after drag ends
       if (typeof window !== 'undefined') {
@@ -155,23 +157,11 @@ export default function RobotFundi({
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
       console.log(`Drag ended with distance: ${dragDistance.toFixed(0)}px`);
       
-      // Super aggressive click prevention after drag
-      const preventClick = (event: MouseEvent) => {
-        console.log('Prevented post-drag click');
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      };
-      
-      // Block ALL clicks for 600ms after drag
-      document.addEventListener('click', preventClick, true);
-      
-      // Remove the click prevention after a shorter delay (600ms)
+      // Reset wasDragged very quickly now
       setTimeout(() => {
-        document.removeEventListener('click', preventClick, true);
-        (window as any).disableClicks = false;
-        console.log('Re-enabled clicks after timeout');
-      }, 600);
+        setWasDragged(false);
+        console.log('Quick reset of wasDragged state');
+      }, 50);
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
@@ -181,13 +171,15 @@ export default function RobotFundi({
     // Set isDragging to false immediately
     setIsDragging(false);
     
-    // If we've been dragging, we need to prevent the touch events that will follow
+    // If we've been dragging, save the position but don't block any clicks
     if (wasDragged) {
-      // Store the last drag time and record it
+      // Store the last drag time for reference
       const now = Date.now();
       setDragEndTime(now);
       (window as any).lastDragTime = now;
-      (window as any).disableClicks = true;
+      
+      // Important: NEVER set disableClicks to true anymore
+      (window as any).disableClicks = false;
       
       // Save Fundi's position to localStorage immediately after drag ends
       if (typeof window !== 'undefined') {
@@ -203,34 +195,11 @@ export default function RobotFundi({
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
       console.log(`Touch drag ended with distance: ${dragDistance.toFixed(0)}px`);
       
-      // Super aggressive touch/click prevention after drag
-      const preventTouch = (event: TouchEvent) => {
-        console.log('Prevented post-drag touch');
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      };
-      
-      const preventClick = (event: MouseEvent) => {
-        console.log('Prevented post-drag click from touch');
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      };
-      
-      // Block ALL touches and clicks for 600ms after drag
-      document.addEventListener('touchend', preventTouch, true);
-      document.addEventListener('touchstart', preventTouch, true);
-      document.addEventListener('click', preventClick, true);
-      
-      // Remove the touch/click prevention after a shorter delay (600ms)
+      // Reset wasDragged very quickly now
       setTimeout(() => {
-        document.removeEventListener('touchend', preventTouch, true);
-        document.removeEventListener('touchstart', preventTouch, true);
-        document.removeEventListener('click', preventClick, true);
-        (window as any).disableClicks = false;
-        console.log('Re-enabled touch/click events after timeout');
-      }, 600);
+        setWasDragged(false);
+        console.log('Quick reset of wasDragged state after touch');
+      }, 50);
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
@@ -314,29 +283,9 @@ export default function RobotFundi({
   const openChatOnly = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event from bubbling to parent elements
     
-    // Apply the same protections as handleOpenChat
-    
-    // 1. Check global disableClicks flag (set by our mouseUp handlers)
-    if ((window as any).disableClicks === true) {
-      console.log('Inner click rejected - global disableClicks flag is active');
-      e.preventDefault();
-      return;
-    }
-    
-    // 2. Check if click is too close to the end of a drag
-    const lastDragTime = (window as any).lastDragTime || 0;
-    const timeSinceLastDrag = Date.now() - lastDragTime;
-    const minClickDelay = 550; // ms - consistent with the main handleOpenChat function
-    
-    if (timeSinceLastDrag < minClickDelay) {
-      console.log(`Inner click rejected - too soon after drag (${timeSinceLastDrag}ms < ${minClickDelay}ms)`);
-      e.preventDefault();
-      return;
-    }
-    
-    // 3. Check dragging states
-    if (isDragging || wasDragged) {
-      console.log('Inner click rejected - dragging or recently dragged');
+    // Very simplified checks - ONLY check if currently dragging
+    if (isDragging) {
+      console.log('Inner click rejected - currently dragging');
       e.preventDefault();
       return;
     }
@@ -368,9 +317,9 @@ export default function RobotFundi({
     e.stopPropagation();
     e.preventDefault(); // ALWAYS prevent default
     
-    // EXTREME PROTECTION:
+    // MUCH SIMPLER PROTECTION:
     
-    // 0. FORCE a minimum wait time after page load before allowing clicks
+    // 0. Only check for page load timing (UX improvement)
     const pageLoadTime = (window as any).fundiPageLoadTime || Date.now();
     if (!pageLoadTime) {
       (window as any).fundiPageLoadTime = Date.now();
@@ -381,43 +330,24 @@ export default function RobotFundi({
       return;
     }
     
-    // 1. Check global disableClicks flag (set by our mouseUp handlers)
-    if ((window as any).disableClicks === true) {
-      console.log('Click rejected - global disableClicks flag is active');
-      return;
-    }
-    
-    // 2. Check if click is too close to the end of a drag
-    const lastDragTime = (window as any).lastDragTime || 0;
-    const timeSinceLastDrag = Date.now() - lastDragTime;
-    const minClickDelay = 550; // ms - reduced from 1000ms to make it consistent with the wasDragged reset time
-    
-    if (timeSinceLastDrag < minClickDelay) {
-      console.log(`Click rejected - too soon after drag (${timeSinceLastDrag}ms < ${minClickDelay}ms)`);
-      return;
-    }
-    
-    // 3. Check if currently dragging
+    // 1. Only check if we're currently in a drag operation
     if (isDragging) {
       console.log('Click rejected - currently dragging');
       return;
     }
     
-    // 4. Check recently dragged state
-    if (wasDragged) {
-      console.log('Click rejected - recently dragged');
-      return;
-    }
+    // EMERGENCY OVERRIDE - Always reset click blocking before processing
+    (window as any).disableClicks = false;
     
-    // 5. Check if any movement happened recently
-    if (Math.abs(e.movementX) > 5 || Math.abs(e.movementY) > 5) {
-      console.log('Click rejected - mouse moved too much');
-      return;
-    }
+    // Dramatically simplify - all other checks removed
     
-    // If we pass all checks, we can open the chat
+    // If we pass these minimal checks, open the chat
     if (onOpen) {
-      console.log("Opening chat - all safety conditions passed");
+      console.log("Opening chat - safety conditions passed");
+      
+      // Force reset any drag-related flags to ensure we can click
+      setWasDragged(false);
+      
       // Call the onOpen callback
       onOpen();
       
