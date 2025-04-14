@@ -50,7 +50,7 @@ export default function ShoppingBuddyCourse() {
         </Button>
       </div>
       
-      <FloatingChat category={LEARNING_CATEGORY} />
+      {/* FloatingChat removed to prevent duplicate Fundi robots */}
     </div>
   );
 }

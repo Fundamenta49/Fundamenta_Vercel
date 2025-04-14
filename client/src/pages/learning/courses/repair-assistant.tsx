@@ -125,7 +125,7 @@ export default function RepairAssistantPage() {
         </Button>
       </div>
       
-      <FloatingChat category={LEARNING_CATEGORY} />
+      {/* FloatingChat removed to prevent duplicate Fundi robots */}
     </div>
   );
 }
