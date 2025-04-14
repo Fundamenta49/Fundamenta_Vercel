@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { cn } from '@/lib/utils';
-import { useAIEventStore } from '@/lib/ai-event-system';
+import { useRef, useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { useAIEventStore } from "@/lib/ai-event-system";
 
 interface RobotFundiProps {
   speaking?: boolean;
@@ -61,24 +61,29 @@ export default function RobotFundi({
   const [isMinimized, setIsMinimized] = useState(getStoredMinimizedState());
   const { lastResponse } = useAIEventStore();
   
-  // For double tap detection - new approach using click counter
+  // For double click/tap detection - click counter approach
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const preventNextClickRef = useRef(false);
   
   // Track if this is the first render to avoid auto-opening immediately after page load
-  const isFirstRender = React.useRef(true);
+  const isFirstRender = useRef(true);
   
   // Removed emergency click handlers since they were causing auto-opening after dragging
   useEffect(() => {
-    // Log for debugging
     console.log("Emergency click handlers disabled - using only standard click handling");
-    
-    // Empty cleanup function
     return () => {};
   }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!interactive) return;
+    
+    // If we recently detected a double-click, don't start dragging
+    if (preventNextClickRef.current) {
+      e.stopPropagation();
+      return;
+    }
+    
     setIsDragging(true);
     setDragStart({
       x: e.clientX - position.x,
@@ -91,114 +96,19 @@ export default function RobotFundi({
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!interactive) return;
     
-    // Using the same click counter approach for touch events
-    // Increment the click count
-    clickCountRef.current += 1;
+    // Handle clicks using our counter approach
+    handleTapEvent(e);
     
-    // Clear any existing timer
-    if (clickTimerRef.current) {
-      clearTimeout(clickTimerRef.current);
+    // Only set up dragging if we're not handling a double-tap
+    if (!preventNextClickRef.current) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - position.x,
+        y: e.touches[0].clientY - position.y
+      });
     }
     
-    // If this is the first tap, set a timer to reset the count
-    if (clickCountRef.current === 1) {
-      // Set a timer to reset after 400ms (standard double-tap timeout)
-      clickTimerRef.current = setTimeout(() => {
-        // If only one tap happened in the time window, proceed with dragging
-        if (clickCountRef.current === 1) {
-          // Reset click count for next time
-          clickCountRef.current = 0;
-          clickTimerRef.current = null;
-        }
-      }, 400);
-    } 
-    // If this is the second tap, handle as a double-tap
-    else if (clickCountRef.current === 2) {
-      console.log(`Double-tap detected! Toggling Fundi minimized state`);
-      
-      // Toggle minimize state
-      setIsMinimized(prev => !prev);
-      
-      // Reset click count immediately
-      clickCountRef.current = 0;
-      clickTimerRef.current = null;
-      
-      e.stopPropagation();
-      e.preventDefault();
-      return;
-    }
-    
-    // Continue with normal touch handling for dragging
-    setIsDragging(true);
-    setDragStart({
-      x: e.touches[0].clientX - position.x,
-      y: e.touches[0].clientY - position.y
-    });
     // Prevent event propagation
-    e.stopPropagation();
-  };
-  
-  const handleClick = (e: React.MouseEvent) => {
-    // Ensure we're not in the middle of a drag
-    if (!interactive || isDragging) {
-      e.stopPropagation();
-      return;
-    }
-    
-    // If we're already processing a double click, don't trigger again
-    if (doubleTapProcessingRef.current) {
-      e.stopPropagation();
-      e.preventDefault();
-      return;
-    }
-    
-    // Check for double click
-    const now = Date.now();
-    const timeDiff = now - lastTapTimeRef.current;
-    
-    // If double click detected (time between clicks is between 10-300ms)
-    if (timeDiff < 300 && timeDiff > 10) {
-      // Set processing flag to prevent double triggers
-      doubleTapProcessingRef.current = true;
-      
-      // Toggle minimize state
-      setIsMinimized(prev => !prev);
-      console.log(`Double-click detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
-      e.stopPropagation();
-      e.preventDefault();
-      
-      // Reset last click time
-      lastTapTimeRef.current = 0;
-      
-      // Reset processing flag after animation completes
-      setTimeout(() => {
-        doubleTapProcessingRef.current = false;
-      }, 500);
-      return;
-    }
-    
-    // Store the time of this click for potential double-click detection
-    lastTapTimeRef.current = now;
-    
-    // Get the last drag time and distance moved since drag started
-    const lastDragTime = (window as any).lastDragTime || 0;
-    const timeSinceLastDrag = Date.now() - lastDragTime;
-    
-    // Detect if this is an actual click (very minimal movement) vs. the end of a drag
-    const isActualClick = 
-      // Either mouse didn't move much during this click...
-      (Math.abs(e.movementX) < 2 && Math.abs(e.movementY) < 2) && 
-      // ...or there was a reasonable delay since last drag (to allow intentional clicks)
-      (timeSinceLastDrag > 250);
-    
-    // Open chat if it's an actual click
-    if (isActualClick && onOpen && !isMinimized) {
-      onOpen();
-      console.log("Opening Fundi chat - click detected");
-    } else {
-      console.log("Click suppressed - detected as part of drag operation or Fundi is minimized");
-    }
-    
     e.stopPropagation();
   };
 
@@ -381,91 +291,16 @@ export default function RobotFundi({
 
   const color = categoryColors[category] || categoryColors.general;
 
-  // This function handles ONLY opening the chat, separate from any drag handling
-  const openChatOnly = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent event from bubbling to parent elements
-    
-    // If we're already processing a double click, don't trigger again
-    if (doubleTapProcessingRef.current) {
-      e.preventDefault();
-      return;
-    }
-    
-    // Check for double click first
-    const now = Date.now();
-    const timeDiff = now - lastTapTimeRef.current;
-    
-    // If double click detected (time between clicks is between 10-300ms)
-    if (timeDiff < 300 && timeDiff > 10) {
-      // Set processing flag to prevent double triggers
-      doubleTapProcessingRef.current = true;
-      
-      // Toggle minimize state
-      setIsMinimized(prev => !prev);
-      console.log(`Double-click detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
-      e.preventDefault();
-      
-      // Reset last click time
-      lastTapTimeRef.current = 0;
-      
-      // Reset processing flag after animation completes
-      setTimeout(() => {
-        doubleTapProcessingRef.current = false;
-      }, 500);
-      return;
-    }
-    
-    // Store the time of this click for potential double-click detection
-    lastTapTimeRef.current = now;
-    
-    // Reset ALL global flags to ensure clickability
-    (window as any).disableClicks = false;
-    (window as any).lastDragTime = 0;
-    (window as any).fundiPageLoadTime = 0;
-    
-    // Very simplified checks - ONLY check if currently dragging
-    if (isDragging) {
-      console.log('Inner click rejected - currently dragging');
-      e.preventDefault();
-      return;
-    }
-    
-    // If minimized, don't open chat on single click
-    if (isMinimized) {
-      console.log('Chat opening suppressed - Fundi is minimized');
-      return;
-    }
-    
-    // Force reset drag state
-    setWasDragged(false);
-    
-    // ALWAYS open the chat - GUARANTEED to work (unless minimized)
-    if (onOpen) {
-      onOpen();
-      console.log("FUNDI CHAT OPENED - Click handled by inner button (GUARANTEED CLICK)");
-      
-      // Also dispatch the force open event with position data
-      if (typeof window !== 'undefined') {
-        const openFundiEvent = new CustomEvent('forceFundiOpen', { 
-          detail: { 
-            position: {
-              x: position.x,
-              y: position.y
-            }
-          }
-        });
-        window.dispatchEvent(openFundiEvent);
-        console.log(`Dispatched forceFundiOpen event from openChatOnly with position: (${position.x}, ${position.y})`);
-      }
-    }
-  };
-  
-  // Consolidated function to handle all chat opening scenarios
-  const handleOpenChat = (e: React.MouseEvent) => {
-    console.log("Handle Open Chat called");
+  // Function to handle tap/click events in a unified way
+  const handleTapEvent = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
-    e.preventDefault(); // ALWAYS prevent default
-
+    
+    // If we were just dragging, don't process clicks
+    if (wasDragged || isDragging) {
+      console.log('Click/tap suppressed - detected as part of drag operation');
+      return;
+    }
+    
     // Increment the click count
     clickCountRef.current += 1;
     
@@ -476,25 +311,24 @@ export default function RobotFundi({
     
     // If this is the first click, set a timer to reset the count
     if (clickCountRef.current === 1) {
-      // Set a timer to reset after 400ms (standard double-click timeout)
+      console.log("First tap detected, waiting for potential second tap");
+      
+      // Set a timer to reset after 300ms (standard double-click timeout)
       clickTimerRef.current = setTimeout(() => {
         // If only one click happened in the time window, treat as a single click
         if (clickCountRef.current === 1) {
-          console.log("Single click detected - attempting to open chat");
+          console.log("Single tap confirmed - attempting to open chat");
           
-          // Only open if not minimized and not dragging
-          if (!isMinimized && !isDragging) {
-            // EMERGENCY OVERRIDE - Reset all flags
-            (window as any).disableClicks = false;
-            (window as any).fundiPageLoadTime = 0;
-            
-            // Force reset drag state
-            setWasDragged(false);
-            
-            // Open the chat
+          // Only open if not minimized
+          if (!isMinimized) {
+            // Call the onOpen callback to open the chat
             if (onOpen) {
+              // Reset all flags to ensure proper operation
+              (window as any).disableClicks = false;
+              setWasDragged(false);
+              
               onOpen();
-              console.log("Opening chat - single click verified");
+              console.log("Opening chat - single tap processed");
               
               // Dispatch positioning event
               if (typeof window !== 'undefined') {
@@ -505,30 +339,50 @@ export default function RobotFundi({
               }
             }
           } else {
-            console.log('Chat opening suppressed - Fundi is minimized or dragging');
+            console.log('Chat opening suppressed - Fundi is minimized');
           }
         }
         
-        // Reset click count for next time
+        // Reset flags and click count
+        preventNextClickRef.current = false;
         clickCountRef.current = 0;
         clickTimerRef.current = null;
-      }, 400);
+      }, 300);
     } 
     // If this is the second click, handle as a double-click
     else if (clickCountRef.current === 2) {
-      console.log(`Double-click detected! Toggling Fundi minimized state`);
+      console.log(`Double-tap detected! Toggling Fundi minimized state`);
+      
+      // Prevent drag operations that might be started by the second tap
+      preventNextClickRef.current = true;
       
       // Toggle minimize state
       setIsMinimized(prev => !prev);
       
       // Reset click count immediately
       clickCountRef.current = 0;
-      clickTimerRef.current = null;
+      
+      // Clear timer
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+        clickTimerRef.current = null;
+      }
+      
+      // Reset the prevention flag after a short delay
+      setTimeout(() => {
+        preventNextClickRef.current = false;
+      }, 100);
+      
+      // Prevent default and stop propagation
+      e.preventDefault();
     }
     // If somehow more than two clicks registered, reset
     else {
       clickCountRef.current = 0;
-      clickTimerRef.current = null;
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+        clickTimerRef.current = null;
+      }
     }
   };
 
@@ -562,7 +416,7 @@ export default function RobotFundi({
       onTouchStart={handleTouchStart}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={handleOpenChat}
+      onClick={handleTapEvent}
     >
       {/* Removed "Click to chat" indicator as requested by the user */}
       <svg
@@ -575,7 +429,7 @@ export default function RobotFundi({
           minWidth: '100%',
           minHeight: '100%'
         }}
-        onClick={handleOpenChat}
+        onClick={handleTapEvent}
       >
         {/* Robot head */}
         <rect x="25" y="20" width="50" height="40" rx="10" fill="#e6e6e6" />
@@ -738,7 +592,7 @@ export default function RobotFundi({
           width="100" 
           height="100" 
           fill="transparent"
-          onClick={handleOpenChat}
+          onClick={handleTapEvent}
           style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
         />
       </svg>
