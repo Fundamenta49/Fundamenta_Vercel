@@ -84,7 +84,7 @@ const FullScreenDialogContent = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content",
+            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content mobile-friendly-content",
             className
           )}
           style={{ 
@@ -95,7 +95,9 @@ const FullScreenDialogContent = React.forwardRef<
             height: '100vh',
             maxWidth: '100vw',
             maxHeight: '100vh',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            backgroundColor: 'white', // Ensure white background on mobile
+            color: '#333' // Ensure dark text color on mobile
           }}
           {...props}
         >
@@ -159,14 +161,16 @@ const FullScreenDialogHeader = ({
     <div
       className={cn(
         "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b",
-        isMobile ? "top-14 mt-2 mobile-dialog-header" : "top-0 pt-6", // Increased top value to avoid overlap with the swipe indicator
+        isMobile ? "top-14 mt-2 mobile-dialog-header mobile-friendly-content" : "top-0 pt-6", // Added mobile-friendly-content class
         className
       )}
       style={isMobile ? {
         width: '100%',
         boxSizing: 'border-box',
         left: 0,
-        right: 0
+        right: 0,
+        backgroundColor: 'white', // Ensure white background on mobile
+        color: '#333' // Ensure dark text color on mobile
       } : undefined}
       {...props}
     />
@@ -177,15 +181,24 @@ FullScreenDialogHeader.displayName = "FullScreenDialogHeader";
 const FullScreenDialogFooter = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "sticky bottom-0 z-10 bg-white dark:bg-gray-950 px-6 py-4 flex justify-between items-center border-t",
-      className
-    )}
-    {...props}
-  />
-);
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const isMobile = useIsMobile();
+  
+  return (
+    <div
+      className={cn(
+        "sticky bottom-0 z-10 bg-white dark:bg-gray-950 px-6 py-4 flex justify-between items-center border-t",
+        isMobile ? "mobile-friendly-content" : "",
+        className
+      )}
+      style={isMobile ? {
+        backgroundColor: 'white', // Ensure white background on mobile
+        color: '#333' // Ensure dark text color on mobile
+      } : undefined}
+      {...props}
+    />
+  );
+};
 FullScreenDialogFooter.displayName = "FullScreenDialogFooter";
 
 const FullScreenDialogTitle = React.forwardRef<

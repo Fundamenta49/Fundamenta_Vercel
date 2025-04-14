@@ -105,21 +105,57 @@
     color: #111827 !important;
   }
   
-  .mobile-friendly-content .border.rounded-md.p-4 p {
+  .mobile-friendly-content .border.rounded-md.p-4 p,
+  .mobile-friendly-content .border.rounded-md.p-4 li,
+  .mobile-friendly-content .border.rounded-md.p-4 span {
     color: #4b5563 !important;
   }
   
-  /* Also fix any other colored boxes in mobile dialogs */
+  /* Handle specific colored background boxes in mobile dialogs */
   .mobile-friendly-content .bg-yellow-50,
   .mobile-friendly-content .bg-orange-50,
-  .mobile-friendly-content .bg-gray-50 {
+  .mobile-friendly-content .bg-gray-50,
+  .mobile-friendly-content [class*="bg-yellow-"],
+  .mobile-friendly-content [class*="bg-orange-"],
+  .mobile-friendly-content [class*="bg-gray-"],
+  .mobile-friendly-content [class*="bg-green-"] {
     background-color: #fefaf0 !important;
   }
   
   .mobile-friendly-content .bg-yellow-50 *,
   .mobile-friendly-content .bg-orange-50 *,
-  .mobile-friendly-content .bg-gray-50 * {
+  .mobile-friendly-content .bg-gray-50 *,
+  .mobile-friendly-content [class*="bg-yellow-"] *,
+  .mobile-friendly-content [class*="bg-orange-"] *,
+  .mobile-friendly-content [class*="bg-gray-"] *,
+  .mobile-friendly-content [class*="bg-green-"] * {
     color: #333 !important;
+  }
+  
+  /* Fix for cognitive bias cards and similar content boxes */
+  .mobile-friendly-content div[class*="border rounded-md p-4"] {
+    background-color: white !important;
+    color: #333 !important;
+  }
+  
+  /* Ensure proper heading colors in all mobile dialog content */
+  .mobile-friendly-content h1, 
+  .mobile-friendly-content h2, 
+  .mobile-friendly-content h3, 
+  .mobile-friendly-content h4, 
+  .mobile-friendly-content h5, 
+  .mobile-friendly-content h6 {
+    color: #111827 !important;
+  }
+  
+  /* Ensure all text in mobile dialogs is readable */
+  .mobile-friendly-content .prose p,
+  .mobile-friendly-content .prose li,
+  .mobile-friendly-content .prose span,
+  .mobile-friendly-content p,
+  .mobile-friendly-content li,
+  .mobile-friendly-content span {
+    color: #4b5563 !important;
   }
 }
 
