@@ -21,7 +21,7 @@ export default function LifeSkillsPopOut() {
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
       
-      <FullScreenDialogBody>
+      <FullScreenDialogBody className="overflow-y-auto max-h-[80vh] md:max-h-[unset]">
         <Alert className="mb-4 border-rose-500 bg-rose-50">
           <AlertCircle className="h-4 w-4 text-rose-500" />
           <AlertDescription className="text-rose-800 text-sm">

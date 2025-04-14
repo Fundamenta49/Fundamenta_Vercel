@@ -174,7 +174,7 @@ export default function FireSafetyPopOut() {
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
       
-      <FullScreenDialogBody>
+      <FullScreenDialogBody className="overflow-y-auto max-h-[80vh] md:max-h-[unset]">
         <Alert className="mb-4 border-orange-500 bg-orange-50">
           <AlertCircle className="h-4 w-4 text-orange-500" />
           <AlertDescription className="text-orange-800 text-sm">
@@ -185,9 +185,9 @@ export default function FireSafetyPopOut() {
         
         {currentSection === "menu" && renderMenu()}
         {currentSection === "guide" && (
-          <>
+          <div className="prose prose-orange max-w-none">
             <FireSafety />
-          </>
+          </div>
         )}
         {currentSection === "videos" && renderVideos()}
         

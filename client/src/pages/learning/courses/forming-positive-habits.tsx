@@ -1222,8 +1222,10 @@ export default function FormingPositiveHabitsCourse() {
                       </div>
                       <FullScreenDialogDescription>{module.description}</FullScreenDialogDescription>
                     </FullScreenDialogHeader>
-                    <FullScreenDialogBody>
-                      {module.content}
+                    <FullScreenDialogBody className="overflow-y-auto max-h-[70vh] md:max-h-[unset]">
+                      <div className="prose prose-orange max-w-none">
+                        {module.content}
+                      </div>
                     </FullScreenDialogBody>
                     <FullScreenDialogFooter>
                       <Button 
