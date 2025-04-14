@@ -96,6 +96,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
             transition={{ duration: 0.3 }}
+            style={{ transform: 'none' }} // Force no transform to prevent inheriting Fundi's position
           >
             <ChatInterface 
               category={category}
