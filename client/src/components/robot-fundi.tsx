@@ -166,12 +166,12 @@ export default function RobotFundi({
       // Block ALL clicks for 1.5 seconds after drag
       document.addEventListener('click', preventClick, true);
       
-      // Remove the click prevention after a longer delay (1.5 seconds)
+      // Remove the click prevention after a shorter delay (600ms)
       setTimeout(() => {
         document.removeEventListener('click', preventClick, true);
         (window as any).disableClicks = false;
-        console.log('Re-enabled clicks after extended timeout');
-      }, 1500);
+        console.log('Re-enabled clicks after timeout');
+      }, 600);
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
@@ -258,7 +258,10 @@ export default function RobotFundi({
     if (wasDragged) {
       const timer = setTimeout(() => {
         setWasDragged(false);
-      }, 300); // Further reduced from 800ms to 300ms for more immediate response
+        // Also reset the disableClicks flag to ensure clickability returns
+        (window as any).disableClicks = false;
+        console.log('Explicitly resetting wasDragged and disableClicks states');
+      }, 500); // Increased from 300ms to 500ms for better stability
       
       return () => clearTimeout(timer);
     }
@@ -323,7 +326,7 @@ export default function RobotFundi({
     // 2. Check if click is too close to the end of a drag
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
-    const minClickDelay = 500; // ms - minimum time after a drag before accepting clicks
+    const minClickDelay = 550; // ms - consistent with the main handleOpenChat function
     
     if (timeSinceLastDrag < minClickDelay) {
       console.log(`Inner click rejected - too soon after drag (${timeSinceLastDrag}ms < ${minClickDelay}ms)`);
@@ -387,7 +390,7 @@ export default function RobotFundi({
     // 2. Check if click is too close to the end of a drag
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
-    const minClickDelay = 1000; // ms - minimum time after a drag before accepting clicks
+    const minClickDelay = 550; // ms - reduced from 1000ms to make it consistent with the wasDragged reset time
     
     if (timeSinceLastDrag < minClickDelay) {
       console.log(`Click rejected - too soon after drag (${timeSinceLastDrag}ms < ${minClickDelay}ms)`);
