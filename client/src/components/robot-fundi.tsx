@@ -63,6 +63,7 @@ export default function RobotFundi({
   
   // For double tap detection
   const lastTapTimeRef = useRef(0);
+  const doubleTapProcessingRef = useRef(false);
   
   // Track if this is the first render to avoid auto-opening immediately after page load
   const isFirstRender = React.useRef(true);
@@ -90,19 +91,35 @@ export default function RobotFundi({
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!interactive) return;
     
+    // If we're already processing a double tap, don't trigger again
+    if (doubleTapProcessingRef.current) {
+      e.stopPropagation();
+      e.preventDefault();
+      return;
+    }
+    
     // Check for double tap
     const now = Date.now();
     const timeDiff = now - lastTapTimeRef.current;
     
     // If double tap detected (time between taps is less than 300ms)
-    if (timeDiff < 300) {
+    if (timeDiff < 300 && timeDiff > 10) { // Ignore if too close (same event firing twice)
+      // Set processing flag to prevent double triggers
+      doubleTapProcessingRef.current = true;
+      
       // Toggle minimize state
       setIsMinimized(prev => !prev);
       console.log(`Double-tap detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
       e.stopPropagation();
       e.preventDefault();
+      
       // Reset last tap time
       lastTapTimeRef.current = 0;
+      
+      // Reset processing flag after animation completes
+      setTimeout(() => {
+        doubleTapProcessingRef.current = false;
+      }, 500);
       return;
     }
     
@@ -126,19 +143,35 @@ export default function RobotFundi({
       return;
     }
     
+    // If we're already processing a double click, don't trigger again
+    if (doubleTapProcessingRef.current) {
+      e.stopPropagation();
+      e.preventDefault();
+      return;
+    }
+    
     // Check for double click
     const now = Date.now();
     const timeDiff = now - lastTapTimeRef.current;
     
-    // If double click detected (time between clicks is less than 300ms)
-    if (timeDiff < 300) {
+    // If double click detected (time between clicks is between 10-300ms)
+    if (timeDiff < 300 && timeDiff > 10) {
+      // Set processing flag to prevent double triggers
+      doubleTapProcessingRef.current = true;
+      
       // Toggle minimize state
       setIsMinimized(prev => !prev);
       console.log(`Double-click detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
       e.stopPropagation();
       e.preventDefault();
+      
       // Reset last click time
       lastTapTimeRef.current = 0;
+      
+      // Reset processing flag after animation completes
+      setTimeout(() => {
+        doubleTapProcessingRef.current = false;
+      }, 500);
       return;
     }
     
@@ -350,18 +383,33 @@ export default function RobotFundi({
   const openChatOnly = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event from bubbling to parent elements
     
+    // If we're already processing a double click, don't trigger again
+    if (doubleTapProcessingRef.current) {
+      e.preventDefault();
+      return;
+    }
+    
     // Check for double click first
     const now = Date.now();
     const timeDiff = now - lastTapTimeRef.current;
     
-    // If double click detected (time between clicks is less than 300ms)
-    if (timeDiff < 300) {
+    // If double click detected (time between clicks is between 10-300ms)
+    if (timeDiff < 300 && timeDiff > 10) {
+      // Set processing flag to prevent double triggers
+      doubleTapProcessingRef.current = true;
+      
       // Toggle minimize state
       setIsMinimized(prev => !prev);
       console.log(`Double-click detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
       e.preventDefault();
+      
       // Reset last click time
       lastTapTimeRef.current = 0;
+      
+      // Reset processing flag after animation completes
+      setTimeout(() => {
+        doubleTapProcessingRef.current = false;
+      }, 500);
       return;
     }
     
@@ -416,17 +464,31 @@ export default function RobotFundi({
     e.stopPropagation();
     e.preventDefault(); // ALWAYS prevent default
     
+    // If we're already processing a double click, don't trigger again
+    if (doubleTapProcessingRef.current) {
+      return;
+    }
+    
     // Check for double click first
     const now = Date.now();
     const timeDiff = now - lastTapTimeRef.current;
     
-    // If double click detected (time between clicks is less than 300ms)
-    if (timeDiff < 300) {
+    // If double click detected (time between clicks is between 10-300ms)
+    if (timeDiff < 300 && timeDiff > 10) {
+      // Set processing flag to prevent double triggers
+      doubleTapProcessingRef.current = true;
+      
       // Toggle minimize state
       setIsMinimized(prev => !prev);
       console.log(`Double-click detected! Fundi ${isMinimized ? 'maximized' : 'minimized'}`);
+      
       // Reset last click time
       lastTapTimeRef.current = 0;
+      
+      // Reset processing flag after animation completes
+      setTimeout(() => {
+        doubleTapProcessingRef.current = false;
+      }, 500);
       return;
     }
     
