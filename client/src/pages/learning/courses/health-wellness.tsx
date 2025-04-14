@@ -262,7 +262,7 @@ export default function HealthWellnessCourse() {
         </div>
       )}
 
-      <FloatingChat category={LEARNING_CATEGORY} />
+      {/* FloatingChat removed to prevent duplicate Fundi robots */}
     </div>
   );
 }
