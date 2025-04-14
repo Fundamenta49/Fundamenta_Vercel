@@ -991,7 +991,13 @@ export default function FundiInteractiveAssistant({
               // Extra inline style to enforce position directly
               transform: `translate(${fundiPosition.x}px, ${fundiPosition.y}px)`,
               // Ensure pointer events are properly isolated
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              // Create a clean stacking context to prevent duplication issues
+              isolation: 'isolate',
+              zIndex: 9999,
+              position: 'relative',
+              // When in a sub-card context, ensure only a single Fundi renders
+              transformStyle: 'preserve-3d'
             }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.2 }}
@@ -1003,6 +1009,10 @@ export default function FundiInteractiveAssistant({
             // Immediately update cursor for drag state
             className={isChatOpen ? "mb-2 fundi-draggable" : "mb-2 cursor-grab active:cursor-grabbing fundi-draggable"}
             // Update fundiPosition when the open chat window is dragged too
+            onDragStart={(e) => {
+              // Prevent event bubbling to avoid duplicate drag operations
+              e.stopPropagation();
+            }}
             onDragEnd={(e, info) => {
               setFundiPosition({
                 x: fundiPosition.x + info.offset.x,
@@ -1380,7 +1390,12 @@ export default function FundiInteractiveAssistant({
         {!isOpen && (
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1, x: fundiPosition.x, y: fundiPosition.y }}
+            animate={{ 
+              scale: 1, 
+              opacity: 1, 
+              x: fundiPosition.x, 
+              y: fundiPosition.y 
+            }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.3 }}
             whileHover={{ scale: 1.05 }}
@@ -1388,9 +1403,19 @@ export default function FundiInteractiveAssistant({
             drag
             dragMomentum={false}
             dragConstraints={{ left: -500, right: 500, top: -500, bottom: 500 }}
-            onDragStart={() => {
+            style={{
+              // Create a clean stacking context to prevent duplication issues
+              isolation: 'isolate',
+              zIndex: 9999,
+              position: 'relative',
+              // When in a sub-card context, ensure only a single Fundi renders
+              transformStyle: 'preserve-3d'
+            }}
+            onDragStart={(e) => {
               // Set a flag on drag start for more reliable click detection
               (window as any).fundiDragStartTime = Date.now();
+              // Prevent event bubbling to avoid duplicate drag operations
+              e.stopPropagation();
             }}
             onDragEnd={(e, info) => {
               // Update the position
@@ -1401,6 +1426,9 @@ export default function FundiInteractiveAssistant({
               
               // Log the position for debugging
               console.log(`Fundi position: x=${fundiPosition.x + info.offset.x}, y=${fundiPosition.y + info.offset.y}`);
+              
+              // Prevent event bubbling
+              e.stopPropagation();
             }}
             className="cursor-grab active:cursor-grabbing"
           >
