@@ -163,7 +163,7 @@ export default function RobotFundi({
         return false;
       };
       
-      // Block ALL clicks for 1.5 seconds after drag
+      // Block ALL clicks for 600ms after drag
       document.addEventListener('click', preventClick, true);
       
       // Remove the click prevention after a shorter delay (600ms)
@@ -218,19 +218,19 @@ export default function RobotFundi({
         return false;
       };
       
-      // Block ALL touches and clicks for 1.5 seconds after drag
+      // Block ALL touches and clicks for 600ms after drag
       document.addEventListener('touchend', preventTouch, true);
       document.addEventListener('touchstart', preventTouch, true);
       document.addEventListener('click', preventClick, true);
       
-      // Remove the touch/click prevention after a longer delay (1.5 seconds)
+      // Remove the touch/click prevention after a shorter delay (600ms)
       setTimeout(() => {
         document.removeEventListener('touchend', preventTouch, true);
         document.removeEventListener('touchstart', preventTouch, true);
         document.removeEventListener('click', preventClick, true);
         (window as any).disableClicks = false;
-        console.log('Re-enabled touch/click events after extended timeout');
-      }, 1500);
+        console.log('Re-enabled touch/click events after timeout');
+      }, 600);
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
