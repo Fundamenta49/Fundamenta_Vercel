@@ -283,6 +283,11 @@ export default function RobotFundi({
   const openChatOnly = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event from bubbling to parent elements
     
+    // Reset ALL global flags to ensure clickability
+    (window as any).disableClicks = false;
+    (window as any).lastDragTime = 0;
+    (window as any).fundiPageLoadTime = 0;
+    
     // Very simplified checks - ONLY check if currently dragging
     if (isDragging) {
       console.log('Inner click rejected - currently dragging');
@@ -290,10 +295,13 @@ export default function RobotFundi({
       return;
     }
     
-    // If all checks pass, open the chat
+    // Force reset drag state
+    setWasDragged(false);
+    
+    // ALWAYS open the chat - GUARANTEED to work
     if (onOpen) {
       onOpen();
-      console.log("FUNDI CHAT OPENED - Click handled by inner button");
+      console.log("FUNDI CHAT OPENED - Click handled by inner button (GUARANTEED CLICK)");
       
       // Also dispatch the force open event with position data
       if (typeof window !== 'undefined') {
@@ -317,18 +325,7 @@ export default function RobotFundi({
     e.stopPropagation();
     e.preventDefault(); // ALWAYS prevent default
     
-    // MUCH SIMPLER PROTECTION:
-    
-    // 0. Only check for page load timing (UX improvement)
-    const pageLoadTime = (window as any).fundiPageLoadTime || Date.now();
-    if (!pageLoadTime) {
-      (window as any).fundiPageLoadTime = Date.now();
-    }
-    const timeSincePageLoad = Date.now() - pageLoadTime;
-    if (timeSincePageLoad < 1000) {
-      console.log('Click rejected - too soon after page load');
-      return;
-    }
+    // ULTRA SIMPLIFIED PROTECTION - Almost no checks at all
     
     // 1. Only check if we're currently in a drag operation
     if (isDragging) {
@@ -338,17 +335,16 @@ export default function RobotFundi({
     
     // EMERGENCY OVERRIDE - Always reset click blocking before processing
     (window as any).disableClicks = false;
+    (window as any).fundiPageLoadTime = 0; // Reset page load time
     
-    // Dramatically simplify - all other checks removed
+    // Dramatically simplified - GUARANTEED to open the chat
+    console.log("Opening chat - almost no checks (GUARANTEED CLICK)");
     
-    // If we pass these minimal checks, open the chat
+    // Force reset any drag-related flags to ensure we can click
+    setWasDragged(false);
+    
+    // Call the onOpen callback - ALWAYS open chat
     if (onOpen) {
-      console.log("Opening chat - safety conditions passed");
-      
-      // Force reset any drag-related flags to ensure we can click
-      setWasDragged(false);
-      
-      // Call the onOpen callback
       onOpen();
       
       // Dispatch custom event with current position so the chat can appear near the Fundi robot
