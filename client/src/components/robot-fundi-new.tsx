@@ -65,6 +65,7 @@ export default function RobotFundi({
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
   const preventNextClickRef = useRef(false);
+  const wasMinimizedRef = useRef(getStoredMinimizedState()); // Track previous minimized state
   
   // Track if this is the first render to avoid auto-opening immediately after page load
   const isFirstRender = useRef(true);
@@ -265,6 +266,16 @@ export default function RobotFundi({
     if (typeof window !== 'undefined') {
       localStorage.setItem('fundiMinimized', JSON.stringify(isMinimized));
       console.log(`Saved Fundi minimized state (${isMinimized}) to localStorage`);
+      
+      // Update the previous state ref
+      const previousState = wasMinimizedRef.current;
+      wasMinimizedRef.current = isMinimized;
+      
+      // If we're transitioning from minimized to normal, don't automatically open chat
+      if (previousState === true && isMinimized === false) {
+        console.log('Fundi restored from minimized state - not opening chat automatically');
+        // We could dispatch a custom event here if needed for other components
+      }
     }
   }, [isMinimized]);
 

@@ -145,8 +145,12 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             transition={{ duration: 0.3 }}
             style={{ 
               position: 'fixed',
-              right: `${chatPosition.right}px`,
-              top: `${chatPosition.top}px`,
+              right: `16px`,
+              bottom: `16px`,
+              top: 'auto',
+              maxWidth: '95vw',
+              maxHeight: '80vh',
+              width: '370px',
               transform: 'none' // Force no transform to prevent inheriting Fundi's position
             }}
           >
@@ -158,7 +162,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
                 currentPage: category,
                 availableActions: [`/${category}`]
               }}
-              className="shadow-xl rounded-2xl overflow-hidden"
+              className="shadow-xl rounded-2xl overflow-hidden w-full max-h-[80vh]"
             />
           </motion.div>
         ) : (
