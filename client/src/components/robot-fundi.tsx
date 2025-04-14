@@ -21,12 +21,28 @@ export default function RobotFundi({
   emotion = 'neutral',
   onOpen
 }: RobotFundiProps) {
-  const [position, setPosition] = useState({ x: 63, y: 8 });
+  // Get stored position from localStorage or use default
+  const getStoredPosition = () => {
+    if (typeof window !== 'undefined') {
+      const storedPosition = localStorage.getItem('fundiPosition');
+      if (storedPosition) {
+        try {
+          return JSON.parse(storedPosition);
+        } catch (e) {
+          console.error('Failed to parse stored position', e);
+        }
+      }
+    }
+    return { x: 63, y: 8 }; // Default position
+  };
+  
+  const [position, setPosition] = useState(getStoredPosition());
   const [isDragging, setIsDragging] = useState(false);
   const [wasDragged, setWasDragged] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [showClickIndicator, setShowClickIndicator] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [clickLocked, setClickLocked] = useState(false); // NEW: dedicated state for click locking
   const { lastResponse } = useAIEventStore();
   
   // Removed emergency click handlers since they were causing auto-opening after dragging
@@ -256,8 +272,14 @@ export default function RobotFundi({
   }, [wasDragged]);
   
   // Log initial position when component mounts and update when position changes
+  // Also store position in localStorage to persist across page refreshes
   useEffect(() => {
     console.log(`Fundi position: top=8px, right=24px, translate(${position.x}px, ${position.y}px)`);
+    
+    // Save position to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('fundiPosition', JSON.stringify(position));
+    }
   }, [position.x, position.y]);
   
   // Hide the "Click to chat" indicator after 6 seconds
@@ -348,38 +370,52 @@ export default function RobotFundi({
   const handleOpenChat = (e: React.MouseEvent) => {
     console.log("Handle Open Chat called");
     e.stopPropagation();
+    e.preventDefault(); // ALWAYS prevent default
     
-    // QUADRUPLE PROTECTION:
+    // EXTREME PROTECTION:
+    
+    // 0. FORCE a minimum wait time after page load before allowing clicks
+    const pageLoadTime = (window as any).fundiPageLoadTime || Date.now();
+    if (!pageLoadTime) {
+      (window as any).fundiPageLoadTime = Date.now();
+    }
+    const timeSincePageLoad = Date.now() - pageLoadTime;
+    if (timeSincePageLoad < 1000) {
+      console.log('Click rejected - too soon after page load');
+      return;
+    }
     
     // 1. Check global disableClicks flag (set by our mouseUp handlers)
     if ((window as any).disableClicks === true) {
       console.log('Click rejected - global disableClicks flag is active');
-      e.preventDefault();
       return;
     }
     
     // 2. Check if click is too close to the end of a drag
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
-    const minClickDelay = 500; // ms - minimum time after a drag before accepting clicks
+    const minClickDelay = 1000; // ms - minimum time after a drag before accepting clicks
     
     if (timeSinceLastDrag < minClickDelay) {
       console.log(`Click rejected - too soon after drag (${timeSinceLastDrag}ms < ${minClickDelay}ms)`);
-      e.preventDefault();
       return;
     }
     
     // 3. Check if currently dragging
     if (isDragging) {
       console.log('Click rejected - currently dragging');
-      e.preventDefault();
       return;
     }
     
     // 4. Check recently dragged state
     if (wasDragged) {
       console.log('Click rejected - recently dragged');
-      e.preventDefault();
+      return;
+    }
+    
+    // 5. Check if any movement happened recently
+    if (Math.abs(e.movementX) > 5 || Math.abs(e.movementY) > 5) {
+      console.log('Click rejected - mouse moved too much');
       return;
     }
     
