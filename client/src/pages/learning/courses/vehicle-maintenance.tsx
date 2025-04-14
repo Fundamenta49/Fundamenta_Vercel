@@ -301,8 +301,8 @@ export default function VehicleMaintenanceCourse() {
           </Card>
         </div>
       )}
-
-      <FloatingChat category={LEARNING_CATEGORY} />
+      
+      {/* FloatingChat removed to prevent duplicate Fundi robot icons */}
     </div>
   );
 }
