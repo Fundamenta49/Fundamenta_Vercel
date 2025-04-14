@@ -35,13 +35,13 @@ export default function RobotFundi({
     const forceOpenFundi = (e: any) => {
       console.log("DIRECT FORCE OPEN: Emergency click handler");
       
-      // Add the safety checks similar to normal click handler
+      // Simplified safety checks - be more permissive to ensure Fundi can be clicked
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
       const lastDragTime = (window as any).lastDragTime || 0;
       const timeSinceLastDrag = Date.now() - lastDragTime;
       
-      // Only open if not dragged too far or too recently
-      const canOpen = !wasDragged && timeSinceLastDrag > 300 && (dragDistance < 100 || position.x === 0 && position.y === 0);
+      // Modified: Allow opening even after dragging - only check if we're currently dragging
+      const canOpen = !isDragging && timeSinceLastDrag > 100; // Much more permissive
       
       if (canOpen && onOpen) {
         console.log("Emergency open permitted - drag distance checks passed");
@@ -164,14 +164,13 @@ export default function RobotFundi({
       // Store the last drag time on the window object for reference
       (window as any).lastDragTime = Date.now();
       
-      // Set a longer wasDragged timeout if dragged a significant distance
-      // This prevents accidental opening when dragged far
+      // Calculate drag distance but only use for logging
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-      if (dragDistance > 100) {
-        // For long drags, we'll set a longer timeout to prevent accidental opening
-        (window as any).lastDragTime = Date.now() + 500; // Add extra time to delay click sensitivity
-        console.log(`Long drag detected (${dragDistance.toFixed(0)}px), extending click prevention`);
-      }
+      // No longer extending drag prevention regardless of distance
+      console.log(`Drag ended with distance: ${dragDistance.toFixed(0)}px`);
+      
+      // Always set the same lastDragTime regardless of distance
+      (window as any).lastDragTime = Date.now();
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
@@ -188,14 +187,13 @@ export default function RobotFundi({
       // Store the last drag time on the window object for reference
       (window as any).lastDragTime = Date.now();
       
-      // Set a longer wasDragged timeout if dragged a significant distance
-      // This prevents accidental opening when dragged far (mobile)
+      // Calculate drag distance but only use for logging
       const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-      if (dragDistance > 100) {
-        // For long drags, we'll set a longer timeout to prevent accidental opening
-        (window as any).lastDragTime = Date.now() + 500; // Add extra time to delay touch sensitivity
-        console.log(`Long touch drag detected (${dragDistance.toFixed(0)}px), extending touch prevention`);
-      }
+      // No longer extending drag prevention regardless of distance
+      console.log(`Touch drag ended with distance: ${dragDistance.toFixed(0)}px`);
+      
+      // Always set the same lastDragTime regardless of distance
+      (window as any).lastDragTime = Date.now();
       
       console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
@@ -223,7 +221,7 @@ export default function RobotFundi({
     if (wasDragged) {
       const timer = setTimeout(() => {
         setWasDragged(false);
-      }, 800); // Reduced from 3000ms to 800ms for more responsive interactions
+      }, 300); // Further reduced from 800ms to 300ms for more immediate response
       
       return () => clearTimeout(timer);
     }
@@ -287,13 +285,13 @@ export default function RobotFundi({
     console.log("Handle Open Chat called");
     e.stopPropagation();
     
-    // Calculate drag distance to add an extra safety check
+    // Calculate drag distance (removed as a blocking factor)
     const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
     
-    // Only open if not in the middle of a drag operation AND not recently dragged far
+    // Modified: Allow opening even after dragging - only check if we're currently dragging
     const lastDragTime = (window as any).lastDragTime || 0;
     const timeSinceLastDrag = Date.now() - lastDragTime;
-    const canOpen = !wasDragged && timeSinceLastDrag > 300 && (dragDistance < 100 || position.x === 0 && position.y === 0);
+    const canOpen = !isDragging && timeSinceLastDrag > 100; // Much more permissive
     
     if (canOpen && onOpen) {
       console.log("Opening chat - conditions satisfied");
