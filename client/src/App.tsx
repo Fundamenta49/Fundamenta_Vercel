@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import { TourProvider } from "@/components/home-tour";
 import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
+
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
 import Partner from "@/pages/partner";

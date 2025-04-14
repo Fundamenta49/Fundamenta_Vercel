@@ -33,7 +33,7 @@ export default function RobotFundi({
         }
       }
     }
-    return { x: 63, y: 8 }; // Default position
+    return { x: 0, y: 0 }; // Reset default position to ensure visibility
   };
   
   const [position, setPosition] = useState(getStoredPosition());
@@ -52,6 +52,19 @@ export default function RobotFundi({
   useEffect(() => {
     // Log for debugging
     console.log("Emergency click handlers disabled - using only standard click handling");
+    
+    // EMERGENCY FIX: Reset any existing fundiPosition in localStorage to ensure Fundy is visible
+    if (typeof window !== 'undefined') {
+      try {
+        // Reset the position to defaults to ensure visibility
+        localStorage.setItem('fundiPosition', JSON.stringify({ x: 0, y: 0 }));
+        // Force reset position state
+        setPosition({ x: 0, y: 0 });
+        console.log("EMERGENCY FIX: Reset Fundi position to ensure visibility");
+      } catch (e) {
+        console.error("Failed to reset Fundi position", e);
+      }
+    }
     
     // Empty cleanup function
     return () => {};
@@ -377,10 +390,13 @@ export default function RobotFundi({
         position: 'fixed',
         top: '8px',
         right: '24px',
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        zIndex: 9999,
+        transform: `translate(0px, 0px)`, /* Reset transform to ensure visibility */
+        zIndex: 9999999,
         touchAction: 'none',
         userSelect: 'none',
+        visibility: 'visible',
+        display: 'block',
+        pointerEvents: 'auto',
         width: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         height: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
         minWidth: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
