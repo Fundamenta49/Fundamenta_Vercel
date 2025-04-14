@@ -93,6 +93,34 @@
   .border-learning {
     border-color: #f59e0b;
   }
+  
+  /* Fix for mobile dialogs to ensure proper styling */
+  .mobile-friendly-content .border.rounded-md.p-4 {
+    background-color: white !important;
+    color: #333 !important;
+    border-color: #e5e7eb !important;
+  }
+  
+  .mobile-friendly-content .border.rounded-md.p-4 h4 {
+    color: #111827 !important;
+  }
+  
+  .mobile-friendly-content .border.rounded-md.p-4 p {
+    color: #4b5563 !important;
+  }
+  
+  /* Also fix any other colored boxes in mobile dialogs */
+  .mobile-friendly-content .bg-yellow-50,
+  .mobile-friendly-content .bg-orange-50,
+  .mobile-friendly-content .bg-gray-50 {
+    background-color: #fefaf0 !important;
+  }
+  
+  .mobile-friendly-content .bg-yellow-50 *,
+  .mobile-friendly-content .bg-orange-50 *,
+  .mobile-friendly-content .bg-gray-50 * {
+    color: #333 !important;
+  }
 }
 
 @layer base {

@@ -222,7 +222,7 @@ const FullScreenDialogBody = ({
     <div
       className={cn(
         "px-6 py-4", 
-        isMobile ? "pb-24 mobile-dialog-body" : "", // Add bottom padding on mobile for better scrolling experience
+        isMobile ? "pb-24 mobile-dialog-body mobile-friendly-content" : "", // Add mobile-friendly class for consistent styling
         className
       )}
       style={isMobile ? {
@@ -230,7 +230,9 @@ const FullScreenDialogBody = ({
         maxWidth: '100%',
         overflowX: 'hidden',
         overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch'
+        WebkitOverflowScrolling: 'touch',
+        backgroundColor: 'white', // Ensure white background on mobile
+        color: '#333' // Ensure dark text color on mobile
       } : undefined}
       {...props}
     />
