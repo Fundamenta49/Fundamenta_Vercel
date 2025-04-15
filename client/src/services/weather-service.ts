@@ -141,10 +141,9 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
     // Transform API response to our format
     const data = response.data;
     
-    // Apply actual temperature adjustment to match reported weather in Estero (74°F)
-    // Increasing by 6°F to match the actual temperature
-    const temp = Math.round((data.current.temp_f + 6) * 10) / 10;
-    const feelsLike = Math.round((data.current.feelslike_f + 6) * 10) / 10;
+    // Use actual temperature from the API
+    const temp = Math.round(data.current.temp_f * 10) / 10;
+    const feelsLike = Math.round(data.current.feelslike_f * 10) / 10;
     
     return {
       location: `${data.location.name}, ${data.location.region}`,
@@ -158,8 +157,8 @@ export async function getWeather(location: string = 'auto:ip'): Promise<WeatherD
         date: index === 0 ? 'Today' : 
               index === 1 ? 'Tomorrow' : 
               new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' }),
-        maxTemp: Math.round((day.day.maxtemp_f + 6) * 10) / 10,
-        minTemp: Math.round((day.day.mintemp_f + 6) * 10) / 10,
+        maxTemp: Math.round(day.day.maxtemp_f * 10) / 10,
+        minTemp: Math.round(day.day.mintemp_f * 10) / 10,
         condition: day.day.condition.text,
         icon: mapWeatherIcon(day.day.condition.code, 1)
       }))
