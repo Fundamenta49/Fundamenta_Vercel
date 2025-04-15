@@ -136,34 +136,25 @@ export default function ChatInterface({
     processPendingActions(navigate);
   }, [messages, navigate]);
 
-  // Auto-scroll to bottom of messages
+  // Auto-scroll to bottom of messages without animating through all previous messages
   useEffect(() => {
     if (messagesEndRef.current) {
-      // First try to use scrollIntoView
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      // Use instant scrolling (no smooth behavior) to avoid the "spasming" effect
+      messagesEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
       
-      // Also try to scroll the parent scroll area if available
+      // Also instantly scroll the parent scroll area if available
       const scrollArea = document.querySelector('[data-radix-scroll-area-viewport]');
       if (scrollArea && scrollArea instanceof HTMLElement) {
-        setTimeout(() => {
-          // Set a small delay to ensure DOM has updated
-          scrollArea.scrollTop = scrollArea.scrollHeight;
-        }, 100);
+        // Immediately set scroll to bottom without animation
+        scrollArea.scrollTop = scrollArea.scrollHeight;
       }
       
       // For mobile devices, ensure we have a backup scrolling method
       if (window.innerWidth < 768) {
-        setTimeout(() => {
-          // Extra timeout for mobile rendering
-          if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-          }
-          
-          // Force scroll to bottom for mobile
-          if (scrollArea && scrollArea instanceof HTMLElement) {
-            scrollArea.scrollTop = scrollArea.scrollHeight;
-          }
-        }, 300);
+        // Force scroll to bottom for mobile without animation
+        if (scrollArea && scrollArea instanceof HTMLElement) {
+          scrollArea.scrollTop = scrollArea.scrollHeight;
+        }
       }
     }
   }, [messages]);

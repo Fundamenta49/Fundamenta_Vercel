@@ -277,18 +277,17 @@ export default function FundiInteractiveAssistant({
     }
   };
 
-  // Auto-scroll chat to bottom when new messages are added
+  // Auto-scroll chat to bottom when new messages are added (using instant scrolling)
   useEffect(() => {
     if (chatEndRef.current) {
-      // Using both methods to ensure cross-browser compatibility
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      // Using instant scrolling to avoid the "spasming" effect of animating through messages
+      chatEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
       
-      // Also find the ScrollArea viewport element and scroll it
+      // Also immediately scroll the ScrollArea viewport element
       const scrollViewport = document.querySelector('[data-radix-scroll-area-viewport]');
       if (scrollViewport && scrollViewport instanceof HTMLElement) {
-        setTimeout(() => {
-          scrollViewport.scrollTop = scrollViewport.scrollHeight;
-        }, 100);
+        // Set scroll directly without animation or delay
+        scrollViewport.scrollTop = scrollViewport.scrollHeight;
       }
     }
   }, [messages]);
