@@ -85,6 +85,8 @@ interface RecipeDetail {
   servings: number;
   summary: string;
   instructions: string;
+  sourceUrl?: string;
+  spoonacularSourceUrl?: string;
   extendedIngredients: {
     id: number;
     aisle: string;
@@ -177,6 +179,22 @@ export default function MealPlanning() {
 
   // Generate meal plan when component loads or plan type changes
   useEffect(() => {
+    // Initial check of API status
+    const checkApiStatus = async () => {
+      try {
+        const statusResponse = await axios.get('/api/cooking/spoonacular-status');
+        console.log('Spoonacular API status:', statusResponse.data);
+      } catch (error) {
+        console.error('API status check failed:', error);
+        toast({
+          title: "API Configuration Issue",
+          description: "There might be an issue with the Spoonacular API configuration.",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    checkApiStatus();
     generateMealPlan(selectedPlan);
   }, [selectedPlan]);
 
@@ -866,12 +884,12 @@ export default function MealPlanning() {
       
       {/* Recipe Detail Modal */}
       <Dialog open={showRecipeModal} onOpenChange={setShowRecipeModal}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto" aria-describedby="recipe-details-description">
           {currentRecipe ? (
             <>
               <DialogHeader>
                 <DialogTitle>{currentRecipe.title}</DialogTitle>
-                <DialogDescription className="flex flex-wrap gap-2 mt-2">
+                <DialogDescription id="recipe-details-description" className="flex flex-wrap gap-2 mt-2">
                   <Badge variant="outline" className="text-xs">
                     <Clock className="h-3 w-3 mr-1" />
                     {currentRecipe.readyInMinutes} min

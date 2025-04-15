@@ -6,6 +6,35 @@ const router = express.Router();
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const BASE_URL = 'https://api.spoonacular.com';
 
+// Check if Spoonacular API key is configured
+router.get('/spoonacular-status', async (req, res) => {
+  if (!SPOONACULAR_API_KEY) {
+    return res.status(500).json({ error: 'Spoonacular API key is not configured' });
+  }
+  
+  try {
+    // Simple API call to test the key
+    const response = await axios.get(`${BASE_URL}/food/ingredients/search`, {
+      params: {
+        apiKey: SPOONACULAR_API_KEY,
+        query: 'apple',
+        number: 1
+      }
+    });
+    
+    return res.json({ status: 'ok', message: 'Spoonacular API key is properly configured' });
+  } catch (error) {
+    console.error('Spoonacular API key validation error:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      return res.status(error.response.status).json({ 
+        error: `Spoonacular API error: ${error.response.data.message || 'Invalid API key or rate limit exceeded'}` 
+      });
+    } else {
+      return res.status(500).json({ error: 'Failed to validate Spoonacular API key' });
+    }
+  }
+});
+
 // Initialize OpenAI client
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -355,8 +384,9 @@ router.post('/generate-shopping-list', async (req, res) => {
         response_format: { type: "json_object" }
       });
 
-      // Extract the content from the API response
-      shoppingListData = JSON.parse(response.choices[0].message.content);
+      // Extract the content from the API response - ensure it's a string before parsing
+      const contentString = response.choices[0].message.content || '{}';
+      shoppingListData = JSON.parse(contentString);
     } 
     // Generate shopping list using Hugging Face
     else if (model === 'huggingface') {
