@@ -111,17 +111,67 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
               : document.querySelector('button:has(svg[data-lucide="Gamepad2"])');
               
             if (targetElement) {
-              // Apply highlight effect
+              // Create a pulsing highlight effect similar to the homepage cards
               const targetHtmlElement = targetElement as HTMLElement;
-              targetHtmlElement.style.transition = "all 0.3s ease-in-out";
-              targetHtmlElement.style.boxShadow = stepIndex === 8 
-                ? "0 0 15px #6366f1" // Indigo for Calendar
-                : "0 0 15px #f59e0b"; // Amber for Arcade
+              
+              // Store original styles to restore later
+              const originalBg = targetHtmlElement.style.backgroundColor;
+              const originalTransform = targetHtmlElement.style.transform;
+              const originalTransition = targetHtmlElement.style.transition;
+              const originalZIndex = targetHtmlElement.style.zIndex;
+              
+              // Apply enhanced highlight effects
+              targetHtmlElement.style.transition = "all 0.5s ease-in-out";
+              targetHtmlElement.style.zIndex = "100";
+              
+              // Apply specific highlighting based on the step
+              if (stepIndex === 8) {
+                // Calendar - Indigo theme
+                targetHtmlElement.style.backgroundColor = "#e0e7ff"; // indigo-100
+                targetHtmlElement.style.boxShadow = "0 0 15px 5px rgba(99, 102, 241, 0.7)"; // indigo glow
+                // Add a subtle pulsing outline animation
+                const keyframes = `
+                  @keyframes calendarPulse {
+                    0% { box-shadow: 0 0 15px 5px rgba(99, 102, 241, 0.7); }
+                    50% { box-shadow: 0 0 25px 8px rgba(99, 102, 241, 0.9); }
+                    100% { box-shadow: 0 0 15px 5px rgba(99, 102, 241, 0.7); }
+                  }
+                `;
+                const styleElement = document.createElement('style');
+                styleElement.innerHTML = keyframes;
+                document.head.appendChild(styleElement);
+                targetHtmlElement.style.animation = "calendarPulse 1.5s infinite";
+              } else {
+                // Arcade - Amber theme
+                targetHtmlElement.style.backgroundColor = "#fef3c7"; // amber-100
+                targetHtmlElement.style.boxShadow = "0 0 15px 5px rgba(245, 158, 11, 0.7)"; // amber glow
+                // Add a subtle pulsing outline animation
+                const keyframes = `
+                  @keyframes arcadePulse {
+                    0% { box-shadow: 0 0 15px 5px rgba(245, 158, 11, 0.7); }
+                    50% { box-shadow: 0 0 25px 8px rgba(245, 158, 11, 0.9); }
+                    100% { box-shadow: 0 0 15px 5px rgba(245, 158, 11, 0.7); }
+                  }
+                `;
+                const styleElement = document.createElement('style');
+                styleElement.innerHTML = keyframes;
+                document.head.appendChild(styleElement);
+                targetHtmlElement.style.animation = "arcadePulse 1.5s infinite";
+              }
+              
+              // Add a subtle scale effect
+              targetHtmlElement.style.transform = "scale(1.05)";
               
               // Remove the highlight effect after a few seconds
               setTimeout(() => {
+                // Restore original styles
+                targetHtmlElement.style.backgroundColor = originalBg;
                 targetHtmlElement.style.boxShadow = "";
-              }, 3000);
+                targetHtmlElement.style.transform = originalTransform;
+                targetHtmlElement.style.transition = originalTransition;
+                targetHtmlElement.style.zIndex = originalZIndex;
+                targetHtmlElement.style.animation = "";
+              }, 6000); // Longer duration for better visibility
             }
           } catch (e) {
             console.warn("Could not add highlight effect to sidebar item:", e);
