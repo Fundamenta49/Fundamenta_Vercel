@@ -122,7 +122,27 @@ export default function AdminPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Diagnostic tools are under development.</p>
+                <div className="space-y-4">
+                  <p>Diagnostic tools are under development.</p>
+                  
+                  <div className="border-t pt-4">
+                    <h3 className="text-sm font-medium mb-2">User Experience Tools</h3>
+                    <div className="flex items-center">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="flex items-center gap-1"
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                        <span>Reset User Data</span>
+                      </Button>
+                      <TourResetButton />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Resetting the tour will trigger the onboarding experience for all users on their next visit.
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
