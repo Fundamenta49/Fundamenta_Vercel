@@ -1,46 +1,94 @@
-/* Custom styles for a narrow sidebar width on mobile */
-.narrow-sidebar-wrapper button {
-  padding-right: 4px !important;
-  padding-left: 4px !important;
+/* Custom styles for a precise sidebar width on mobile */
+
+/* Animation for pulsing tour highlight */
+@keyframes pulseTourGlow {
+  0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6); }
+  50% { box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.4); }
+  100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6); }
 }
 
+/* Apply the highlight to tour elements only when tour is active */
+body[data-tour-active="true"] [data-tour-id="nav-smart-calendar"],
+body[data-tour-active="true"] [data-tour-id="nav-arcade"] {
+  position: relative;
+  animation: pulseTourGlow 2s infinite;
+  z-index: 10;
+  border-radius: 0.375rem;
+}
+
+/* Custom style for the active tour step */
+body[data-tour-step="calendar"] [data-tour-id="nav-smart-calendar"],
+body[data-tour-step="arcade"] [data-tour-id="nav-arcade"] {
+  animation: pulseTourGlow 1.5s infinite;
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+/* The base sheet content width - exactly fit content */
 .narrow-sidebar {
-  width: min-content !important;
-  max-width: 220px !important;
+  width: fit-content !important;
+  max-width: 210px !important; /* Limit the max width */
+  padding-right: 4px !important; /* Exactly 4px on the right */
+  padding-left: 4px !important; /* Minimum padding on the left */
+}
+
+/* Tighter spacing between icon and text */
+.narrow-sidebar button {
+  gap: 4px !important; /* Reduces gap between icon and text */
+  padding-left: 4px !important;
   padding-right: 4px !important;
 }
 
+/* Smart Calendar and Arcade text will fit exactly */
 .narrow-sidebar span {
   font-size: 0.875rem !important; /* Smaller font size */
+  white-space: nowrap !important; /* Prevent text wrap */
 }
 
-/* Apply smaller gap between icon and text */
-.narrow-sidebar .icon-text-gap {
-  gap: 0.5rem !important;
-}
-
-/* Make the icons slightly smaller */
+/* Make the icons smaller */
 .narrow-sidebar svg {
-  width: 1.125rem !important;
-  height: 1.125rem !important;
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0 !important;
 }
 
-/* Reduce side paddings */
-.narrow-sidebar button {
+/* Reduce all spacing in the mobile sidebar */
+.narrow-sidebar .px-3 {
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
-}
-
-/* Reduce vertical spacing between elements */
-.narrow-sidebar .mt-4 {
-  margin-top: 0.75rem !important;
-}
-
-.narrow-sidebar .mb-2 {
-  margin-bottom: 0.5rem !important;
 }
 
 .narrow-sidebar .py-2\.5 {
   padding-top: 0.5rem !important;
   padding-bottom: 0.5rem !important;
+}
+
+/* Make logo more compact */
+.narrow-sidebar .py-6 {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+.narrow-sidebar .mb-6 {
+  margin-bottom: 0.75rem !important;
+}
+
+/* Optimize space between sections */
+.narrow-sidebar .mt-4 {
+  margin-top: 0.5rem !important;
+}
+
+.narrow-sidebar .mb-2 {
+  margin-bottom: 0.25rem !important;
+}
+
+/* Exact sizing for Sheet itself */
+[role="dialog"][data-state="open"] {
+  width: fit-content !important;
+}
+
+/* Ensure we don't get unnecessary overflow */
+.narrow-sidebar > div {
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }

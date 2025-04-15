@@ -227,7 +227,7 @@ export default function Navigation() {
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className={`${navBgColor} border-r ${borderColor} shadow-md w-fit pr-1 max-w-[240px] narrow-sidebar`}>
+        <SheetContent side="left" className={`${navBgColor} border-r ${borderColor} shadow-md narrow-sidebar`}>
           <button 
             onClick={() => handleNavigation("/")}
             className={cn(
@@ -279,6 +279,7 @@ export default function Navigation() {
                         : `text-gray-700 hover:bg-gray-50`
                     )}
                     onClick={() => handleNavigation("/calendar")}
+                    data-tour-id="nav-smart-calendar"
                   >
                     <Calendar className={cn("h-5 w-5", isNavItemActive("/calendar") ? themeColors.iconColor : "text-gray-600")} />
                     <span className="font-medium">Smart Calendar</span>
@@ -295,6 +296,7 @@ export default function Navigation() {
                       : `text-gray-700 hover:bg-gray-50`
                   )}
                   onClick={() => handleNavigation("/arcade")}
+                  data-tour-id="nav-arcade"
                 >
                   <Gamepad2 className={cn("h-5 w-5", isNavItemActive("/arcade") ? themeColors.iconColor : "text-gray-600")} />
                   <span className="font-medium">Arcade</span>

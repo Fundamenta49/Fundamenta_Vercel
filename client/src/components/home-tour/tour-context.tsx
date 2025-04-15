@@ -55,9 +55,28 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
   useEffect(() => {
     // Only check for sidebar steps when tour is active
     if (isTourActive) {
+      // Set data attribute on body to indicate tour is active (for CSS targeting)
+      document.body.setAttribute('data-tour-active', 'true');
+      
+      // Add step-specific attribute for targeted styling
+      const stepTypeMap: Record<number, string> = {
+        8: 'calendar', // Calendar step
+        9: 'arcade'    // Arcade step
+      };
+      
+      if (stepTypeMap[currentStep]) {
+        document.body.setAttribute('data-tour-step', stepTypeMap[currentStep]);
+      } else {
+        document.body.removeAttribute('data-tour-step');
+      }
+      
       // Delay sidebar opening slightly to ensure the DOM is fully ready
       const sidebarOpenDelay = currentStep === 0 ? 800 : 300;
       setTimeout(() => handleMobileSidebarForStep(currentStep), sidebarOpenDelay);
+    } else {
+      // Remove data attributes when tour is not active
+      document.body.removeAttribute('data-tour-active');
+      document.body.removeAttribute('data-tour-step');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTourActive, currentStep]);
@@ -68,10 +87,22 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
     setIsTourActive(true);
   };
   
+  // Add cleanup effect to remove data attributes when component unmounts
+  useEffect(() => {
+    return () => {
+      // Clean up any data attributes on unmount
+      document.body.removeAttribute('data-tour-active');
+      document.body.removeAttribute('data-tour-step');
+    };
+  }, []);
+  
   // End the tour
   const endTour = () => {
     setIsTourActive(false);
     setCurrentStep(0);
+    // Remove data attributes
+    document.body.removeAttribute('data-tour-active');
+    document.body.removeAttribute('data-tour-step');
     // Mark that user has seen the tour
     localStorage.setItem('fundamenta-tour-completed', 'true');
   };
