@@ -73,6 +73,7 @@ interface ChatInterfaceProps {
   expanded?: boolean;
   showSuggestions?: boolean;
   onToggleExpand?: () => void;
+  suppressHistory?: boolean; // Add this prop to optionally skip loading conversation history
 }
 
 export default function ChatInterface({
@@ -84,6 +85,7 @@ export default function ChatInterface({
   className = '',
   expanded = false,
   showSuggestions = true,
+  suppressHistory = false,
   onToggleExpand
 }: ChatInterfaceProps) {
   // State
@@ -219,6 +221,13 @@ export default function ChatInterface({
   // Load existing messages when active conversation changes
   useEffect(() => {
     if (activeConversationId) {
+      // If suppressHistory is true, just display an empty chat
+      if (suppressHistory) {
+        console.log('Suppressing conversation history display as requested');
+        setMessages([]);
+        return;
+      }
+      
       // Check if we already have messages in the store
       const cachedMessages = messagesByConversation[activeConversationId];
       
@@ -237,7 +246,7 @@ export default function ChatInterface({
         
         // Then set the messages in a setTimeout to ensure DOM updates in between
         setTimeout(() => {
-          // Set messages state
+          // Set messages state - show only the most recent message if needed
           setMessages(formattedMessages);
           
           // Wait until messages have been rendered, then instantly scroll to bottom
