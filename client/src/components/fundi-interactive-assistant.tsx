@@ -297,24 +297,25 @@ export default function FundiInteractiveAssistant({
     });
   }, [messages]);
   
-  // Additional scroll handler for when chat opens
+  // Improved scroll handler for when chat opens - directly positions at the end without animating through all messages
   useEffect(() => {
     if (isChatOpen) {
-      // Use RAF and a small timeout to ensure DOM is ready
+      // Use a slightly longer timeout to ensure DOM is fully ready
       const scrollTimer = setTimeout(() => {
-        requestAnimationFrame(() => {
-          if (chatEndRef.current) {
-            chatEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
-            
-            const scrollViewports = document.querySelectorAll('[data-radix-scroll-area-viewport]');
-            scrollViewports.forEach(viewport => {
-              if (viewport instanceof HTMLElement) {
-                viewport.scrollTop = viewport.scrollHeight;
-              }
-            });
+        // Skip animation frames and directly set the scroll position
+        if (chatEndRef.current) {
+          // Find the specific scroll viewport for the chat, not all viewports
+          const chatViewport = chatEndRef.current.closest('[data-radix-scroll-area-viewport]');
+          
+          if (chatViewport instanceof HTMLElement) {
+            // Directly set final position without animation
+            chatViewport.scrollTop = chatViewport.scrollHeight;
           }
-        });
-      }, 100); // Small delay to ensure DOM is fully rendered
+          
+          // As a fallback, use scrollIntoView but with no animation
+          chatEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
+        }
+      }, 150); // Slightly longer delay to ensure DOM is fully rendered
       
       return () => clearTimeout(scrollTimer);
     }
