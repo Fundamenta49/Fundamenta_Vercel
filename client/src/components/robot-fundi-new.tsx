@@ -72,6 +72,7 @@ export default function RobotFundi({
   
   // Removed emergency click handlers since they were causing auto-opening after dragging
   useEffect(() => {
+    // Log kept for debugging purposes
     console.log("Emergency click handlers disabled - using only standard click handling");
     return () => {};
   }, []);
@@ -158,17 +159,10 @@ export default function RobotFundi({
         }
       }
       
-      // Calculate drag distance for logging
-      const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-      console.log(`Drag ended with distance: ${dragDistance.toFixed(0)}px`);
-      
       // Reset wasDragged very quickly now
       setTimeout(() => {
         setWasDragged(false);
-        console.log('Quick reset of wasDragged state');
       }, 50);
-      
-      console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
   };
 
@@ -190,23 +184,15 @@ export default function RobotFundi({
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('fundiPosition', JSON.stringify(position));
-          console.log('Saved Fundi position to localStorage after touch drag');
         } catch (e) {
           console.error('Failed to save position to localStorage', e);
         }
       }
       
-      // Calculate drag distance for logging
-      const dragDistance = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2));
-      console.log(`Touch drag ended with distance: ${dragDistance.toFixed(0)}px`);
-      
       // Reset wasDragged very quickly now
       setTimeout(() => {
         setWasDragged(false);
-        console.log('Quick reset of wasDragged state after touch');
       }, 50);
-      
-      console.log(`Current Fundi position: x=${position.x.toFixed(0)}px, y=${position.y.toFixed(0)}px`);
     }
   };
 
