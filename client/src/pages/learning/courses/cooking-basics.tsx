@@ -14,6 +14,7 @@ import {
 import RecipeExplorer from '@/components/recipe-explorer';
 import KitchenSkillsLearning from '@/components/kitchen-skills-learning-updated';
 import CookingTutorialPopup from '@/components/cooking-tutorial-popup';
+import MealPlanning from '@/components/meal-planning';
 import { Link } from 'wouter';
 import { 
   FullScreenDialog,
@@ -146,6 +147,7 @@ export default function CookingBasics() {
   const [isRecipeExplorerOpen, setIsRecipeExplorerOpen] = useState(false);
   const [isKitchenSkillsOpen, setIsKitchenSkillsOpen] = useState(false);
   const [isIntroOpen, setIsIntroOpen] = useState(false);
+  const [isMealPlanningOpen, setIsMealPlanningOpen] = useState(false);
   
   const handleCardClick = (sectionId: string) => {
     // Open the appropriate dialog based on the section clicked
@@ -158,6 +160,9 @@ export default function CookingBasics() {
         break;
       case 'skills':
         setIsKitchenSkillsOpen(true);
+        break;
+      case 'meal-planning':
+        setIsMealPlanningOpen(true);
         break;
       case 'intro':
         setIsIntroOpen(true);
@@ -216,6 +221,12 @@ export default function CookingBasics() {
             <h2 className="text-xl font-bold mb-4">Introduction to Cooking</h2>
             {introContent}
           </div>
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <FullScreenDialog open={isMealPlanningOpen} onOpenChange={setIsMealPlanningOpen}>
+        <FullScreenDialogContent themeColor="#d97706">
+          <MealPlanning />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
