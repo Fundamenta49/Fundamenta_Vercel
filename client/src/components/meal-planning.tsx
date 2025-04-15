@@ -207,7 +207,7 @@ export default function MealPlanning() {
       if (!selectedPlanConfig) {
         throw new Error("Invalid plan type");
       }
-
+      
       const response = await axios.get('/api/cooking/meal-plan', {
         params: selectedPlanConfig.apiParams
       });
