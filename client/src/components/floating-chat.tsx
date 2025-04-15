@@ -148,10 +148,11 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
         {isExpanded ? (
           <motion.div 
             className="fixed z-[999999] flex items-end justify-end"
-            initial={{ opacity: 0, scale: 0.8, y: -20 }}
+            // Start at full opacity and without animation to prevent scroll flickering
+            initial={{ opacity: 1, scale: 1, y: 0 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.15 }}
             style={{ 
               position: 'fixed',
               right: chatPosition.right ? `${chatPosition.right}px` : '16px',
