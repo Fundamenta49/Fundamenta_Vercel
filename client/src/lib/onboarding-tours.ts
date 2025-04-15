@@ -33,6 +33,12 @@ export const initialTour: Tour = {
       placement: 'left',
     },
     {
+      targetSelector: '.fundi-button',
+      title: 'Double-Click Feature',
+      content: 'Pro tip: You can double-click on Fundi to minimize or maximize him! This keeps him out of the way when you need more screen space, and brings him back when you need help.',
+      placement: 'left',
+    },
+    {
       title: 'Let\'s Get Started!',
       content: 'That\'s it for the quick tour! Feel free to explore the app, and remember Fundi is always here to help.',
       placement: 'center',
