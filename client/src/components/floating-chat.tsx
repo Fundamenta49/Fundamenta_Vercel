@@ -172,6 +172,8 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
                 currentPage: category,
                 availableActions: [`/${category}`]
               }}
+              showSuggestions={true}
+              suppressHistory={true} // Add this flag to prevent loading history
               className="shadow-xl rounded-2xl overflow-hidden w-full max-h-[80vh]"
             />
           </motion.div>
