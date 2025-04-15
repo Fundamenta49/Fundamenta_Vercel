@@ -396,36 +396,69 @@ export default function MealPlanning() {
         if (day.meals.snack?.id) mealIds.push(day.meals.snack.id);
       });
       
-      // Get recipe information for all meals to extract ingredients
-      const allIngredients: string[] = [];
+      // Collect all ingredients with detailed information
+      const allIngredientsWithDetails: any[] = [];
       
       for (const id of mealIds) {
         try {
           const response = await axios.get(`/api/cooking/recipes/${id}/information`);
           const recipe = response.data as RecipeDetail;
           
-          recipe.extendedIngredients.forEach(ingredient => {
-            allIngredients.push(`${ingredient.amount} ${ingredient.unit} ${ingredient.name}`);
-          });
+          // Add all extended ingredients with full details
+          allIngredientsWithDetails.push(...recipe.extendedIngredients);
         } catch (error) {
           console.error(`Error fetching details for recipe ${id}:`, error);
         }
       }
       
-      // Deduplicate ingredients (basic method - could be improved with better parsing)
-      const uniqueIngredients = Array.from(new Set(allIngredients));
-      setShoppingList(uniqueIngredients);
+      if (allIngredientsWithDetails.length === 0) {
+        throw new Error("No ingredients found for the selected recipes");
+      }
+      
+      // Call our AI-powered shopping list generation endpoint (using OpenAI by default)
+      const aiResponse = await axios.post('/api/cooking/generate-shopping-list', {
+        ingredients: allIngredientsWithDetails,
+        model: 'openai' // Can be 'openai' or 'huggingface'
+      });
+      
+      if (!aiResponse.data.success) {
+        throw new Error("Failed to generate shopping list");
+      }
+      
+      // The AI response should include categorized items
+      const shoppingListData = aiResponse.data.shoppingList;
+      
+      // For the display, we'll extract all items into a flat array
+      const flatIngredientsList: string[] = [];
+      
+      if (shoppingListData.categories && Array.isArray(shoppingListData.categories)) {
+        shoppingListData.categories.forEach((category: any) => {
+          if (category.items && Array.isArray(category.items)) {
+            category.items.forEach((item: any) => {
+              // Format with amount and unit if available
+              if (item.amount && item.unit) {
+                flatIngredientsList.push(`${item.amount} ${item.unit} ${item.name}`);
+              } else {
+                flatIngredientsList.push(item.name);
+              }
+            });
+          }
+        });
+      }
+      
+      // Set the processed shopping list data
+      setShoppingList(flatIngredientsList);
       setShowShoppingList(true);
       
       toast({
-        title: "Shopping List Generated",
-        description: `Created a list with ${uniqueIngredients.length} ingredients.`
+        title: "AI Shopping List Generated",
+        description: `Created a smart list with ${flatIngredientsList.length} ingredients`,
       });
     } catch (error) {
       console.error("Error generating shopping list:", error);
       toast({
         title: "Error generating shopping list",
-        description: "Unable to create shopping list. Please try again later.",
+        description: error instanceof Error ? error.message : "Unable to create shopping list. Please try again later.",
         variant: "destructive"
       });
     } finally {
@@ -727,32 +760,70 @@ export default function MealPlanning() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5 text-blue-500" />
-              Shopping List
+              AI-Generated Shopping List
             </CardTitle>
             <CardDescription>
-              Based on your weekly meal plan
+              Intelligently organized based on your weekly meal plan
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {shoppingList.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input type="checkbox" id={`item-${index}`} className="rounded" />
-                  <label htmlFor={`item-${index}`} className="text-sm">{item}</label>
+            {/* Only display this format if we have the AI-generated categorized data */}
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin mb-4" />
+                <p>Generating your intelligent shopping list...</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-6">
+                  {/* If we have an AI-processed structured response */}
+                  {shoppingList.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Simple list display for now */}
+                      <div className="border rounded-md p-4">
+                        <h3 className="font-medium mb-3">Your Shopping List</h3>
+                        <div className="space-y-2">
+                          {shoppingList.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <input type="checkbox" id={`item-${index}`} className="rounded" />
+                              <label htmlFor={`item-${index}`} className="text-sm">{item}</label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="border rounded-md p-4">
+                        <h3 className="font-medium mb-3">Shopping Tips</h3>
+                        <ul className="list-disc list-inside space-y-2 text-sm text-gray-600">
+                          <li>Shop from the perimeter of the store first (produce, meat, dairy)</li>
+                          <li>Buy in bulk for frequently used non-perishable items</li>
+                          <li>Compare unit prices to find the best deals</li>
+                          <li>Consider seasonal produce for freshness and value</li>
+                          <li>Check your pantry before shopping to avoid duplicates</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-            
-            <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowShoppingList(false)}>
-                <XCircle className="h-4 w-4 mr-2" />
-                Close List
-              </Button>
-              <Button variant="outline">
-                <Printer className="h-4 w-4 mr-2" />
-                Print List
-              </Button>
-            </div>
+                
+                <div className="mt-6 flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setShowShoppingList(false)}>
+                    <XCircle className="h-4 w-4 mr-2" />
+                    Close List
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      // You could implement printing functionality here
+                      window.print();
+                    }}
+                  >
+                    <Printer className="h-4 w-4 mr-2" />
+                    Print List
+                  </Button>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       )}

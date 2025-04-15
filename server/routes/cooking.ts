@@ -321,11 +321,9 @@ router.post('/generate-shopping-list', async (req, res) => {
 
     // Generate shopping list using OpenAI
     if (model === 'openai') {
-      // Import OpenAI from the existing server setup
-      const { openai } = await import('../ai/index');
-      
-      if (!openai) {
-        return res.status(500).json({ error: 'OpenAI is not configured' });
+      // Use the existing OpenAI client
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: 'OpenAI API key is not configured' });
       }
 
       const response = await openai.chat.completions.create({
