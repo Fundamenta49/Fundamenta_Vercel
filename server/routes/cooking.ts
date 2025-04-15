@@ -1,9 +1,13 @@
 import express from 'express';
 import axios from 'axios';
+import OpenAI from 'openai';
 
 const router = express.Router();
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const BASE_URL = 'https://api.spoonacular.com';
+
+// Initialize OpenAI client
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Search for recipes
 router.get('/recipes/search', async (req, res) => {
@@ -282,6 +286,162 @@ router.get('/videos/category/:category', async (req, res) => {
     } else {
       res.status(500).json({ error: 'Failed to fetch cooking videos by category from Spoonacular' });
     }
+  }
+});
+
+// Generate intelligent shopping list from recipe ingredients using AI
+router.post('/generate-shopping-list', async (req, res) => {
+  try {
+    const { ingredients, model = 'openai' } = req.body;
+    
+    if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) {
+      return res.status(400).json({ error: 'Valid ingredients array is required' });
+    }
+
+    // Format ingredients for better AI understanding
+    const formattedIngredients = ingredients.map(ing => {
+      // If the ingredient is a simple string, return it directly
+      if (typeof ing === 'string') return ing;
+      
+      // If it's an object with detailed properties (from Spoonacular), format it
+      if (ing.amount && ing.unit && ing.name) {
+        return `${ing.amount} ${ing.unit} ${ing.name}`;
+      }
+
+      // If it has originalString property, use that
+      if (ing.originalString) {
+        return ing.originalString;
+      }
+
+      // Otherwise, stringify the object for inspection
+      return JSON.stringify(ing);
+    });
+
+    let shoppingListData;
+
+    // Generate shopping list using OpenAI
+    if (model === 'openai') {
+      // Import OpenAI from the existing server setup
+      const { openai } = await import('../ai/index');
+      
+      if (!openai) {
+        return res.status(500).json({ error: 'OpenAI is not configured' });
+      }
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // Using the latest OpenAI model
+        messages: [
+          {
+            role: "system",
+            content: `You are a helpful meal planning assistant. Your task is to organize a shopping list based on recipe ingredients.
+            
+            Instructions:
+            1. Combine duplicate or similar ingredients and adjust quantities appropriately
+            2. Organize items by grocery store section (produce, dairy, meat, pantry, etc.)
+            3. Identify potential substitutions or alternatives for hard-to-find items
+            4. Format the response as a structured JSON object with categories
+            5. For each ingredient, include the original amount and unit when possible
+            6. Add helpful notes for items that might be confusing or have multiple options
+            
+            Return a JSON object with:
+            1. "categories" - an array of grocery section objects, each with:
+               - "name": the section name (produce, dairy, etc.)
+               - "items": array of ingredient objects with name, amount, unit, and optional notes
+            2. "tips" - array of shopping and meal prep efficiency tips specific to these ingredients`
+          },
+          {
+            role: "user",
+            content: `Here are the ingredients from my meal plan. Please organize them into an efficient shopping list:\n\n${formattedIngredients.join("\n")}`
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      // Extract the content from the API response
+      shoppingListData = JSON.parse(response.choices[0].message.content);
+    } 
+    // Generate shopping list using Hugging Face
+    else if (model === 'huggingface') {
+      // Check for Hugging Face API key
+      const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
+      
+      if (!HUGGINGFACE_API_KEY) {
+        return res.status(500).json({ error: 'Hugging Face API key is not configured' });
+      }
+
+      // Define the prompt for Hugging Face models
+      const prompt = `
+      Task: Organize a shopping list based on these recipe ingredients.
+
+      Instructions:
+      1. Combine duplicate or similar ingredients and adjust quantities appropriately
+      2. Organize items by grocery store section (produce, dairy, meat, pantry, etc.)
+      3. Identify potential substitutions or alternatives for hard-to-find items
+      4. Format the response as a structured JSON object with categories
+      5. For each ingredient, include the original amount and unit when possible
+      6. Add helpful notes for items that might be confusing or have multiple options
+
+      Return a JSON object with:
+      1. "categories" - an array of grocery section objects, each with:
+         - "name": the section name (produce, dairy, etc.)
+         - "items": array of ingredient objects with name, amount, unit, and optional notes
+      2. "tips" - array of shopping and meal prep efficiency tips specific to these ingredients
+
+      Ingredients:
+      ${formattedIngredients.join("\n")}
+
+      JSON response:
+      `;
+
+      // Call Hugging Face Inference API directly using axios
+      const response = await axios.post(
+        'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2', // Using Mistral model, can be changed
+        { inputs: prompt },
+        { 
+          headers: { 
+            'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
+            'Content-Type': 'application/json' 
+          }
+        }
+      );
+
+      // Get the response and parse the JSON
+      // Note: The response format may vary depending on the model
+      try {
+        const generatedText = response.data[0]?.generated_text || response.data?.generated_text;
+        // Extract the JSON from the text (model might wrap it in markdown or other text)
+        const jsonMatch = generatedText.match(/```json\s*(\{[\s\S]*\})\s*```/) || 
+                        generatedText.match(/(\{[\s\S]*\})/);
+                        
+        if (jsonMatch && jsonMatch[1]) {
+          shoppingListData = JSON.parse(jsonMatch[1]);
+        } else {
+          // If we can't find a valid JSON structure, try to parse the whole text
+          shoppingListData = JSON.parse(generatedText);
+        }
+      } catch (jsonError) {
+        console.error('Error parsing Hugging Face response:', jsonError);
+        return res.status(500).json({ 
+          error: 'Failed to parse shopping list from Hugging Face API',
+          details: 'Invalid JSON format in response'
+        });
+      }
+    } else {
+      return res.status(400).json({ error: 'Invalid model specified. Use "openai" or "huggingface"' });
+    }
+
+    res.json({
+      success: true,
+      model: model,
+      shoppingList: shoppingListData
+    });
+    
+  } catch (error) {
+    console.error('Shopping list generation error:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate intelligent shopping list',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
