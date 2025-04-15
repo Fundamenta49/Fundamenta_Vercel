@@ -36,6 +36,16 @@ export const useTourSteps = () => {
       animationType: 'dance'
     },
     
+    // Step 3: Introduce the double-click feature
+    {
+      title: 'Pro Tip: Double-Click Me!',
+      content: `Need more screen space? Double-click on me to minimize me to a small icon! Double-click again when you need me back. It's a neat way to keep me around without taking up too much space while you explore.`,
+      target: 'body',
+      placement: 'center',
+      showFundiAnimation: true,
+      animationType: 'jump'
+    },
+    
     // Step 3: Life Skills card
     {
       title: 'Life Skills Academy',

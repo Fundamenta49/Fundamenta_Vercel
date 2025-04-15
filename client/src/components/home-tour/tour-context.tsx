@@ -18,7 +18,7 @@ interface TourContextType {
 const defaultContext: TourContextType = {
   isTourActive: false,
   currentStep: 0,
-  totalSteps: 10, // Total number of steps in our tour (updated with Why Fundamenta final step)
+  totalSteps: 11, // Total number of steps in our tour (updated with double-click and Why Fundamenta final steps)
   startTour: () => {},
   endTour: () => {},
   nextStep: () => {},

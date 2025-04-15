@@ -5,7 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
-import { AlertTriangle, Shield } from 'lucide-react';
+import { AlertTriangle, Shield, RefreshCw } from 'lucide-react';
+import { TourResetButton } from '@/components/tour-reset-button';
 
 /**
  * Admin Dashboard Page
