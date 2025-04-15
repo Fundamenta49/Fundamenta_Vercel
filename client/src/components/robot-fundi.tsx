@@ -65,6 +65,10 @@ export default function RobotFundi({
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
   
+  // For double click detection
+  const lastTapTimeRef = useRef(0);
+  const doubleTapProcessingRef = useRef(false);
+  
   // Track if this is the first render to avoid auto-opening immediately after page load
   const isFirstRender = React.useRef(true);
   
