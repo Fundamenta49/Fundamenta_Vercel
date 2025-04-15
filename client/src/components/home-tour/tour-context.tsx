@@ -60,8 +60,8 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
       
       // Add step-specific attribute for targeted styling
       const stepTypeMap: Record<number, string> = {
-        8: 'calendar', // Calendar step
-        9: 'arcade'    // Arcade step
+        9: 'calendar', // Calendar step (index 9 - 0-based indexing)
+        10: 'arcade'   // Arcade step (index 10 - 0-based indexing)
       };
       
       if (stepTypeMap[currentStep]) {
@@ -120,9 +120,9 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
     
     if (!isMobile) return; // Only execute for mobile devices
     
-    // Calendar step is typically at index 8 and Arcade at index 9 (after adding double-click step)
+    // Calendar step is at index 9 and Arcade at index 10 in the steps array
     // These are the steps that need the sidebar open on mobile
-    const sidebarSteps = [8, 9]; // Step indices for Calendar and Arcade
+    const sidebarSteps = [9, 10]; // Step indices for Calendar and Arcade
     
     if (sidebarSteps.includes(stepIndex)) {
       // Use a custom event to directly communicate with the Navigation component
@@ -137,9 +137,10 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
         // After sidebar opens, add highlight effect to Calendar/Arcade item
         setTimeout(() => {
           try {
-            const targetElement = stepIndex === 8 
-              ? document.querySelector('button:has(svg[data-lucide="Calendar"])')
-              : document.querySelector('button:has(svg[data-lucide="Gamepad2"])');
+            // Find the element to highlight - either Calendar or Arcade button
+            const targetElement = stepIndex === 9 
+              ? document.querySelector('[data-tour-id="nav-smart-calendar"]')
+              : document.querySelector('[data-tour-id="nav-arcade"]');
               
             if (targetElement) {
               // Create a pulsing highlight effect similar to the homepage cards
@@ -156,7 +157,7 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
               targetHtmlElement.style.zIndex = "100";
               
               // Apply specific highlighting based on the step
-              if (stepIndex === 8) {
+              if (stepIndex === 9) {
                 // Calendar - Indigo theme
                 targetHtmlElement.style.backgroundColor = "#e0e7ff"; // indigo-100
                 targetHtmlElement.style.boxShadow = "0 0 15px 5px rgba(99, 102, 241, 0.7)"; // indigo glow

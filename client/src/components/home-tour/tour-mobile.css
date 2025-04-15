@@ -41,18 +41,26 @@ body.mobile-tour-active .tour-tooltip {
     padding: 12px !important;
   }
   
-  /* Special positioning for tour during Calendar and Arcade steps (steps 9 and 10) */
-  body[data-tour-step="8"] .mobile-tour-active [data-tour-dialog="true"],
-  body[data-tour-step="8"] .mobile-tour-active [class*="tour-dialog"],
-  body[data-tour-step="8"] .tour-tooltip,
-  body[data-tour-step="9"] .mobile-tour-active [data-tour-dialog="true"],
-  body[data-tour-step="9"] .mobile-tour-active [class*="tour-dialog"],
-  body[data-tour-step="9"] .tour-tooltip {
+  /* Special positioning for tour during Calendar and Arcade steps */
+  body[data-tour-step="calendar"] .mobile-tour-active [data-tour-dialog="true"],
+  body[data-tour-step="calendar"] .mobile-tour-active [class*="tour-dialog"],
+  body[data-tour-step="calendar"] .tour-tooltip,
+  body[data-tour-step="arcade"] .mobile-tour-active [data-tour-dialog="true"],
+  body[data-tour-step="arcade"] .mobile-tour-active [class*="tour-dialog"],
+  body[data-tour-step="arcade"] .tour-tooltip {
     left: 65% !important; /* Position even further to the right to avoid sidebar */
     top: 40% !important; /* Move up a bit to give better view of sidebar items */
     transform: translate(-50%, -50%) !important;
     width: 200px !important; /* Make it more compact */
     font-size: 0.9rem !important; /* Slightly smaller text */
+  }
+  
+  /* When the tour is active and sidebar is open on mobile, adjust dialog positions */
+  body[data-tour-active="true"] [role="dialog"][data-state="open"] ~ [data-tour-dialog="true"],
+  body[data-tour-active="true"] [role="dialog"][data-state="open"] ~ [class*="tour-dialog"],
+  body[data-tour-active="true"] [role="dialog"][data-state="open"] ~ .tour-tooltip {
+    left: 75% !important; /* Move further right to avoid sidebar */
+    width: 180px !important; /* Even more compact */
   }
 }
 
