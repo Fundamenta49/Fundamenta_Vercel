@@ -28,7 +28,7 @@ const TourButton: React.FC<TourButtonProps> = ({ className = '' }) => {
               onClick={startTour}
               variant="outline"
               size="sm"
-              className={`tour-button rounded-full h-12 w-12 p-0 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-blue-500 to-indigo-600 border-0 ${className}`}
+              className={`tour-button h-12 w-12 p-0 flex items-center justify-center transition-all duration-300 bg-transparent border-0 ${className}`}
               aria-label="Start Tour"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
@@ -37,7 +37,7 @@ const TourButton: React.FC<TourButtonProps> = ({ className = '' }) => {
                 animate={isHovered ? { rotate: [0, 15, -15, 0] } : {}}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
               >
-                <HelpCircle className="h-6 w-6 text-white" />
+                <HelpCircle className="h-6 w-6 text-blue-600" />
               </motion.div>
             </Button>
           </motion.div>
