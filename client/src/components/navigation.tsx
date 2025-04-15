@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import './narrow-sidebar.css';
 import {
   HeartHandshake,
   HandshakeIcon,
@@ -226,7 +227,7 @@ export default function Navigation() {
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className={`${navBgColor} border-r ${borderColor} shadow-md w-[80vw]`}>
+        <SheetContent side="left" className={`${navBgColor} border-r ${borderColor} shadow-md w-fit pr-1 max-w-[240px] narrow-sidebar`}>
           <button 
             onClick={() => handleNavigation("/")}
             className={cn(

@@ -1,0 +1,46 @@
+/* Custom styles for a narrow sidebar width on mobile */
+.narrow-sidebar-wrapper button {
+  padding-right: 4px !important;
+  padding-left: 4px !important;
+}
+
+.narrow-sidebar {
+  width: min-content !important;
+  max-width: 220px !important;
+  padding-right: 4px !important;
+}
+
+.narrow-sidebar span {
+  font-size: 0.875rem !important; /* Smaller font size */
+}
+
+/* Apply smaller gap between icon and text */
+.narrow-sidebar .icon-text-gap {
+  gap: 0.5rem !important;
+}
+
+/* Make the icons slightly smaller */
+.narrow-sidebar svg {
+  width: 1.125rem !important;
+  height: 1.125rem !important;
+}
+
+/* Reduce side paddings */
+.narrow-sidebar button {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+/* Reduce vertical spacing between elements */
+.narrow-sidebar .mt-4 {
+  margin-top: 0.75rem !important;
+}
+
+.narrow-sidebar .mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+.narrow-sidebar .py-2\.5 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
