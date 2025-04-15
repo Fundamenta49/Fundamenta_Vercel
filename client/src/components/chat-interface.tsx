@@ -235,20 +235,23 @@ export default function ChatInterface({
         // Set messages state
         setMessages(formattedMessages);
         
-        // Immediately scroll to the bottom without waiting for the messages to render
-        // This prevents the "spasming" effect when chat is first opened
-        setTimeout(() => {
-          // Immediately force scroll to bottom
+        // Use requestAnimationFrame for smoother scrolling - this prevents the "frantic scrolling" effect
+        // by waiting for the next paint cycle before scrolling, but still being fast
+        requestAnimationFrame(() => {
+          // Set scroll position directly to the bottom without animation
+          // This avoids the visual "scroll through messages" effect
+          if (scrollAreaRef.current) {
+            const scrollArea = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+            if (scrollArea && scrollArea instanceof HTMLElement) {
+              scrollArea.scrollTop = scrollArea.scrollHeight;
+            }
+          }
+          
+          // Additional backup scroll method using messagesEndRef
           if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
           }
-          
-          // Also force the scroll area to bottom
-          const scrollArea = document.querySelector('[data-radix-scroll-area-viewport]');
-          if (scrollArea && scrollArea instanceof HTMLElement) {
-            scrollArea.scrollTop = scrollArea.scrollHeight;
-          }
-        }, 0);
+        });
       } else {
         // Fetch messages from API using react-query (handled by useUserMemory hook)
         // This will be updated in the messagesByConversation store,

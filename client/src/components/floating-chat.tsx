@@ -160,7 +160,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               bottom: !chatPosition.top ? '16px' : 'auto',
               maxWidth: '95vw',
               maxHeight: '80vh',
-              width: '362px', // Further reduced by 4px (8px total from original)
+              width: '358px', // Further reduced by 4px (12px total reduction from original 370px)
               transform: 'none' // Force no transform to prevent inheriting Fundi's position
             }}
           >
