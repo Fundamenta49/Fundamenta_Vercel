@@ -58,34 +58,6 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
       // Delay sidebar opening slightly to ensure the DOM is fully ready
       const sidebarOpenDelay = currentStep === 0 ? 800 : 300;
       setTimeout(() => handleMobileSidebarForStep(currentStep), sidebarOpenDelay);
-      
-      // If on the Calendar or Arcade steps, add additional highlighting after sidebar opens
-      if (currentStep === 8 || currentStep === 9) {
-        // Wait for sidebar to open
-        setTimeout(() => {
-          try {
-            const targetElement = currentStep === 8 
-              ? document.querySelector('button:has(svg[data-lucide="Calendar"])')
-              : document.querySelector('button:has(svg[data-lucide="Gamepad2"])');
-              
-            if (targetElement) {
-              // Apply highlight effect
-              const targetHtmlElement = targetElement as HTMLElement;
-              targetHtmlElement.style.transition = "all 0.3s ease-in-out";
-              targetHtmlElement.style.boxShadow = currentStep === 8 
-                ? "0 0 15px #6366f1" // Indigo for Calendar
-                : "0 0 15px #f59e0b"; // Amber for Arcade
-              
-              // Remove the highlight effect after a few seconds
-              setTimeout(() => {
-                targetHtmlElement.style.boxShadow = "";
-              }, 3000);
-            }
-          } catch (e) {
-            console.warn("Could not add highlight effect to sidebar item:", e);
-          }
-        }, sidebarOpenDelay + 500); // Give the sidebar time to open
-      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTourActive, currentStep]);
@@ -122,69 +94,49 @@ export const TourProvider: React.FC<{children: React.ReactNode}> = ({ children }
     const sidebarSteps = [8, 9]; // Step indices for Calendar and Arcade
     
     if (sidebarSteps.includes(stepIndex)) {
-      // Direct way to find the mobile menu button by its exact structure and position
-      // In the navigation component, the mobile button is inside a SheetTrigger
-      // and has a fixed position at top-4 left-4
-      const mobileButton = document.querySelector('button.fixed.top-4.left-4') as HTMLButtonElement;
-      
-      if (mobileButton) {
-        // Using simulated clicks for more reliability
-        try {
-          // Create and dispatch mouse events to simulate a more natural interaction
-          const events = ['mousedown', 'mouseup', 'click'];
-          
-          for (const eventType of events) {
-            const event = new MouseEvent(eventType, {
-              bubbles: true,
-              cancelable: true,
-              view: window
-            });
-            mobileButton.dispatchEvent(event);
-          }
-          
-          console.log('Mobile sidebar opened for tour step');
-        } catch (error) {
-          console.error('Error simulating click on mobile menu:', error);
-          // Fallback to simple click
-          mobileButton.click();
-        }
-      } else {
-        // Fallback approaches if the specific selector fails
-        const fallbackSelectors = [
-          '.SheetTrigger button',
-          'button:has(svg[data-lucide="Menu"])',
-          'nav > button',
-          'button.z-50',
-          'button:has(.h-6.w-6)'
-        ];
+      // Use a custom event to directly communicate with the Navigation component
+      // This is more reliable than trying to find and click the button
+      try {
+        document.dispatchEvent(new CustomEvent('openMobileNavigation', { 
+          bubbles: true,
+          detail: { open: true }
+        }));
+        console.log('Mobile sidebar opened for tour step');
         
-        let fallbackButton: HTMLButtonElement | null = null;
-        for (const selector of fallbackSelectors) {
+        // After sidebar opens, add highlight effect to Calendar/Arcade item
+        setTimeout(() => {
           try {
-            fallbackButton = document.querySelector(selector) as HTMLButtonElement;
-            if (fallbackButton) {
-              fallbackButton.click();
-              console.log('Mobile sidebar opened using fallback selector');
-              break;
+            const targetElement = stepIndex === 8 
+              ? document.querySelector('button:has(svg[data-lucide="Calendar"])')
+              : document.querySelector('button:has(svg[data-lucide="Gamepad2"])');
+              
+            if (targetElement) {
+              // Apply highlight effect
+              const targetHtmlElement = targetElement as HTMLElement;
+              targetHtmlElement.style.transition = "all 0.3s ease-in-out";
+              targetHtmlElement.style.boxShadow = stepIndex === 8 
+                ? "0 0 15px #6366f1" // Indigo for Calendar
+                : "0 0 15px #f59e0b"; // Amber for Arcade
+              
+              // Remove the highlight effect after a few seconds
+              setTimeout(() => {
+                targetHtmlElement.style.boxShadow = "";
+              }, 3000);
             }
           } catch (e) {
-            // Continue to next selector
+            console.warn("Could not add highlight effect to sidebar item:", e);
           }
-        }
+        }, 500);
+      } catch (e) {
+        console.error('Failed to dispatch custom event:', e);
         
-        if (!fallbackButton) {
+        // If custom event fails, fall back to trying to click the button directly
+        const mobileButton = document.querySelector('button.fixed.top-4.left-4') as HTMLButtonElement;
+        if (mobileButton) {
+          mobileButton.click();
+          console.log('Mobile sidebar opened by direct button click (fallback)');
+        } else {
           console.warn('Could not find mobile menu button to open sidebar for tour');
-          
-          // Last resort - create a custom event that the Sheet component might listen for
-          try {
-            document.dispatchEvent(new CustomEvent('openMobileNavigation', { 
-              bubbles: true,
-              detail: { open: true }
-            }));
-            console.log('Dispatched custom open navigation event');
-          } catch (e) {
-            console.error('Failed to dispatch custom event:', e);
-          }
         }
       }
     }

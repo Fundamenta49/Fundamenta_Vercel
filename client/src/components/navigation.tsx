@@ -56,6 +56,24 @@ export default function Navigation() {
   const isMobile = useIsMobile();
   const [isMinimized, setIsMinimized] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Add event listener for opening the mobile sidebar from the tour
+  useEffect(() => {
+    const handleOpenMobileNav = (event: CustomEvent) => {
+      if (isMobile) {
+        setIsOpen(true);
+        console.log('Mobile sidebar opened via custom event');
+      }
+    };
+    
+    // Register event listener
+    document.addEventListener('openMobileNavigation', handleOpenMobileNav as EventListener);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('openMobileNavigation', handleOpenMobileNav as EventListener);
+    };
+  }, [isMobile]);
 
   const isHomePage = location === "/" || location === "/home";
   
