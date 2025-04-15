@@ -116,8 +116,8 @@ export const useTourSteps = () => {
     {
       title: 'Your Smart Calendar',
       content: `Psst! 📅 Over here in the sidebar! This magical calendar keeps track of your learning journey without you having to remember everything. It's like having a personal assistant who never judges your procrastination habits!`,
-      target: 'nav-smart-calendar',
-      placement: 'right',
+      target: 'body', // Using body for mobile targeting since we'll use a custom approach
+      placement: 'center', // Center placement for better mobile visibility
       highlightColor: '#6366f1', // indigo
       showFundiAnimation: true,
       animationType: 'point'
@@ -127,8 +127,8 @@ export const useTourSteps = () => {
     {
       title: 'Fun Break Station',
       content: `All learn and no play? Not on my watch! 🎮 Our Arcade is where serious skills meet serious fun. Games that teach while you play! Think of it as "productive procrastination" – your brain will thank you for the refreshing break!`,
-      target: 'nav-arcade',
-      placement: 'right',
+      target: 'body', // Using body for mobile targeting since we'll use a custom approach
+      placement: 'center', // Center placement for better mobile visibility
       highlightColor: '#f59e0b', // amber
       showFundiAnimation: true,
       animationType: 'jump'
