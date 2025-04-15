@@ -72,8 +72,7 @@ export default function RobotFundi({
   
   // Removed emergency click handlers since they were causing auto-opening after dragging
   useEffect(() => {
-    // Log kept for debugging purposes
-    console.log("Emergency click handlers disabled - using only standard click handling");
+    // Previously had logging here - removed for cleaner console output
     return () => {};
   }, []);
 
@@ -153,7 +152,6 @@ export default function RobotFundi({
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('fundiPosition', JSON.stringify(position));
-          console.log('Saved Fundi position to localStorage after drag');
         } catch (e) {
           console.error('Failed to save position to localStorage', e);
         }
@@ -220,18 +218,14 @@ export default function RobotFundi({
         setWasDragged(false);
         // Also reset the disableClicks flag to ensure clickability returns
         (window as any).disableClicks = false;
-        console.log('Explicitly resetting wasDragged and disableClicks states');
       }, 500); // Increased from 300ms to 500ms for better stability
       
       return () => clearTimeout(timer);
     }
   }, [wasDragged]);
   
-  // Log initial position when component mounts and update when position changes
-  // Also store position in localStorage to persist across page refreshes
+  // Store position in localStorage to persist across page refreshes
   useEffect(() => {
-    console.log(`Fundi position: top=8px, right=24px, translate(${position.x}px, ${position.y}px)`);
-    
     // Save position to localStorage
     if (typeof window !== 'undefined') {
       localStorage.setItem('fundiPosition', JSON.stringify(position));
@@ -251,7 +245,6 @@ export default function RobotFundi({
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('fundiMinimized', JSON.stringify(isMinimized));
-      console.log(`Saved Fundi minimized state (${isMinimized}) to localStorage`);
       
       // Update the previous state ref
       const previousState = wasMinimizedRef.current;
@@ -259,15 +252,12 @@ export default function RobotFundi({
       
       // If we're transitioning from minimized to normal, set the flag to prevent chat opening
       if (previousState === true && isMinimized === false) {
-        console.log('Fundi restored from minimized state - not opening chat automatically');
-        
         // Set the flag to prevent chat opening on next tap
         justRestoredFromMinimizedRef.current = true;
         
         // Reset the flag after a delay to re-enable normal chat opening
         setTimeout(() => {
           justRestoredFromMinimizedRef.current = false;
-          console.log('Reset justRestoredFromMinimized flag after timeout');
         }, 1000);
         
         // Dispatch an event to prevent chat opening
@@ -313,7 +303,6 @@ export default function RobotFundi({
     
     // If we were just dragging, don't process clicks
     if (wasDragged || isDragging) {
-      console.log('Click/tap suppressed - detected as part of drag operation');
       return;
     }
     
@@ -327,21 +316,16 @@ export default function RobotFundi({
     
     // If this is the first click, set a timer to reset the count
     if (clickCountRef.current === 1) {
-      console.log("First tap detected, waiting for potential second tap");
-      
       // Set a timer to reset after 300ms (standard double-click timeout)
       clickTimerRef.current = setTimeout(() => {
         // If only one click happened in the time window, treat as a single click
         if (clickCountRef.current === 1) {
-          console.log("Single tap confirmed - attempting to open chat");
-          
           // Only open if not minimized
           if (!isMinimized) {
             // Call the onOpen callback to open the chat
             if (onOpen) {
               // Check if we just restored from minimized state
               if (justRestoredFromMinimizedRef.current) {
-                console.log('Suppressing chat open - just restored from minimized state');
                 justRestoredFromMinimizedRef.current = false;
                 
                 // Dispatch event to notify floating-chat
@@ -357,7 +341,6 @@ export default function RobotFundi({
                 setWasDragged(false);
                 
                 onOpen();
-                console.log("Opening chat - single tap processed");
                 
                 // Dispatch positioning event
                 if (typeof window !== 'undefined') {
@@ -368,8 +351,6 @@ export default function RobotFundi({
                 }
               }
             }
-          } else {
-            console.log('Chat opening suppressed - Fundi is minimized');
           }
         }
         
@@ -381,20 +362,16 @@ export default function RobotFundi({
     } 
     // If this is the second click, handle as a double-click
     else if (clickCountRef.current === 2) {
-      console.log(`Double-tap detected! Toggling Fundi minimized state`);
-      
       // Prevent drag operations that might be started by the second tap
       preventNextClickRef.current = true;
       
       // If we're going from minimized to normal, set the justRestored flag
       if (isMinimized) {
         justRestoredFromMinimizedRef.current = true;
-        console.log('Setting justRestoredFromMinimized flag to prevent chat open');
         
         // Create a timeout to reset this flag after a short delay
         setTimeout(() => {
           justRestoredFromMinimizedRef.current = false;
-          console.log('Reset justRestoredFromMinimized flag');
         }, 1000);
       }
       
