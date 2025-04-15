@@ -60,7 +60,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       if ((event as CustomEvent)?.detail?.position) {
         const { x, y } = (event as CustomEvent).detail.position;
         // Use Fundi's current position to determine chat placement
-        console.log(`Received position from Fundi: (${x}, ${y})`);
+        // Update position based on Fundi's location
         
         // Apply offset so it doesn't cover Fundi but is still near it
         const offset = 50; // Further reduced offset to position even closer to Fundi
@@ -76,7 +76,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     const handlePreventChatOpen = () => {
       // Prevent the chat from opening
       setIsExpanded(false);
-      console.log('Prevented chat from opening after Fundi was restored');
+      // Prevent auto-opening after Fundi is restored from minimized state
     };
     
     // Add the event listeners
@@ -151,8 +151,8 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             // Start at full opacity and without animation to prevent scroll flickering
             initial={{ opacity: 1, scale: 1, y: 0 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            transition={{ duration: 0.15 }}
+            exit={{ opacity: 0, scale: 0.9, y: -10 }}
+            transition={{ duration: 0.12 }}
             style={{ 
               position: 'fixed',
               right: chatPosition.right ? `${chatPosition.right}px` : '16px',
@@ -212,7 +212,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               onClick={() => {
                 // We still need this onClick handler but the actual 
                 // open/close logic happens in the RobotFundi component
-                console.log("Button clicked, delegating to RobotFundi handler");
+                // Handler delegated to RobotFundi component
               }}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
