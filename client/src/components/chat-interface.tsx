@@ -232,26 +232,25 @@ export default function ChatInterface({
           category: msg.category || category
         }));
         
-        // Set messages state
-        setMessages(formattedMessages);
+        // First set messages to empty array to prevent ScrollTo behavior
+        setMessages([]);
         
-        // Use requestAnimationFrame for smoother scrolling - this prevents the "frantic scrolling" effect
-        // by waiting for the next paint cycle before scrolling, but still being fast
-        requestAnimationFrame(() => {
-          // Set scroll position directly to the bottom without animation
-          // This avoids the visual "scroll through messages" effect
-          if (scrollAreaRef.current) {
-            const scrollArea = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-            if (scrollArea && scrollArea instanceof HTMLElement) {
-              scrollArea.scrollTop = scrollArea.scrollHeight;
-            }
-          }
+        // Then set the messages in a setTimeout to ensure DOM updates in between
+        setTimeout(() => {
+          // Set messages state
+          setMessages(formattedMessages);
           
-          // Additional backup scroll method using messagesEndRef
-          if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
-          }
-        });
+          // Wait until messages have been rendered, then instantly scroll to bottom
+          setTimeout(() => {
+            // Directly set scroll position without animation to prevent visible scrolling
+            if (scrollAreaRef.current) {
+              const scrollArea = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+              if (scrollArea && scrollArea instanceof HTMLElement) {
+                scrollArea.scrollTop = scrollArea.scrollHeight;
+              }
+            }
+          }, 100);
+        }, 50);
       } else {
         // Fetch messages from API using react-query (handled by useUserMemory hook)
         // This will be updated in the messagesByConversation store,

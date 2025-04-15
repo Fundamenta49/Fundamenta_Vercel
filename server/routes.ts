@@ -714,13 +714,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/messages", async (req, res) => {
     try {
       const conversationId = req.query.conversationId ? parseInt(req.query.conversationId as string) : null;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 20; // Default to 20 most recent messages
       
       if (!conversationId) {
         return res.status(400).json({ error: "Conversation ID is required" });
       }
       
-      const messages = await messageService.getByConversationId(conversationId);
-      res.json(messages);
+      // Use getRecentMessages instead of getByConversationId to limit number of messages
+      // This will help prevent the chat window from scrolling through the entire history
+      const messages = await messageService.getRecentMessages(conversationId, limit);
+      
+      // Messages come in reverse chronological order, so reverse them back for display
+      res.json(messages.reverse());
     } catch (error: any) {
       console.error("Error fetching messages:", error);
       res.status(500).json({ error: "Failed to fetch messages" });
