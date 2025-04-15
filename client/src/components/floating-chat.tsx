@@ -43,7 +43,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       if (savedPosition) {
         const position = JSON.parse(savedPosition);
         // Pre-position the chat based on stored Fundi position - smaller offset for better proximity
-        const offset = 75; // Reduced offset from 120px to position closer to Fundi
+        const offset = 50; // Further reduced offset to position even closer to Fundi
         setChatPosition({ 
           top: Math.max(0, 8 + position.y), 
           right: Math.max(0, 24 - position.x + offset)
@@ -63,7 +63,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
         console.log(`Received position from Fundi: (${x}, ${y})`);
         
         // Apply offset so it doesn't cover Fundi but is still near it
-        const offset = 75; // Reduced offset for better proximity to Fundi
+        const offset = 50; // Further reduced offset to position even closer to Fundi
         
         setChatPosition({ 
           top: Math.max(0, 8 + y), 
@@ -154,12 +154,12 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
             transition={{ duration: 0.3 }}
             style={{ 
               position: 'fixed',
-              right: `16px`,
-              bottom: `16px`,
-              top: 'auto',
+              right: chatPosition.right ? `${chatPosition.right}px` : '16px',
+              top: chatPosition.top ? `${chatPosition.top}px` : 'auto',
+              bottom: !chatPosition.top ? '16px' : 'auto',
               maxWidth: '95vw',
               maxHeight: '80vh',
-              width: '366px', // Reduced size by 4px as requested
+              width: '362px', // Further reduced by 4px (8px total from original)
               transform: 'none' // Force no transform to prevent inheriting Fundi's position
             }}
           >

@@ -271,9 +271,18 @@ export default function RobotFundi({
       const previousState = wasMinimizedRef.current;
       wasMinimizedRef.current = isMinimized;
       
-      // If we're transitioning from minimized to normal, don't automatically open chat
+      // If we're transitioning from minimized to normal, set the flag to prevent chat opening
       if (previousState === true && isMinimized === false) {
         console.log('Fundi restored from minimized state - not opening chat automatically');
+        
+        // Set the flag to prevent chat opening on next tap
+        justRestoredFromMinimizedRef.current = true;
+        
+        // Reset the flag after a delay to re-enable normal chat opening
+        setTimeout(() => {
+          justRestoredFromMinimizedRef.current = false;
+          console.log('Reset justRestoredFromMinimized flag after timeout');
+        }, 1000);
         
         // Dispatch an event to prevent chat opening
         if (typeof window !== 'undefined') {
@@ -309,6 +318,9 @@ export default function RobotFundi({
 
   const color = categoryColors[category] || categoryColors.general;
 
+  // Track when a Fundi restore from minimized happens for chat prevention
+  const justRestoredFromMinimizedRef = useRef(false);
+  
   // Function to handle tap/click events in a unified way
   const handleTapEvent = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
@@ -341,19 +353,33 @@ export default function RobotFundi({
           if (!isMinimized) {
             // Call the onOpen callback to open the chat
             if (onOpen) {
-              // Reset all flags to ensure proper operation
-              (window as any).disableClicks = false;
-              setWasDragged(false);
-              
-              onOpen();
-              console.log("Opening chat - single tap processed");
-              
-              // Dispatch positioning event
-              if (typeof window !== 'undefined') {
-                const openFundiEvent = new CustomEvent('forceFundiOpen', { 
-                  detail: { position: { x: position.x, y: position.y } }
-                });
-                window.dispatchEvent(openFundiEvent);
+              // Check if we just restored from minimized state
+              if (justRestoredFromMinimizedRef.current) {
+                console.log('Suppressing chat open - just restored from minimized state');
+                justRestoredFromMinimizedRef.current = false;
+                
+                // Dispatch event to notify floating-chat
+                if (typeof window !== 'undefined') {
+                  const preventChatOpenEvent = new CustomEvent('preventFundiChatOpen', {
+                    detail: { timestamp: Date.now() }
+                  });
+                  window.dispatchEvent(preventChatOpenEvent);
+                }
+              } else {
+                // Reset all flags to ensure proper operation
+                (window as any).disableClicks = false;
+                setWasDragged(false);
+                
+                onOpen();
+                console.log("Opening chat - single tap processed");
+                
+                // Dispatch positioning event
+                if (typeof window !== 'undefined') {
+                  const openFundiEvent = new CustomEvent('forceFundiOpen', { 
+                    detail: { position: { x: position.x, y: position.y } }
+                  });
+                  window.dispatchEvent(openFundiEvent);
+                }
               }
             }
           } else {
@@ -373,6 +399,18 @@ export default function RobotFundi({
       
       // Prevent drag operations that might be started by the second tap
       preventNextClickRef.current = true;
+      
+      // If we're going from minimized to normal, set the justRestored flag
+      if (isMinimized) {
+        justRestoredFromMinimizedRef.current = true;
+        console.log('Setting justRestoredFromMinimized flag to prevent chat open');
+        
+        // Create a timeout to reset this flag after a short delay
+        setTimeout(() => {
+          justRestoredFromMinimizedRef.current = false;
+          console.log('Reset justRestoredFromMinimized flag');
+        }, 1000);
+      }
       
       // Toggle minimize state
       setIsMinimized(prev => !prev);
