@@ -140,7 +140,7 @@ const mealPlans = {
     days: 7,
     icon: Salad,
     color: "text-green-500",
-    apiParams: { timeFrame: "week", targetCalories: 2000 }
+    apiParams: { timeFrame: "day", targetCalories: 2000 }
   },
   vegetarian: {
     title: "Vegetarian Plan",
@@ -148,7 +148,7 @@ const mealPlans = {
     days: 7,
     icon: Soup,
     color: "text-purple-500",
-    apiParams: { timeFrame: "week", targetCalories: 2000, diet: "vegetarian" }
+    apiParams: { timeFrame: "day", targetCalories: 2000, diet: "vegetarian" }
   },
   quick: {
     title: "Quick & Easy Meal Plan",
@@ -156,7 +156,7 @@ const mealPlans = {
     days: 7,
     icon: Clock,
     color: "text-orange-500",
-    apiParams: { timeFrame: "week", targetCalories: 2000, maxReadyTime: 30 }
+    apiParams: { timeFrame: "day", targetCalories: 2000, maxReadyTime: 30 }
   }
 };
 
@@ -263,37 +263,50 @@ export default function MealPlanning() {
         // Handle daily meal plan if that's what we get back
         const dayData = response.data.meals as SpoonacularMeal[];
         
-        // Create a simple one-day plan
-        const formattedPlan: DayPlan[] = [{
-          day: "Today",
-          meals: {
-            breakfast: dayData[0] ? {
-              id: dayData[0].id,
-              title: dayData[0].title,
-              readyInMinutes: dayData[0].readyInMinutes,
-              servings: dayData[0].servings,
-              imageUrl: `https://spoonacular.com/recipeImages/${dayData[0].id}-312x231.${dayData[0].imageType}`,
-              type: 'breakfast'
-            } : null,
-            lunch: dayData[1] ? {
-              id: dayData[1].id,
-              title: dayData[1].title,
-              readyInMinutes: dayData[1].readyInMinutes,
-              servings: dayData[1].servings,
-              imageUrl: `https://spoonacular.com/recipeImages/${dayData[1].id}-312x231.${dayData[1].imageType}`,
-              type: 'lunch'
-            } : null,
-            dinner: dayData[2] ? {
-              id: dayData[2].id,
-              title: dayData[2].title,
-              readyInMinutes: dayData[2].readyInMinutes,
-              servings: dayData[2].servings,
-              imageUrl: `https://spoonacular.com/recipeImages/${dayData[2].id}-312x231.${dayData[2].imageType}`,
-              type: 'dinner'
-            } : null,
-            snack: null
-          }
-        }];
+        // Create a 7-day plan by generating different meals for each day
+        // We'll use the same meal data but stagger them to create variety
+        const formattedPlan: DayPlan[] = [];
+        
+        // For each day of the week
+        for (let i = 0; i < 7; i++) {
+          const dayName = DAYS_OF_WEEK[i];
+          
+          // We'll rotate the meals for variety (breakfast becomes lunch, lunch becomes dinner, etc.)
+          const breakfastIndex = i % 3;
+          const lunchIndex = (i + 1) % 3;
+          const dinnerIndex = (i + 2) % 3;
+          
+          formattedPlan.push({
+            day: dayName,
+            meals: {
+              breakfast: dayData[breakfastIndex] ? {
+                id: dayData[breakfastIndex].id,
+                title: dayData[breakfastIndex].title,
+                readyInMinutes: dayData[breakfastIndex].readyInMinutes,
+                servings: dayData[breakfastIndex].servings,
+                imageUrl: `https://spoonacular.com/recipeImages/${dayData[breakfastIndex].id}-312x231.${dayData[breakfastIndex].imageType}`,
+                type: 'breakfast'
+              } : null,
+              lunch: dayData[lunchIndex] ? {
+                id: dayData[lunchIndex].id,
+                title: dayData[lunchIndex].title,
+                readyInMinutes: dayData[lunchIndex].readyInMinutes,
+                servings: dayData[lunchIndex].servings,
+                imageUrl: `https://spoonacular.com/recipeImages/${dayData[lunchIndex].id}-312x231.${dayData[lunchIndex].imageType}`,
+                type: 'lunch'
+              } : null,
+              dinner: dayData[dinnerIndex] ? {
+                id: dayData[dinnerIndex].id,
+                title: dayData[dinnerIndex].title,
+                readyInMinutes: dayData[dinnerIndex].readyInMinutes,
+                servings: dayData[dinnerIndex].servings,
+                imageUrl: `https://spoonacular.com/recipeImages/${dayData[dinnerIndex].id}-312x231.${dayData[dinnerIndex].imageType}`,
+                type: 'dinner'
+              } : null,
+              snack: null
+            }
+          });
+        }
         
         setWeeklyPlan(formattedPlan);
       } else {
