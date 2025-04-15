@@ -5,11 +5,11 @@
 body.mobile-tour-active .tour-tooltip {
   position: fixed !important;
   top: 50% !important;
-  left: 50% !important;
+  left: 60% !important; /* Moved to the right side to avoid sidebar */
   transform: translate(-50%, -50%) !important;
-  max-width: 80vw !important; /* Smaller width */
-  width: 240px !important; /* Reduced from 280px */
-  max-height: 75vh !important; /* Reduced height */
+  max-width: 70vw !important; /* Even smaller width */
+  width: 220px !important; /* Further reduced from 240px */
+  max-height: 70vh !important; /* Reduced height */
   overflow-y: auto !important;
   z-index: 999999 !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
@@ -39,6 +39,20 @@ body.mobile-tour-active .tour-tooltip {
   /* Fix mobile spacing for tour content */
   .tour-card-content {
     padding: 12px !important;
+  }
+  
+  /* Special positioning for tour during Calendar and Arcade steps (steps 9 and 10) */
+  body[data-tour-step="8"] .mobile-tour-active [data-tour-dialog="true"],
+  body[data-tour-step="8"] .mobile-tour-active [class*="tour-dialog"],
+  body[data-tour-step="8"] .tour-tooltip,
+  body[data-tour-step="9"] .mobile-tour-active [data-tour-dialog="true"],
+  body[data-tour-step="9"] .mobile-tour-active [class*="tour-dialog"],
+  body[data-tour-step="9"] .tour-tooltip {
+    left: 65% !important; /* Position even further to the right to avoid sidebar */
+    top: 40% !important; /* Move up a bit to give better view of sidebar items */
+    transform: translate(-50%, -50%) !important;
+    width: 200px !important; /* Make it more compact */
+    font-size: 0.9rem !important; /* Slightly smaller text */
   }
 }
 

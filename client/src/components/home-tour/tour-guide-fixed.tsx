@@ -81,6 +81,9 @@ const TourGuide: React.FC = () => {
     // Reset the animation key to trigger animation
     setAnimationKey(prev => prev + 1);
     
+    // Add the current step to the body element for step-specific CSS targeting
+    document.body.setAttribute('data-tour-step', currentStep.toString());
+    
     let cleanupFunction: (() => void) | undefined;
     
     const highlightTargetElement = () => {
@@ -169,6 +172,8 @@ const TourGuide: React.FC = () => {
       if (cleanupFunction) {
         cleanupFunction();
       }
+      // Remove the data-tour-step attribute when the tour step changes
+      document.body.removeAttribute('data-tour-step');
     };
   }, [currentStep, isTourActive]);
 

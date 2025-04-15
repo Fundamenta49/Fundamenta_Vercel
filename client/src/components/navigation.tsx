@@ -226,7 +226,7 @@ export default function Navigation() {
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className={`${navBgColor} border-r ${borderColor} shadow-md`}>
+        <SheetContent side="left" className={`${navBgColor} border-r ${borderColor} shadow-md w-[calc(100vw-7px)]`}>
           <button 
             onClick={() => handleNavigation("/")}
             className={cn(
