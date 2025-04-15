@@ -304,6 +304,10 @@ export default function MealPlanning() {
     
     try {
       const response = await axios.get(`/api/cooking/recipes/${recipeId}/information`);
+      // Add sourceUrl property if it doesn't exist
+      if (!response.data.sourceUrl && response.data.spoonacularSourceUrl) {
+        response.data.sourceUrl = response.data.spoonacularSourceUrl;
+      }
       setCurrentRecipe(response.data);
       setShowRecipeModal(true);
     } catch (error) {
