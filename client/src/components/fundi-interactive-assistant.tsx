@@ -277,20 +277,48 @@ export default function FundiInteractiveAssistant({
     }
   };
 
-  // Auto-scroll chat to bottom when new messages are added (using instant scrolling)
+  // Auto-scroll chat to bottom when new messages are added (using optimized scrolling)
   useEffect(() => {
-    if (chatEndRef.current) {
-      // Using instant scrolling to avoid the "spasming" effect of animating through messages
-      chatEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
-      
-      // Also immediately scroll the ScrollArea viewport element
-      const scrollViewport = document.querySelector('[data-radix-scroll-area-viewport]');
-      if (scrollViewport && scrollViewport instanceof HTMLElement) {
-        // Set scroll directly without animation or delay
-        scrollViewport.scrollTop = scrollViewport.scrollHeight;
+    // Use RAF to ensure the DOM has been updated before attempting to scroll
+    requestAnimationFrame(() => {
+      if (chatEndRef.current) {
+        // Disable animation completely for scrolling
+        chatEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
+        
+        // Target all viewport elements to ensure we catch the right one
+        const scrollViewports = document.querySelectorAll('[data-radix-scroll-area-viewport]');
+        scrollViewports.forEach(viewport => {
+          if (viewport instanceof HTMLElement) {
+            // Set scroll top directly with no animation
+            viewport.scrollTop = viewport.scrollHeight;
+          }
+        });
       }
-    }
+    });
   }, [messages]);
+  
+  // Additional scroll handler for when chat opens
+  useEffect(() => {
+    if (isChatOpen) {
+      // Use RAF and a small timeout to ensure DOM is ready
+      const scrollTimer = setTimeout(() => {
+        requestAnimationFrame(() => {
+          if (chatEndRef.current) {
+            chatEndRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
+            
+            const scrollViewports = document.querySelectorAll('[data-radix-scroll-area-viewport]');
+            scrollViewports.forEach(viewport => {
+              if (viewport instanceof HTMLElement) {
+                viewport.scrollTop = viewport.scrollHeight;
+              }
+            });
+          }
+        });
+      }, 100); // Small delay to ensure DOM is fully rendered
+      
+      return () => clearTimeout(scrollTimer);
+    }
+  }, [isChatOpen]);
 
   // Focus input when chat opens
   useEffect(() => {
@@ -978,7 +1006,8 @@ export default function FundiInteractiveAssistant({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            // Start with full scale and opacity to prevent animation-induced scroll issues
+            initial={{ scale: 1, opacity: 1 }}
             animate={{ 
               scale: 1, 
               opacity: 1,
@@ -999,7 +1028,7 @@ export default function FundiInteractiveAssistant({
               transformStyle: 'preserve-3d'
             }}
             exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.1 }}
             drag
             dragMomentum={false}
             // More generous constraints for dragging around the screen
