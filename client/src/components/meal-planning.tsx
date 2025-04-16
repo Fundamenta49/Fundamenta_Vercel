@@ -21,6 +21,8 @@ import {
   Clock, 
   Check, 
   ShoppingCart, 
+  ShoppingBag,
+  ShoppingBasket,
   Pizza, 
   Download, 
   Printer,
@@ -29,10 +31,18 @@ import {
   ChevronDown,
   ChevronUp,
   XCircle,
-  Loader2
+  Loader2,
+  Milk,
+  Cookie,
+  Package,
+  Flower,
+  Snowflake,
+  Lightbulb,
+  CheckCircle
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { 
@@ -867,13 +877,13 @@ export default function MealPlanning() {
       
       {/* Shopping List */}
       {showShoppingList && (
-        <Card className="mb-8">
-          <CardHeader>
+        <Card className="mb-8 print:shadow-none print:border-none">
+          <CardHeader className="print:pb-2">
             <CardTitle className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5 text-blue-500" />
+              <ShoppingCart className="h-5 w-5 text-blue-500 print:hidden" />
               AI-Generated Shopping List
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="print:hidden">
               Intelligently organized based on your weekly meal plan
             </CardDescription>
           </CardHeader>
@@ -892,50 +902,88 @@ export default function MealPlanning() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                       {/* Categorized list on the left - takes 8/12 columns on large screens */}
                       <div className="lg:col-span-8 space-y-6">
-                        <h3 className="font-medium text-lg mb-2">Organized Shopping List</h3>
+                        <h3 className="font-medium text-lg mb-2 flex items-center">
+                          <ShoppingBag className="h-5 w-5 mr-2 text-orange-500 print:hidden" />
+                          Organized Shopping List
+                        </h3>
                         
-                        <div className="space-y-4">
-                          {categorizedShoppingList.categories.map((category, categoryIndex) => (
-                            <div key={categoryIndex} className="border rounded-md p-4">
-                              <h4 className="font-medium text-base mb-3 text-slate-800">{category.name}</h4>
-                              <div className="space-y-2">
-                                {category.items.map((item, itemIndex) => (
-                                  <div key={`${categoryIndex}-${itemIndex}`} className="flex items-center gap-2">
-                                    <input 
-                                      type="checkbox" 
-                                      id={`cat-${categoryIndex}-item-${itemIndex}`} 
-                                      className="rounded" 
-                                    />
-                                    <label 
-                                      htmlFor={`cat-${categoryIndex}-item-${itemIndex}`} 
-                                      className="text-sm"
-                                    >
-                                      {item.amount && item.unit 
-                                        ? `${item.amount} ${item.unit} ${item.name}`
-                                        : item.name
-                                      }
-                                      {item.notes && (
-                                        <span className="text-xs text-gray-500 ml-1">({item.notes})</span>
-                                      )}
-                                    </label>
-                                  </div>
-                                ))}
+                        <div className="space-y-6">
+                          {categorizedShoppingList.categories.map((category, categoryIndex) => {
+                            // Get appropriate icons for categories
+                            const getCategoryIcon = (categoryName: string) => {
+                              const name = categoryName.toLowerCase();
+                              if (name.includes('produce') || name.includes('fruit') || name.includes('vegetable')) 
+                                return <Apple className="h-4 w-4 mr-2 text-green-500" />;
+                              if (name.includes('dairy') || name.includes('cheese') || name.includes('milk')) 
+                                return <Milk className="h-4 w-4 mr-2 text-blue-400" />;
+                              if (name.includes('meat') || name.includes('protein') || name.includes('fish')) 
+                                return <Beef className="h-4 w-4 mr-2 text-red-500" />;
+                              if (name.includes('bakery') || name.includes('bread')) 
+                                return <Cookie className="h-4 w-4 mr-2 text-amber-500" />;
+                              if (name.includes('pantry') || name.includes('dry')) 
+                                return <Package className="h-4 w-4 mr-2 text-amber-700" />;
+                              if (name.includes('spice') || name.includes('herb')) 
+                                return <Flower className="h-4 w-4 mr-2 text-purple-500" />;
+                              if (name.includes('frozen')) 
+                                return <Snowflake className="h-4 w-4 mr-2 text-blue-500" />;
+                              
+                              // Default icon
+                              return <ShoppingBasket className="h-4 w-4 mr-2 text-gray-600" />;
+                            };
+                            
+                            return (
+                              <div key={categoryIndex} className="border rounded-md p-4 shadow-sm print:shadow-none print:border print:border-gray-300">
+                                <h4 className="font-medium text-base mb-3 text-slate-800 flex items-center border-b pb-2">
+                                  <span className="print:hidden">{getCategoryIcon(category.name)}</span>
+                                  {category.name}
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                  {category.items.map((item, itemIndex) => (
+                                    <div key={`${categoryIndex}-${itemIndex}`} className="flex items-center gap-2 bg-gray-50 p-2 rounded-md print:bg-white print:border print:border-gray-200">
+                                      <Checkbox 
+                                        id={`cat-${categoryIndex}-item-${itemIndex}`}
+                                        className="print:border-black"
+                                      />
+                                      <label 
+                                        htmlFor={`cat-${categoryIndex}-item-${itemIndex}`} 
+                                        className="text-sm flex-1 cursor-pointer"
+                                      >
+                                        <span className="font-medium">
+                                          {item.amount && item.unit 
+                                            ? `${item.amount} ${item.unit} ${item.name}`
+                                            : item.name}
+                                        </span>
+                                        {item.notes && 
+                                          <span className="text-gray-500 ml-1 text-xs block">
+                                            {item.notes}
+                                          </span>
+                                        }
+                                      </label>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                       
                       {/* Shopping tips section on the right - takes 4/12 columns on large screens */}
-                      <div className="lg:col-span-4">
-                        <div className="border rounded-md p-4 sticky top-4">
-                          <h3 className="font-medium mb-3">Shopping Tips</h3>
+                      <div className="lg:col-span-4 print:hidden">
+                        <div className="border rounded-md p-4 sticky top-4 bg-blue-50 shadow-sm">
+                          <h3 className="font-medium mb-3 flex items-center">
+                            <Lightbulb className="h-5 w-5 mr-2 text-yellow-500" />
+                            Shopping Tips
+                          </h3>
                           
                           {/* Custom tips if available */}
                           {categorizedShoppingList.tips && categorizedShoppingList.tips.length > 0 ? (
-                            <ul className="list-disc list-inside space-y-2 text-sm text-gray-600">
+                            <ul className="space-y-3 text-sm">
                               {categorizedShoppingList.tips.map((tip, index) => (
-                                <li key={index}>{tip}</li>
+                                <li key={index} className="flex items-start gap-2">
+                                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 shrink-0" />
+                                  <span>{tip}</span>
+                                </li>
                               ))}
                             </ul>
                           ) : (
