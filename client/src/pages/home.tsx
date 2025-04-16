@@ -85,12 +85,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="px-3 py-3">
-      <div className="text-center mb-3 relative max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold tracking-tight mb-1 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
+    <div className="px-3 py-2 min-h-[100vh]">
+      <div className="text-center mb-2 relative max-w-3xl mx-auto">
+        <h1 className="text-xl md:text-2xl font-bold tracking-tight mb-0 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
           Welcome to Fundamenta
         </h1>
-        <p className="text-xs md:text-sm text-muted-foreground mb-2">
+        <p className="text-xs md:text-sm text-muted-foreground mb-1">
           Your AI-powered assistant for life skills and wellness
         </p>
         
@@ -115,17 +115,17 @@ export default function Home() {
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href}>
             <Card 
-              className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200"
+              className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200 min-h-[100px]"
               data-tour-id={`card-${feature.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
             >
               {/* Mobile Layout (XS to SM screens) */}
               <div className="md:hidden">
-                <div className="flex items-center p-2">
-                  <feature.icon className={`h-5 w-5 ${feature.color} flex-shrink-0`} />
-                  <CardTitle className="text-[#1C3D5A] text-xs font-bold ml-2">{feature.title}</CardTitle>
+                <div className="flex items-center p-3">
+                  <feature.icon className={`h-6 w-6 ${feature.color} flex-shrink-0`} />
+                  <CardTitle className="text-[#1C3D5A] text-sm font-bold ml-2">{feature.title}</CardTitle>
                 </div>
-                <CardContent className="text-center p-1 pb-2">
-                  <p className="text-gray-600 text-xs line-clamp-1">{feature.description}</p>
+                <CardContent className="text-center p-2 pb-3">
+                  <p className="text-gray-600 text-xs line-clamp-2">{feature.description}</p>
                 </CardContent>
               </div>
               
