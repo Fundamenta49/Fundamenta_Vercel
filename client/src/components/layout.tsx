@@ -38,14 +38,13 @@ export default function Layout({ children }: LayoutProps) {
       
       <main className={cn(
         "transition-all duration-300 bg-background min-h-screen",
-        isMobile ? "ml-0 p-4 pt-16" : "ml-64 p-6", 
+        isMobile && isHomePage ? "ml-0 p-0 pt-16" : isMobile ? "ml-0 p-4 pt-16" : "ml-64 p-6", 
         document.body.classList.contains("sidebar-minimized") && !isMobile ? "ml-16" : ""
       )}>
         {/* All headers are now handled directly in each page component */}
         
         <div className={cn(
-          "pb-24", // Add padding at bottom to accommodate floating chat
-          isHomePage ? "mt-0" : "mt-4"
+          isHomePage ? "pb-0 mt-0" : "pb-24 mt-4" // Remove bottom padding on home page
         )}>
           {/* Display notice when in fallback mode */}
           <AIFallbackNotice />

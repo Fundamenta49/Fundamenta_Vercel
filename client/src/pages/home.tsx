@@ -85,7 +85,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="px-3 py-1 min-h-[100vh]">
+    <div className="px-3 py-1">
       <div className="text-center mb-2 relative max-w-3xl mx-auto">
         <h1 className="text-xl md:text-2xl font-bold tracking-tight mb-0 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
           Welcome to Fundamenta
