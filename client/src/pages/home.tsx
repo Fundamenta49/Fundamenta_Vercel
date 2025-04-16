@@ -85,12 +85,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="px-3 py-1">
-      <div className="text-center mb-2 relative max-w-3xl mx-auto">
-        <h1 className="text-xl md:text-2xl font-bold tracking-tight mb-0 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
+    <div className="px-3 py-1 sm:px-4 sm:py-6">
+      <div className="text-center mb-4 relative max-w-3xl mx-auto">
+        <h1 className="text-xl md:text-3xl font-bold tracking-tight mb-0 sm:mb-2 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
           Welcome to Fundamenta
         </h1>
-        <p className="text-xs md:text-sm text-muted-foreground mb-1">
+        <p className="text-xs md:text-base text-muted-foreground mb-1 sm:mb-2">
           Your AI-powered assistant for life skills and wellness
         </p>
         
@@ -111,7 +111,7 @@ export default function Home() {
       
       {/* Weather Widget removed */}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-2 md:gap-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-2 sm:gap-4 md:gap-6 max-w-5xl mx-auto">
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href}>
             <Card 
@@ -119,7 +119,7 @@ export default function Home() {
               data-tour-id={`card-${feature.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
             >
               {/* Mobile Layout (XS to SM screens) */}
-              <div className="md:hidden">
+              <div className="sm:hidden">
                 <div className="flex items-center p-2">
                   <feature.icon className={`h-6 w-6 ${feature.color} flex-shrink-0`} />
                   <CardTitle className="text-[#1C3D5A] text-sm font-bold ml-2">{feature.title}</CardTitle>
@@ -129,8 +129,8 @@ export default function Home() {
                 </CardContent>
               </div>
               
-              {/* Desktop Layout (MD screens and up) */}
-              <div className="hidden md:block">
+              {/* Desktop Layout (SM screens and up) */}
+              <div className="hidden sm:block">
                 <CardHeader>
                   <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
                   <CardTitle className="text-[#1C3D5A] text-xl">{feature.title}</CardTitle>
