@@ -417,6 +417,25 @@ export default function MealPlanning() {
     }
   };
   
+  // Define interface for categorized shopping list
+  interface ShoppingListCategory {
+    name: string;
+    items: {
+      name: string;
+      amount?: number | string;
+      unit?: string;
+      notes?: string;
+    }[];
+  }
+
+  interface ShoppingListData {
+    categories: ShoppingListCategory[];
+    tips?: string[];
+  }
+
+  // State for categorized shopping list
+  const [categorizedShoppingList, setCategorizedShoppingList] = useState<ShoppingListData | null>(null);
+
   // Generate shopping list from current meal plan
   const handleGenerateShoppingList = async () => {
     setLoading(true);
@@ -440,7 +459,9 @@ export default function MealPlanning() {
           const recipe = response.data as RecipeDetail;
           
           // Add all extended ingredients with full details
-          allIngredientsWithDetails.push(...recipe.extendedIngredients);
+          if (recipe.extendedIngredients && Array.isArray(recipe.extendedIngredients)) {
+            allIngredientsWithDetails.push(...recipe.extendedIngredients);
+          }
         } catch (error) {
           console.error(`Error fetching details for recipe ${id}:`, error);
         }
@@ -461,33 +482,35 @@ export default function MealPlanning() {
       }
       
       // The AI response should include categorized items
-      const shoppingListData = aiResponse.data.shoppingList;
+      const shoppingListData = aiResponse.data.shoppingList as ShoppingListData;
       
-      // For the display, we'll extract all items into a flat array
-      const flatIngredientsList: string[] = [];
+      // Store the categorized shopping list
+      setCategorizedShoppingList(shoppingListData);
+      
+      // Also create a flat list for backwards compatibility
+      const flatList: string[] = [];
       
       if (shoppingListData.categories && Array.isArray(shoppingListData.categories)) {
-        shoppingListData.categories.forEach((category: any) => {
+        shoppingListData.categories.forEach(category => {
           if (category.items && Array.isArray(category.items)) {
-            category.items.forEach((item: any) => {
+            category.items.forEach(item => {
               // Format with amount and unit if available
               if (item.amount && item.unit) {
-                flatIngredientsList.push(`${item.amount} ${item.unit} ${item.name}`);
+                flatList.push(`${item.amount} ${item.unit} ${item.name}`);
               } else {
-                flatIngredientsList.push(item.name);
+                flatList.push(item.name);
               }
             });
           }
         });
       }
       
-      // Set the processed shopping list data
-      setShoppingList(flatIngredientsList);
+      setShoppingList(flatList);
       setShowShoppingList(true);
       
       toast({
         title: "AI Shopping List Generated",
-        description: `Created a smart list with ${flatIngredientsList.length} ingredients`,
+        description: `Created a smart list with ${flatList.length} ingredients organized by store section`,
       });
     } catch (error) {
       console.error("Error generating shopping list:", error);
@@ -811,10 +834,74 @@ export default function MealPlanning() {
             ) : (
               <>
                 <div className="space-y-6">
-                  {/* If we have an AI-processed structured response */}
-                  {shoppingList.length > 0 && (
+                  {/* Display categorized shopping list */}
+                  {categorizedShoppingList && categorizedShoppingList.categories && (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                      {/* Categorized list on the left - takes 8/12 columns on large screens */}
+                      <div className="lg:col-span-8 space-y-6">
+                        <h3 className="font-medium text-lg mb-2">Organized Shopping List</h3>
+                        
+                        <div className="space-y-4">
+                          {categorizedShoppingList.categories.map((category, categoryIndex) => (
+                            <div key={categoryIndex} className="border rounded-md p-4">
+                              <h4 className="font-medium text-base mb-3 text-slate-800">{category.name}</h4>
+                              <div className="space-y-2">
+                                {category.items.map((item, itemIndex) => (
+                                  <div key={`${categoryIndex}-${itemIndex}`} className="flex items-center gap-2">
+                                    <input 
+                                      type="checkbox" 
+                                      id={`cat-${categoryIndex}-item-${itemIndex}`} 
+                                      className="rounded" 
+                                    />
+                                    <label 
+                                      htmlFor={`cat-${categoryIndex}-item-${itemIndex}`} 
+                                      className="text-sm"
+                                    >
+                                      {item.amount && item.unit 
+                                        ? `${item.amount} ${item.unit} ${item.name}`
+                                        : item.name
+                                      }
+                                      {item.notes && (
+                                        <span className="text-xs text-gray-500 ml-1">({item.notes})</span>
+                                      )}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Shopping tips section on the right - takes 4/12 columns on large screens */}
+                      <div className="lg:col-span-4">
+                        <div className="border rounded-md p-4 sticky top-4">
+                          <h3 className="font-medium mb-3">Shopping Tips</h3>
+                          
+                          {/* Custom tips if available */}
+                          {categorizedShoppingList.tips && categorizedShoppingList.tips.length > 0 ? (
+                            <ul className="list-disc list-inside space-y-2 text-sm text-gray-600">
+                              {categorizedShoppingList.tips.map((tip, index) => (
+                                <li key={index}>{tip}</li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <ul className="list-disc list-inside space-y-2 text-sm text-gray-600">
+                              <li>Shop from the perimeter of the store first (produce, meat, dairy)</li>
+                              <li>Buy in bulk for frequently used non-perishable items</li>
+                              <li>Compare unit prices to find the best deals</li>
+                              <li>Consider seasonal produce for freshness and value</li>
+                              <li>Check your pantry before shopping to avoid duplicates</li>
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Fallback flat list if categorized data isn't available */}
+                  {!categorizedShoppingList && shoppingList.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Simple list display for now */}
                       <div className="border rounded-md p-4">
                         <h3 className="font-medium mb-3">Your Shopping List</h3>
                         <div className="space-y-2">
