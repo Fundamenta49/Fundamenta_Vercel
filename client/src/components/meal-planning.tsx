@@ -187,6 +187,30 @@ export default function MealPlanning() {
     mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   } | null>(null);
 
+  // Helper function to fetch daily meals
+  const fetchDailyMeals = async (planConfig: any): Promise<(SpoonacularMeal & { mealType?: string })[]> => {
+    try {
+      // Add some randomness to avoid getting the same meals
+      const offset = Math.floor(Math.random() * 50);
+      
+      // Get new daily meal plan
+      const dailyResponse = await axios.get('/api/cooking/meal-plan', {
+        params: {
+          ...planConfig.apiParams,
+          offset
+        }
+      });
+      
+      if (dailyResponse.data?.meals && Array.isArray(dailyResponse.data.meals)) {
+        return dailyResponse.data.meals;
+      }
+      return [];
+    } catch (error) {
+      console.error("Error fetching daily meals:", error);
+      return [];
+    }
+  };
+
   // Generate meal plan when component loads or plan type changes
   useEffect(() => {
     // Initial check of API status
@@ -276,51 +300,89 @@ export default function MealPlanning() {
         // Create a 7-day plan by generating different meals for each day
         const formattedPlan: DayPlan[] = [];
         
-        // For each day of the week, generate a consistent set of meals based on their types
+        // Generate a meal plan for each day of the week with unique meals
         for (let i = 0; i < 7; i++) {
+          // Get new meals for each day
+          const dayMeals = await fetchDailyMeals(selectedPlanConfig);
           const dayName = DAYS_OF_WEEK[i];
           
-          // Find meals by their specific types (from our enhanced API)
-          const breakfastMeal = dayData.find(meal => meal.mealType === 'breakfast');
-          const lunchMeal = dayData.find(meal => meal.mealType === 'lunch');
-          const dinnerMeal = dayData.find(meal => meal.mealType === 'dinner');
-          
-          // If we don't have meal type information, fall back to positions
-          // This is a safety measure in case the API response format changes
-          const fallbackBreakfast = dayData[0];
-          const fallbackLunch = dayData[1];
-          const fallbackDinner = dayData[2];
-          
-          formattedPlan.push({
-            day: dayName,
-            meals: {
-              breakfast: breakfastMeal || fallbackBreakfast ? {
-                id: (breakfastMeal || fallbackBreakfast).id,
-                title: (breakfastMeal || fallbackBreakfast).title,
-                readyInMinutes: (breakfastMeal || fallbackBreakfast).readyInMinutes,
-                servings: (breakfastMeal || fallbackBreakfast).servings,
-                imageUrl: `https://spoonacular.com/recipeImages/${(breakfastMeal || fallbackBreakfast).id}-312x231.${(breakfastMeal || fallbackBreakfast).imageType}`,
-                type: 'breakfast'
-              } : null,
-              lunch: lunchMeal || fallbackLunch ? {
-                id: (lunchMeal || fallbackLunch).id,
-                title: (lunchMeal || fallbackLunch).title,
-                readyInMinutes: (lunchMeal || fallbackLunch).readyInMinutes,
-                servings: (lunchMeal || fallbackLunch).servings,
-                imageUrl: `https://spoonacular.com/recipeImages/${(lunchMeal || fallbackLunch).id}-312x231.${(lunchMeal || fallbackLunch).imageType}`,
-                type: 'lunch'
-              } : null,
-              dinner: dinnerMeal || fallbackDinner ? {
-                id: (dinnerMeal || fallbackDinner).id,
-                title: (dinnerMeal || fallbackDinner).title,
-                readyInMinutes: (dinnerMeal || fallbackDinner).readyInMinutes,
-                servings: (dinnerMeal || fallbackDinner).servings,
-                imageUrl: `https://spoonacular.com/recipeImages/${(dinnerMeal || fallbackDinner).id}-312x231.${(dinnerMeal || fallbackDinner).imageType}`,
-                type: 'dinner'
-              } : null,
-              snack: null
-            }
-          });
+          if (!dayMeals || dayMeals.length === 0) {
+            // If we couldn't get unique meals, use the initial response as fallback
+            const breakfastMeal = dayData.find(meal => meal.mealType === 'breakfast');
+            const lunchMeal = dayData.find(meal => meal.mealType === 'lunch');
+            const dinnerMeal = dayData.find(meal => meal.mealType === 'dinner');
+            
+            const fallbackBreakfast = dayData[0];
+            const fallbackLunch = dayData[1];
+            const fallbackDinner = dayData[2];
+            
+            formattedPlan.push({
+              day: dayName,
+              meals: {
+                breakfast: breakfastMeal || fallbackBreakfast ? {
+                  id: (breakfastMeal || fallbackBreakfast).id,
+                  title: (breakfastMeal || fallbackBreakfast).title,
+                  readyInMinutes: (breakfastMeal || fallbackBreakfast).readyInMinutes,
+                  servings: (breakfastMeal || fallbackBreakfast).servings,
+                  imageUrl: `https://spoonacular.com/recipeImages/${(breakfastMeal || fallbackBreakfast).id}-312x231.${(breakfastMeal || fallbackBreakfast).imageType}`,
+                  type: 'breakfast'
+                } : null,
+                lunch: lunchMeal || fallbackLunch ? {
+                  id: (lunchMeal || fallbackLunch).id,
+                  title: (lunchMeal || fallbackLunch).title,
+                  readyInMinutes: (lunchMeal || fallbackLunch).readyInMinutes,
+                  servings: (lunchMeal || fallbackLunch).servings,
+                  imageUrl: `https://spoonacular.com/recipeImages/${(lunchMeal || fallbackLunch).id}-312x231.${(lunchMeal || fallbackLunch).imageType}`,
+                  type: 'lunch'
+                } : null,
+                dinner: dinnerMeal || fallbackDinner ? {
+                  id: (dinnerMeal || fallbackDinner).id,
+                  title: (dinnerMeal || fallbackDinner).title,
+                  readyInMinutes: (dinnerMeal || fallbackDinner).readyInMinutes,
+                  servings: (dinnerMeal || fallbackDinner).servings,
+                  imageUrl: `https://spoonacular.com/recipeImages/${(dinnerMeal || fallbackDinner).id}-312x231.${(dinnerMeal || fallbackDinner).imageType}`,
+                  type: 'dinner'
+                } : null,
+                snack: null
+              }
+            });
+          } else {
+            // Use the newly fetched meals
+            const breakfastMeal = dayMeals.find((meal: SpoonacularMeal & { mealType?: string }) => meal.mealType === 'breakfast');
+            const lunchMeal = dayMeals.find((meal: SpoonacularMeal & { mealType?: string }) => meal.mealType === 'lunch');
+            const dinnerMeal = dayMeals.find((meal: SpoonacularMeal & { mealType?: string }) => meal.mealType === 'dinner');
+            
+            formattedPlan.push({
+              day: dayName,
+              meals: {
+                breakfast: breakfastMeal ? {
+                  id: breakfastMeal.id,
+                  title: breakfastMeal.title,
+                  readyInMinutes: breakfastMeal.readyInMinutes,
+                  servings: breakfastMeal.servings,
+                  imageUrl: `https://spoonacular.com/recipeImages/${breakfastMeal.id}-312x231.${breakfastMeal.imageType}`,
+                  type: 'breakfast'
+                } : null,
+                lunch: lunchMeal ? {
+                  id: lunchMeal.id,
+                  title: lunchMeal.title,
+                  readyInMinutes: lunchMeal.readyInMinutes,
+                  servings: lunchMeal.servings,
+                  imageUrl: `https://spoonacular.com/recipeImages/${lunchMeal.id}-312x231.${lunchMeal.imageType}`,
+                  type: 'lunch'
+                } : null,
+                dinner: dinnerMeal ? {
+                  id: dinnerMeal.id,
+                  title: dinnerMeal.title,
+                  readyInMinutes: dinnerMeal.readyInMinutes,
+                  servings: dinnerMeal.servings,
+                  imageUrl: `https://spoonacular.com/recipeImages/${dinnerMeal.id}-312x231.${dinnerMeal.imageType}`,
+                  type: 'dinner'
+                } : null,
+                snack: null
+              }
+            });
+          }
         }
         
         setWeeklyPlan(formattedPlan);
