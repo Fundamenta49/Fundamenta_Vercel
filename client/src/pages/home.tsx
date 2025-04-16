@@ -86,17 +86,17 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="px-4 py-8">
-      <div className="text-center mb-8 relative">
-        <h1 className="text-4xl font-bold tracking-tight mb-4 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
+    <div className="px-4 py-6">
+      <div className="text-center mb-6 relative max-w-3xl mx-auto">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
           Welcome to Fundamenta
         </h1>
-        <p className="text-lg text-muted-foreground mb-4">
+        <p className="text-base md:text-lg text-muted-foreground mb-3">
           Your AI-powered assistant for life skills and wellness
         </p>
         
         {/* Tour Button - centered below title */}
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-2">
           <TourButton />
         </div>
         
@@ -110,24 +110,26 @@ export default function Home() {
         onOpenChange={setFounderMessageOpen}
       />
       
-      {/* Weather Widget - optimized for mobile */}
-      <div className="w-full px-2 sm:px-4 md:px-6 max-w-3xl mx-auto mb-8">
-        <WeatherWidget showForecast={true} className="shadow-sm" />
+      {/* Weather Widget - optimized for mobile, smaller to fit above the fold */}
+      <div className="w-full max-w-4xl mx-auto mb-6">
+        <WeatherWidget showForecast={false} className="shadow-sm" />
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href}>
             <Card 
               className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200"
               data-tour-id={`card-${feature.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
             >
-              <CardHeader>
-                <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
-                <CardTitle className="text-[#1C3D5A] text-balance">{feature.title}</CardTitle>
+              <CardHeader className="py-3 px-4">
+                <div className="flex items-center gap-3">
+                  <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                  <CardTitle className="text-[#1C3D5A] text-balance text-lg">{feature.title}</CardTitle>
+                </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 text-pretty line-clamp-3 sm:line-clamp-none">{feature.description}</p>
+              <CardContent className="py-2 px-4">
+                <p className="text-gray-600 text-pretty text-sm line-clamp-2">{feature.description}</p>
               </CardContent>
             </Card>
           </Link>
