@@ -102,8 +102,6 @@ client/src/components/mortgage-market-trends.tsx
 client/src/components/mortgage-education.tsx
 client/src/components/credit-building-skills.tsx
 client/src/components/credit-building-skills-enhanced-part1.tsx
-client/src/components/credit-building-skills-enhanced-part2.tsx
-client/src/components/credit-building-skills-enhanced-part3.tsx
 client/src/components/credit-skills.tsx
 client/src/components/credit-building-skills-enhanced.tsx
 client/src/components/retirement-planning.tsx
@@ -205,7 +203,6 @@ client/src/components/skeletons/CardSkeleton.tsx
 client/src/components/skeletons/index.ts
 client/src/components/recipe-explorer.tsx
 client/src/components/SkeletonDemoPage.tsx
-client/src/components/closing-cost-calculator.backup.tsx
 client/src/components/closing-cost-calculator.tsx
 client/src/components/closing-cost-calculator-new.tsx
 client/src/components/running-app.tsx
@@ -229,7 +226,6 @@ client/src/components/home-tour/tour-context.tsx
 client/src/components/founder-message-dialog.tsx
 client/src/components/life-skills-pop-out.tsx
 client/src/components/fire-safety-pop-out.tsx
-client/src/components/robot-fundi-new-backup.tsx
 client/src/components/robot-fundi-new.tsx
 client/src/components/fundi-interactive-assistant.tsx
 client/src/components/floating-chat.tsx
@@ -255,7 +251,6 @@ client/src/lib/mood-colors.ts
 client/src/lib/queryClient.ts
 client/src/lib/resume-analysis.ts
 client/src/lib/quiz-service.ts
-client/src/lib/nhtsa-service.ts
 client/src/lib/format-utils.ts
 client/src/lib/mortgage-data-service.ts
 client/src/lib/fred-service.ts
@@ -273,6 +268,7 @@ client/src/lib/temp-fix.js
 client/src/lib/tour-controller.ts
 client/src/lib/user-utils.ts
 client/src/lib/onboarding-tours.ts
+client/src/lib/nhtsa-service.ts
 client/src/pages/not-found.tsx
 client/src/pages/partner.tsx
 client/src/pages/privacy.tsx

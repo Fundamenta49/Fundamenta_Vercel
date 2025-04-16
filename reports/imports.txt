@@ -1161,27 +1161,6 @@ client/src/components/recipe-explorer.tsx:import { CardSkeleton, VideoThumbnailS
 client/src/components/SkeletonDemoPage.tsx:import React, { useState } from "react";
 client/src/components/SkeletonDemoPage.tsx:import { Button } from "@/components/ui/button";
 client/src/components/SkeletonDemoPage.tsx:import { CardSkeleton, VideoThumbnailSkeleton, GridSkeleton, FormSkeleton, ListSkeleton } from "@/components/skeletons";
-client/src/components/closing-cost-calculator.backup.tsx:import React, { useState, useEffect } from 'react';
-client/src/components/closing-cost-calculator.backup.tsx:import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-client/src/components/closing-cost-calculator.backup.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-client/src/components/closing-cost-calculator.backup.tsx:import { Button } from '@/components/ui/button';
-client/src/components/closing-cost-calculator.backup.tsx:import { Label } from '@/components/ui/label';
-client/src/components/closing-cost-calculator.backup.tsx:import { Input } from '@/components/ui/input';
-client/src/components/closing-cost-calculator.backup.tsx:import { Slider } from '@/components/ui/slider';
-client/src/components/closing-cost-calculator.backup.tsx:import { Separator } from '@/components/ui/separator';
-client/src/components/closing-cost-calculator.backup.tsx:import { Switch } from '@/components/ui/switch';
-client/src/components/closing-cost-calculator.backup.tsx:import { ScrollArea } from '@/components/ui/scroll-area';
-client/src/components/closing-cost-calculator.backup.tsx:import { EnhancedScrollArea } from '@/components/ui/enhanced-scroll-area';
-client/src/components/closing-cost-calculator.backup.tsx:import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-client/src/components/closing-cost-calculator.backup.tsx:import { Badge } from '@/components/ui/badge';
-client/src/components/closing-cost-calculator.backup.tsx:import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-client/src/components/closing-cost-calculator.backup.tsx:import { Progress } from '@/components/ui/progress';
-client/src/components/closing-cost-calculator.backup.tsx:import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-client/src/components/closing-cost-calculator.backup.tsx:import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-client/src/components/closing-cost-calculator.backup.tsx:import { FredDataSeries, formatFredValue } from '@/lib/fred-service';
-client/src/components/closing-cost-calculator.backup.tsx:import { getMortgageRates, formatRate } from '@/lib/mortgage-data-service';
-client/src/components/closing-cost-calculator.backup.tsx:import { formatCurrency, formatCurrencyPrecise, formatPercent } from '@/lib/format-utils';
-client/src/components/closing-cost-calculator.backup.tsx:// Formatting utils are now imported from '@/lib/format-utils'
 client/src/components/closing-cost-calculator.tsx:import React, { useState, useEffect } from 'react';
 client/src/components/closing-cost-calculator.tsx:import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 client/src/components/closing-cost-calculator.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1377,9 +1356,6 @@ client/src/components/fire-safety-pop-out.tsx:import { Button } from "@/componen
 client/src/components/fire-safety-pop-out.tsx:import { useToast } from "@/hooks/use-toast";
 client/src/components/fire-safety-pop-out.tsx:import FireSafety from "@/components/fire-safety";
 client/src/components/fire-safety-pop-out.tsx:import { VideoPlayerDialog } from "@/components/video-player-dialog";
-client/src/components/robot-fundi-new-backup.tsx:import { useRef, useState, useEffect } from "react";
-client/src/components/robot-fundi-new-backup.tsx:import { cn } from "@/lib/utils";
-client/src/components/robot-fundi-new-backup.tsx:import { useAIEventStore } from "@/lib/ai-event-system";
 client/src/components/robot-fundi-new.tsx:import { useRef, useState, useEffect } from "react";
 client/src/components/robot-fundi-new.tsx:import { cn } from "@/lib/utils";
 client/src/components/robot-fundi-new.tsx:import { useAIEventStore } from "@/lib/ai-event-system";
