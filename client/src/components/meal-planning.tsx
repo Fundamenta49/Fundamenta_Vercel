@@ -734,29 +734,34 @@ export default function MealPlanning() {
           </Alert>
         ) : (
           <Tabs defaultValue={weeklyPlan[0]?.day.toLowerCase() || "monday"} className="w-full">
-            <TabsList className="mb-2 flex flex-wrap">
+            <TabsList className="mb-4 flex flex-wrap justify-center gap-1 overflow-x-auto p-1 sm:justify-start">
               {weeklyPlan.map((day, index) => (
-                <TabsTrigger key={index} value={day.day.toLowerCase()}>
+                <TabsTrigger 
+                  key={index} 
+                  value={day.day.toLowerCase()}
+                  className="min-w-[90px] text-center px-3 py-2"
+                >
                   {day.day}
                 </TabsTrigger>
               ))}
             </TabsList>
             
             {weeklyPlan.map((day, index) => (
-              <TabsContent key={index} value={day.day.toLowerCase()} className="border rounded-lg p-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <TabsContent key={index} value={day.day.toLowerCase()} className="border rounded-lg p-3 sm:p-4">
+                <h3 className="text-lg font-semibold mb-3 text-center sm:text-left">{day.day}'s Meals</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Breakfast */}
                   {day.meals.breakfast ? (
-                    <Card className="h-full">
-                      <CardHeader className="pb-2">
+                    <Card className="h-full shadow-sm hover:shadow transition-shadow duration-200">
+                      <CardHeader className="pb-1 pt-3 px-3 sm:pb-2 sm:pt-4 sm:px-4">
                         <CardTitle className="text-base flex items-center gap-2">
                           <Coffee className="h-4 w-4 text-amber-500" />
                           Breakfast
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="pb-2">
+                      <CardContent className="pb-1 px-3 sm:pb-2 sm:px-4">
                         {day.meals.breakfast.imageUrl && (
-                          <div className="relative w-full h-40 mb-3 rounded-md overflow-hidden">
+                          <div className="relative w-full h-36 sm:h-40 mb-3 rounded-md overflow-hidden">
                             <img 
                               src={day.meals.breakfast.imageUrl} 
                               alt={day.meals.breakfast.title}
@@ -764,16 +769,16 @@ export default function MealPlanning() {
                             />
                           </div>
                         )}
-                        <h3 className="font-medium">{day.meals.breakfast.title}</h3>
-                        <p className="text-sm text-gray-500 flex items-center mt-1">
+                        <h3 className="font-medium text-sm sm:text-base line-clamp-2">{day.meals.breakfast.title}</h3>
+                        <p className="text-xs sm:text-sm text-gray-500 flex items-center mt-1">
                           <Clock className="h-3 w-3 mr-1" /> {day.meals.breakfast.readyInMinutes} min
                         </p>
                       </CardContent>
-                      <CardFooter className="pt-0 flex gap-2">
+                      <CardFooter className="pt-0 flex gap-2 px-3 pb-3 sm:px-4 sm:pb-4">
                         <Button 
                           variant="secondary" 
                           size="sm" 
-                          className="w-full"
+                          className="w-full text-xs sm:text-sm"
                           onClick={() => getRecipeDetails(day.meals.breakfast!.id)}
                           disabled={loadingMealDetail}
                         >
@@ -783,42 +788,54 @@ export default function MealPlanning() {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          className="w-10 p-0"
+                          className="w-8 sm:w-10 p-0 flex-shrink-0"
                           onClick={() => handleRegenerateMeal(day.day, 'breakfast')}
                           disabled={Boolean(regeneratingMeal)}
                         >
                           {regeneratingMeal?.day === day.day && regeneratingMeal?.mealType === 'breakfast' 
-                            ? <Loader2 className="h-4 w-4 animate-spin" /> 
-                            : <RefreshCw className="h-4 w-4" />}
+                            ? <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" /> 
+                            : <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />}
                         </Button>
                       </CardFooter>
                     </Card>
                   ) : (
-                    <Card>
-                      <CardHeader>
+                    <Card className="h-full shadow-sm border-dashed">
+                      <CardHeader className="pb-1 pt-3 px-3 sm:pb-2 sm:pt-4 sm:px-4">
                         <CardTitle className="text-base flex items-center gap-2">
                           <Coffee className="h-4 w-4 text-amber-500" />
                           Breakfast
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-gray-500">No breakfast planned</p>
+                      <CardContent className="pb-6 px-3 sm:pb-8 sm:px-4 flex flex-col items-center justify-center">
+                        <p className="text-sm text-gray-500 text-center">No breakfast planned</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="mt-3 text-xs"
+                          onClick={() => handleRegenerateMeal(day.day, 'breakfast')}
+                          disabled={Boolean(regeneratingMeal)}
+                        >
+                          {regeneratingMeal?.day === day.day && regeneratingMeal?.mealType === 'breakfast' 
+                            ? <Loader2 className="h-3 w-3 mr-2 animate-spin" /> 
+                            : <RefreshCw className="h-3 w-3 mr-2" />}
+                          Add a meal
+                        </Button>
                       </CardContent>
                     </Card>
                   )}
                   
                   {/* Lunch */}
                   {day.meals.lunch ? (
-                    <Card className="h-full">
-                      <CardHeader className="pb-2">
+                    <Card className="h-full shadow-sm hover:shadow transition-shadow duration-200">
+                      <CardHeader className="pb-1 pt-3 px-3 sm:pb-2 sm:pt-4 sm:px-4">
                         <CardTitle className="text-base flex items-center gap-2">
                           <Salad className="h-4 w-4 text-green-500" />
                           Lunch
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="pb-2">
+                      <CardContent className="pb-1 px-3 sm:pb-2 sm:px-4">
                         {day.meals.lunch.imageUrl && (
-                          <div className="relative w-full h-40 mb-3 rounded-md overflow-hidden">
+                          <div className="relative w-full h-36 sm:h-40 mb-3 rounded-md overflow-hidden">
                             <img 
                               src={day.meals.lunch.imageUrl} 
                               alt={day.meals.lunch.title}
@@ -826,16 +843,16 @@ export default function MealPlanning() {
                             />
                           </div>
                         )}
-                        <h3 className="font-medium">{day.meals.lunch.title}</h3>
-                        <p className="text-sm text-gray-500 flex items-center mt-1">
+                        <h3 className="font-medium text-sm sm:text-base line-clamp-2">{day.meals.lunch.title}</h3>
+                        <p className="text-xs sm:text-sm text-gray-500 flex items-center mt-1">
                           <Clock className="h-3 w-3 mr-1" /> {day.meals.lunch.readyInMinutes} min
                         </p>
                       </CardContent>
-                      <CardFooter className="pt-0 flex gap-2">
+                      <CardFooter className="pt-0 flex gap-2 px-3 pb-3 sm:px-4 sm:pb-4">
                         <Button 
                           variant="secondary" 
                           size="sm" 
-                          className="w-full"
+                          className="w-full text-xs sm:text-sm"
                           onClick={() => getRecipeDetails(day.meals.lunch!.id)}
                           disabled={loadingMealDetail}
                         >
@@ -845,42 +862,54 @@ export default function MealPlanning() {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          className="w-10 p-0"
+                          className="w-8 sm:w-10 p-0 flex-shrink-0"
                           onClick={() => handleRegenerateMeal(day.day, 'lunch')}
                           disabled={Boolean(regeneratingMeal)}
                         >
                           {regeneratingMeal?.day === day.day && regeneratingMeal?.mealType === 'lunch' 
-                            ? <Loader2 className="h-4 w-4 animate-spin" /> 
-                            : <RefreshCw className="h-4 w-4" />}
+                            ? <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" /> 
+                            : <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />}
                         </Button>
                       </CardFooter>
                     </Card>
                   ) : (
-                    <Card>
-                      <CardHeader>
+                    <Card className="h-full shadow-sm border-dashed">
+                      <CardHeader className="pb-1 pt-3 px-3 sm:pb-2 sm:pt-4 sm:px-4">
                         <CardTitle className="text-base flex items-center gap-2">
                           <Salad className="h-4 w-4 text-green-500" />
                           Lunch
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-gray-500">No lunch planned</p>
+                      <CardContent className="pb-6 px-3 sm:pb-8 sm:px-4 flex flex-col items-center justify-center">
+                        <p className="text-sm text-gray-500 text-center">No lunch planned</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="mt-3 text-xs"
+                          onClick={() => handleRegenerateMeal(day.day, 'lunch')}
+                          disabled={Boolean(regeneratingMeal)}
+                        >
+                          {regeneratingMeal?.day === day.day && regeneratingMeal?.mealType === 'lunch' 
+                            ? <Loader2 className="h-3 w-3 mr-2 animate-spin" /> 
+                            : <RefreshCw className="h-3 w-3 mr-2" />}
+                          Add a meal
+                        </Button>
                       </CardContent>
                     </Card>
                   )}
                   
                   {/* Dinner */}
                   {day.meals.dinner ? (
-                    <Card className="h-full">
-                      <CardHeader className="pb-2">
+                    <Card className="h-full shadow-sm hover:shadow transition-shadow duration-200">
+                      <CardHeader className="pb-1 pt-3 px-3 sm:pb-2 sm:pt-4 sm:px-4">
                         <CardTitle className="text-base flex items-center gap-2">
                           <UtensilsCrossed className="h-4 w-4 text-purple-500" />
                           Dinner
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="pb-2">
+                      <CardContent className="pb-1 px-3 sm:pb-2 sm:px-4">
                         {day.meals.dinner.imageUrl && (
-                          <div className="relative w-full h-40 mb-3 rounded-md overflow-hidden">
+                          <div className="relative w-full h-36 sm:h-40 mb-3 rounded-md overflow-hidden">
                             <img 
                               src={day.meals.dinner.imageUrl} 
                               alt={day.meals.dinner.title}
@@ -888,16 +917,16 @@ export default function MealPlanning() {
                             />
                           </div>
                         )}
-                        <h3 className="font-medium">{day.meals.dinner.title}</h3>
-                        <p className="text-sm text-gray-500 flex items-center mt-1">
+                        <h3 className="font-medium text-sm sm:text-base line-clamp-2">{day.meals.dinner.title}</h3>
+                        <p className="text-xs sm:text-sm text-gray-500 flex items-center mt-1">
                           <Clock className="h-3 w-3 mr-1" /> {day.meals.dinner.readyInMinutes} min
                         </p>
                       </CardContent>
-                      <CardFooter className="pt-0 flex gap-2">
+                      <CardFooter className="pt-0 flex gap-2 px-3 pb-3 sm:px-4 sm:pb-4">
                         <Button 
                           variant="secondary" 
                           size="sm" 
-                          className="w-full"
+                          className="w-full text-xs sm:text-sm"
                           onClick={() => getRecipeDetails(day.meals.dinner!.id)}
                           disabled={loadingMealDetail}
                         >
@@ -907,26 +936,38 @@ export default function MealPlanning() {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          className="w-10 p-0"
+                          className="w-8 sm:w-10 p-0 flex-shrink-0"
                           onClick={() => handleRegenerateMeal(day.day, 'dinner')}
                           disabled={Boolean(regeneratingMeal)}
                         >
                           {regeneratingMeal?.day === day.day && regeneratingMeal?.mealType === 'dinner' 
-                            ? <Loader2 className="h-4 w-4 animate-spin" /> 
-                            : <RefreshCw className="h-4 w-4" />}
+                            ? <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" /> 
+                            : <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />}
                         </Button>
                       </CardFooter>
                     </Card>
                   ) : (
-                    <Card>
-                      <CardHeader>
+                    <Card className="h-full shadow-sm border-dashed">
+                      <CardHeader className="pb-1 pt-3 px-3 sm:pb-2 sm:pt-4 sm:px-4">
                         <CardTitle className="text-base flex items-center gap-2">
                           <UtensilsCrossed className="h-4 w-4 text-purple-500" />
                           Dinner
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-gray-500">No dinner planned</p>
+                      <CardContent className="pb-6 px-3 sm:pb-8 sm:px-4 flex flex-col items-center justify-center">
+                        <p className="text-sm text-gray-500 text-center">No dinner planned</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="mt-3 text-xs"
+                          onClick={() => handleRegenerateMeal(day.day, 'dinner')}
+                          disabled={Boolean(regeneratingMeal)}
+                        >
+                          {regeneratingMeal?.day === day.day && regeneratingMeal?.mealType === 'dinner' 
+                            ? <Loader2 className="h-3 w-3 mr-2 animate-spin" /> 
+                            : <RefreshCw className="h-3 w-3 mr-2" />}
+                          Add a meal
+                        </Button>
                       </CardContent>
                     </Card>
                   )}
