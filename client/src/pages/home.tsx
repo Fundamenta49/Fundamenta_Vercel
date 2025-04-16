@@ -115,22 +115,34 @@ export default function Home() {
         <WeatherWidget showForecast={false} className="shadow-sm" />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 max-w-5xl mx-auto">
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href}>
             <Card 
               className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200"
               data-tour-id={`card-${feature.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
             >
-              <CardHeader className="py-3 px-4">
-                <div className="flex items-center gap-3">
-                  <feature.icon className={`h-6 w-6 ${feature.color}`} />
-                  <CardTitle className="text-[#1C3D5A] text-balance text-lg">{feature.title}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="py-2 px-4">
-                <p className="text-gray-600 text-pretty text-sm line-clamp-2">{feature.description}</p>
-              </CardContent>
+              {/* Mobile Layout (XS to SM screens) */}
+              <div className="md:hidden">
+                <CardHeader className="flex flex-col items-center text-center p-3 pb-1">
+                  <feature.icon className={`h-7 w-7 ${feature.color} mb-1`} />
+                  <CardTitle className="text-[#1C3D5A] text-sm font-bold">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center px-2 pt-0 pb-3">
+                  <p className="text-gray-600 text-xs line-clamp-2">{feature.description}</p>
+                </CardContent>
+              </div>
+              
+              {/* Desktop Layout (MD screens and up) */}
+              <div className="hidden md:block">
+                <CardHeader>
+                  <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
+                  <CardTitle className="text-[#1C3D5A] text-xl">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 text-pretty">{feature.description}</p>
+                </CardContent>
+              </div>
             </Card>
           </Link>
         ))}
