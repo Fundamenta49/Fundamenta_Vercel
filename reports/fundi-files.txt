@@ -1,0 +1,11 @@
+client/src/components/fundi-avatar-enhanced.tsx
+client/src/components/fundi-avatar-new.tsx
+client/src/components/fundi-avatar.tsx
+client/src/components/fundi-interactive-assistant.tsx
+client/src/components/fundi-personality-adapter.tsx
+client/src/components/robot-fundi-enhanced.tsx
+client/src/components/robot-fundi-new.tsx
+client/src/components/robot-fundi.tsx
+client/src/components/simple-button-fundi.tsx
+client/src/components/simple-fundi.tsx
+client/src/services/fundi-interactions-service.ts
