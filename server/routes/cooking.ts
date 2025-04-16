@@ -177,23 +177,123 @@ router.get('/recipes/by-ingredients', async (req, res) => {
 // Get meal plan
 router.get('/meal-plan', async (req, res) => {
   try {
-    const { timeFrame = 'day', targetCalories = 2000, diet, exclude } = req.query;
+    const { timeFrame = 'day', targetCalories = 2000, diet, exclude, maxReadyTime } = req.query;
     
     if (!SPOONACULAR_API_KEY) {
       return res.status(500).json({ error: 'Spoonacular API key is not configured' });
     }
+
+    // If requesting weekly meal plan, use the built-in endpoint
+    if (timeFrame === 'week') {
+      const response = await axios.get(`${BASE_URL}/mealplanner/generate`, {
+        params: {
+          apiKey: SPOONACULAR_API_KEY,
+          timeFrame,
+          targetCalories,
+          diet,
+          exclude
+        }
+      });
+      
+      return res.json(response.data);
+    }
     
-    const response = await axios.get(`${BASE_URL}/mealplanner/generate`, {
+    // For daily meal plans, we'll enhance the results by explicitly requesting breakfast, lunch, and dinner
+    // This ensures more appropriate meals for each time of day
+    
+    // Get breakfast recipes
+    const breakfastResponse = await axios.get(`${BASE_URL}/recipes/complexSearch`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
-        timeFrame,
-        targetCalories,
+        type: 'breakfast',
         diet,
-        exclude
+        maxReadyTime,
+        instructionsRequired: true,
+        addRecipeInformation: true,
+        number: 1,
+        sort: 'random',
+        offset: Math.floor(Math.random() * 10) // Add some variety
       }
     });
     
-    res.json(response.data);
+    // Get lunch recipes
+    const lunchResponse = await axios.get(`${BASE_URL}/recipes/complexSearch`, {
+      params: {
+        apiKey: SPOONACULAR_API_KEY,
+        type: 'main course',
+        tags: 'lunch',
+        diet,
+        maxReadyTime,
+        instructionsRequired: true,
+        addRecipeInformation: true,
+        number: 1,
+        sort: 'random',
+        offset: Math.floor(Math.random() * 10) // Add some variety
+      }
+    });
+    
+    // Get dinner recipes
+    const dinnerResponse = await axios.get(`${BASE_URL}/recipes/complexSearch`, {
+      params: {
+        apiKey: SPOONACULAR_API_KEY,
+        type: 'main course',
+        tags: 'dinner',
+        diet,
+        maxReadyTime,
+        instructionsRequired: true,
+        addRecipeInformation: true,
+        number: 1,
+        sort: 'random',
+        offset: Math.floor(Math.random() * 10) // Add some variety
+      }
+    });
+    
+    // Format the meals to match the expected structure
+    const meals = [
+      ...breakfastResponse.data.results.map(recipe => ({
+        id: recipe.id,
+        imageType: recipe.imageType || 'jpg',
+        title: recipe.title,
+        readyInMinutes: recipe.readyInMinutes,
+        servings: recipe.servings,
+        sourceUrl: recipe.sourceUrl,
+        mealType: 'breakfast'
+      })),
+      ...lunchResponse.data.results.map(recipe => ({
+        id: recipe.id,
+        imageType: recipe.imageType || 'jpg',
+        title: recipe.title,
+        readyInMinutes: recipe.readyInMinutes,
+        servings: recipe.servings,
+        sourceUrl: recipe.sourceUrl,
+        mealType: 'lunch'
+      })),
+      ...dinnerResponse.data.results.map(recipe => ({
+        id: recipe.id,
+        imageType: recipe.imageType || 'jpg',
+        title: recipe.title,
+        readyInMinutes: recipe.readyInMinutes,
+        servings: recipe.servings,
+        sourceUrl: recipe.sourceUrl,
+        mealType: 'dinner'
+      }))
+    ];
+    
+    // Calculate approximate nutrition (this is simplified)
+    const nutrients = {
+      calories: 0,
+      protein: 0,
+      fat: 0,
+      carbohydrates: 0
+    };
+    
+    // Build a response that matches the format from Spoonacular's mealplanner endpoint
+    const response = {
+      meals,
+      nutrients
+    };
+    
+    return res.json(response);
   } catch (error) {
     console.error('Spoonacular API error:', error);
     if (axios.isAxiosError(error) && error.response) {

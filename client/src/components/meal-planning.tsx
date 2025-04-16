@@ -261,46 +261,51 @@ export default function MealPlanning() {
         setWeeklyPlan(formattedPlan);
       } else if (response.data?.meals) {
         // Handle daily meal plan if that's what we get back
-        const dayData = response.data.meals as SpoonacularMeal[];
+        const dayData = response.data.meals as (SpoonacularMeal & { mealType?: string })[];
         
         // Create a 7-day plan by generating different meals for each day
-        // We'll use the same meal data but stagger them to create variety
         const formattedPlan: DayPlan[] = [];
         
-        // For each day of the week
+        // For each day of the week, generate a consistent set of meals based on their types
         for (let i = 0; i < 7; i++) {
           const dayName = DAYS_OF_WEEK[i];
           
-          // We'll rotate the meals for variety (breakfast becomes lunch, lunch becomes dinner, etc.)
-          const breakfastIndex = i % 3;
-          const lunchIndex = (i + 1) % 3;
-          const dinnerIndex = (i + 2) % 3;
+          // Find meals by their specific types (from our enhanced API)
+          const breakfastMeal = dayData.find(meal => meal.mealType === 'breakfast');
+          const lunchMeal = dayData.find(meal => meal.mealType === 'lunch');
+          const dinnerMeal = dayData.find(meal => meal.mealType === 'dinner');
+          
+          // If we don't have meal type information, fall back to positions
+          // This is a safety measure in case the API response format changes
+          const fallbackBreakfast = dayData[0];
+          const fallbackLunch = dayData[1];
+          const fallbackDinner = dayData[2];
           
           formattedPlan.push({
             day: dayName,
             meals: {
-              breakfast: dayData[breakfastIndex] ? {
-                id: dayData[breakfastIndex].id,
-                title: dayData[breakfastIndex].title,
-                readyInMinutes: dayData[breakfastIndex].readyInMinutes,
-                servings: dayData[breakfastIndex].servings,
-                imageUrl: `https://spoonacular.com/recipeImages/${dayData[breakfastIndex].id}-312x231.${dayData[breakfastIndex].imageType}`,
+              breakfast: breakfastMeal || fallbackBreakfast ? {
+                id: (breakfastMeal || fallbackBreakfast).id,
+                title: (breakfastMeal || fallbackBreakfast).title,
+                readyInMinutes: (breakfastMeal || fallbackBreakfast).readyInMinutes,
+                servings: (breakfastMeal || fallbackBreakfast).servings,
+                imageUrl: `https://spoonacular.com/recipeImages/${(breakfastMeal || fallbackBreakfast).id}-312x231.${(breakfastMeal || fallbackBreakfast).imageType}`,
                 type: 'breakfast'
               } : null,
-              lunch: dayData[lunchIndex] ? {
-                id: dayData[lunchIndex].id,
-                title: dayData[lunchIndex].title,
-                readyInMinutes: dayData[lunchIndex].readyInMinutes,
-                servings: dayData[lunchIndex].servings,
-                imageUrl: `https://spoonacular.com/recipeImages/${dayData[lunchIndex].id}-312x231.${dayData[lunchIndex].imageType}`,
+              lunch: lunchMeal || fallbackLunch ? {
+                id: (lunchMeal || fallbackLunch).id,
+                title: (lunchMeal || fallbackLunch).title,
+                readyInMinutes: (lunchMeal || fallbackLunch).readyInMinutes,
+                servings: (lunchMeal || fallbackLunch).servings,
+                imageUrl: `https://spoonacular.com/recipeImages/${(lunchMeal || fallbackLunch).id}-312x231.${(lunchMeal || fallbackLunch).imageType}`,
                 type: 'lunch'
               } : null,
-              dinner: dayData[dinnerIndex] ? {
-                id: dayData[dinnerIndex].id,
-                title: dayData[dinnerIndex].title,
-                readyInMinutes: dayData[dinnerIndex].readyInMinutes,
-                servings: dayData[dinnerIndex].servings,
-                imageUrl: `https://spoonacular.com/recipeImages/${dayData[dinnerIndex].id}-312x231.${dayData[dinnerIndex].imageType}`,
+              dinner: dinnerMeal || fallbackDinner ? {
+                id: (dinnerMeal || fallbackDinner).id,
+                title: (dinnerMeal || fallbackDinner).title,
+                readyInMinutes: (dinnerMeal || fallbackDinner).readyInMinutes,
+                servings: (dinnerMeal || fallbackDinner).servings,
+                imageUrl: `https://spoonacular.com/recipeImages/${(dinnerMeal || fallbackDinner).id}-312x231.${(dinnerMeal || fallbackDinner).imageType}`,
                 type: 'dinner'
               } : null,
               snack: null
@@ -364,33 +369,63 @@ export default function MealPlanning() {
         throw new Error("Invalid plan type");
       }
       
-      // Convert parameters to daily for single meal regeneration
-      const params = {
-        ...selectedPlanConfig.apiParams,
-        timeFrame: "day" // Override to get just one day
+      // Create meal type specific parameters
+      const getMealTypeParams = () => {
+        switch(mealType) {
+          case 'breakfast':
+            return {
+              type: 'breakfast',
+              tags: 'breakfast'
+            };
+          case 'lunch':
+            return {
+              type: 'main course',
+              tags: 'lunch'
+            };
+          case 'dinner':
+            return {
+              type: 'main course', 
+              tags: 'dinner'
+            };
+          case 'snack':
+            return {
+              type: 'snack',
+              tags: 'snack'
+            };
+          default:
+            return {};
+        }
       };
       
-      const response = await axios.get('/api/cooking/meal-plan', { params });
+      // Get a recipe appropriate for this specific meal type
+      const params = {
+        apiKey: process.env.SPOONACULAR_API_KEY,
+        diet: selectedPlanConfig.apiParams.diet,
+        maxReadyTime: selectedPlanConfig.apiParams.maxReadyTime,
+        instructionsRequired: true,
+        addRecipeInformation: true,
+        number: 1,
+        sort: 'random',
+        ...getMealTypeParams()
+      };
       
-      if (response.data?.meals && response.data.meals.length > 0) {
-        // Determine which meal from the response to use based on mealType
-        let mealIndex: number = 0;
-        if (mealType === 'lunch') mealIndex = 1;
-        if (mealType === 'dinner') mealIndex = 2;
-        
-        const newMeal = response.data.meals[mealIndex % response.data.meals.length];
+      // Use complex search to get a recipe of the appropriate type
+      const response = await axios.get('/api/cooking/recipes/complexSearch', { params });
+      
+      if (response.data?.results && response.data.results.length > 0) {
+        const newRecipe = response.data.results[0];
         
         // Update the weekly plan with the new meal
         setWeeklyPlan(prevPlan => 
           prevPlan.map(dayPlan => {
             if (dayPlan.day === day) {
               const updatedMeals = { ...dayPlan.meals };
-              updatedMeals[mealType] = newMeal ? {
-                id: newMeal.id,
-                title: newMeal.title,
-                readyInMinutes: newMeal.readyInMinutes,
-                servings: newMeal.servings,
-                imageUrl: `https://spoonacular.com/recipeImages/${newMeal.id}-312x231.${newMeal.imageType}`,
+              updatedMeals[mealType] = newRecipe ? {
+                id: newRecipe.id,
+                title: newRecipe.title,
+                readyInMinutes: newRecipe.readyInMinutes || 30,
+                servings: newRecipe.servings || 4,
+                imageUrl: newRecipe.image || `https://spoonacular.com/recipeImages/${newRecipe.id}-312x231.${newRecipe.imageType || 'jpg'}`,
                 type: mealType
               } : null;
               
