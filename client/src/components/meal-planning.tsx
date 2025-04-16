@@ -398,16 +398,22 @@ export default function MealPlanning() {
       };
       
       // Get a recipe appropriate for this specific meal type
-      const params = {
-        apiKey: process.env.SPOONACULAR_API_KEY,
-        diet: selectedPlanConfig.apiParams.diet,
-        maxReadyTime: selectedPlanConfig.apiParams.maxReadyTime,
+      const params: Record<string, any> = {
         instructionsRequired: true,
         addRecipeInformation: true,
         number: 1,
         sort: 'random',
         ...getMealTypeParams()
       };
+      
+      // Add optional parameters if they exist in the plan config
+      if ('diet' in selectedPlanConfig.apiParams) {
+        params.diet = selectedPlanConfig.apiParams.diet;
+      }
+      
+      if ('maxReadyTime' in selectedPlanConfig.apiParams) {
+        params.maxReadyTime = selectedPlanConfig.apiParams.maxReadyTime;
+      }
       
       // Use complex search to get a recipe of the appropriate type
       const response = await axios.get('/api/cooking/recipes/complexSearch', { params });

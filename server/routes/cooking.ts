@@ -250,7 +250,7 @@ router.get('/meal-plan', async (req, res) => {
     
     // Format the meals to match the expected structure
     const meals = [
-      ...breakfastResponse.data.results.map(recipe => ({
+      ...breakfastResponse.data.results.map((recipe: any) => ({
         id: recipe.id,
         imageType: recipe.imageType || 'jpg',
         title: recipe.title,
@@ -259,7 +259,7 @@ router.get('/meal-plan', async (req, res) => {
         sourceUrl: recipe.sourceUrl,
         mealType: 'breakfast'
       })),
-      ...lunchResponse.data.results.map(recipe => ({
+      ...lunchResponse.data.results.map((recipe: any) => ({
         id: recipe.id,
         imageType: recipe.imageType || 'jpg',
         title: recipe.title,
@@ -268,7 +268,7 @@ router.get('/meal-plan', async (req, res) => {
         sourceUrl: recipe.sourceUrl,
         mealType: 'lunch'
       })),
-      ...dinnerResponse.data.results.map(recipe => ({
+      ...dinnerResponse.data.results.map((recipe: any) => ({
         id: recipe.id,
         imageType: recipe.imageType || 'jpg',
         title: recipe.title,
