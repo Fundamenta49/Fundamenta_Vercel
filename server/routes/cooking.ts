@@ -355,30 +355,25 @@ router.post('/generate-shopping-list', async (req, res) => {
         return res.status(500).json({ error: 'OpenAI API key is not configured' });
       }
 
+      // Use a more concise prompt to reduce payload size
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", // Using the latest OpenAI model
+        model: "gpt-3.5-turbo", // Use a faster, lighter model for shopping lists
         messages: [
           {
             role: "system",
-            content: `You are a helpful meal planning assistant. Your task is to organize a shopping list based on recipe ingredients.
+            content: `You are a shopping list organizer. Create a structured grocery list with categories.
             
             Instructions:
-            1. Combine duplicate or similar ingredients and adjust quantities appropriately
-            2. Organize items by grocery store section (produce, dairy, meat, pantry, etc.)
-            3. Identify potential substitutions or alternatives for hard-to-find items
-            4. Format the response as a structured JSON object with categories
-            5. For each ingredient, include the original amount and unit when possible
-            6. Add helpful notes for items that might be confusing or have multiple options
-            
-            Return a JSON object with:
-            1. "categories" - an array of grocery section objects, each with:
-               - "name": the section name (produce, dairy, etc.)
-               - "items": array of ingredient objects with name, amount, unit, and optional notes
-            2. "tips" - array of shopping and meal prep efficiency tips specific to these ingredients`
+            1. Combine similar ingredients and adjust quantities
+            2. Organize by store section (produce, dairy, meat, pantry, etc.)
+            3. Format as JSON with categories array
+            4. Each category has a name and items array
+            5. Each item has name, amount, unit, and optional notes
+            6. Include brief shopping tips array`
           },
           {
             role: "user",
-            content: `Here are the ingredients from my meal plan. Please organize them into an efficient shopping list:\n\n${formattedIngredients.join("\n")}`
+            content: `Organize these ingredients into a categorized shopping list:\n\n${formattedIngredients.join("\n")}`
           }
         ],
         response_format: { type: "json_object" }

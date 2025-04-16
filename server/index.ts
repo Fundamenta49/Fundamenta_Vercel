@@ -18,9 +18,9 @@ log(`Platform: ${process.platform}`);
 const app = express();
 log(`Express initialized (${Date.now() - startTime}ms)`);
 
-// Basic middleware setup
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Basic middleware setup with increased JSON payload limit
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
 // Configure session store with PostgreSQL
 const PgSession = connectPgSimple(session);

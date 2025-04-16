@@ -450,30 +450,42 @@ export default function MealPlanning() {
         if (day.meals.snack?.id) mealIds.push(day.meals.snack.id);
       });
       
-      // Collect all ingredients with detailed information
-      const allIngredientsWithDetails: any[] = [];
+      // Collect all ingredients with only the essential information to reduce payload size
+      const simplifiedIngredients: Array<{
+        name: string;
+        amount?: number;
+        unit?: string;
+        originalString?: string;
+      }> = [];
       
       for (const id of mealIds) {
         try {
           const response = await axios.get(`/api/cooking/recipes/${id}/information`);
           const recipe = response.data as RecipeDetail;
           
-          // Add all extended ingredients with full details
+          // Only include essential ingredient data (not the full objects)
           if (recipe.extendedIngredients && Array.isArray(recipe.extendedIngredients)) {
-            allIngredientsWithDetails.push(...recipe.extendedIngredients);
+            recipe.extendedIngredients.forEach(ingredient => {
+              simplifiedIngredients.push({
+                name: ingredient.name,
+                amount: ingredient.amount,
+                unit: ingredient.unit,
+                originalString: ingredient.originalString
+              });
+            });
           }
         } catch (error) {
           console.error(`Error fetching details for recipe ${id}:`, error);
         }
       }
       
-      if (allIngredientsWithDetails.length === 0) {
+      if (simplifiedIngredients.length === 0) {
         throw new Error("No ingredients found for the selected recipes");
       }
       
-      // Call our AI-powered shopping list generation endpoint (using OpenAI by default)
+      // Call our AI-powered shopping list generation endpoint with simplified ingredients
       const aiResponse = await axios.post('/api/cooking/generate-shopping-list', {
-        ingredients: allIngredientsWithDetails,
+        ingredients: simplifiedIngredients,
         model: 'openai' // Can be 'openai' or 'huggingface'
       });
       
