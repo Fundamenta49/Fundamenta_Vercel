@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { AlertCircle, DollarSign, Briefcase, Heart, GraduationCap, Activity } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import WeatherWidget from "@/components/weather-widget";
 import { useAuth } from "@/lib/auth-context";
 import FounderMessageDialog from "@/components/founder-message-dialog";
 import { TourGuide, TourButton } from "@/components/home-tour";
@@ -86,17 +85,17 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="px-4 py-6">
-      <div className="text-center mb-6 relative max-w-3xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
+    <div className="px-3 py-3">
+      <div className="text-center mb-3 relative max-w-3xl mx-auto">
+        <h1 className="text-2xl font-bold tracking-tight mb-1 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
           Welcome to Fundamenta
         </h1>
-        <p className="text-base md:text-lg text-muted-foreground mb-3">
+        <p className="text-xs md:text-sm text-muted-foreground mb-2">
           Your AI-powered assistant for life skills and wellness
         </p>
         
-        {/* Tour Button - centered below title */}
-        <div className="flex justify-center mt-2">
+        {/* Tour Button inline with title on mobile */}
+        <div className="flex justify-center">
           <TourButton />
         </div>
         
@@ -110,12 +109,9 @@ export default function Home() {
         onOpenChange={setFounderMessageOpen}
       />
       
-      {/* Weather Widget - optimized for mobile, smaller to fit above the fold */}
-      <div className="w-full max-w-4xl mx-auto mb-6">
-        <WeatherWidget showForecast={false} className="shadow-sm" />
-      </div>
+      {/* Weather Widget removed */}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-2 md:gap-6 max-w-5xl mx-auto">
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href}>
             <Card 
@@ -124,12 +120,12 @@ export default function Home() {
             >
               {/* Mobile Layout (XS to SM screens) */}
               <div className="md:hidden">
-                <CardHeader className="flex flex-col items-center text-center p-3 pb-1">
-                  <feature.icon className={`h-7 w-7 ${feature.color} mb-1`} />
-                  <CardTitle className="text-[#1C3D5A] text-sm font-bold">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center px-2 pt-0 pb-3">
-                  <p className="text-gray-600 text-xs line-clamp-2">{feature.description}</p>
+                <div className="flex items-center p-2">
+                  <feature.icon className={`h-5 w-5 ${feature.color} flex-shrink-0`} />
+                  <CardTitle className="text-[#1C3D5A] text-xs font-bold ml-2">{feature.title}</CardTitle>
+                </div>
+                <CardContent className="text-center p-1 pb-2">
+                  <p className="text-gray-600 text-xs line-clamp-1">{feature.description}</p>
                 </CardContent>
               </div>
               
