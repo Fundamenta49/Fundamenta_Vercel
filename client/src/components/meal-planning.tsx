@@ -651,12 +651,15 @@ export default function MealPlanning() {
   
   return (
     <div className="container py-6">
-      <h1 className="text-2xl font-bold mb-4">Weekly Meal Planning</h1>
-      
-      <p className="text-gray-600 mb-6">
-        Planning your meals in advance helps save money, reduce food waste, and maintain a balanced diet.
-        Choose a plan type below to get started.
-      </p>
+      <div className="border-b pb-4 mb-6">
+        <h1 className="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-100">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-600 to-amber-600">Weekly Meal Planning</span>
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl">
+          Planning your meals in advance helps save money, reduce food waste, and maintain a balanced diet.
+          Choose a plan type below to get started.
+        </p>
+      </div>
       
       {/* Plan selection */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -689,26 +692,33 @@ export default function MealPlanning() {
       
       {/* Weekly meal plan display */}
       <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Weekly Meal Plan</h2>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={handleGenerateShoppingList}
-              disabled={loading || weeklyPlan.length === 0}
-            >
-              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
-              Generate Shopping List
-            </Button>
-            
-            <Button 
-              variant="outline"
-              onClick={() => generateMealPlan(selectedPlan)}
-              disabled={loading}
-            >
-              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
-              Refresh Plan
-            </Button>
+        <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-gray-800 dark:to-gray-900 border rounded-lg p-5 mb-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-orange-600 dark:text-orange-400">Weekly Meal Plan</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Personalized meals based on your preferences</p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button 
+                variant="secondary" 
+                className="w-full sm:w-auto"
+                onClick={handleGenerateShoppingList}
+                disabled={loading || weeklyPlan.length === 0}
+              >
+                {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
+                Generate Shopping List
+              </Button>
+              
+              <Button 
+                variant="default"
+                className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-none"
+                onClick={() => generateMealPlan(selectedPlan)}
+                disabled={loading}
+              >
+                {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                Refresh Plan
+              </Button>
+            </div>
           </div>
         </div>
         
