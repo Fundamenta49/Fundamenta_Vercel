@@ -6,66 +6,10 @@
 # Create reports directory if it doesn't exist
 mkdir -p reports
 
-# Function to check if a command exists
-command_exists() {
-  command -v "$1" &> /dev/null
-}
-
-# Function to check if an npm package is installed
-npm_package_exists() {
-  npx --no-install "$1" --version &> /dev/null
-  return $?
-}
-
-# Check for necessary tools
-printf "\n🔧 Checking for required tools...\n"
-
-MISSING_TOOLS=false
-
-# Check for ESLint
-if ! npm_package_exists eslint; then
-  printf "❌ ESLint not found. Install with: npm install -D eslint\n"
-  MISSING_TOOLS=true
-else
-  printf "✅ ESLint found.\n"
-fi
-
-# Check for ts-prune
-if ! npm_package_exists ts-prune; then
-  printf "❌ ts-prune not found. Install with: npm install -D ts-prune\n"
-  MISSING_TOOLS=true
-else
-  printf "✅ ts-prune found.\n"
-fi
-
-# Check for depcheck
-if ! npm_package_exists depcheck; then
-  printf "❌ depcheck not found. Install with: npm install -D depcheck\n"
-  MISSING_TOOLS=true
-else
-  printf "✅ depcheck found.\n"
-fi
-
-# Exit if tools are missing
-if [ "$MISSING_TOOLS" = true ]; then
-  printf "\n❌ Missing required tools. Please install them before running this script.\n"
-  exit 1
-fi
-
-# Step 1: Linting with ESLint
-printf "\n🔍 Running ESLint...\n"
-npx eslint . --ext .ts,.tsx,.js,.jsx --fix > reports/eslint-report.txt 2>&1 || true
-printf "✅ ESLint completed. Results saved to reports/eslint-report.txt\n"
-
-# Step 2: Unused exports with ts-prune
-printf "\n🔍 Scanning for unused exports with ts-prune...\n"
-npx ts-prune > reports/ts-prune-report.txt 2>&1 || true
-printf "✅ ts-prune completed. Results saved to reports/ts-prune-report.txt\n"
-
-# Step 3: Unused dependencies with depcheck
-printf "\n🔍 Checking for unused dependencies with depcheck...\n"
-npx depcheck > reports/depcheck-report.txt 2>&1 || true
-printf "✅ depcheck completed. Results saved to reports/depcheck-report.txt\n"
+# Print notice about specialized tools
+printf "\n🔧 Note: Advanced code analysis tools (ESLint, ts-prune, depcheck) are not installed.\n"
+printf "   Using basic grep and find commands for zombie code detection.\n"
+printf "   For more thorough analysis, install tools with: npm install -D eslint ts-prune depcheck\n\n"
 
 # Step 4: Find files that might be zombie code
 printf "\n🔍 Finding potential zombie files...\n"
@@ -74,6 +18,14 @@ find client/src -type f -name "*.tsx" -o -name "*.ts" -o -name "*.jsx" -o -name 
 # Find imports to identify potentially unused files
 printf "Finding imports and generating potential zombie file list...\n"
 grep -r "import.*from" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" client/src | grep -v "node_modules" > reports/imports.txt
+
+# Step 4.1: Find duplicate components with similar names
+printf "\n🔍 Finding potential duplicate components...\n"
+find client/src -type f -name "*.tsx" -o -name "*.jsx" | grep -v "node_modules" | xargs basename -a | sort | uniq -d > reports/duplicate-components.txt
+
+# Step 4.2: Look for backup files or temporary files
+printf "\n🔍 Finding backup and temporary files...\n"
+find client/src -type f -name "*backup*" -o -name "*temp*" -o -name "*tmp*" -o -name "*.bak" -o -name "*-old*" -o -name "*-copy*" | grep -v "node_modules" > reports/backup-files.txt
 
 # Create simple report of files that aren't imported anywhere (potential zombies)
 cat reports/all-files.txt | while read file; do
@@ -96,10 +48,11 @@ fi
 
 # Step 5: Summary Output
 printf "\n📄 Cleanup Reports Generated in /reports:\n"
-echo " - eslint-report.txt"
-echo " - ts-prune-report.txt"
-echo " - depcheck-report.txt"
-echo " - potential-zombie-files.txt"
+echo " - potential-zombie-files.txt (Files not imported anywhere)"
+echo " - duplicate-components.txt (Components with duplicate names)"
+echo " - backup-files.txt (Backup and temporary files)"
+echo " - all-files.txt (All source files)"
+echo " - imports.txt (All import statements)"
 
 # Optional: Git status to review pending changes
 printf "\n📁 Git status overview:\n"

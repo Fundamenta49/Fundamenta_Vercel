@@ -1,0 +1,10 @@
+client/src/components/closing-cost-calculator.tsx.bak
+client/src/components/auto-accident-pop-out.tsx.bak
+client/src/components/fitness-exercises.tsx.bak
+client/src/components/active-you-enhanced.tsx.bak
+client/src/components/closing-cost-calculator.backup.tsx
+client/src/components/tax-information-pop-out.tsx.bak
+client/src/components/robot-fundi-new-backup.tsx
+client/src/lib/temp-fix.js
+client/src/pages/learning/courses/template-page.tsx
+client/src/pages/learning/courses/cooking-basics.tsx.bak

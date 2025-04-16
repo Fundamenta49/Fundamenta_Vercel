@@ -1,0 +1,4 @@
+client/src/components/credit-building-skills-enhanced-part2.tsx
+client/src/components/credit-building-skills-enhanced-part3.tsx
+client/src/lib/nhtsa-service.ts
+client/src/types/speech-recognition.d.ts

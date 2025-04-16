@@ -1,0 +1,6 @@
+index.tsx
+life-skills.tsx
+login.tsx
+repair-assistant.tsx
+shopping-buddy.tsx
+yoga-progression.tsx
