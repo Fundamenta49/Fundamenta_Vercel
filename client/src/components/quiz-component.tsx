@@ -69,8 +69,20 @@ export default function QuizComponent({
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userAnswers, setUserAnswers] = useState<(number | null)[]>([]);
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [resumeDialogOpen, setResumeDialogOpen] = useState(false);
   
   const aiEventStore = useAIEventStore();
+  
+  // Initialize quiz progress hook for save/resume functionality
+  const {
+    saveProgress,
+    checkForSavedProgress,
+    isResuming,
+    isSaving,
+    savedQuiz
+  } = useQuizProgress(userId || 1, subject, pathwayId, moduleId);
   
   const generateAIQuiz = async () => {
     if (!onGenerateQuiz) {
@@ -91,6 +103,56 @@ export default function QuizComponent({
     } else {
       onGenerateQuiz();
     }
+  };
+  
+  // Check for saved progress and resume if available
+  useEffect(() => {
+    if (userId && questions.length > 0) {
+      const checkSavedQuiz = async () => {
+        // Try to load saved quiz
+        const savedProgress = await checkForSavedProgress();
+        if (savedProgress && !savedProgress.completed) {
+          setResumeDialogOpen(true);
+        }
+      };
+      
+      checkSavedQuiz();
+    }
+  }, [userId, questions]);
+  
+  // Resume quiz from saved progress
+  const handleResumeQuiz = () => {
+    if (savedQuiz) {
+      setCurrentQuestionIndex(savedQuiz.currentQuestionIndex);
+      setScore(savedQuiz.score);
+      setUserAnswers(savedQuiz.userAnswers);
+      setResumeDialogOpen(false);
+    }
+  };
+  
+  // Save current quiz progress
+  const handleSaveQuiz = async () => {
+    if (!userId) return;
+    
+    await saveProgress({
+      subject,
+      pathwayId,
+      moduleId,
+      difficulty,
+      currentQuestionIndex,
+      score,
+      questions: questions.map(q => ({
+        question: q.question,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation || ""
+      })),
+      userAnswers,
+      adaptiveLearning,
+      completed: false
+    });
+    
+    setSaveDialogOpen(false);
   };
   
   useEffect(() => {
@@ -124,8 +186,7 @@ export default function QuizComponent({
     }
   };
   
-  // Track user answers throughout the quiz
-  const [userAnswers, setUserAnswers] = useState<number[]>([]);
+  // Removed duplicate state
   
   const handleNextQuestion = () => {
     // Record the user's answer for this question
@@ -265,104 +326,159 @@ export default function QuizComponent({
     );
   }
   
+  // Resume Quiz Dialog
+  const ResumeQuizDialog = () => (
+    <AlertDialog open={resumeDialogOpen} onOpenChange={setResumeDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Resume your quiz?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You have a saved {subject} quiz in progress. Would you like to resume where you left off?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setResumeDialogOpen(false)}>Start New</AlertDialogCancel>
+          <AlertDialogAction onClick={handleResumeQuiz}>Resume Quiz</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+  
+  // Save Quiz Dialog
+  const SaveQuizDialog = () => (
+    <AlertDialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Save quiz progress?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You can save your progress and come back to finish this quiz later.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setSaveDialogOpen(false)}>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleSaveQuiz}>
+            {isSaving ? "Saving..." : "Save & Exit"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
   return (
-    <Card className={className}>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <div>
-            <CardTitle>Question {currentQuestionIndex + 1} of {questions.length}</CardTitle>
-            <CardDescription>
-              {subject} quiz
-            </CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} level
-              {adaptiveLearning && (
-                <span className="ml-1 inline-flex items-center">
-                  <span className="relative flex h-2 w-2 mr-1">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+    <>
+      <ResumeQuizDialog />
+      <SaveQuizDialog />
+      
+      <Card className={className}>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Question {currentQuestionIndex + 1} of {questions.length}</CardTitle>
+              <CardDescription>
+                {subject} quiz
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} level
+                {adaptiveLearning && (
+                  <span className="ml-1 inline-flex items-center">
+                    <span className="relative flex h-2 w-2 mr-1">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                    </span>
+                    <span className="text-xs font-medium">adaptive</span>
                   </span>
-                  <span className="text-xs font-medium">adaptive</span>
-                </span>
-              )}
-            </div>
-            <div className="text-sm bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
-              Score: {score}/{currentQuestionIndex}
+                )}
+              </div>
+              <div className="text-sm bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
+                Score: {score}/{currentQuestionIndex}
+              </div>
             </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4">
-          <Progress value={progress} className="h-2" />
-        </div>
-        
-        <div className="space-y-6">
-          <h3 className="font-semibold text-lg">{currentQuestion.question}</h3>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-4">
+            <Progress value={progress} className="h-2" />
+          </div>
           
-          <RadioGroup value={selectedOption?.toString()} onValueChange={(value) => handleOptionSelect(parseInt(value))}>
-            <div className="space-y-3">
-              {currentQuestion.options.map((option, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center space-x-2 p-3 rounded-md border ${
-                    isAnswerSubmitted
-                      ? index === currentQuestion.correctAnswer
-                        ? "bg-green-50 border-green-200"
-                        : selectedOption === index
-                        ? "bg-red-50 border-red-200"
-                        : "bg-white"
-                      : "hover:bg-slate-50"
-                  }`}
-                >
-                  <RadioGroupItem
-                    value={index.toString()}
-                    id={`option-${index}`}
-                    disabled={isAnswerSubmitted}
-                  />
-                  <Label
-                    htmlFor={`option-${index}`}
-                    className={`flex-1 cursor-pointer ${
-                      isAnswerSubmitted &&
-                      index === currentQuestion.correctAnswer &&
-                      "font-medium text-green-700"
+          <div className="space-y-6">
+            <h3 className="font-semibold text-lg">{currentQuestion.question}</h3>
+            
+            <RadioGroup value={selectedOption?.toString()} onValueChange={(value) => handleOptionSelect(parseInt(value))}>
+              <div className="space-y-3">
+                {currentQuestion.options.map((option, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center space-x-2 p-3 rounded-md border ${
+                      isAnswerSubmitted
+                        ? index === currentQuestion.correctAnswer
+                          ? "bg-green-50 border-green-200"
+                          : selectedOption === index
+                          ? "bg-red-50 border-red-200"
+                          : "bg-white"
+                        : "hover:bg-slate-50"
                     }`}
                   >
-                    {option}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </RadioGroup>
-          
-          {showExplanation && (
-            <div className="mt-6 p-4 bg-blue-50 rounded-md border border-blue-100">
-              <h4 className="font-semibold mb-2">Explanation:</h4>
-              <p>{currentQuestion.explanation}</p>
-            </div>
+                    <RadioGroupItem
+                      value={index.toString()}
+                      id={`option-${index}`}
+                      disabled={isAnswerSubmitted}
+                    />
+                    <Label
+                      htmlFor={`option-${index}`}
+                      className={`flex-1 cursor-pointer ${
+                        isAnswerSubmitted &&
+                        index === currentQuestion.correctAnswer &&
+                        "font-medium text-green-700"
+                      }`}
+                    >
+                      {option}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </RadioGroup>
+            
+            {showExplanation && (
+              <div className="mt-6 p-4 bg-blue-50 rounded-md border border-blue-100">
+                <h4 className="font-semibold mb-2">Explanation:</h4>
+                <p>{currentQuestion.explanation}</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between flex-wrap gap-2">
+          {userId && (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setSaveDialogOpen(true)}
+              className="ml-auto mr-2"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              Save Progress
+            </Button>
           )}
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        {!isAnswerSubmitted ? (
-          <Button
-            onClick={handleSubmitAnswer}
-            disabled={selectedOption === null}
-            className="w-full"
-          >
-            Submit Answer
-          </Button>
-        ) : (
-          <Button
-            onClick={handleNextQuestion}
-            className="w-full"
-          >
-            {currentQuestionIndex < questions.length - 1 ? "Next Question" : "See Results"}
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+          
+          {!isAnswerSubmitted ? (
+            <Button
+              onClick={handleSubmitAnswer}
+              disabled={selectedOption === null}
+              className="w-full md:w-auto"
+            >
+              Submit Answer
+            </Button>
+          ) : (
+            <Button
+              onClick={handleNextQuestion}
+              className="w-full md:w-auto"
+            >
+              {currentQuestionIndex < questions.length - 1 ? "Next Question" : "See Results"}
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+    </>
   );
 }

@@ -58,7 +58,7 @@ export function useQuizProgress(userId: number, subject: string, pathwayId?: str
         url += `?${params.toString()}`;
       }
       
-      return apiRequest(url);
+      return apiRequest(url, 'GET');
     },
     enabled: false, // Don't run automatically, we'll manually invoke it
     retry: 1
@@ -149,7 +149,7 @@ export function useSavedQuizzes(userId: number) {
   return useQuery({
     queryKey: ['/api/learning/quiz-progress', userId],
     queryFn: async () => {
-      return apiRequest(`/api/learning/quiz-progress/${userId}`);
+      return apiRequest(`/api/learning/quiz-progress/${userId}`, 'GET');
     },
     enabled: !!userId, // Only run if userId is provided
     retry: 1
