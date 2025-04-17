@@ -137,6 +137,20 @@ export async function fetchLearningAnalytics(userId: number): Promise<LearningAn
 }
 
 /**
+ * Clear all learning progress for a user
+ */
+export async function clearLearningProgress(userId: number): Promise<boolean> {
+  try {
+    const response = await apiRequest('DELETE', `/api/learning/clear-progress/${userId}`);
+    const result = await response.json();
+    return result.success;
+  } catch (error) {
+    console.error('Error clearing learning progress:', error);
+    return false;
+  }
+}
+
+/**
  * Calculate overall progress percentage for a pathway
  */
 export function calculatePathwayProgress(
