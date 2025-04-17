@@ -33,6 +33,36 @@ const learningPathways = [
     ]
   },
   {
+    id: "cognitive-skills",
+    title: "Cognitive Skills",
+    description: "Develop analytical thinking and decision-making abilities",
+    category: "learning",
+    progress: 40,
+    icon: <Target className="h-5 w-5" />,
+    modules: [
+      { id: "critical-thinking", title: "Critical Thinking", path: "/learning/courses/critical-thinking", complete: true },
+      { id: "decision-making", title: "Decision Making", path: "/learning/courses/decision-making", complete: true },
+      { id: "time-management", title: "Time Management", path: "/learning/courses/time-management", complete: false },
+      { id: "conflict-resolution", title: "Conflict Resolution", path: "/learning/courses/conflict-resolution", complete: false },
+      { id: "coping-failure", title: "Coping With Failure", path: "/learning/courses/coping-with-failure", complete: false },
+      { id: "positive-habits", title: "Forming Positive Habits", path: "/learning/courses/forming-positive-habits", complete: false },
+    ]
+  },
+  {
+    id: "communication-skills",
+    title: "Communication Skills",
+    description: "Improve your ability to communicate effectively",
+    category: "learning",
+    progress: 25,
+    icon: <BookOpen className="h-5 w-5" />,
+    modules: [
+      { id: "conversation-basics", title: "Conversation Skills", path: "/learning/courses/conversation-skills", complete: true },
+      { id: "active-listening", title: "Active Listening", path: "/learning/courses/active-listening", complete: false },
+      { id: "public-speaking", title: "Public Speaking", path: "/learning/courses/public-speaking", complete: false },
+      { id: "written-communication", title: "Written Communication", path: "/learning/courses/written-communication", complete: false },
+    ]
+  },
+  {
     id: "cooking-skills",
     title: "Cooking Skills",
     description: "Learn culinary techniques and meal preparation",
