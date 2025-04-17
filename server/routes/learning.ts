@@ -3,6 +3,9 @@ import OpenAI from 'openai';
 import { QuizQuestion } from '../../client/src/components/quiz-component';
 import { Resource } from '../../client/src/components/resource-links';
 import { generateQuiz, gradeQuiz } from '../services/quiz-service';
+import { db } from '../db';
+import { and, eq, desc } from 'drizzle-orm';
+import { learningProgress } from '../../shared/schema';
 
 const router = Router();
 
@@ -219,15 +222,87 @@ router.post('/submit-quiz-results', async (req: Request, res: Response) => {
 /**
  * Track user's learning progress for personalized recommendations
  */
-router.post('/track-progress', (req: Request, res: Response) => {
+router.post('/track-progress', async (req: Request, res: Response) => {
   try {
-    // Here you would store the user's learning activity in a database
-    // For now, we'll just log it and return success
-    console.log('Learning progress tracked:', req.body);
+    const { userId, pathwayId, moduleId, completed } = req.body;
+    
+    if (!userId || !pathwayId || !moduleId) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: userId, pathwayId, moduleId' 
+      });
+    }
+    
+    // First, check if a record already exists
+    const existingProgress = await db.query.learningProgress.findFirst({
+      where: and(
+        eq(learningProgress.userId, userId),
+        eq(learningProgress.pathwayId, pathwayId),
+        eq(learningProgress.moduleId, moduleId)
+      )
+    });
+    
+    if (existingProgress) {
+      // Update existing record
+      await db.update(learningProgress)
+        .set({ 
+          completed,
+          completedAt: completed ? new Date() : null,
+          lastAccessedAt: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(learningProgress.id, existingProgress.id));
+      
+      console.log(`Updated progress for user ${userId}, pathway ${pathwayId}, module ${moduleId}`);
+    } else {
+      // Create new record
+      await db.insert(learningProgress).values({
+        userId,
+        pathwayId,
+        moduleId,
+        completed,
+        completedAt: completed ? new Date() : null,
+        lastAccessedAt: new Date()
+      });
+      
+      console.log(`Created new progress for user ${userId}, pathway ${pathwayId}, module ${moduleId}`);
+    }
+    
     res.json({ success: true });
   } catch (error) {
     console.error('Error tracking progress:', error);
     res.status(500).json({ error: 'Failed to track progress' });
+  }
+});
+
+/**
+ * Fetch user's learning progress for all pathways
+ */
+router.get('/progress/:userId', async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+    
+    const progress = await db.query.learningProgress.findMany({
+      where: eq(learningProgress.userId, userId),
+      orderBy: [desc(learningProgress.lastAccessedAt)]
+    });
+    
+    // Group by pathway for easier frontend consumption
+    const groupedProgress = progress.reduce((acc, item) => {
+      if (!acc[item.pathwayId]) {
+        acc[item.pathwayId] = [];
+      }
+      acc[item.pathwayId].push(item);
+      return acc;
+    }, {} as Record<string, typeof progress[0][]>);
+    
+    res.json(groupedProgress);
+  } catch (error) {
+    console.error('Error fetching progress:', error);
+    res.status(500).json({ error: 'Failed to fetch learning progress' });
   }
 });
 
