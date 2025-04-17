@@ -5,7 +5,7 @@ import { Resource } from '../../client/src/components/resource-links';
 import { generateQuiz, gradeQuiz } from '../services/quiz-service';
 import { db } from '../db';
 import { and, eq, desc } from 'drizzle-orm';
-import { learningProgress } from '../../shared/schema';
+import { learningProgress, quizProgress, insertQuizProgressSchema } from '../../shared/schema';
 
 const router = Router();
 
@@ -586,6 +586,150 @@ router.get('/analytics/:userId', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error generating analytics:', error);
     res.status(500).json({ error: 'Failed to generate learning analytics' });
+  }
+});
+
+/**
+ * Save in-progress quiz state for resuming later
+ */
+router.post('/save-quiz-progress', async (req: Request, res: Response) => {
+  try {
+    // Validate the input
+    const result = insertQuizProgressSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ 
+        error: 'Invalid quiz progress data', 
+        details: result.error.format() 
+      });
+    }
+
+    const quizData = result.data;
+    
+    // Check if a record already exists for this user, pathway, and module
+    const existingProgress = await db.query.quizProgress.findFirst({
+      where: and(
+        eq(quizProgress.userId, quizData.userId),
+        eq(quizProgress.subject, quizData.subject),
+        quizData.pathwayId ? eq(quizProgress.pathwayId, quizData.pathwayId) : undefined,
+        quizData.moduleId ? eq(quizProgress.moduleId, quizData.moduleId) : undefined
+      )
+    });
+    
+    const now = new Date();
+    
+    if (existingProgress) {
+      // Update existing record
+      await db
+        .update(quizProgress)
+        .set({ 
+          ...quizData,
+          lastAccessedAt: now,
+          updatedAt: now
+        })
+        .where(eq(quizProgress.id, existingProgress.id));
+      
+      console.log(`Updated quiz progress for user ${quizData.userId}, subject ${quizData.subject}`);
+    } else {
+      // Create new record
+      await db.insert(quizProgress).values({
+        ...quizData,
+        lastAccessedAt: now
+      });
+      
+      console.log(`Created new quiz progress for user ${quizData.userId}, subject ${quizData.subject}`);
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error saving quiz progress:', error);
+    res.status(500).json({ error: 'Failed to save quiz progress' });
+  }
+});
+
+/**
+ * Get saved quiz progress for resuming
+ */
+router.get('/quiz-progress/:userId/:subject', async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    const { subject } = req.params;
+    const { pathwayId, moduleId } = req.query;
+    
+    if (isNaN(userId) || !subject) {
+      return res.status(400).json({ error: 'Invalid user ID or subject' });
+    }
+    
+    // Query conditions
+    const conditions = [
+      eq(quizProgress.userId, userId),
+      eq(quizProgress.subject, subject)
+    ];
+    
+    // Add optional pathway and module filters if provided
+    if (pathwayId) {
+      conditions.push(eq(quizProgress.pathwayId, pathwayId as string));
+    }
+    
+    if (moduleId) {
+      conditions.push(eq(quizProgress.moduleId, moduleId as string));
+    }
+    
+    // Get the most recent quiz progress
+    const progress = await db.query.quizProgress.findFirst({
+      where: and(...conditions),
+      orderBy: [desc(quizProgress.lastAccessedAt)]
+    });
+    
+    if (!progress) {
+      return res.status(404).json({ error: 'No saved quiz progress found' });
+    }
+    
+    // Update the lastAccessedAt timestamp
+    await db
+      .update(quizProgress)
+      .set({ lastAccessedAt: new Date() })
+      .where(eq(quizProgress.id, progress.id));
+      
+    res.json(progress);
+  } catch (error) {
+    console.error('Error fetching quiz progress:', error);
+    res.status(500).json({ error: 'Failed to fetch quiz progress' });
+  }
+});
+
+/**
+ * List all saved quizzes for a user
+ */
+router.get('/quiz-progress/:userId', async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+    
+    // Get all saved quizzes for the user
+    const quizzes = await db.query.quizProgress.findMany({
+      where: and(
+        eq(quizProgress.userId, userId),
+        eq(quizProgress.completed, false)  // Only show incomplete quizzes
+      ),
+      orderBy: [desc(quizProgress.lastAccessedAt)]
+    });
+    
+    // Group by subject for easier frontend consumption
+    const groupedQuizzes = quizzes.reduce((acc, item) => {
+      if (!acc[item.subject]) {
+        acc[item.subject] = [];
+      }
+      acc[item.subject].push(item);
+      return acc;
+    }, {} as Record<string, typeof quizzes[0][]>);
+    
+    res.json(groupedQuizzes);
+  } catch (error) {
+    console.error('Error fetching saved quizzes:', error);
+    res.status(500).json({ error: 'Failed to fetch saved quizzes' });
   }
 });
 

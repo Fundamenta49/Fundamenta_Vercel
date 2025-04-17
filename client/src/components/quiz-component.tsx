@@ -4,8 +4,20 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Trophy, RefreshCw, ThumbsUp } from "lucide-react";
+import { Trophy, RefreshCw, ThumbsUp, Save, RotateCcw, PauseCircle } from "lucide-react";
 import { useAIEventStore } from "@/lib/ai-event-system";
+import { useQuizProgress } from "@/hooks/use-quiz-progress";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export interface QuizQuestion {
   id: number;
