@@ -517,6 +517,50 @@ export default function Arcade() {
 
         {/* Learning Tab */}
         <TabsContent value="learning" className="space-y-6">
+          {/* Analytics Dashboard Card - New addition */}
+          <Card className="bg-blue-50 border-blue-200">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle className="text-lg flex items-center">
+                    <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
+                    Learning Analytics Dashboard
+                  </CardTitle>
+                  <CardDescription>
+                    Track your progress across learning frameworks and competencies
+                  </CardDescription>
+                </div>
+                <Button 
+                  onClick={() => navigate('/learning/analytics')}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  View Analytics
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 bg-white rounded-lg border">
+                  <h4 className="text-sm font-medium mb-2 flex items-center">
+                    <Brain className="h-4 w-4 mr-1 text-purple-500" />
+                    SEL Framework
+                  </h4>
+                  <Progress value={65} className="h-2 mb-1" />
+                  <p className="text-xs text-gray-500">Track social-emotional learning competencies</p>
+                </div>
+                <div className="p-3 bg-white rounded-lg border">
+                  <h4 className="text-sm font-medium mb-2 flex items-center">
+                    <Users className="h-4 w-4 mr-1 text-teal-500" />
+                    LIFE Framework
+                  </h4>
+                  <Progress value={42} className="h-2 mb-1" />
+                  <p className="text-xs text-gray-500">Track life skill domains and progress</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
