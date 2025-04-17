@@ -1,15 +1,24 @@
 import React from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, BarChart3, Calendar, CheckCircle, Clock, Rocket, TrendingUp } from "lucide-react";
+import { ArrowLeft, BarChart3, Calendar, CheckCircle, Clock, Rocket, TrendingUp, Badge, BookOpen, Brain, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
-import { fetchLearningAnalytics, LearningAnalytics } from "@/lib/learning-progress";
+import { 
+  fetchLearningAnalytics, 
+  LearningAnalytics, 
+  FrameworkProgress, 
+  SELCompetency, 
+  LIFEDomain, 
+  PathwayProgressStats,
+  ActivityTimelineItem
+} from "@/lib/learning-progress";
 import { useToast } from "@/hooks/use-toast";
 import { learningPathways } from "./pathways-data";
+import { formatSELCompetency, formatLIFEDomain, getSELCompetencyColor, getLIFEDomainColor } from "@/lib/framework-constants";
 
 // Helper function to get a readable date
 function formatDate(dateString: string): string {
@@ -84,17 +93,12 @@ export default function LearningAnalyticsDashboard() {
   const userId = 1;
   
   // Fetch analytics data
-  const { data: analytics, isLoading } = useQuery<LearningAnalytics>({
+  const { data: analytics, isLoading } = useQuery({
     queryKey: [`/api/learning/analytics/${userId}`],
     queryFn: () => fetchLearningAnalytics(userId),
-    onError: (error) => {
-      console.error("Error loading analytics:", error);
-      toast({
-        title: "Error loading analytics",
-        description: "There was a problem loading your learning analytics.",
-        variant: "destructive"
-      });
-    }
+    // Add proper typings to prevent errors
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
   
   return (
@@ -141,6 +145,12 @@ export default function LearningAnalyticsDashboard() {
             className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
           >
             Activity
+          </TabsTrigger>
+          <TabsTrigger 
+            value="frameworks" 
+            className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
+          >
+            Frameworks
           </TabsTrigger>
         </TabsList>
         
@@ -327,6 +337,140 @@ export default function LearningAnalyticsDashboard() {
             <Card>
               <CardContent className="py-8 text-center">
                 <p className="text-muted-foreground">No activity data available yet. Start completing modules to see your activity.</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="frameworks" className="mt-6">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+              <p className="text-muted-foreground">Loading framework data...</p>
+            </div>
+          ) : analytics && analytics.frameworkProgress ? (
+            <div className="space-y-6">
+              {/* SEL Framework Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center">
+                    <Brain className="h-5 w-5 mr-2 text-purple-500" />
+                    Social-Emotional Learning (SEL)
+                  </CardTitle>
+                  <CardDescription>
+                    Track your progress across SEL competencies
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {Object.entries(analytics.frameworkProgress.sel).map(([competency, progress]) => (
+                      <div key={competency} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <span className={`px-2 py-1 rounded-md text-xs mr-2 ${getSELCompetencyColor(competency as SELCompetency)}`}>
+                              {formatSELCompetency(competency as SELCompetency)}
+                            </span>
+                          </div>
+                          <span className="text-sm font-medium">{progress}%</span>
+                        </div>
+                        <Progress value={progress} className="h-2" />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Project LIFE Framework Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center">
+                    <Users className="h-5 w-5 mr-2 text-teal-500" />
+                    Project LIFE Framework
+                  </CardTitle>
+                  <CardDescription>
+                    Track your progress across life skill domains
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {Object.entries(analytics.frameworkProgress.projectLife).map(([domain, progress]) => (
+                      <div key={domain} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <span className={`px-2 py-1 rounded-md text-xs mr-2 ${getLIFEDomainColor(domain as LIFEDomain)}`}>
+                              {formatLIFEDomain(domain as LIFEDomain)}
+                            </span>
+                          </div>
+                          <span className="text-sm font-medium">{progress}%</span>
+                        </div>
+                        <Progress value={progress} className="h-2" />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Framework Insights Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center">
+                    <BookOpen className="h-5 w-5 mr-2 text-blue-500" />
+                    Personalized Learning Recommendations
+                  </CardTitle>
+                  <CardDescription>
+                    Based on your progress and framework gaps
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <p className="text-sm">
+                      Our analysis suggests you might benefit from focusing on these areas to improve your skills balance:
+                    </p>
+                    
+                    <div className="mt-4 space-y-2">
+                      <h3 className="text-sm font-medium">Recommended SEL Focus Areas:</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.entries(analytics.frameworkProgress.sel)
+                          .sort(([, a], [, b]) => a - b)
+                          .slice(0, 2)
+                          .map(([competency]) => (
+                            <span key={competency} className={`px-2 py-1 rounded-md text-xs ${getSELCompetencyColor(competency as SELCompetency)}`}>
+                              {formatSELCompetency(competency as SELCompetency)}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 space-y-2">
+                      <h3 className="text-sm font-medium">Recommended Life Skills Focus Areas:</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.entries(analytics.frameworkProgress.projectLife)
+                          .sort(([, a], [, b]) => a - b)
+                          .slice(0, 2)
+                          .map(([domain]) => (
+                            <span key={domain} className={`px-2 py-1 rounded-md text-xs ${getLIFEDomainColor(domain as LIFEDomain)}`}>
+                              {formatLIFEDomain(domain as LIFEDomain)}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <Button 
+                        onClick={() => navigate('/learning/pathways')}
+                        className="w-full"
+                      >
+                        Find Relevant Learning Pathways
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-8 text-center">
+                <p className="text-muted-foreground">Framework progress data not available yet. Start completing modules to see your progress across educational frameworks.</p>
               </CardContent>
             </Card>
           )}
