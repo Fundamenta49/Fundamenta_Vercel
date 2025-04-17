@@ -9,58 +9,58 @@ Implementing family plans is projected to increase total revenue by approximatel
 - **Total User Accounts:** 1,000-3,000
 - **Tier Distribution:**
   - Free: 96.5%
-  - Bronze: 1.8%
-  - Silver: 0.7%
-  - Gold: 0.2%
+  - Personal Growth: 1.8%
+  - Life Navigator: 0.7%
+  - Fundamenta Complete: 0.2%
   - Family Basic: 0.5%
   - Family Plus: 0.2%
   - Family Premium: 0.1%
 - **Monthly Revenue:**
-  - Bronze (18-54 users × $7.99): $144-$431
-  - Silver (7-21 users × $14.99): $105-$315
-  - Gold (2-6 users × $29.99): $60-$180
-  - Family Basic (5-15 users × $12.99): $65-$195
-  - Family Plus (2-6 users × $19.99): $40-$120
-  - Family Premium (1-3 users × $29.99): $30-$90
-  - **Total:** $444-$1,331/month
+  - Personal Growth (18-54 users × $5.99): $108-$323
+  - Life Navigator (7-21 users × $12.99): $91-$273
+  - Fundamenta Complete (2-6 users × $24.99): $50-$150
+  - Family Basic (5-15 users × $16.99): $85-$255
+  - Family Plus (2-6 users × $27.99): $56-$168
+  - Family Premium (1-3 users × $39.99): $40-$120
+  - **Total:** $430-$1,289/month
 
 ### Month 4-6: Early Growth
 - **Total User Accounts:** 5,000-10,000
 - **Tier Distribution:**
   - Free: 95%
-  - Bronze: 2.2%
-  - Silver: 1.0%
-  - Gold: 0.3%
+  - Personal Growth: 2.2%
+  - Life Navigator: 1.0%
+  - Fundamenta Complete: 0.3%
   - Family Basic: 0.8%
   - Family Plus: 0.4%
   - Family Premium: 0.3%
 - **Monthly Revenue:**
-  - Bronze (110-220 users × $7.99): $879-$1,758
-  - Silver (50-100 users × $14.99): $750-$1,499
-  - Gold (15-30 users × $29.99): $450-$900
-  - Family Basic (40-80 users × $12.99): $520-$1,039
-  - Family Plus (20-40 users × $19.99): $400-$800
-  - Family Premium (15-30 users × $29.99): $450-$900
-  - **Total:** $3,449-$6,896/month
+  - Personal Growth (110-220 users × $5.99): $659-$1,318
+  - Life Navigator (50-100 users × $12.99): $650-$1,299
+  - Fundamenta Complete (15-30 users × $24.99): $375-$750
+  - Family Basic (40-80 users × $16.99): $680-$1,359
+  - Family Plus (20-40 users × $27.99): $560-$1,120
+  - Family Premium (15-30 users × $39.99): $600-$1,200
+  - **Total:** $3,524-$7,046/month
 
 ### Month 7-12: Momentum Building
 - **Total User Accounts:** 15,000-25,000
 - **Tier Distribution:**
   - Free: 93%
-  - Bronze: 2.5%
-  - Silver: 1.2%
-  - Gold: 0.4%
+  - Personal Growth: 2.5%
+  - Life Navigator: 1.2%
+  - Fundamenta Complete: 0.4%
   - Family Basic: 1.5%
   - Family Plus: 0.8%
   - Family Premium: 0.6%
 - **Monthly Revenue:**
-  - Bronze (375-625 users × $7.99): $2,996-$4,994
-  - Silver (180-300 users × $14.99): $2,698-$4,497
-  - Gold (60-100 users × $29.99): $1,799-$2,999
-  - Family Basic (225-375 users × $12.99): $2,923-$4,871
-  - Family Plus (120-200 users × $19.99): $2,399-$3,998
-  - Family Premium (90-150 users × $29.99): $2,699-$4,499
-  - **Total:** $15,514-$25,858/month
+  - Personal Growth (375-625 users × $5.99): $2,246-$3,744
+  - Life Navigator (180-300 users × $12.99): $2,338-$3,897
+  - Fundamenta Complete (60-100 users × $24.99): $1,499-$2,499
+  - Family Basic (225-375 users × $16.99): $3,823-$6,371
+  - Family Plus (120-200 users × $27.99): $3,359-$5,598
+  - Family Premium (90-150 users × $39.99): $3,599-$5,999
+  - **Total:** $16,864-$28,108/month
 
 **Year 1 Total Revenue: $120,000-$210,000**
 (Compared to $75,000-$130,000 without family plans)
@@ -70,22 +70,22 @@ Implementing family plans is projected to increase total revenue by approximatel
 - **Total User Accounts:** 40,000-60,000
 - **Tier Distribution:**
   - Free: 90%
-  - Bronze: 3.0%
-  - Silver: 1.5%
-  - Gold: 0.8%
+  - Personal Growth: 3.0%
+  - Life Navigator: 1.5%
+  - Fundamenta Complete: 0.8%
   - Family Basic: 2.5%
   - Family Plus: 1.4%
   - Family Premium: 0.8%
 - **Monthly Revenue:**
-  - Bronze (1,200-1,800 users × $7.99): $9,588-$14,382
-  - Silver (600-900 users × $14.99): $8,994-$13,491
-  - Gold (320-480 users × $29.99): $9,597-$14,395
-  - Family Basic (1,000-1,500 users × $12.99): $12,990-$19,485
-  - Family Plus (560-840 users × $19.99): $11,194-$16,792
-  - Family Premium (320-480 users × $29.99): $9,597-$14,395
-  - **Total:** $61,960-$92,940/month
+  - Personal Growth (1,200-1,800 users × $5.99): $7,188-$10,782
+  - Life Navigator (600-900 users × $12.99): $7,794-$11,691
+  - Fundamenta Complete (320-480 users × $24.99): $7,997-$11,995
+  - Family Basic (1,000-1,500 users × $16.99): $16,990-$25,485
+  - Family Plus (560-840 users × $27.99): $15,674-$23,512
+  - Family Premium (320-480 users × $39.99): $12,797-$19,195
+  - **Total:** $68,440-$102,660/month
 
-**Year 2 Total Revenue: $743,520-$1,115,280**
+**Year 2 Total Revenue: $821,280-$1,231,920**
 (Compared to $441,264-$661,896 without family plans)
 
 ## Year 3: Maturity and Expansion
@@ -93,22 +93,22 @@ Implementing family plans is projected to increase total revenue by approximatel
 - **Total User Accounts:** 80,000-120,000
 - **Tier Distribution:**
   - Free: 87%
-  - Bronze: 3.5%
-  - Silver: 2.0%
-  - Gold: 1.0%
+  - Personal Growth: 3.5%
+  - Life Navigator: 2.0%
+  - Fundamenta Complete: 1.0%
   - Family Basic: 3.5%
   - Family Plus: 2.0%
   - Family Premium: 1.0%
 - **Monthly Revenue:**
-  - Bronze (2,800-4,200 users × $7.99): $22,372-$33,558
-  - Silver (1,600-2,400 users × $14.99): $23,984-$35,976
-  - Gold (800-1,200 users × $29.99): $23,992-$35,988
-  - Family Basic (2,800-4,200 users × $12.99): $36,372-$54,558
-  - Family Plus (1,600-2,400 users × $19.99): $31,984-$47,976
-  - Family Premium (800-1,200 users × $29.99): $23,992-$35,988
-  - **Total:** $162,696-$244,044/month
+  - Personal Growth (2,800-4,200 users × $5.99): $16,772-$25,158
+  - Life Navigator (1,600-2,400 users × $12.99): $20,784-$31,176
+  - Fundamenta Complete (800-1,200 users × $24.99): $19,992-$29,988
+  - Family Basic (2,800-4,200 users × $16.99): $47,572-$71,358
+  - Family Plus (1,600-2,400 users × $27.99): $44,784-$67,176
+  - Family Premium (800-1,200 users × $39.99): $31,992-$47,988
+  - **Total:** $181,896-$272,844/month
 
-**Year 3 Total Revenue: $1,952,352-$2,928,528**
+**Year 3 Total Revenue: $2,182,752-$3,274,128**
 (Compared to $992,832-$1,489,248 without family plans)
 
 ## Educational Market Opportunity (Year 3+)

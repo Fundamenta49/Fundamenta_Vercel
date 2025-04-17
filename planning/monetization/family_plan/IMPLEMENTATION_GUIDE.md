@@ -7,9 +7,9 @@ This document outlines the strategy for implementing family plans within Fundame
 
 | Plan Name | Price (Monthly) | Price (Yearly) | Features |
 |-----------|----------------|----------------|----------|
-| Family Basic | $12.99 | $129.90 ($10.83/mo) | 1 parent + 1 child |
-| Family Plus | $19.99 | $199.90 ($16.66/mo) | 1 parent + up to 3 children |
-| Family Premium | $29.99 | $299.90 ($24.99/mo) | 2 parents + up to 5 children |
+| Family Basic | $16.99 | $169.90 ($14.16/mo) | 1 parent + 1 child |
+| Family Plus | $27.99 | $279.90 ($23.33/mo) | 1 parent + up to 3 children |
+| Family Premium | $39.99 | $399.90 ($33.33/mo) | 2 parents + up to 5 children |
 
 ## Technical Requirements
 
