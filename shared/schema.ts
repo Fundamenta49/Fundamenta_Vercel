@@ -3,6 +3,40 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { and, eq, desc } from "drizzle-orm";
 
+// Educational frameworks constants
+
+// SEL (Social-Emotional Learning) Framework - CASEL competencies
+export const selCompetencies = {
+  SELF_AWARENESS: "self_awareness",
+  SELF_MANAGEMENT: "self_management",
+  SOCIAL_AWARENESS: "social_awareness",
+  RELATIONSHIP_SKILLS: "relationship_skills",
+  RESPONSIBLE_DECISION_MAKING: "responsible_decision_making",
+} as const;
+
+export type SELCompetency = keyof typeof selCompetencies;
+
+// Project LIFE Framework - Chafee Foster Care Independence Program domains
+export const lifeDomains = {
+  EDUCATION_TRAINING: "education_training",
+  EMPLOYMENT: "employment", 
+  FINANCIAL_LITERACY: "financial_literacy",
+  HOUSING: "housing",
+  HEALTH: "health",
+  PERSONAL_SOCIAL: "personal_social",
+} as const;
+
+export type LIFEDomain = keyof typeof lifeDomains;
+
+// Skill levels for content classification
+export const skillLevels = {
+  FOUNDATIONAL: "foundational",
+  INTERMEDIATE: "intermediate",
+  ADVANCED: "advanced",
+} as const;
+
+export type SkillLevel = keyof typeof skillLevels;
+
 // User Table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -121,6 +155,17 @@ export const trainingPlans = pgTable("training_plans", {
   durationWeeks: integer("duration_weeks").notNull(),
   difficulty: text("difficulty").notNull(), // "BEGINNER", "INTERMEDIATE", "ADVANCED"
   planData: text("plan_data").notNull(), // JSON stringified training schedule
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Learning Modules Framework Tags Table
+export const learningModuleTags = pgTable("learning_module_tags", {
+  id: serial("id").primaryKey(),
+  moduleId: text("module_id").notNull(),
+  selCompetency: text("sel_competency"),  // Reference to SEL competency
+  lifeDomain: text("life_domain"),        // Reference to Project LIFE domain
+  skillLevel: text("skill_level"),        // Skill level for the module
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
