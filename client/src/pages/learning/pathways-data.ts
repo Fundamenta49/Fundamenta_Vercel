@@ -4,6 +4,7 @@ import { LearningPathway } from "@/lib/learning-progress";
 
 // Sample learning pathways data
 export const learningPathways: LearningPathway[] = [
+  // Foundation Pathways (No prerequisites)
   {
     id: "financial-literacy",
     title: "Financial Literacy",
@@ -48,6 +49,8 @@ export const learningPathways: LearningPathway[] = [
       { id: "written-communication", title: "Written Communication", path: "/learning/courses/written-communication", complete: false },
     ]
   },
+  
+  // Intermediate Pathways (Single prerequisite)
   {
     id: "cooking-skills",
     title: "Cooking Skills",
@@ -55,6 +58,7 @@ export const learningPathways: LearningPathway[] = [
     category: "learning",
     progress: 75,
     icon: React.createElement(BookOpen, { className: "h-5 w-5" }),
+    prerequisites: ["financial-literacy"], // Managing food budgets requires financial literacy
     modules: [
       { id: "cooking-basics", title: "Cooking Basics", path: "/learning/courses/cooking-basics", complete: true },
       { id: "meal-planning", title: "Meal Planning", path: "/wellness/meal-planning", complete: true },
@@ -71,25 +75,11 @@ export const learningPathways: LearningPathway[] = [
     category: "learning",
     progress: 33,
     icon: React.createElement(Target, { className: "h-5 w-5" }),
+    prerequisites: ["financial-literacy"], // Home maintenance involves budgeting for repairs
     modules: [
       { id: "home-basics", title: "Home Maintenance Basics", path: "/learning/courses/home-maintenance", complete: true },
       { id: "repair-assistant", title: "Repair Assistant", path: "/learning/courses/repair-assistant", complete: false },
       { id: "home-safety", title: "Home Safety", path: "/emergency/home-safety", complete: false },
-    ]
-  },
-  {
-    id: "professional-skills",
-    title: "Professional Skills",
-    description: "Develop workplace and career advancement skills",
-    category: "career",
-    progress: 40,
-    icon: React.createElement(Target, { className: "h-5 w-5" }),
-    modules: [
-      { id: "conflict-resolution", title: "Conflict Resolution", path: "/learning/courses/conflict-resolution", complete: true },
-      { id: "time-management", title: "Time Management", path: "/learning/courses/time-management", complete: true },
-      { id: "conversation", title: "Conversation Skills", path: "/learning/courses/conversation-skills", complete: false },
-      { id: "decision-making", title: "Decision Making", path: "/learning/courses/decision-making", complete: false },
-      { id: "coping-failure", title: "Coping with Failure", path: "/learning/courses/coping-with-failure", complete: false },
     ]
   },
   {
@@ -99,6 +89,7 @@ export const learningPathways: LearningPathway[] = [
     category: "wellness",
     progress: 20,
     icon: React.createElement(Flame, { className: "h-5 w-5" }),
+    prerequisites: ["cognitive-skills"], // Mental wellness builds on cognitive skills
     modules: [
       { id: "health-wellness", title: "Health & Wellness", path: "/learning/courses/health-wellness", complete: true },
       { id: "meditation", title: "Meditation Basics", path: "/wellness/meditation", complete: false },
@@ -114,6 +105,7 @@ export const learningPathways: LearningPathway[] = [
     category: "fitness",
     progress: 15,
     icon: React.createElement(Dumbbell, { className: "h-5 w-5" }),
+    prerequisites: ["wellness-routine"], // Fitness follows general wellness
     modules: [
       { id: "fitness-basics", title: "Fitness Fundamentals", path: "/active/basics", complete: true },
       { id: "cardio", title: "Cardio Training", path: "/active/cardio", complete: false },
@@ -123,6 +115,24 @@ export const learningPathways: LearningPathway[] = [
       { id: "recovery", title: "Rest & Recovery", path: "/active/recovery", complete: false },
     ]
   },
+  
+  // Advanced Pathways (Multiple prerequisites)
+  {
+    id: "professional-skills",
+    title: "Professional Skills",
+    description: "Develop workplace and career advancement skills",
+    category: "career",
+    progress: 40,
+    icon: React.createElement(Target, { className: "h-5 w-5" }),
+    prerequisites: ["cognitive-skills", "communication-skills"], // Professional skills require both thinking and communication
+    modules: [
+      { id: "conflict-resolution", title: "Conflict Resolution", path: "/learning/courses/conflict-resolution", complete: true },
+      { id: "time-management", title: "Time Management", path: "/learning/courses/time-management", complete: true },
+      { id: "conversation", title: "Conversation Skills", path: "/learning/courses/conversation-skills", complete: false },
+      { id: "decision-making", title: "Decision Making", path: "/learning/courses/decision-making", complete: false },
+      { id: "coping-failure", title: "Coping with Failure", path: "/learning/courses/coping-with-failure", complete: false },
+    ]
+  },
   {
     id: "emergency-prep",
     title: "Emergency Preparedness",
@@ -130,6 +140,7 @@ export const learningPathways: LearningPathway[] = [
     category: "emergency",
     progress: 0,
     icon: React.createElement(Shield, { className: "h-5 w-5" }),
+    prerequisites: ["home-maintenance", "cognitive-skills"], // Emergency prep builds on home safety and quick thinking
     modules: [
       { id: "first-aid", title: "First Aid Basics", path: "/emergency/first-aid", complete: false },
       { id: "household-safety", title: "Household Safety", path: "/emergency/household", complete: false },

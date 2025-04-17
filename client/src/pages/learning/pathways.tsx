@@ -1,17 +1,24 @@
 import React from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, BarChart3, Rocket } from "lucide-react";
+import { ArrowLeft, BarChart3, Lock, Rocket, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   fetchUserProgress, 
   trackModuleProgress, 
-  enrichPathwaysWithProgress
+  enrichPathwaysWithProgress,
+  LearningPathway
 } from "@/lib/learning-progress";
 import { useToast } from "@/hooks/use-toast";
 import { learningPathways } from "./pathways-data";
@@ -41,14 +48,9 @@ export default function LearningPathwaysPage() {
   // Fetch the user's learning progress
   const { data: progressData, isLoading: isLoadingProgress } = useQuery({
     queryKey: [`/api/learning/progress/${userId}`],
-    onError: (error: Error) => {
-      console.error("Error loading progress:", error);
-      toast({
-        title: "Error loading progress",
-        description: "There was a problem loading your learning progress.",
-        variant: "destructive"
-      });
-    }
+    // Updated to use onSuccess/onError through proper callbacks
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds
   });
   
   // Track module completion mutation
@@ -89,10 +91,9 @@ export default function LearningPathwaysPage() {
   
   // Enrich the static pathways data with actual progress from the API
   const pathwaysWithProgress = React.useMemo(() => {
-    if (!progressData) {
-      return learningPathways;
-    }
-    return enrichPathwaysWithProgress(learningPathways, progressData);
+    // If no progress data, initialize with empty object that matches GroupedProgress type
+    const progress = progressData || {} as { [pathwayId: string]: any[] };
+    return enrichPathwaysWithProgress(learningPathways, progress);
   }, [progressData]);
   
   // Filter pathways by category
@@ -200,77 +201,130 @@ export default function LearningPathwaysPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {filteredPathways.map(pathway => (
-                  <Card key={pathway.id} className="border">
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <div className={`rounded-full p-1.5 ${categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
-                            {pathway.icon}
-                          </div>
-                          <CardTitle className="text-lg">{pathway.title}</CardTitle>
+                {filteredPathways.map(pathway => {
+                  // Find prerequisite pathway titles for locked pathways
+                  const getPrerequisiteInfo = (pathway: LearningPathway) => {
+                    if (!pathway.prerequisites || pathway.prerequisites.length === 0) {
+                      return null;
+                    }
+                    
+                    const prerequisiteTitles = pathway.prerequisites.map(prereqId => {
+                      const prereqPathway = pathwaysWithProgress.find(p => p.id === prereqId);
+                      return prereqPathway ? prereqPathway.title : prereqId;
+                    });
+                    
+                    return (
+                      <div className="mt-2 text-sm text-amber-700 bg-amber-50 p-2 rounded-md flex items-start gap-2">
+                        <Lock className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium">Prerequisites Required:</p>
+                          <ul className="list-disc pl-4 mt-1 space-y-0.5">
+                            {prerequisiteTitles.map((title, i) => (
+                              <li key={i}>{title}</li>
+                            ))}
+                          </ul>
                         </div>
-                        <Badge variant="outline">
-                          {pathway.modules.length} modules
-                        </Badge>
                       </div>
-                      <CardDescription className="mt-1">
-                        {pathway.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Progress</span>
-                            <span className="font-medium">{pathway.progress}%</span>
-                          </div>
-                          <Progress value={pathway.progress} className="h-2" />
-                        </div>
-                        
-                        <div>
-                          <Button 
-                            variant="link" 
-                            className="p-0 h-auto text-sm font-medium"
-                            onClick={() => togglePathDetails(pathway.id)}
-                          >
-                            {expandedPath === pathway.id ? "Hide Modules" : "View Modules"}
-                          </Button>
-                          
-                          {expandedPath === pathway.id && (
-                            <div className="mt-3 space-y-3">
-                              <Separator />
-                              
-                              {pathway.modules.map((module, index) => (
-                                <div key={module.id} className="flex items-center justify-between">
-                                  <div className="flex items-center gap-2">
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
-                                      module.complete ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
-                                    }`}>
-                                      {index + 1}
-                                    </div>
-                                    <span className={`${module.complete ? "text-green-700 font-medium" : "text-gray-700"}`}>
-                                      {module.title}
-                                    </span>
-                                  </div>
-                                  
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    className="h-7 text-xs"
-                                    onClick={() => handleModuleView(pathway.id, module.id)}
-                                  >
-                                    {module.complete ? "Revisit" : "Start"}
-                                  </Button>
-                                </div>
-                              ))}
+                    );
+                  };
+                  
+                  return (
+                    <Card 
+                      key={pathway.id} 
+                      className={`border ${pathway.isLocked ? 'opacity-80' : ''}`}
+                    >
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <div className={`rounded-full p-1.5 ${categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
+                              {pathway.icon}
                             </div>
-                          )}
+                            <div className="flex items-center gap-1.5">
+                              <CardTitle className="text-lg">{pathway.title}</CardTitle>
+                              {pathway.isLocked && (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <Lock className="h-4 w-4 text-amber-600" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="text-sm">Complete prerequisites to unlock</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              )}
+                            </div>
+                          </div>
+                          <Badge variant="outline">
+                            {pathway.modules.length} modules
+                          </Badge>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                        <CardDescription className="mt-1">
+                          {pathway.description}
+                        </CardDescription>
+                        
+                        {pathway.isLocked && getPrerequisiteInfo(pathway)}
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between text-sm mb-1">
+                              <span>Progress</span>
+                              <span className="font-medium">{pathway.progress}%</span>
+                            </div>
+                            <Progress value={pathway.progress} className="h-2" />
+                          </div>
+                          
+                          <div>
+                            <Button 
+                              variant="link" 
+                              className="p-0 h-auto text-sm font-medium"
+                              onClick={() => togglePathDetails(pathway.id)}
+                              disabled={pathway.isLocked}
+                            >
+                              {pathway.isLocked 
+                                ? "Locked" 
+                                : expandedPath === pathway.id 
+                                  ? "Hide Modules" 
+                                  : "View Modules"
+                              }
+                            </Button>
+                            
+                            {!pathway.isLocked && expandedPath === pathway.id && (
+                              <div className="mt-3 space-y-3">
+                                <Separator />
+                                
+                                {pathway.modules.map((module, index) => (
+                                  <div key={module.id} className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                                        module.complete ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+                                      }`}>
+                                        {index + 1}
+                                      </div>
+                                      <span className={`${module.complete ? "text-green-700 font-medium" : "text-gray-700"}`}>
+                                        {module.title}
+                                      </span>
+                                    </div>
+                                    
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      className="h-7 text-xs"
+                                      onClick={() => handleModuleView(pathway.id, module.id)}
+                                    >
+                                      {module.complete ? "Revisit" : "Start"}
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             )}
           </TabsContent>
