@@ -23,7 +23,7 @@ function formatDate(dateString: string): string {
 
 // Helper function to get pathway name by id
 function getPathwayName(pathwayId: string): string {
-  const pathway = learningPathways.find(p => p.id === pathwayId);
+  const pathway = learningPathways.find((p: any) => p.id === pathwayId);
   return pathway?.title || pathwayId;
 }
 
@@ -84,10 +84,10 @@ export default function LearningAnalyticsDashboard() {
   const userId = 1;
   
   // Fetch analytics data
-  const { data: analytics, isLoading } = useQuery({
+  const { data: analytics, isLoading } = useQuery<LearningAnalytics>({
     queryKey: [`/api/learning/analytics/${userId}`],
     queryFn: () => fetchLearningAnalytics(userId),
-    onError: (error: Error) => {
+    onError: (error) => {
       console.error("Error loading analytics:", error);
       toast({
         title: "Error loading analytics",
@@ -200,7 +200,7 @@ export default function LearningAnalyticsDashboard() {
                   <CardContent>
                     <div className="space-y-3">
                       {analytics.recentCategories.length > 0 ? (
-                        analytics.recentCategories.map(pathwayId => (
+                        analytics.recentCategories.map((pathwayId: string) => (
                           <div key={pathwayId} className="flex items-center gap-2">
                             <Rocket className="h-4 w-4 text-primary" />
                             <span className="text-sm">{getPathwayName(pathwayId)}</span>
@@ -241,7 +241,7 @@ export default function LearningAnalyticsDashboard() {
           ) : analytics ? (
             <div className="space-y-4">
               {Object.entries(analytics.pathwayProgress).length > 0 ? (
-                Object.entries(analytics.pathwayProgress).map(([pathwayId, stats]) => (
+                Object.entries(analytics.pathwayProgress).map(([pathwayId, stats]: [string, PathwayProgressStats]) => (
                   <Card key={pathwayId}>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg">{getPathwayName(pathwayId)}</CardTitle>
