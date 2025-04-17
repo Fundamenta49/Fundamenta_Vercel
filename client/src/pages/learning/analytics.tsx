@@ -479,66 +479,7 @@ export default function LearningAnalyticsDashboard() {
         </TabsContent>
       </Tabs>
       
-      {/* Add Reset Progress Card */}
-      <Card className="mt-8 border-red-200">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Reset Learning Progress</CardTitle>
-          <CardDescription>
-            Clear all your learning progress data if you want to start fresh
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-4">
-            <p className="text-sm text-muted-foreground">
-              This action will permanently delete all your learning progress data, including completed modules,
-              pathways, and analytics. This cannot be undone.
-            </p>
-            <div className="flex justify-end">
-              <Button 
-                variant="destructive"
-                onClick={async () => {
-                  const confirmed = window.confirm(
-                    "Are you sure you want to clear all your learning progress? This action cannot be undone."
-                  );
-                  
-                  if (confirmed) {
-                    try {
-                      const success = await clearLearningProgress(userId);
-                      
-                      if (success) {
-                        toast({
-                          title: "Progress cleared",
-                          description: "All your learning progress has been reset successfully.",
-                        });
-                        
-                        // Invalidate queries to refresh data
-
-                        queryClient.invalidateQueries({ queryKey: [`/api/learning/analytics/${userId}`] });
-                        queryClient.invalidateQueries({ queryKey: [`/api/learning/progress/${userId}`] });
-                      } else {
-                        toast({
-                          title: "Error",
-                          description: "Failed to clear learning progress. Please try again.",
-                          variant: "destructive"
-                        });
-                      }
-                    } catch (error) {
-                      console.error("Error clearing progress:", error);
-                      toast({
-                        title: "Error",
-                        description: "Failed to clear learning progress. Please try again.",
-                        variant: "destructive"
-                      });
-                    }
-                  }
-                }}
-              >
-                Clear All Progress
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Reset learning progress feature removed as requested */}
     </div>
   );
 }
