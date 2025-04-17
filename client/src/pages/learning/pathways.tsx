@@ -245,46 +245,46 @@ export default function LearningPathwaysPage() {
       <div className="mb-6">
         <h2 className="text-lg font-medium mb-3">Filter by Category</h2>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-600 w-full max-w-4xl">
+          <TabsList className="inline-flex h-12 items-center justify-center rounded-lg bg-white shadow-sm border p-1 text-gray-600 w-full max-w-4xl">
             <TabsTrigger 
               value="all" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
             >
               All
             </TabsTrigger>
             <TabsTrigger 
               value="finance" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
             >
               Finance
             </TabsTrigger>
             <TabsTrigger 
               value="learning" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
             >
               Skills
             </TabsTrigger>
             <TabsTrigger 
               value="career" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
             >
               Career
             </TabsTrigger>
             <TabsTrigger 
               value="wellness" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
             >
               Wellness
             </TabsTrigger>
             <TabsTrigger 
               value="fitness" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
             >
               Fitness
             </TabsTrigger>
             <TabsTrigger 
               value="emergency" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
             >
               Emergency
             </TabsTrigger>
