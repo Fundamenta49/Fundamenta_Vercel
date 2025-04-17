@@ -48,7 +48,6 @@ import LearningPathwaysPage from "@/pages/learning/pathways";
 import LearningAnalyticsDashboard from "@/pages/learning/analytics";
 import SavedQuizzesPage from "@/pages/learning/saved-quizzes";
 import DesignShowcasePage from "@/pages/design-showcase";
-import TestHarness from "@/pages/test-harness";
 import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
@@ -215,7 +214,6 @@ function Router() {
             <Route path="/admin/personality-test" component={PersonalityTestPage} />
             <Route path="/design-showcase" component={DesignShowcasePage} />
             <Route path="/ui/skeletons" component={SkeletonDemoPage} />
-            <Route path="/test-harness" component={TestHarness} />
             <Route path="/learning">
               <ProtectedRoute>
                 <Learning />
