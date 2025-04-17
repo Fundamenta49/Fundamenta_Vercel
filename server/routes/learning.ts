@@ -306,4 +306,163 @@ router.get('/progress/:userId', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * Get analytics data for a user's learning progress
+ */
+router.get('/analytics/:userId', async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+    
+    // Fetch all progress data
+    const progress = await db.query.learningProgress.findMany({
+      where: eq(learningProgress.userId, userId)
+    });
+    
+    // Calculate high-level metrics
+    const totalModules = progress.length;
+    const completedModules = progress.filter(p => p.completed).length;
+    const completionRate = totalModules > 0 ? (completedModules / totalModules) * 100 : 0;
+    
+    // Group by pathway to calculate per-pathway completion
+    const pathwayProgress = progress.reduce((acc, item) => {
+      if (!acc[item.pathwayId]) {
+        acc[item.pathwayId] = {
+          totalModules: 0,
+          completedModules: 0,
+          lastAccessedAt: null
+        };
+      }
+      
+      acc[item.pathwayId].totalModules += 1;
+      if (item.completed) {
+        acc[item.pathwayId].completedModules += 1;
+      }
+      
+      // Track the most recent access timestamp
+      const itemDate = new Date(item.lastAccessedAt).getTime();
+      if (!acc[item.pathwayId].lastAccessedAt || 
+          itemDate > new Date(acc[item.pathwayId].lastAccessedAt as Date).getTime()) {
+        acc[item.pathwayId].lastAccessedAt = item.lastAccessedAt;
+      }
+      
+      return acc;
+    }, {} as Record<string, { 
+      totalModules: number; 
+      completedModules: number; 
+      lastAccessedAt: Date | null;
+    }>);
+    
+    // Calculate per-pathway completion rates
+    const pathwayCompletionRates = Object.entries(pathwayProgress).reduce((acc, [id, data]) => {
+      acc[id] = {
+        ...data,
+        completionRate: data.totalModules > 0 ? 
+          (data.completedModules / data.totalModules) * 100 : 0
+      };
+      return acc;
+    }, {} as Record<string, { 
+      totalModules: number; 
+      completedModules: number; 
+      lastAccessedAt: Date | null;
+      completionRate: number;
+    }>);
+    
+    // Get activity over time (for graphs)
+    const activityByDate = progress
+      .filter(p => p.completedAt)
+      .reduce((acc, item) => {
+        const dateKey = new Date(item.completedAt as Date).toISOString().split('T')[0];
+        if (!acc[dateKey]) {
+          acc[dateKey] = 0;
+        }
+        acc[dateKey] += 1;
+        return acc;
+      }, {} as Record<string, number>);
+    
+    // Convert to array for easier usage with charting libraries
+    const activityTimeline = Object.entries(activityByDate)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    // Calculate learning streaks
+    let currentStreak = 0;
+    let longestStreak = 0;
+    
+    if (activityTimeline.length > 0) {
+      // Simple streak calculation based on consecutive days with completed modules
+      const dates = activityTimeline.map(item => new Date(item.date).getTime());
+      dates.sort((a, b) => a - b);
+      
+      currentStreak = 1;
+      let tempStreak = 1;
+      
+      for (let i = 1; i < dates.length; i++) {
+        const prevDate = new Date(dates[i-1]);
+        const currDate = new Date(dates[i]);
+        
+        // Check if dates are consecutive (allowing for date logic)
+        prevDate.setDate(prevDate.getDate() + 1);
+        
+        if (prevDate.toISOString().split('T')[0] === currDate.toISOString().split('T')[0]) {
+          tempStreak++;
+          
+          if (i === dates.length - 1) {
+            // If this is the last date and it's consecutive with previous, it's current streak
+            currentStreak = tempStreak;
+          }
+        } else {
+          if (tempStreak > longestStreak) {
+            longestStreak = tempStreak;
+          }
+          tempStreak = 1;
+          
+          // If this is the last date, current streak is 1
+          if (i === dates.length - 1) {
+            currentStreak = 1;
+          }
+        }
+      }
+      
+      // Ensure longest streak is updated if the current streak is the longest
+      if (tempStreak > longestStreak) {
+        longestStreak = tempStreak;
+      }
+    }
+    
+    // Find most recently accessed categories
+    const recentCategories = Object.entries(pathwayProgress)
+      .filter(([_, data]) => data.lastAccessedAt)
+      .sort((a, b) => {
+        const dateA = new Date(a[1].lastAccessedAt as Date).getTime();
+        const dateB = new Date(b[1].lastAccessedAt as Date).getTime();
+        return dateB - dateA;
+      })
+      .slice(0, 3)
+      .map(([id]) => id);
+    
+    // Assemble the analytics response
+    const analytics = {
+      summary: {
+        totalModules,
+        completedModules,
+        completionRate: Math.round(completionRate),
+        currentStreak,
+        longestStreak
+      },
+      pathwayProgress: pathwayCompletionRates,
+      activityTimeline,
+      recentCategories
+    };
+    
+    res.json(analytics);
+  } catch (error) {
+    console.error('Error generating analytics:', error);
+    res.status(500).json({ error: 'Failed to generate learning analytics' });
+  }
+});
+
 export default router;

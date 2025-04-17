@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, Award, BookOpen, Clock, Dumbbell, Flame, Rocket, Shield, Target } from "lucide-react";
+import { ArrowLeft, BarChart3, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,147 +11,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   fetchUserProgress, 
   trackModuleProgress, 
-  enrichPathwaysWithProgress,
-  LearningPathway
+  enrichPathwaysWithProgress
 } from "@/lib/learning-progress";
 import { useToast } from "@/hooks/use-toast";
+import { learningPathways } from "./pathways-data";
 
-// Sample learning pathways data
-const learningPathways = [
-  {
-    id: "financial-literacy",
-    title: "Financial Literacy",
-    description: "Develop essential financial skills and knowledge",
-    category: "finance",
-    progress: 50,
-    icon: <Award className="h-5 w-5" />,
-    modules: [
-      { id: "econ-basics", title: "Economics Basics", path: "/learning/courses/economics", complete: true },
-      { id: "budget", title: "Budgeting Essentials", path: "/finance/budget", complete: true },
-      { id: "utilities", title: "Understanding Utilities", path: "/learning/courses/utilities-guide", complete: false },
-      { id: "shopping", title: "Smart Shopping", path: "/learning/courses/shopping-buddy", complete: false },
-    ]
-  },
-  {
-    id: "cognitive-skills",
-    title: "Cognitive Skills",
-    description: "Develop analytical thinking and decision-making abilities",
-    category: "learning",
-    progress: 40,
-    icon: <Target className="h-5 w-5" />,
-    modules: [
-      { id: "critical-thinking", title: "Critical Thinking", path: "/learning/courses/critical-thinking", complete: true },
-      { id: "decision-making", title: "Decision Making", path: "/learning/courses/decision-making", complete: true },
-      { id: "time-management", title: "Time Management", path: "/learning/courses/time-management", complete: false },
-      { id: "conflict-resolution", title: "Conflict Resolution", path: "/learning/courses/conflict-resolution", complete: false },
-      { id: "coping-failure", title: "Coping With Failure", path: "/learning/courses/coping-with-failure", complete: false },
-      { id: "positive-habits", title: "Forming Positive Habits", path: "/learning/courses/forming-positive-habits", complete: false },
-    ]
-  },
-  {
-    id: "communication-skills",
-    title: "Communication Skills",
-    description: "Improve your ability to communicate effectively",
-    category: "learning",
-    progress: 25,
-    icon: <BookOpen className="h-5 w-5" />,
-    modules: [
-      { id: "conversation-basics", title: "Conversation Skills", path: "/learning/courses/conversation-skills", complete: true },
-      { id: "active-listening", title: "Active Listening", path: "/learning/courses/active-listening", complete: false },
-      { id: "public-speaking", title: "Public Speaking", path: "/learning/courses/public-speaking", complete: false },
-      { id: "written-communication", title: "Written Communication", path: "/learning/courses/written-communication", complete: false },
-    ]
-  },
-  {
-    id: "cooking-skills",
-    title: "Cooking Skills",
-    description: "Learn culinary techniques and meal preparation",
-    category: "learning",
-    progress: 75,
-    icon: <BookOpen className="h-5 w-5" />,
-    modules: [
-      { id: "cooking-basics", title: "Cooking Basics", path: "/learning/courses/cooking-basics", complete: true },
-      { id: "meal-planning", title: "Meal Planning", path: "/wellness/meal-planning", complete: true },
-      { id: "nutrition", title: "Nutrition Essentials", path: "/wellness/nutrition", complete: true },
-      { id: "advanced-cooking", title: "Advanced Techniques", path: "/learning/courses/cooking-advanced", complete: false },
-      { id: "special-diets", title: "Special Diets", path: "/wellness/special-diets", complete: false },
-      { id: "food-safety", title: "Food Safety", path: "/wellness/food-safety", complete: false },
-    ]
-  },
-  {
-    id: "home-maintenance",
-    title: "Home Maintenance",
-    description: "Essential skills for maintaining your living space",
-    category: "learning",
-    progress: 33,
-    icon: <Target className="h-5 w-5" />,
-    modules: [
-      { id: "home-basics", title: "Home Maintenance Basics", path: "/learning/courses/home-maintenance", complete: true },
-      { id: "repair-assistant", title: "Repair Assistant", path: "/learning/courses/repair-assistant", complete: false },
-      { id: "home-safety", title: "Home Safety", path: "/emergency/home-safety", complete: false },
-    ]
-  },
-  {
-    id: "professional-skills",
-    title: "Professional Skills",
-    description: "Develop workplace and career advancement skills",
-    category: "career",
-    progress: 40,
-    icon: <Target className="h-5 w-5" />,
-    modules: [
-      { id: "conflict-resolution", title: "Conflict Resolution", path: "/learning/courses/conflict-resolution", complete: true },
-      { id: "time-management", title: "Time Management", path: "/learning/courses/time-management", complete: true },
-      { id: "conversation", title: "Conversation Skills", path: "/learning/courses/conversation-skills", complete: false },
-      { id: "decision-making", title: "Decision Making", path: "/learning/courses/decision-making", complete: false },
-      { id: "coping-failure", title: "Coping with Failure", path: "/learning/courses/coping-with-failure", complete: false },
-    ]
-  },
-  {
-    id: "wellness-routine",
-    title: "Wellness Routine",
-    description: "Build habits for physical and mental wellbeing",
-    category: "wellness",
-    progress: 20,
-    icon: <Flame className="h-5 w-5" />,
-    modules: [
-      { id: "health-wellness", title: "Health & Wellness", path: "/learning/courses/health-wellness", complete: true },
-      { id: "meditation", title: "Meditation Basics", path: "/wellness/meditation", complete: false },
-      { id: "sleep-hygiene", title: "Sleep Hygiene", path: "/wellness/sleep", complete: false },
-      { id: "stress-management", title: "Stress Management", path: "/wellness/stress", complete: false },
-      { id: "positive-habits", title: "Forming Positive Habits", path: "/learning/courses/forming-positive-habits", complete: false },
-    ]
-  },
-  {
-    id: "fitness-journey",
-    title: "Fitness Journey",
-    description: "Personalized approach to physical fitness",
-    category: "fitness",
-    progress: 15,
-    icon: <Dumbbell className="h-5 w-5" />,
-    modules: [
-      { id: "fitness-basics", title: "Fitness Fundamentals", path: "/active/basics", complete: true },
-      { id: "cardio", title: "Cardio Training", path: "/active/cardio", complete: false },
-      { id: "strength", title: "Strength Building", path: "/active/strength", complete: false },
-      { id: "yoga", title: "Yoga Practice", path: "/active/yoga", complete: false },
-      { id: "fitness-tracking", title: "Progress Tracking", path: "/active/tracking", complete: false },
-      { id: "recovery", title: "Rest & Recovery", path: "/active/recovery", complete: false },
-    ]
-  },
-  {
-    id: "emergency-prep",
-    title: "Emergency Preparedness",
-    description: "Essential skills for emergency situations",
-    category: "emergency",
-    progress: 0,
-    icon: <Shield className="h-5 w-5" />,
-    modules: [
-      { id: "first-aid", title: "First Aid Basics", path: "/emergency/first-aid", complete: false },
-      { id: "household-safety", title: "Household Safety", path: "/emergency/household", complete: false },
-      { id: "emergency-plan", title: "Emergency Plan", path: "/emergency/planning", complete: false },
-    ]
-  },
-];
-
+// Category colors for styling
 const categoryColors = {
   finance: "bg-blue-100 text-blue-700",
   learning: "bg-green-100 text-green-700",
@@ -176,9 +41,6 @@ export default function LearningPathwaysPage() {
   // Fetch the user's learning progress
   const { data: progressData, isLoading: isLoadingProgress } = useQuery({
     queryKey: [`/api/learning/progress/${userId}`],
-    onSuccess: (data: any) => {
-      console.log("Progress data loaded:", data);
-    },
     onError: (error: Error) => {
       console.error("Error loading progress:", error);
       toast({
@@ -187,7 +49,7 @@ export default function LearningPathwaysPage() {
         variant: "destructive"
       });
     }
-  } as any);
+  });
   
   // Track module completion mutation
   const trackProgressMutation = useMutation({
@@ -231,7 +93,7 @@ export default function LearningPathwaysPage() {
     if (!progressData) {
       return learningPathways;
     }
-    return enrichPathwaysWithProgress(learningPathways, progressData as any);
+    return enrichPathwaysWithProgress(learningPathways, progressData);
   }, [progressData]);
   
   // Filter pathways by category
@@ -249,20 +111,31 @@ export default function LearningPathwaysPage() {
   
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
-      <div className="flex items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/arcade')}
+            className="mr-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Arcade
+          </Button>
+          
+          <h1 className="text-2xl font-bold flex items-center">
+            <Rocket className="h-6 w-6 mr-2 text-purple-500" />
+            Learning Pathways
+          </h1>
+        </div>
+
         <Button 
-          variant="ghost" 
-          onClick={() => navigate('/arcade')}
-          className="mr-4"
+          variant="outline"
+          onClick={() => navigate('/learning/analytics')}
+          className="flex items-center"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Arcade
+          <BarChart3 className="h-4 w-4 mr-2" />
+          View Analytics
         </Button>
-        
-        <h1 className="text-2xl font-bold flex items-center">
-          <Rocket className="h-6 w-6 mr-2 text-purple-500" />
-          Learning Pathways
-        </h1>
       </div>
 
       <div className="mb-6">
@@ -356,61 +229,44 @@ export default function LearningPathwaysPage() {
                           <Progress value={pathway.progress} className="h-2" />
                         </div>
                         
-                        {expandedPath === pathway.id && (
-                          <div className="mt-4 space-y-3 pt-3 border-t">
-                            <h4 className="text-sm font-medium">Modules:</h4>
-                            <div className="space-y-2">
-                              {pathway.modules.map((module) => (
-                                <div key={module.id} className="flex justify-between items-center p-2 rounded-md bg-gray-50">
-                                  <div className="flex items-center">
-                                    {module.complete ? (
-                                      <div className="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
-                                    ) : (
-                                      <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
-                                    )}
-                                    <span className={module.complete ? "text-sm" : "text-sm text-gray-600"}>
+                        <div>
+                          <Button 
+                            variant="link" 
+                            className="p-0 h-auto text-sm font-medium"
+                            onClick={() => togglePathDetails(pathway.id)}
+                          >
+                            {expandedPath === pathway.id ? "Hide Modules" : "View Modules"}
+                          </Button>
+                          
+                          {expandedPath === pathway.id && (
+                            <div className="mt-3 space-y-3">
+                              <Separator />
+                              
+                              {pathway.modules.map((module, index) => (
+                                <div key={module.id} className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                                      module.complete ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+                                    }`}>
+                                      {index + 1}
+                                    </div>
+                                    <span className={`${module.complete ? "text-green-700 font-medium" : "text-gray-700"}`}>
                                       {module.title}
                                     </span>
                                   </div>
+                                  
                                   <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    className="h-7"
+                                    variant="outline" 
+                                    size="sm"
+                                    className="h-7 text-xs"
                                     onClick={() => handleModuleView(pathway.id, module.id, !module.complete)}
-                                    disabled={trackProgressMutation.isPending}
                                   >
-                                    {module.complete ? "Review" : "Start"}
+                                    {module.complete ? "Revisit" : "Start"}
                                   </Button>
                                 </div>
                               ))}
                             </div>
-                          </div>
-                        )}
-                        
-                        <div className="flex justify-between pt-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => togglePathDetails(pathway.id)}
-                          >
-                            {expandedPath === pathway.id ? "Hide Details" : "Show Details"}
-                          </Button>
-                          
-                          <Button 
-                            variant="default" 
-                            size="sm"
-                            onClick={() => {
-                              const nextModule = pathway.modules.find(m => !m.complete);
-                              if (nextModule) {
-                                handleModuleView(pathway.id, nextModule.id, true);
-                              } else if (pathway.modules.length > 0) {
-                                navigate(pathway.modules[0].path);
-                              }
-                            }}
-                            disabled={trackProgressMutation.isPending}
-                          >
-                            {pathway.progress > 0 ? "Continue" : "Start"} Pathway
-                          </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>

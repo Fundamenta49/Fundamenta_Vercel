@@ -70,6 +70,47 @@ export async function trackModuleProgress(
   }
 }
 
+// Analytics types
+export interface LearningAnalyticsSummary {
+  totalModules: number;
+  completedModules: number;
+  completionRate: number;
+  currentStreak: number;
+  longestStreak: number;
+}
+
+export interface PathwayProgressStats {
+  totalModules: number;
+  completedModules: number;
+  lastAccessedAt: Date | null;
+  completionRate: number;
+}
+
+export interface ActivityTimelineItem {
+  date: string;
+  count: number;
+}
+
+export interface LearningAnalytics {
+  summary: LearningAnalyticsSummary;
+  pathwayProgress: Record<string, PathwayProgressStats>;
+  activityTimeline: ActivityTimelineItem[];
+  recentCategories: string[];
+}
+
+/**
+ * Fetch analytics data for a user's learning progress
+ */
+export async function fetchLearningAnalytics(userId: number): Promise<LearningAnalytics> {
+  try {
+    const response = await apiRequest('GET', `/api/learning/analytics/${userId}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching learning analytics:', error);
+    throw new Error('Failed to fetch learning analytics');
+  }
+}
+
 /**
  * Calculate overall progress percentage for a pathway
  */
