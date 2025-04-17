@@ -1,0 +1,22 @@
+{
+    "free": {
+        "journal_entries": 5,
+        "goals": 3,
+        "document_uploads": 0
+    },
+    "tier1": {
+        "journal_entries": 30,
+        "goals": 10,
+        "document_uploads": 3
+    },
+    "tier2": {
+        "journal_entries": 100,
+        "goals": 20,
+        "document_uploads": 10
+    },
+    "tier3": {
+        "journal_entries": "unlimited",
+        "goals": "unlimited",
+        "document_uploads": "unlimited"
+    }
+}

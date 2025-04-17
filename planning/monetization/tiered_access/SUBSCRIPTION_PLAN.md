@@ -117,3 +117,15 @@ The key is that Fundi remains helpful at all times, only mentioning upgrades whe
 - Progressive feature access that introduces more costly features gradually
 - Focus on high-conversion, lower-cost features during the 3-day trial period
 - Usage-based limits during trial to prevent exploitation
+
+## Additional Documentation
+
+For more detailed information, see the following documents:
+
+- [Features Matrix](./FEATURES_MATRIX.json) - Detailed feature breakdown by tier
+- [Usage Limits](./LIMITS_CONFIG.json) - Specific limits for each tier
+- [Fundi Plan Awareness](./FUNDI_PLAN_AWARENESS.md) - How Fundi adapts to user tiers
+- [API Cost Controls](./API_COST_CONTROLS.md) - Measures to control API costs
+- [Conversion Strategy](./CONVERSION_STRATEGY.md) - Detailed trial conversion approach
+- [Pricing Table](./PRICING_TABLE_DRAFT.md) - Simplified pricing comparison table
+- [Onboarding UI Flow](./ONBOARDING_UI_FLOW.md) - Trial onboarding sequence

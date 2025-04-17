@@ -1,0 +1,44 @@
+{
+    "free": [
+        "Fundi AI Assistant",
+        "2 Learning Paths",
+        "Basic Financial Tools",
+        "Basic Fitness Tracker",
+        "5 Journal Entries",
+        "3 Goals",
+        "Community Forum"
+    ],
+    "tier1": [
+        "Everything in Free",
+        "5 Learning Paths",
+        "Workout Recommendations",
+        "30 Journal Entries",
+        "Weekly Goal Progress",
+        "3 Document Uploads",
+        "Ad-Free"
+    ],
+    "tier2": [
+        "Everything in Tier1",
+        "Unlimited Learning Paths",
+        "Personalized Learning",
+        "Advanced Financial Tools",
+        "Custom Fitness Plans",
+        "10 Document Uploads",
+        "Priority Support",
+        "Skill Reports",
+        "Data Export",
+        "Fitness App Integration"
+    ],
+    "tier3": [
+        "Everything in Tier2",
+        "Career Paths",
+        "Investment Guidance",
+        "Meal Planning",
+        "AI Coaching Sessions",
+        "Resume Review",
+        "Unlimited Document Analysis",
+        "Premium Content",
+        "Early Feature Access",
+        "Quarterly 1:1 Consults"
+    ]
+}
