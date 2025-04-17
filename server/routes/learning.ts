@@ -113,10 +113,11 @@ router.post('/resources', async (req: Request, res: Response) => {
 
 /**
  * Submit quiz results and get personalized feedback
+ * If quiz is passed, automatically mark the associated module as complete
  */
 router.post('/submit-quiz-results', async (req: Request, res: Response) => {
   try {
-    const { subject, userAnswers, correctAnswers, difficulty } = req.body;
+    const { subject, userAnswers, correctAnswers, difficulty, userId, pathwayId, moduleId } = req.body;
     
     // Use our grading service if we have user's specific answers
     if (Array.isArray(userAnswers) && Array.isArray(correctAnswers)) {
@@ -124,6 +125,59 @@ router.post('/submit-quiz-results', async (req: Request, res: Response) => {
       
       // Use our grading service
       const gradeResults = await gradeQuiz(userAnswers, correctAnswers);
+      
+      // Determine if user passed the quiz (default passing is 70%)
+      const passingThreshold = 0.7; // 70%
+      const passed = gradeResults.percentageScore >= (passingThreshold * 100);
+      
+      // If user passed the quiz and we have pathway/module info, mark the module as complete
+      if (passed && userId && pathwayId && moduleId) {
+        try {
+          // Check if progress record exists
+          const existingProgress = await db.query.learningProgress.findFirst({
+            where: and(
+              eq(learningProgress.userId, userId),
+              eq(learningProgress.pathwayId, pathwayId),
+              eq(learningProgress.moduleId, moduleId)
+            ),
+          });
+          
+          const now = new Date();
+          
+          if (existingProgress) {
+            // Update existing record
+            await db
+              .update(learningProgress)
+              .set({ 
+                completed: true, 
+                completedAt: now,
+                lastAccessedAt: now
+              })
+              .where(and(
+                eq(learningProgress.userId, userId),
+                eq(learningProgress.pathwayId, pathwayId),
+                eq(learningProgress.moduleId, moduleId)
+              ));
+          } else {
+            // Create new record
+            await db.insert(learningProgress).values({
+              userId,
+              pathwayId,
+              moduleId,
+              completed: true,
+              completedAt: now,
+              lastAccessedAt: now
+            });
+          }
+          
+          console.log(`Module ${moduleId} automatically marked as completed for user ${userId} after passing quiz`);
+          // Add module completion info to the grade results
+          gradeResults.moduleCompleted = true;
+        } catch (err) {
+          console.error('Error updating module completion status:', err);
+          // Continue execution - we still want to return quiz results even if tracking fails
+        }
+      }
       
       // Enhance feedback with OpenAI if needed
       if (subject) {
@@ -170,6 +224,59 @@ router.post('/submit-quiz-results', async (req: Request, res: Response) => {
       const { score, totalQuestions } = req.body;
       const percentage = (score / totalQuestions) * 100;
       
+      // Determine if user passed the quiz (default passing is 70%)
+      const passingThreshold = 0.7; // 70%
+      const passed = percentage >= (passingThreshold * 100);
+      let moduleCompleted = false;
+      
+      // If user passed the quiz and we have pathway/module info, mark the module as complete
+      if (passed && userId && pathwayId && moduleId) {
+        try {
+          // Check if progress record exists
+          const existingProgress = await db.query.learningProgress.findFirst({
+            where: and(
+              eq(learningProgress.userId, userId),
+              eq(learningProgress.pathwayId, pathwayId),
+              eq(learningProgress.moduleId, moduleId)
+            ),
+          });
+          
+          const now = new Date();
+          
+          if (existingProgress) {
+            // Update existing record
+            await db
+              .update(learningProgress)
+              .set({ 
+                completed: true, 
+                completedAt: now,
+                lastAccessedAt: now
+              })
+              .where(and(
+                eq(learningProgress.userId, userId),
+                eq(learningProgress.pathwayId, pathwayId),
+                eq(learningProgress.moduleId, moduleId)
+              ));
+          } else {
+            // Create new record
+            await db.insert(learningProgress).values({
+              userId,
+              pathwayId,
+              moduleId,
+              completed: true,
+              completedAt: now,
+              lastAccessedAt: now
+            });
+          }
+          
+          console.log(`Module ${moduleId} automatically marked as completed for user ${userId} after passing quiz`);
+          moduleCompleted = true;
+        } catch (err) {
+          console.error('Error updating module completion status:', err);
+          // Continue execution - we still want to return quiz results even if tracking fails
+        }
+      }
+      
       // Build prompt for OpenAI
       const prompt = `
         A user has completed a quiz on ${subject} at the ${difficulty} level.
@@ -208,6 +315,10 @@ router.post('/submit-quiz-results', async (req: Request, res: Response) => {
       
       const content = response.choices[0].message.content;
       const feedbackData = JSON.parse(content);
+      
+      // Add module completion info to the feedback
+      feedbackData.moduleCompleted = moduleCompleted;
+      feedbackData.passed = passed;
       
       return res.json(feedbackData);
     } else {

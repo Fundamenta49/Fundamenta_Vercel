@@ -75,10 +75,9 @@ export default function LearningPathwaysPage() {
     }
   });
   
-  // Mark a module as complete when the user views it
-  const handleModuleView = (pathwayId: string, moduleId: string, completed: boolean) => {
-    trackProgressMutation.mutate({ pathwayId, moduleId, completed });
-    // Navigate to the module
+  // Navigate to the module - completion will be triggered by backend after quiz success
+  const handleModuleView = (pathwayId: string, moduleId: string) => {
+    // Only navigate to the module, don't mark as complete
     const module = learningPathways
       .find(p => p.id === pathwayId)
       ?.modules.find(m => m.id === moduleId);
@@ -259,7 +258,7 @@ export default function LearningPathwaysPage() {
                                     variant="outline" 
                                     size="sm"
                                     className="h-7 text-xs"
-                                    onClick={() => handleModuleView(pathway.id, module.id, !module.complete)}
+                                    onClick={() => handleModuleView(pathway.id, module.id)}
                                   >
                                     {module.complete ? "Revisit" : "Start"}
                                   </Button>
