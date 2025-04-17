@@ -1,6 +1,7 @@
 import { pgTable, serial, text, timestamp, boolean, integer, real, jsonb, varchar, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { and, eq, desc } from "drizzle-orm";
 
 // User Table
 export const users = pgTable("users", {
@@ -124,6 +125,19 @@ export const trainingPlans = pgTable("training_plans", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// Learning Progress Tracking Table
+export const learningProgress = pgTable("learning_progress", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  pathwayId: text("pathway_id").notNull(),
+  moduleId: text("module_id").notNull(), 
+  completed: boolean("completed").notNull().default(false),
+  completedAt: timestamp("completed_at"),
+  lastAccessedAt: timestamp("last_accessed_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // Sessions Table for express-session with connect-pg-simple
 export const sessions = pgTable("sessions", {
   sid: varchar("sid").notNull().primaryKey(),
@@ -161,6 +175,9 @@ export const insertRunningGoalSchema = createInsertSchema(runningGoals)
 
 export const insertTrainingPlanSchema = createInsertSchema(trainingPlans)
   .omit({ id: true, createdAt: true, updatedAt: true });
+
+export const insertLearningProgressSchema = createInsertSchema(learningProgress)
+  .omit({ id: true, createdAt: true, updatedAt: true });
   
 export const insertSessionSchema = createInsertSchema(sessions);
 
@@ -196,6 +213,9 @@ export type SelectRunningGoalType = typeof runningGoals.$inferSelect;
 
 export type InsertTrainingPlanType = z.infer<typeof insertTrainingPlanSchema>;
 export type SelectTrainingPlanType = typeof trainingPlans.$inferSelect;
+
+export type InsertLearningProgressType = z.infer<typeof insertLearningProgressSchema>;
+export type SelectLearningProgressType = typeof learningProgress.$inferSelect;
 
 export type InsertSessionType = z.infer<typeof insertSessionSchema>;
 export type SelectSessionType = typeof sessions.$inferSelect;
