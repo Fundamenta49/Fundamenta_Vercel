@@ -82,8 +82,8 @@ export async function analyzeUserLearningData(userId: number): Promise<{
     }
     
     // Add quiz score if available
-    if (record.metadata && record.metadata.quizScore) {
-      modulePerformance[record.moduleId].quizScores.push(record.metadata.quizScore);
+    if (record.metadata && (record.metadata as any).quizScore) {
+      modulePerformance[record.moduleId].quizScores.push((record.metadata as any).quizScore);
       
       // Update average score
       const scores = modulePerformance[record.moduleId].quizScores;

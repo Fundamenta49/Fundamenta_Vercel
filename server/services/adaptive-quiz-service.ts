@@ -56,8 +56,9 @@ async function getUserPerformanceData(userId: number): Promise<UserPerformanceDa
     
     // Process each progress record with quiz metadata
     progressRecords.forEach(record => {
-      if (record.metadata?.quizData) {
-        const quizData = record.metadata.quizData;
+      // Using the new metadata field (which is a jsonb column)
+      if (record.metadata && (record.metadata as any).quizData) {
+        const quizData = (record.metadata as any).quizData;
         
         // Track overall performance
         if (quizData.correct !== undefined && quizData.total !== undefined) {

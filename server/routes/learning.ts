@@ -7,7 +7,8 @@ import { generateAdaptiveQuiz, recordQuizResults } from '../services/adaptive-qu
 import { generatePersonalizedLearningPlan } from '../services/recommendation-engine';
 import { db } from '../db';
 import { and, eq, desc } from 'drizzle-orm';
-import { learningProgress, quizProgress, insertQuizProgressSchema } from '../../shared/schema';
+import { learningProgress, quizProgress, insertQuizProgressSchema, learningModuleTags } from '../../shared/schema';
+import { learningPathways } from '../../client/src/pages/learning/pathways-data';
 
 const router = Router();
 
@@ -570,6 +571,86 @@ router.get('/analytics/:userId', async (req: Request, res: Response) => {
       .slice(0, 3)
       .map(([id]) => id);
     
+    // Get framework progress data by analyzing module completions 
+    // and their associated competencies (SEL) and domains (LIFE)
+    
+    // Get completed module IDs
+    const completedModuleIds = progress
+      .filter(p => p.completed)
+      .map(p => p.moduleId);
+    
+    // Initialize framework coverage tracking
+    const selFrameworkProgress = {
+      SELF_AWARENESS: 0,
+      SELF_MANAGEMENT: 0, 
+      SOCIAL_AWARENESS: 0,
+      RELATIONSHIP_SKILLS: 0,
+      RESPONSIBLE_DECISION_MAKING: 0
+    };
+    
+    const lifeFrameworkProgress = {
+      EDUCATION_TRAINING: 0,
+      EMPLOYMENT: 0,
+      FINANCIAL_LITERACY: 0, 
+      HOUSING: 0,
+      HEALTH: 0,
+      PERSONAL_SOCIAL: 0
+    };
+    
+    // Get total modules with each competency/domain for calculating percentages
+    const totalSelModules = {
+      SELF_AWARENESS: 0,
+      SELF_MANAGEMENT: 0,
+      SOCIAL_AWARENESS: 0,
+      RELATIONSHIP_SKILLS: 0,
+      RESPONSIBLE_DECISION_MAKING: 0
+    };
+    
+    const totalLifeModules = {
+      EDUCATION_TRAINING: 0,
+      EMPLOYMENT: 0,
+      FINANCIAL_LITERACY: 0,
+      HOUSING: 0,
+      HEALTH: 0,
+      PERSONAL_SOCIAL: 0
+    };
+    
+    // Scan pathways data to map modules to their competencies
+    learningPathways.forEach(pathway => {
+      pathway.modules.forEach(module => {
+        // Track SEL competencies
+        module.selCompetencies?.forEach(comp => {
+          totalSelModules[comp as keyof typeof totalSelModules]++;
+          
+          if (completedModuleIds.includes(module.id)) {
+            selFrameworkProgress[comp as keyof typeof selFrameworkProgress]++;
+          }
+        });
+        
+        // Track LIFE domains
+        module.lifeDomains?.forEach(domain => {
+          totalLifeModules[domain as keyof typeof totalLifeModules]++;
+          
+          if (completedModuleIds.includes(module.id)) {
+            lifeFrameworkProgress[domain as keyof typeof lifeFrameworkProgress]++;
+          }
+        });
+      });
+    });
+    
+    // Calculate percentages for each competency/domain
+    const selProgressPercentages = Object.entries(selFrameworkProgress).reduce((acc, [key, count]) => {
+      const total = totalSelModules[key as keyof typeof totalSelModules];
+      acc[key] = total > 0 ? Math.round((count / total) * 100) : 0;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const lifeProgressPercentages = Object.entries(lifeFrameworkProgress).reduce((acc, [key, count]) => {
+      const total = totalLifeModules[key as keyof typeof totalLifeModules];
+      acc[key] = total > 0 ? Math.round((count / total) * 100) : 0;
+      return acc;
+    }, {} as Record<string, number>);
+    
     // Assemble the analytics response
     const analytics = {
       summary: {
@@ -581,7 +662,11 @@ router.get('/analytics/:userId', async (req: Request, res: Response) => {
       },
       pathwayProgress: pathwayCompletionRates,
       activityTimeline,
-      recentCategories
+      recentCategories,
+      frameworkProgress: {
+        sel: selProgressPercentages,
+        projectLife: lifeProgressPercentages
+      }
     };
     
     res.json(analytics);
