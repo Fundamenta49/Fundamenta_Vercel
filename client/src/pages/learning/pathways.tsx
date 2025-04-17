@@ -245,46 +245,46 @@ export default function LearningPathwaysPage() {
       <div className="mb-6">
         <h2 className="text-lg font-medium mb-3">Filter by Category</h2>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full max-w-4xl">
+          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-600 w-full max-w-4xl">
             <TabsTrigger 
               value="all" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
             >
               All
             </TabsTrigger>
             <TabsTrigger 
               value="finance" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
             >
               Finance
             </TabsTrigger>
             <TabsTrigger 
               value="learning" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
             >
               Skills
             </TabsTrigger>
             <TabsTrigger 
               value="career" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
             >
               Career
             </TabsTrigger>
             <TabsTrigger 
               value="wellness" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
             >
               Wellness
             </TabsTrigger>
             <TabsTrigger 
               value="fitness" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
             >
               Fitness
             </TabsTrigger>
             <TabsTrigger 
               value="emergency" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-white data-[state=active]:text-primary hover:text-primary"
             >
               Emergency
             </TabsTrigger>
