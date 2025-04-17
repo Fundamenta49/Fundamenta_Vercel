@@ -18,10 +18,12 @@ export interface QuizQuestion {
 interface QuizComponentProps {
   subject: string;
   questions?: QuizQuestion[];
-  difficulty?: "beginner" | "intermediate" | "advanced";
+  difficulty?: "beginner" | "intermediate" | "advanced" | "proficient";
   pathwayId?: string;  // Added for module completion tracking
   moduleId?: string;   // Added for module completion tracking
   userId?: number;     // Added for module completion tracking
+  adaptiveLearning?: boolean; // Enable difficulty adjustment based on user performance
+  previousScore?: number; // Previous score to adjust difficulty dynamically
   onComplete?: (
     score: number, 
     totalQuestions: number, 
@@ -42,6 +44,8 @@ export default function QuizComponent({
   pathwayId,
   moduleId,
   userId,
+  adaptiveLearning = false,
+  previousScore,
   onComplete,
   onGenerateQuiz,
   className
@@ -81,7 +85,7 @@ export default function QuizComponent({
     if (questions.length === 0) {
       generateAIQuiz();
     }
-  }, [subject, difficulty]);
+  }, [subject, difficulty, adaptiveLearning, previousScore]);
   
   const currentQuestion = questions[currentQuestionIndex] || {
     id: 0,

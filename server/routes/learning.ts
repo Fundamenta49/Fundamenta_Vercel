@@ -19,9 +19,20 @@ const openai = new OpenAI({
  */
 router.post('/generate-quiz', async (req: Request, res: Response) => {
   try {
-    const { subject, difficulty, numberOfQuestions = 5, topics = [] } = req.body;
+    const { 
+      subject, 
+      difficulty, 
+      numberOfQuestions = 5, 
+      topics = [], 
+      adaptiveLearning = false,
+      previousScore
+    } = req.body;
     
-    console.log(`Generating ${numberOfQuestions} ${difficulty} questions about ${subject}`);
+    console.log(`Generating ${numberOfQuestions} ${difficulty} questions about ${subject} with${adaptiveLearning ? '' : 'out'} adaptive learning`);
+    
+    if (adaptiveLearning) {
+      console.log(`Previous score: ${previousScore !== undefined ? previousScore : 'none'}. Using for difficulty adjustment.`);
+    }
     
     const quizData = await generateQuiz(
       subject, 

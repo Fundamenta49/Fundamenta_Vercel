@@ -491,7 +491,8 @@ export async function gradeQuiz(
   percentageScore: number,
   feedback: string,
   incorrectQuestions: number[],
-  suggestedActions?: string[]
+  suggestedActions?: string[],
+  moduleCompleted?: boolean
 }> {
   // Calculate basic score
   let correctCount = 0;
