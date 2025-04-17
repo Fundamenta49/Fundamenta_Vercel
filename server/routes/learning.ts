@@ -820,4 +820,31 @@ router.get('/quiz-progress/:userId', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * Clear all learning progress for a user
+ */
+router.delete('/clear-progress/:userId', async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+    
+    // Delete all learning progress records for the user
+    await db.delete(learningProgress)
+      .where(eq(learningProgress.userId, userId));
+    
+    console.log(`Cleared all learning progress for user ${userId}`);
+    
+    res.json({ 
+      success: true, 
+      message: 'Learning progress successfully cleared' 
+    });
+  } catch (error) {
+    console.error('Error clearing learning progress:', error);
+    res.status(500).json({ error: 'Failed to clear learning progress' });
+  }
+});
+
 export default router;
