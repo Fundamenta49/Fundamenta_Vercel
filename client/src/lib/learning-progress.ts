@@ -1,11 +1,27 @@
 import { apiRequest } from "./queryClient";
 
+// Import framework types from schema
+import { 
+  selCompetencies,
+  lifeDomains,
+  skillLevels
+} from './framework-constants';
+
+// Framework type definitions
+export type SELCompetency = keyof typeof selCompetencies;
+export type LIFEDomain = keyof typeof lifeDomains;
+export type SkillLevel = keyof typeof skillLevels;
+
 // Types for learning progress
 export interface LearningModule {
   id: string;
   title: string;
   path: string;
   complete: boolean;
+  // Framework metadata
+  selCompetencies?: SELCompetency[];  // SEL competencies this module addresses
+  lifeDomains?: LIFEDomain[];         // Project LIFE domains this module addresses
+  skillLevel?: SkillLevel;            // Skill level of this module
 }
 
 export interface LearningPathway {
@@ -93,11 +109,18 @@ export interface ActivityTimelineItem {
   count: number;
 }
 
+// Framework progress tracking
+export interface FrameworkProgress {
+  sel: Record<SELCompetency, number>;    // Progress percentage by SEL competency 
+  projectLife: Record<LIFEDomain, number>; // Progress percentage by Project LIFE domain
+}
+
 export interface LearningAnalytics {
   summary: LearningAnalyticsSummary;
   pathwayProgress: Record<string, PathwayProgressStats>;
   activityTimeline: ActivityTimelineItem[];
   recentCategories: string[];
+  frameworkProgress?: FrameworkProgress; // Progress across educational frameworks
 }
 
 /**
@@ -205,4 +228,117 @@ export function enrichPathwaysWithProgress(
       isLocked
     };
   });
+}
+
+/**
+ * Identify framework competency gaps for personalized recommendations
+ */
+export function identifyFrameworkGaps(
+  completedModules: LearningModule[],
+  allModules: LearningModule[]
+): {
+  selGaps: SELCompetency[],
+  lifeGaps: LIFEDomain[]
+} {
+  // Track competency coverage
+  const selCoverage: Record<SELCompetency, number> = {} as Record<SELCompetency, number>;
+  const lifeCoverage: Record<LIFEDomain, number> = {} as Record<LIFEDomain, number>;
+  
+  // Initialize all competencies and domains with zero
+  Object.keys(selCompetencies).forEach(key => {
+    selCoverage[key as SELCompetency] = 0;
+  });
+  
+  Object.keys(lifeDomains).forEach(key => {
+    lifeCoverage[key as LIFEDomain] = 0;
+  });
+  
+  // Count completed modules for each competency/domain
+  completedModules.forEach(module => {
+    module.selCompetencies?.forEach(comp => {
+      selCoverage[comp]++;
+    });
+    
+    module.lifeDomains?.forEach(domain => {
+      lifeCoverage[domain]++;
+    });
+  });
+  
+  // Identify gaps (areas with lowest coverage)
+  const selGaps = Object.entries(selCoverage)
+    .sort(([, a], [, b]) => a - b)
+    .slice(0, 2)
+    .map(([key]) => key as SELCompetency);
+    
+  const lifeGaps = Object.entries(lifeCoverage)
+    .sort(([, a], [, b]) => a - b)
+    .slice(0, 2)
+    .map(([key]) => key as LIFEDomain);
+    
+  return { selGaps, lifeGaps };
+}
+
+/**
+ * Calculate framework coverage percentages
+ */
+export function calculateFrameworkProgress(
+  completedModules: LearningModule[],
+  allModules: LearningModule[]
+): FrameworkProgress {
+  // Initialize coverage tracking objects
+  const selModules: Record<SELCompetency, { total: number, completed: number }> = 
+    {} as Record<SELCompetency, { total: number, completed: number }>;
+    
+  const lifeModules: Record<LIFEDomain, { total: number, completed: number }> = 
+    {} as Record<LIFEDomain, { total: number, completed: number }>;
+  
+  // Initialize records for all competencies and domains
+  Object.keys(selCompetencies).forEach(comp => {
+    selModules[comp as SELCompetency] = { total: 0, completed: 0 };
+  });
+  
+  Object.keys(lifeDomains).forEach(domain => {
+    lifeModules[domain as LIFEDomain] = { total: 0, completed: 0 };
+  });
+  
+  // Process all modules to count totals for each framework element
+  allModules.forEach(module => {
+    const isCompleted = completedModules.some(m => m.id === module.id);
+    
+    // Count SEL competencies
+    module.selCompetencies?.forEach(comp => {
+      selModules[comp].total++;
+      if (isCompleted) {
+        selModules[comp].completed++;
+      }
+    });
+    
+    // Count Project LIFE domains
+    module.lifeDomains?.forEach(domain => {
+      lifeModules[domain].total++;
+      if (isCompleted) {
+        lifeModules[domain].completed++;
+      }
+    });
+  });
+  
+  // Convert to percentage values
+  const selProgress = Object.entries(selModules).reduce((acc, [key, value]) => {
+    acc[key as SELCompetency] = value.total > 0 
+      ? Math.round((value.completed / value.total) * 100) 
+      : 0;
+    return acc;
+  }, {} as Record<SELCompetency, number>);
+  
+  const projectLifeProgress = Object.entries(lifeModules).reduce((acc, [key, value]) => {
+    acc[key as LIFEDomain] = value.total > 0 
+      ? Math.round((value.completed / value.total) * 100) 
+      : 0;
+    return acc;
+  }, {} as Record<LIFEDomain, number>);
+  
+  return {
+    sel: selProgress,
+    projectLife: projectLifeProgress
+  };
 }

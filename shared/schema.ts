@@ -243,6 +243,9 @@ export const insertTrainingPlanSchema = createInsertSchema(trainingPlans)
 export const insertLearningProgressSchema = createInsertSchema(learningProgress)
   .omit({ id: true, createdAt: true, updatedAt: true });
 
+export const insertLearningModuleTagsSchema = createInsertSchema(learningModuleTags)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+
 export const insertQuizProgressSchema = createInsertSchema(quizProgress)
   .omit({ id: true, createdAt: true, updatedAt: true });
   
@@ -283,6 +286,9 @@ export type SelectTrainingPlanType = typeof trainingPlans.$inferSelect;
 
 export type InsertLearningProgressType = z.infer<typeof insertLearningProgressSchema>;
 export type SelectLearningProgressType = typeof learningProgress.$inferSelect;
+
+export type InsertLearningModuleTagsType = z.infer<typeof insertLearningModuleTagsSchema>;
+export type SelectLearningModuleTagsType = typeof learningModuleTags.$inferSelect;
 
 export type InsertQuizProgressType = z.infer<typeof insertQuizProgressSchema>;
 export type SelectQuizProgressType = typeof quizProgress.$inferSelect;
