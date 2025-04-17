@@ -21,7 +21,8 @@ import {
   MessageSquare,
   Star,
   ShoppingBag,
-  Calendar
+  Calendar,
+  PauseCircle
 } from 'lucide-react';
 
 import FloatingChat from '@/components/floating-chat';
@@ -301,9 +302,33 @@ export default function Learning() {
 
   return (
     <div className="w-full h-full mx-auto p-0">
-      <h1 className="text-2xl font-bold tracking-tight text-center mb-6">
+      <h1 className="text-2xl font-bold tracking-tight text-center mb-3">
         Learning Hub
       </h1>
+      
+      <div className="flex justify-center gap-3 mb-6">
+        <button 
+          onClick={() => navigate('/learning/pathways')} 
+          className="px-4 py-2 rounded-md text-sm font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
+        >
+          <GraduationCap className="w-4 h-4 inline-block mr-1" />
+          Learning Pathways
+        </button>
+        <button 
+          onClick={() => navigate('/learning/saved-quizzes')} 
+          className="px-4 py-2 rounded-md text-sm font-medium bg-green-100 text-green-800 hover:bg-green-200 transition-colors"
+        >
+          <PauseCircle className="w-4 h-4 inline-block mr-1" />
+          Saved Quizzes
+        </button>
+        <button 
+          onClick={() => navigate('/learning/analytics')} 
+          className="px-4 py-2 rounded-md text-sm font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors"
+        >
+          <BookOpen className="w-4 h-4 inline-block mr-1" />
+          Learning Analytics
+        </button>
+      </div>
       
       {/* Categories with book-style cards */}
       <div className="px-3 sm:px-5 pt-2">

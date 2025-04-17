@@ -46,6 +46,7 @@ import IdentityDocumentsPage from "@/pages/learning/identity-documents";
 import CompletedCoursesPage from "@/pages/learning/completed";
 import LearningPathwaysPage from "@/pages/learning/pathways";
 import LearningAnalyticsDashboard from "@/pages/learning/analytics";
+import SavedQuizzesPage from "@/pages/learning/saved-quizzes";
 import DesignShowcasePage from "@/pages/design-showcase";
 import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/lib/auth-context";
@@ -321,6 +322,11 @@ function Router() {
             <Route path="/learning/analytics">
               <ProtectedRoute>
                 <LearningAnalyticsDashboard />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/saved-quizzes">
+              <ProtectedRoute>
+                <SavedQuizzesPage />
               </ProtectedRoute>
             </Route>
             <Route component={NotFound} />

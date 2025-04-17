@@ -188,12 +188,39 @@ export function useQuizProgress(userId: number, subject: string, pathwayId?: str
 
 /**
  * Hook to get all saved (incomplete) quizzes for a user
+ * @returns List of saved quizzes for the user
  */
 export function useSavedQuizzes(userId: number) {
   return useQuery({
     queryKey: ['/api/learning/quiz-progress', userId],
     queryFn: async () => {
-      return apiRequest(`/api/learning/quiz-progress/${userId}`, 'GET');
+      try {
+        const response = await apiRequest(`/api/learning/quiz-progress/${userId}`, 'GET');
+        
+        // Transform API response to array of QuizProgress objects
+        if (response && Array.isArray(response)) {
+          return response.map((quizData: any) => ({
+            userId: quizData.userId || userId,
+            subject: quizData.subject || '',
+            pathwayId: quizData.pathwayId,
+            moduleId: quizData.moduleId,
+            difficulty: quizData.difficulty || 'beginner',
+            currentQuestionIndex: quizData.currentQuestionIndex || 0,
+            score: quizData.score || 0,
+            questions: Array.isArray(quizData.questions) ? quizData.questions : [],
+            userAnswers: Array.isArray(quizData.userAnswers) ? quizData.userAnswers : [],
+            adaptiveLearning: !!quizData.adaptiveLearning,
+            completed: !!quizData.completed,
+            lastAccessedAt: quizData.lastAccessedAt,
+            createdAt: quizData.createdAt
+          } as QuizProgress));
+        }
+        
+        return [];
+      } catch (error) {
+        console.error('Error fetching saved quizzes:', error);
+        return [];
+      }
     },
     enabled: !!userId, // Only run if userId is provided
     retry: 1
