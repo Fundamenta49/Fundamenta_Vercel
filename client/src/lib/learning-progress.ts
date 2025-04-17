@@ -16,6 +16,8 @@ export interface LearningPathway {
   progress: number;
   icon: React.ReactNode;
   modules: LearningModule[];
+  prerequisites?: string[]; // IDs of pathways that must be completed first
+  isLocked?: boolean; // Whether this pathway is locked due to prerequisites
 }
 
 export interface ProgressRecord {
@@ -139,13 +141,37 @@ export function calculatePathwayProgress(
 }
 
 /**
- * Update LearningPathway with actual progress from backend
+ * Check if a pathway is completed (100% progress)
+ */
+export function isPathwayCompleted(pathway: LearningPathway): boolean {
+  return pathway.progress === 100;
+}
+
+/**
+ * Check if all prerequisites for a pathway are completed
+ */
+export function arePrerequisitesMet(pathway: LearningPathway, allPathways: LearningPathway[]): boolean {
+  // If no prerequisites, it's always unlocked
+  if (!pathway.prerequisites || pathway.prerequisites.length === 0) {
+    return true;
+  }
+
+  // Check if all prerequisite pathways are completed
+  return pathway.prerequisites.every(prereqId => {
+    const prerequisitePathway = allPathways.find(p => p.id === prereqId);
+    return prerequisitePathway && isPathwayCompleted(prerequisitePathway);
+  });
+}
+
+/**
+ * Update LearningPathway with actual progress from backend and check prerequisites
  */
 export function enrichPathwaysWithProgress(
   pathways: LearningPathway[], 
   progressData: GroupedProgress
 ): LearningPathway[] {
-  return pathways.map(pathway => {
+  // First pass: update progress for all pathways
+  const pathwaysWithProgress = pathways.map(pathway => {
     const pathwayProgress = progressData[pathway.id] || [];
     
     // Update modules completion status
@@ -164,6 +190,19 @@ export function enrichPathwaysWithProgress(
       ...pathway,
       modules: updatedModules,
       progress: progressPercentage
+    };
+  });
+  
+  // Second pass: check prerequisites and update locked status
+  return pathwaysWithProgress.map(pathway => {
+    // Check if all prerequisites are met
+    const isLocked = pathway.prerequisites && pathway.prerequisites.length > 0
+      ? !arePrerequisitesMet(pathway, pathwaysWithProgress)
+      : false;
+    
+    return {
+      ...pathway,
+      isLocked
     };
   });
 }
