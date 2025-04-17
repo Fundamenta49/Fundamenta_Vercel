@@ -1,0 +1,47 @@
+{
+  "learningPathways": {
+    "overview": "Fundamenta offers structured learning pathways that guide users through a progressive educational journey. Each pathway contains modules that build on each other to develop comprehensive skills in various life areas.",
+    "prerequisiteSystem": {
+      "description": "The learning pathway system includes prerequisites that create a guided, logical progression through different skill areas. Some pathways require the completion of foundational pathways before they can be unlocked.",
+      "purpose": "This system ensures users build necessary foundational knowledge before tackling more advanced topics, creating a more effective learning journey.",
+      "mechanics": "Pathways with prerequisites appear with a lock icon until all required prerequisite pathways are 100% complete. The prerequisite pathways are clearly listed so users know what they need to complete first.",
+      "examples": [
+        "Professional Skills pathway requires both Cognitive Skills and Communication Skills to be completed first",
+        "Cooking Skills pathway requires Financial Literacy to be completed first to understand food budgeting",
+        "Fitness Journey requires completion of the Wellness Routine pathway"
+      ]
+    },
+    "categories": {
+      "foundation": [
+        "Financial Literacy: Develops essential financial skills and knowledge",
+        "Cognitive Skills: Builds analytical thinking and decision-making abilities",
+        "Communication Skills: Improves ability to communicate effectively"
+      ],
+      "intermediate": [
+        "Cooking Skills: Teaches culinary techniques and meal preparation",
+        "Home Maintenance: Covers essential skills for maintaining living spaces",
+        "Wellness Routine: Helps build habits for physical and mental wellbeing"
+      ],
+      "advanced": [
+        "Professional Skills: Develops workplace and career advancement skills",
+        "Fitness Journey: Creates a personalized approach to physical fitness",
+        "Emergency Preparedness: Teaches essential skills for emergency situations"
+      ]
+    },
+    "progressTracking": {
+      "description": "Progress through pathways is automatically tracked as users complete modules. Module completion is verified through quizzes with a 70% passing threshold.",
+      "features": [
+        "Visual progress bars show completion percentage for each pathway",
+        "Completed modules are marked with green indicators",
+        "Prerequisites are clearly displayed for locked pathways",
+        "Analytics dashboard shows overall learning progress and activity patterns"
+      ]
+    },
+    "tips": [
+      "Focus on completing foundation pathways first to unlock more advanced content",
+      "Each module can be revisited even after completion for review",
+      "The analytics dashboard helps track progress across all learning areas",
+      "Prerequisites create a structured journey but all application features remain accessible directly"
+    ]
+  }
+}
