@@ -122,10 +122,18 @@ export default function QuizComponent({
   
   // Resume quiz from saved progress
   const handleResumeQuiz = () => {
+    // Safely access properties with proper type checking
     if (savedQuiz) {
-      setCurrentQuestionIndex(savedQuiz.currentQuestionIndex);
-      setScore(savedQuiz.score);
-      setUserAnswers(savedQuiz.userAnswers);
+      const quizData = savedQuiz as any;
+      if (quizData.currentQuestionIndex !== undefined) {
+        setCurrentQuestionIndex(quizData.currentQuestionIndex);
+      }
+      if (quizData.score !== undefined) {
+        setScore(quizData.score);
+      }
+      if (Array.isArray(quizData.userAnswers)) {
+        setUserAnswers(quizData.userAnswers);
+      }
       setResumeDialogOpen(false);
     }
   };
@@ -188,6 +196,11 @@ export default function QuizComponent({
   
   // Removed duplicate state
   
+  // Convert nullable answers to numbers for API compatibility
+  const getCleanAnswers = (answers: (number | null)[]): number[] => {
+    return answers.map(answer => answer === null ? -1 : answer);
+  };
+
   const handleNextQuestion = () => {
     // Record the user's answer for this question
     const updatedUserAnswers = [...userAnswers];
@@ -212,12 +225,33 @@ export default function QuizComponent({
         onComplete(
           finalScore, 
           questions.length, 
-          updatedUserAnswers, 
+          getCleanAnswers(updatedUserAnswers), 
           correctAnswers,
           pathwayId,
           moduleId,
           userId
         );
+      }
+      
+      // If the quiz is completed, mark it as complete in saved progress
+      if (userId) {
+        saveProgress({
+          subject,
+          pathwayId,
+          moduleId,
+          difficulty,
+          currentQuestionIndex,
+          score: finalScore,
+          questions: questions.map(q => ({
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation || ""
+          })),
+          userAnswers: updatedUserAnswers,
+          adaptiveLearning,
+          completed: true
+        });
       }
     }
   };
