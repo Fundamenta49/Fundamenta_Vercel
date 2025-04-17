@@ -19,11 +19,17 @@ interface QuizComponentProps {
   subject: string;
   questions?: QuizQuestion[];
   difficulty?: "beginner" | "intermediate" | "advanced";
+  pathwayId?: string;  // Added for module completion tracking
+  moduleId?: string;   // Added for module completion tracking
+  userId?: number;     // Added for module completion tracking
   onComplete?: (
     score: number, 
     totalQuestions: number, 
     userAnswers?: number[], 
-    correctAnswers?: number[]
+    correctAnswers?: number[],
+    pathwayId?: string,
+    moduleId?: string,
+    userId?: number
   ) => void;
   onGenerateQuiz?: () => void;
   className?: string;
@@ -33,6 +39,9 @@ export default function QuizComponent({
   subject,
   questions = [],
   difficulty = "beginner",
+  pathwayId,
+  moduleId,
+  userId,
   onComplete,
   onGenerateQuiz,
   className
@@ -122,7 +131,16 @@ export default function QuizComponent({
       
       if (onComplete) {
         // Use the updated onComplete function with optional parameters
-        onComplete(finalScore, questions.length, updatedUserAnswers, correctAnswers);
+        // Include pathway, module, and user IDs for backend marking of module completion
+        onComplete(
+          finalScore, 
+          questions.length, 
+          updatedUserAnswers, 
+          correctAnswers,
+          pathwayId,
+          moduleId,
+          userId
+        );
       }
     }
   };

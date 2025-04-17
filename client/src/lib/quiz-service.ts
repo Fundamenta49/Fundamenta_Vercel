@@ -3,9 +3,11 @@ import { Resource } from '@/components/resource-links';
 
 interface GenerateQuizParams {
   subject: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'proficient';
   numberOfQuestions?: number;
   topics?: string[];
+  adaptiveLearning?: boolean; // Enable difficulty adjustment based on previous performance
+  previousScore?: number; // Optional previous score to adjust difficulty dynamically
 }
 
 interface GenerateResourcesParams {
@@ -28,10 +30,38 @@ export async function generateQuiz({
   subject,
   difficulty,
   numberOfQuestions = 5,
-  topics = []
+  topics = [],
+  adaptiveLearning = false,
+  previousScore
 }: GenerateQuizParams): Promise<QuizQuestion[]> {
   try {
-    console.log(`Generating quiz for ${subject} at ${difficulty} level`);
+    console.log(`Generating quiz for ${subject} at ${difficulty} level with${adaptiveLearning ? '' : 'out'} adaptive learning`);
+    
+    // If adaptive learning is enabled and we have a previous score, we might adjust difficulty
+    let effectiveDifficulty = difficulty;
+    
+    if (adaptiveLearning && previousScore !== undefined) {
+      // Dynamically adjust difficulty based on previous performance
+      if (difficulty === 'beginner' && previousScore >= 85) {
+        effectiveDifficulty = 'intermediate';
+        console.log('Adapting difficulty: beginner -> intermediate based on high previous score');
+      } else if (difficulty === 'intermediate' && previousScore >= 80) {
+        effectiveDifficulty = 'advanced';
+        console.log('Adapting difficulty: intermediate -> advanced based on high previous score');
+      } else if (difficulty === 'advanced' && previousScore >= 75) {
+        effectiveDifficulty = 'proficient';
+        console.log('Adapting difficulty: advanced -> proficient based on high previous score');
+      } else if (difficulty === 'intermediate' && previousScore <= 40) {
+        effectiveDifficulty = 'beginner';
+        console.log('Adapting difficulty: intermediate -> beginner based on low previous score');
+      } else if (difficulty === 'advanced' && previousScore <= 50) {
+        effectiveDifficulty = 'intermediate';
+        console.log('Adapting difficulty: advanced -> intermediate based on low previous score');
+      } else if (difficulty === 'proficient' && previousScore <= 60) {
+        effectiveDifficulty = 'advanced';
+        console.log('Adapting difficulty: proficient -> advanced based on low previous score');
+      }
+    }
     
     const response = await fetch('/api/learning/generate-quiz', {
       method: 'POST',
@@ -40,9 +70,11 @@ export async function generateQuiz({
       },
       body: JSON.stringify({
         subject,
-        difficulty,
+        difficulty: effectiveDifficulty,
         numberOfQuestions,
-        topics
+        topics,
+        adaptiveLearning,
+        previousScore
       })
     });
 
@@ -119,19 +151,27 @@ export async function submitQuizResults(
   userAnswers: number[] | null = null,
   correctAnswers: number[] | null = null,
   score?: number,
-  totalQuestions?: number
+  totalQuestions?: number,
+  pathwayId?: string,
+  moduleId?: string,
+  userId?: number
 ): Promise<{ 
   feedback: string; 
   suggestedActions: string[];
   percentageScore?: number;
   incorrectQuestions?: number[];
+  moduleCompleted?: boolean;
 }> {
   try {
     // Prepare the request body based on available data
     const requestBody: any = {
       subject,
       difficulty,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      // Include pathway, module, and user IDs for automated module completion
+      pathwayId,
+      moduleId,
+      userId
     };
     
     // If we have detailed answer data, use it (preferred for better analysis)
@@ -176,7 +216,8 @@ export async function submitQuizResults(
       feedback: result.feedback || 'Quiz results submitted successfully!',
       suggestedActions: result.suggestedActions || [],
       percentageScore: result.percentageScore,
-      incorrectQuestions: result.incorrectQuestions
+      incorrectQuestions: result.incorrectQuestions,
+      moduleCompleted: result.moduleCompleted
     };
   } catch (error) {
     console.error('Error submitting quiz results:', error);
