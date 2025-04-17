@@ -189,6 +189,24 @@ export default function QuizComponent({
       feedback = "Keep practicing! Review the material and try again.";
     }
     
+    // Determine next difficulty message if adaptive learning is enabled
+    let nextDifficultyMessage = "";
+    if (adaptiveLearning) {
+      if (difficulty === 'beginner' && finalScore >= 85) {
+        nextDifficultyMessage = "Great job! Next time you'll advance to intermediate difficulty.";
+      } else if (difficulty === 'intermediate' && finalScore >= 80) {
+        nextDifficultyMessage = "Excellent work! Next time you'll advance to advanced difficulty.";
+      } else if (difficulty === 'advanced' && finalScore >= 75) {
+        nextDifficultyMessage = "Outstanding! Next time you'll advance to proficient difficulty.";
+      } else if (difficulty === 'intermediate' && finalScore <= 40) {
+        nextDifficultyMessage = "Let's build your foundation. Next time we'll return to beginner difficulty.";
+      } else if (difficulty === 'advanced' && finalScore <= 50) {
+        nextDifficultyMessage = "Let's strengthen your skills. Next time we'll return to intermediate difficulty.";
+      } else if (difficulty === 'proficient' && finalScore <= 60) {
+        nextDifficultyMessage = "Let's reinforce these concepts. Next time we'll return to advanced difficulty.";
+      }
+    }
+    
     return (
       <Card className={className}>
         <CardHeader>
@@ -200,6 +218,12 @@ export default function QuizComponent({
           <h3 className="text-2xl font-bold mb-2">Your Score: {score}/{questions.length}</h3>
           <Progress value={finalScore} className="h-3 w-full max-w-md mx-auto mb-4" />
           <p className="mb-6">{feedback}</p>
+          
+          {nextDifficultyMessage && (
+            <div className="mb-6 p-4 bg-blue-50 rounded-md border border-blue-100">
+              <p className="text-blue-700">{nextDifficultyMessage}</p>
+            </div>
+          )}
           
           <div className="space-y-6 max-w-md mx-auto mt-8">
             <h4 className="font-semibold text-lg">What's next?</h4>
@@ -236,11 +260,25 @@ export default function QuizComponent({
           <div>
             <CardTitle>Question {currentQuestionIndex + 1} of {questions.length}</CardTitle>
             <CardDescription>
-              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} level {subject} quiz
+              {subject} quiz
             </CardDescription>
           </div>
-          <div className="text-sm bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
-            Score: {score}/{currentQuestionIndex}
+          <div className="flex items-center gap-2">
+            <div className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} level
+              {adaptiveLearning && (
+                <span className="ml-1 inline-flex items-center">
+                  <span className="relative flex h-2 w-2 mr-1">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                  </span>
+                  <span className="text-xs font-medium">adaptive</span>
+                </span>
+              )}
+            </div>
+            <div className="text-sm bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
+              Score: {score}/{currentQuestionIndex}
+            </div>
           </div>
         </div>
       </CardHeader>
