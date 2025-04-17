@@ -42,7 +42,7 @@ export async function fetchUserProgress(userId: number): Promise<GroupedProgress
     return await response.json();
   } catch (error) {
     console.error('Error fetching user progress:', error);
-    return {};
+    return {} as GroupedProgress;
   }
 }
 

@@ -7,6 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { 
+  fetchUserProgress, 
+  trackModuleProgress, 
+  enrichPathwaysWithProgress,
+  LearningPathway
+} from "@/lib/learning-progress";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample learning pathways data
 const learningPathways = [
@@ -128,11 +136,78 @@ export default function LearningPathwaysPage() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = React.useState<string>("all");
   const [expandedPath, setExpandedPath] = React.useState<string | null>(null);
-
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  // For demo purposes, we'll use a hardcoded user ID
+  // In a real app, this would come from authentication context
+  const userId = 1;
+  
+  // Fetch the user's learning progress
+  const { data: progressData, isLoading: isLoadingProgress } = useQuery({
+    queryKey: [`/api/learning/progress/${userId}`],
+    onSuccess: (data: any) => {
+      console.log("Progress data loaded:", data);
+    },
+    onError: (error: Error) => {
+      console.error("Error loading progress:", error);
+      toast({
+        title: "Error loading progress",
+        description: "There was a problem loading your learning progress.",
+        variant: "destructive"
+      });
+    }
+  } as any);
+  
+  // Track module completion mutation
+  const trackProgressMutation = useMutation({
+    mutationFn: ({ pathwayId, moduleId, completed }: { 
+      pathwayId: string, 
+      moduleId: string, 
+      completed: boolean 
+    }) => trackModuleProgress(userId, pathwayId, moduleId, completed),
+    onSuccess: () => {
+      // Invalidate the progress query to refresh data
+      queryClient.invalidateQueries({ queryKey: [`/api/learning/progress/${userId}`] });
+      toast({
+        title: "Progress updated",
+        description: "Your learning progress has been saved."
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error updating progress",
+        description: "There was a problem saving your progress.",
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Mark a module as complete when the user views it
+  const handleModuleView = (pathwayId: string, moduleId: string, completed: boolean) => {
+    trackProgressMutation.mutate({ pathwayId, moduleId, completed });
+    // Navigate to the module
+    const module = learningPathways
+      .find(p => p.id === pathwayId)
+      ?.modules.find(m => m.id === moduleId);
+      
+    if (module) {
+      navigate(module.path);
+    }
+  };
+  
+  // Enrich the static pathways data with actual progress from the API
+  const pathwaysWithProgress = React.useMemo(() => {
+    if (!progressData) {
+      return learningPathways;
+    }
+    return enrichPathwaysWithProgress(learningPathways, progressData as any);
+  }, [progressData]);
+  
   // Filter pathways by category
   const filteredPathways = activeTab === "all" 
-    ? learningPathways 
-    : learningPathways.filter(pathway => pathway.category === activeTab);
+    ? pathwaysWithProgress 
+    : pathwaysWithProgress.filter(pathway => pathway.category === activeTab);
 
   const togglePathDetails = (pathId: string) => {
     if (expandedPath === pathId) {
@@ -216,87 +291,103 @@ export default function LearningPathwaysPage() {
           </TabsList>
 
           <TabsContent value={activeTab} className="mt-6">
-            <div className="grid grid-cols-1 gap-4">
-              {filteredPathways.map(pathway => (
-                <Card key={pathway.id} className="border">
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <div className={`rounded-full p-1.5 ${categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
-                          {pathway.icon}
-                        </div>
-                        <CardTitle className="text-lg">{pathway.title}</CardTitle>
-                      </div>
-                      <Badge variant="outline">
-                        {pathway.modules.length} modules
-                      </Badge>
-                    </div>
-                    <CardDescription className="mt-1">
-                      {pathway.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Progress</span>
-                          <span className="font-medium">{pathway.progress}%</span>
-                        </div>
-                        <Progress value={pathway.progress} className="h-2" />
-                      </div>
-                      
-                      {expandedPath === pathway.id && (
-                        <div className="mt-4 space-y-3 pt-3 border-t">
-                          <h4 className="text-sm font-medium">Modules:</h4>
-                          <div className="space-y-2">
-                            {pathway.modules.map((module) => (
-                              <div key={module.id} className="flex justify-between items-center p-2 rounded-md bg-gray-50">
-                                <div className="flex items-center">
-                                  {module.complete ? (
-                                    <div className="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
-                                  ) : (
-                                    <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
-                                  )}
-                                  <span className={module.complete ? "text-sm" : "text-sm text-gray-600"}>
-                                    {module.title}
-                                  </span>
-                                </div>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="h-7"
-                                  onClick={() => navigate(module.path)}
-                                >
-                                  {module.complete ? "Review" : "Start"}
-                                </Button>
-                              </div>
-                            ))}
+            {isLoadingProgress ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+                <p className="text-muted-foreground">Loading your learning progress...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {filteredPathways.map(pathway => (
+                  <Card key={pathway.id} className="border">
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div className={`rounded-full p-1.5 ${categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
+                            {pathway.icon}
                           </div>
+                          <CardTitle className="text-lg">{pathway.title}</CardTitle>
                         </div>
-                      )}
-                      
-                      <div className="flex justify-between pt-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => togglePathDetails(pathway.id)}
-                        >
-                          {expandedPath === pathway.id ? "Hide Details" : "Show Details"}
-                        </Button>
-                        
-                        <Button 
-                          variant="default" 
-                          size="sm"
-                          onClick={() => navigate(pathway.modules.find(m => !m.complete)?.path || pathway.modules[0].path)}
-                        >
-                          {pathway.progress > 0 ? "Continue" : "Start"} Pathway
-                        </Button>
+                        <Badge variant="outline">
+                          {pathway.modules.length} modules
+                        </Badge>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <CardDescription className="mt-1">
+                        {pathway.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span>Progress</span>
+                            <span className="font-medium">{pathway.progress}%</span>
+                          </div>
+                          <Progress value={pathway.progress} className="h-2" />
+                        </div>
+                        
+                        {expandedPath === pathway.id && (
+                          <div className="mt-4 space-y-3 pt-3 border-t">
+                            <h4 className="text-sm font-medium">Modules:</h4>
+                            <div className="space-y-2">
+                              {pathway.modules.map((module) => (
+                                <div key={module.id} className="flex justify-between items-center p-2 rounded-md bg-gray-50">
+                                  <div className="flex items-center">
+                                    {module.complete ? (
+                                      <div className="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
+                                    ) : (
+                                      <div className="w-4 h-4 rounded-full border border-gray-300 mr-2"></div>
+                                    )}
+                                    <span className={module.complete ? "text-sm" : "text-sm text-gray-600"}>
+                                      {module.title}
+                                    </span>
+                                  </div>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="h-7"
+                                    onClick={() => handleModuleView(pathway.id, module.id, !module.complete)}
+                                    disabled={trackProgressMutation.isPending}
+                                  >
+                                    {module.complete ? "Review" : "Start"}
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="flex justify-between pt-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => togglePathDetails(pathway.id)}
+                          >
+                            {expandedPath === pathway.id ? "Hide Details" : "Show Details"}
+                          </Button>
+                          
+                          <Button 
+                            variant="default" 
+                            size="sm"
+                            onClick={() => {
+                              const nextModule = pathway.modules.find(m => !m.complete);
+                              if (nextModule) {
+                                handleModuleView(pathway.id, nextModule.id, true);
+                              } else if (pathway.modules.length > 0) {
+                                navigate(pathway.modules[0].path);
+                              }
+                            }}
+                            disabled={trackProgressMutation.isPending}
+                          >
+                            {pathway.progress > 0 ? "Continue" : "Start"} Pathway
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
