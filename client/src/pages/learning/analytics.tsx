@@ -106,11 +106,11 @@ export default function LearningAnalyticsDashboard() {
       <div className="flex items-center mb-6">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/learning/pathways')}
+          onClick={() => navigate('/arcade')}
           className="mr-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Pathways
+          Back to Arcade
         </Button>
         
         <h1 className="text-2xl font-bold flex items-center">
