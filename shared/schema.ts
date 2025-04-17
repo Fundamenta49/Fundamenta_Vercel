@@ -178,6 +178,7 @@ export const learningProgress = pgTable("learning_progress", {
   moduleId: text("module_id").notNull(), 
   completed: boolean("completed").notNull().default(false),
   completedAt: timestamp("completed_at"),
+  metadata: jsonb("metadata").default({}), // Store adaptive learning data and quiz performance
   lastAccessedAt: timestamp("last_accessed_at").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

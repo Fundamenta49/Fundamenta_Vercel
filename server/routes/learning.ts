@@ -3,6 +3,8 @@ import OpenAI from 'openai';
 import { QuizQuestion } from '../../client/src/components/quiz-component';
 import { Resource } from '../../client/src/components/resource-links';
 import { generateQuiz, gradeQuiz } from '../services/quiz-service';
+import { generateAdaptiveQuiz, recordQuizResults } from '../services/adaptive-quiz-service';
+import { generatePersonalizedLearningPlan } from '../services/recommendation-engine';
 import { db } from '../db';
 import { and, eq, desc } from 'drizzle-orm';
 import { learningProgress, quizProgress, insertQuizProgressSchema } from '../../shared/schema';
