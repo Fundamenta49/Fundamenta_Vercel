@@ -314,7 +314,7 @@ const DailyChallenges = ({ onViewAllChallenges }: { onViewAllChallenges?: () => 
               <p className="text-xs text-gray-600">Answer 5 finance questions correctly</p>
             </div>
           </div>
-          <Badge className="bg-green-600">+20 pts</Badge>
+          <Badge className="bg-white text-gray-800 border">+20 pts</Badge>
         </div>
         
         <div className="flex justify-between items-center p-3 border rounded-lg bg-purple-50 border-purple-200">
@@ -327,7 +327,7 @@ const DailyChallenges = ({ onViewAllChallenges }: { onViewAllChallenges?: () => 
               <p className="text-xs text-gray-600">Log a fitness activity today</p>
             </div>
           </div>
-          <Badge className="bg-purple-600">+15 pts</Badge>
+          <Badge className="bg-white text-gray-800 border">+15 pts</Badge>
         </div>
         
         <div className="flex justify-between items-center p-3 border rounded-lg bg-orange-50 border-orange-200">
@@ -340,7 +340,7 @@ const DailyChallenges = ({ onViewAllChallenges }: { onViewAllChallenges?: () => 
               <p className="text-xs text-gray-600">Complete any learning module</p>
             </div>
           </div>
-          <Badge className="bg-orange-600">+15 pts</Badge>
+          <Badge className="bg-white text-gray-800 border">+15 pts</Badge>
         </div>
         
         <Button 
@@ -646,7 +646,7 @@ export default function Arcade() {
                         <p className="text-xs text-gray-600">Completed on April 12, 2025</p>
                       </div>
                     </div>
-                    <Badge className="bg-green-600">+35 pts</Badge>
+                    <Badge className="bg-white text-gray-800 border">+35 pts</Badge>
                   </div>
                   
                   <div className="flex justify-between items-center p-3 border rounded-lg bg-green-50 border-green-200">
@@ -659,7 +659,7 @@ export default function Arcade() {
                         <p className="text-xs text-gray-600">Completed on April 5, 2025</p>
                       </div>
                     </div>
-                    <Badge className="bg-green-600">+40 pts</Badge>
+                    <Badge className="bg-white text-gray-800 border">+40 pts</Badge>
                   </div>
                   
                   <div className="flex justify-between items-center p-3 border rounded-lg bg-green-50 border-green-200">
@@ -672,7 +672,7 @@ export default function Arcade() {
                         <p className="text-xs text-gray-600">Completed on March 28, 2025</p>
                       </div>
                     </div>
-                    <Badge className="bg-green-600">+25 pts</Badge>
+                    <Badge className="bg-white text-gray-800 border">+25 pts</Badge>
                   </div>
                 </div>
                 
@@ -707,7 +707,7 @@ export default function Arcade() {
                       <p className="text-xs text-gray-600">Answer 5 finance questions correctly</p>
                     </div>
                   </div>
-                  <Badge className="bg-green-600">+20 pts</Badge>
+                  <Badge className="bg-white text-gray-800 border">+20 pts</Badge>
                 </div>
                 
                 <div className="flex justify-between items-center p-3 border rounded-lg bg-purple-50 border-purple-200">
@@ -720,7 +720,7 @@ export default function Arcade() {
                       <p className="text-xs text-gray-600">Log a fitness activity today</p>
                     </div>
                   </div>
-                  <Badge className="bg-purple-600">+15 pts</Badge>
+                  <Badge className="bg-white text-gray-800 border">+15 pts</Badge>
                 </div>
                 
                 <div className="flex justify-between items-center p-3 border rounded-lg bg-orange-50 border-orange-200">
@@ -733,7 +733,7 @@ export default function Arcade() {
                       <p className="text-xs text-gray-600">Complete any learning module</p>
                     </div>
                   </div>
-                  <Badge className="bg-orange-600">+15 pts</Badge>
+                  <Badge className="bg-white text-gray-800 border">+15 pts</Badge>
                 </div>
                 
                 <div className="flex justify-between items-center p-3 border rounded-lg bg-rose-50 border-rose-200">
@@ -746,7 +746,7 @@ export default function Arcade() {
                       <p className="text-xs text-gray-600">Complete a guided meditation</p>
                     </div>
                   </div>
-                  <Badge className="bg-rose-600">+10 pts</Badge>
+                  <Badge className="bg-white text-gray-800 border">+10 pts</Badge>
                 </div>
               </CardContent>
             </Card>
