@@ -67,6 +67,7 @@ const Icons = {
   Star: Star as React.ComponentType<{ className?: string }>,
   ShoppingBag: ShoppingBag as React.ComponentType<{ className?: string }>,
   Calendar: Calendar as React.ComponentType<{ className?: string }>,
+  PauseCircle: PauseCircle as React.ComponentType<{ className?: string }>,
 };
 
 export default function Learning() {
