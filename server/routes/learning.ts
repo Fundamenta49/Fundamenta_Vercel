@@ -38,7 +38,9 @@ router.post('/generate-quiz', async (req: Request, res: Response) => {
       subject, 
       difficulty, 
       numberOfQuestions, 
-      topics
+      topics,
+      adaptiveLearning,
+      previousScore
     );
     
     res.json(quizData);

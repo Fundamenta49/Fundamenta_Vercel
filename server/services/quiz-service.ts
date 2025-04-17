@@ -320,9 +320,23 @@ async function generateQuizWithOpenAI(
   topics: string[] = []
 ): Promise<Quiz> {
   // Build prompt for OpenAI
+  // Adjust difficulty guidance based on selected level
+  let difficultyGuidance = '';
+  if (difficulty === 'beginner') {
+    difficultyGuidance = 'Focus on fundamental concepts and basic knowledge. Use simple language and straightforward scenarios.';
+  } else if (difficulty === 'intermediate') {
+    difficultyGuidance = 'Include more complex concepts that build on fundamentals. Questions should require deeper understanding.';
+  } else if (difficulty === 'advanced') {
+    difficultyGuidance = 'Focus on advanced concepts and complex scenarios. Questions should require thorough knowledge and critical thinking.';
+  } else if (difficulty === 'proficient') {
+    difficultyGuidance = 'Create challenging questions that test mastery of the subject. Include edge cases, complex scenarios, and questions that require synthesis of multiple concepts.';
+  }
+
   const prompt = `
     Create ${numberOfQuestions} multiple-choice quiz questions about ${subject} at a ${difficulty} level.
     ${topics.length > 0 ? `Focus on these specific topics: ${topics.join(', ')}.` : ''}
+    
+    ${difficultyGuidance}
     
     If the subject is related to finances, focus on practical math for life skills including:
     - Calculating income versus expenses
@@ -419,11 +433,39 @@ export async function generateQuiz(
   subject: string,
   difficulty: string = "beginner",
   numberOfQuestions: number = 5,
-  topics: string[] = []
+  topics: string[] = [],
+  adaptiveLearning: boolean = false,
+  previousScore?: number
 ): Promise<Quiz> {
   try {
-    // Create a cache key based on input parameters
-    const cacheKey = `quiz_${subject}_${difficulty}_${numberOfQuestions}_${topics.join('_')}`;
+    // If adaptive learning is enabled, adjust difficulty based on previous score
+    if (adaptiveLearning && previousScore !== undefined) {
+      console.log(`Adaptive learning enabled. Previous score: ${previousScore}`);
+      
+      // Apply similar logic to the client-side for consistency
+      if (difficulty === 'beginner' && previousScore >= 85) {
+        console.log('Adapting server-side difficulty: beginner -> intermediate');
+        difficulty = 'intermediate';
+      } else if (difficulty === 'intermediate' && previousScore >= 80) {
+        console.log('Adapting server-side difficulty: intermediate -> advanced');
+        difficulty = 'advanced';
+      } else if (difficulty === 'advanced' && previousScore >= 75) {
+        console.log('Adapting server-side difficulty: advanced -> proficient');
+        difficulty = 'proficient';
+      } else if (difficulty === 'intermediate' && previousScore <= 40) {
+        console.log('Adapting server-side difficulty: intermediate -> beginner');
+        difficulty = 'beginner';
+      } else if (difficulty === 'advanced' && previousScore <= 50) {
+        console.log('Adapting server-side difficulty: advanced -> intermediate');
+        difficulty = 'intermediate';
+      } else if (difficulty === 'proficient' && previousScore <= 60) {
+        console.log('Adapting server-side difficulty: proficient -> advanced');
+        difficulty = 'advanced';
+      }
+    }
+    
+    // Create a cache key based on input parameters including adaptive learning status
+    const cacheKey = `quiz_${subject}_${difficulty}_${numberOfQuestions}_${topics.join('_')}_${adaptiveLearning ? 'adaptive' : 'standard'}`;
     
     // Check if we have this quiz cached
     const cachedQuiz = quizCache.get<Quiz>(cacheKey);
