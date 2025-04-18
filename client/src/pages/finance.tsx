@@ -14,6 +14,7 @@ import {
 import FinanceAdvisorPopOut from "@/components/finance-advisor-pop-out";
 import BudgetCalculatorPopOut from "@/components/budget-calculator-pop-out";
 import FinancialDashboardPopOut from "@/components/financial-dashboard-pop-out";
+import FinancialDashboardFullscreen from "@/components/financial-dashboard-fullscreen";
 import CreditSkillsPopOut from "@/components/credit-skills-pop-out";
 import RetirementPlanningPopOut from "@/components/retirement-planning-pop-out";
 import MortgageCalculatorPopOut from "@/components/mortgage-calculator-pop-out";
@@ -167,11 +168,13 @@ export default function Finance() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      <FullScreenDialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
-        <FullScreenDialogContent themeColor="#22c55e" className="w-full financial-dashboard-dialog" style={{ maxWidth: "100%", width: "100vw", height: "100vh", position: "fixed", inset: 0 }}>
-          <FinancialDashboardPopOut budgetData={budgetData} />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+      {/* Use our custom fullscreen component for financial dashboard instead of the dialog */}
+      {isDashboardOpen && (
+        <FinancialDashboardFullscreen 
+          budgetData={budgetData} 
+          onClose={() => setIsDashboardOpen(false)} 
+        />
+      )}
 
       <FullScreenDialog open={isCreditOpen} onOpenChange={setIsCreditOpen}>
         <FullScreenDialogContent themeColor="#22c55e">
