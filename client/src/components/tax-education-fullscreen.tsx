@@ -711,12 +711,12 @@ export default function TaxEducationFullscreen({
                   style={{ backgroundColor: "white", borderColor: "#10b981" }}
                 >
                   {states.map((state) => (
-                    <option key={state.value} value={state.value} disabled={!["ny", "ca", "tx", "fl"].includes(state.value)}>
-                      {state.name} {!["ny", "ca", "tx", "fl"].includes(state.value) ? "(Coming soon)" : ""}
+                    <option key={state.value} value={state.value}>
+                      {state.name}
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-green-600 mt-1">Tax data available for NY, CA, TX, and FL. More states coming soon via FRED API!</p>
+                <p className="text-xs text-green-600 mt-1">Tax data for all 50 states now available via the FRED API!</p>
               </div>
               
               {getStateContent()}
@@ -793,12 +793,12 @@ export default function TaxEducationFullscreen({
                         style={{ backgroundColor: "white", borderColor: "#10b981" }}
                       >
                         {states.map((state) => (
-                          <option key={state.value} value={state.value} disabled={!["ny", "ca", "tx", "fl"].includes(state.value)}>
-                            {state.name} {!["ny", "ca", "tx", "fl"].includes(state.value) ? "(Coming soon)" : ""}
+                          <option key={state.value} value={state.value}>
+                            {state.name}
                           </option>
                         ))}
                       </select>
-                      <p className="text-xs text-green-600 mt-1">Tax data for more states coming via FRED API!</p>
+                      <p className="text-xs text-green-600 mt-1">Tax data for all 50 states now available via the FRED API!</p>
                     </div>
                     
                     <div>
