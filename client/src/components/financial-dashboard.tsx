@@ -88,7 +88,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
         
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 w-full">
-            <Card className="w-full">
+            <Card className="w-full max-w-full">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Monthly Income</CardTitle>
               </CardHeader>
@@ -97,7 +97,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
               </CardContent>
             </Card>
             
-            <Card className="w-full">
+            <Card className="w-full max-w-full">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Monthly Expenses</CardTitle>
               </CardHeader>
