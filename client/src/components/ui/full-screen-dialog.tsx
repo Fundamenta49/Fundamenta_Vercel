@@ -140,9 +140,7 @@ const FullScreenDialogContent = React.forwardRef<
           }}
           {...props}
         >
-          <div className="w-full h-full">
-            {children}
-          </div>
+{children}
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
@@ -183,14 +181,7 @@ const FullScreenDialogHeader = ({
       }}
       {...props}
     >
-      {/* Center content container for desktop */}
-      {!isMobile ? (
-        <div className="w-full max-w-full">
-          {props.children}
-        </div>
-      ) : (
-        props.children
-      )}
+{props.children}
     </div>
   );
 };
@@ -260,14 +251,7 @@ const FullScreenDialogBody = ({
       }}
       {...props}
     >
-      {/* This div centers and controls max-width of content on desktop only */}
-      {!isMobile ? (
-        <div className="w-full max-w-full">
-          {props.children}
-        </div>
-      ) : (
-        props.children
-      )}
+{props.children}
     </div>
   );
 };

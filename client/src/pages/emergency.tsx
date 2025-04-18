@@ -237,7 +237,7 @@ export default function Emergency() {
       </FullScreenDialog>
 
       <FullScreenDialog open={isSuppliesOpen} onOpenChange={setIsSuppliesOpen}>
-        <FullScreenDialogContent themeColor="#ef4444" className="w-full h-full overflow-auto">
+        <FullScreenDialogContent themeColor="#ef4444" className="p-0">
           <EmergencyChecklistFullscreen />
         </FullScreenDialogContent>
       </FullScreenDialog>

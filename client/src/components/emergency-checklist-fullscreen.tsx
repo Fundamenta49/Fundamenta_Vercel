@@ -395,7 +395,7 @@ export default function EmergencyChecklistFullscreen() {
   };
   
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col p-4 md:p-6">
       <div className="flex flex-col gap-2">
         <h2 className="text-xl font-bold text-red-700">Emergency Preparedness Checklist</h2>
         <p className="text-sm text-red-600/80">
