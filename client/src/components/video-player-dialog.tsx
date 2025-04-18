@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, X, AlertCircle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { EmbeddedYouTubePlayer } from './embedded-youtube-player';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 
 interface VideoPlayerDialogProps {
@@ -41,20 +39,30 @@ export function VideoPlayerDialog({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full sm:w-[90vw] md:w-[80vw] lg:max-w-5xl xl:max-w-6xl h-auto max-h-[90vh] p-0 rounded-lg border overflow-hidden">
+      <DialogContent 
+        className="w-full h-full p-0 border overflow-hidden"
+        style={{
+          width: "100vw",
+          height: "100vh",
+          maxWidth: "100vw",
+          maxHeight: "100vh",
+          borderRadius: 0
+        }}
+      >
         {/* Ensure screen reader accessibility */}
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">{description || `Video: ${title}`}</DialogDescription>
         
         {/* Close button - improved positioning and z-index */}
-        <div className="absolute top-3 right-3 z-[100]">
+        <div className="absolute top-6 right-6 z-[100]">
           <Button 
             variant="outline"
             aria-label="Close video"
             onClick={() => onOpenChange(false)} 
-            className="h-8 w-8 p-0 rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 border-none"
+            className="h-12 w-12 p-3 rounded-full bg-gray-100 hover:bg-gray-200 border-none"
           >
-            <X className="h-4 w-4 text-white" />
+            <X className="h-8 w-8 text-gray-700" />
+            <span className="sr-only">Close</span>
           </Button>
         </div>
         
