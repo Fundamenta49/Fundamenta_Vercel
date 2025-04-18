@@ -290,7 +290,7 @@ export default function SimpleEmergencyChecklist() {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full">
             <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
               <div 
                 className={cn(
@@ -300,111 +300,114 @@ export default function SimpleEmergencyChecklist() {
                 style={{ width: `${completion}%` }}
               />
             </div>
-            <span className="text-sm font-medium">{completion}%</span>
+            <span className="text-sm font-medium whitespace-nowrap">{completion}%</span>
           </div>
         </div>
         
-        {Object.entries(groupedItems).map(([category, categoryItems]) => {
-          // Create a key for this specific category input
-          const inputKey = `${tabPrefix}-${category}`;
-          const inputValue = newItemTexts[inputKey] || "";
-          
-          return (
-            <div key={category} className="border border-red-100 rounded-lg p-4 bg-card">
-              <h3 className="font-medium mb-2 text-red-700 border-b border-red-100 pb-1">
-                {category === "supply" ? "Basic Supplies" :
-                 category === "battery" ? "Batteries & Power" : 
-                 category === "light" ? "Lighting & Flashlights" :
-                 category === "elec" ? "Electronics & Communication" :
-                 category === "cook" ? "Cooking & Heating" :
-                 category === "water" ? "Water & Storage" :
-                 category === "firstaid" ? "First Aid Kit" :
-                 category === "aid" ? "Bandages & Wound Care" :
-                 category === "anti" ? "Antiseptics & Cleaners" :
-                 category === "med" ? "Medications" :
-                 category === "tool" ? "Tools & Equipment" :
-                 category === "other" ? "Other Essentials" :
-                 category === "food" ? "Non-perishable Foods" :
-                 category === "can" ? "Canned Goods" :
-                 category === "spread" ? "Spreads & Condiments" :
-                 category === "dry" ? "Dry Goods & Grains" :
-                 category === "snack" ? "Nuts, Fruits & Snacks" :
-                 category === "drink" ? "Beverages & Milk" :
-                 category}
-              </h3>
-              <ul className="space-y-2">
-                {categoryItems.map(item => (
-                  <li key={item.id} className="flex items-start gap-2">
-                    <Checkbox 
-                      id={item.id} 
-                      checked={item.completed}
-                      onCheckedChange={() => toggleItemCompletion(item.id, items, setItems)}
-                      className={cn(
-                        "mt-1 border-red-300",
-                        item.completed && "bg-green-500 text-white border-green-500 data-[state=checked]:bg-green-500 data-[state=checked]:text-white"
-                      )}
-                    />
-                    <div className="flex-1">
-                      <Label 
-                        htmlFor={item.id}
+        {/* Grid layout for desktop view */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Object.entries(groupedItems).map(([category, categoryItems]) => {
+            // Create a key for this specific category input
+            const inputKey = `${tabPrefix}-${category}`;
+            const inputValue = newItemTexts[inputKey] || "";
+            
+            return (
+              <div key={category} className="border border-red-100 rounded-lg p-4 bg-card">
+                <h3 className="font-medium mb-2 text-red-700 border-b border-red-100 pb-1">
+                  {category === "supply" ? "Basic Supplies" :
+                  category === "battery" ? "Batteries & Power" : 
+                  category === "light" ? "Lighting & Flashlights" :
+                  category === "elec" ? "Electronics & Communication" :
+                  category === "cook" ? "Cooking & Heating" :
+                  category === "water" ? "Water & Storage" :
+                  category === "firstaid" ? "First Aid Kit" :
+                  category === "aid" ? "Bandages & Wound Care" :
+                  category === "anti" ? "Antiseptics & Cleaners" :
+                  category === "med" ? "Medications" :
+                  category === "tool" ? "Tools & Equipment" :
+                  category === "other" ? "Other Essentials" :
+                  category === "food" ? "Non-perishable Foods" :
+                  category === "can" ? "Canned Goods" :
+                  category === "spread" ? "Spreads & Condiments" :
+                  category === "dry" ? "Dry Goods & Grains" :
+                  category === "snack" ? "Nuts, Fruits & Snacks" :
+                  category === "drink" ? "Beverages & Milk" :
+                  category}
+                </h3>
+                <ul className="space-y-2">
+                  {categoryItems.map(item => (
+                    <li key={item.id} className="flex items-start gap-2">
+                      <Checkbox 
+                        id={item.id} 
+                        checked={item.completed}
+                        onCheckedChange={() => toggleItemCompletion(item.id, items, setItems)}
                         className={cn(
-                          "text-sm font-normal cursor-pointer text-red-900",
-                          item.completed && "line-through text-green-700"
+                          "mt-1 border-red-300",
+                          item.completed && "bg-green-500 text-white border-green-500 data-[state=checked]:bg-green-500 data-[state=checked]:text-white"
                         )}
+                      />
+                      <div className="flex-1">
+                        <Label 
+                          htmlFor={item.id}
+                          className={cn(
+                            "text-sm font-normal cursor-pointer text-red-900",
+                            item.completed && "line-through text-green-700"
+                          )}
+                        >
+                          {item.text}
+                        </Label>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => deleteItem(item.id, items, setItems)}
+                        className="h-6 w-6 opacity-50 hover:opacity-100 hover:text-red-700"
                       >
-                        {item.text}
-                      </Label>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => deleteItem(item.id, items, setItems)}
-                      className="h-6 w-6 opacity-50 hover:opacity-100 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-              
-              {/* Add per-category input field */}
-              <div className="mt-3 flex gap-2">
-                <Input
-                  placeholder={`Add ${category === "supply" ? "supply" : 
-                                    category === "firstaid" ? "first aid" : 
-                                    category === "food" ? "food" : 
-                                    "item"}...`}
-                  value={inputValue}
-                  onChange={(e) => setNewItemTexts(prev => ({
-                    ...prev,
-                    [inputKey]: e.target.value
-                  }))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      addNewItem(inputValue, items, setItems, category, tabPrefix);
-                    }
-                  }}
-                  className="flex-1 text-sm h-8 border-red-200 focus-visible:ring-red-400"
-                  size={1}
-                />
-                <Button
-                  onClick={() => addNewItem(inputValue, items, setItems, category, tabPrefix)}
-                  size="sm"
-                  className="h-8 px-2 bg-red-400 hover:bg-red-500"
-                >
-                  <Plus className="h-3 w-3" />
-                </Button>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+                
+                {/* Add per-category input field */}
+                <div className="mt-3 flex gap-2">
+                  <Input
+                    placeholder={`Add ${category === "supply" ? "supply" : 
+                                      category === "firstaid" ? "first aid" : 
+                                      category === "food" ? "food" : 
+                                      "item"}...`}
+                    value={inputValue}
+                    onChange={(e) => setNewItemTexts(prev => ({
+                      ...prev,
+                      [inputKey]: e.target.value
+                    }))}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        addNewItem(inputValue, items, setItems, category, tabPrefix);
+                      }
+                    }}
+                    className="flex-1 text-sm h-8 border-red-200 focus-visible:ring-red-400"
+                    size={1}
+                  />
+                  <Button
+                    onClick={() => addNewItem(inputValue, items, setItems, category, tabPrefix)}
+                    size="sm"
+                    className="h-8 px-2 bg-red-400 hover:bg-red-500"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     );
   };
   
   return (
-    <Card className="w-full border shadow-sm border-red-100">
-      <CardHeader className="pb-3 bg-red-50/50 rounded-t-lg">
+    <Card className="w-full border shadow-sm border-red-100 max-h-[calc(100vh-12rem)] overflow-auto">
+      <CardHeader className="pb-3 bg-red-50/50 rounded-t-lg sticky top-0 z-10">
         <CardTitle className="text-xl flex items-center gap-2 text-red-700">
           <ListChecks className="h-5 w-5 text-red-600" />
           Emergency Preparedness Checklist

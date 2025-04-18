@@ -237,11 +237,11 @@ export default function Emergency() {
       </FullScreenDialog>
 
       <FullScreenDialog open={isSuppliesOpen} onOpenChange={setIsSuppliesOpen}>
-        <FullScreenDialogContent themeColor="#ef4444">
-          <div className="p-4 md:p-6">
+        <FullScreenDialogContent themeColor="#ef4444" className="w-full max-w-full h-full">
+          <div className="p-4 md:p-6 h-full">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <ShoppingBag className="h-5 w-5 text-red-500" />
-              Emergency Checklist
+              Emergency Preparedness Checklist
             </h2>
             <SimpleEmergencyChecklist />
           </div>
