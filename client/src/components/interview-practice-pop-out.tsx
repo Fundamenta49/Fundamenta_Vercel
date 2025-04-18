@@ -25,14 +25,18 @@ export function InterviewPracticePopOut({
   title,
   description,
   children,
-  maxWidth = "max-w-4xl",
+  maxWidth = "w-full",
 }: InterviewPracticePopOutProps) {
   const isMobile = useIsMobile();
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent
-        className={`p-0 overflow-hidden ${maxWidth} w-full h-[90vh] max-h-[90vh] md:rounded-xl rounded-lg shadow-xl border-blue-100`}
+        className={`p-0 overflow-hidden w-full h-[100vh] max-h-[100vh] shadow-xl border-blue-100`}
+        style={{
+          width: "100vw",
+          maxWidth: "100vw"
+        }}
       >
         <div className="flex flex-col h-full">
           <DialogHeader className="px-4 md:px-6 py-4 md:py-5 bg-gradient-to-br from-blue-500 to-blue-600 text-white border-b border-blue-600">
