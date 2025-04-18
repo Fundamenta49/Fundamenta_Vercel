@@ -27,7 +27,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
         </FullScreenDialogHeader>
         
         <FullScreenDialogBody>
-          <ClosingCostCalculator onClose={onClose} />
+          <ClosingCostCalculator onClose={onClose} isWrappedInFullscreen={true} />
         </FullScreenDialogBody>
       </FullScreenDialogContent>
     </FullScreenDialog>

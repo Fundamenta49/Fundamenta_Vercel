@@ -186,7 +186,10 @@ const STATE_DATA: { [key: string]: StateData } = {
   "DC": { name: "District of Columbia", propertyTaxRate: 0.56, transferTaxRate: 1.1, recordingFees: 200, abbreviation: "DC" }
 }
 
-export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClose }) => {
+export const ClosingCostCalculator: React.FC<{onClose?: () => void, isWrappedInFullscreen?: boolean}> = ({ 
+  onClose, 
+  isWrappedInFullscreen = false 
+}) => {
   // When used inside a fullscreen component, we don't need to handle our own fullscreen state
   // This has been moved to closing-cost-calculator-fullscreen.tsx
   
@@ -588,36 +591,39 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
   };
 
   return (
-    <div className="container max-w-5xl mx-auto">
-      {/* Main content - no need for SimpleFullScreenDialog wrapper */}
+    <div className={isWrappedInFullscreen ? "" : "container max-w-5xl mx-auto"}>
+      {/* Main content */}
       <div className="container max-w-5xl mx-auto">
-        <div className="mb-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                <Calculator className="h-6 w-6 text-green-600" />
-                Closing Cost & Total Ownership Calculator
-              </h1>
-              <p className="text-gray-600">
-                Understand all costs associated with buying a home, from closing to long-term ownership
-              </p>
+        {/* Show the header only if not wrapped in a fullscreen component */}
+        {!isWrappedInFullscreen && (
+          <div className="mb-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
+                  <Calculator className="h-6 w-6 text-green-600" />
+                  Closing Cost & Total Ownership Calculator
+                </h1>
+                <p className="text-gray-600">
+                  Understand all costs associated with buying a home, from closing to long-term ownership
+                </p>
+              </div>
+              
+              {/* Desktop Close Button */}
+              {onClose && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="hidden md:flex rounded-full h-10 w-10 p-0 border-2 border-green-500"
+                  onClick={onClose}
+                >
+                  <X className="h-6 w-6 text-green-600" />
+                  <span className="sr-only">Close</span>
+                </Button>
+              )}
             </div>
-            
-            {/* Desktop Close Button */}
-            {onClose && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="hidden md:flex rounded-full h-10 w-10 p-0 border-2 border-green-500"
-                onClick={onClose}
-              >
-                <X className="h-6 w-6 text-green-600" />
-                <span className="sr-only">Close</span>
-              </Button>
-            )}
+            <Separator className="my-4" />
           </div>
-          <Separator className="my-4" />
-        </div>
+        )}
         
         {/* Main Calculator */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
