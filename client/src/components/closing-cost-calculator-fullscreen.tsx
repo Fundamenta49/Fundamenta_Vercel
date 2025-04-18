@@ -43,7 +43,16 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+// A wrapper component for ScrollArea with consistent styling
 import { getMortgageRates } from '@/lib/mortgage-data-service';
+
+// A wrapper component for ScrollArea with consistent styling
+const ScrollAreaWrapper = ({ children, className = "h-[300px]" }: { children: React.ReactNode, className?: string }) => (
+  <ScrollArea className={className}>
+    {children}
+  </ScrollArea>
+);
 import { FullScreenDialog, FullScreenDialogContent, FullScreenDialogHeader, FullScreenDialogTitle, FullScreenDialogBody, FullScreenDialogClose, FullScreenDialogFooter } from '@/components/ui/full-screen-dialog';
 
 // Default values and state data imported from constants
@@ -206,6 +215,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
     insurance: false,
     closingCosts: false
   });
+  const [showStateSelector, setShowStateSelector] = useState<boolean>(false);
   
   // Calculate mortgage payment
   const calculateMonthlyPayment = (): MortgageBreakdown => {
@@ -272,7 +282,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
     const cashToClose = netSheet.downPayment + totalClosingCosts;
     
     // Calculate yearly costs
-    const yearlyPrincipalAndInterest = monthlyPayment.principal + monthlyPayment.interest;
+    const yearlyPrincipalAndInterest = (monthlyPayment.principal + monthlyPayment.interest) * 12;
     const yearlyTaxes = netSheet.recurringCosts.propertyTax * 12;
     const yearlyInsurance = netSheet.recurringCosts.homeownersInsurance * 12;
     const yearlyPMI = netSheet.recurringCosts.mortgageInsurance * 12;
@@ -285,7 +295,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
     
     // Calculate total costs over time
     const fiveYearTotal = yearlyTotal * 5;
-    const thirtyYearTotal = yearlyTotal * 30;
+    const thirtyYearTotal = yearlyTotal * netSheet.loanTerm;
     
     // Update state
     setNetSheet(prevState => ({
@@ -479,6 +489,48 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
         propertyTax: newPropertyTax
       }
     }));
+    
+    // Hide state selector after selection
+    setShowStateSelector(false);
+  };
+
+  // Handle HOA fees change
+  const handleHoaFeesChange = (value: string) => {
+    const hoaFees = parseInt(value.replace(/[^0-9]/g, '')) || 0;
+    
+    setNetSheet(prev => ({
+      ...prev,
+      recurringCosts: {
+        ...prev.recurringCosts,
+        hoaFees
+      }
+    }));
+  };
+
+  // Handle property tax change directly (for advanced mode)
+  const handlePropertyTaxChange = (value: string) => {
+    const annualTax = parseInt(value.replace(/[^0-9]/g, '')) || 0;
+    
+    setNetSheet(prev => ({
+      ...prev,
+      recurringCosts: {
+        ...prev.recurringCosts,
+        propertyTax: annualTax / 12 // Convert to monthly
+      }
+    }));
+  };
+
+  // Handle homeowners insurance change directly (for advanced mode)
+  const handleInsuranceChange = (value: string) => {
+    const annualInsurance = parseInt(value.replace(/[^0-9]/g, '')) || 0;
+    
+    setNetSheet(prev => ({
+      ...prev,
+      recurringCosts: {
+        ...prev.recurringCosts,
+        homeownersInsurance: annualInsurance / 12 // Convert to monthly
+      }
+    }));
   };
 
   // Handle tab change
@@ -502,6 +554,28 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
       ...prev,
       [section]: !prev[section]
     }));
+  };
+
+  // Apply current market rate based on loan term
+  const useMarketRate = (term: number) => {
+    if (term === 30 && currentRates.thirtyYearFixed) {
+      setNetSheet(prev => ({
+        ...prev,
+        interestRate: currentRates.thirtyYearFixed
+      }));
+    } else if (term === 15 && currentRates.fifteenYearFixed) {
+      setNetSheet(prev => ({
+        ...prev,
+        interestRate: currentRates.fifteenYearFixed
+      }));
+    } else {
+      // Use typical rates if FRED data isn't available
+      const typicalRate = term === 15 ? 6.2 : 6.8; // Typical rates as of early 2024
+      setNetSheet(prev => ({
+        ...prev,
+        interestRate: typicalRate
+      }));
+    }
   };
 
   // Reset to defaults
@@ -1136,7 +1210,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                 <DialogHeader>
                   <DialogTitle>Understanding Private Mortgage Insurance (PMI)</DialogTitle>
                 </DialogHeader>
-                <EnhancedScrollArea className="max-h-[60vh] pr-4">
+                <ScrollAreaWrapper className="max-h-[60vh] pr-4">
                   <div className="space-y-4 text-sm">
                     <p>
                       <strong>What is PMI?</strong> Private Mortgage Insurance protects the lender if you stop making payments on your loan. It's typically required when your down payment is less than 20% of the home's value.
@@ -1156,7 +1230,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                       <strong>How to remove PMI:</strong> Once you reach 22% equity (based on original purchase price), PMI automatically terminates. You can request cancellation at 20% equity if your payment history is good.
                     </p>
                   </div>
-                </EnhancedScrollArea>
+                </ScrollAreaWrapper>
               </DialogContent>
             </Dialog>
             
@@ -1165,7 +1239,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                 <DialogHeader>
                   <DialogTitle>Property Taxes Explained</DialogTitle>
                 </DialogHeader>
-                <EnhancedScrollArea className="max-h-[60vh] pr-4">
+                <ScrollAreaWrapper className="max-h-[60vh] pr-4">
                   <div className="space-y-4 text-sm">
                     <p>
                       <strong>What are property taxes?</strong> These are local taxes assessed by your county or municipality based on your home's value, used to fund schools, infrastructure, and public services.
@@ -1185,7 +1259,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                       <li>Tax rates vary significantly by location, even within the same state</li>
                     </ul>
                   </div>
-                </EnhancedScrollArea>
+                </ScrollAreaWrapper>
               </DialogContent>
             </Dialog>
             
@@ -1194,7 +1268,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                 <DialogHeader>
                   <DialogTitle>Homeowners Insurance Guide</DialogTitle>
                 </DialogHeader>
-                <EnhancedScrollArea className="max-h-[60vh] pr-4">
+                <ScrollAreaWrapper className="max-h-[60vh] pr-4">
                   <div className="space-y-4 text-sm">
                     <p>
                       <strong>What it covers:</strong> Damage to your home's structure, personal belongings, liability protection, and additional living expenses if your home becomes uninhabitable.
@@ -1214,7 +1288,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                       <strong>How to save:</strong> Bundle with auto insurance, increase deductibles, install security systems, or improve your home's resilience.
                     </p>
                   </div>
-                </EnhancedScrollArea>
+                </ScrollAreaWrapper>
               </DialogContent>
             </Dialog>
             
@@ -1223,7 +1297,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                 <DialogHeader>
                   <DialogTitle>Understanding Closing Costs</DialogTitle>
                 </DialogHeader>
-                <EnhancedScrollArea className="max-h-[60vh] pr-4">
+                <ScrollAreaWrapper className="max-h-[60vh] pr-4">
                   <div className="space-y-4 text-sm">
                     <p>
                       <strong>What are closing costs?</strong> Closing costs are fees and expenses you pay when finalizing your mortgage and home purchase.
@@ -1250,7 +1324,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                       <li>Look for lender credits (in exchange for a higher interest rate)</li>
                     </ul>
                   </div>
-                </EnhancedScrollArea>
+                </ScrollAreaWrapper>
               </DialogContent>
             </Dialog>
           </div>
