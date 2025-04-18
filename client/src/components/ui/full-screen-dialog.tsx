@@ -84,7 +84,7 @@ const FullScreenDialogContent = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content",
+            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content bg-white",
             className
           )}
           style={{ 
@@ -95,25 +95,28 @@ const FullScreenDialogContent = React.forwardRef<
             height: '100vh',
             maxWidth: '100vw',
             maxHeight: '100vh',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            overflow: 'hidden'
           }}
           {...props}
         >
             {/* Swipe handle indicator */}
-            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-6 bg-white dark:bg-gray-950">
+            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-3 bg-white dark:bg-gray-950 border-b border-gray-100">
               <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
-              <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
+              <p className="text-xs text-gray-500 mt-1 mb-1">Swipe down to close</p>
               
               {/* Visible close button for mobile */}
               <DialogPrimitive.Close 
-                className="absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-100"
+                className="absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-100 shadow-sm"
               >
                 <X className="h-5 w-5 text-gray-700" />
                 <span className="sr-only">Close</span>
               </DialogPrimitive.Close>
             </div>
             
-            {children}
+            <div className="h-[calc(100vh-48px)] overflow-y-auto">
+              {children}
+            </div>
             
             {/* Hidden close button for programmatic clicking */}
             <DialogPrimitive.Close 
@@ -127,16 +130,28 @@ const FullScreenDialogContent = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-4 z-50 w-auto h-auto overflow-auto bg-white dark:bg-gray-950 shadow-xl duration-200 rounded-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+            "fixed inset-0 z-50 w-full h-full bg-white dark:bg-gray-950 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 overflow-hidden",
             className
           )}
+          style={{
+            width: "100vw",
+            height: "100vh",
+            maxWidth: "100vw",
+            maxHeight: "100vh",
+            margin: 0,
+            padding: 0,
+            display: "flex",
+            flexDirection: "column"
+          }}
           {...props}
         >
-          {children}
+          <div className="h-full overflow-y-auto">
+            {children}
+          </div>
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
-            className="absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+            className="fixed right-6 top-6 rounded-full p-3 opacity-80 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-[60] shadow-md"
             style={{ backgroundColor: `${themeColor}20` }}
           >
             <X className="h-6 w-6" style={{ color: themeColor }} />
@@ -158,16 +173,16 @@ const FullScreenDialogHeader = ({
   return (
     <div
       className={cn(
-        "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b",
-        isMobile ? "top-14 mt-2 mobile-dialog-header" : "top-0 pt-6", // Increased top value to avoid overlap with the swipe indicator
+        "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b w-full",
+        isMobile ? "top-[48px] pt-4 mobile-dialog-header" : "top-0 pt-6", 
         className
       )}
-      style={isMobile ? {
+      style={{
         width: '100%',
         boxSizing: 'border-box',
         left: 0,
         right: 0
-      } : undefined}
+      }}
       {...props}
     />
   );
@@ -180,7 +195,7 @@ const FullScreenDialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "sticky bottom-0 z-10 bg-white dark:bg-gray-950 px-6 py-4 flex justify-between items-center border-t",
+      "sticky bottom-0 z-10 bg-white dark:bg-gray-950 px-6 py-4 flex justify-between items-center border-t w-full",
       className
     )}
     {...props}
@@ -221,17 +236,16 @@ const FullScreenDialogBody = ({
   return (
     <div
       className={cn(
-        "px-6 py-4", 
-        isMobile ? "pb-24 mobile-dialog-body" : "", // Add bottom padding on mobile for better scrolling experience
+        "px-6 py-4 w-full", 
+        isMobile ? "pb-24 mobile-dialog-body" : "", 
         className
       )}
-      style={isMobile ? {
+      style={{
         width: '100%',
         maxWidth: '100%',
-        overflowX: 'hidden',
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch'
-      } : undefined}
+        boxSizing: 'border-box',
+        overflowX: 'hidden'
+      }}
       {...props}
     />
   );
