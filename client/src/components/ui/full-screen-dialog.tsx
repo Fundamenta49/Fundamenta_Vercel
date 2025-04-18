@@ -161,7 +161,8 @@ const FullScreenDialogContent = React.forwardRef<
             maxHeight: "100vh",
             display: "flex",
             flexDirection: "column",
-            overflow: "hidden", /* Prevent content from popping out */
+            overflowX: "hidden", /* Prevent horizontal content from popping out */
+            overflowY: "auto", /* Allow vertical scrolling */
             position: "relative"
           }}
           {...props}
