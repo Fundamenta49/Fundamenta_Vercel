@@ -103,8 +103,8 @@ interface NetSheetResults {
   thirtyYearTotal: number;
 }
 
-// Utility functions
-export const formatCurrency = (amount: number): string => {
+// Utility functions - internal to component
+const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -112,7 +112,7 @@ export const formatCurrency = (amount: number): string => {
   }).format(amount);
 };
 
-export const formatCurrencyPrecise = (amount: number): string => {
+const formatCurrencyPrecise = (amount: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -121,7 +121,7 @@ export const formatCurrencyPrecise = (amount: number): string => {
   }).format(amount);
 };
 
-export const formatPercent = (amount: number): string => {
+const formatPercent = (amount: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'percent',
     minimumFractionDigits: 2,
@@ -206,6 +206,9 @@ const STATE_DATA: { [key: string]: StateData } = {
 }
 
 export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClose }) => {
+  // Always show the full card immediately, no landing page
+  const [showFullCard, setShowFullCard] = useState<boolean>(true);
+  
   // State for net sheet
   const [netSheet, setNetSheet] = useState<NetSheet>({
     homePrice: DEFAULT_HOME_PRICE,
@@ -269,8 +272,7 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
     closingCosts: false
   });
   
-  // Dialog state for full-screen card
-  const [showFullCard, setShowFullCard] = useState<boolean>(false);
+  // Dialog state for full-screen card - using the existing declaration above
 
   // Calculate mortgage payment
   const calculateMonthlyPayment = (): MortgageBreakdown => {
@@ -602,36 +604,7 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
 
   return (
     <div>
-      {/* Small Card for Homepage View */}
-      <Card 
-        className="border-green-200 cursor-pointer hover:shadow-md transition-shadow"
-        onClick={() => setShowFullCard(true)}
-      >
-        <CardHeader className="bg-green-100 text-green-800 rounded-t-lg">
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
-            Closing Cost & Total Ownership Calculator
-          </CardTitle>
-          <CardDescription className="text-green-700/90">
-            Understand all costs associated with buying a home, from closing to long-term ownership
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="pt-6">
-          <div className="text-center p-4">
-            <p className="text-sm mb-4">Click to calculate all costs associated with buying a home:</p>
-            <ul className="text-left list-disc list-inside mb-4">
-              <li>Down payment requirements</li>
-              <li>Closing costs breakdown</li>
-              <li>Monthly payment analysis</li>
-              <li>Long-term homeownership expenses</li>
-            </ul>
-            <Button variant="default" className="bg-green-600 hover:bg-green-700">
-              Open Calculator
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Skip the landing page card and directly show the fullscreen calculator */}
       
       {/* Full Screen Dialog */}
       <SimpleFullScreenDialog 
