@@ -170,7 +170,7 @@ export default function AbsoluteFullscreenEmergencyGuide({ onClose }: AbsoluteFu
     {
       id: "natural",
       title: "Natural Disasters",
-      icon: Hurricane,
+      icon: Wind,
       color: "text-blue-500",
       content: (
         <div className="space-y-4">
@@ -211,7 +211,7 @@ export default function AbsoluteFullscreenEmergencyGuide({ onClose }: AbsoluteFu
             <AccordionItem value="hurricane">
               <AccordionTrigger className="hover:bg-blue-50">
                 <div className="flex items-center text-blue-700">
-                  <Hurricane className="h-4 w-4 mr-2" />
+                  <Wind className="h-4 w-4 mr-2" />
                   Hurricane
                 </div>
               </AccordionTrigger>

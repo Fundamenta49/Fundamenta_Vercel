@@ -198,40 +198,27 @@ export default function Emergency() {
         </AlertDescription>
       </Alert>
       
-      {/* Full-screen dialogs */}
-      <FullScreenDialog open={isEmergencyAIOpen} onOpenChange={setIsEmergencyAIOpen}>
-        <FullScreenDialogContent themeColor="#ef4444">
-          <EmergencyAIPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      <FullScreenDialog open={isEmergencyGuideOpen} onOpenChange={setIsEmergencyGuideOpen}>
-        <FullScreenDialogContent themeColor="#ef4444">
-          <EmergencyGuidePopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      <FullScreenDialog open={isFireSafetyOpen} onOpenChange={setIsFireSafetyOpen}>
-        <FullScreenDialogContent themeColor="#ef4444">
-          <FireSafetyPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      <FullScreenDialog open={isCPRGuideOpen} onOpenChange={setIsCPRGuideOpen}>
-        <FullScreenDialogContent themeColor="#ef4444">
-          <CPRGuidePopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      {/* We're not using the EmergencyChecklistPopOut anymore, using SimpleEmergencyChecklist instead */}
-
-      <FullScreenDialog open={isAutoAccidentOpen} onOpenChange={setIsAutoAccidentOpen}>
-        <FullScreenDialogContent themeColor="#ef4444" className="overflow-x-hidden">
-          <AutoAccidentPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-
-      {/* Using AbsoluteFullscreenEmergencyChecklist for true full-screen experience */}
+      {/* All components now use absolute positioning for true fullscreen experience */}
+      {isEmergencyAIOpen && (
+        <AbsoluteFullscreenEmergencyAI onClose={() => setIsEmergencyAIOpen(false)} />
+      )}
+      
+      {isEmergencyGuideOpen && (
+        <AbsoluteFullscreenEmergencyGuide onClose={() => setIsEmergencyGuideOpen(false)} />
+      )}
+      
+      {isFireSafetyOpen && (
+        <AbsoluteFullscreenFireSafety onClose={() => setIsFireSafetyOpen(false)} />
+      )}
+      
+      {isCPRGuideOpen && (
+        <AbsoluteFullscreenCPRGuide onClose={() => setIsCPRGuideOpen(false)} />
+      )}
+      
+      {isAutoAccidentOpen && (
+        <AbsoluteFullscreenAutoAccident onClose={() => setIsAutoAccidentOpen(false)} />
+      )}
+      
       {isSuppliesOpen && (
         <AbsoluteFullscreenEmergencyChecklist onClose={() => setIsSuppliesOpen(false)} />
       )}
