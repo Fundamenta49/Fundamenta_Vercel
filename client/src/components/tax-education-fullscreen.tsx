@@ -700,18 +700,16 @@ export default function TaxEducationFullscreen({
               <p className="mb-4">Each state has different tax rules that affect how much money you take home from your job. Select your state to learn more:</p>
               
               <div className="mb-4">
-                <Select value={selectedState} onValueChange={setSelectedState}>
-                  <SelectTrigger className="w-full sm:w-[300px]">
-                    <SelectValue placeholder="Select your state" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* Only show states we have data for */}
-                    <SelectItem value="ny">New York</SelectItem>
-                    <SelectItem value="ca">California</SelectItem>
-                    <SelectItem value="tx">Texas</SelectItem>
-                    <SelectItem value="fl">Florida</SelectItem>
-                  </SelectContent>
-                </Select>
+                <select 
+                  value={selectedState} 
+                  onChange={(e) => setSelectedState(e.target.value)}
+                  className="w-full sm:w-[300px] rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                >
+                  <option value="ny">New York</option>
+                  <option value="ca">California</option>
+                  <option value="tx">Texas</option>
+                  <option value="fl">Florida</option>
+                </select>
                 <p className="text-xs text-gray-500 mt-1">More states coming soon!</p>
               </div>
               
@@ -782,18 +780,16 @@ export default function TaxEducationFullscreen({
                     
                     <div>
                       <h3 className="font-medium mb-3">Your Location</h3>
-                      <Select value={selectedState} onValueChange={setSelectedState}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your state" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {/* Only show states we have data for */}
-                          <SelectItem value="ny">New York</SelectItem>
-                          <SelectItem value="ca">California</SelectItem>
-                          <SelectItem value="tx">Texas</SelectItem>
-                          <SelectItem value="fl">Florida</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <select 
+                        value={selectedState} 
+                        onChange={(e) => setSelectedState(e.target.value)}
+                        className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      >
+                        <option value="ny">New York</option>
+                        <option value="ca">California</option>
+                        <option value="tx">Texas</option>
+                        <option value="fl">Florida</option>
+                      </select>
                       <p className="text-xs text-gray-500 mt-1">More states coming soon!</p>
                     </div>
                     
