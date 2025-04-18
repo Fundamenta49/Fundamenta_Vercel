@@ -10,7 +10,7 @@ import ResumeBuilderEnhanced from "@/components/resume-builder-enhanced";
 
 export default function ResumeBuilderPopOut() {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-7xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <FileText className="h-6 w-6 text-blue-500" />

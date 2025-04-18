@@ -163,7 +163,7 @@ export default function CPRGuidePopOut() {
   
   // Main component render
   return (
-    <div className="w-full">
+    <div className="w-full max-w-7xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Heart className="h-6 w-6 text-red-500" />
