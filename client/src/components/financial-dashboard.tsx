@@ -15,7 +15,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
   // If no budget data is available, show a message to create one
   if (!budgetData) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
+      <div className="w-full flex flex-col items-center justify-center p-8 text-center space-y-4">
         <h2 className="text-xl font-bold">No Financial Data Available</h2>
         <p className="text-gray-600 max-w-md">
           You haven't created a budget yet. Visit the Smart Budget Planner to create your budget and see your financial dashboard.
@@ -72,12 +72,12 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
   return (
-    <div className="space-y-6 w-full max-w-full">
+    <div className="space-y-6 w-full max-w-full box-border" id="financial-dashboard">
       <Tabs 
         defaultValue="overview" 
         value={activeTab} 
         onValueChange={setActiveTab}
-        className="w-full"
+        className="w-full max-w-full box-border"
       >
         <TabsList className="w-full grid grid-cols-4 mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
