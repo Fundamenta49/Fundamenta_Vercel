@@ -397,6 +397,18 @@ export default function FinancialDashboardFullscreen({
             </TabsContent>
           </Tabs>
         </div>
+        
+        {/* Add a more prominent close button at the bottom */}
+        <div className="flex justify-center mt-8 mb-4">
+          <Button 
+            onClick={onClose}
+            className="px-8 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md flex items-center gap-2"
+            size="lg"
+          >
+            <X className="h-5 w-5" />
+            Close Dashboard
+          </Button>
+        </div>
       </div>
     </div>
   );
