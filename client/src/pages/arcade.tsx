@@ -500,7 +500,7 @@ export default function Arcade() {
             <LearningModuleCard
               title="Kitchen Skills"
               description="Master essential cooking techniques"
-              progress={75}
+              progress={0}
               category="learning"
               points={30}
               href="/learning/courses/cooking-basics"
@@ -508,7 +508,7 @@ export default function Arcade() {
             <LearningModuleCard
               title="Financial Planning"
               description="Build a solid financial foundation"
-              progress={40}
+              progress={0}
               category="finance"
               points={45}
               href="/finance"
@@ -516,7 +516,7 @@ export default function Arcade() {
             <LearningModuleCard
               title="Yoga Fundamentals"
               description="Improve flexibility and balance"
-              progress={60}
+              progress={0}
               category="fitness"
               points={35}
               href="/active?section=yoga"

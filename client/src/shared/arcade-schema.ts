@@ -308,83 +308,32 @@ export const ACHIEVEMENTS: Achievement[] = [
   }
 ];
 
-// Function to create sample user progress 
+// Function to create sample user progress with NO progress (clean slate)
 export const createSampleUserProgress = (userId: string): UserArcadeProgress => {
-  // Initialize some unlocked achievements with progress
-  const achievements = {
-    "fin-budget-basics": { 
-      unlockedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
-      progress: 100 
-    },
-    "fin-savings-starter": { 
-      unlockedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-      progress: 100 
-    },
-    "car-resume-ready": { 
-      unlockedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-      progress: 100 
-    },
-    "well-meal-planner": { 
-      unlockedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-      progress: 100 
-    },
-    "learn-first-course": { 
-      unlockedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-      progress: 100 
-    },
-    // Achievements in progress
-    "fit-first-workout": { 
-      unlockedAt: null, 
-      progress: 75 
-    },
-    "learn-cooking-basics": { 
-      unlockedAt: null, 
-      progress: 60 
-    },
-    "fit-yoga-beginner": { 
-      unlockedAt: null, 
-      progress: 40 
-    },
-    "well-nutrition-novice": { 
-      unlockedAt: null, 
-      progress: 30 
-    },
-    "fin-investment-initiate": { 
-      unlockedAt: null, 
-      progress: 20 
-    }
-  };
+  // Initialize empty achievements - no progress
+  const achievements: Record<string, { unlockedAt: null, progress: number }> = {};
   
-  // Calculate total points from unlocked achievements
-  const unlockedPoints = Object.entries(achievements)
-    .filter(([id, data]) => data.unlockedAt !== null)
-    .reduce((total, [id]) => {
-      const achievement = ACHIEVEMENTS.find(a => a.id === id);
-      return total + (achievement ? achievement.points : 0);
-    }, 0);
+  // Initialize all achievements with 0 progress
+  ACHIEVEMENTS.forEach(achievement => {
+    achievements[achievement.id] = {
+      unlockedAt: null,
+      progress: 0
+    };
+  });
   
-  // Determine rank based on points
-  let rankData = RANK_DEFINITIONS[0]; // Start with beginner
-  let nextRankData = RANK_DEFINITIONS[1];
+  // Set up rank with minimum values
+  const rankData = RANK_DEFINITIONS[0]; // Start with beginner (level 1)
+  const nextRankData = RANK_DEFINITIONS[1]; // Next rank is level 2
   
-  for (let i = 0; i < RANK_DEFINITIONS.length; i++) {
-    if (unlockedPoints >= RANK_DEFINITIONS[i].pointsNeeded) {
-      rankData = RANK_DEFINITIONS[i];
-      nextRankData = RANK_DEFINITIONS[i + 1] || RANK_DEFINITIONS[i];
-    } else {
-      break;
-    }
-  }
-  
-  // Create category levels based on achievements in each category
+  // Create category levels with all at 0
   const categoryLevels: Record<string, number> = {
-    finance: 2,  // Example: user has 2 finance achievements
-    career: 1,
-    wellness: 1,
-    fitness: 0,  // No completed fitness achievements yet
-    learning: 1,
-    emergency: 0, // No completed emergency achievements yet
-    general: 0    // No hidden achievements unlocked
+    finance: 0,
+    career: 0,
+    wellness: 0,
+    fitness: 0,
+    learning: 0,
+    emergency: 0,
+    general: 0
   };
   
   return {
@@ -394,11 +343,11 @@ export const createSampleUserProgress = (userId: string): UserArcadeProgress => 
       userId,
       level: rankData.level,
       title: rankData.title,
-      currentPoints: unlockedPoints,
+      currentPoints: 0, // No points
       nextLevelPoints: nextRankData.pointsNeeded,
       categoryLevels
     },
-    streakDays: 5, // Example: user has a 5-day streak
+    streakDays: 0, // No streak
     lastActive: new Date()
   };
 };
