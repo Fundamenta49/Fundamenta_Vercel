@@ -162,13 +162,13 @@ export default function Finance() {
       {/* Full-screen dialogs */}
 
       <FullScreenDialog open={isBudgetOpen} onOpenChange={setIsBudgetOpen}>
-        <FullScreenDialogContent themeColor="#22c55e">
+        <FullScreenDialogContent themeColor="#22c55e" className="w-full" style={{ maxWidth: "100%", width: "100vw" }}>
           <BudgetCalculatorPopOut onBudgetUpdate={setBudgetData} />
         </FullScreenDialogContent>
       </FullScreenDialog>
 
       <FullScreenDialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
-        <FullScreenDialogContent themeColor="#22c55e">
+        <FullScreenDialogContent themeColor="#22c55e" className="w-full" style={{ maxWidth: "100%", width: "100vw" }}>
           <FinancialDashboardPopOut budgetData={budgetData} />
         </FullScreenDialogContent>
       </FullScreenDialog>

@@ -163,8 +163,8 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
+    <div className="space-y-6" style={{ width: "100%" }}>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Monthly Income</CardTitle>
         </CardHeader>
@@ -182,7 +182,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Monthly Expenses</CardTitle>
         </CardHeader>
@@ -227,7 +227,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Savings Goals</CardTitle>
         </CardHeader>
@@ -304,7 +304,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Monthly Savings Allocation</CardTitle>
         </CardHeader>
@@ -324,7 +324,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Summary</CardTitle>
         </CardHeader>
