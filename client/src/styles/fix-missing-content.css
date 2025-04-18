@@ -1,0 +1,59 @@
+/* Fix for missing content in dialogs, full-screen dialogs and cards */
+
+/* Common fixes for all viewports */
+[class*="DialogContent"], 
+[class*="FullScreenDialogContent"],
+[class*="DialogBody"],
+[class*="FullScreenDialogBody"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure content is shown */
+[class*="DialogContent"] > *,
+[class*="FullScreenDialogContent"] > *,
+[class*="DialogBody"] > *,
+[class*="FullScreenDialogBody"] > * {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Apply white background for readability */
+[class*="DialogContent"],
+[class*="FullScreenDialogContent"] {
+  background-color: white !important;
+}
+
+/* Make sure things don't pop out */
+[class*="DialogContent"] img,
+[class*="DialogContent"] pre,
+[class*="DialogContent"] table,
+[class*="FullScreenDialogContent"] img,
+[class*="FullScreenDialogContent"] pre,
+[class*="FullScreenDialogContent"] table {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Mobile-specific fixes */
+@media (max-width: 768px) {
+  /* Fix missing backgrounds and visibility */
+  .mobile-dialog-body,
+  [class*="DialogBody"],
+  [class*="FullScreenDialogBody"] {
+    background-color: white !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    padding: 1rem !important;
+  }
+  
+  /* Children of dialog must display */
+  .full-screen-dialog-children {
+    display: block !important;
+    width: 100% !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}

@@ -167,7 +167,9 @@ const FullScreenDialogContent = React.forwardRef<
           }}
           {...props}
         >
-{children}
+<div className="full-screen-dialog-children" style={{ display: 'block', width: '100%', flex: '1 1 auto' }}>
+            {children}
+          </div>
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
