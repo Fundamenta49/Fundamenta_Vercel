@@ -3,16 +3,15 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Brain, Flame, Heart, PhoneCall, ClipboardList, Car, ShoppingBag, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// Import absolute fullscreen components (new approach)
+// Import all absolute fullscreen components from centralized export
 import {
   AbsoluteFullscreenEmergencyGuide,
   AbsoluteFullscreenCPRGuide,
   AbsoluteFullscreenFireSafety,
-  AbsoluteFullscreenAutoAccident
+  AbsoluteFullscreenAutoAccident,
+  AbsoluteFullscreenEmergencyChecklist,
+  AbsoluteFullscreenEmergencyAI
 } from "@/components/absolute-fullscreen-components";
-
-import AbsoluteFullscreenEmergencyChecklist from "@/components/absolute-fullscreen-emergency-checklist";
-import AbsoluteFullscreenEmergencyAI from "@/components/absolute-fullscreen-emergency-ai";
 
 // Define section properties
 type SectionType = {
