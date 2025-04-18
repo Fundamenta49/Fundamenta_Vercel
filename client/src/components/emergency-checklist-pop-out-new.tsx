@@ -240,7 +240,13 @@ export default function EmergencyChecklistPopOut() {
   
   // Sync checklists to localStorage when they change
   useEffect(() => {
-    localStorage.setItem('emergency_checklists', JSON.stringify(checklists));
+    // Create a simplified version without circular references
+    const simplifiedChecklists = checklists.map(checklist => ({
+      ...checklist,
+      icon: null, // Don't store the React elements
+      iconType: checklist.iconType
+    }));
+    localStorage.setItem('emergency_checklists', JSON.stringify(simplifiedChecklists));
   }, [checklists]);
   
   // State for the new checklist being created
@@ -471,7 +477,12 @@ export default function EmergencyChecklistPopOut() {
                     </div>
                     <div className="flex items-center space-x-1 text-sm">
                       <span className="text-xs">{calculateProgress(checklist)}%</span>
-                      <Progress value={calculateProgress(checklist)} className="w-16 h-2" />
+                      <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="bg-primary h-full transition-all"
+                          style={{ width: `${calculateProgress(checklist)}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
                   <CardDescription>{checklist.description}</CardDescription>
