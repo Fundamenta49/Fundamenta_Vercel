@@ -79,6 +79,25 @@
   display: block !important;
   visibility: visible !important;
   background-color: white !important;
+  box-sizing: border-box !important;
+}
+
+/* Critical - Fix all chart containers and data tables to prevent overflow */
+.recharts-wrapper,
+.recharts-surface,
+.recharts-responsive-container,
+[class*="chartjs"],
+[class*="chart-container"],
+[class*="chart-wrapper"],
+.budget-table,
+.financial-table,
+table[class*="financial"],
+table[class*="budget"] {
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+  display: block !important;
 }
 
 /* Fix nested cards inside dialogs */
@@ -111,6 +130,16 @@
   visibility: visible !important;
 }
 
+/* Direct children of dialog body should not be width-constrained */
+[class*="FullScreenDialogBody"] > *,
+[class*="DialogBody"] > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
 /* Fix cognitive bias cards and content boxes */
 div[class*="border rounded-md p-4"],
 .border.rounded-md.p-4,
@@ -136,40 +165,94 @@ div[class*="border rounded-md p-4"],
   }
 }
 
-/* Fix popouts for specific tools like retirement planning */
+/* Fix popouts for specific tools like retirement planning, financial dashboard, and budget calculator */
 #retirement-planning,
 [class*="retirement-planning"],
 .retirement-planning,
-[id*="retirement"] {
+[id*="retirement"],
+#financial-dashboard,
+[class*="financial-dashboard"],
+.financial-dashboard,
+[id*="financial"],
+#budget-calculator,
+[class*="budget-calculator"],
+.budget-calculator,
+[id*="budget"] {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
   height: 100% !important;
   overflow-y: auto !important;
+  max-width: 100vw !important;
+  min-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-/* Make retirement planning grid properly formatted */
+/* Ensure all financial tools have proper layout */
 .retirement-planning .grid,
 [class*="retirement-planning"] .grid,
-[id*="retirement"] .grid {
+[id*="retirement"] .grid,
+.financial-dashboard .grid,
+[class*="financial-dashboard"] .grid,
+[id*="financial"] .grid,
+.budget-calculator .grid,
+[class*="budget-calculator"] .grid,
+[id*="budget"] .grid {
   display: grid !important;
   grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
   gap: 1rem !important;
   width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Financial dashboard specific fixes */
+.financial-dashboard-chart,
+.financial-chart-container,
+[class*="chart-container"],
+.chart-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix budget calculator specific components */
+.budget-form,
+.budget-summary,
+.budget-breakdown,
+[class*="budget-form"],
+[class*="budget-summary"],
+[class*="budget-breakdown"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
 }
 
 @media (min-width: 768px) {
   .retirement-planning .grid,
   [class*="retirement-planning"] .grid,
-  [id*="retirement"] .grid {
+  [id*="retirement"] .grid,
+  .financial-dashboard .grid,
+  [class*="financial-dashboard"] .grid,
+  [id*="financial"] .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
   /* Ensure specific calc types take full width */
   [id*="retirement"] [class*="calculator"],
   [id*="retirement"] [class*="projections"],
-  [id*="retirement"] [class*="resources"] {
+  [id*="retirement"] [class*="resources"],
+  [id*="financial"] [class*="summary"],
+  [id*="financial"] [class*="overview"],
+  [id*="financial"] [class*="chart"],
+  [id*="budget"] [class*="summary"],
+  [id*="budget"] [class*="breakdown"] {
     grid-column: span 2 / span 2 !important;
     width: 100% !important;
+    max-width: 100% !important;
   }
 }
