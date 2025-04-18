@@ -17,10 +17,11 @@ import BudgetCalculatorFullscreen from "@/components/budget-calculator-fullscree
 import FinancialDashboardPopOut from "@/components/financial-dashboard-pop-out";
 import FinancialDashboardFullscreen from "@/components/financial-dashboard-fullscreen";
 import CreditSkillsPopOut from "@/components/credit-skills-pop-out";
+import TaxInformationPopOut from "@/components/tax-information-pop-out";
+import TaxInformationFullscreen from "@/components/tax-information-fullscreen";
 import RetirementPlanningPopOut from "@/components/retirement-planning-pop-out";
 import MortgageCalculatorPopOut from "@/components/mortgage-calculator-pop-out";
 import BankLinkPopOut from "@/components/bank-link-pop-out";
-import TaxInformationPopOut from "@/components/tax-information-pop-out";
 
 // Define section properties
 type SectionType = {
@@ -185,11 +186,12 @@ export default function Finance() {
         </FullScreenDialogContent>
       </FullScreenDialog>
       
-      <FullScreenDialog open={isTaxOpen} onOpenChange={setIsTaxOpen}>
-        <FullScreenDialogContent themeColor="#22c55e">
-          <TaxInformationPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+      {/* Use our custom fullscreen component for tax information instead of the dialog */}
+      {isTaxOpen && (
+        <TaxInformationFullscreen 
+          onClose={() => setIsTaxOpen(false)} 
+        />
+      )}
 
       <FullScreenDialog open={isRetirementOpen} onOpenChange={setIsRetirementOpen}>
         <FullScreenDialogContent themeColor="#22c55e">
