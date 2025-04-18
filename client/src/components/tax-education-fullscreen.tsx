@@ -705,11 +705,14 @@ export default function TaxEducationFullscreen({
                     <SelectValue placeholder="Select your state" />
                   </SelectTrigger>
                   <SelectContent>
-                    {states.map((state) => (
-                      <SelectItem key={state.value} value={state.value}>{state.name}</SelectItem>
-                    ))}
+                    {/* Only show states we have data for */}
+                    <SelectItem value="ny">New York</SelectItem>
+                    <SelectItem value="ca">California</SelectItem>
+                    <SelectItem value="tx">Texas</SelectItem>
+                    <SelectItem value="fl">Florida</SelectItem>
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-gray-500 mt-1">More states coming soon!</p>
               </div>
               
               {getStateContent()}
@@ -784,11 +787,14 @@ export default function TaxEducationFullscreen({
                           <SelectValue placeholder="Select your state" />
                         </SelectTrigger>
                         <SelectContent>
-                          {states.map((state) => (
-                            <SelectItem key={state.value} value={state.value}>{state.name}</SelectItem>
-                          ))}
+                          {/* Only show states we have data for */}
+                          <SelectItem value="ny">New York</SelectItem>
+                          <SelectItem value="ca">California</SelectItem>
+                          <SelectItem value="tx">Texas</SelectItem>
+                          <SelectItem value="fl">Florida</SelectItem>
                         </SelectContent>
                       </Select>
+                      <p className="text-xs text-gray-500 mt-1">More states coming soon!</p>
                     </div>
                     
                     <div>
