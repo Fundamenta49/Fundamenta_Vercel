@@ -5,6 +5,7 @@
 @import './styles/card-fixes.css';
 @import './styles/desktop-specific-fixes.css';
 @import './styles/fullscreen-dialog-fix.css';
+@import './styles/dialog-fixes.css';
 
 @tailwind base;
 @tailwind components;

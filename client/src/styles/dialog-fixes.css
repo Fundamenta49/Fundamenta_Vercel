@@ -1,0 +1,39 @@
+/* Dialog spacing fixes for mobile */
+@media (max-width: 768px) {
+  /* Add padding to content below sticky headers */
+  .mobile-dialog-header + div,
+  .mobile-dialog-content + div {
+    padding-top: 1.5rem !important;
+  }
+  
+  /* Fix for overlapping header content */
+  .mobile-dialog-header {
+    margin-top: 4rem !important;
+    padding-top: 0.75rem !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+  }
+  
+  /* Prevent dialog content from being hidden under headers */
+  [role="dialog"] [data-state="open"] {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Add spacing after swipe handle */
+  [class*="DialogContent"] > div:first-child {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Fix for interactive elements in dialog content */
+  [role="dialog"] button,
+  [role="dialog"] a,
+  [role="dialog"] input {
+    position: relative !important;
+    z-index: 5 !important; /* Lower than headers but still high enough */
+  }
+  
+  /* Ensure content isn't hidden under swipe handle */
+  div[class*="swipe"] + * {
+    margin-top: 1rem !important;
+  }
+}

@@ -78,8 +78,8 @@ const DialogContent = React.forwardRef<
           onDragEnd={handleDragEnd}
           className="rounded-lg border bg-background shadow-lg"
         >
-          {/* Swipe handle indicator - improved for visibility */}
-          <div className="w-full flex flex-col items-center pt-2 pb-3 bg-white sticky top-0 z-20 border-b border-gray-100">
+          {/* Swipe handle indicator - improved for visibility and spacing */}
+          <div className="w-full flex flex-col items-center pt-3 pb-4 bg-white sticky top-0 z-20 border-b border-gray-100">
             <div className="w-16 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
             <p className="text-xs text-gray-500 mt-2 font-medium">Swipe down to close</p>
           </div>

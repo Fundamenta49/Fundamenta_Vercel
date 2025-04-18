@@ -122,8 +122,8 @@ const FullScreenDialogContent = React.forwardRef<
             }}
             {...props}
           >
-            {/* Swipe handle indicator - with improved visibility */}
-            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-4 bg-white dark:bg-gray-950 border-b border-gray-100">
+            {/* Swipe handle indicator - with improved visibility and proper spacing */}
+            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-3 pb-5 bg-white dark:bg-gray-950 border-b border-gray-100">
               <div className="w-16 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
               <p className="text-xs text-gray-500 mt-2 font-medium">Swipe down to close</p>
               
@@ -191,7 +191,7 @@ const FullScreenDialogHeader = ({
     <div
       className={cn(
         "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b w-full",
-        isMobile ? "top-14 mt-2 mobile-dialog-header" : "top-0 pt-6", 
+        isMobile ? "top-20 mt-4 mobile-dialog-header" : "top-0 pt-6", 
         className
       )}
       style={isMobile ? {
@@ -259,7 +259,7 @@ const FullScreenDialogBody = ({
     <div
       className={cn(
         "px-6 py-4 w-full", 
-        isMobile ? "pb-24 mobile-dialog-body" : "", 
+        isMobile ? "pb-24 pt-8 mobile-dialog-body" : "", 
         className
       )}
       style={isMobile ? {
@@ -267,7 +267,9 @@ const FullScreenDialogBody = ({
         maxWidth: '100%',
         overflowX: 'hidden',
         overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch'
+        WebkitOverflowScrolling: 'touch',
+        paddingTop: '2rem', // Ensure content starts below any sticky headers
+        marginTop: '0.5rem'
       } : {
         width: '100%',
         maxWidth: '100%',
