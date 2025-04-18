@@ -31,12 +31,13 @@ const SECTIONS: SectionType[] = [
     description: 'Checklist of essential items for emergency preparedness',
     icon: ShoppingBag,
   },
+  /* Removed duplicate checklist button
   {
     id: 'checklists',
     title: 'Emergency Checklists',
     description: 'Preparation steps for different types of emergencies',
     icon: ClipboardList,
-  },
+  }, */
   {
     id: 'guides',
     title: 'Emergency Guides',
@@ -227,10 +228,7 @@ export default function Emergency() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      {/* We're now using the new version with FullScreenDialogTrigger pattern */}
-      <div className="hidden">
-        <EmergencyChecklistPopOut />
-      </div>
+      {/* We're not using the EmergencyChecklistPopOut anymore, using SimpleEmergencyChecklist instead */}
 
       <FullScreenDialog open={isAutoAccidentOpen} onOpenChange={setIsAutoAccidentOpen}>
         <FullScreenDialogContent themeColor="#ef4444" className="overflow-x-hidden">
