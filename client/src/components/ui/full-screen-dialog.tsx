@@ -88,6 +88,17 @@ const FullScreenDialogContent = React.forwardRef<
             "pointer-events-auto m-0 p-0 w-screen h-screen max-w-screen max-h-screen box-border overflow-hidden",
             className
           )}
+          style={{
+            width: "100vw !important",
+            maxWidth: "100vw !important",
+            minWidth: "100vw !important",
+            height: "100vh !important",
+            maxHeight: "100vh !important",
+            left: "0 !important",
+            right: "0 !important",
+            top: "0 !important",
+            bottom: "0 !important",
+          }}
           {...props}
         >
             {/* Swipe handle indicator */}
@@ -124,6 +135,17 @@ const FullScreenDialogContent = React.forwardRef<
             "w-screen h-screen m-0 p-0 fixed top-0 left-0 right-0 bottom-0 overflow-y-auto block",
             className
           )}
+          style={{
+            width: "100vw !important",
+            maxWidth: "100vw !important",
+            minWidth: "100vw !important",
+            height: "100vh !important",
+            maxHeight: "100vh !important",
+            left: "0 !important",
+            right: "0 !important",
+            top: "0 !important",
+            bottom: "0 !important",
+          }}
           {...props}
         >
           {children}
@@ -157,6 +179,11 @@ const FullScreenDialogHeader = ({
         isMobile ? "top-[48px] pt-4 mobile-dialog-header" : "top-0 pt-6", 
         className
       )}
+      style={{
+        width: "100% !important",
+        minWidth: "100% !important",
+        maxWidth: "100vw !important",
+      }}
       {...props}
     />
   );
@@ -215,6 +242,11 @@ const FullScreenDialogBody = ({
         isMobile ? "pb-24 mobile-dialog-body" : "", 
         className
       )}
+      style={{
+        width: "100% !important",
+        minWidth: "100% !important",
+        maxWidth: "100vw !important",
+      }}
       {...props}
     />
   );
