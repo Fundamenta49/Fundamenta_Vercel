@@ -67,7 +67,10 @@ const DialogContent = React.forwardRef<
             maxWidth: '450px',
             maxHeight: '85vh',
             transform: 'translate(-50%, -50%)',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            backgroundColor: 'white',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+            borderRadius: '0.75rem'
           }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
@@ -75,19 +78,19 @@ const DialogContent = React.forwardRef<
           onDragEnd={handleDragEnd}
           className="rounded-lg border bg-background shadow-lg"
         >
-          {/* Swipe handle indicator */}
-          <div className="w-full flex flex-col items-center pt-2 pb-2 bg-background sticky top-0 z-10">
-            <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
-            <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
+          {/* Swipe handle indicator - improved for visibility */}
+          <div className="w-full flex flex-col items-center pt-2 pb-3 bg-white sticky top-0 z-20 border-b border-gray-100">
+            <div className="w-16 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
+            <p className="text-xs text-gray-500 mt-2 font-medium">Swipe down to close</p>
           </div>
           
           <DialogPrimitive.Content
             ref={ref}
             className={cn(
-              "grid w-full gap-3 p-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto",
+              "grid w-full gap-3 p-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto bg-white",
               className
             )}
-            style={{ maxHeight: 'calc(85vh - 40px)' }}
+            style={{ maxHeight: 'calc(85vh - 40px)', backgroundColor: 'white' }}
             {...props}
           >
             {children}

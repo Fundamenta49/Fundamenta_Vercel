@@ -81,32 +81,55 @@ const FullScreenDialogContent = React.forwardRef<
     <FullScreenDialogPortal>
       <FullScreenDialogOverlay />
       {isMobile ? (
-        <DialogPrimitive.Content
-          ref={ref}
-          className={cn(
-            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content",
-            className
-          )}
+        <motion.div
           style={{ 
-            pointerEvents: 'auto',
-            margin: 0,
-            padding: 0,
+            y,
+            opacity,
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
             width: '100vw',
             height: '100vh',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            backgroundColor: 'white',
+            overflow: 'hidden'
           }}
-          {...props}
+          drag="y"
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={0.2}
+          onDragEnd={handleDragEnd}
+          className="w-full h-full mobile-dialog-content"
         >
-            {/* Swipe handle indicator */}
-            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-6 bg-white dark:bg-gray-950">
-              <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
-              <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
+          <DialogPrimitive.Content
+            ref={ref}
+            className={cn(
+              "w-full h-full mobile-dialog-content",
+              className
+            )}
+            style={{ 
+              pointerEvents: 'auto',
+              margin: 0,
+              padding: 0,
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '100vw',
+              maxHeight: '100vh',
+              boxSizing: 'border-box',
+              backgroundColor: 'white'
+            }}
+            {...props}
+          >
+            {/* Swipe handle indicator - with improved visibility */}
+            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-4 bg-white dark:bg-gray-950 border-b border-gray-100">
+              <div className="w-16 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
+              <p className="text-xs text-gray-500 mt-2 font-medium">Swipe down to close</p>
               
               {/* Visible close button for mobile */}
               <DialogPrimitive.Close 
-                className="absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-100"
+                className="absolute right-4 top-4 rounded-full p-2 opacity-80 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-100 shadow-sm"
               >
                 <X className="h-5 w-5 text-gray-700" />
                 <span className="sr-only">Close</span>
@@ -123,6 +146,7 @@ const FullScreenDialogContent = React.forwardRef<
               <span className="sr-only">Close</span>
             </DialogPrimitive.Close>
           </DialogPrimitive.Content>
+        </motion.div>
       ) : (
         <DialogPrimitive.Content
           ref={ref}
