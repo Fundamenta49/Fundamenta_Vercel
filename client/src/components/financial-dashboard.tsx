@@ -106,7 +106,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
               </CardContent>
             </Card>
             
-            <Card className="w-full">
+            <Card className="w-full max-w-full">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Remaining/Savings</CardTitle>
               </CardHeader>
@@ -116,7 +116,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </Card>
           </div>
           
-          <Card className="w-full">
+          <Card className="w-full max-w-full">
             <CardHeader>
               <CardTitle>Financial Health Score</CardTitle>
             </CardHeader>
@@ -166,7 +166,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </CardContent>
           </Card>
           
-          <Card className="w-full">
+          <Card className="w-full max-w-full">
             <CardHeader>
               <CardTitle>Monthly Overview</CardTitle>
             </CardHeader>
@@ -188,7 +188,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
         </TabsContent>
         
         <TabsContent value="spending" className="space-y-4">
-          <Card className="w-full">
+          <Card className="w-full max-w-full">
             <CardHeader>
               <CardTitle>Expenses by Category</CardTitle>
             </CardHeader>
@@ -218,7 +218,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </CardContent>
           </Card>
           
-          <Card className="w-full">
+          <Card className="w-full max-w-full">
             <CardHeader>
               <CardTitle>Expense Breakdown</CardTitle>
             </CardHeader>
@@ -236,7 +236,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
         </TabsContent>
         
         <TabsContent value="savings" className="space-y-4">
-          <Card className="w-full">
+          <Card className="w-full max-w-full">
             <CardHeader>
               <CardTitle>Savings Goals</CardTitle>
             </CardHeader>
@@ -264,7 +264,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </CardContent>
           </Card>
           
-          <Card className="w-full">
+          <Card className="w-full max-w-full">
             <CardHeader>
               <CardTitle>Retirement Planning</CardTitle>
             </CardHeader>
@@ -288,7 +288,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
         </TabsContent>
         
         <TabsContent value="trends" className="space-y-4">
-          <Card className="w-full">
+          <Card className="w-full max-w-full">
             <CardHeader>
               <CardTitle>Financial Trends (6 Months)</CardTitle>
             </CardHeader>
@@ -308,7 +308,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </CardContent>
           </Card>
           
-          <Card className="w-full">
+          <Card className="w-full max-w-full">
             <CardHeader>
               <CardTitle>Financial Insights</CardTitle>
             </CardHeader>
