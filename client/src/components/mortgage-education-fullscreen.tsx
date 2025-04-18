@@ -1222,9 +1222,10 @@ const MortgageEducationFullscreen: React.FC<MortgageEducationFullscreenProps> = 
               <CardContent className="pt-6">
                 <QuizComponent 
                   questions={mortgageQuizQuestions}
+                  subject="Mortgage Fundamentals"
                   pathwayId="finance-fundamentals"
                   moduleId="mortgage-basics"
-                  onComplete={(score, total) => {
+                  onComplete={(score: number, total: number) => {
                     console.log(`Quiz completed with score ${score}/${total}`);
                   }}
                 />
