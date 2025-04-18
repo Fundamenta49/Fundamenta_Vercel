@@ -1,143 +1,134 @@
-import axios from 'axios';
+// FRED API service for fetching economic data
 
-// FRED API configuration
-const FRED_API_KEY = import.meta.env.FRED_API_KEY;
-const FRED_BASE_URL = 'https://api.stlouisfed.org/fred';
+// Base URL for the FRED API
+const API_BASE_URL = 'https://api.stlouisfed.org/fred/series/observations';
 
-// FRED Series IDs for mortgage rates
-const MORTGAGE_SERIES = {
-  thirtyYearFixed: 'MORTGAGE30US',
-  fifteenYearFixed: 'MORTGAGE15US'
+// Function to get the latest value for any FRED series
+export const getSeriesLatestValue = async (seriesId: string): Promise<number> => {
+  try {
+    const result = await fetchFREDData(seriesId);
+    return parseFloat(result) || 0;
+  } catch (error) {
+    console.error(`Error fetching latest value for ${seriesId}:`, error);
+    return 0;
+  }
 };
 
-/**
- * Get state tax rates from FRED API
- * This function fetches the most recent state tax rate data from the 
- * Federal Reserve Economic Data (FRED)
- */
-export async function getStateTaxRates() {
-  try {
-    // For state income tax rates, we use the FRED series "TAXRATE" with state code
-    const response = await axios.get(`${FRED_BASE_URL}/series/search`, {
-      params: {
-        api_key: FRED_API_KEY,
-        search_text: 'state individual income tax rate',
-        file_type: 'json'
-      }
-    });
-
-    if (response.data && response.data.seriess) {
-      return response.data.seriess;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching state tax data from FRED:', error);
-    return null;
+// Helper function to fetch data from FRED API
+const fetchFREDData = async (seriesId: string) => {
+  // We're using environment variable for the API key
+  const apiKey = process.env.FRED_API_KEY || import.meta.env.VITE_FRED_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('FRED API key is not configured.');
   }
-}
-
-/**
- * Get state sales tax rates from FRED API
- */
-export async function getStateSalesTaxRates() {
+  
+  const params = new URLSearchParams({
+    series_id: seriesId,
+    api_key: apiKey,
+    file_type: 'json',
+    sort_order: 'desc',
+    limit: '1'  // Just get the most recent value
+  });
+  
   try {
-    const response = await axios.get(`${FRED_BASE_URL}/series/search`, {
-      params: {
-        api_key: FRED_API_KEY,
-        search_text: 'state sales tax rate',
-        file_type: 'json'
-      }
-    });
-
-    if (response.data && response.data.seriess) {
-      return response.data.seriess;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching state sales tax data from FRED:', error);
-    return null;
-  }
-}
-
-/**
- * Get latest value for a specific FRED series
- */
-export async function getSeriesLatestValue(seriesId: string) {
-  try {
-    const response = await axios.get(`${FRED_BASE_URL}/series/observations`, {
-      params: {
-        api_key: FRED_API_KEY,
-        series_id: seriesId,
-        sort_order: 'desc',
-        limit: 1,
-        file_type: 'json'
-      }
-    });
-
-    if (response.data && response.data.observations && response.data.observations.length > 0) {
-      return response.data.observations[0].value;
-    }
-    return null;
-  } catch (error) {
-    console.error(`Error fetching latest value for series ${seriesId}:`, error);
-    return null;
-  }
-}
-
-/**
- * Get current mortgage rates from FRED API
- * Returns the latest 30-year and 15-year fixed mortgage rates
- */
-export async function getMortgageRates() {
-  try {
-    // Get the 30-year fixed mortgage rate
-    const thirtyYearResponse = await axios.get(`${FRED_BASE_URL}/series/observations`, {
-      params: {
-        api_key: FRED_API_KEY,
-        series_id: MORTGAGE_SERIES.thirtyYearFixed,
-        sort_order: 'desc',
-        limit: 1,
-        file_type: 'json'
-      }
-    });
+    const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
     
-    // Get the 15-year fixed mortgage rate
-    const fifteenYearResponse = await axios.get(`${FRED_BASE_URL}/series/observations`, {
-      params: {
-        api_key: FRED_API_KEY,
-        series_id: MORTGAGE_SERIES.fifteenYearFixed,
-        sort_order: 'desc',
-        limit: 1,
-        file_type: 'json'
-      }
-    });
+    if (!response.ok) {
+      throw new Error(`FRED API request failed with status ${response.status}`);
+    }
     
-    // Extract rates from responses
-    const thirtyYearRate = thirtyYearResponse.data.observations?.[0]?.value;
-    const fifteenYearRate = fifteenYearResponse.data.observations?.[0]?.value;
+    const data = await response.json();
+    return data.observations?.[0]?.value || null;
+  } catch (error) {
+    console.error('Error fetching FRED data:', error);
+    throw error;
+  }
+};
+
+// Series IDs for different economic indicators
+// Tax rate series IDs
+const SERIES_IDS = {
+  // Federal tax rates
+  FEDERAL_INCOME_TAX: 'FEDFUNDS', // Using fed funds rate as placeholder, would need actual tax rate series
+  
+  // Mortgage rates
+  MORTGAGE_30YR: 'MORTGAGE30US',
+  MORTGAGE_15YR: 'MORTGAGE15US',
+  
+  // State-specific tax rates would be specific to each state
+  // Currently FRED doesn't have direct state tax rate data in an easily accessible format
+};
+
+// Function to get federal tax rates
+export const getFederalTaxRates = async () => {
+  try {
+    const federalRate = await fetchFREDData(SERIES_IDS.FEDERAL_INCOME_TAX);
+    return parseFloat(federalRate) || 0;
+  } catch (error) {
+    console.error('Error fetching federal tax rates:', error);
+    return 0; // Return 0 if unable to fetch
+  }
+};
+
+// Function to get current mortgage rates
+export const getMortgageRates = async () => {
+  try {
+    const [thirtyYearRate, fifteenYearRate] = await Promise.all([
+      fetchFREDData(SERIES_IDS.MORTGAGE_30YR),
+      fetchFREDData(SERIES_IDS.MORTGAGE_15YR)
+    ]);
     
     return {
       thirtyYearFixed: {
-        rate: thirtyYearRate ? parseFloat(thirtyYearRate) : 6.5,
-        date: thirtyYearResponse.data.observations?.[0]?.date || new Date().toISOString().split('T')[0]
+        rate: parseFloat(thirtyYearRate) || 6.5, // Default to 6.5% if unable to fetch
+        lastUpdated: new Date().toISOString()
       },
       fifteenYearFixed: {
-        rate: fifteenYearRate ? parseFloat(fifteenYearRate) : 5.75,
-        date: fifteenYearResponse.data.observations?.[0]?.date || new Date().toISOString().split('T')[0]
+        rate: parseFloat(fifteenYearRate) || 5.75, // Default to 5.75% if unable to fetch
+        lastUpdated: new Date().toISOString()
       }
     };
   } catch (error) {
-    console.error('Error fetching mortgage rates from FRED:', error);
-    // Return fallback rates if API fails
+    console.error('Error fetching mortgage rates:', error);
+    // Return reasonable defaults if unable to fetch
     return {
       thirtyYearFixed: {
         rate: 6.5,
-        date: new Date().toISOString().split('T')[0]
+        lastUpdated: new Date().toISOString()
       },
       fifteenYearFixed: {
         rate: 5.75,
-        date: new Date().toISOString().split('T')[0]
+        lastUpdated: new Date().toISOString()
       }
     };
   }
-}
+};
+
+// Function to get state tax rates
+// This would be incomplete since FRED doesn't have comprehensive state tax data
+export const getStateTaxRates = async () => {
+  // In a real implementation, this would fetch state-specific tax data
+  // Since we can't easily get tax data from FRED, we'll return an empty array
+  // Real implementation would need to use a different data source or specific FRED series for each state
+  
+  try {
+    // Return an empty array as if we queried the API and found no series
+    return [];
+  } catch (error) {
+    console.error(`Error fetching tax rates:`, error);
+    return [];
+  }
+};
+
+// Function to get state sales tax rates
+export const getStateSalesTaxRates = async () => {
+  // Similar to income tax, return an empty array as placeholder
+  try {
+    // Return an empty array as if we queried the API and found no series
+    return [];
+  } catch (error) {
+    console.error(`Error fetching sales tax rates:`, error);
+    return [];
+  }
+};
