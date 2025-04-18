@@ -4,3 +4,6 @@ client/src/lib/nhtsa-service.ts
 client/src/types/speech-recognition.d.ts
 client/src/lib/nhtsa-service.ts
 client/src/types/speech-recognition.d.ts
+client/src/components/absolute-fullscreen-components.tsx
+client/src/lib/nhtsa-service.ts
+client/src/types/speech-recognition.d.ts

@@ -2,5 +2,6 @@ index.tsx
 life-skills.tsx
 login.tsx
 repair-assistant.tsx
+saved-quizzes.tsx
 shopping-buddy.tsx
 yoga-progression.tsx
