@@ -2,6 +2,7 @@
 @import '@fontsource/lora/700.css';
 /* Calendar CSS imports removed */
 @import './styles/enhanced-scroll-area.css';
+@import './styles/emergency-fix.css'; /* High-priority fix for content visibility */
 @import './styles/card-fixes.css';
 @import './styles/desktop-specific-fixes.css';
 @import './styles/fullscreen-dialog-fix.css';

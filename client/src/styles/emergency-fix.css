@@ -1,0 +1,91 @@
+/* Emergency Fix CSS - Restore Dialog Content */
+
+/* Force all dialog content to display */
+[role="dialog"] * {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure dialog contents are properly displayed */
+[role="dialog"] [class*="DialogContent"] > div,
+[role="dialog"] [class*="FullScreenDialogContent"] > div,
+[role="dialog"] [class*="DialogBody"] > div,
+[role="dialog"] [class*="FullScreenDialogBody"] > div,
+.full-screen-dialog-children,
+.dialog-content-wrapper {
+  display: block !important;
+  background-color: white !important;
+  width: 100% !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+}
+
+/* Force all card content to display properly */
+[role="dialog"] .card,
+[role="dialog"] [class*="Card"],
+[role="dialog"] .border,
+[role="dialog"] .rounded-md,
+[role="dialog"] .border.rounded-md,
+[role="dialog"] [class*="border rounded-md"],
+[role="dialog"] .bg-yellow-50,
+[role="dialog"] .bg-orange-50,
+[role="dialog"] .bg-gray-50 {
+  display: block !important;
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  padding: 1rem !important;
+  margin: 0.5rem 0 !important;
+}
+
+/* Text content visibility fixes */
+[role="dialog"] h1,
+[role="dialog"] h2,
+[role="dialog"] h3,
+[role="dialog"] h4,
+[role="dialog"] h5,
+[role="dialog"] h6,
+[role="dialog"] p,
+[role="dialog"] span,
+[role="dialog"] a,
+[role="dialog"] li,
+[role="dialog"] ul,
+[role="dialog"] ol {
+  color: #333 !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Fix non-styled div wrappers that might be hiding content */
+[role="dialog"] div:not([class]) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Mobile specific content fixes */
+@media (max-width: 768px) {
+  .mobile-dialog-header {
+    display: block !important;
+    visibility: visible !important;
+    background-color: white !important;
+  }
+  
+  .mobile-dialog-body {
+    display: block !important;
+    visibility: visible !important;
+    background-color: white !important;
+  }
+  
+  /* Fix for mobile nested cards */
+  [role="dialog"] .card .card,
+  [role="dialog"] [class*="Card"] [class*="Card"],
+  [role="dialog"] .card [class*="Card"],
+  [role="dialog"] [class*="Card"] .card {
+    background-color: #f8f9fa !important;
+  }
+}
