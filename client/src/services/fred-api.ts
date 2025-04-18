@@ -4,6 +4,12 @@ import axios from 'axios';
 const FRED_API_KEY = import.meta.env.FRED_API_KEY;
 const FRED_BASE_URL = 'https://api.stlouisfed.org/fred';
 
+// FRED Series IDs for mortgage rates
+const MORTGAGE_SERIES = {
+  thirtyYearFixed: 'MORTGAGE30US',
+  fifteenYearFixed: 'MORTGAGE15US'
+};
+
 /**
  * Get state tax rates from FRED API
  * This function fetches the most recent state tax rate data from the 
@@ -75,5 +81,63 @@ export async function getSeriesLatestValue(seriesId: string) {
   } catch (error) {
     console.error(`Error fetching latest value for series ${seriesId}:`, error);
     return null;
+  }
+}
+
+/**
+ * Get current mortgage rates from FRED API
+ * Returns the latest 30-year and 15-year fixed mortgage rates
+ */
+export async function getMortgageRates() {
+  try {
+    // Get the 30-year fixed mortgage rate
+    const thirtyYearResponse = await axios.get(`${FRED_BASE_URL}/series/observations`, {
+      params: {
+        api_key: FRED_API_KEY,
+        series_id: MORTGAGE_SERIES.thirtyYearFixed,
+        sort_order: 'desc',
+        limit: 1,
+        file_type: 'json'
+      }
+    });
+    
+    // Get the 15-year fixed mortgage rate
+    const fifteenYearResponse = await axios.get(`${FRED_BASE_URL}/series/observations`, {
+      params: {
+        api_key: FRED_API_KEY,
+        series_id: MORTGAGE_SERIES.fifteenYearFixed,
+        sort_order: 'desc',
+        limit: 1,
+        file_type: 'json'
+      }
+    });
+    
+    // Extract rates from responses
+    const thirtyYearRate = thirtyYearResponse.data.observations?.[0]?.value;
+    const fifteenYearRate = fifteenYearResponse.data.observations?.[0]?.value;
+    
+    return {
+      thirtyYearFixed: {
+        rate: thirtyYearRate ? parseFloat(thirtyYearRate) : 6.5,
+        date: thirtyYearResponse.data.observations?.[0]?.date || new Date().toISOString().split('T')[0]
+      },
+      fifteenYearFixed: {
+        rate: fifteenYearRate ? parseFloat(fifteenYearRate) : 5.75,
+        date: fifteenYearResponse.data.observations?.[0]?.date || new Date().toISOString().split('T')[0]
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching mortgage rates from FRED:', error);
+    // Return fallback rates if API fails
+    return {
+      thirtyYearFixed: {
+        rate: 6.5,
+        date: new Date().toISOString().split('T')[0]
+      },
+      fifteenYearFixed: {
+        rate: 5.75,
+        date: new Date().toISOString().split('T')[0]
+      }
+    };
   }
 }
