@@ -168,7 +168,7 @@ export default function Finance() {
       </FullScreenDialog>
 
       <FullScreenDialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
-        <FullScreenDialogContent themeColor="#22c55e" className="w-full" style={{ maxWidth: "100%", width: "100vw" }}>
+        <FullScreenDialogContent themeColor="#22c55e" className="w-full financial-dashboard-dialog" style={{ maxWidth: "100%", width: "100vw", height: "100vh", position: "fixed", inset: 0 }}>
           <FinancialDashboardPopOut budgetData={budgetData} />
         </FullScreenDialogContent>
       </FullScreenDialog>

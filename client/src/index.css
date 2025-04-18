@@ -7,6 +7,7 @@
 @import './styles/desktop-specific-fixes.css';
 @import './styles/fullscreen-dialog-fix.css';
 @import './styles/dialog-fixes.css';
+@import './styles/financial-dashboard-fix.css'; /* New fix for financial dashboard fullscreen */
 
 @tailwind base;
 @tailwind components;

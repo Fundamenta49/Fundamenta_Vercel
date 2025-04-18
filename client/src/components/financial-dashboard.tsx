@@ -72,12 +72,12 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
   return (
-    <div className="space-y-6 w-full max-w-full box-border" id="financial-dashboard">
+    <div className="space-y-6 w-full max-w-full max-w-[100vw] box-border" id="financial-dashboard">
       <Tabs 
         defaultValue="overview" 
         value={activeTab} 
         onValueChange={setActiveTab}
-        className="w-full max-w-full box-border"
+        className="w-full max-w-full max-w-[100vw] box-border"
       >
         <TabsList className="w-full grid grid-cols-4 mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
