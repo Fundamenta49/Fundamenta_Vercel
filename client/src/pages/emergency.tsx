@@ -14,7 +14,7 @@ import FireSafetyPopOut from "@/components/fire-safety-pop-out";
 import CPRGuidePopOut from "@/components/cpr-guide-pop-out";
 import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out-new";
 import AutoAccidentPopOut from "@/components/auto-accident-pop-out";
-import SimpleEmergencyChecklist from "@/components/simple-emergency-checklist";
+import EmergencyChecklistFullscreen from "@/components/emergency-checklist-fullscreen";
 
 // Define section properties
 type SectionType = {
@@ -238,12 +238,8 @@ export default function Emergency() {
 
       <FullScreenDialog open={isSuppliesOpen} onOpenChange={setIsSuppliesOpen}>
         <FullScreenDialogContent themeColor="#ef4444" className="w-full max-w-full h-full">
-          <div className="p-4 md:p-6 h-full">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5 text-red-500" />
-              Emergency Preparedness Checklist
-            </h2>
-            <SimpleEmergencyChecklist />
+          <div className="p-4 md:p-6 h-full overflow-hidden">
+            <EmergencyChecklistFullscreen />
           </div>
         </FullScreenDialogContent>
       </FullScreenDialog>
