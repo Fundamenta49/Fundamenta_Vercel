@@ -151,7 +151,7 @@ const FullScreenDialogContent = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-0 z-50 w-full h-full overflow-auto bg-white dark:bg-gray-950 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+            "fixed inset-0 z-50 w-full h-full bg-white dark:bg-gray-950 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             className
           )}
           style={{
@@ -160,7 +160,9 @@ const FullScreenDialogContent = React.forwardRef<
             maxWidth: "100vw",
             maxHeight: "100vh",
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
+            overflow: "hidden", /* Prevent content from popping out */
+            position: "relative"
           }}
           {...props}
         >
@@ -273,7 +275,10 @@ const FullScreenDialogBody = ({
       } : {
         width: '100%',
         maxWidth: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        flex: '1 1 auto'
       }}
       {...props}
     >
