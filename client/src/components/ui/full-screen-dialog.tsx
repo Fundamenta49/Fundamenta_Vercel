@@ -142,21 +142,13 @@ const FullScreenDialogContent = React.forwardRef<
             top: 0,
             left: 0,
             right: 0,
-            bottom: 0
+            bottom: 0,
+            overflowY: "auto",
+            display: "block"
           }}
           {...props}
         >
-          <div 
-            className="w-full h-full overflow-auto" 
-            style={{ 
-              height: "100vh", 
-              paddingTop: "16px",
-              paddingBottom: "64px",
-              boxSizing: "border-box"
-            }}
-          >
-            {children}
-          </div>
+          {children}
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
