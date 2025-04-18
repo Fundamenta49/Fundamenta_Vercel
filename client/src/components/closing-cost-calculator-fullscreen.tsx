@@ -3,13 +3,30 @@ import {
   Calculator, 
   DollarSign, 
   X, 
-  HelpCircle
+  HelpCircle, 
+  Home, 
+  Building, 
+  CreditCard, 
+  FileText, 
+  Gauge, 
+  Clock, 
+  ArrowRight, 
+  Calendar, 
+  ShieldCheck, 
+  BarChart4, 
+  Info, 
+  Percent,
+  RefreshCw,
+  CheckCircle2,
+  Download
 } from 'lucide-react';
 import { 
   Card, 
   CardContent, 
   CardHeader, 
-  CardTitle 
+  CardTitle,
+  CardDescription,
+  CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,10 +36,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getMortgageRates } from '@/services/fred-api';
-import { FullScreenDialog, FullScreenDialogContent, FullScreenDialogHeader, FullScreenDialogTitle, FullScreenDialogBody, FullScreenDialogClose } from '@/components/ui/full-screen-dialog';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getMortgageRates } from '@/lib/mortgage-data-service';
+import { FullScreenDialog, FullScreenDialogContent, FullScreenDialogHeader, FullScreenDialogTitle, FullScreenDialogBody, FullScreenDialogClose, FullScreenDialogFooter } from '@/components/ui/full-screen-dialog';
 
 // Default values and state data imported from constants
 import { 
@@ -38,13 +60,6 @@ import {
   DEFAULT_STATE,
   STATE_DATA
 } from '../lib/mortgage-constants';
-
-// Enhanced scroll area with proper height limits
-const EnhancedScrollArea = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <ScrollArea className={className}>
-    {children}
-  </ScrollArea>
-);
 
 // Format currency without decimal points
 const formatCurrency = (amount: number): string => {
