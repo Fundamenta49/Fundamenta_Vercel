@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getStateTaxRates, getStateSalesTaxRates } from '@/services/fred-api';
+import { getStateTaxRates, getStateSalesTaxRates, getSeriesLatestValue } from '@/services/fred-api';
 
 // Define the structure of our tax data
 interface StateTaxData {
@@ -96,8 +96,64 @@ export function useStateTaxData() {
         const incomeTaxData = await getStateTaxRates();
         const salesTaxData = await getStateSalesTaxRates();
         
-        // We will process the actual data here when available
+        console.log('FRED Income Tax Data:', incomeTaxData);
+        console.log('FRED Sales Tax Data:', salesTaxData);
+        
+        // Process the income tax data
+        if (incomeTaxData && Array.isArray(incomeTaxData)) {
+          for (const series of incomeTaxData) {
+            // Extract state code from series title or id
+            // Example format: "Individual Income Tax Rate for Alabama"
+            const titleParts = series.title.split(" for ");
+            if (titleParts.length === 2) {
+              const stateName = titleParts[1].trim();
+              // Find state code from state name
+              const stateEntry = Object.entries(stateNames).find(
+                ([_, name]) => name === stateName
+              );
+              
+              if (stateEntry) {
+                const [stateCode] = stateEntry;
+                
+                // Get the latest value for this series
+                const taxRate = await getSeriesLatestValue(series.id);
+                
+                if (taxRate !== null && initialData[stateCode]) {
+                  initialData[stateCode].incomeTaxRate = parseFloat(taxRate);
+                }
+              }
+            }
+          }
+        }
+        
+        // Process the sales tax data
+        if (salesTaxData && Array.isArray(salesTaxData)) {
+          for (const series of salesTaxData) {
+            // Extract state code from series title or id
+            // Example format: "Sales Tax Rate for California"
+            const titleParts = series.title.split(" for ");
+            if (titleParts.length === 2) {
+              const stateName = titleParts[1].trim();
+              // Find state code from state name
+              const stateEntry = Object.entries(stateNames).find(
+                ([_, name]) => name === stateName
+              );
+              
+              if (stateEntry) {
+                const [stateCode] = stateEntry;
+                
+                // Get the latest value for this series
+                const taxRate = await getSeriesLatestValue(series.id);
+                
+                if (taxRate !== null && initialData[stateCode]) {
+                  initialData[stateCode].salesTaxRate = parseFloat(taxRate);
+                }
+              }
+            }
+          }
+        }
 
+        // At this point initialData should be populated with real values from FRED
         setStateData(initialData);
         setLoading(false);
       } catch (err) {

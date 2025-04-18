@@ -343,15 +343,37 @@ export default function TaxEducationFullscreen({
     // State income tax (simplified)
     let stateIncomeTax = 0;
     if (includeStateIncomeTax) {
+      // Get state tax info from either our detailed data or the FRED API data
       const stateInfo = stateTaxInfo[selectedState];
-      if (stateInfo && stateInfo.hasIncomeTax) {
-        // Simple approximation based on state
-        if (selectedState === "ca") {
-          stateIncomeTax = weeklyGrossPay * 0.04;
-        } else if (selectedState === "ny") {
-          stateIncomeTax = weeklyGrossPay * 0.05;
-        } else {
-          stateIncomeTax = weeklyGrossPay * 0.03; // Default for other states with income tax
+      const fredStateData = stateData[selectedState];
+      
+      // States known to have no income tax
+      const noIncomeTaxStates = ['ak', 'fl', 'nv', 'sd', 'tx', 'wa', 'wy', 'tn', 'nh'];
+      
+      // Check if state has income tax
+      const hasIncomeTax = stateInfo?.hasIncomeTax ?? fredStateData?.hasIncomeTax ?? !noIncomeTaxStates.includes(selectedState);
+      
+      if (hasIncomeTax) {
+        // First check if we have actual data from FRED
+        if (fredStateData?.incomeTaxRate) {
+          // Convert the percentage to decimal (and adjust based on income level)
+          const taxRate = fredStateData.incomeTaxRate / 100;
+          stateIncomeTax = weeklyGrossPay * taxRate;
+          console.log(`Using FRED tax rate for ${selectedState}: ${taxRate * 100}%`);
+        }
+        // If no FRED data, use our pre-defined rates for known states
+        else if (stateInfo) {
+          if (selectedState === "ca") {
+            stateIncomeTax = weeklyGrossPay * 0.04;
+          } else if (selectedState === "ny") {
+            stateIncomeTax = weeklyGrossPay * 0.05;
+          } else {
+            stateIncomeTax = weeklyGrossPay * 0.03; // Default for states with income tax
+          }
+        } 
+        // Generic fallback rate for states with income tax
+        else {
+          stateIncomeTax = weeklyGrossPay * 0.03;
         }
       }
     }
@@ -382,18 +404,21 @@ export default function TaxEducationFullscreen({
     // Try to get the selected state info, fall back to a default if not found
     const stateInfo = stateTaxInfo[selectedState];
     
-    // If we don't have specific info for this state, create a generic template
+    // If we don't have specific info for this state, create a template using FRED API data
     if (!stateInfo) {
-      console.log(`No specific data for ${selectedState}, creating generic template`);
+      console.log(`No specific data for ${selectedState}, creating data-driven template`);
       
       // Get state name (reference the stateNames from our states array)
       const stateName = states.find(s => s.value === selectedState)?.name || selectedState.toUpperCase();
       
+      // Get tax info from our FRED API data hook
+      const stateTaxInfo = stateData[selectedState];
+      
       // States with no income tax (from our hook)
       const noIncomeTaxStates = ['ak', 'fl', 'nv', 'sd', 'tx', 'wa', 'wy', 'tn', 'nh'];
       
-      // Create generic info based on whether it has income tax
-      const hasIncomeTax = !noIncomeTaxStates.includes(selectedState);
+      // Create info based on whether it has income tax and actual FRED data
+      const hasIncomeTax = stateTaxInfo?.hasIncomeTax ?? !noIncomeTaxStates.includes(selectedState);
       
       // Return generic template
       return (
