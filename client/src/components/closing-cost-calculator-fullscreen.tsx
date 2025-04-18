@@ -613,718 +613,1098 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
 
   return (
     <FullScreenDialog open={true} onOpenChange={onClose}>
-      <FullScreenDialogContent themeColor="#22c55e">
-        <FullScreenDialogHeader>
-          <FullScreenDialogTitle>Closing Cost Calculator</FullScreenDialogTitle>
-          <FullScreenDialogClose asChild>
-            <Button 
-              variant="ghost" 
-              className="absolute right-4 top-4 rounded-full h-10 w-10 p-0 border-2 border-green-500"
-              onClick={onClose}
-            >
-              <X className="h-6 w-6 text-green-600" />
-              <span className="sr-only">Close</span>
-            </Button>
-          </FullScreenDialogClose>
-        </FullScreenDialogHeader>
+      <FullScreenDialogContent className="overflow-auto bg-neutral-50">
+        {/* Header with accent color and navigation */}
+        <div className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white py-4 sticky top-0 z-10 shadow-md">
+          <div className="container max-w-7xl mx-auto px-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-6 w-6" />
+              <h1 className="text-2xl font-bold">Closing Cost Calculator</h1>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white hover:bg-green-700 hover:text-white"
+                onClick={handleReset}
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Reset
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-green-700 rounded-full"
+                onClick={onClose}
+              >
+                <X className="h-5 w-5" />
+                <span className="sr-only">Close</span>
+              </Button>
+            </div>
+          </div>
+        </div>
         
-        <FullScreenDialogBody>
-          <div className="container max-w-5xl mx-auto">
-            {/* Main Calculator */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-1">
-                {/* Input Section */}
-                <Card>
-                  <CardHeader className="bg-green-50 dark:bg-green-900">
-                    <CardTitle className="text-lg text-green-900 dark:text-green-50">Loan Details</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4 pt-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="home-price">Home Price</Label>
-                      <div className="relative">
-                        <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                        <Input
-                          id="home-price"
-                          type="text"
-                          className="pl-8"
-                          value={formatCurrency(netSheet.homePrice)}
-                          onChange={(e) => handleHomePriceChange(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <Label htmlFor="down-payment">Down Payment</Label>
-                        <span className="text-sm text-gray-500">{formatPercent(netSheet.downPaymentPercent)}</span>
-                      </div>
-                      <div className="relative">
-                        <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                        <Input
-                          id="down-payment"
-                          type="text"
-                          className="pl-8"
-                          value={formatCurrency(netSheet.downPayment)}
-                          onChange={(e) => handleDownPaymentChange(e.target.value)}
-                        />
-                      </div>
-                      <Slider
-                        defaultValue={[DEFAULT_DOWN_PAYMENT_PERCENT]}
-                        max={50}
-                        step={1}
-                        value={[netSheet.downPaymentPercent]}
-                        onValueChange={handleDownPaymentPercentChange}
-                        className="mt-2"
-                      />
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>0%</span>
-                        <span>25%</span>
-                        <span>50%</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <Label htmlFor="interest-rate">Interest Rate</Label>
-                        <span className="text-sm text-gray-500">{netSheet.interestRate.toFixed(2)}%</span>
-                      </div>
-                      <Slider
-                        defaultValue={[DEFAULT_INTEREST_RATE]}
-                        min={2}
-                        max={10}
-                        step={0.125}
-                        value={[netSheet.interestRate]}
-                        onValueChange={handleInterestRateChange}
-                      />
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>2%</span>
-                        <span>6%</span>
-                        <span>10%</span>
-                      </div>
-                      {currentRates.thirtyYearFixed > 0 && (
-                        <div className="mt-1 text-xs text-gray-600">
-                          Current average 30-year rate: {formatRate(currentRates.thirtyYearFixed)}%
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="loan-term">Loan Term</Label>
-                      <Select value={netSheet.loanTerm.toString()} onValueChange={handleLoanTermChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select loan term" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="30">30 Years</SelectItem>
-                          <SelectItem value="20">20 Years</SelectItem>
-                          <SelectItem value="15">15 Years</SelectItem>
-                          <SelectItem value="10">10 Years</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {currentRates.fifteenYearFixed > 0 && netSheet.loanTerm === 15 && (
-                        <div className="mt-1 text-xs text-gray-600">
-                          Current average 15-year rate: {formatRate(currentRates.fifteenYearFixed)}%
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="state">State</Label>
-                      <Select value={netSheet.selectedState} onValueChange={handleStateChange}>
-                        <SelectTrigger id="state">
-                          <SelectValue placeholder="Select state" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.keys(STATE_DATA).sort().map((stateCode) => (
-                            <SelectItem key={stateCode} value={stateCode}>
-                              {STATE_DATA[stateCode].name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <div className="mt-1 text-xs text-gray-600">
-                        Rates are specific to each state
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-2">
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          id="advanced-mode"
-                          checked={advancedMode}
-                          onCheckedChange={handleAdvancedModeToggle}
-                        />
-                        <Label htmlFor="advanced-mode">Advanced Options</Label>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleReset}
-                      >
-                        Reset
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {advancedMode && (
-                  <Card className="mt-4">
-                    <CardHeader className="bg-green-50 dark:bg-green-900">
-                      <CardTitle className="text-lg text-green-900 dark:text-green-50">Advanced Options</CardTitle>
+        <div className="container max-w-7xl mx-auto px-4 py-8">
+          {/* Main content area */}
+          <div className="flex flex-col gap-8">
+            {/* Alert banner */}
+            <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md">
+              <div className="flex items-start">
+                <CheckCircle2 className="h-5 w-5 text-green-500 mr-3 mt-0.5" />
+                <div>
+                  <h3 className="font-medium text-green-900">Real-time calculation</h3>
+                  <p className="text-green-700">Using market data updated daily. All results are for estimation purposes only.</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Main calculator grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Left column - Inputs */}
+              <div className="lg:col-span-5">
+                <div className="space-y-6">
+                  {/* Key inputs panel */}
+                  <Card className="shadow-sm">
+                    <CardHeader className="bg-white border-b pb-3">
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <Home className="h-5 w-5 text-green-500" />
+                        <span>Property Details</span>
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-4">
-                      <Tabs defaultValue="closing" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2 bg-green-100 dark:bg-green-950">
-                          <TabsTrigger value="closing" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Closing Costs</TabsTrigger>
-                          <TabsTrigger value="recurring" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Recurring Costs</TabsTrigger>
-                        </TabsList>
+                    <CardContent className="pt-6 pb-5 space-y-6">
+                      <div className="space-y-3">
+                        <Label htmlFor="home-price" className="text-base">Home Price</Label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                          <Input
+                            id="home-price"
+                            type="text"
+                            className="pl-8 h-12 text-lg"
+                            value={formatCurrency(netSheet.homePrice)}
+                            onChange={(e) => handleHomePriceChange(e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <Label htmlFor="state" className="text-base">Property Location</Label>
+                          <Badge variant="outline" className="font-normal">
+                            Tax Rate: {STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}%
+                          </Badge>
+                        </div>
+                        <Select value={netSheet.selectedState} onValueChange={handleStateChange}>
+                          <SelectTrigger id="state" className="h-12 text-md">
+                            <SelectValue placeholder="Select state" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.keys(STATE_DATA).sort().map((stateCode) => (
+                              <SelectItem key={stateCode} value={stateCode}>
+                                {STATE_DATA[stateCode].name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <Label htmlFor="down-payment" className="text-base">Down Payment</Label>
+                          <Badge variant="outline" className="font-normal">
+                            {formatPercent(netSheet.downPaymentPercent)} of home price
+                          </Badge>
+                        </div>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                          <Input
+                            id="down-payment"
+                            type="text"
+                            className="pl-8 h-12 text-lg"
+                            value={formatCurrency(netSheet.downPayment)}
+                            onChange={(e) => handleDownPaymentChange(e.target.value)}
+                          />
+                        </div>
+                        <Slider
+                          defaultValue={[DEFAULT_DOWN_PAYMENT_PERCENT]}
+                          max={50}
+                          step={1}
+                          value={[netSheet.downPaymentPercent]}
+                          onValueChange={handleDownPaymentPercentChange}
+                          className="mt-3"
+                        />
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <span>0%</span>
+                          <span>10%</span>
+                          <span>20%</span>
+                          <span>30%</span>
+                          <span>40%</span>
+                          <span>50%</span>
+                        </div>
                         
-                        <TabsContent value="closing" className="space-y-4 pt-4">
-                          <div className="space-y-2">
-                            <Label>Loan Origination Fee</Label>
-                            <div className="relative">
-                              <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                              <Input
-                                type="text"
-                                className="pl-8"
-                                value={formatCurrency(netSheet.closingCosts.loanOrigination)}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
-                                  setNetSheet(prev => ({
-                                    ...prev,
-                                    closingCosts: {
-                                      ...prev.closingCosts,
-                                      loanOrigination: value
-                                    }
-                                  }));
-                                }}
-                              />
-                            </div>
+                        {netSheet.downPaymentPercent < 20 && (
+                          <div className="flex items-center p-2 bg-amber-50 border border-amber-100 rounded text-sm text-amber-700 mt-1">
+                            <Info className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <span>Down payments under 20% require Private Mortgage Insurance.</span>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-5 w-5 ml-1 text-amber-700"
+                              onClick={() => toggleEducation('pmi')}
+                            >
+                              <HelpCircle className="h-3 w-3" />
+                              <span className="sr-only">About PMI</span>
+                            </Button>
                           </div>
-                          
-                          {/* Add more closing cost fields here */}
-                          <div className="space-y-2">
-                            <Label>Appraisal Fee</Label>
-                            <div className="relative">
-                              <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                              <Input
-                                type="text"
-                                className="pl-8"
-                                value={formatCurrency(netSheet.closingCosts.appraisalFee)}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
-                                  setNetSheet(prev => ({
-                                    ...prev,
-                                    closingCosts: {
-                                      ...prev.closingCosts,
-                                      appraisalFee: value
-                                    }
-                                  }));
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </TabsContent>
-                        
-                        <TabsContent value="recurring" className="space-y-4 pt-4">
-                          <div className="space-y-2">
-                            <Label>Property Tax (Monthly)</Label>
-                            <div className="relative">
-                              <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                              <Input
-                                type="text"
-                                className="pl-8"
-                                value={formatCurrencyPrecise(netSheet.recurringCosts.propertyTax)}
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0;
-                                  setNetSheet(prev => ({
-                                    ...prev,
-                                    recurringCosts: {
-                                      ...prev.recurringCosts,
-                                      propertyTax: value
-                                    }
-                                  }));
-                                }}
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label>Homeowners Insurance (Monthly)</Label>
-                            <div className="relative">
-                              <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                              <Input
-                                type="text"
-                                className="pl-8"
-                                value={formatCurrencyPrecise(netSheet.recurringCosts.homeownersInsurance)}
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0;
-                                  setNetSheet(prev => ({
-                                    ...prev,
-                                    recurringCosts: {
-                                      ...prev.recurringCosts,
-                                      homeownersInsurance: value
-                                    }
-                                  }));
-                                }}
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label>HOA Fees (Monthly)</Label>
-                            <div className="relative">
-                              <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                              <Input
-                                type="text"
-                                className="pl-8"
-                                value={formatCurrencyPrecise(netSheet.recurringCosts.hoaFees)}
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0;
-                                  setNetSheet(prev => ({
-                                    ...prev,
-                                    recurringCosts: {
-                                      ...prev.recurringCosts,
-                                      hoaFees: value
-                                    }
-                                  }));
-                                }}
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label>Utilities (Monthly)</Label>
-                            <div className="relative">
-                              <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                              <Input
-                                type="text"
-                                className="pl-8"
-                                value={formatCurrencyPrecise(netSheet.recurringCosts.utilities)}
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0;
-                                  setNetSheet(prev => ({
-                                    ...prev,
-                                    recurringCosts: {
-                                      ...prev.recurringCosts,
-                                      utilities: value
-                                    }
-                                  }));
-                                }}
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label>Maintenance (Monthly)</Label>
-                            <div className="relative">
-                              <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                              <Input
-                                type="text"
-                                className="pl-8"
-                                value={formatCurrencyPrecise(netSheet.recurringCosts.maintenance)}
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0;
-                                  setNetSheet(prev => ({
-                                    ...prev,
-                                    recurringCosts: {
-                                      ...prev.recurringCosts,
-                                      maintenance: value
-                                    }
-                                  }));
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </TabsContent>
-                      </Tabs>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
-                )}
-              </div>
 
-              <div className="lg:col-span-2">
-                {/* Results Section */}
-                <Card>
-                  <CardHeader className="bg-green-50 dark:bg-green-900">
-                    <CardTitle className="text-lg text-green-900 dark:text-green-50">
-                      Results Summary
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="space-y-6">
-                      {/* Upfront Costs */}
-                      <div>
-                        <h3 className="text-lg font-medium mb-3 flex items-center justify-between">
-                          <span>Cash Needed to Close</span>
-                          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                            {formatCurrency(results.upfrontCosts.totalCashNeeded)}
-                          </Badge>
-                        </h3>
+                  {/* Loan details panel */}
+                  <Card className="shadow-sm">
+                    <CardHeader className="bg-white border-b pb-3">
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <FileText className="h-5 w-5 text-green-500" />
+                        <span>Loan Details</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6 pb-5 space-y-6">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-3">
+                          <Label htmlFor="loan-term" className="text-base">Loan Term</Label>
+                          <Select value={netSheet.loanTerm.toString()} onValueChange={handleLoanTermChange}>
+                            <SelectTrigger id="loan-term" className="h-12 text-md">
+                              <SelectValue placeholder="Select term" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="30">30 Years</SelectItem>
+                              <SelectItem value="20">20 Years</SelectItem>
+                              <SelectItem value="15">15 Years</SelectItem>
+                              <SelectItem value="10">10 Years</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                         
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="flex items-center">
-                              Down Payment
-                            </span>
-                            <span>{formatCurrency(results.upfrontCosts.downPayment)}</span>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="rate-display" className="text-base">Interest Rate</Label>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 py-0 text-xs text-green-700"
+                              onClick={() => useMarketRate(netSheet.loanTerm)}
+                            >
+                              <RefreshCw className="h-3 w-3 mr-1" />
+                              Use Current Rate
+                            </Button>
                           </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="flex items-center gap-1">
-                              Closing Costs
-                              <Button variant="ghost" size="icon" className="h-4 w-4" onClick={() => toggleEducation('closingCosts')}>
-                                <HelpCircle className="h-3 w-3" />
-                                <span className="sr-only">Learn about closing costs</span>
-                              </Button>
-                            </span>
-                            <span>{formatCurrency(results.upfrontCosts.closingCosts)}</span>
+                          <div className="relative">
+                            <Percent className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                            <Input
+                              id="rate-display"
+                              value={netSheet.interestRate.toFixed(3)}
+                              className="pl-8 h-12 text-lg"
+                              readOnly
+                            />
                           </div>
-                          <div className="h-px bg-gray-200 my-1"></div>
-                          <div className="flex justify-between items-center font-medium">
-                            <span>Total Cash Needed</span>
-                            <span>{formatCurrency(results.upfrontCosts.totalCashNeeded)}</span>
+                          <Slider
+                            min={2}
+                            max={10}
+                            step={0.125}
+                            value={[netSheet.interestRate]}
+                            onValueChange={handleInterestRateChange}
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>2%</span>
+                            <span>4%</span>
+                            <span>6%</span>
+                            <span>8%</span>
+                            <span>10%</span>
                           </div>
                         </div>
                       </div>
+
+                      {(currentRates.thirtyYearFixed > 0 || currentRates.fifteenYearFixed > 0) && (
+                        <div className="bg-gray-50 p-3 rounded border border-gray-200 text-sm">
+                          <div className="font-medium mb-1">Current Average Rates:</div>
+                          <div className="grid grid-cols-2 gap-2">
+                            {currentRates.thirtyYearFixed > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">30-Year Fixed:</span>
+                                <span className="font-medium">{formatRate(currentRates.thirtyYearFixed)}%</span>
+                              </div>
+                            )}
+                            {currentRates.fifteenYearFixed > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">15-Year Fixed:</span>
+                                <span className="font-medium">{formatRate(currentRates.fifteenYearFixed)}%</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       
-                      {/* Monthly Breakdown */}
-                      <div>
-                        <h3 className="text-lg font-medium mb-3 flex items-center justify-between">
-                          <span>Monthly Payment</span>
-                          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                            {formatCurrencyPrecise(results.monthlyPayment.total)}
-                          </Badge>
-                        </h3>
+                      <div className="border-t border-gray-100 pt-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-gray-600 font-medium">Loan Amount:</span>
+                          <span className="font-semibold text-lg">{formatCurrency(netSheet.loanAmount)}</span>
+                        </div>
                         
-                        <Tabs defaultValue="breakdown" className="w-full">
-                          <TabsList className="grid w-full grid-cols-2 bg-green-100 dark:bg-green-950">
-                            <TabsTrigger value="breakdown" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Payment Breakdown</TabsTrigger>
-                            <TabsTrigger value="chart" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-green-700 dark:data-[state=active]:text-green-400">Payment Chart</TabsTrigger>
+                        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-green-500 rounded-full"
+                            style={{ width: `${(netSheet.loanAmount / netSheet.homePrice) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Additional costs panel */}
+                  <Card className="shadow-sm">
+                    <CardHeader className="bg-white border-b pb-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <Building className="h-5 w-5 text-green-500" />
+                          <span>Additional Costs</span>
+                        </CardTitle>
+                        
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setAdvancedMode(!advancedMode)}
+                          className={advancedMode ? "bg-green-50 text-green-700 border-green-200" : ""}
+                        >
+                          {advancedMode ? "Hide Details" : "Show Details"}
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-6 pb-5">
+                      {!advancedMode ? (
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                              <span className="font-medium">Property Tax</span>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6 ml-1"
+                                onClick={() => toggleEducation('taxes')}
+                              >
+                                <HelpCircle className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-medium">{formatCurrencyPrecise(netSheet.recurringCosts.propertyTax)} / month</div>
+                              <div className="text-xs text-gray-500">{formatCurrencyPrecise(netSheet.recurringCosts.propertyTax * 12)} annually</div>
+                            </div>
+                          </div>
+                          
+                          <Separator />
+                          
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                              <span className="font-medium">Homeowners Insurance</span>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6 ml-1"
+                                onClick={() => toggleEducation('insurance')}
+                              >
+                                <HelpCircle className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-medium">{formatCurrencyPrecise(netSheet.recurringCosts.homeownersInsurance)} / month</div>
+                              <div className="text-xs text-gray-500">{formatCurrencyPrecise(netSheet.recurringCosts.homeownersInsurance * 12)} annually</div>
+                            </div>
+                          </div>
+                          
+                          {netSheet.recurringCosts.hoaFees > 0 && (
+                            <>
+                              <Separator />
+                              <div className="flex justify-between items-center">
+                                <span className="font-medium">HOA Fees</span>
+                                <div className="text-right">
+                                  <div className="font-medium">{formatCurrencyPrecise(netSheet.recurringCosts.hoaFees)} / month</div>
+                                  <div className="text-xs text-gray-500">{formatCurrencyPrecise(netSheet.recurringCosts.hoaFees * 12)} annually</div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                          
+                          {netSheet.recurringCosts.mortgageInsurance > 0 && (
+                            <>
+                              <Separator />
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center">
+                                  <span className="font-medium">PMI</span>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-6 w-6 ml-1"
+                                    onClick={() => toggleEducation('pmi')}
+                                  >
+                                    <HelpCircle className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                                <div className="text-right">
+                                  <div className="font-medium">{formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance)} / month</div>
+                                  <div className="text-xs text-gray-500">{formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance * 12)} annually</div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                          
+                          <Separator />
+                          
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                              <span className="font-medium">Closing Costs</span>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6 ml-1"
+                                onClick={() => toggleEducation('closingCosts')}
+                              >
+                                <HelpCircle className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            <div>
+                              <span className="font-medium">{formatCurrency(calculateTotalClosingCosts())}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <Tabs defaultValue="closing" className="w-full">
+                          <TabsList className="grid w-full grid-cols-2 bg-slate-100">
+                            <TabsTrigger value="closing" className="data-[state=active]:bg-white data-[state=active]:text-green-700">Closing Costs</TabsTrigger>
+                            <TabsTrigger value="recurring" className="data-[state=active]:bg-white data-[state=active]:text-green-700">Monthly Costs</TabsTrigger>
                           </TabsList>
                           
-                          <TabsContent value="breakdown" className="pt-4">
+                          <TabsContent value="closing" className="space-y-4 pt-4">
+                            <div className="space-y-3">
+                              <Label>Loan Origination Fee</Label>
+                              <div className="relative">
+                                <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                <Input
+                                  type="text"
+                                  className="pl-8"
+                                  value={formatCurrency(netSheet.closingCosts.loanOrigination)}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                                    setNetSheet(prev => ({
+                                      ...prev,
+                                      closingCosts: {
+                                        ...prev.closingCosts,
+                                        loanOrigination: value
+                                      }
+                                    }));
+                                  }}
+                                />
+                              </div>
+                              <div className="text-xs text-gray-500">Typically 0.5-1% of loan amount</div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label>Appraisal Fee</Label>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                  <Input
+                                    type="text"
+                                    className="pl-8"
+                                    value={formatCurrency(netSheet.closingCosts.appraisalFee)}
+                                    onChange={(e) => {
+                                      const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                                      setNetSheet(prev => ({
+                                        ...prev,
+                                        closingCosts: {
+                                          ...prev.closingCosts,
+                                          appraisalFee: value
+                                        }
+                                      }));
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label>Credit Report Fee</Label>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                  <Input
+                                    type="text"
+                                    className="pl-8"
+                                    value={formatCurrency(netSheet.closingCosts.creditReportFee)}
+                                    onChange={(e) => {
+                                      const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                                      setNetSheet(prev => ({
+                                        ...prev,
+                                        closingCosts: {
+                                          ...prev.closingCosts,
+                                          creditReportFee: value
+                                        }
+                                      }));
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label>Title Services</Label>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                  <Input
+                                    type="text"
+                                    className="pl-8"
+                                    value={formatCurrency(netSheet.closingCosts.titleServices)}
+                                    onChange={(e) => {
+                                      const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                                      setNetSheet(prev => ({
+                                        ...prev,
+                                        closingCosts: {
+                                          ...prev.closingCosts,
+                                          titleServices: value
+                                        }
+                                      }));
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label>Home Inspection</Label>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                  <Input
+                                    type="text"
+                                    className="pl-8"
+                                    value={formatCurrency(netSheet.closingCosts.homeInspection)}
+                                    onChange={(e) => {
+                                      const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                                      setNetSheet(prev => ({
+                                        ...prev,
+                                        closingCosts: {
+                                          ...prev.closingCosts,
+                                          homeInspection: value
+                                        }
+                                      }));
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label>Recording Charges</Label>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                  <Input
+                                    type="text"
+                                    className="pl-8"
+                                    value={formatCurrency(netSheet.closingCosts.governmentRecordingCharges)}
+                                    onChange={(e) => {
+                                      const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                                      setNetSheet(prev => ({
+                                        ...prev,
+                                        closingCosts: {
+                                          ...prev.closingCosts,
+                                          governmentRecordingCharges: value
+                                        }
+                                      }));
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label>Transfer Taxes</Label>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                  <Input
+                                    type="text"
+                                    className="pl-8"
+                                    value={formatCurrency(netSheet.closingCosts.transferTaxes)}
+                                    onChange={(e) => {
+                                      const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                                      setNetSheet(prev => ({
+                                        ...prev,
+                                        closingCosts: {
+                                          ...prev.closingCosts,
+                                          transferTaxes: value
+                                        }
+                                      }));
+                                    }}
+                                  />
+                                </div>
+                                <div className="text-xs text-gray-500">Based on {STATE_DATA[netSheet.selectedState].name} rates</div>
+                              </div>
+                            </div>
+                            
                             <div className="space-y-2">
-                              <div className="flex justify-between items-center text-sm">
-                                <span>Principal & Interest</span>
-                                <span>{formatCurrencyPrecise(results.monthlyPayment.principal + results.monthlyPayment.interest)}</span>
+                              <Label>Other Closing Costs</Label>
+                              <div className="relative">
+                                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                <Input
+                                  type="text"
+                                  className="pl-8"
+                                  value={formatCurrency(netSheet.closingCosts.other)}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                                    setNetSheet(prev => ({
+                                      ...prev,
+                                      closingCosts: {
+                                        ...prev.closingCosts,
+                                        other: value
+                                      }
+                                    }));
+                                  }}
+                                />
                               </div>
-                              <div className="flex justify-between items-center text-sm">
-                                <span className="flex items-center gap-1">
-                                  Property Taxes
-                                  <Button variant="ghost" size="icon" className="h-4 w-4" onClick={() => toggleEducation('taxes')}>
-                                    <HelpCircle className="h-3 w-3" />
-                                    <span className="sr-only">Learn about property taxes</span>
-                                  </Button>
-                                </span>
-                                <span>{formatCurrencyPrecise(results.monthlyPayment.taxes)}</span>
+                            </div>
+                            
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                              <div className="flex justify-between font-medium">
+                                <span>Total Closing Costs:</span>
+                                <span>{formatCurrency(calculateTotalClosingCosts())}</span>
                               </div>
-                              <div className="flex justify-between items-center text-sm">
-                                <span className="flex items-center gap-1">
-                                  Homeowners Insurance
-                                  <Button variant="ghost" size="icon" className="h-4 w-4" onClick={() => toggleEducation('insurance')}>
-                                    <HelpCircle className="h-3 w-3" />
-                                    <span className="sr-only">Learn about homeowners insurance</span>
-                                  </Button>
-                                </span>
-                                <span>{formatCurrencyPrecise(results.monthlyPayment.insurance)}</span>
-                              </div>
-                              {results.monthlyPayment.pmi > 0 && (
-                                <div className="flex justify-between items-center text-sm">
-                                  <span className="flex items-center gap-1">
-                                    Mortgage Insurance (PMI)
-                                    <Button variant="ghost" size="icon" className="h-4 w-4" onClick={() => toggleEducation('pmi')}>
-                                      <HelpCircle className="h-3 w-3" />
-                                      <span className="sr-only">Learn about PMI</span>
-                                    </Button>
-                                  </span>
-                                  <span>{formatCurrencyPrecise(results.monthlyPayment.pmi)}</span>
-                                </div>
-                              )}
-                              {results.monthlyPayment.hoa > 0 && (
-                                <div className="flex justify-between items-center text-sm">
-                                  <span>HOA Fees</span>
-                                  <span>{formatCurrencyPrecise(results.monthlyPayment.hoa)}</span>
-                                </div>
-                              )}
-                              <div className="h-px bg-gray-200 my-1"></div>
-                              <div className="flex justify-between items-center font-medium">
-                                <span>Total Monthly Payment</span>
-                                <span>{formatCurrencyPrecise(results.monthlyPayment.total)}</span>
-                              </div>
+                              <div className="text-xs text-gray-500 mt-1">Approximately {(calculateTotalClosingCosts() / netSheet.homePrice * 100).toFixed(1)}% of home price</div>
                             </div>
                           </TabsContent>
                           
-                          <TabsContent value="chart" className="pt-4">
-                            <div className="text-center p-4 bg-gray-50 rounded-md">
-                              <p className="text-gray-500 mb-2">Monthly Payment Breakdown</p>
-                              {/* Simple visual breakdown with colored boxes - responsive alternative to chart */}
-                              <div className="w-full h-10 flex rounded-md overflow-hidden">
-                                {/* Principal & Interest */}
-                                <div 
-                                  className="bg-green-500 h-full flex items-center justify-center"
-                                  style={{ 
-                                    width: `${((results.monthlyPayment.principal + results.monthlyPayment.interest) / results.monthlyPayment.total * 100)}%` 
-                                  }}
-                                >
-                                  <span className="text-white text-xs px-1 truncate">P&I</span>
-                                </div>
-                                
-                                {/* Taxes */}
-                                <div 
-                                  className="bg-blue-500 h-full flex items-center justify-center"
-                                  style={{ 
-                                    width: `${(results.monthlyPayment.taxes / results.monthlyPayment.total * 100)}%` 
-                                  }}
-                                >
-                                  <span className="text-white text-xs px-1 truncate">Tax</span>
-                                </div>
-                                
-                                {/* Insurance */}
-                                <div 
-                                  className="bg-purple-500 h-full flex items-center justify-center"
-                                  style={{ 
-                                    width: `${(results.monthlyPayment.insurance / results.monthlyPayment.total * 100)}%` 
-                                  }}
-                                >
-                                  <span className="text-white text-xs px-1 truncate">Ins</span>
-                                </div>
-                                
-                                {/* PMI (if applicable) */}
-                                {results.monthlyPayment.pmi > 0 && (
-                                  <div 
-                                    className="bg-yellow-500 h-full flex items-center justify-center"
-                                    style={{ 
-                                      width: `${(results.monthlyPayment.pmi / results.monthlyPayment.total * 100)}%` 
-                                    }}
-                                  >
-                                    <span className="text-white text-xs px-1 truncate">PMI</span>
-                                  </div>
-                                )}
-                                
-                                {/* HOA (if applicable) */}
-                                {results.monthlyPayment.hoa > 0 && (
-                                  <div 
-                                    className="bg-orange-500 h-full flex items-center justify-center"
-                                    style={{ 
-                                      width: `${(results.monthlyPayment.hoa / results.monthlyPayment.total * 100)}%` 
-                                    }}
-                                  >
-                                    <span className="text-white text-xs px-1 truncate">HOA</span>
-                                  </div>
-                                )}
+                          <TabsContent value="recurring" className="space-y-4 pt-4">
+                            <div className="space-y-3">
+                              <Label>Property Tax (Annual)</Label>
+                              <div className="relative">
+                                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                <Input
+                                  type="text"
+                                  className="pl-8"
+                                  value={formatCurrency(netSheet.recurringCosts.propertyTax * 12)}
+                                  onChange={(e) => handlePropertyTaxChange(e.target.value)}
+                                />
                               </div>
-                              
-                              {/* Legend */}
-                              <div className="flex flex-wrap gap-3 justify-center mt-3">
-                                <div className="flex items-center gap-1">
-                                  <div className="w-3 h-3 bg-green-500 rounded-sm"></div>
-                                  <span className="text-xs">Principal & Interest</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <div className="w-3 h-3 bg-blue-500 rounded-sm"></div>
-                                  <span className="text-xs">Property Taxes</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <div className="w-3 h-3 bg-purple-500 rounded-sm"></div>
-                                  <span className="text-xs">Insurance</span>
-                                </div>
-                                {results.monthlyPayment.pmi > 0 && (
-                                  <div className="flex items-center gap-1">
-                                    <div className="w-3 h-3 bg-yellow-500 rounded-sm"></div>
-                                    <span className="text-xs">PMI</span>
-                                  </div>
-                                )}
-                                {results.monthlyPayment.hoa > 0 && (
-                                  <div className="flex items-center gap-1">
-                                    <div className="w-3 h-3 bg-orange-500 rounded-sm"></div>
-                                    <span className="text-xs">HOA</span>
-                                  </div>
-                                )}
+                              <div className="text-xs text-gray-500">
+                                Rate: {STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}% in {STATE_DATA[netSheet.selectedState].name}
                               </div>
+                            </div>
+                            
+                            <div className="space-y-3">
+                              <Label>Homeowners Insurance (Annual)</Label>
+                              <div className="relative">
+                                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                <Input
+                                  type="text"
+                                  className="pl-8"
+                                  value={formatCurrency(netSheet.recurringCosts.homeownersInsurance * 12)}
+                                  onChange={(e) => handleInsuranceChange(e.target.value)}
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-3">
+                              <Label>HOA Fees (Monthly)</Label>
+                              <div className="relative">
+                                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                                <Input
+                                  type="text"
+                                  className="pl-8"
+                                  value={formatCurrency(netSheet.recurringCosts.hoaFees)}
+                                  onChange={(e) => handleHoaFeesChange(e.target.value)}
+                                />
+                              </div>
+                            </div>
+                            
+                            {netSheet.downPaymentPercent < 20 && (
+                              <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                  <Label>Private Mortgage Insurance (Monthly)</Label>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-6 w-6"
+                                    onClick={() => toggleEducation('pmi')}
+                                  >
+                                    <HelpCircle className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                                <div className="text-sm bg-amber-50 p-3 rounded border border-amber-100">
+                                  <div className="font-medium text-amber-800 mb-1">PMI Calculation</div>
+                                  <div className="text-amber-700">
+                                    {formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance)} per month
+                                    <div className="text-xs mt-1">Based on {formatPercent(DEFAULT_PMI_RATE)} of loan amount annually</div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                              <div className="flex justify-between font-medium">
+                                <span>Total Monthly Recurring Costs:</span>
+                                <span>{formatCurrencyPrecise(
+                                  netSheet.recurringCosts.propertyTax + 
+                                  netSheet.recurringCosts.homeownersInsurance + 
+                                  netSheet.recurringCosts.mortgageInsurance +
+                                  netSheet.recurringCosts.hoaFees
+                                )}</span>
+                              </div>
+                              <div className="text-xs text-gray-500 mt-1">In addition to principal and interest payments</div>
                             </div>
                           </TabsContent>
                         </Tabs>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+              
+              {/* Right column - Results */}
+              <div className="lg:col-span-7">
+                {/* Monthly payment card */}
+                <Card className="shadow-sm">
+                  <CardHeader className="bg-white border-b pb-3">
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <Calculator className="h-5 w-5 text-green-500" />
+                        <span>Payment Summary</span>
+                      </CardTitle>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="gap-1"
+                        >
+                          <Download className="h-4 w-4" />
+                          <span>Save PDF</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                      {/* Monthly payment block */}
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 p-4 rounded-lg">
+                        <div className="text-green-700 font-medium mb-1 flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          <span>Monthly Payment</span>
+                        </div>
+                        <div className="text-4xl font-bold text-green-800 tracking-tight mb-2">
+                          {formatCurrencyPrecise(results.monthlyPayment.total)}
+                        </div>
+                        <div className="text-sm text-green-700">Principal + Interest + Escrow</div>
                       </div>
                       
-                      {/* Long-term Costs */}
+                      {/* Cash to close block */}
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 p-4 rounded-lg">
+                        <div className="text-blue-700 font-medium mb-1 flex items-center gap-1">
+                          <DollarSign className="h-4 w-4" />
+                          <span>Cash to Close</span>
+                        </div>
+                        <div className="text-4xl font-bold text-blue-800 tracking-tight mb-2">
+                          {formatCurrency(results.upfrontCosts.totalCashNeeded)}
+                        </div>
+                        <div className="text-sm text-blue-700">Down Payment + Closing Costs</div>
+                      </div>
+                      
+                      {/* Total cost block */}
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 p-4 rounded-lg">
+                        <div className="text-purple-700 font-medium mb-1 flex items-center gap-1">
+                          <Clock className="h-4 w-4" />
+                          <span>Total over {netSheet.loanTerm} Years</span>
+                        </div>
+                        <div className="text-4xl font-bold text-purple-800 tracking-tight mb-2">
+                          {formatCurrency(results.thirtyYearTotal)}
+                        </div>
+                        <div className="text-sm text-purple-700">Including principal, interest, and all costs</div>
+                      </div>
+                    </div>
+
+                    {/* Breakdown charts */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      {/* Monthly payment breakdown */}
                       <div>
-                        <h3 className="text-lg font-medium mb-3">
-                          <span>Long-term Cost Projections</span>
-                        </h3>
-                        
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center text-sm">
-                            <span>Annual Housing Costs</span>
-                            <span>{formatCurrency(results.yearlyTotal)}</span>
+                        <h3 className="text-lg font-medium mb-4">Monthly Payment Breakdown</h3>
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                              <span>Principal & Interest</span>
+                            </div>
+                            <span className="font-medium">
+                              {formatCurrencyPrecise(results.monthlyPayment.principal + results.monthlyPayment.interest)}
+                            </span>
                           </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span>5-Year Total Cost</span>
-                            <span>{formatCurrency(results.fiveYearTotal)}</span>
+                          
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                              <span>Property Tax</span>
+                            </div>
+                            <span className="font-medium">
+                              {formatCurrencyPrecise(results.monthlyPayment.taxes)}
+                            </span>
                           </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span>30-Year Total Cost</span>
-                            <span>{formatCurrency(results.thirtyYearTotal)}</span>
+                          
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                              <span>Insurance</span>
+                            </div>
+                            <span className="font-medium">
+                              {formatCurrencyPrecise(results.monthlyPayment.insurance)}
+                            </span>
+                          </div>
+                          
+                          {results.monthlyPayment.pmi > 0 && (
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                                <span>PMI</span>
+                              </div>
+                              <span className="font-medium">
+                                {formatCurrencyPrecise(results.monthlyPayment.pmi)}
+                              </span>
+                            </div>
+                          )}
+                          
+                          {results.monthlyPayment.hoa > 0 && (
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-pink-500"></div>
+                                <span>HOA</span>
+                              </div>
+                              <span className="font-medium">
+                                {formatCurrencyPrecise(results.monthlyPayment.hoa)}
+                              </span>
+                            </div>
+                          )}
+                          
+                          <div className="mt-4 pt-4 border-t">
+                            <div className="h-12 w-full bg-gray-100 rounded-md overflow-hidden flex">
+                              <div 
+                                className="h-full bg-blue-500"
+                                style={{ 
+                                  width: `${((results.monthlyPayment.principal + results.monthlyPayment.interest) / 
+                                    results.monthlyPayment.total) * 100}%` 
+                                }}
+                              ></div>
+                              <div 
+                                className="h-full bg-green-500"
+                                style={{ 
+                                  width: `${(results.monthlyPayment.taxes / 
+                                    results.monthlyPayment.total) * 100}%` 
+                                }}
+                              ></div>
+                              <div 
+                                className="h-full bg-purple-500"
+                                style={{ 
+                                  width: `${(results.monthlyPayment.insurance / 
+                                    results.monthlyPayment.total) * 100}%` 
+                                }}
+                              ></div>
+                              {results.monthlyPayment.pmi > 0 && (
+                                <div 
+                                  className="h-full bg-amber-500"
+                                  style={{ 
+                                    width: `${(results.monthlyPayment.pmi / 
+                                      results.monthlyPayment.total) * 100}%` 
+                                  }}
+                                ></div>
+                              )}
+                              {results.monthlyPayment.hoa > 0 && (
+                                <div 
+                                  className="h-full bg-pink-500"
+                                  style={{ 
+                                    width: `${(results.monthlyPayment.hoa / 
+                                      results.monthlyPayment.total) * 100}%` 
+                                  }}
+                                ></div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="pt-4">
+                            <Accordion type="single" collapsible className="border rounded-md">
+                              <AccordionItem value="item-1" className="border-0">
+                                <AccordionTrigger className="px-4 py-2 hover:no-underline">
+                                  Payment Details
+                                </AccordionTrigger>
+                                <AccordionContent className="px-4 pb-4">
+                                  <Table>
+                                    <TableBody>
+                                      <TableRow>
+                                        <TableCell className="py-2 pl-0">Principal & Interest</TableCell>
+                                        <TableCell className="py-2 text-right">{formatCurrencyPrecise(results.monthlyPayment.principal + results.monthlyPayment.interest)}</TableCell>
+                                      </TableRow>
+                                      <TableRow>
+                                        <TableCell className="py-2 pl-0">Principal Payment</TableCell>
+                                        <TableCell className="py-2 text-right">{formatCurrencyPrecise(results.monthlyPayment.principal)}</TableCell>
+                                      </TableRow>
+                                      <TableRow>
+                                        <TableCell className="py-2 pl-0">Interest Payment</TableCell>
+                                        <TableCell className="py-2 text-right">{formatCurrencyPrecise(results.monthlyPayment.interest)}</TableCell>
+                                      </TableRow>
+                                      <TableRow>
+                                        <TableCell className="py-2 pl-0">Property Tax</TableCell>
+                                        <TableCell className="py-2 text-right">{formatCurrencyPrecise(results.monthlyPayment.taxes)}</TableCell>
+                                      </TableRow>
+                                      <TableRow>
+                                        <TableCell className="py-2 pl-0">Homeowners Insurance</TableCell>
+                                        <TableCell className="py-2 text-right">{formatCurrencyPrecise(results.monthlyPayment.insurance)}</TableCell>
+                                      </TableRow>
+                                      {results.monthlyPayment.pmi > 0 && (
+                                        <TableRow>
+                                          <TableCell className="py-2 pl-0">Private Mortgage Insurance</TableCell>
+                                          <TableCell className="py-2 text-right">{formatCurrencyPrecise(results.monthlyPayment.pmi)}</TableCell>
+                                        </TableRow>
+                                      )}
+                                      {results.monthlyPayment.hoa > 0 && (
+                                        <TableRow>
+                                          <TableCell className="py-2 pl-0">HOA Fees</TableCell>
+                                          <TableCell className="py-2 text-right">{formatCurrencyPrecise(results.monthlyPayment.hoa)}</TableCell>
+                                        </TableRow>
+                                      )}
+                                    </TableBody>
+                                  </Table>
+                                </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
                           </div>
                         </div>
                       </div>
                       
-                      {/* Loan Summary */}
-                      <Card className="border border-green-100">
-                        <CardHeader className="bg-green-50 py-3">
-                          <CardTitle className="text-base text-green-900">Loan Summary</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-4 space-y-2">
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <p className="text-sm text-gray-500">Loan Amount</p>
-                              <p className="font-medium">{formatCurrency(netSheet.loanAmount)}</p>
+                      {/* Upfront and long-term costs */}
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-lg font-medium mb-4">Upfront Costs</h3>
+                          <div className="border rounded-md p-4 space-y-3">
+                            <div className="flex justify-between items-center">
+                              <span>Down Payment</span>
+                              <span className="font-medium">{formatCurrency(results.upfrontCosts.downPayment)}</span>
                             </div>
-                            <div>
-                              <p className="text-sm text-gray-500">Interest Rate</p>
-                              <p className="font-medium">{netSheet.interestRate.toFixed(3)}%</p>
+                            
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center">
+                                <span>Closing Costs</span>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-6 w-6 ml-1"
+                                  onClick={() => toggleEducation('closingCosts')}
+                                >
+                                  <HelpCircle className="h-3 w-3" />
+                                </Button>
+                              </div>
+                              <span className="font-medium">{formatCurrency(results.upfrontCosts.closingCosts)}</span>
                             </div>
-                            <div>
-                              <p className="text-sm text-gray-500">Loan Term</p>
-                              <p className="font-medium">{netSheet.loanTerm} years</p>
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-500">Property Tax Rate</p>
-                              <p className="font-medium">{STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}%</p>
+                            
+                            <Separator />
+                            
+                            <div className="flex justify-between items-center font-bold">
+                              <span>Total Cash to Close</span>
+                              <span>{formatCurrency(results.upfrontCosts.totalCashNeeded)}</span>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                        
+                        <div>
+                          <h3 className="text-lg font-medium mb-4">Total Cost Analysis</h3>
+                          <div className="border rounded-md overflow-hidden">
+                            <div className="grid grid-cols-4 divide-x">
+                              <div>
+                                <div className="p-3 bg-gray-50 text-center text-sm text-gray-700 font-medium border-b">
+                                  Term
+                                </div>
+                                <div className="p-4 text-center">
+                                  <div className="text-3xl font-bold text-gray-900">{netSheet.loanTerm}</div>
+                                  <div className="text-xs text-gray-500 mt-1">years</div>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <div className="p-3 bg-gray-50 text-center text-sm text-gray-700 font-medium border-b">
+                                  1 Year
+                                </div>
+                                <div className="p-4 text-center">
+                                  <div className="text-sm font-semibold text-gray-900">{formatCurrency(results.yearlyTotal)}</div>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <div className="p-3 bg-gray-50 text-center text-sm text-gray-700 font-medium border-b">
+                                  5 Years
+                                </div>
+                                <div className="p-4 text-center">
+                                  <div className="text-sm font-semibold text-gray-900">{formatCurrency(results.fiveYearTotal)}</div>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <div className="p-3 bg-gray-50 text-center text-sm text-gray-700 font-medium border-b">
+                                  Full Term
+                                </div>
+                                <div className="p-4 text-center">
+                                  <div className="text-sm font-semibold text-gray-900">{formatCurrency(results.thirtyYearTotal)}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="mt-6 bg-amber-50 p-4 rounded-md border border-amber-100">
+                            <div className="flex items-start gap-3">
+                              <Info className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <h4 className="font-medium text-amber-800">Costs Beyond Principal</h4>
+                                <p className="text-sm text-amber-700 mt-1">
+                                  Over the full term, you'll pay approximately {formatCurrency(results.thirtyYearTotal - netSheet.homePrice)} in interest, taxes, insurance, and other costs beyond the home price of {formatCurrency(netSheet.homePrice)}.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               </div>
             </div>
-            
-            {/* Education popups */}
-            <Dialog open={showEducation.pmi} onOpenChange={() => toggleEducation('pmi')}>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Understanding Private Mortgage Insurance (PMI)</DialogTitle>
-                </DialogHeader>
-                <ScrollAreaWrapper className="max-h-[60vh] pr-4">
-                  <div className="space-y-4 text-sm">
-                    <p>
-                      <strong>What is PMI?</strong> Private Mortgage Insurance protects the lender if you stop making payments on your loan. It's typically required when your down payment is less than 20% of the home's value.
-                    </p>
-                    <p>
-                      <strong>How much does it cost?</strong> Usually between 0.3% and 1.5% of your loan amount annually, depending on your credit score, loan term, and down payment percentage.
-                    </p>
-                    <p>
-                      <strong>How to avoid PMI:</strong>
-                    </p>
-                    <ul className="list-disc list-inside space-y-1 pl-4">
-                      <li>Make a down payment of at least 20%</li>
-                      <li>Consider a piggyback loan (80-10-10 loan structure)</li>
-                      <li>Look for lender-paid PMI options (higher interest rate but no separate PMI payment)</li>
-                    </ul>
-                    <p>
-                      <strong>How to remove PMI:</strong> Once you reach 22% equity (based on original purchase price), PMI automatically terminates. You can request cancellation at 20% equity if your payment history is good.
-                    </p>
-                  </div>
-                </ScrollAreaWrapper>
-              </DialogContent>
-            </Dialog>
-            
-            <Dialog open={showEducation.taxes} onOpenChange={() => toggleEducation('taxes')}>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Property Taxes Explained</DialogTitle>
-                </DialogHeader>
-                <ScrollAreaWrapper className="max-h-[60vh] pr-4">
-                  <div className="space-y-4 text-sm">
-                    <p>
-                      <strong>What are property taxes?</strong> These are local taxes assessed by your county or municipality based on your home's value, used to fund schools, infrastructure, and public services.
-                    </p>
-                    <p>
-                      <strong>How they're calculated:</strong> Your home's assessed value multiplied by the local tax rate. In {STATE_DATA[netSheet.selectedState].name}, the average rate is {STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}% of your home's value annually.
-                    </p>
-                    <p>
-                      <strong>How they're paid:</strong> Usually included in your monthly mortgage payment and held in an escrow account until your lender pays them on your behalf.
-                    </p>
-                    <p>
-                      <strong>Important considerations:</strong>
-                    </p>
-                    <ul className="list-disc list-inside space-y-1 pl-4">
-                      <li>Property taxes can increase over time as your home's value increases</li>
-                      <li>Some areas offer exemptions for primary residences or senior citizens</li>
-                      <li>Tax rates vary significantly by location, even within the same state</li>
-                    </ul>
-                  </div>
-                </ScrollAreaWrapper>
-              </DialogContent>
-            </Dialog>
-            
-            <Dialog open={showEducation.insurance} onOpenChange={() => toggleEducation('insurance')}>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Homeowners Insurance Guide</DialogTitle>
-                </DialogHeader>
-                <ScrollAreaWrapper className="max-h-[60vh] pr-4">
-                  <div className="space-y-4 text-sm">
-                    <p>
-                      <strong>What it covers:</strong> Damage to your home's structure, personal belongings, liability protection, and additional living expenses if your home becomes uninhabitable.
-                    </p>
-                    <p>
-                      <strong>What it doesn't cover:</strong>
-                    </p>
-                    <ul className="list-disc list-inside space-y-1 pl-4">
-                      <li>Flood damage (requires separate policy)</li>
-                      <li>Earthquake damage (requires separate policy)</li>
-                      <li>Normal wear and tear</li>
-                    </ul>
-                    <p>
-                      <strong>Factors affecting premiums:</strong> Location, home value, deductible amount, credit score, claim history, and coverage options.
-                    </p>
-                    <p>
-                      <strong>How to save:</strong> Bundle with auto insurance, increase deductibles, install security systems, or improve your home's resilience.
-                    </p>
-                  </div>
-                </ScrollAreaWrapper>
-              </DialogContent>
-            </Dialog>
-            
-            <Dialog open={showEducation.closingCosts} onOpenChange={() => toggleEducation('closingCosts')}>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Understanding Closing Costs</DialogTitle>
-                </DialogHeader>
-                <ScrollAreaWrapper className="max-h-[60vh] pr-4">
-                  <div className="space-y-4 text-sm">
-                    <p>
-                      <strong>What are closing costs?</strong> Closing costs are fees and expenses you pay when finalizing your mortgage and home purchase.
-                    </p>
-                    <p>
-                      <strong>How much are they?</strong> Typically, closing costs range from 2% to 5% of the loan amount. In {STATE_DATA[netSheet.selectedState].name}, transfer taxes are approximately {STATE_DATA[netSheet.selectedState].transferTaxRate.toFixed(2)}% of the property value.
-                    </p>
-                    <p>
-                      <strong>Common closing costs include:</strong>
-                    </p>
-                    <div className="space-y-2">
-                      <p><strong>Loan costs:</strong> Origination fees, application fees, underwriting fees</p>
-                      <p><strong>Third-party fees:</strong> Appraisal, credit report, home inspection, title search</p>
-                      <p><strong>Government fees:</strong> Recording fees, transfer taxes</p>
-                      <p><strong>Prepaid items:</strong> Homeowners insurance, property taxes, mortgage insurance</p>
-                    </div>
-                    <p>
-                      <strong>How to reduce closing costs:</strong>
-                    </p>
-                    <ul className="list-disc list-inside space-y-1 pl-4">
-                      <li>Shop around for lenders and service providers</li>
-                      <li>Ask for seller concessions</li>
-                      <li>Close at the end of the month</li>
-                      <li>Look for lender credits (in exchange for a higher interest rate)</li>
-                    </ul>
-                  </div>
-                </ScrollAreaWrapper>
-              </DialogContent>
-            </Dialog>
           </div>
-        </FullScreenDialogBody>
+        </div>
+      
+        {/* Education popups */}
+        <Dialog open={showEducation.pmi} onOpenChange={() => toggleEducation('pmi')}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Understanding Private Mortgage Insurance (PMI)</DialogTitle>
+            </DialogHeader>
+            <ScrollAreaWrapper className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What is PMI?</strong> Private Mortgage Insurance protects the lender if you stop making payments on your loan. It's typically required when your down payment is less than 20% of the home's value.
+                </p>
+                <p>
+                  <strong>How much does it cost?</strong> Usually between 0.3% and 1.5% of your loan amount annually, depending on your credit score, loan term, and down payment percentage.
+                </p>
+                <p>
+                  <strong>How to avoid PMI:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Make a down payment of at least 20%</li>
+                  <li>Consider a piggyback loan (80-10-10 loan structure)</li>
+                  <li>Look for lender-paid PMI options (higher interest rate but no separate PMI payment)</li>
+                </ul>
+                <p>
+                  <strong>How to remove PMI:</strong> Once you have at least 20% equity in your home, you can request to have PMI removed. It will automatically terminate when you reach 22% equity based on your original amortization schedule.
+                </p>
+              </div>
+            </ScrollAreaWrapper>
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog open={showEducation.taxes} onOpenChange={() => toggleEducation('taxes')}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Understanding Property Taxes</DialogTitle>
+            </DialogHeader>
+            <ScrollAreaWrapper className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What are property taxes?</strong> Property taxes are annual fees based on your home's assessed value that fund local services like schools, roads, and emergency services.
+                </p>
+                <p>
+                  <strong>How are they calculated?</strong> Property tax rates vary widely by location. The annual amount is typically between 0.5% to 2.5% of your home's assessed value, which may differ from its market value.
+                </p>
+                <p>
+                  <strong>How are they paid?</strong> Most homeowners pay property taxes monthly as part of their mortgage payment. The lender holds these funds in an escrow account and pays the tax bill when due.
+                </p>
+                <p>
+                  <strong>Can property taxes change?</strong> Yes. Property taxes can increase if:
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Your home is reassessed at a higher value</li>
+                  <li>Local tax rates increase</li>
+                  <li>Special assessments are approved in your area</li>
+                </ul>
+              </div>
+            </ScrollAreaWrapper>
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog open={showEducation.insurance} onOpenChange={() => toggleEducation('insurance')}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Understanding Homeowners Insurance</DialogTitle>
+            </DialogHeader>
+            <ScrollAreaWrapper className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What is homeowners insurance?</strong> Homeowners insurance protects your home and possessions against damage or loss from events like fire, storms, theft, and some natural disasters.
+                </p>
+                <p>
+                  <strong>What does it cover?</strong> Typical policies include:
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Dwelling coverage (structure of your home)</li>
+                  <li>Personal property coverage</li>
+                  <li>Liability protection</li>
+                  <li>Additional living expenses if you need temporary housing</li>
+                </ul>
+                <p>
+                  <strong>How much does it cost?</strong> The average annual cost is between $800 and $1,500, but varies based on your home's value, location, coverage level, deductible, and other factors.
+                </p>
+                <p>
+                  <strong>How is it paid?</strong> Like property taxes, insurance is typically paid monthly as part of your mortgage payment and held in an escrow account.
+                </p>
+                <p>
+                  <strong>Note:</strong> Flood and earthquake insurance are usually separate policies not included in standard homeowners insurance.
+                </p>
+              </div>
+            </ScrollAreaWrapper>
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog open={showEducation.closingCosts} onOpenChange={() => toggleEducation('closingCosts')}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Understanding Closing Costs</DialogTitle>
+            </DialogHeader>
+            <ScrollAreaWrapper className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What are closing costs?</strong> Closing costs are the fees and expenses you pay when finalizing a mortgage, typically ranging from 2% to 5% of the loan amount.
+                </p>
+                <p>
+                  <strong>Common closing costs include:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li><strong>Loan origination fee:</strong> Charged by the lender for processing your application</li>
+                  <li><strong>Appraisal fee:</strong> Cost of having the home's value assessed</li>
+                  <li><strong>Title services:</strong> Fees for title search, insurance, and settlement</li>
+                  <li><strong>Government recording charges:</strong> Fees paid to record the deed and mortgage</li>
+                  <li><strong>Transfer taxes:</strong> Taxes on transferring the property title</li>
+                  <li><strong>Home inspection:</strong> Cost of inspecting the home's condition</li>
+                  <li><strong>Prepaid expenses:</strong> Property taxes, insurance, and interest paid in advance</li>
+                </ul>
+                <p>
+                  <strong>Can closing costs be negotiated?</strong> Yes, some fees can be negotiated or shopped around for better rates. You can also ask the seller to pay for some of your closing costs.
+                </p>
+                <p>
+                  <strong>Can closing costs be included in the loan?</strong> In some cases, closing costs can be rolled into the mortgage amount (increasing your loan balance and monthly payments).
+                </p>
+              </div>
+            </ScrollAreaWrapper>
+          </DialogContent>
+        </Dialog>
       </FullScreenDialogContent>
     </FullScreenDialog>
   );
