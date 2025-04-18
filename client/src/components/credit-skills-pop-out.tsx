@@ -10,7 +10,7 @@ import CreditSkills from "@/components/credit-skills";
 
 export default function CreditSkillsPopOut() {
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <CreditCard className="h-6 w-6 text-green-500" />

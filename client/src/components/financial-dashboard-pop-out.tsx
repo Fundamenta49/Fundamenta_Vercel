@@ -15,7 +15,7 @@ interface FinancialDashboardPopOutProps {
 
 export default function FinancialDashboardPopOut({ budgetData }: FinancialDashboardPopOutProps) {
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <DollarSign className="h-6 w-6 text-green-500" />

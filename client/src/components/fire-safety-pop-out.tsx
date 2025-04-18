@@ -163,7 +163,7 @@ export default function FireSafetyPopOut() {
   
   // Main component render
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Flame className="h-6 w-6 text-orange-500" />

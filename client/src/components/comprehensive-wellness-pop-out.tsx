@@ -23,7 +23,7 @@ export default function ComprehensiveWellnessPopOut() {
       </FullScreenDialogHeader>
       
       <FullScreenDialogBody className="pt-6">
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full">
           <ComprehensiveWellnessAssessment />
         </div>
       </FullScreenDialogBody>

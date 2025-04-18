@@ -10,7 +10,7 @@ import MortgageCalculator from "@/components/mortgage-calculator";
 
 export default function MortgageCalculatorPopOut() {
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Building className="h-6 w-6 text-green-500" />

@@ -15,7 +15,7 @@ export default function JobSearchPopOut() {
   const [activeTab, setActiveTab] = useState("job-search");
   
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Network className="h-6 w-6 text-blue-500" />

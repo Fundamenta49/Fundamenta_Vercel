@@ -651,7 +651,7 @@ export default function AutoAccidentPopOut() {
   
   // Main render function with conditional content
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Car className="h-6 w-6 text-red-500" />

@@ -11,7 +11,7 @@ import { CAREER_CATEGORY } from "@/components/chat-interface";
 
 export default function CareerCoachPopOut() {
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Brain className="h-6 w-6 text-blue-500" />
