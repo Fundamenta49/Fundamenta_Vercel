@@ -11,7 +11,7 @@ import EmergencyGuide from "@/components/emergency-guide";
 export default function EmergencyGuidePopOut() {
   // Main component render - simplified to directly show the emergency guide
   return (
-    <div className="w-full max-w-screen-xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <PhoneCall className="h-6 w-6 text-red-500" />

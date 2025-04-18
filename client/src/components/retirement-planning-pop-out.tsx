@@ -10,7 +10,7 @@ import RetirementPlanning from "@/components/retirement-planning";
 
 export default function RetirementPlanningPopOut() {
   return (
-    <div className="w-full max-w-screen-xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <PiggyBank className="h-6 w-6 text-green-500" />

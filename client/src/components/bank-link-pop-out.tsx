@@ -10,7 +10,7 @@ import BankLink from "@/components/bank-link";
 
 export default function BankLinkPopOut() {
   return (
-    <div className="w-full max-w-screen-xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Home className="h-6 w-6 text-green-500" />

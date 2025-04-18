@@ -12,7 +12,7 @@ import NutritionTracker from "./nutrition-tracker";
 
 export default function NutritionTrackerPopOut() {
   return (
-    <div className="w-full max-w-screen-xl mx-auto">
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Calendar className="h-6 w-6 text-purple-500" />
