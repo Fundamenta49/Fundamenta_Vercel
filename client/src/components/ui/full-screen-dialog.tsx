@@ -129,14 +129,14 @@ const FullScreenDialogContent = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed left-[50%] top-[50%] z-50 w-[90%] h-[85%] translate-x-[-50%] translate-y-[-50%] overflow-auto bg-white dark:bg-gray-950 shadow-xl duration-200 rounded-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+            "fixed inset-0 z-50 w-full h-full overflow-auto bg-white dark:bg-gray-950 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             className
           )}
           style={{
-            minWidth: "75%",
-            minHeight: "75%",
-            maxWidth: "1400px",
-            maxHeight: "85vh"
+            width: "100vw",
+            height: "100vh",
+            maxWidth: "100vw",
+            maxHeight: "100vh"
           }}
           {...props}
         >
@@ -144,10 +144,10 @@ const FullScreenDialogContent = React.forwardRef<
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
-            className="absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-            style={{ backgroundColor: `${themeColor}20` }}
+            className="absolute right-6 top-6 rounded-full p-3 opacity-90 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+            style={{ backgroundColor: `${themeColor}30` }}
           >
-            <X className="h-6 w-6" style={{ color: themeColor }} />
+            <X className="h-8 w-8" style={{ color: themeColor }} />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         </DialogPrimitive.Content>
