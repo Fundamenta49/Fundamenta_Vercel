@@ -81,55 +81,32 @@ const FullScreenDialogContent = React.forwardRef<
     <FullScreenDialogPortal>
       <FullScreenDialogOverlay />
       {isMobile ? (
-        <motion.div
+        <DialogPrimitive.Content
+          ref={ref}
+          className={cn(
+            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content",
+            className
+          )}
           style={{ 
-            y,
-            opacity,
-            position: 'fixed',
-            left: 0,
-            top: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
+            pointerEvents: 'auto',
+            margin: 0,
+            padding: 0,
             width: '100vw',
             height: '100vh',
-            boxSizing: 'border-box',
-            backgroundColor: 'white',
-            overflow: 'hidden'
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            boxSizing: 'border-box'
           }}
-          drag="y"
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.2}
-          onDragEnd={handleDragEnd}
-          className="w-full h-full mobile-dialog-content"
+          {...props}
         >
-          <DialogPrimitive.Content
-            ref={ref}
-            className={cn(
-              "w-full h-full mobile-dialog-content",
-              className
-            )}
-            style={{ 
-              pointerEvents: 'auto',
-              margin: 0,
-              padding: 0,
-              width: '100vw',
-              height: '100vh',
-              maxWidth: '100vw',
-              maxHeight: '100vh',
-              boxSizing: 'border-box',
-              backgroundColor: 'white'
-            }}
-            {...props}
-          >
-            {/* Swipe handle indicator - with improved visibility and proper spacing */}
-            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-3 pb-5 bg-white dark:bg-gray-950 border-b border-gray-100">
-              <div className="w-16 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
-              <p className="text-xs text-gray-500 mt-2 font-medium">Swipe down to close</p>
+            {/* Swipe handle indicator */}
+            <div className="w-full flex flex-col items-center sticky top-0 z-20 pt-2 pb-6 bg-white dark:bg-gray-950">
+              <div className="w-12 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
+              <p className="text-xs text-gray-400 mt-1">Swipe down to close</p>
               
               {/* Visible close button for mobile */}
               <DialogPrimitive.Close 
-                className="absolute right-4 top-4 rounded-full p-2 opacity-80 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-100 shadow-sm"
+                className="absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-100"
               >
                 <X className="h-5 w-5 text-gray-700" />
                 <span className="sr-only">Close</span>
@@ -146,33 +123,23 @@ const FullScreenDialogContent = React.forwardRef<
               <span className="sr-only">Close</span>
             </DialogPrimitive.Close>
           </DialogPrimitive.Content>
-        </motion.div>
       ) : (
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-0 z-50 w-full h-full bg-white dark:bg-gray-950 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+            "fixed inset-4 z-50 w-auto h-auto overflow-auto bg-white dark:bg-gray-950 shadow-xl duration-200 rounded-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             className
           )}
-          style={{
-            width: "100vw",
-            height: "100vh", 
-            maxWidth: "100vw",
-            maxHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            position: "relative"
-          }}
           {...props}
         >
-{children}
+          {children}
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
-            className="fixed right-6 top-6 rounded-full p-3 opacity-90 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-[60]"
-            style={{ backgroundColor: `${themeColor}30` }}
+            className="absolute right-4 top-4 rounded-full p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+            style={{ backgroundColor: `${themeColor}20` }}
           >
-            <X className="h-8 w-8" style={{ color: themeColor }} />
+            <X className="h-6 w-6" style={{ color: themeColor }} />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         </DialogPrimitive.Content>
@@ -191,8 +158,8 @@ const FullScreenDialogHeader = ({
   return (
     <div
       className={cn(
-        "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b w-full",
-        isMobile ? "top-20 mt-4 mobile-dialog-header" : "top-0 pt-6", 
+        "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b",
+        isMobile ? "top-14 mt-2 mobile-dialog-header" : "top-0 pt-6", // Increased top value to avoid overlap with the swipe indicator
         className
       )}
       style={isMobile ? {
@@ -200,14 +167,9 @@ const FullScreenDialogHeader = ({
         boxSizing: 'border-box',
         left: 0,
         right: 0
-      } : {
-        width: '100%',
-        boxSizing: 'border-box'
-      }}
+      } : undefined}
       {...props}
-    >
-{props.children}
-    </div>
+    />
   );
 };
 FullScreenDialogHeader.displayName = "FullScreenDialogHeader";
@@ -259,8 +221,8 @@ const FullScreenDialogBody = ({
   return (
     <div
       className={cn(
-        "px-6 py-4 w-full", 
-        isMobile ? "pb-24 pt-8 mobile-dialog-body" : "", 
+        "px-6 py-4", 
+        isMobile ? "pb-24 mobile-dialog-body" : "", // Add bottom padding on mobile for better scrolling experience
         className
       )}
       style={isMobile ? {
@@ -268,19 +230,10 @@ const FullScreenDialogBody = ({
         maxWidth: '100%',
         overflowX: 'hidden',
         overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        paddingTop: '2rem', // Ensure content starts below any sticky headers
-        marginTop: '0.5rem'
-      } : {
-        width: '100%',
-        maxWidth: '100%',
-        boxSizing: 'border-box',
-        flex: '1 1 auto'
-      }}
+        WebkitOverflowScrolling: 'touch'
+      } : undefined}
       {...props}
-    >
-{props.children}
-    </div>
+    />
   );
 };
 FullScreenDialogBody.displayName = "FullScreenDialogBody";
