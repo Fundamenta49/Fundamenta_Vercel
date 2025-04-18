@@ -229,11 +229,10 @@ export default function Emergency() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      <FullScreenDialog open={isChecklistsOpen} onOpenChange={setIsChecklistsOpen}>
-        <FullScreenDialogContent themeColor="#ef4444">
-          <EmergencyChecklistPopOut />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+      {/* We're now using the new version with FullScreenDialogTrigger pattern */}
+      <div className="hidden">
+        <EmergencyChecklistPopOut />
+      </div>
 
       <FullScreenDialog open={isAutoAccidentOpen} onOpenChange={setIsAutoAccidentOpen}>
         <FullScreenDialogContent themeColor="#ef4444" className="overflow-x-hidden">

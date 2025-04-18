@@ -14,10 +14,14 @@ import {
   ArrowRight
 } from "lucide-react";
 import {
+  FullScreenDialog,
+  FullScreenDialogTrigger,
+  FullScreenDialogContent,
   FullScreenDialogHeader,
   FullScreenDialogTitle,
   FullScreenDialogDescription,
   FullScreenDialogBody,
+  FullScreenDialogFooter,
 } from "@/components/ui/full-screen-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
