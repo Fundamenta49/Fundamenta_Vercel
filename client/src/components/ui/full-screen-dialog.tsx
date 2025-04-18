@@ -136,12 +136,11 @@ const FullScreenDialogContent = React.forwardRef<
             maxWidth: "100vw",
             maxHeight: "100vh",
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
+            flexDirection: "column"
           }}
           {...props}
         >
-          <div className="w-full max-w-7xl mx-auto px-4 py-2 h-full">
+          <div className="w-full h-full">
             {children}
           </div>
           
@@ -180,9 +179,7 @@ const FullScreenDialogHeader = ({
         right: 0
       } : {
         width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
+        boxSizing: 'border-box'
       }}
       {...props}
     >
@@ -258,9 +255,8 @@ const FullScreenDialogBody = ({
         WebkitOverflowScrolling: 'touch'
       } : {
         width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
+        maxWidth: '100%',
+        boxSizing: 'border-box'
       }}
       {...props}
     >

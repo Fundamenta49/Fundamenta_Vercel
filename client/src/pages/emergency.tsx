@@ -14,7 +14,7 @@ import FireSafetyPopOut from "@/components/fire-safety-pop-out";
 import CPRGuidePopOut from "@/components/cpr-guide-pop-out";
 import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out-new";
 import AutoAccidentPopOut from "@/components/auto-accident-pop-out";
-import EmergencyFullscreen from "@/components/emergency-fullscreen";
+import EmergencyChecklistFullscreen from "@/components/emergency-checklist-fullscreen";
 
 // Define section properties
 type SectionType = {
@@ -236,25 +236,11 @@ export default function Emergency() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      {isSuppliesOpen && (
-        <div className="fixed inset-0 z-50 bg-white w-screen h-screen flex flex-col">
-          <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5 text-red-500" />
-              Emergency Preparedness Checklist
-            </h2>
-            <button
-              onClick={() => setIsSuppliesOpen(false)}
-              className="p-2 rounded-full bg-red-50 text-red-500 hover:bg-red-100"
-            >
-              <X className="h-6 w-6" />
-            </button>
-          </div>
-          <div className="flex-1 overflow-auto p-4 md:p-6">
-            <EmergencyFullscreen />
-          </div>
-        </div>
-      )}
+      <FullScreenDialog open={isSuppliesOpen} onOpenChange={setIsSuppliesOpen}>
+        <FullScreenDialogContent themeColor="#ef4444" className="w-full h-full overflow-auto">
+          <EmergencyChecklistFullscreen />
+        </FullScreenDialogContent>
+      </FullScreenDialog>
 
       {/* Grid-style cards layout */}
       <div className="px-2">
