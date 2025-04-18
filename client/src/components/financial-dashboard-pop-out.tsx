@@ -15,7 +15,7 @@ interface FinancialDashboardPopOutProps {
 
 export default function FinancialDashboardPopOut({ budgetData }: FinancialDashboardPopOutProps) {
   return (
-    <div style={{ width: "100%" }}>
+    <div className="w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <DollarSign className="h-6 w-6 text-green-500" />
@@ -36,9 +36,7 @@ export default function FinancialDashboardPopOut({ budgetData }: FinancialDashbo
           </AlertDescription>
         </Alert>
         
-        <div style={{ width: "100%", maxWidth: "none" }}>
-          <FinancialDashboard budgetData={budgetData} />
-        </div>
+        <FinancialDashboard budgetData={budgetData} />
       </FullScreenDialogBody>
     </div>
   );
