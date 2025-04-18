@@ -72,7 +72,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
   return (
-    <div className="space-y-6" style={{ width: "100%", maxWidth: "none" }}>
+    <div className="space-y-6 w-full max-w-full">
       <Tabs 
         defaultValue="overview" 
         value={activeTab} 
