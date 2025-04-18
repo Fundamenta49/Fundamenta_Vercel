@@ -43,19 +43,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-// A wrapper component for ScrollArea with consistent styling
-import { getMortgageRates } from '@/lib/mortgage-data-service';
-
-// A wrapper component for ScrollArea with consistent styling
-const ScrollAreaWrapper = ({ children, className = "h-[300px]" }: { children: React.ReactNode, className?: string }) => (
-  <ScrollArea className={className}>
-    {children}
-  </ScrollArea>
-);
 import { FullScreenDialog, FullScreenDialogContent, FullScreenDialogHeader, FullScreenDialogTitle, FullScreenDialogBody, FullScreenDialogClose, FullScreenDialogFooter } from '@/components/ui/full-screen-dialog';
-
-// Default values and state data imported from constants
+import { getMortgageRates } from '@/lib/mortgage-data-service';
 import { 
   DEFAULT_HOME_PRICE, 
   DEFAULT_DOWN_PAYMENT_PERCENT,
@@ -69,6 +58,13 @@ import {
   DEFAULT_STATE,
   STATE_DATA
 } from '../lib/mortgage-constants';
+
+// A wrapper component for ScrollArea with consistent styling
+const ScrollAreaWrapper = ({ children, className = "h-[300px]" }: { children: React.ReactNode, className?: string }) => (
+  <ScrollArea className={className}>
+    {children}
+  </ScrollArea>
+);
 
 // Format currency without decimal points
 const formatCurrency = (amount: number): string => {
