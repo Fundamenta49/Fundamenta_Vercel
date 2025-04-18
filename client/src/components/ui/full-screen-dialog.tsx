@@ -81,6 +81,7 @@ const FullScreenDialogContent = React.forwardRef<
     <FullScreenDialogPortal>
       <FullScreenDialogOverlay />
       {isMobile ? (
+        // NO CHANGES TO MOBILE VERSION - keep it as is
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
@@ -96,8 +97,8 @@ const FullScreenDialogContent = React.forwardRef<
             maxWidth: '100vw',
             maxHeight: '100vh',
             boxSizing: 'border-box',
-            backgroundColor: 'white', // Ensure white background on mobile
-            color: '#333' // Ensure dark text color on mobile
+            backgroundColor: 'white',
+            color: '#333'
           }}
           {...props}
         >
@@ -126,6 +127,7 @@ const FullScreenDialogContent = React.forwardRef<
             </DialogPrimitive.Close>
           </DialogPrimitive.Content>
       ) : (
+        // DESKTOP VERSION FIXES ONLY
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
@@ -140,11 +142,13 @@ const FullScreenDialogContent = React.forwardRef<
           }}
           {...props}
         >
-          {children}
+          <div className="max-w-[1200px] w-full h-full mx-auto px-4">
+            {children}
+          </div>
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
-            className="absolute right-6 top-6 rounded-full p-3 opacity-90 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+            className="absolute right-6 top-6 rounded-full p-3 opacity-90 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-[51]"
             style={{ backgroundColor: `${themeColor}30` }}
           >
             <X className="h-8 w-8" style={{ color: themeColor }} />
@@ -166,8 +170,8 @@ const FullScreenDialogHeader = ({
   return (
     <div
       className={cn(
-        "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b",
-        isMobile ? "top-14 mt-2 mobile-dialog-header mobile-friendly-content" : "top-0 pt-6", // Added mobile-friendly-content class
+        "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b w-full",
+        isMobile ? "top-14 mt-2 mobile-dialog-header mobile-friendly-content" : "top-0 pt-6", 
         className
       )}
       style={isMobile ? {
@@ -175,11 +179,26 @@ const FullScreenDialogHeader = ({
         boxSizing: 'border-box',
         left: 0,
         right: 0,
-        backgroundColor: 'white', // Ensure white background on mobile
-        color: '#333' // Ensure dark text color on mobile
-      } : undefined}
+        backgroundColor: 'white',
+        color: '#333',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      } : {
+        width: '100%',
+        boxSizing: 'border-box',
+        left: 0,
+        right: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}
       {...props}
-    />
+    >
+      <div className="w-full max-w-[1200px]">
+        {props.children}
+      </div>
+    </div>
   );
 };
 FullScreenDialogHeader.displayName = "FullScreenDialogHeader";
@@ -240,8 +259,8 @@ const FullScreenDialogBody = ({
   return (
     <div
       className={cn(
-        "px-6 py-4 w-full", 
-        isMobile ? "pb-24 mobile-dialog-body mobile-friendly-content" : "", // Add mobile-friendly class for consistent styling
+        "px-6 py-4 w-full flex flex-col items-center", 
+        isMobile ? "pb-24 mobile-dialog-body mobile-friendly-content" : "", 
         className
       )}
       style={isMobile ? {
@@ -250,14 +269,22 @@ const FullScreenDialogBody = ({
         overflowX: 'hidden',
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
-        backgroundColor: 'white', // Ensure white background on mobile
-        color: '#333' // Ensure dark text color on mobile
+        backgroundColor: 'white',
+        color: '#333'
       } : {
-        width: '100%',
-        maxWidth: '100%'
+        width: '100%', 
+        maxWidth: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        margin: '0 auto'
       }}
       {...props}
-    />
+    >
+      <div className="w-full max-w-[1200px] flex flex-col items-center">
+        {props.children}
+      </div>
+    </div>
   );
 };
 FullScreenDialogBody.displayName = "FullScreenDialogBody";
