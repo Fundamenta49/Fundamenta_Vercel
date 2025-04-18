@@ -12,7 +12,7 @@ import EmergencyAIPopOut from "@/components/emergency-ai-pop-out";
 import EmergencyGuidePopOut from "@/components/emergency-guide-pop-out";
 import FireSafetyPopOut from "@/components/fire-safety-pop-out";
 import CPRGuidePopOut from "@/components/cpr-guide-pop-out";
-import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out";
+import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out-new";
 import AutoAccidentPopOut from "@/components/auto-accident-pop-out";
 import SimpleEmergencyChecklist from "@/components/simple-emergency-checklist";
 
@@ -31,14 +31,12 @@ const SECTIONS: SectionType[] = [
     description: 'Checklist of essential items for emergency preparedness',
     icon: ShoppingBag,
   },
-  /* Removed duplicate checklist button 
   {
     id: 'checklists',
     title: 'Emergency Checklists',
     description: 'Preparation steps for different types of emergencies',
     icon: ClipboardList,
   },
-  */
   {
     id: 'guides',
     title: 'Emergency Guides',

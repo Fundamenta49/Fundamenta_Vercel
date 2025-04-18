@@ -537,7 +537,12 @@ export default function EmergencyChecklistPopOut() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center space-x-2">
-                        <Progress value={calculateProgress(checklist)} className="flex-1 h-3" />
+                        <div className="flex-1 h-3 rounded-full overflow-hidden bg-gray-200">
+                          <div 
+                            className="bg-primary h-full transition-all"
+                            style={{ width: `${calculateProgress(checklist)}%` }}
+                          />
+                        </div>
                         <span className="font-bold">{calculateProgress(checklist)}%</span>
                       </div>
                     </CardContent>
