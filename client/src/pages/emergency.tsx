@@ -4,11 +4,14 @@ import { AlertCircle, Brain, Flame, Heart, PhoneCall, ClipboardList, Car, Shoppi
 import { useToast } from "@/hooks/use-toast";
 
 // Import absolute fullscreen components (new approach)
+import {
+  AbsoluteFullscreenEmergencyGuide,
+  AbsoluteFullscreenCPRGuide,
+  AbsoluteFullscreenFireSafety,
+  AbsoluteFullscreenAutoAccident
+} from "@/components/absolute-fullscreen-components";
+
 import AbsoluteFullscreenEmergencyChecklist from "@/components/absolute-fullscreen-emergency-checklist";
-import AbsoluteFullscreenCPRGuide from "@/components/absolute-fullscreen-cpr-guide";
-import AbsoluteFullscreenFireSafety from "@/components/absolute-fullscreen-fire-safety";
-import AbsoluteFullscreenEmergencyGuide from "@/components/absolute-fullscreen-emergency-guide";
-import AbsoluteFullscreenAutoAccident from "@/components/absolute-fullscreen-auto-accident";
 import AbsoluteFullscreenEmergencyAI from "@/components/absolute-fullscreen-emergency-ai";
 
 // Define section properties
