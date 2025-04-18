@@ -21,6 +21,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import { useStateTaxData } from "@/hooks/use-state-tax-data";
 
 interface TaxEducationFullscreenProps {
   onClose: () => void;
@@ -32,6 +33,9 @@ export default function TaxEducationFullscreen({
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("learn");
   const [selectedState, setSelectedState] = useState("ny");
+  
+  // Get tax data for all states using our hook
+  const { stateData, loading } = useStateTaxData();
   
   // Paycheck Calculator State
   const [hourlyWage, setHourlyWage] = useState(15);
@@ -466,26 +470,26 @@ export default function TaxEducationFullscreen({
   return (
     <div className="fixed inset-0 z-[99999] bg-white flex flex-col">
       {/* Header */}
-      <div className="flex justify-between items-center px-6 py-4 border-b bg-gradient-to-r from-indigo-600 to-blue-500 text-white">
+      <div className="flex justify-between items-center px-6 py-4 border-b bg-gradient-to-r from-green-600 to-emerald-500 text-white">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <Receipt className="h-6 w-6" />
             Understanding Taxes
           </h2>
-          <p className="text-indigo-100">
+          <p className="text-green-100">
             Learn how taxes work and why they matter for your future
           </p>
         </div>
-        <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-indigo-700">
+        <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-green-700">
           <X className="h-6 w-6" />
         </Button>
       </div>
       
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">
-        <Alert className="mb-6 border-blue-500 bg-blue-50">
-          <Lightbulb className="h-4 w-4 text-blue-500" />
-          <AlertDescription className="text-blue-800 text-sm">
+        <Alert className="mb-6 border-green-500 bg-green-50">
+          <Lightbulb className="h-4 w-4 text-green-500" />
+          <AlertDescription className="text-green-800 text-sm">
             Understanding taxes now will help you make smart money decisions when you start earning!
           </AlertDescription>
         </Alert>
@@ -591,7 +595,7 @@ export default function TaxEducationFullscreen({
                           <li>Some things might be tax-free (like groceries in many states).</li>
                           <li>You pay this tax every time you buy something - it's added at the checkout.</li>
                         </ul>
-                        <div className="mt-3 p-3 rounded-md bg-blue-50">
+                        <div className="mt-3 p-3 rounded-md bg-green-50">
                           <p><span className="font-medium">Example:</span> If you buy a $50 pair of shoes in a state with 6% sales tax, you'll actually pay $53 ($50 + $3 in tax).</p>
                         </div>
                       </AccordionContent>
@@ -609,7 +613,7 @@ export default function TaxEducationFullscreen({
                             <span className="font-medium">Medicare:</span> This provides healthcare for people who are 65 or older. You pay 1.45% of your earnings.
                           </li>
                         </ul>
-                        <div className="mt-3 p-3 rounded-md bg-indigo-50">
+                        <div className="mt-3 p-3 rounded-md bg-green-50">
                           <p>These taxes might seem far away from your life now, but they're investing in your future and helping current retirees!</p>
                         </div>
                       </AccordionContent>
@@ -619,7 +623,7 @@ export default function TaxEducationFullscreen({
                       <AccordionTrigger>Property Tax</AccordionTrigger>
                       <AccordionContent>
                         <p>This is a tax that homeowners pay based on the value of their house and land. While you probably don't pay this now, your parents might if they own a home.</p>
-                        <div className="mt-3 p-3 rounded-md bg-purple-50">
+                        <div className="mt-3 p-3 rounded-md bg-green-50">
                           <p><span className="font-medium">Important to know:</span> Property taxes typically fund local schools and community services. That's why schools in areas with high property values often have more resources!</p>
                         </div>
                       </AccordionContent>
@@ -703,14 +707,16 @@ export default function TaxEducationFullscreen({
                 <select 
                   value={selectedState} 
                   onChange={(e) => setSelectedState(e.target.value)}
-                  className="w-full sm:w-[300px] rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full sm:w-[300px] rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 bg-white"
+                  style={{ backgroundColor: "white", borderColor: "#10b981" }}
                 >
-                  <option value="ny">New York</option>
-                  <option value="ca">California</option>
-                  <option value="tx">Texas</option>
-                  <option value="fl">Florida</option>
+                  {states.map((state) => (
+                    <option key={state.value} value={state.value} disabled={!["ny", "ca", "tx", "fl"].includes(state.value)}>
+                      {state.name} {!["ny", "ca", "tx", "fl"].includes(state.value) ? "(Coming soon)" : ""}
+                    </option>
+                  ))}
                 </select>
-                <p className="text-xs text-gray-500 mt-1">More states coming soon!</p>
+                <p className="text-xs text-green-600 mt-1">Tax data available for NY, CA, TX, and FL. More states coming soon via FRED API!</p>
               </div>
               
               {getStateContent()}
@@ -783,14 +789,16 @@ export default function TaxEducationFullscreen({
                       <select 
                         value={selectedState} 
                         onChange={(e) => setSelectedState(e.target.value)}
-                        className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 bg-white"
+                        style={{ backgroundColor: "white", borderColor: "#10b981" }}
                       >
-                        <option value="ny">New York</option>
-                        <option value="ca">California</option>
-                        <option value="tx">Texas</option>
-                        <option value="fl">Florida</option>
+                        {states.map((state) => (
+                          <option key={state.value} value={state.value} disabled={!["ny", "ca", "tx", "fl"].includes(state.value)}>
+                            {state.name} {!["ny", "ca", "tx", "fl"].includes(state.value) ? "(Coming soon)" : ""}
+                          </option>
+                        ))}
                       </select>
-                      <p className="text-xs text-gray-500 mt-1">More states coming soon!</p>
+                      <p className="text-xs text-green-600 mt-1">Tax data for more states coming via FRED API!</p>
                     </div>
                     
                     <div>
@@ -830,8 +838,8 @@ export default function TaxEducationFullscreen({
                     </div>
                   </div>
                   
-                  <div className="bg-blue-50 rounded-lg p-5">
-                    <h3 className="text-xl font-bold mb-6 text-center text-blue-700">Your Estimated Paycheck</h3>
+                  <div className="bg-green-50 rounded-lg p-5">
+                    <h3 className="text-xl font-bold mb-6 text-center text-green-700">Your Estimated Paycheck</h3>
                     
                     <div className="space-y-4">
                       <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -879,7 +887,7 @@ export default function TaxEducationFullscreen({
                       <div className="bg-white rounded-lg p-4 shadow-sm">
                         <div className="text-center">
                           <h4 className="text-sm uppercase text-gray-500 mb-1">Weekly Take-Home Pay</h4>
-                          <p className="text-2xl font-bold text-blue-600">${paycheckResults.weeklyNetPay}</p>
+                          <p className="text-2xl font-bold text-green-600">${paycheckResults.weeklyNetPay}</p>
                           <p className="text-xs text-gray-500">What you'll receive in your paycheck</p>
                         </div>
                       </div>
@@ -888,7 +896,7 @@ export default function TaxEducationFullscreen({
                         <label className="text-sm font-medium mb-1 block">You keep {paycheckResults.takeHomePercentage}% of your earnings:</label>
                         <div className="h-4 bg-gray-200 rounded-full">
                           <div 
-                            className="h-4 bg-blue-500 rounded-full" 
+                            className="h-4 bg-green-500 rounded-full" 
                             style={{ width: `${paycheckResults.takeHomePercentage}%` }}
                           />
                         </div>
@@ -907,9 +915,9 @@ export default function TaxEducationFullscreen({
           </TabsContent>
           
           <TabsContent value="quiz" className="space-y-6">
-            <Card className="border-indigo-200">
-              <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-t-lg">
-                <CardTitle className="text-center text-indigo-700">Test Your Tax Knowledge</CardTitle>
+            <Card className="border-green-200">
+              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-lg">
+                <CardTitle className="text-center text-green-700">Test Your Tax Knowledge</CardTitle>
                 <CardDescription className="text-center">
                   {quizStep < quizQuestions.length ? `Question ${quizStep + 1} of ${quizQuestions.length}` : 'Quiz Complete!'}
                 </CardDescription>
@@ -929,7 +937,7 @@ export default function TaxEducationFullscreen({
                                 ? option === quizQuestions[quizStep].correctAnswer
                                   ? 'bg-green-50 border-green-300'
                                   : 'bg-red-50 border-red-300'
-                                : 'bg-blue-50 border-blue-300'
+                                : 'bg-green-50 border-green-300'
                               : 'hover:bg-gray-50'
                           }`}
                           onClick={() => handleQuizAnswer(option)}
@@ -965,11 +973,11 @@ export default function TaxEducationFullscreen({
                   </div>
                 ) : (
                   <div className="text-center space-y-6">
-                    <div className="bg-blue-50 rounded-lg p-6 inline-block mx-auto">
-                      <h3 className="text-2xl font-bold mb-2">Quiz Complete!</h3>
+                    <div className="bg-green-50 rounded-lg p-6 inline-block mx-auto">
+                      <h3 className="text-2xl font-bold mb-2 text-green-700">Quiz Complete!</h3>
                       <p className="text-lg">Your Score: <span className="font-bold">{quizScore} out of {quizQuestions.length}</span></p>
                       <div className="mt-4 mb-2">
-                        <Progress value={(quizScore / quizQuestions.length) * 100} className="h-4" />
+                        <Progress value={(quizScore / quizQuestions.length) * 100} className="h-4 bg-green-100" />
                       </div>
                       <p className="text-sm text-gray-600">
                         {quizScore === quizQuestions.length
@@ -996,7 +1004,7 @@ export default function TaxEducationFullscreen({
         <div className="flex justify-center mt-8 mb-4">
           <Button 
             onClick={onClose} 
-            className="tax-close-btn px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md flex items-center gap-2"
+            className="tax-close-btn px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md flex items-center gap-2"
             size="lg"
             style={{ zIndex: 999999 }}
           >
