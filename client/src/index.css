@@ -2,6 +2,8 @@
 @import '@fontsource/lora/700.css';
 /* Calendar CSS imports removed */
 @import './styles/enhanced-scroll-area.css';
+@import './styles/card-fixes.css';
+@import './styles/desktop-specific-fixes.css';
 
 @tailwind base;
 @tailwind components;

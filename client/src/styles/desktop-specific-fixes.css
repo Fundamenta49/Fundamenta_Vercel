@@ -1,0 +1,110 @@
+/* Desktop-specific fixes for the main tool dialog screens based on screenshots */
+
+/* Smart Budget Planner dialog fixes */
+.budget-planner,
+#budget-planner,
+[id*="budget-planner"],
+[class*="budget-planner"] {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 1.5rem !important;
+  background-color: #fff !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Food Tracker dialog fixes */
+.food-tracker,
+#food-tracker,
+[id*="food-tracker"],
+[class*="food-tracker"] {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 1.5rem !important;
+  background-color: #fff !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Wellness Journal dialog fixes */
+.wellness-journal,
+#wellness-journal,
+[id*="wellness-journal"],
+[class*="wellness-journal"] {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 1.5rem !important;
+  background-color: #fff !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Fundamenta Connects dialog fixes */
+.connects,
+#connects,
+[id*="connects"],
+[class*="connects"] {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 1.5rem !important;
+  background-color: #fff !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Additional dialog overlay background for desktop */
+@media (min-width: 1024px) {
+  [role="dialog"]::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+  
+  /* Center the dialog content in desktop view */
+  [role="dialog"] > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  /* Set main dialog container width */
+  [role="dialog"] > div > div {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+}
+
+/* Make form fields same width in desktop view */
+@media (min-width: 1024px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  input[type="time"],
+  input[type="search"],
+  select,
+  textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Fix button alignment */
+  button {
+    align-self: flex-start;
+  }
+}

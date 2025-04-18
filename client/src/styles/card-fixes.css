@@ -1,0 +1,199 @@
+/* Global Card Layout Fixes for Desktop and Mobile Views
+ * This addresses formatting issues with main cards and sub-cards across the platform
+ */
+
+/* Base card fixes */
+.card, 
+[class*="Card"] {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Fix for modals/dialogs displaying cards */
+.modal-content .card,
+.dialog-content .card {
+  height: auto;
+}
+
+/* Fix for card content - ensures proper spacing */
+.card-content,
+[class*="CardContent"] {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* DESKTOP-SPECIFIC FIXES - for proper formatting in desktop view */
+@media (min-width: 1024px) {
+  /* Fix for the main card containers in desktop view */
+  [class*="FullScreenDialogContent"] {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Make sure cards in a dialog fill the available space */
+  [class*="FullScreenDialogContent"] .card,
+  [class*="FullScreenDialogContent"] [class*="Card"] {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Fix for the main tools cards (Food Tracker, Wellness Journal, etc.) */
+  [class*="connect"],
+  [class*="tracker"],
+  [class*="journal"],
+  [class*="budget"],
+  [class*="planner"] {
+    width: 100% !important;
+    max-width: 960px !important; /* Standard desktop width */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  }
+  
+  /* Fix the card inside app pages in desktop view */
+  [class*="FullScreenDialogContent"] > div > div {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Ensure forms and content areas are properly sized */
+  form,
+  [class*="content-area"] {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Fix grid layouts in desktop view */
+  .grid-cols-1.md\:grid-cols-2,
+  .grid-cols-1.md\:grid-cols-3,
+  .grid-cols-1.md\:grid-cols-4 {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  /* Ensure all cards in desktop view have consistent padding */
+  .card, 
+  [class*="Card"] {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Grid layout fixes for different screen sizes */
+@media (min-width: 640px) {
+  /* Small screens and up */
+  .grid-cols-2 > * {
+    height: 100%;
+  }
+  
+  [class*="grid"] > * {
+    height: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Medium screens and up */
+  .grid-cols-3 > *,
+  .md\:grid-cols-3 > * {
+    height: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Large screens and up */
+  .grid-cols-4 > *,
+  .lg\:grid-cols-4 > *,
+  .grid-cols-2 > *,
+  .grid-cols-3 > * {
+    height: 100%;
+  }
+  
+  /* Fix for tool card containers - ensure they're centered in desktop */
+  .tool-container,
+  [class*="container"],
+  .mx-auto {
+    max-width: 1200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+/* Full screen card layouts */
+.fullScreenCard {
+  height: 100%;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Fix for nested grid cards */
+.grid .grid .card,
+.grid .card .card {
+  height: 100%;
+}
+
+/* Fix for progress bars in cards */
+.card progress,
+.card [class*="Progress"] {
+  width: 100%;
+}
+
+/* Card footer alignment */
+.card-footer,
+[class*="CardFooter"] {
+  margin-top: auto;
+}
+
+/* Fix for specialty screen components that use cards */
+[class*="connect"],
+[class*="tracker"],
+[class*="journal"],
+[class*="budget"],
+[class*="planner"] {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 100%;
+}
+
+/* Ensure buttons within cards are properly sized */
+.card button,
+[class*="Card"] button {
+  width: auto;
+}
+
+/* Ensure form elements align properly */
+.card form,
+[class*="Card"] form {
+  width: 100%;
+}
+
+/* Fix for card grid containers */
+.grid,
+[class*="grid"] {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Fix content overflow issues */
+[role="dialog"] {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Fix height issues with dialog content */
+[class*="DialogContent"] {
+  max-height: 100vh;
+  overflow-y: auto;
+}
