@@ -2,20 +2,14 @@ import { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Brain, Flame, Heart, PhoneCall, ClipboardList, Car, ShoppingBag, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  FullScreenDialog,
-  FullScreenDialogContent,
-} from "@/components/ui/full-screen-dialog";
 
-// Import pop-out components
-import EmergencyAIPopOut from "@/components/emergency-ai-pop-out";
-import EmergencyGuidePopOut from "@/components/emergency-guide-pop-out";
-import FireSafetyPopOut from "@/components/fire-safety-pop-out";
-import CPRGuidePopOut from "@/components/cpr-guide-pop-out";
-import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out-new";
-import AutoAccidentPopOut from "@/components/auto-accident-pop-out";
-import EmergencyChecklistFullscreen from "@/components/emergency-checklist-fullscreen";
+// Import absolute fullscreen components (new approach)
 import AbsoluteFullscreenEmergencyChecklist from "@/components/absolute-fullscreen-emergency-checklist";
+import AbsoluteFullscreenCPRGuide from "@/components/absolute-fullscreen-cpr-guide";
+import AbsoluteFullscreenFireSafety from "@/components/absolute-fullscreen-fire-safety";
+import AbsoluteFullscreenEmergencyGuide from "@/components/absolute-fullscreen-emergency-guide";
+import AbsoluteFullscreenAutoAccident from "@/components/absolute-fullscreen-auto-accident";
+import AbsoluteFullscreenEmergencyAI from "@/components/absolute-fullscreen-emergency-ai";
 
 // Define section properties
 type SectionType = {
