@@ -239,15 +239,10 @@ const FullScreenDialogBody = ({
     <div
       className={cn(
         "px-6 py-4 w-full", 
+        "max-w-full box-border overflow-x-hidden",
         isMobile ? "pb-24 mobile-dialog-body" : "", 
         className
       )}
-      style={{
-        width: '100%',
-        maxWidth: '100%',
-        boxSizing: 'border-box',
-        overflowX: 'hidden'
-      }}
       {...props}
     />
   );
