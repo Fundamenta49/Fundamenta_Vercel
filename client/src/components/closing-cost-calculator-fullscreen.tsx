@@ -68,12 +68,21 @@ const ScrollAreaWrapper = ({ children, className = "h-[300px]" }: { children: Re
 
 // Format currency without decimal points
 const formatCurrency = (amount: number): string => {
-  return `$${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+  return new Intl.NumberFormat('en-US', { 
+    style: 'currency', 
+    currency: 'USD',
+    maximumFractionDigits: 0 
+  }).format(amount);
 };
 
 // Format currency with decimal points for more precise values
 const formatCurrencyPrecise = (amount: number): string => {
-  return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return new Intl.NumberFormat('en-US', { 
+    style: 'currency', 
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2 
+  }).format(amount);
 };
 
 // Format percentage
@@ -696,12 +705,12 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                           </Badge>
                         </div>
                         <Select value={netSheet.selectedState} onValueChange={handleStateChange}>
-                          <SelectTrigger id="state" className="h-12 text-md">
+                          <SelectTrigger id="state" className="h-12 text-md border-gray-300 shadow-sm bg-white">
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-white">
                             {Object.keys(STATE_DATA).sort().map((stateCode) => (
-                              <SelectItem key={stateCode} value={stateCode}>
+                              <SelectItem key={stateCode} value={stateCode} className="text-base">
                                 {STATE_DATA[stateCode].name}
                               </SelectItem>
                             ))}
@@ -746,18 +755,25 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                         </div>
                         
                         {netSheet.downPaymentPercent < 20 && (
-                          <div className="flex items-center p-2 bg-amber-50 border border-amber-100 rounded text-sm text-amber-700 mt-1">
-                            <Info className="h-4 w-4 mr-2 flex-shrink-0" />
-                            <span>Down payments under 20% require Private Mortgage Insurance.</span>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-5 w-5 ml-1 text-amber-700"
-                              onClick={() => toggleEducation('pmi')}
-                            >
-                              <HelpCircle className="h-3 w-3" />
-                              <span className="sr-only">About PMI</span>
-                            </Button>
+                          <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-amber-800 mt-2 shadow-sm">
+                            <div className="flex items-center gap-2 mb-1 font-medium">
+                              <Info className="h-4 w-4 flex-shrink-0" />
+                              <span>Private Mortgage Insurance (PMI) Required</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <p className="text-sm text-amber-700">
+                                Because your down payment is less than 20%, PMI of {formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance)}/month will be added.
+                              </p>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="ml-2 h-7 border-amber-300 bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs whitespace-nowrap"
+                                onClick={() => toggleEducation('pmi')}
+                              >
+                                <HelpCircle className="h-3 w-3 mr-1" />
+                                Learn More
+                              </Button>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -793,12 +809,12 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                           <div className="flex items-center justify-between">
                             <Label htmlFor="rate-display" className="text-base">Interest Rate</Label>
                             <Button 
-                              variant="ghost" 
+                              variant="outline" 
                               size="sm" 
-                              className="h-6 py-0 text-xs text-green-700"
+                              className="h-7 py-0 text-xs text-green-700 border-green-200 bg-green-50 hover:bg-green-100 flex items-center"
                               onClick={() => useMarketRate(netSheet.loanTerm)}
                             >
-                              <RefreshCw className="h-3 w-3 mr-1" />
+                              <RefreshCw className="h-3 w-3 mr-1.5" />
                               Use Current Rate
                             </Button>
                           </div>
@@ -940,21 +956,21 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                           {netSheet.recurringCosts.mortgageInsurance > 0 && (
                             <>
                               <Separator />
-                              <div className="flex justify-between items-center">
+                              <div className="flex justify-between items-center p-2 bg-amber-50 rounded-md border border-amber-200">
                                 <div className="flex items-center">
-                                  <span className="font-medium">PMI</span>
+                                  <span className="font-medium text-amber-800">Private Mortgage Insurance (PMI)</span>
                                   <Button 
                                     variant="ghost" 
                                     size="icon" 
-                                    className="h-6 w-6 ml-1"
+                                    className="h-6 w-6 ml-1 text-amber-700"
                                     onClick={() => toggleEducation('pmi')}
                                   >
                                     <HelpCircle className="h-3 w-3" />
                                   </Button>
                                 </div>
                                 <div className="text-right">
-                                  <div className="font-medium">{formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance)} / month</div>
-                                  <div className="text-xs text-gray-500">{formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance * 12)} annually</div>
+                                  <div className="font-medium text-amber-800">{formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance)} / month</div>
+                                  <div className="text-xs text-amber-700">{formatCurrencyPrecise(netSheet.recurringCosts.mortgageInsurance * 12)} annually</div>
                                 </div>
                               </div>
                             </>
@@ -1281,7 +1297,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                         <Button 
                           variant="outline" 
                           size="sm"
-                          className="gap-1"
+                          className="gap-1 bg-white border-gray-300 hover:bg-gray-50 text-gray-700 shadow-sm"
                         >
                           <Download className="h-4 w-4" />
                           <span>Save PDF</span>
@@ -1390,23 +1406,23 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                           )}
                           
                           <div className="mt-4 pt-4 border-t">
-                            <div className="h-12 w-full bg-gray-100 rounded-md overflow-hidden flex">
+                            <div className="h-14 w-full bg-gray-100 rounded-md overflow-hidden flex shadow-inner">
                               <div 
-                                className="h-full bg-blue-500"
+                                className="h-full bg-blue-600 border-r border-white"
                                 style={{ 
                                   width: `${((results.monthlyPayment.principal + results.monthlyPayment.interest) / 
                                     results.monthlyPayment.total) * 100}%` 
                                 }}
                               ></div>
                               <div 
-                                className="h-full bg-green-500"
+                                className="h-full bg-green-600 border-r border-white"
                                 style={{ 
                                   width: `${(results.monthlyPayment.taxes / 
                                     results.monthlyPayment.total) * 100}%` 
                                 }}
                               ></div>
                               <div 
-                                className="h-full bg-purple-500"
+                                className="h-full bg-purple-600 border-r border-white"
                                 style={{ 
                                   width: `${(results.monthlyPayment.insurance / 
                                     results.monthlyPayment.total) * 100}%` 
@@ -1414,7 +1430,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                               ></div>
                               {results.monthlyPayment.pmi > 0 && (
                                 <div 
-                                  className="h-full bg-amber-500"
+                                  className="h-full bg-amber-600 border-r border-white"
                                   style={{ 
                                     width: `${(results.monthlyPayment.pmi / 
                                       results.monthlyPayment.total) * 100}%` 
@@ -1423,7 +1439,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                               )}
                               {results.monthlyPayment.hoa > 0 && (
                                 <div 
-                                  className="h-full bg-pink-500"
+                                  className="h-full bg-pink-600"
                                   style={{ 
                                     width: `${(results.monthlyPayment.hoa / 
                                       results.monthlyPayment.total) * 100}%` 
