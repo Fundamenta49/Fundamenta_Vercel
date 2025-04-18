@@ -14,7 +14,7 @@ interface BudgetCalculatorPopOutProps {
 
 export default function BudgetCalculatorPopOut({ onBudgetUpdate }: BudgetCalculatorPopOutProps) {
   return (
-    <div className="w-full">
+    <div style={{ width: "100%" }}>
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Calculator className="h-6 w-6 text-green-500" />
@@ -34,7 +34,9 @@ export default function BudgetCalculatorPopOut({ onBudgetUpdate }: BudgetCalcula
           </AlertDescription>
         </Alert>
         
-        <BudgetCalculator onBudgetUpdate={onBudgetUpdate} />
+        <div style={{ width: "100%", maxWidth: "none" }}>
+          <BudgetCalculator onBudgetUpdate={onBudgetUpdate} />
+        </div>
       </FullScreenDialogBody>
     </div>
   );
