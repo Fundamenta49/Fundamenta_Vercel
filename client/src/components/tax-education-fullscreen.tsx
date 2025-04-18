@@ -23,7 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { useStateTaxData } from "@/hooks/use-state-tax-data";
 import { useToast } from "@/hooks/use-toast";
-import QuizComponent from "@/components/quiz-component";
+import QuizComponent, { QuizQuestion } from "@/components/quiz-component";
 import { trackLearningProgress } from "@/lib/quiz-service";
 
 // Default pathway and module IDs for the Financial Literacy pathway
@@ -250,7 +250,7 @@ export default function TaxEducationFullscreen({
   };
 
   // Tax Quiz questions in the standard platform format
-  const standardizedQuizQuestions = [
+  const standardizedQuizQuestions: QuizQuestion[] = [
     {
       id: 1,
       question: "What happens to the taxes that are taken out of your paycheck?",
@@ -261,8 +261,7 @@ export default function TaxEducationFullscreen({
         "It's saved in your personal account for later"
       ],
       correctAnswer: 1, // Index of correct answer
-      explanation: "Taxes fund important services we all use! From the roads you travel on to the schools you attend, taxes help pay for many public services in your community.",
-      difficulty: "beginner"
+      explanation: "Taxes fund important services we all use! From the roads you travel on to the schools you attend, taxes help pay for many public services in your community."
     },
     {
       id: 2,
