@@ -84,20 +84,15 @@ const FullScreenDialogContent = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content bg-white",
-            "pointer-events-auto m-0 p-0 w-screen h-screen max-w-screen max-h-screen box-border overflow-hidden",
+            "fixed inset-0 z-[9999] mobile-dialog-content bg-white",
+            "pointer-events-auto m-0 p-0 box-border overflow-hidden",
+            "w-screen h-screen max-w-full min-w-full",
             className
           )}
+          id="fullscreen-dialog-content-mobile"
           style={{
-            width: "100vw !important",
-            maxWidth: "100vw !important",
-            minWidth: "100vw !important",
-            height: "100vh !important",
-            maxHeight: "100vh !important",
-            left: "0 !important",
-            right: "0 !important",
-            top: "0 !important",
-            bottom: "0 !important",
+            width: "100vw",
+            height: "100vh"
           }}
           {...props}
         >
@@ -133,18 +128,13 @@ const FullScreenDialogContent = React.forwardRef<
           className={cn(
             "fixed inset-0 z-50 bg-white dark:bg-gray-950 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "w-screen h-screen m-0 p-0 fixed top-0 left-0 right-0 bottom-0 overflow-y-auto block",
+            "max-w-full box-border",
             className
           )}
+          id="fullscreen-dialog-content-desktop"
           style={{
-            width: "100vw !important",
-            maxWidth: "100vw !important",
-            minWidth: "100vw !important",
-            height: "100vh !important",
-            maxHeight: "100vh !important",
-            left: "0 !important",
-            right: "0 !important",
-            top: "0 !important",
-            bottom: "0 !important",
+            width: "100vw",
+            height: "100vh"
           }}
           {...props}
         >
@@ -174,16 +164,12 @@ const FullScreenDialogHeader = ({
   return (
     <div
       className={cn(
-        "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b w-full",
-        "w-full max-w-full box-border left-0 right-0",
+        "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b",
+        "w-full max-w-full min-w-full box-border left-0 right-0 flex-shrink-0",
         isMobile ? "top-[48px] pt-4 mobile-dialog-header" : "top-0 pt-6", 
         className
       )}
-      style={{
-        width: "100% !important",
-        minWidth: "100% !important",
-        maxWidth: "100vw !important",
-      }}
+      id="fullscreen-dialog-header"
       {...props}
     />
   );
@@ -196,9 +182,11 @@ const FullScreenDialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "sticky bottom-0 z-10 bg-white dark:bg-gray-950 px-6 py-4 flex justify-between items-center border-t w-full",
+      "sticky bottom-0 z-10 bg-white dark:bg-gray-950 px-6 py-4 flex justify-between items-center border-t",
+      "w-full max-w-full min-w-full box-border left-0 right-0 flex-shrink-0",
       className
     )}
+    id="fullscreen-dialog-footer"
     {...props}
   />
 );
@@ -237,16 +225,12 @@ const FullScreenDialogBody = ({
   return (
     <div
       className={cn(
-        "px-6 py-4 w-full", 
-        "max-w-full box-border overflow-x-hidden",
+        "px-6 py-4 w-full max-w-full box-border overflow-x-hidden",
+        "min-w-full flex-shrink-0 flex-grow",
         isMobile ? "pb-24 mobile-dialog-body" : "", 
         className
       )}
-      style={{
-        width: "100% !important",
-        minWidth: "100% !important",
-        maxWidth: "100vw !important",
-      }}
+      id="fullscreen-dialog-body"
       {...props}
     />
   );

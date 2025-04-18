@@ -14,7 +14,7 @@ interface BudgetCalculatorPopOutProps {
 
 export default function BudgetCalculatorPopOut({ onBudgetUpdate }: BudgetCalculatorPopOutProps) {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-full min-w-full">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Calculator className="h-6 w-6 text-green-500" />
@@ -25,8 +25,8 @@ export default function BudgetCalculatorPopOut({ onBudgetUpdate }: BudgetCalcula
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
       
-      <FullScreenDialogBody>
-        <Alert className="mb-4 border-green-500 bg-green-50">
+      <FullScreenDialogBody className="w-full max-w-full">
+        <Alert className="mb-4 border-green-500 bg-green-50 w-full max-w-full">
           <AlertCircle className="h-4 w-4 text-green-500" />
           <AlertDescription className="text-green-800 text-sm">
             Use this calculator to track your monthly budget and plan for your financial goals.
@@ -34,7 +34,9 @@ export default function BudgetCalculatorPopOut({ onBudgetUpdate }: BudgetCalcula
           </AlertDescription>
         </Alert>
         
-        <BudgetCalculator onBudgetUpdate={onBudgetUpdate} />
+        <div className="w-full max-w-full">
+          <BudgetCalculator onBudgetUpdate={onBudgetUpdate} />
+        </div>
       </FullScreenDialogBody>
     </div>
   );
