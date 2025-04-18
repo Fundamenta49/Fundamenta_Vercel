@@ -43,7 +43,7 @@ export default function FinancialDashboardFullscreen({
   // If no budget data is available, show a message to create one
   if (!budgetData) {
     return (
-      <div className="fixed inset-0 z-[9999] bg-white flex flex-col">
+      <div className="fixed inset-0 z-[99999] bg-white flex flex-col">
         <div className="flex justify-between items-center px-6 py-4 border-b">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <DollarSign className="h-6 w-6 text-green-500" />
@@ -59,7 +59,14 @@ export default function FinancialDashboardFullscreen({
           <p className="text-gray-600 max-w-md mt-4">
             You haven't created a budget yet. Visit the Smart Budget Planner to create your budget and see your financial dashboard.
           </p>
-          <Button onClick={onClose} className="mt-8">Close</Button>
+          <Button 
+            onClick={onClose} 
+            className="mt-8 px-8 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md flex items-center gap-2"
+            size="lg"
+          >
+            <X className="h-5 w-5" />
+            Close Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -115,7 +122,7 @@ export default function FinancialDashboardFullscreen({
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-white flex flex-col">
+    <div className="fixed inset-0 z-[99999] bg-white flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center px-6 py-4 border-b">
         <div>
@@ -402,8 +409,9 @@ export default function FinancialDashboardFullscreen({
         <div className="flex justify-center mt-8 mb-4">
           <Button 
             onClick={onClose}
-            className="px-8 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md flex items-center gap-2"
+            className="dashboard-close-btn px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md flex items-center gap-2"
             size="lg"
+            style={{ zIndex: 999999 }}
           >
             <X className="h-5 w-5" />
             Close Dashboard
