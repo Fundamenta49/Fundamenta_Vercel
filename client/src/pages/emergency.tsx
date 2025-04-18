@@ -15,6 +15,7 @@ import CPRGuidePopOut from "@/components/cpr-guide-pop-out";
 import EmergencyChecklistPopOut from "@/components/emergency-checklist-pop-out-new";
 import AutoAccidentPopOut from "@/components/auto-accident-pop-out";
 import EmergencyChecklistFullscreen from "@/components/emergency-checklist-fullscreen";
+import AbsoluteFullscreenEmergencyChecklist from "@/components/absolute-fullscreen-emergency-checklist";
 
 // Define section properties
 type SectionType = {
@@ -236,11 +237,10 @@ export default function Emergency() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      <FullScreenDialog open={isSuppliesOpen} onOpenChange={setIsSuppliesOpen}>
-        <FullScreenDialogContent themeColor="#ef4444" className="p-0">
-          <EmergencyChecklistFullscreen />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+      {/* Using AbsoluteFullscreenEmergencyChecklist for true full-screen experience */}
+      {isSuppliesOpen && (
+        <AbsoluteFullscreenEmergencyChecklist onClose={() => setIsSuppliesOpen(false)} />
+      )}
 
       {/* Grid-style cards layout */}
       <div className="px-2">
