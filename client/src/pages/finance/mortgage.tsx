@@ -33,7 +33,7 @@ import {
 import MortgageCalculatorFullscreen from '@/components/mortgage-calculator-fullscreen';
 import MortgageMarketTrendsFullscreen from '@/components/mortgage-market-trends-fullscreen';
 import MortgageEducationFullscreen from '@/components/mortgage-education-fullscreen';
-import { ClosingCostCalculator } from '@/components/closing-cost-calculator-new';
+import ClosingCostCalculatorFullscreen from '@/components/closing-cost-calculator-fullscreen';
 
 const MortgagePage: React.FC = () => {
   // State for info dialog
@@ -90,7 +90,7 @@ const MortgagePage: React.FC = () => {
       case "education":
         return <MortgageEducationFullscreen onClose={closeTool} />;
       case "costs":
-        return <ClosingCostCalculator onClose={closeTool} />;
+        return <ClosingCostCalculatorFullscreen onClose={closeTool} />;
       default:
         return null;
     }

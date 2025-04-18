@@ -206,8 +206,8 @@ const STATE_DATA: { [key: string]: StateData } = {
 }
 
 export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClose }) => {
-  // Always show the full card immediately, no landing page
-  const [showFullCard, setShowFullCard] = useState<boolean>(true);
+  // When used inside a fullscreen component, we don't need to handle our own fullscreen state
+  // This has been moved to closing-cost-calculator-fullscreen.tsx
   
   // State for net sheet
   const [netSheet, setNetSheet] = useState<NetSheet>({
@@ -603,15 +603,8 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
   };
 
   return (
-    <div>
-      {/* Skip the landing page card and directly show the fullscreen calculator */}
-      
-      {/* Full Screen Dialog */}
-      <SimpleFullScreenDialog 
-        isOpen={showFullCard} 
-        onClose={() => setShowFullCard(false)}
-        title="Closing Cost & Total Ownership Calculator"
-      >
+    <div className="container max-w-5xl mx-auto p-4">
+      {/* Main content - no need for SimpleFullScreenDialog wrapper */}
         <div className="container max-w-5xl mx-auto p-4">
           <div className="mb-6">
             <div className="flex justify-between items-start">
@@ -633,8 +626,6 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
                 onClick={() => {
                   if (onClose) {
                     onClose();
-                  } else {
-                    setShowFullCard(false);
                   }
                 }}
               >
@@ -1446,7 +1437,129 @@ export const ClosingCostCalculator: React.FC<{onClose?: () => void}> = ({ onClos
             </EnhancedScrollArea>
           </DialogContent>
         </Dialog>
-      </SimpleFullScreenDialog>
+        {/* Education popups */}
+        <Dialog open={showEducation.pmi} onOpenChange={() => toggleEducation('pmi')}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Understanding Private Mortgage Insurance (PMI)</DialogTitle>
+            </DialogHeader>
+            <EnhancedScrollArea className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What is PMI?</strong> Private Mortgage Insurance protects the lender if you stop making payments on your loan. It's typically required when your down payment is less than 20% of the home's value.
+                </p>
+                <p>
+                  <strong>How much does it cost?</strong> Usually between 0.3% and 1.5% of your loan amount annually, depending on your credit score, loan term, and down payment percentage.
+                </p>
+                <p>
+                  <strong>How to avoid PMI:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Make a down payment of at least 20%</li>
+                  <li>Consider a piggyback loan (80-10-10 loan structure)</li>
+                  <li>Look for lender-paid PMI options (higher interest rate but no separate PMI payment)</li>
+                </ul>
+                <p>
+                  <strong>How to remove PMI:</strong> Once you reach 22% equity (based on original purchase price), PMI automatically terminates. You can request cancellation at 20% equity if your payment history is good.
+                </p>
+              </div>
+            </EnhancedScrollArea>
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog open={showEducation.taxes} onOpenChange={() => toggleEducation('taxes')}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Property Taxes Explained</DialogTitle>
+            </DialogHeader>
+            <EnhancedScrollArea className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What are property taxes?</strong> These are local taxes assessed by your county or municipality based on your home's value, used to fund schools, infrastructure, and public services.
+                </p>
+                <p>
+                  <strong>How they're calculated:</strong> Your home's assessed value multiplied by the local tax rate. In {STATE_DATA[netSheet.selectedState].name}, the average rate is {STATE_DATA[netSheet.selectedState].propertyTaxRate.toFixed(2)}% of your home's value annually.
+                </p>
+                <p>
+                  <strong>How they're paid:</strong> Usually included in your monthly mortgage payment and held in an escrow account until your lender pays them on your behalf.
+                </p>
+                <p>
+                  <strong>Important considerations:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Property taxes can increase over time as your home's value increases</li>
+                  <li>Some areas offer exemptions for primary residences or senior citizens</li>
+                  <li>Tax rates vary significantly by location, even within the same state</li>
+                </ul>
+              </div>
+            </EnhancedScrollArea>
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog open={showEducation.insurance} onOpenChange={() => toggleEducation('insurance')}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Homeowners Insurance Guide</DialogTitle>
+            </DialogHeader>
+            <EnhancedScrollArea className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What it covers:</strong> Damage to your home's structure, personal belongings, liability protection, and additional living expenses if your home becomes uninhabitable.
+                </p>
+                <p>
+                  <strong>What it doesn't cover:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Flood damage (requires separate policy)</li>
+                  <li>Earthquake damage (requires separate policy)</li>
+                  <li>Normal wear and tear</li>
+                </ul>
+                <p>
+                  <strong>Factors affecting premiums:</strong> Location, home value, deductible amount, credit score, claim history, and coverage options.
+                </p>
+                <p>
+                  <strong>How to save:</strong> Bundle with auto insurance, increase deductibles, install security systems, or improve your home's resilience.
+                </p>
+              </div>
+            </EnhancedScrollArea>
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog open={showEducation.closingCosts} onOpenChange={() => toggleEducation('closingCosts')}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Understanding Closing Costs</DialogTitle>
+            </DialogHeader>
+            <EnhancedScrollArea className="max-h-[60vh] pr-4">
+              <div className="space-y-4 text-sm">
+                <p>
+                  <strong>What are closing costs?</strong> Closing costs are fees and expenses you pay when finalizing your mortgage and home purchase.
+                </p>
+                <p>
+                  <strong>How much are they?</strong> Typically, closing costs range from 2% to 5% of the loan amount. In {STATE_DATA[netSheet.selectedState].name}, transfer taxes are approximately {STATE_DATA[netSheet.selectedState].transferTaxRate.toFixed(2)}% of the property value.
+                </p>
+                <p>
+                  <strong>Common closing costs include:</strong>
+                </p>
+                <div className="space-y-2">
+                  <p><strong>Loan costs:</strong> Origination fees, application fees, underwriting fees</p>
+                  <p><strong>Third-party fees:</strong> Appraisal, credit report, home inspection, title search</p>
+                  <p><strong>Government fees:</strong> Recording fees, transfer taxes</p>
+                  <p><strong>Prepaid items:</strong> Homeowners insurance, property taxes, mortgage insurance</p>
+                </div>
+                <p>
+                  <strong>How to reduce closing costs:</strong>
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-4">
+                  <li>Shop around for lenders and service providers</li>
+                  <li>Ask for seller concessions</li>
+                  <li>Close at the end of the month</li>
+                  <li>Look for lender credits (in exchange for a higher interest rate)</li>
+                </ul>
+              </div>
+            </EnhancedScrollArea>
+          </DialogContent>
+        </Dialog>
     </div>
   );
 };
