@@ -236,7 +236,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
         </TabsContent>
         
         <TabsContent value="savings" className="space-y-4">
-          <Card>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Savings Goals</CardTitle>
             </CardHeader>
@@ -264,7 +264,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Retirement Planning</CardTitle>
             </CardHeader>
@@ -288,7 +288,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
         </TabsContent>
         
         <TabsContent value="trends" className="space-y-4">
-          <Card>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Financial Trends (6 Months)</CardTitle>
             </CardHeader>
@@ -308,7 +308,7 @@ export default function FinancialDashboard({ budgetData }: FinancialDashboardPro
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Financial Insights</CardTitle>
             </CardHeader>

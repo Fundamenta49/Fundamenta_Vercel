@@ -163,7 +163,7 @@ export default function BudgetCalculator({ onBudgetUpdate }: BudgetCalculatorPro
   };
 
   return (
-    <div className="space-y-6" style={{ width: "100%" }}>
+    <div className="space-y-6" style={{ width: "100%", maxWidth: "none" }}>
       <Card className="w-full">
         <CardHeader>
           <CardTitle>Monthly Income</CardTitle>
