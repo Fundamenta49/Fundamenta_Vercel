@@ -377,9 +377,51 @@ export default function TaxEducationFullscreen({
   const paycheckResults = calculatePaycheck();
   
   // Get state-specific content
+  // Function to get state content, with debug logging
   const getStateContent = () => {
-    const stateInfo = stateTaxInfo[selectedState] || stateTaxInfo.ny;
+    // Try to get the selected state info, fall back to a default if not found
+    const stateInfo = stateTaxInfo[selectedState];
     
+    // If we don't have specific info for this state, create a generic template
+    if (!stateInfo) {
+      console.log(`No specific data for ${selectedState}, creating generic template`);
+      // Get the state name from our hook
+      const stateName = stateData[selectedState]?.stateName || selectedState.toUpperCase();
+      
+      // Create generic info based on whether it has income tax
+      const hasIncomeTax = !noIncomeTaxStates.includes(selectedState);
+      
+      // Return generic template
+      return (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl font-bold">{stateName} Tax Facts</CardTitle>
+                <div className="bg-white px-3 py-1 rounded-full text-sm font-medium text-blue-600 border border-blue-200">
+                  {hasIncomeTax ? "Has Income Tax" : "No Income Tax!"}
+                </div>
+              </div>
+              <CardDescription>
+                Learn how taxes work in {stateName} and what it means for your money
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-6">
+              <Alert variant="info">
+                <RocketIcon className="h-4 w-4" />
+                <AlertTitle>Detailed information for {stateName} coming soon!</AlertTitle>
+                <AlertDescription>
+                  We're working on adding comprehensive tax information for all 50 states.
+                  In the meantime, you can use the Paycheck Calculator with real tax data for {stateName}.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+    
+    // We have specific state info, so return the detailed view
     return (
       <div className="space-y-6">
         <Card>
