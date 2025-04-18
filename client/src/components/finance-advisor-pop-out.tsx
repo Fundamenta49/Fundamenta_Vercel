@@ -10,7 +10,7 @@ import ChatInterface, { FINANCE_CATEGORY } from "@/components/chat-interface";
 
 export default function FinanceAdvisorPopOut() {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-4xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Brain className="h-6 w-6 text-green-500" />

@@ -12,7 +12,7 @@ import ShoppingBuddy from "./shopping-buddy";
 
 export default function ShoppingBuddyPopOut() {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-4xl mx-auto">
       <FullScreenDialogHeader className="mb-6">
         <FullScreenDialogTitle className="flex items-center gap-2">
           <ShoppingBag className="h-6 w-6 text-purple-500" />

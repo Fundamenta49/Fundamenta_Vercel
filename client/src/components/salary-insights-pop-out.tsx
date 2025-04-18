@@ -10,7 +10,7 @@ import SalaryInsights from "@/components/salary-insights";
 
 export default function SalaryInsightsPopOut() {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-4xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <DollarSign className="h-6 w-6 text-blue-500" />

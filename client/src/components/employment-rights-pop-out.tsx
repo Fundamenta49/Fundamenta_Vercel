@@ -10,7 +10,7 @@ import EmploymentRights from "@/components/employment-rights";
 
 export default function EmploymentRightsPopOut() {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-4xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Scale className="h-6 w-6 text-blue-500" />

@@ -10,7 +10,7 @@ import EmotionalResilienceTracker from "@/components/emotional-resilience-tracke
 
 export default function EmotionalResiliencePopOut() {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-4xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Brain className="h-6 w-6 text-blue-500" />

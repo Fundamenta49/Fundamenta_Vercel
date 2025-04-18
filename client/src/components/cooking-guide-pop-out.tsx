@@ -11,7 +11,7 @@ import CookingGuide from "@/components/cooking-guide";
 
 export default function CookingGuidePopOut() {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-4xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <ChefHat className="h-6 w-6 text-rose-500" />

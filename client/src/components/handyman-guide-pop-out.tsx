@@ -10,7 +10,7 @@ import HandymanGuide from "@/components/handyman-guide";
 
 export default function HandymanGuidePopOut() {
   return (
-    <div className="w-full">
+    <div className="w-full max-w-4xl mx-auto">
       <FullScreenDialogHeader>
         <FullScreenDialogTitle className="flex items-center gap-2">
           <Wrench className="h-6 w-6 text-rose-500" />
