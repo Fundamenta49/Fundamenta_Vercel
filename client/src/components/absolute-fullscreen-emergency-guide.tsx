@@ -1,11 +1,20 @@
-import { useState } from "react";
-import { PhoneCall, AlertCircle, X, AlertTriangle, LucideIcon, Info, Ambulance, Heart, Bomb, Cloud, RadioTower, Wind, Thermometer, Waves } from "lucide-react";
+import { useState, useEffect } from "react";
+import { PhoneCall, AlertCircle, X, AlertTriangle, LucideIcon, Info, Ambulance, Heart, Bomb, Cloud, RadioTower, Wind, Thermometer, Waves, MapPin, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface AbsoluteFullscreenEmergencyGuideProps {
   onClose: () => void;
@@ -19,11 +28,190 @@ interface EmergencyGuideSection {
   content: React.ReactNode;
 }
 
+interface Location {
+  city: string;
+  state: string;
+  country: string;
+}
+
+type StateEmergencyLinks = {
+  [key: string]: string;
+};
+
+const stateEmergencyLinks: StateEmergencyLinks = {
+  "Alabama": "https://ema.alabama.gov/",
+  "Alaska": "https://ready.alaska.gov/",
+  "Arizona": "https://dem.az.gov/",
+  "Arkansas": "https://www.adem.arkansas.gov/",
+  "California": "https://www.caloes.ca.gov/",
+  "Colorado": "https://dhsem.colorado.gov/",
+  "Connecticut": "https://portal.ct.gov/DEMHS",
+  "Delaware": "https://dema.delaware.gov/",
+  "Florida": "https://www.floridadisaster.org/",
+  "Georgia": "https://gema.georgia.gov/",
+  "Hawaii": "https://dod.hawaii.gov/hiema/",
+  "Idaho": "https://ioem.idaho.gov/",
+  "Illinois": "https://www2.illinois.gov/iema/",
+  "Indiana": "https://www.in.gov/dhs/",
+  "Iowa": "https://homelandsecurity.iowa.gov/",
+  "Kansas": "https://www.kansastag.gov/KDEM.asp",
+  "Kentucky": "https://kyem.ky.gov/",
+  "Louisiana": "https://gohsep.la.gov/",
+  "Maine": "https://www.maine.gov/mema/",
+  "Maryland": "https://mema.maryland.gov/",
+  "Massachusetts": "https://www.mass.gov/orgs/massachusetts-emergency-management-agency",
+  "Michigan": "https://www.michigan.gov/msp/divisions/emhsd",
+  "Minnesota": "https://hsem.dps.mn.gov/",
+  "Mississippi": "https://www.msema.org/",
+  "Missouri": "https://sema.dps.mo.gov/",
+  "Montana": "https://des.mt.gov/",
+  "Nebraska": "https://nema.nebraska.gov/",
+  "Nevada": "https://dem.nv.gov/",
+  "New Hampshire": "https://www.nh.gov/safety/divisions/hsem/",
+  "New Jersey": "https://www.ready.nj.gov/",
+  "New Mexico": "https://www.nmdhsem.org/",
+  "New York": "https://www.dhses.ny.gov/",
+  "North Carolina": "https://www.ncdps.gov/ncem",
+  "North Dakota": "https://www.des.nd.gov/",
+  "Ohio": "https://ema.ohio.gov/",
+  "Oklahoma": "https://oklahoma.gov/oem.html",
+  "Oregon": "https://www.oregon.gov/oem/",
+  "Pennsylvania": "https://www.pema.pa.gov/",
+  "Rhode Island": "https://riema.ri.gov/",
+  "South Carolina": "https://emd.sc.gov/",
+  "South Dakota": "https://dps.sd.gov/emergency-services",
+  "Tennessee": "https://www.tn.gov/tema.html",
+  "Texas": "https://tdem.texas.gov/",
+  "Utah": "https://dem.utah.gov/",
+  "Vermont": "https://vem.vermont.gov/",
+  "Virginia": "https://www.vaemergency.gov/",
+  "Washington": "https://mil.wa.gov/emergency-management-division",
+  "West Virginia": "https://emd.wv.gov/",
+  "Wisconsin": "https://wem.wi.gov/",
+  "Wyoming": "https://hls.wyo.gov/",
+  "District of Columbia": "https://hsema.dc.gov/",
+  "Puerto Rico": "https://manejodeemergencias.pr.gov/",
+  "U.S. Virgin Islands": "https://vitema.vi.gov/",
+  "American Samoa": "https://asdhs.gov/",
+  "Guam": "https://ghs.guam.gov/",
+  "Northern Mariana Islands": "https://cnmihsem.gov.mp/",
+}
+
 export default function AbsoluteFullscreenEmergencyGuide({ onClose }: AbsoluteFullscreenEmergencyGuideProps) {
   const isMobile = useIsMobile();
   const [selectedGuide, setSelectedGuide] = useState<string | null>(null);
+  const [location, setLocation] = useState<Location>(() => {
+    const stored = localStorage.getItem("emergency_location");
+    return stored ? JSON.parse(stored) : { city: "", state: "", country: "USA" };
+  });
   
+  // Save location to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("emergency_location", JSON.stringify(location));
+  }, [location]);
+  
+  const handleLocationChange = (field: keyof Location, value: string) => {
+    setLocation(prev => ({ ...prev, [field]: value }));
+  };
+  
+  const handleStateResourceClick = (state: string) => {
+    const url = stateEmergencyLinks[state];
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+  
+  // Add state-specific emergency resources guide
   const guides: EmergencyGuideSection[] = [
+    {
+      id: "location",
+      title: "State Resources",
+      icon: MapPin,
+      color: "text-purple-500",
+      content: (
+        <div className="space-y-4">
+          <Alert className="mb-4 border-purple-300 bg-purple-50 text-purple-800">
+            <MapPin className="h-4 w-4 text-purple-500" />
+            <AlertDescription>
+              Access emergency resources specific to your state.
+            </AlertDescription>
+          </Alert>
+          
+          <div className="grid gap-4 mb-4">
+            <div className="space-y-2">
+              <Label htmlFor="city">City</Label>
+              <Input
+                id="city"
+                value={location.city}
+                onChange={(e) => handleLocationChange("city", e.target.value)}
+                placeholder="Enter your city"
+                className="w-full"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="state">State</Label>
+              <Select
+                value={location.state}
+                onValueChange={(value) => handleLocationChange("state", value)}
+              >
+                <SelectTrigger id="state">
+                  <SelectValue placeholder="Select your state" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  {Object.keys(stateEmergencyLinks).map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          {location.state && (
+            <Card className="border-purple-300">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center">
+                  <MapPin className="h-5 w-5 text-purple-500 mr-2" />
+                  {location.state} Emergency Resources
+                </CardTitle>
+                <CardDescription>
+                  Official emergency management resources for {location.state}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  variant="outline" 
+                  className="w-full mb-2 justify-between border-purple-200 hover:bg-purple-50 hover:text-purple-700"
+                  onClick={() => handleStateResourceClick(location.state)}
+                >
+                  <span>Visit {location.state} Emergency Management</span>
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </Button>
+                
+                <div className="pt-4 text-sm text-muted-foreground">
+                  <p>This site provides official:</p>
+                  <ul className="list-disc pl-5 mt-1 space-y-1">
+                    <li>Evacuation routes &amp; shelters</li>
+                    <li>Local emergency alerts</li>
+                    <li>Disaster recovery assistance</li>
+                    <li>Emergency preparedness guides</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          {!location.state && (
+            <div className="text-center py-8 text-muted-foreground">
+              <MapPin className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
+              <p>Select your state to view emergency management resources</p>
+            </div>
+          )}
+        </div>
+      )
+    },
     {
       id: "medical",
       title: "Medical Emergencies",
