@@ -90,30 +90,7 @@ const MortgagePage: React.FC = () => {
       case "education":
         return <MortgageEducationFullscreen onClose={closeTool} />;
       case "costs":
-        return (
-          <div className="fixed inset-0 z-[99999] bg-white flex flex-col">
-            {/* Header */}
-            <div className="flex justify-between items-center px-6 py-4 border-b bg-gradient-to-r from-green-600 to-emerald-500 text-white">
-              <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <DollarSign className="h-6 w-6" />
-                  Closing Costs Calculator
-                </h2>
-                <p className="text-green-100">
-                  Understand all costs associated with buying a home including taxes and insurance
-                </p>
-              </div>
-              <Button variant="ghost" size="icon" onClick={closeTool} className="text-white hover:bg-green-700">
-                <X className="h-6 w-6" />
-              </Button>
-            </div>
-            
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
-              <ClosingCostCalculator onClose={closeTool} />
-            </div>
-          </div>
-        );
+        return <ClosingCostCalculator onClose={closeTool} />;
       default:
         return null;
     }
