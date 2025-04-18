@@ -22,14 +22,29 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { useStateTaxData } from "@/hooks/use-state-tax-data";
+import { useToast } from "@/hooks/use-toast";
+import QuizComponent from "@/components/quiz-component";
+import { trackLearningProgress } from "@/lib/quiz-service";
+
+// Default pathway and module IDs for the Financial Literacy pathway
+const DEFAULT_PATHWAY_ID = "financial-literacy";
+const DEFAULT_MODULE_ID = "tax-education";
+const DEFAULT_USER_ID = 1; // Default user ID for demo purposes
 
 interface TaxEducationFullscreenProps {
   onClose: () => void;
+  pathwayId?: string; // Financial literacy pathway ID
+  moduleId?: string; // Tax education module ID
+  userId?: number; // User ID for progress tracking
 }
 
 export default function TaxEducationFullscreen({ 
-  onClose 
+  onClose,
+  pathwayId = DEFAULT_PATHWAY_ID,
+  moduleId = DEFAULT_MODULE_ID,
+  userId = DEFAULT_USER_ID
 }: TaxEducationFullscreenProps) {
+  const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("learn");
   const [selectedState, setSelectedState] = useState("ny");
@@ -234,9 +249,10 @@ export default function TaxEducationFullscreen({
     }
   };
 
-  // Tax Quiz questions
-  const quizQuestions = [
+  // Tax Quiz questions in the standard platform format
+  const standardizedQuizQuestions = [
     {
+      id: 1,
       question: "What happens to the taxes that are taken out of your paycheck?",
       options: [
         "The money disappears forever",
@@ -244,10 +260,12 @@ export default function TaxEducationFullscreen({
         "It all goes to the president",
         "It's saved in your personal account for later"
       ],
-      correctAnswer: "It funds government services like schools, roads, and parks",
-      explanation: "Taxes fund important services we all use! From the roads you travel on to the schools you attend, taxes help pay for many public services in your community."
+      correctAnswer: 1, // Index of correct answer
+      explanation: "Taxes fund important services we all use! From the roads you travel on to the schools you attend, taxes help pay for many public services in your community.",
+      difficulty: "beginner"
     },
     {
+      id: 2,
       question: "What's the difference between gross pay and net pay?",
       options: [
         "Gross pay is paid monthly, net pay is paid weekly",
@@ -255,10 +273,12 @@ export default function TaxEducationFullscreen({
         "Gross pay is for full-time workers, net pay is for part-time workers",
         "They're exactly the same thing"
       ],
-      correctAnswer: "Gross pay is before taxes, net pay is what you actually take home",
-      explanation: "Gross pay is the total amount you earn before any deductions. Net pay is your 'take-home pay' after taxes and other deductions are subtracted. This is why your paycheck is smaller than your hourly rate might suggest!"
+      correctAnswer: 1,
+      explanation: "Gross pay is the total amount you earn before any deductions. Net pay is your 'take-home pay' after taxes and other deductions are subtracted. This is why your paycheck is smaller than your hourly rate might suggest!",
+      difficulty: "beginner"
     },
     {
+      id: 3,
       question: "What is a W-4 form?",
       options: [
         "A form that shows how much you earned last year",
@@ -266,10 +286,12 @@ export default function TaxEducationFullscreen({
         "A form you fill out when starting a job to determine tax withholding",
         "A receipt for the taxes you've paid"
       ],
-      correctAnswer: "A form you fill out when starting a job to determine tax withholding",
-      explanation: "When you start a new job, you'll fill out a W-4 form. This tells your employer how much tax to withhold from each paycheck based on your situation. Getting this right helps avoid owing a lot of tax or getting too big a refund later."
+      correctAnswer: 2,
+      explanation: "When you start a new job, you'll fill out a W-4 form. This tells your employer how much tax to withhold from each paycheck based on your situation. Getting this right helps avoid owing a lot of tax or getting too big a refund later.",
+      difficulty: "beginner"
     },
     {
+      id: 4,
       question: "In which of these states would you NOT pay state income tax?",
       options: [
         "California",
@@ -277,10 +299,12 @@ export default function TaxEducationFullscreen({
         "Texas",
         "Illinois"
       ],
-      correctAnswer: "Texas",
-      explanation: "Texas is one of seven states with no income tax! The others are Alaska, Florida, Nevada, South Dakota, Washington, and Wyoming. However, these states typically have higher sales or property taxes instead."
+      correctAnswer: 2,
+      explanation: "Texas is one of seven states with no income tax! The others are Alaska, Florida, Nevada, South Dakota, Washington, and Wyoming. However, these states typically have higher sales or property taxes instead.",
+      difficulty: "intermediate"
     },
     {
+      id: 5,
       question: "What is sales tax?",
       options: [
         "A tax on your income from a job",
@@ -288,10 +312,19 @@ export default function TaxEducationFullscreen({
         "A tax only adults have to pay",
         "A tax on owning property"
       ],
-      correctAnswer: "A tax added to purchases you make in stores",
-      explanation: "Sales tax is added to the price of items you buy. It varies by state and sometimes even by city! That's why a $10 item might actually cost $10.60 or more at the register."
+      correctAnswer: 1,
+      explanation: "Sales tax is added to the price of items you buy. It varies by state and sometimes even by city! That's why a $10 item might actually cost $10.60 or more at the register.",
+      difficulty: "beginner"
     }
   ];
+  
+  // For backward compatibility with the original quiz questions format
+  const quizQuestions = standardizedQuizQuestions.map(q => ({
+    question: q.question,
+    options: q.options,
+    correctAnswer: q.options[q.correctAnswer],
+    explanation: q.explanation
+  }));
 
   // Calculate estimated taxes based on inputs
   const calculatePaycheck = () => {
@@ -437,6 +470,38 @@ export default function TaxEducationFullscreen({
     );
   };
 
+  // This function is called when a quiz is completed through the QuizComponent
+  const handleQuizCompletion = (
+    score: number, 
+    totalQuestions: number, 
+    userAnswers?: number[], 
+    correctAnswers?: number[]
+  ) => {
+    // Record the quiz completion with the learning progress tracking system
+    toast({
+      title: "Quiz completed!",
+      description: `You scored ${score} out of ${totalQuestions}`,
+      duration: 3000
+    });
+    
+    // Track learning progress if the pathway and module IDs are available
+    if (pathwayId && moduleId) {
+      // In a real implementation, this would call the API to track progress
+      // trackLearningProgress({
+      //   userId,
+      //   pathwayId,
+      //   moduleId,
+      //   activityType: "quiz",
+      //   score,
+      //   totalQuestions,
+      //   completed: true
+      // });
+      
+      console.log(`Quiz completed: ${score}/${totalQuestions} for module ${moduleId} in pathway ${pathwayId}`);
+    }
+  };
+  
+  // Legacy quiz handlers for backward compatibility
   const handleQuizAnswer = (answer: string) => {
     setSelectedAnswer(answer);
     setShowAnswer(true);
@@ -917,84 +982,29 @@ export default function TaxEducationFullscreen({
           <TabsContent value="quiz" className="space-y-6">
             <Card className="border-green-200">
               <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-lg">
-                <CardTitle className="text-center text-green-700">Test Your Tax Knowledge</CardTitle>
-                <CardDescription className="text-center">
-                  {quizStep < quizQuestions.length ? `Question ${quizStep + 1} of ${quizQuestions.length}` : 'Quiz Complete!'}
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-green-700">Test Your Tax Knowledge</CardTitle>
+                  <span className="text-sm font-medium text-green-600 bg-white px-3 py-1 rounded-full">
+                    Progress Tracked
+                  </span>
+                </div>
+                <CardDescription>
+                  Complete this quiz to demonstrate your understanding of taxes and track your learning progress
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
-                {quizStep < quizQuestions.length ? (
-                  <div className="space-y-6">
-                    <p className="text-lg font-medium">{quizQuestions[quizStep].question}</p>
-                    
-                    <div className="space-y-3">
-                      {quizQuestions[quizStep].options.map((option, index) => (
-                        <button
-                          key={index}
-                          className={`w-full text-left p-3 rounded-md border transition-colors ${
-                            selectedAnswer === option
-                              ? showAnswer
-                                ? option === quizQuestions[quizStep].correctAnswer
-                                  ? 'bg-green-50 border-green-300'
-                                  : 'bg-red-50 border-red-300'
-                                : 'bg-green-50 border-green-300'
-                              : 'hover:bg-gray-50'
-                          }`}
-                          onClick={() => handleQuizAnswer(option)}
-                          disabled={showAnswer}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    {showAnswer && (
-                      <div className={`p-4 rounded-md ${
-                        selectedAnswer === quizQuestions[quizStep].correctAnswer
-                          ? 'bg-green-50 border border-green-200'
-                          : 'bg-red-50 border border-red-200'
-                      }`}>
-                        <p className="font-medium mb-2">
-                          {selectedAnswer === quizQuestions[quizStep].correctAnswer
-                            ? '✅ Correct!'
-                            : `❌ The correct answer is: ${quizQuestions[quizStep].correctAnswer}`}
-                        </p>
-                        <p>{quizQuestions[quizStep].explanation}</p>
-                      </div>
-                    )}
-                    
-                    {showAnswer && (
-                      <div className="flex justify-center">
-                        <Button onClick={nextQuizQuestion}>
-                          Next Question
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-center space-y-6">
-                    <div className="bg-green-50 rounded-lg p-6 inline-block mx-auto">
-                      <h3 className="text-2xl font-bold mb-2 text-green-700">Quiz Complete!</h3>
-                      <p className="text-lg">Your Score: <span className="font-bold">{quizScore} out of {quizQuestions.length}</span></p>
-                      <div className="mt-4 mb-2">
-                        <Progress value={(quizScore / quizQuestions.length) * 100} className="h-4 bg-green-100" />
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        {quizScore === quizQuestions.length
-                          ? "Perfect! You're a tax expert! 🏆"
-                          : quizScore >= quizQuestions.length * 0.8
-                          ? "Great job! You know your taxes well! 🌟"
-                          : quizScore >= quizQuestions.length * 0.6
-                          ? "Good work! You're on your way to understanding taxes. 👍"
-                          : "Keep learning about taxes - they're important for your future! 📚"}
-                      </p>
-                    </div>
-                    
-                    <Button onClick={resetQuiz} variant="outline">
-                      Try Again
-                    </Button>
-                  </div>
-                )}
+                {/* Platform's standardized quiz component */}
+                <QuizComponent
+                  subject="Tax Education"
+                  questions={standardizedQuizQuestions}
+                  difficulty="beginner"
+                  pathwayId={pathwayId}
+                  moduleId={moduleId}
+                  userId={userId}
+                  adaptiveLearning={true}
+                  onComplete={handleQuizCompletion}
+                  className="py-4"
+                />
               </CardContent>
             </Card>
           </TabsContent>
