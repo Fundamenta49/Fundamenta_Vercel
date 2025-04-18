@@ -273,8 +273,7 @@ export default function TaxEducationFullscreen({
         "They're exactly the same thing"
       ],
       correctAnswer: 1,
-      explanation: "Gross pay is the total amount you earn before any deductions. Net pay is your 'take-home pay' after taxes and other deductions are subtracted. This is why your paycheck is smaller than your hourly rate might suggest!",
-      difficulty: "beginner"
+      explanation: "Gross pay is the total amount you earn before any deductions. Net pay is your 'take-home pay' after taxes and other deductions are subtracted. This is why your paycheck is smaller than your hourly rate might suggest!"
     },
     {
       id: 3,
@@ -286,8 +285,7 @@ export default function TaxEducationFullscreen({
         "A receipt for the taxes you've paid"
       ],
       correctAnswer: 2,
-      explanation: "When you start a new job, you'll fill out a W-4 form. This tells your employer how much tax to withhold from each paycheck based on your situation. Getting this right helps avoid owing a lot of tax or getting too big a refund later.",
-      difficulty: "beginner"
+      explanation: "When you start a new job, you'll fill out a W-4 form. This tells your employer how much tax to withhold from each paycheck based on your situation. Getting this right helps avoid owing a lot of tax or getting too big a refund later."
     },
     {
       id: 4,
@@ -299,8 +297,7 @@ export default function TaxEducationFullscreen({
         "Illinois"
       ],
       correctAnswer: 2,
-      explanation: "Texas is one of seven states with no income tax! The others are Alaska, Florida, Nevada, South Dakota, Washington, and Wyoming. However, these states typically have higher sales or property taxes instead.",
-      difficulty: "intermediate"
+      explanation: "Texas is one of seven states with no income tax! The others are Alaska, Florida, Nevada, South Dakota, Washington, and Wyoming. However, these states typically have higher sales or property taxes instead."
     },
     {
       id: 5,
@@ -312,8 +309,7 @@ export default function TaxEducationFullscreen({
         "A tax on owning property"
       ],
       correctAnswer: 1,
-      explanation: "Sales tax is added to the price of items you buy. It varies by state and sometimes even by city! That's why a $10 item might actually cost $10.60 or more at the register.",
-      difficulty: "beginner"
+      explanation: "Sales tax is added to the price of items you buy. It varies by state and sometimes even by city! That's why a $10 item might actually cost $10.60 or more at the register."
     }
   ];
   
@@ -1002,7 +998,6 @@ export default function TaxEducationFullscreen({
                   userId={userId}
                   adaptiveLearning={true}
                   onComplete={handleQuizCompletion}
-                  className="py-4"
                 />
               </CardContent>
             </Card>
