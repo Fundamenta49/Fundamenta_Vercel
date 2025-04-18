@@ -81,11 +81,10 @@ const FullScreenDialogContent = React.forwardRef<
     <FullScreenDialogPortal>
       <FullScreenDialogOverlay />
       {isMobile ? (
-        // NO CHANGES TO MOBILE VERSION - keep it as is
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content mobile-friendly-content",
+            "fixed inset-0 z-[9999] w-full h-full mobile-dialog-content",
             className
           )}
           style={{ 
@@ -96,9 +95,7 @@ const FullScreenDialogContent = React.forwardRef<
             height: '100vh',
             maxWidth: '100vw',
             maxHeight: '100vh',
-            boxSizing: 'border-box',
-            backgroundColor: 'white',
-            color: '#333'
+            boxSizing: 'border-box'
           }}
           {...props}
         >
@@ -127,7 +124,6 @@ const FullScreenDialogContent = React.forwardRef<
             </DialogPrimitive.Close>
           </DialogPrimitive.Content>
       ) : (
-        // DESKTOP VERSION FIXES ONLY
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
@@ -136,19 +132,22 @@ const FullScreenDialogContent = React.forwardRef<
           )}
           style={{
             width: "100vw",
-            height: "100vh",
+            height: "100vh", 
             maxWidth: "100vw",
-            maxHeight: "100vh"
+            maxHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
           }}
           {...props}
         >
-          <div className="max-w-[1200px] w-full h-full mx-auto px-4">
+          <div className="w-full max-w-7xl mx-auto px-4 py-2 h-full">
             {children}
           </div>
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
-            className="absolute right-6 top-6 rounded-full p-3 opacity-90 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-[51]"
+            className="fixed right-6 top-6 rounded-full p-3 opacity-90 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-[60]"
             style={{ backgroundColor: `${themeColor}30` }}
           >
             <X className="h-8 w-8" style={{ color: themeColor }} />
@@ -171,33 +170,30 @@ const FullScreenDialogHeader = ({
     <div
       className={cn(
         "sticky z-10 bg-white dark:bg-gray-950 px-6 pb-4 flex flex-col gap-1.5 border-b w-full",
-        isMobile ? "top-14 mt-2 mobile-dialog-header mobile-friendly-content" : "top-0 pt-6", 
+        isMobile ? "top-14 mt-2 mobile-dialog-header" : "top-0 pt-6", 
         className
       )}
       style={isMobile ? {
         width: '100%',
         boxSizing: 'border-box',
         left: 0,
-        right: 0,
-        backgroundColor: 'white',
-        color: '#333',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
+        right: 0
       } : {
         width: '100%',
-        boxSizing: 'border-box',
-        left: 0,
-        right: 0,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center'
       }}
       {...props}
     >
-      <div className="w-full max-w-[1200px]">
-        {props.children}
-      </div>
+      {/* Center content container for desktop */}
+      {!isMobile ? (
+        <div className="w-full max-w-full">
+          {props.children}
+        </div>
+      ) : (
+        props.children
+      )}
     </div>
   );
 };
@@ -206,24 +202,15 @@ FullScreenDialogHeader.displayName = "FullScreenDialogHeader";
 const FullScreenDialogFooter = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
-  const isMobile = useIsMobile();
-  
-  return (
-    <div
-      className={cn(
-        "sticky bottom-0 z-10 bg-white dark:bg-gray-950 px-6 py-4 flex justify-between items-center border-t",
-        isMobile ? "mobile-friendly-content" : "",
-        className
-      )}
-      style={isMobile ? {
-        backgroundColor: 'white', // Ensure white background on mobile
-        color: '#333' // Ensure dark text color on mobile
-      } : undefined}
-      {...props}
-    />
-  );
-};
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "sticky bottom-0 z-10 bg-white dark:bg-gray-950 px-6 py-4 flex justify-between items-center border-t",
+      className
+    )}
+    {...props}
+  />
+);
 FullScreenDialogFooter.displayName = "FullScreenDialogFooter";
 
 const FullScreenDialogTitle = React.forwardRef<
@@ -259,8 +246,8 @@ const FullScreenDialogBody = ({
   return (
     <div
       className={cn(
-        "px-6 py-4 w-full flex flex-col items-center", 
-        isMobile ? "pb-24 mobile-dialog-body mobile-friendly-content" : "", 
+        "px-6 py-4 w-full", 
+        isMobile ? "pb-24 mobile-dialog-body" : "", 
         className
       )}
       style={isMobile ? {
@@ -268,22 +255,23 @@ const FullScreenDialogBody = ({
         maxWidth: '100%',
         overflowX: 'hidden',
         overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        backgroundColor: 'white',
-        color: '#333'
+        WebkitOverflowScrolling: 'touch'
       } : {
-        width: '100%', 
-        maxWidth: '100%',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        margin: '0 auto'
+        alignItems: 'center'
       }}
       {...props}
     >
-      <div className="w-full max-w-[1200px] flex flex-col items-center">
-        {props.children}
-      </div>
+      {/* This div centers and controls max-width of content on desktop only */}
+      {!isMobile ? (
+        <div className="w-full max-w-full">
+          {props.children}
+        </div>
+      ) : (
+        props.children
+      )}
     </div>
   );
 };
