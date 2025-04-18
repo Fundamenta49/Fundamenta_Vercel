@@ -385,8 +385,12 @@ export default function TaxEducationFullscreen({
     // If we don't have specific info for this state, create a generic template
     if (!stateInfo) {
       console.log(`No specific data for ${selectedState}, creating generic template`);
-      // Get the state name from our hook
-      const stateName = stateData[selectedState]?.stateName || selectedState.toUpperCase();
+      
+      // Get state name (reference the stateNames from our states array)
+      const stateName = states.find(s => s.value === selectedState)?.name || selectedState.toUpperCase();
+      
+      // States with no income tax (from our hook)
+      const noIncomeTaxStates = ['ak', 'fl', 'nv', 'sd', 'tx', 'wa', 'wy', 'tn', 'nh'];
       
       // Create generic info based on whether it has income tax
       const hasIncomeTax = !noIncomeTaxStates.includes(selectedState);
@@ -407,10 +411,10 @@ export default function TaxEducationFullscreen({
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4 space-y-6">
-              <Alert variant="info">
-                <RocketIcon className="h-4 w-4" />
-                <AlertTitle>Detailed information for {stateName} coming soon!</AlertTitle>
+              <Alert variant="default">
+                <Lightbulb className="h-4 w-4" />
                 <AlertDescription>
+                  <span className="font-bold block mb-1">Detailed information for {stateName} coming soon!</span>
                   We're working on adding comprehensive tax information for all 50 states.
                   In the meantime, you can use the Paycheck Calculator with real tax data for {stateName}.
                 </AlertDescription>
@@ -589,7 +593,7 @@ export default function TaxEducationFullscreen({
       
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">
-        <Alert className="mb-6 border-green-500 bg-green-50">
+        <Alert variant="default" className="mb-6 border-green-500 bg-green-50">
           <Lightbulb className="h-4 w-4 text-green-500" />
           <AlertDescription className="text-green-800 text-sm">
             Understanding taxes now will help you make smart money decisions when you start earning!
