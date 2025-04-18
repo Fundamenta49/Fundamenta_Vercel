@@ -165,19 +165,7 @@ const FullScreenDialogContent = React.forwardRef<
           }}
           {...props}
         >
-<div className="full-screen-dialog-children emergency-content-fix" style={{ 
-              display: 'block', 
-              width: '100%', 
-              flex: '1 1 auto', 
-              backgroundColor: 'white',
-              visibility: 'visible',
-              opacity: 1,
-              overflow: 'auto',
-              position: 'relative',
-              zIndex: 1
-            }}>
-            {children}
-          </div>
+{children}
           
           {/* Close button for desktop */}
           <DialogPrimitive.Close 
@@ -218,9 +206,7 @@ const FullScreenDialogHeader = ({
       }}
       {...props}
     >
-      <div style={{ display: 'block' }}>
-        {props.children}
-      </div>
+{props.children}
     </div>
   );
 };
@@ -293,15 +279,7 @@ const FullScreenDialogBody = ({
       }}
       {...props}
     >
-      <div className="dialog-content-wrapper emergency-content-fix" style={{ 
-              display: 'block',
-              visibility: 'visible',
-              opacity: 1,
-              backgroundColor: 'white',
-              width: '100%'
-           }}>
-        {props.children}
-      </div>
+{props.children}
     </div>
   );
 };
