@@ -208,7 +208,9 @@ const FullScreenDialogHeader = ({
       }}
       {...props}
     >
-{props.children}
+      <div style={{ display: 'block' }}>
+        {props.children}
+      </div>
     </div>
   );
 };

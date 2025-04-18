@@ -76,6 +76,9 @@
   max-width: 1200px !important;
   margin: 0 auto !important;
   width: 100% !important;
+  display: block !important;
+  visibility: visible !important;
+  background-color: white !important;
 }
 
 /* Fix nested cards inside dialogs */
@@ -83,6 +86,43 @@
 [class*="FullScreenDialogContent"] [class*="Card"] {
   height: auto !important;
   margin-bottom: 1rem !important;
+  display: block !important;
+  background-color: white !important;
+  visibility: visible !important;
+}
+
+/* Ensure sub-cards are visible */
+.card .card, 
+.card [class*="Card"], 
+[class*="Card"] .card {
+  display: block !important;
+  background-color: white !important; 
+  visibility: visible !important;
+  margin: 0.5rem 0 !important;
+  padding: 0.75rem !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Make sure all content is visible within dialogs */
+[class*="FullScreenDialogContent"] *,
+[class*="FullScreenDialogBody"] *,
+[class*="DialogContent"] *,
+[class*="DialogBody"] * {
+  visibility: visible !important;
+}
+
+/* Fix cognitive bias cards and content boxes */
+div[class*="border rounded-md p-4"],
+.border.rounded-md.p-4,
+.bg-yellow-50,
+.bg-orange-50,
+.bg-gray-50 {
+  display: block !important;
+  background-color: white !important;
+  visibility: visible !important;
+  border: 1px solid #e5e7eb !important;
+  padding: 1rem !important;
+  margin: 0.5rem 0 !important;
 }
 
 /* Ensure proper desktop view spacing */
