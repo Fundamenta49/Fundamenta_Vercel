@@ -13,6 +13,7 @@ import {
 // Import pop-out components
 import FinanceAdvisorPopOut from "@/components/finance-advisor-pop-out";
 import BudgetCalculatorPopOut from "@/components/budget-calculator-pop-out";
+import BudgetCalculatorFullscreen from "@/components/budget-calculator-fullscreen";
 import FinancialDashboardPopOut from "@/components/financial-dashboard-pop-out";
 import FinancialDashboardFullscreen from "@/components/financial-dashboard-fullscreen";
 import CreditSkillsPopOut from "@/components/credit-skills-pop-out";
@@ -162,11 +163,13 @@ export default function Finance() {
 
       {/* Full-screen dialogs */}
 
-      <FullScreenDialog open={isBudgetOpen} onOpenChange={setIsBudgetOpen}>
-        <FullScreenDialogContent themeColor="#22c55e" className="w-full" style={{ maxWidth: "100%", width: "100vw" }}>
-          <BudgetCalculatorPopOut onBudgetUpdate={setBudgetData} />
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+      {/* Use our custom fullscreen component for budget calculator instead of the dialog */}
+      {isBudgetOpen && (
+        <BudgetCalculatorFullscreen 
+          onBudgetUpdate={setBudgetData} 
+          onClose={() => setIsBudgetOpen(false)} 
+        />
+      )}
 
       {/* Use our custom fullscreen component for financial dashboard instead of the dialog */}
       {isDashboardOpen && (
