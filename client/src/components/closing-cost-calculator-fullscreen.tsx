@@ -690,7 +690,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                           <Input
                             id="home-price"
                             type="text"
-                            className="pl-8 h-12 text-lg"
+                            className="pl-8 h-12 text-lg w-full min-w-[160px]"
                             value={formatCurrency(netSheet.homePrice)}
                             onChange={(e) => handleHomePriceChange(e.target.value)}
                           />
@@ -732,7 +732,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                           <Input
                             id="down-payment"
                             type="text"
-                            className="pl-8 h-12 text-lg"
+                            className="pl-8 h-12 text-lg w-full min-w-[160px]"
                             value={formatCurrency(netSheet.downPayment)}
                             onChange={(e) => handleDownPaymentChange(e.target.value)}
                           />
@@ -823,7 +823,7 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                             <Input
                               id="rate-display"
                               value={netSheet.interestRate.toFixed(3)}
-                              className="pl-8 h-12 text-lg"
+                              className="pl-8 h-12 text-lg w-full min-w-[160px]"
                               readOnly
                             />
                           </div>
@@ -1407,44 +1407,63 @@ const ClosingCostCalculatorFullscreen: React.FC<ClosingCostCalculatorFullscreenP
                           
                           <div className="mt-4 pt-4 border-t">
                             <div className="h-14 w-full bg-gray-100 rounded-md overflow-hidden flex shadow-inner">
+                              {/* Principal & Interest */}
                               <div 
-                                className="h-full bg-blue-600 border-r border-white"
+                                className="h-full bg-blue-600 border-r border-white flex items-center justify-center"
                                 style={{ 
                                   width: `${((results.monthlyPayment.principal + results.monthlyPayment.interest) / 
                                     results.monthlyPayment.total) * 100}%` 
                                 }}
-                              ></div>
+                              >
+                                <span className="text-white text-xs font-medium px-1 truncate">P&I</span>
+                              </div>
+                              
+                              {/* Taxes */}
                               <div 
-                                className="h-full bg-green-600 border-r border-white"
+                                className="h-full bg-green-600 border-r border-white flex items-center justify-center"
                                 style={{ 
                                   width: `${(results.monthlyPayment.taxes / 
                                     results.monthlyPayment.total) * 100}%` 
                                 }}
-                              ></div>
+                              >
+                                <span className="text-white text-xs font-medium px-1 truncate">Tax</span>
+                              </div>
+                              
+                              {/* Insurance - Make minimum width to ensure visibility */}
                               <div 
-                                className="h-full bg-purple-600 border-r border-white"
+                                className="h-full bg-purple-600 border-r border-white flex items-center justify-center"
                                 style={{ 
-                                  width: `${(results.monthlyPayment.insurance / 
-                                    results.monthlyPayment.total) * 100}%` 
+                                  width: `${Math.max(3, (results.monthlyPayment.insurance / 
+                                    results.monthlyPayment.total) * 100)}%` 
                                 }}
-                              ></div>
+                              >
+                                <span className="text-white text-xs font-medium px-1 truncate">Ins</span>
+                              </div>
+                              
+                              {/* PMI */}
                               {results.monthlyPayment.pmi > 0 && (
                                 <div 
-                                  className="h-full bg-amber-600 border-r border-white"
+                                  className="h-full bg-amber-600 border-r border-white flex items-center justify-center"
                                   style={{ 
-                                    width: `${(results.monthlyPayment.pmi / 
-                                      results.monthlyPayment.total) * 100}%` 
+                                    width: `${Math.max(4, (results.monthlyPayment.pmi / 
+                                      results.monthlyPayment.total) * 100)}%` 
                                   }}
-                                ></div>
+                                >
+                                  <span className="text-white text-xs font-medium px-1 truncate">PMI</span>
+                                </div>
                               )}
+                              
+                              {/* HOA */}
                               {results.monthlyPayment.hoa > 0 && (
                                 <div 
-                                  className="h-full bg-pink-600"
+                                  className="h-full bg-pink-600 flex items-center justify-center"
                                   style={{ 
-                                    width: `${(results.monthlyPayment.hoa / 
-                                      results.monthlyPayment.total) * 100}%` 
+                                    width: `${Math.max(3, (results.monthlyPayment.hoa / 
+                                      results.monthlyPayment.total) * 100)}%` 
                                   }}
-                                ></div>
+                                >
+                                  <span className="text-white text-xs font-medium px-1 truncate">HOA</span>
+                                </div>
                               )}
                             </div>
                           </div>
