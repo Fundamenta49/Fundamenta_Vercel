@@ -7,6 +7,7 @@
 @import './styles/fullscreen-dialog-fix.css';
 @import './styles/dialog-fixes.css';
 @import './styles/fix-missing-content.css';
+@import './styles/dialog-content-fix.css';
 
 @tailwind base;
 @tailwind components;
