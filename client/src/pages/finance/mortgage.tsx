@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   CalculatorIcon,
@@ -16,12 +17,9 @@ import {
   Info,
   DollarSign,
   FileText,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react';
-import MortgageCalculator from '@/components/mortgage-calculator';
-import MortgageMarketTrends from '@/components/mortgage-market-trends';
-import MortgageEducation from '@/components/mortgage-education';
-import { ClosingCostCalculator } from '@/components/closing-cost-calculator-new';
 import { 
   Dialog, 
   DialogContent, 
@@ -30,54 +28,96 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from '@/components/ui/dialog';
-import {
-  FullScreenDialog,
-  FullScreenDialogContent,
-  FullScreenDialogHeader,
-  FullScreenDialogTitle,
-  FullScreenDialogDescription,
-  FullScreenDialogBody,
-  FullScreenDialogTrigger
-} from "@/components/ui/full-screen-dialog";
+
+// Import our fullscreen components
+import MortgageCalculatorFullscreen from '@/components/mortgage-calculator-fullscreen';
+import MortgageMarketTrendsFullscreen from '@/components/mortgage-market-trends-fullscreen';
+import MortgageEducationFullscreen from '@/components/mortgage-education-fullscreen';
+import { ClosingCostCalculator } from '@/components/closing-cost-calculator-new';
 
 const MortgagePage: React.FC = () => {
-  // State for info dialog and fullscreen dialogs
+  // State for info dialog
   const [isAboutDialogOpen, setIsAboutDialogOpen] = useState(false);
-  const [activeDialog, setActiveDialog] = useState<string | null>(null);
+  
+  // State to manage which tool is currently active in fullscreen
+  const [activeFullscreenTool, setActiveFullscreenTool] = useState<string | null>(null);
 
-  // Calculate the appropriate theme color for Finance section
-  const themeColor = "#22c55e"; // Finance green color
+  // Handle opening a specific tool
+  const openTool = (toolId: string) => {
+    setActiveFullscreenTool(toolId);
+  };
 
+  // Handle closing the active tool
+  const closeTool = () => {
+    setActiveFullscreenTool(null);
+  };
+
+  // Mortgage tools configuration
   const mortgageTools = [
     {
       id: "calculator",
       title: "Mortgage Calculator",
       description: "Calculate monthly payments, total interest, and view amortization schedules",
-      icon: CalculatorIcon,
-      component: MortgageCalculator
+      icon: CalculatorIcon
     },
     {
       id: "costs",
       title: "Closing Costs Calculator",
       description: "Understand all costs associated with buying a home including taxes and insurance",
-      icon: DollarSign,
-      component: ClosingCostCalculator
+      icon: DollarSign
     },
     {
       id: "trends",
       title: "Market Trends",
       description: "Real-time mortgage rates and housing market data from the Federal Reserve",
-      icon: BarChart4,
-      component: MortgageMarketTrends
+      icon: BarChart4
     },
     {
       id: "education",
       title: "Mortgage Education",
       description: "Essential guides and resources for understanding the mortgage process",
-      icon: BookOpen,
-      component: MortgageEducation
+      icon: BookOpen
     }
   ];
+
+  // Render the appropriate fullscreen component based on the active tool
+  const renderActiveFullscreenTool = () => {
+    switch (activeFullscreenTool) {
+      case "calculator":
+        return <MortgageCalculatorFullscreen onClose={closeTool} />;
+      case "trends":
+        return <MortgageMarketTrendsFullscreen onClose={closeTool} />;
+      case "education":
+        return <MortgageEducationFullscreen onClose={closeTool} />;
+      case "costs":
+        return (
+          <div className="fixed inset-0 z-[99999] bg-white flex flex-col">
+            {/* Header */}
+            <div className="flex justify-between items-center px-6 py-4 border-b bg-gradient-to-r from-green-600 to-emerald-500 text-white">
+              <div>
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <DollarSign className="h-6 w-6" />
+                  Closing Costs Calculator
+                </h2>
+                <p className="text-green-100">
+                  Understand all costs associated with buying a home including taxes and insurance
+                </p>
+              </div>
+              <Button variant="ghost" size="icon" onClick={closeTool} className="text-white hover:bg-green-700">
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <ClosingCostCalculator onClose={closeTool} />
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="container py-8 space-y-6 max-w-7xl">
@@ -142,43 +182,27 @@ const MortgagePage: React.FC = () => {
         {mortgageTools.map((tool) => {
           const Icon = tool.icon;
           return (
-            <FullScreenDialog key={tool.id}>
-              <FullScreenDialogTrigger asChild>
-                <Card className="border-2 border-green-100 shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow">
-                  <CardContent className="pt-6">
-                    <div className="flex flex-col items-center text-center">
-                      <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-4">
-                        <Icon className="h-10 w-10 text-green-500" />
-                      </div>
-                      <CardTitle className="mb-2">{tool.title}</CardTitle>
-                      <CardDescription>{tool.description}</CardDescription>
-                    </div>
-                  </CardContent>
-                </Card>
-              </FullScreenDialogTrigger>
-              <FullScreenDialogContent themeColor={themeColor}>
-                <FullScreenDialogHeader>
-                  <div className="flex items-center mb-2">
-                    <Icon className="h-6 w-6 mr-2 text-green-500" />
-                    <FullScreenDialogTitle>{tool.title}</FullScreenDialogTitle>
+            <Card 
+              key={tool.id} 
+              className="border-2 border-green-100 shadow-md bg-white cursor-pointer hover:border-green-300 hover:shadow-lg transition-all"
+              onClick={() => openTool(tool.id)}
+            >
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-4">
+                    <Icon className="h-10 w-10 text-green-500" />
                   </div>
-                  <FullScreenDialogDescription>{tool.description}</FullScreenDialogDescription>
-                </FullScreenDialogHeader>
-                <FullScreenDialogBody>
-                  {tool.id === "costs" ? (
-                    <ClosingCostCalculator onClose={() => {
-                      const closeButton = document.querySelector("[data-radix-collection-item]") as HTMLElement;
-                      if (closeButton) closeButton.click();
-                    }} />
-                  ) : (
-                    <tool.component />
-                  )}
-                </FullScreenDialogBody>
-              </FullScreenDialogContent>
-            </FullScreenDialog>
+                  <CardTitle className="mb-2">{tool.title}</CardTitle>
+                  <CardDescription>{tool.description}</CardDescription>
+                </div>
+              </CardContent>
+            </Card>
           );
         })}
       </div>
+
+      {/* Render the active fullscreen tool */}
+      {renderActiveFullscreenTool()}
     </div>
   );
 };
