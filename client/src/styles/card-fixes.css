@@ -44,20 +44,6 @@
   [class*="FullScreenDialogContent"] > div {
     max-width: 100% !important;
     padding: 0.5rem !important;
-    overflow-x: hidden !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  
-  /* Fix for missing content in sub cards */
-  [class*="DialogContent"] > *,
-  [class*="FullScreenDialogBody"] > *,
-  [class*="FullScreenDialogContent"] > *,
-  [class*="DialogBody"] > * {
-    display: block !important;
-    visibility: visible !important;
-    background-color: white;
   }
 }
 

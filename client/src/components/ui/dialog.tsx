@@ -121,12 +121,7 @@ const DialogContent = React.forwardRef<
             width: "100vw",
             height: "100vh",
             maxWidth: "100vw",
-            maxHeight: "100vh",
-            overflowX: "hidden", /* Prevent horizontal popouts */
-            overflowY: "auto", /* Allow vertical scrolling */
-            display: "flex",
-            flexDirection: "column",
-            position: "relative"
+            maxHeight: "100vh"
           }}
           {...props}
         >

@@ -161,13 +161,11 @@ const FullScreenDialogContent = React.forwardRef<
             maxHeight: "100vh",
             display: "flex",
             flexDirection: "column",
-            overflowX: "hidden", /* Prevent horizontal content from popping out */
-            overflowY: "auto", /* Allow vertical scrolling */
             position: "relative"
           }}
           {...props}
         >
-<div className="full-screen-dialog-children" style={{ display: 'block', width: '100%', flex: '1 1 auto' }}>
+<div className="full-screen-dialog-children" style={{ display: 'block', width: '100%', flex: '1 1 auto', backgroundColor: 'white' }}>
             {children}
           </div>
           
@@ -279,13 +277,13 @@ const FullScreenDialogBody = ({
         width: '100%',
         maxWidth: '100%',
         boxSizing: 'border-box',
-        overflowX: 'hidden',
-        overflowY: 'auto',
         flex: '1 1 auto'
       }}
       {...props}
     >
-{props.children}
+      <div className="dialog-content-wrapper" style={{ display: 'block' }}>
+        {props.children}
+      </div>
     </div>
   );
 };
