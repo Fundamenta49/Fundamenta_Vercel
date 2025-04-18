@@ -18,7 +18,7 @@ import FinancialDashboardPopOut from "@/components/financial-dashboard-pop-out";
 import FinancialDashboardFullscreen from "@/components/financial-dashboard-fullscreen";
 import CreditSkillsPopOut from "@/components/credit-skills-pop-out";
 import TaxInformationPopOut from "@/components/tax-information-pop-out";
-import TaxInformationFullscreen from "@/components/tax-information-fullscreen";
+import TaxEducationFullscreen from "@/components/tax-education-fullscreen";
 import RetirementPlanningPopOut from "@/components/retirement-planning-pop-out";
 import MortgageCalculatorPopOut from "@/components/mortgage-calculator-pop-out";
 import BankLinkPopOut from "@/components/bank-link-pop-out";
@@ -52,8 +52,8 @@ const SECTIONS: SectionType[] = [
   },
   {
     id: 'tax',
-    title: 'Tax Information',
-    description: 'State-specific tax guides for personal finance and business',
+    title: 'Tax Education',
+    description: 'Interactive tax guides and practical tools for young adults',
     icon: Receipt,
   },
   {
@@ -186,9 +186,9 @@ export default function Finance() {
         </FullScreenDialogContent>
       </FullScreenDialog>
       
-      {/* Use our custom fullscreen component for tax information instead of the dialog */}
+      {/* Use our custom fullscreen component for tax education instead of the dialog */}
       {isTaxOpen && (
-        <TaxInformationFullscreen 
+        <TaxEducationFullscreen 
           onClose={() => setIsTaxOpen(false)} 
         />
       )}
