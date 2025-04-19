@@ -8,16 +8,19 @@ import {
   FullScreenDialogHeader, 
   FullScreenDialogTitle, 
   FullScreenDialogDescription, 
-  FullScreenDialogBody 
+  FullScreenDialogBody,
+  FullScreenDialogClose
 } from "@/components/ui/full-screen-dialog";
 
+// Original pop-outs
 import CareerAssessmentPopOut from "@/components/career-assessment-pop-out";
-import ResumeBuilderPopOut from "@/components/career/resume-builder-pop-out";
-import JobSearchPopOut from "@/components/career/job-search-pop-out";
-// SalaryInsights is now part of JobSearchPopOut
-import InterviewPracticePopOut from "@/components/career/interview-practice-pop-out";
 import EmotionalResiliencePopOut from "@/components/emotional-resilience-pop-out";
 import EmploymentRightsPopOut from "@/components/employment-rights-pop-out";
+
+// New career components
+import ResumeBuilderFullscreen from "@/components/career/resume-builder-fullscreen";
+import JobSearchFullscreen from "@/components/career/job-search-fullscreen";
+import InterviewPracticeFullscreen from "@/components/career/interview-practice-fullscreen";
 import React, { useState, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { GraduationCap, Search, Book, Brain, FileText, Briefcase, DollarSign, MessageSquare, Scale } from "lucide-react";
@@ -50,21 +53,21 @@ const SECTIONS: SectionType[] = [
     title: 'Resume Builder',
     description: 'Create and manage your professional resume',
     icon: FileText,
-    component: ResumeBuilderPopOut
+    component: ResumeBuilderFullscreen
   },
   {
     id: 'search',
     title: 'Fundamenta Connects',
     description: 'Find opportunities and research salary insights',
     icon: Briefcase,
-    component: JobSearchPopOut
+    component: JobSearchFullscreen
   },
   {
     id: 'interview',
     title: 'Interview Practice',
     description: 'Prepare for job interviews with AI feedback',
     icon: MessageSquare,
-    component: InterviewPracticePopOut
+    component: InterviewPracticeFullscreen
   },
   {
     id: 'resilience',
