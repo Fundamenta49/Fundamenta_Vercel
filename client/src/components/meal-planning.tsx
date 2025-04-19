@@ -218,6 +218,20 @@ export default function MealPlanning() {
       try {
         const statusResponse = await axios.get('/api/cooking/spoonacular-status');
         console.log('Spoonacular API status:', statusResponse.data);
+        
+        // If status is ok, proceed with generating the meal plan
+        if (statusResponse.data?.status === 'ok') {
+          generateMealPlan(selectedPlan);
+        } else {
+          // If status is not ok, show appropriate message and set loading to false
+          console.error('Spoonacular API not configured properly:', statusResponse.data);
+          toast({
+            title: "API Configuration Issue",
+            description: "There might be an issue with the Spoonacular API configuration.",
+            variant: "destructive"
+          });
+          setLoading(false);
+        }
       } catch (error) {
         console.error('API status check failed:', error);
         toast({
@@ -225,11 +239,12 @@ export default function MealPlanning() {
           description: "There might be an issue with the Spoonacular API configuration.",
           variant: "destructive"
         });
+        setLoading(false);
       }
     };
     
     checkApiStatus();
-    generateMealPlan(selectedPlan);
+    // Don't call generateMealPlan here, it will be called after API status check
   }, [selectedPlan]);
 
   // Function to fetch a meal plan from the Spoonacular API
@@ -736,12 +751,34 @@ export default function MealPlanning() {
             ))}
           </div>
         ) : weeklyPlan.length === 0 ? (
-          <Alert className="mb-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              No meal plan could be generated. Please try again with different parameters.
-            </AlertDescription>
-          </Alert>
+          <div className="space-y-4">
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                No meal plan could be generated. The Spoonacular API might be unavailable or misconfigured.
+              </AlertDescription>
+            </Alert>
+            
+            {/* Add fallback content to show when API fails */}
+            <div className="border rounded-lg p-6 bg-gray-50 text-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+                <UtensilsCrossed className="h-8 w-8 text-orange-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Meal Planning Tool</h3>
+              <p className="text-gray-600 mb-4 max-w-md mx-auto">
+                This feature requires a functioning Spoonacular API connection. 
+                Please try again later or contact support if the issue persists.
+              </p>
+              <Button 
+                onClick={() => generateMealPlan(selectedPlan)} 
+                variant="outline"
+                className="mx-auto"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Retry
+              </Button>
+            </div>
+          </div>
         ) : (
           <Tabs defaultValue={weeklyPlan[0]?.day.toLowerCase() || "monday"} className="w-full">
             <TabsList className="mb-4 flex flex-wrap justify-center gap-1 overflow-x-auto p-1 sm:justify-start">
