@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus, Dumbbell, Shield, ArrowRight } from "lucide-react";
+import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus, Dumbbell, Shield, ArrowRight, Activity, Clipboard } from "lucide-react";
 import { WELLNESS_CATEGORY } from "@/components/chat-interface";
 import ChatRedirect, { ChatCategory } from "@/components/chat-redirect";
 import { useState, useRef, useEffect, Suspense, lazy } from "react";
@@ -27,6 +27,9 @@ const ShoppingBuddy = lazy(() => import("@/components/shopping-buddy"));
 const RiskAssessment = lazy(() => import("@/components/risk-assessment"));
 const BrainTap = lazy(() => import("@/components/brain-tap"));
 const ComprehensiveWellnessAssessment = lazy(() => import("@/components/comprehensive-wellness-assessment"));
+const WellnessIntegration = lazy(() => import("@/components/wellness-integration"));
+const PHQ9Assessment = lazy(() => import("@/components/phq9-assessment"));
+const PAVSAssessment = lazy(() => import("@/components/pavs-assessment"));
 const IntegratedNutrition = lazy(() => import("@/components/integrated-nutrition"));
 const JournalPopOut = lazy(() => import("@/components/journal-pop-out"));
 const RiskAssessmentPopOut = lazy(() => import("@/components/risk-assessment-pop-out"));
@@ -49,10 +52,31 @@ type SectionType = {
 
 const SECTIONS: SectionType[] = [
   {
+    id: 'wellness-profile',
+    title: 'Wellness Profile',
+    description: 'View your personalized wellness assessment results and recommendations',
+    icon: Heart,
+    component: WellnessIntegration
+  },
+  {
+    id: 'mental-health',
+    title: 'Mental Health Assessment',
+    description: 'Evaluate your emotional wellbeing with the PHQ-9 screening tool',
+    icon: Brain,
+    component: PHQ9Assessment
+  },
+  {
+    id: 'physical-activity',
+    title: 'Physical Activity Assessment',
+    description: 'Evaluate your activity level and get personalized recommendations',
+    icon: Activity, 
+    component: PAVSAssessment
+  },
+  {
     id: 'comprehensive',
     title: 'Comprehensive Assessment',
-    description: 'Complete physical and mental health evaluation with personalized recommendations',
-    icon: Heart,
+    description: 'Complete physical and mental health evaluation with integrated recommendations',
+    icon: Clipboard,
     component: ComprehensiveWellnessAssessment
   },
   {
@@ -95,6 +119,9 @@ export default function Wellness() {
   const [isShoppingOpen, setIsShoppingOpen] = useState(false);
   const [isCoachOpen, setIsCoachOpen] = useState(false);
   const [isComprehensiveOpen, setIsComprehensiveOpen] = useState(false);
+  const [isWellnessProfileOpen, setIsWellnessProfileOpen] = useState(false);
+  const [isMentalHealthOpen, setIsMentalHealthOpen] = useState(false);
+  const [isPhysicalActivityOpen, setIsPhysicalActivityOpen] = useState(false);
   
   // Check URL for parameters to automatically open certain sections
   const { search } = window.location;
@@ -139,6 +166,15 @@ export default function Wellness() {
     }
     else if (sectionId === 'comprehensive') {
       setIsComprehensiveOpen(true);
+    }
+    else if (sectionId === 'wellness-profile') {
+      setIsWellnessProfileOpen(true);
+    }
+    else if (sectionId === 'mental-health') {
+      setIsMentalHealthOpen(true);
+    }
+    else if (sectionId === 'physical-activity') {
+      setIsPhysicalActivityOpen(true);
     }
     // Emergency section removed - now only in Emergency page
     else if (sectionId === 'stress-management') {
