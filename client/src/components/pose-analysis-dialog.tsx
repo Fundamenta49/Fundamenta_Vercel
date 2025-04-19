@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { MegaDialog, MegaDialogContent, MegaDialogHeader, MegaDialogTitle, MegaDialogDescription, MegaDialogFooter, MegaDialogBody } from "@/components/ui/mega-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -330,17 +331,18 @@ export default function PoseAnalysisDialog({
   if (!pose) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center text-xl gap-2">
+    <MegaDialog open={open} onOpenChange={onOpenChange}>
+      <MegaDialogContent className="max-w-4xl overflow-auto">
+        <MegaDialogHeader>
+          <MegaDialogTitle className="flex items-center text-xl gap-2">
             <Activity className="h-5 w-5 text-blue-600" />
             Analyze Your {pose.name}
-          </DialogTitle>
-          <DialogDescription>
+          </MegaDialogTitle>
+          <MegaDialogDescription>
             Follow the instructions and use YogaVision to get real-time feedback on your form
-          </DialogDescription>
-        </DialogHeader>
+          </MegaDialogDescription>
+        </MegaDialogHeader>
+        <MegaDialogBody>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           {/* Left side - Pose instruction */}
@@ -554,7 +556,9 @@ export default function PoseAnalysisDialog({
           </div>
         </div>
 
-        <DialogFooter className="mt-6 gap-2 flex-wrap">
+        </MegaDialogBody>
+        
+        <MegaDialogFooter className="mt-6 gap-2 flex-wrap">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
@@ -572,8 +576,8 @@ export default function PoseAnalysisDialog({
               Watch Tutorial Video
             </Button>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </MegaDialogFooter>
+      </MegaDialogContent>
+    </MegaDialog>
   );
 }
