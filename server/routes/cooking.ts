@@ -1,6 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import OpenAI from 'openai';
+import { MealCategorizationService } from '../services/meal-categorization-service';
 
 const router = express.Router();
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
@@ -174,6 +175,8 @@ router.get('/recipes/by-ingredients', async (req, res) => {
   }
 });
 
+// We're now using MealCategorizationService to improve meal categorization
+
 // Get meal plan
 router.get('/meal-plan', async (req, res) => {
   try {
@@ -185,6 +188,7 @@ router.get('/meal-plan', async (req, res) => {
 
     // If requesting weekly meal plan, use the built-in endpoint
     if (timeFrame === 'week') {
+      // First get the standard response from Spoonacular
       const response = await axios.get(`${BASE_URL}/mealplanner/generate`, {
         params: {
           apiKey: SPOONACULAR_API_KEY,
@@ -195,7 +199,66 @@ router.get('/meal-plan', async (req, res) => {
         }
       });
       
-      return res.json(response.data);
+      // Now let's enhance the meal plan with improved categorization if OpenAI is available
+      if (process.env.OPENAI_API_KEY) {
+        // For each day in the week, get the recipes and recategorize them
+        try {
+          console.log('Enhancing meal plan with OpenAI categorization');
+          
+          // For each day, collect the recipes for categorization
+          const enhancedWeek = { days: [] };
+          
+          for (const day of response.data.week.days) {
+            // Collect all recipes from this day for processing
+            const recipes = day.meals.map((meal: any) => ({
+              id: meal.id,
+              title: meal.title,
+              readyInMinutes: meal.readyInMinutes,
+              servings: meal.servings,
+              imageType: meal.imageType
+            }));
+            
+            // Get OpenAI to categorize these recipes
+            const categorizedRecipes = await MealCategorizationService.categorizeRecipes(recipes);
+            const organizedMeals = MealCategorizationService.organizeMealsByType(categorizedRecipes);
+            
+            // Reorganize the meals based on their types
+            // Try to select a breakfast, lunch, and dinner if available
+            const enhancedMeals = [
+              // Breakfast (use the first breakfast or fallback to original)
+              organizedMeals.breakfast.length > 0 ? 
+                { ...organizedMeals.breakfast[0], mealType: 'breakfast' } : 
+                { ...day.meals[0], mealType: 'breakfast' },
+                
+              // Lunch (use the first lunch or fallback to original)
+              organizedMeals.lunch.length > 0 ? 
+                { ...organizedMeals.lunch[0], mealType: 'lunch' } : 
+                day.meals.length > 1 ? { ...day.meals[1], mealType: 'lunch' } : null,
+                
+              // Dinner (use the first dinner or fallback to original)
+              organizedMeals.dinner.length > 0 ? 
+                { ...organizedMeals.dinner[0], mealType: 'dinner' } : 
+                day.meals.length > 2 ? { ...day.meals[2], mealType: 'dinner' } : null
+            ].filter(Boolean);
+            
+            // Add the categorization info to the enhanced day
+            enhancedWeek.days.push({
+              ...day,
+              meals: enhancedMeals,
+              aiEnhanced: true
+            });
+          }
+          
+          return res.json({ week: enhancedWeek });
+        } catch (aiError) {
+          console.error('Error enhancing meal plan with AI:', aiError);
+          // If AI enhancement fails, just return the original data
+          return res.json(response.data);
+        }
+      } else {
+        // No OpenAI API key, just return the original data
+        return res.json(response.data);
+      }
     }
     
     // For daily meal plans, we'll enhance the results by explicitly requesting breakfast, lunch, and dinner
@@ -286,6 +349,97 @@ router.get('/meal-plan', async (req, res) => {
       fat: 0,
       carbohydrates: 0
     };
+    
+    // If OpenAI is available, verify and potentially reorder the meal types
+    if (process.env.OPENAI_API_KEY) {
+      try {
+        console.log('Enhancing daily meal plan with OpenAI categorization');
+        
+        // Get detailed recipe info for better categorization
+        const recipePromises = meals.map(async (meal) => {
+          try {
+            const recipeInfo = await axios.get(`${BASE_URL}/recipes/${meal.id}/information`, {
+              params: {
+                apiKey: SPOONACULAR_API_KEY
+              }
+            });
+            
+            return {
+              ...meal,
+              dishTypes: recipeInfo.data.dishTypes || [],
+              cuisines: recipeInfo.data.cuisines || []
+            };
+          } catch (error) {
+            // If we fail to get detailed info, just use what we have
+            return meal;
+          }
+        });
+        
+        const detailedRecipes = await Promise.all(recipePromises);
+        
+        // Use OpenAI to categorize and verify meal types
+        const categorizedRecipes = await MealCategorizationService.categorizeRecipes(detailedRecipes);
+        
+        // Organize meals by their OpenAI-determined types
+        const organizedMeals = MealCategorizationService.organizeMealsByType(categorizedRecipes);
+        
+        // Build an enhanced response with the AI-categorized meals
+        const enhancedMeals = [];
+        
+        // Add a breakfast recipe
+        if (organizedMeals.breakfast.length > 0) {
+          enhancedMeals.push({
+            ...organizedMeals.breakfast[0],
+            mealType: 'breakfast'
+          });
+        } else if (meals.length > 0) {
+          // Fallback to the first meal if no breakfast found
+          enhancedMeals.push({
+            ...meals[0],
+            mealType: 'breakfast'
+          });
+        }
+        
+        // Add a lunch recipe
+        if (organizedMeals.lunch.length > 0) {
+          enhancedMeals.push({
+            ...organizedMeals.lunch[0],
+            mealType: 'lunch'
+          });
+        } else if (meals.length > 1) {
+          // Fallback to the second meal if no lunch found
+          enhancedMeals.push({
+            ...meals[1],
+            mealType: 'lunch'
+          });
+        }
+        
+        // Add a dinner recipe
+        if (organizedMeals.dinner.length > 0) {
+          enhancedMeals.push({
+            ...organizedMeals.dinner[0],
+            mealType: 'dinner'
+          });
+        } else if (meals.length > 2) {
+          // Fallback to the third meal if no dinner found
+          enhancedMeals.push({
+            ...meals[2],
+            mealType: 'dinner'
+          });
+        }
+        
+        // Return the enhanced response
+        return res.json({
+          meals: enhancedMeals,
+          nutrients,
+          aiEnhanced: true
+        });
+        
+      } catch (aiError) {
+        console.error('Error enhancing daily meal plan with AI:', aiError);
+        // If AI enhancement fails, just return the original data
+      }
+    }
     
     // Build a response that matches the format from Spoonacular's mealplanner endpoint
     const response = {
