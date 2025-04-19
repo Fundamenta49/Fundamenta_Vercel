@@ -40,7 +40,7 @@ import {
   Lightbulb,
   CheckCircle
 } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -211,6 +211,10 @@ export default function MealPlanning() {
     }
   };
 
+  // State to track if the API is rate limited
+  const [isRateLimited, setIsRateLimited] = useState(false);
+  const [apiMessage, setApiMessage] = useState('');
+
   // Generate meal plan when component loads or plan type changes
   useEffect(() => {
     // Initial check of API status
@@ -221,13 +225,28 @@ export default function MealPlanning() {
         
         // If status is ok, proceed with generating the meal plan
         if (statusResponse.data?.status === 'ok') {
+          setIsRateLimited(false);
+          setApiMessage('');
           generateMealPlan(selectedPlan);
-        } else {
-          // If status is not ok, show appropriate message and set loading to false
+        } 
+        // Check if API is rate limited
+        else if (statusResponse.data?.status === 'rate_limited') {
+          console.error('Spoonacular API rate limit reached:', statusResponse.data);
+          setIsRateLimited(true);
+          setApiMessage(statusResponse.data.details || 'Daily API rate limit has been reached');
+          toast({
+            title: "API Rate Limit Reached",
+            description: statusResponse.data.details || "The Spoonacular API daily points limit has been reached. Try again later.",
+            variant: "destructive"
+          });
+          setLoading(false);
+        } 
+        // Handle other API issues
+        else {
           console.error('Spoonacular API not configured properly:', statusResponse.data);
           toast({
             title: "API Configuration Issue",
-            description: "There might be an issue with the Spoonacular API configuration.",
+            description: statusResponse.data.message || "There might be an issue with the Spoonacular API configuration.",
             variant: "destructive"
           });
           setLoading(false);
@@ -674,6 +693,17 @@ export default function MealPlanning() {
           Planning your meals in advance helps save money, reduce food waste, and maintain a balanced diet.
           Choose a plan type below to get started.
         </p>
+        
+        {/* API Rate Limit Alert */}
+        {isRateLimited && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>API Rate Limit Reached</AlertTitle>
+            <AlertDescription>
+              {apiMessage || "The Spoonacular API daily points limit has been reached. Meal planning features will be unavailable until the quota resets. Please try again later."}
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
       
       {/* Plan selection */}

@@ -10,7 +10,10 @@ const BASE_URL = 'https://api.spoonacular.com';
 // Check if Spoonacular API key is configured
 router.get('/spoonacular-status', async (req, res) => {
   if (!SPOONACULAR_API_KEY) {
-    return res.status(500).json({ error: 'Spoonacular API key is not configured' });
+    return res.json({ 
+      status: 'error', 
+      message: 'Spoonacular API key is not configured' 
+    });
   }
   
   try {
@@ -23,15 +26,39 @@ router.get('/spoonacular-status', async (req, res) => {
       }
     });
     
+    // Check if response indicates rate limiting (comes back as 200 status with failure message)
+    if (response.data?.status === 'failure' && response.data?.code === 402) {
+      console.log('API rate limit reached:', response.data.message);
+      return res.json({
+        status: 'rate_limited',
+        message: 'Spoonacular API daily points limit reached',
+        details: response.data.message
+      });
+    }
+    
     return res.json({ status: 'ok', message: 'Spoonacular API key is properly configured' });
   } catch (error) {
     console.error('Spoonacular API key validation error:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      return res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Invalid API key or rate limit exceeded'}` 
+    
+    // Check for rate limit error in response
+    if (axios.isAxiosError(error) && 
+        (error.response?.status === 402 || 
+         (error.response?.data?.status === 'failure' && error.response?.data?.code === 402))) {
+      return res.json({
+        status: 'rate_limited',
+        message: 'Spoonacular API daily points limit reached',
+        details: error.response?.data?.message || 'Rate limit exceeded'
+      });
+    } else if (axios.isAxiosError(error) && error.response) {
+      return res.json({ 
+        status: 'error',
+        message: `Spoonacular API error: ${error.response.data.message || 'Invalid API key'}` 
       });
     } else {
-      return res.status(500).json({ error: 'Failed to validate Spoonacular API key' });
+      return res.json({ 
+        status: 'error', 
+        message: 'Failed to validate Spoonacular API key' 
+      });
     }
   }
 });
