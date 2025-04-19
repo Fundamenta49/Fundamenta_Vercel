@@ -1,5 +1,5 @@
 import { Switch, Route, useLocation } from "wouter";
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -8,6 +8,12 @@ import NotFound from "@/pages/not-found";
 import { TourProvider } from "@/components/home-tour";
 import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
+
+// Import cooking pages
+import CookingPage from "@/pages/cooking";
+import RecipesPage from "@/pages/cooking/recipes";
+import MealPlanPage from "@/pages/cooking/meal-plan";
+import CookingTechniquesPage from "@/pages/cooking/techniques";
 import Home from "@/pages/home";
 import WhyFundamenta from "@/pages/why-fundamenta";
 import Partner from "@/pages/partner";
@@ -192,30 +198,22 @@ function Router() {
             </Route>
             <Route path="/cooking">
               <ProtectedRoute>
-                <Suspense fallback={<div>Loading...</div>}>
-                  {lazy(() => import("@/pages/cooking"))}
-                </Suspense>
+                <CookingPage />
               </ProtectedRoute>
             </Route>
             <Route path="/cooking/recipes">
               <ProtectedRoute>
-                <Suspense fallback={<div>Loading...</div>}>
-                  {lazy(() => import("@/pages/cooking/recipes"))}
-                </Suspense>
+                <RecipesPage />
               </ProtectedRoute>
             </Route>
             <Route path="/cooking/meal-plan">
               <ProtectedRoute>
-                <Suspense fallback={<div>Loading...</div>}>
-                  {lazy(() => import("@/pages/cooking/meal-plan"))}
-                </Suspense>
+                <MealPlanPage />
               </ProtectedRoute>
             </Route>
             <Route path="/cooking/techniques">
               <ProtectedRoute>
-                <Suspense fallback={<div>Loading...</div>}>
-                  {lazy(() => import("@/pages/cooking/techniques"))}
-                </Suspense>
+                <CookingTechniquesPage />
               </ProtectedRoute>
             </Route>
             <Route path="/yoga-test">
