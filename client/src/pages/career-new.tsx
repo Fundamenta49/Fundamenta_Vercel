@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { 
-  FullScreenDialog,
-  FullScreenDialogContent
-} from "@/components/ui/full-screen-dialog";
+  MegaDialog,
+  MegaDialogContent,
+  MegaDialogHeader,
+  MegaDialogTitle,
+  MegaDialogBody,
+} from "@/components/ui/mega-dialog";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,7 +13,7 @@ import { Briefcase, BookOpen, School, FileText, MessageSquare, Brain, Scale, Net
 
 // Import components for Career tools
 import ResumeBuilder from '@/components/career/resume-builder';
-import JobSearchPopOut from '@/components/career/job-search-pop-out'; // Updated to use pop-out version
+import JobSearch from '@/components/career/job-search-fullscreen'; // Using the fullscreen component directly
 import InterviewPractice from '@/components/career/interview-practice';
 import CareerAssessment from '@/components/career/career-assessment/index';
 import EmotionalResilience from '@/components/career/emotional-resilience/index';
@@ -41,7 +44,7 @@ const CAREER_TOOLS = [
     title: 'Job Search',
     description: 'Find and apply to jobs that match your skills and interests',
     icon: <Briefcase className="h-8 w-8" />,
-    component: JobSearchPopOut,
+    component: JobSearch,
     color: 'bg-green-50 dark:bg-green-950'
   },
   {
@@ -49,7 +52,7 @@ const CAREER_TOOLS = [
     title: 'Fundamenta Connects',
     description: 'Connect with professionals, mentors, and networking opportunities',
     icon: <Network className="h-8 w-8" />,
-    component: JobSearchPopOut, // Updated to use pop-out version
+    component: JobSearch, // Using direct fullscreen component
     color: 'bg-purple-50 dark:bg-purple-950'
   },
   {
@@ -170,12 +173,17 @@ export default function CareerNew() {
         ))}
       </div>
       
-      {/* Fullscreen Dialog for selected tool */}
-      <FullScreenDialog open={openTool !== null} onOpenChange={(open) => !open && setOpenTool(null)}>
-        <FullScreenDialogContent themeColor="#3b82f6">
-          {ToolComponent && <ToolComponent />}
-        </FullScreenDialogContent>
-      </FullScreenDialog>
+      {/* MegaDialog for selected tool */}
+      <MegaDialog open={!!openTool} onOpenChange={(open) => !open && setOpenTool(null)}>
+        <MegaDialogContent>
+          <MegaDialogHeader>
+            <MegaDialogTitle>{getCurrentTitle()}</MegaDialogTitle>
+          </MegaDialogHeader>
+          <MegaDialogBody>
+            {ToolComponent && <ToolComponent />}
+          </MegaDialogBody>
+        </MegaDialogContent>
+      </MegaDialog>
     </div>
   );
 }
