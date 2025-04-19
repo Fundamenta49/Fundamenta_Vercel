@@ -101,7 +101,7 @@ const RIGHTS_CATEGORIES = [
       },
       {
         id: 'workers-comp',
-        title: 'Workers' Compensation',
+        title: "Workers' Compensation",
         content: "Workers' compensation provides benefits to employees who suffer work-related injuries or illnesses. Benefits typically include medical care, temporary disability benefits while unable to work, permanent disability benefits for lasting impairments, vocational rehabilitation services, and death benefits for families of workers who die from work-related causes."
       },
       {

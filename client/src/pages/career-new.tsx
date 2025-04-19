@@ -9,9 +9,9 @@ import { Briefcase, BookOpen, School, FileText, MessageSquare, Brain, Scale, Net
 import ResumeBuilder from '@/components/career/resume-builder';
 import JobSearch from '@/components/career/job-search';
 import InterviewPractice from '@/components/career/interview-practice';
-import CareerAssessment from '@/components/career/career-assessment';
-import EmotionalResilience from '@/components/career/emotional-resilience';
-import EmploymentRights from '@/components/career/employment-rights';
+import CareerAssessment from '@/components/career/career-assessment/index';
+import EmotionalResilience from '@/components/career/emotional-resilience/index';
+import EmploymentRights from '@/components/career/employment-rights/index';
 
 // Skills for the skills section
 const CAREER_SKILLS = [
