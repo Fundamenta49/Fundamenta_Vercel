@@ -24,6 +24,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
+  MegaDialog,
+  MegaDialogContent,
+  MegaDialogHeader,
+  MegaDialogTitle,
+  MegaDialogBody,
+  MegaDialogFooter,
+  MegaDialogDescription,
+} from "@/components/ui/mega-dialog";
+import {
   Tabs,
   TabsContent,
   TabsList,
@@ -157,13 +166,16 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   // Access yoga progression context
   const { poses, updatePoseStatus, getPoseById } = useYogaProgression();
   
-  // State for managing the exercise detail dialog
+  // State for managing tab selection
+  const [activeTab, setActiveTab] = useState<TabType>(defaultTab);
+  
+  // State for managing the exercise detail MegaDialog
   const [selectedExercise, setSelectedExercise] = useState<ExerciseDetails | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [exerciseDetailOpen, setExerciseDetailOpen] = useState(false);
   const [videoFullscreen, setVideoFullscreen] = useState(false);
   const [yogaPromptOpen, setYogaPromptOpen] = useState(false);
   
-  // State for pose analysis dialog
+  // State for pose analysis MegaDialog
   const [analysisPose, setAnalysisPose] = useState<ExerciseDetails | null>(null);
   const [analysisPoseId, setAnalysisPoseId] = useState<string>("");
   const [poseAnalysisOpen, setPoseAnalysisOpen] = useState(false);
