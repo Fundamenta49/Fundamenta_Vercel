@@ -5,7 +5,7 @@ import { ResumePreviewProps } from './types';
 
 export default function ResumePreview({ data }: ResumePreviewProps) {
   // Format date helper
-  const formatDate = (date: string, current: boolean | undefined): string => {
+  const formatDate = (date: string | undefined, current: boolean | undefined): string => {
     if (!date) return '';
     if (current) return 'Present';
     return date;

@@ -79,7 +79,6 @@ export default function ResumeBuilder() {
     // In a real implementation, this would call the OpenAI API
     setTimeout(() => {
       toast({
-        variant: "success",
         title: "Resume optimized",
         description: "We've analyzed your resume and made suggestions to improve it.",
         duration: 3000,

@@ -46,7 +46,7 @@ const CAREER_TOOLS = [
     title: 'Fundamenta Connects',
     description: 'Connect with professionals, mentors, and networking opportunities',
     icon: <Network className="h-8 w-8" />,
-    component: JobSearch, // Placeholder - will need its own component
+    component: JobSearch, // Using job search component for now with networking features
     color: 'bg-purple-50 dark:bg-purple-950'
   },
   {

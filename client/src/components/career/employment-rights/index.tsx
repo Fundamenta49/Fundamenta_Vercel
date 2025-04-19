@@ -28,61 +28,17 @@ const RIGHTS_CATEGORIES = [
       {
         id: 'minimum-wage',
         title: 'Minimum Wage',
-        content: `
-          <p>Federal law establishes a minimum wage that employers must pay their employees. As of 2023, the federal minimum wage is $7.25 per hour. However, many states and localities have enacted minimum wage rates higher than the federal level.</p>
-          
-          <p>Key points about minimum wage:</p>
-          <ul>
-            <li>When federal and state minimum wage laws differ, you're entitled to the higher rate</li>
-            <li>Some occupations may be exempt from minimum wage requirements</li>
-            <li>Tipped employees may have a different minimum wage, but total compensation (including tips) must meet the standard minimum wage</li>
-          </ul>
-          
-          <p>For specific information about minimum wage in your state, contact your state's labor department or visit the U.S. Department of Labor website.</p>
-        `
+        content: "Federal law establishes a minimum wage that employers must pay their employees. As of 2023, the federal minimum wage is $7.25 per hour. However, many states and localities have enacted minimum wage rates higher than the federal level. When federal and state minimum wage laws differ, you're entitled to the higher rate. Some occupations may be exempt from minimum wage requirements."
       },
       {
         id: 'overtime',
         title: 'Overtime Pay',
-        content: `
-          <p>Under the Fair Labor Standards Act (FLSA), eligible employees must receive overtime pay for hours worked over 40 in a workweek at a rate of at least 1.5 times their regular pay rate.</p>
-          
-          <p>Important overtime rules include:</p>
-          <ul>
-            <li>Overtime is calculated based on a workweek (7 consecutive 24-hour periods)</li>
-            <li>Certain employees are exempt from overtime requirements, including many salaried managers and professionals who meet specific criteria</li>
-            <li>Employers cannot average hours over multiple weeks to avoid paying overtime</li>
-            <li>Unauthorized overtime must still be paid, though an employer may discipline an employee for violating company policy</li>
-          </ul>
-          
-          <p>Some states have more favorable overtime laws, such as requiring overtime pay for working more than 8 hours in a single day.</p>
-        `
+        content: "Under the Fair Labor Standards Act (FLSA), eligible employees must receive overtime pay for hours worked over 40 in a workweek at a rate of at least 1.5 times their regular pay rate. Overtime is calculated based on a workweek (7 consecutive 24-hour periods). Certain employees are exempt from overtime requirements, including many salaried managers and professionals who meet specific criteria."
       },
       {
         id: 'wage-theft',
         title: 'Wage Theft Prevention',
-        content: `
-          <p>Wage theft occurs when employers don't pay employees the full wages they've earned. Common forms of wage theft include:</p>
-          
-          <ul>
-            <li>Paying less than minimum wage</li>
-            <li>Not paying overtime</li>
-            <li>Requiring employees to work "off the clock"</li>
-            <li>Making illegal deductions from wages</li>
-            <li>Not paying for all hours worked</li>
-            <li>Misclassifying employees as independent contractors</li>
-          </ul>
-          
-          <p>If you believe you're experiencing wage theft:</p>
-          <ol>
-            <li>Document all hours worked and payments received</li>
-            <li>Raise the issue with your employer</li>
-            <li>Contact your state's labor department or the U.S. Department of Labor's Wage and Hour Division</li>
-            <li>Consider consulting with an employment attorney</li>
-          </ol>
-          
-          <p>Many states have laws that provide additional protections against wage theft.</p>
-        `
+        content: "Wage theft occurs when employers don't pay employees the full wages they've earned. Common forms include paying less than minimum wage, not paying overtime, requiring employees to work 'off the clock', making illegal deductions from wages, not paying for all hours worked, or misclassifying employees as independent contractors."
       }
     ]
   },
@@ -95,79 +51,17 @@ const RIGHTS_CATEGORIES = [
       {
         id: 'equal-opportunity',
         title: 'Equal Employment Opportunity',
-        content: `
-          <p>Federal laws prohibit employment discrimination based on:</p>
-          <ul>
-            <li>Race, color, and national origin</li>
-            <li>Sex (including pregnancy, sexual orientation, and gender identity)</li>
-            <li>Religion</li>
-            <li>Age (40 or older)</li>
-            <li>Disability</li>
-            <li>Genetic information</li>
-          </ul>
-          
-          <p>These protections apply to all aspects of employment, including:</p>
-          <ul>
-            <li>Hiring and firing</li>
-            <li>Compensation, assignment, or classification of employees</li>
-            <li>Transfer, promotion, layoff, or recall</li>
-            <li>Job advertisements and recruitment</li>
-            <li>Training and apprenticeship programs</li>
-            <li>Benefits</li>
-          </ul>
-          
-          <p>The Equal Employment Opportunity Commission (EEOC) enforces these laws and handles discrimination complaints.</p>
-        `
+        content: "Federal laws prohibit employment discrimination based on race, color, national origin, sex (including pregnancy, sexual orientation, and gender identity), religion, age (40 or older), disability, and genetic information. These protections apply to all aspects of employment, including hiring and firing, compensation, transfer, promotion, and training."
       },
       {
         id: 'harassment',
         title: 'Harassment & Hostile Work Environment',
-        content: `
-          <p>Workplace harassment is a form of discrimination that violates federal civil rights laws. Harassment becomes illegal when:</p>
-          
-          <ul>
-            <li>Enduring offensive conduct becomes a condition of continued employment, or</li>
-            <li>The conduct is severe or pervasive enough to create a work environment that a reasonable person would consider intimidating, hostile, or abusive</li>
-          </ul>
-          
-          <p>Sexual harassment includes unwelcome sexual advances, requests for sexual favors, and other verbal or physical harassment of a sexual nature.</p>
-          
-          <p>If you're experiencing harassment:</p>
-          <ol>
-            <li>Check your employer's harassment policies</li>
-            <li>Document all incidents (date, time, what happened, who was involved, witnesses)</li>
-            <li>Report the harassment to your supervisor, HR department, or designated person</li>
-            <li>If the situation isn't resolved, file a charge with the EEOC</li>
-          </ol>
-          
-          <p>Employers have a responsibility to prevent and address harassment in the workplace.</p>
-        `
+        content: "Workplace harassment is a form of discrimination that violates federal civil rights laws. Harassment becomes illegal when enduring offensive conduct becomes a condition of continued employment, or the conduct is severe or pervasive enough to create a work environment that a reasonable person would consider intimidating, hostile, or abusive."
       },
       {
         id: 'reasonable-accommodation',
         title: 'Reasonable Accommodations',
-        content: `
-          <p>Under the Americans with Disabilities Act (ADA) and Title VII (for religious practices), employers must provide reasonable accommodations to qualified employees, unless doing so would cause undue hardship.</p>
-          
-          <p>For disabilities, reasonable accommodations might include:</p>
-          <ul>
-            <li>Making facilities accessible</li>
-            <li>Job restructuring or modified work schedules</li>
-            <li>Acquiring or modifying equipment</li>
-            <li>Providing qualified readers or interpreters</li>
-            <li>Modifying training materials or policies</li>
-          </ul>
-          
-          <p>For religious practices, accommodations might include:</p>
-          <ul>
-            <li>Flexible scheduling</li>
-            <li>Voluntary shift substitutions or swaps</li>
-            <li>Job reassignments</li>
-            <li>Modifications to workplace policies or practices</li>
-          </ul>
-          
-          <p>To request an accommodation, inform your employer of your needs. While no specific language is required, clearly explain the reason for the accommodation and what you need.</p>
-        `
+        content: "Under the Americans with Disabilities Act (ADA) and Title VII (for religious practices), employers must provide reasonable accommodations to qualified employees, unless doing so would cause undue hardship. Accommodations might include making facilities accessible, job restructuring, modified work schedules, or providing specialized equipment."
       }
     ]
   },
@@ -180,69 +74,17 @@ const RIGHTS_CATEGORIES = [
       {
         id: 'fmla',
         title: 'Family and Medical Leave',
-        content: `
-          <p>The Family and Medical Leave Act (FMLA) provides eligible employees with up to 12 weeks of unpaid, job-protected leave per year for certain family and medical reasons.</p>
-          
-          <p>You may be eligible for FMLA leave if:</p>
-          <ul>
-            <li>You work for a covered employer (private employers with 50+ employees, public agencies, schools)</li>
-            <li>You've worked for your employer for at least 12 months</li>
-            <li>You've worked at least 1,250 hours during the 12 months before the leave</li>
-            <li>You work at a location where the employer has 50+ employees within 75 miles</li>
-          </ul>
-          
-          <p>FMLA leave can be taken for:</p>
-          <ul>
-            <li>Birth and care of a newborn child</li>
-            <li>Placement of a child for adoption or foster care</li>
-            <li>Care for an immediate family member with a serious health condition</li>
-            <li>Medical leave for your own serious health condition</li>
-            <li>Qualifying exigencies related to a family member's military service</li>
-          </ul>
-          
-          <p>Some states have more generous family and medical leave laws that provide additional rights.</p>
-        `
+        content: "The Family and Medical Leave Act (FMLA) provides eligible employees with up to 12 weeks of unpaid, job-protected leave per year for certain family and medical reasons. You may be eligible if you work for a covered employer, have worked there for at least 12 months, and have worked at least 1,250 hours during the 12 months before the leave."
       },
       {
         id: 'sick-leave',
         title: 'Sick Leave & Paid Time Off',
-        content: `
-          <p>While federal law doesn't require employers to provide paid sick leave, many states and localities have enacted laws requiring employers to provide paid sick leave to employees.</p>
-          
-          <p>Where required, paid sick leave typically can be used for:</p>
-          <ul>
-            <li>An employee's own illness, injury, or medical care</li>
-            <li>Care for a family member who is ill</li>
-            <li>Absences related to domestic violence, sexual assault, or stalking</li>
-            <li>Public health emergencies</li>
-          </ul>
-          
-          <p>The amount of sick leave varies by location, often accruing at a rate like 1 hour of sick leave for every 30 or 40 hours worked.</p>
-          
-          <p>Even in areas without required sick leave, employers must follow their established policies and employee contracts regarding paid time off.</p>
-        `
+        content: "While federal law doesn't require employers to provide paid sick leave, many states and localities have enacted laws requiring employers to provide paid sick leave to employees. Where required, paid sick leave typically can be used for an employee's own illness, injury, or medical care, or to care for a family member who is ill."
       },
       {
         id: 'breaks',
         title: 'Breaks & Rest Periods',
-        content: `
-          <p>Federal law doesn't require employers to provide meal or rest breaks. However, if employers do offer short breaks (usually 5-20 minutes), federal law considers the breaks as compensable work hours.</p>
-          
-          <p>Many states have enacted laws requiring meal and rest breaks:</p>
-          <ul>
-            <li>Meal breaks: Typically 30 minutes or more for employees who work more than a certain number of hours (often 5-6 hours)</li>
-            <li>Rest breaks: Often 10-15 minutes for each 4 hours worked</li>
-          </ul>
-          
-          <p>Special break provisions often exist for:</p>
-          <ul>
-            <li>Nursing mothers: Federal law requires employers to provide reasonable break time and a private space for expressing breast milk</li>
-            <li>Minors: Many states have enhanced break requirements for employees under 18</li>
-            <li>Certain industries: Some industries have specific break requirements due to safety concerns</li>
-          </ul>
-          
-          <p>Check your state's labor department website for specific break requirements in your location.</p>
-        `
+        content: "Federal law doesn't require employers to provide meal or rest breaks. However, if employers do offer short breaks (usually 5-20 minutes), federal law considers the breaks as compensable work hours. Many states have enacted laws requiring meal and rest breaks, typically 30 minutes or more for employees who work more than a certain number of hours."
       }
     ]
   },
@@ -255,77 +97,17 @@ const RIGHTS_CATEGORIES = [
       {
         id: 'osha',
         title: 'Occupational Safety & Health',
-        content: `
-          <p>The Occupational Safety and Health Act (OSHA) requires employers to provide a workplace free from recognized hazards that are causing or likely to cause death or serious physical harm.</p>
-          
-          <p>Under OSHA, employees have the right to:</p>
-          <ul>
-            <li>Receive information and training about hazards, methods to prevent harm, and OSHA standards that apply to their workplace</li>
-            <li>Request an OSHA inspection of their workplace if they believe there are violations of standards or serious hazards</li>
-            <li>Use their rights without retaliation or discrimination</li>
-            <li>Receive copies of tests done to find hazards in the workplace</li>
-            <li>Review records of work-related injuries and illnesses</li>
-          </ul>
-          
-          <p>If you have a safety concern:</p>
-          <ol>
-            <li>Bring the condition to your employer's attention</li>
-            <li>If the condition isn't fixed, file a confidential complaint with OSHA</li>
-            <li>Participate in the inspection when an OSHA compliance officer comes to the workplace</li>
-          </ol>
-          
-          <p>OSHA protects workers who report safety violations from retaliation.</p>
-        `
+        content: "The Occupational Safety and Health Act (OSHA) requires employers to provide a workplace free from recognized hazards that are causing or likely to cause death or serious physical harm. Under OSHA, employees have the right to receive information and training about hazards, request inspections, and use their rights without retaliation."
       },
       {
         id: 'workers-comp',
         title: 'Workers' Compensation',
-        content: `
-          <p>Workers' compensation provides benefits to employees who suffer work-related injuries or illnesses. Each state has its own workers' compensation system, but generally:</p>
-          
-          <p>Benefits typically include:</p>
-          <ul>
-            <li>Medical care for work-related injuries or illnesses</li>
-            <li>Temporary disability benefits while unable to work</li>
-            <li>Permanent disability benefits for lasting impairments</li>
-            <li>Vocational rehabilitation services</li>
-            <li>Death benefits for families of workers who die from work-related causes</li>
-          </ul>
-          
-          <p>If you're injured at work:</p>
-          <ol>
-            <li>Report the injury to your employer immediately</li>
-            <li>Seek medical treatment</li>
-            <li>File a workers' compensation claim (your employer should provide the forms)</li>
-            <li>Follow the doctor's treatment plan</li>
-            <li>Keep records of all medical care and communications about your injury</li>
-          </ol>
-          
-          <p>Workers' compensation is a "no-fault" system, meaning you don't need to prove the employer was negligent to receive benefits.</p>
-        `
+        content: "Workers' compensation provides benefits to employees who suffer work-related injuries or illnesses. Benefits typically include medical care, temporary disability benefits while unable to work, permanent disability benefits for lasting impairments, vocational rehabilitation services, and death benefits for families of workers who die from work-related causes."
       },
       {
         id: 'right-to-refuse',
         title: 'Right to Refuse Dangerous Work',
-        content: `
-          <p>Under OSHA, you have the right to refuse to work when:</p>
-          <ul>
-            <li>You believe that you face an imminent danger of death or serious injury</li>
-            <li>You have a reasonable belief that there is a real danger</li>
-            <li>There isn't enough time to eliminate the danger through regular enforcement channels</li>
-            <li>You have asked the employer to eliminate the danger and they have failed to do so</li>
-          </ul>
-          
-          <p>Steps to take if you need to refuse dangerous work:</p>
-          <ol>
-            <li>Inform your supervisor about the hazardous condition</li>
-            <li>State that you are willing to continue working if the dangerous condition is corrected or you are assigned other work that is safe</li>
-            <li>Explain that you're refusing to work because you believe there is a risk of injury or illness</li>
-            <li>If possible, stay at the workplace until your employer asks you to leave</li>
-          </ol>
-          
-          <p>Contact OSHA immediately if you believe you've been wrongfully discharged or disciplined for refusing dangerous work.</p>
-        `
+        content: "Under OSHA, you have the right to refuse to work when you believe that you face an imminent danger of death or serious injury, you have a reasonable belief that there is a real danger, and there isn't enough time to eliminate the danger through regular enforcement channels."
       }
     ]
   },
@@ -338,68 +120,17 @@ const RIGHTS_CATEGORIES = [
       {
         id: 'at-will',
         title: 'At-Will Employment',
-        content: `
-          <p>Most employment in the U.S. is "at-will," meaning either the employer or employee can terminate the relationship at any time, with or without notice, and with or without cause.</p>
-          
-          <p>However, there are important exceptions to at-will employment:</p>
-          <ul>
-            <li>Contracts: Employment contracts or collective bargaining agreements may limit an employer's ability to terminate employees</li>
-            <li>Discrimination: Employers cannot fire employees based on protected characteristics (race, color, religion, sex, national origin, age, disability, or genetic information)</li>
-            <li>Retaliation: Employers cannot fire employees for exercising workplace rights, like filing a discrimination complaint or reporting safety violations</li>
-            <li>Public policy: Employers generally cannot fire employees for refusing to break the law or exercising legal rights</li>
-          </ul>
-          
-          <p>Some states have additional protections limiting at-will employment. For example, some states recognize an implied covenant of good faith and fair dealing in employment relationships.</p>
-        `
+        content: "Most employment in the U.S. is 'at-will,' meaning either the employer or employee can terminate the relationship at any time, with or without notice, and with or without cause. However, exceptions include employment contracts, discrimination laws, retaliation protections, and public policy considerations."
       },
       {
         id: 'unemployment',
         title: 'Unemployment Benefits',
-        content: `
-          <p>If you lose your job through no fault of your own, you may be eligible for unemployment insurance benefits. Eligibility requirements vary by state but generally include:</p>
-          
-          <ul>
-            <li>You must have earned a minimum amount in wages during a "base period"</li>
-            <li>You must be able and available for work</li>
-            <li>You must be actively seeking employment</li>
-            <li>You must have lost your job through no fault of your own (such as a layoff)</li>
-          </ul>
-          
-          <p>If you're fired for misconduct or quit without good cause, you may be disqualified from receiving benefits, though the definition of misconduct and good cause varies by state.</p>
-          
-          <p>To claim unemployment benefits:</p>
-          <ol>
-            <li>File a claim with your state's unemployment agency as soon as possible after becoming unemployed</li>
-            <li>Provide required information about your employment history and reason for separation</li>
-            <li>Follow your state's procedures for weekly or biweekly certification of continued eligibility</li>
-          </ol>
-          
-          <p>Benefits typically last for 26 weeks, though extensions may be available during periods of high unemployment.</p>
-        `
+        content: "If you lose your job through no fault of your own, you may be eligible for unemployment insurance benefits. Eligibility requirements vary by state but generally include having earned a minimum amount in wages during a 'base period', being able and available for work, actively seeking employment, and having lost your job through no fault of your own."
       },
       {
         id: 'severance',
         title: 'Severance & Final Pay',
-        content: `
-          <p>Severance pay is not required by federal law unless an employer has promised it through a contract, policy, or collective bargaining agreement.</p>
-          
-          <p>If you're entitled to severance, the amount typically depends on your length of service with the employer. Severance packages may also include:</p>
-          <ul>
-            <li>Continued health insurance coverage</li>
-            <li>Outplacement services</li>
-            <li>References</li>
-            <li>Other benefits</li>
-          </ul>
-          
-          <p>Regarding final pay, most states have laws specifying when a departing employee must receive their final paycheck. Depending on the state, final pay may be due:</p>
-          <ul>
-            <li>On the next regular payday</li>
-            <li>Immediately upon termination</li>
-            <li>Within a specific timeframe (such as 72 hours)</li>
-          </ul>
-          
-          <p>Final pay must include all earned wages, including accrued overtime. Some states also require payment of unused vacation time.</p>
-        `
+        content: "Severance pay is not required by federal law unless an employer has promised it through a contract, policy, or collective bargaining agreement. Regarding final pay, most states have laws specifying when a departing employee must receive their final paycheck, which may be due on the next regular payday, immediately upon termination, or within a specific timeframe."
       }
     ]
   }
@@ -522,7 +253,7 @@ export default function EmploymentRights() {
                         <CardTitle>{topicDetails.title}</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div dangerouslySetInnerHTML={{ __html: topicDetails.content }} />
+                        <p className="whitespace-pre-line">{topicDetails.content}</p>
                       </CardContent>
                     </Card>
                   ) : (
