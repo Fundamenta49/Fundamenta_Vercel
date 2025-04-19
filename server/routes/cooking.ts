@@ -205,17 +205,29 @@ router.get('/meal-plan', async (req, res) => {
         try {
           console.log('Enhancing meal plan with OpenAI categorization');
           
+          // Check if the response structure is as expected
+          if (!response.data.week || !response.data.week.days || !Array.isArray(response.data.week.days)) {
+            console.error('Unexpected API response structure:', response.data);
+            return res.json(response.data);
+          }
+          
           // For each day, collect the recipes for categorization
           const enhancedWeek = { days: [] };
           
           for (const day of response.data.week.days) {
+            // Verify day has valid meals array
+            if (!day.meals || !Array.isArray(day.meals) || day.meals.length === 0) {
+              console.error('Day has invalid meals data:', day);
+              continue;
+            }
+            
             // Collect all recipes from this day for processing
             const recipes = day.meals.map((meal: any) => ({
               id: meal.id,
               title: meal.title,
-              readyInMinutes: meal.readyInMinutes,
-              servings: meal.servings,
-              imageType: meal.imageType
+              readyInMinutes: meal.readyInMinutes || 0,
+              servings: meal.servings || 1,
+              imageType: meal.imageType || 'jpg'
             }));
             
             // Get OpenAI to categorize these recipes
@@ -228,7 +240,7 @@ router.get('/meal-plan', async (req, res) => {
               // Breakfast (use the first breakfast or fallback to original)
               organizedMeals.breakfast.length > 0 ? 
                 { ...organizedMeals.breakfast[0], mealType: 'breakfast' } : 
-                { ...day.meals[0], mealType: 'breakfast' },
+                day.meals[0] ? { ...day.meals[0], mealType: 'breakfast' } : null,
                 
               // Lunch (use the first lunch or fallback to original)
               organizedMeals.lunch.length > 0 ? 

@@ -150,7 +150,7 @@ const mealPlans = {
     days: 7,
     icon: Salad,
     color: "text-green-500",
-    apiParams: { timeFrame: "day", targetCalories: 2000 }
+    apiParams: { timeFrame: "week", targetCalories: 2000 }
   },
   vegetarian: {
     title: "Vegetarian Plan",
@@ -158,7 +158,7 @@ const mealPlans = {
     days: 7,
     icon: Soup,
     color: "text-purple-500",
-    apiParams: { timeFrame: "day", targetCalories: 2000, diet: "vegetarian" }
+    apiParams: { timeFrame: "week", targetCalories: 2000, diet: "vegetarian" }
   },
   quick: {
     title: "Quick & Easy Meal Plan",
@@ -166,7 +166,7 @@ const mealPlans = {
     days: 7,
     icon: Clock,
     color: "text-orange-500",
-    apiParams: { timeFrame: "day", targetCalories: 2000, maxReadyTime: 30 }
+    apiParams: { timeFrame: "week", targetCalories: 2000, maxReadyTime: 30 }
   }
 };
 
