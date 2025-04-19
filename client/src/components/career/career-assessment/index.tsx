@@ -284,10 +284,65 @@ export default function CareerAssessment() {
       .map(category => category[0].toUpperCase())
       .join('');
     
+    // Generate detailed interpretations of each RAISEC type
+    const interpretations: Record<string, {description: string, traits: string[], careers: string[]}> = {
+      realistic: {
+        description: "You prefer practical, hands-on work and enjoy working with tools, machines, plants, or animals. You value concrete problems over abstract ones and like to see tangible results from your efforts.",
+        traits: ["Practical", "Straightforward", "Mechanically inclined", "Nature-oriented", "Athletic"],
+        careers: ["Engineer", "Mechanic", "Construction", "Agriculture", "Athletic Trainer", "Forestry", "Electrician"]
+      },
+      artistic: {
+        description: "You're creative and expressive, with an appreciation for aesthetics. You prefer unstructured environments where you can express your individuality and often enjoy working with ideas, concepts, and artistic media.",
+        traits: ["Creative", "Intuitive", "Expressive", "Independent", "Original"],
+        careers: ["Artist", "Writer", "Musician", "Designer", "Actor", "Architect", "Creative Director"]
+      },
+      investigative: {
+        description: "You enjoy analyzing and solving complex problems. You're curious, precise, and intellectual, preferring to work with ideas and data rather than people or physical objects.",
+        traits: ["Analytical", "Curious", "Precise", "Scientific", "Independent"],
+        careers: ["Scientist", "Researcher", "Analyst", "Professor", "Medical Professional", "Data Scientist"]
+      },
+      social: {
+        description: "You enjoy working with and helping people. You're empathetic, patient, and cooperative, preferring environments where you can make a positive impact on others' lives.",
+        traits: ["Helpful", "Empathetic", "Collaborative", "Patient", "Understanding"],
+        careers: ["Teacher", "Counselor", "Social Worker", "Healthcare Provider", "HR Professional", "Therapist"]
+      },
+      enterprising: {
+        description: "You enjoy leading, persuading, and taking risks. You're ambitious, assertive, and energetic, preferring environments where you can influence others and achieve status or economic goals.",
+        traits: ["Persuasive", "Ambitious", "Assertive", "Leadership-oriented", "Confident"],
+        careers: ["Manager", "Entrepreneur", "Salesperson", "Marketing Executive", "Lawyer", "Real Estate Agent"]
+      },
+      conventional: {
+        description: "You prefer organized, well-structured environments with clear expectations. You're detail-oriented, organized, and methodical, enjoying work that requires precision and following established procedures.",
+        traits: ["Organized", "Detail-oriented", "Systematic", "Efficient", "Precise"],
+        careers: ["Accountant", "Administrative Assistant", "Financial Analyst", "Librarian", "Quality Control Specialist"]
+      }
+    };
+    
+    // Find primary personality type (highest score)
+    const primaryType = sortedCategories[0];
+    const secondaryType = sortedCategories[1];
+    
+    // Construct detailed analysis
+    const detailedAnalysis = {
+      primaryType: {
+        type: primaryType,
+        score: normalizedScores[primaryType],
+        ...interpretations[primaryType]
+      },
+      secondaryType: {
+        type: secondaryType,
+        score: normalizedScores[secondaryType],
+        ...interpretations[secondaryType]
+      },
+      combinationInsight: `Your primary ${primaryType.charAt(0).toUpperCase()}${primaryType.slice(1)} tendencies combined with your secondary ${secondaryType.charAt(0).toUpperCase()}${secondaryType.slice(1)} interests suggest you might excel in careers that combine practical problem-solving with creative thinking.`
+    };
+    
     setResultsData({
       topPaths,
       strengths: normalizedScores,
-      raisecCode
+      raisecCode,
+      interpretations,
+      detailedAnalysis
     });
     
     setShowResults(true);
@@ -435,6 +490,86 @@ export default function CareerAssessment() {
                       ))}
                     </div>
                   </div>
+                  
+                  <Separator />
+                  
+                  {/* Primary Type Analysis */}
+                  {resultsData?.detailedAnalysis && (
+                    <div className="space-y-6">
+                      <div className="grid gap-6 md:grid-cols-2">
+                        <Card className="border-primary/30">
+                          <CardHeader className="pb-2 bg-primary/5">
+                            <CardTitle className="text-lg">Primary Type: {resultsData.detailedAnalysis.primaryType.type.charAt(0).toUpperCase() + resultsData.detailedAnalysis.primaryType.type.slice(1)}</CardTitle>
+                            <CardDescription>Score: {resultsData.detailedAnalysis.primaryType.score}%</CardDescription>
+                          </CardHeader>
+                          <CardContent className="pt-4 space-y-4">
+                            <p>{resultsData.detailedAnalysis.primaryType.description}</p>
+                            
+                            <div>
+                              <h4 className="text-sm font-medium mb-2">Key Traits</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {resultsData.detailedAnalysis.primaryType.traits.map((trait: string, i: number) => (
+                                  <div key={i} className="text-sm rounded-md bg-primary/10 px-2 py-1">
+                                    {trait}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h4 className="text-sm font-medium mb-2">Suggested Careers</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {resultsData.detailedAnalysis.primaryType.careers.map((career: string, i: number) => (
+                                  <div key={i} className="text-sm rounded-md bg-muted px-2 py-1">
+                                    {career}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card>
+                          <CardHeader className="pb-2 bg-primary/5">
+                            <CardTitle className="text-lg">Secondary Type: {resultsData.detailedAnalysis.secondaryType.type.charAt(0).toUpperCase() + resultsData.detailedAnalysis.secondaryType.type.slice(1)}</CardTitle>
+                            <CardDescription>Score: {resultsData.detailedAnalysis.secondaryType.score}%</CardDescription>
+                          </CardHeader>
+                          <CardContent className="pt-4 space-y-4">
+                            <p>{resultsData.detailedAnalysis.secondaryType.description}</p>
+                            
+                            <div>
+                              <h4 className="text-sm font-medium mb-2">Key Traits</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {resultsData.detailedAnalysis.secondaryType.traits.map((trait: string, i: number) => (
+                                  <div key={i} className="text-sm rounded-md bg-primary/10 px-2 py-1">
+                                    {trait}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h4 className="text-sm font-medium mb-2">Suggested Careers</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {resultsData.detailedAnalysis.secondaryType.careers.map((career: string, i: number) => (
+                                  <div key={i} className="text-sm rounded-md bg-muted px-2 py-1">
+                                    {career}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                      
+                      <Card className="bg-primary/5 border-none">
+                        <CardContent className="pt-6">
+                          <h4 className="font-medium mb-2">Personalized Insight</h4>
+                          <p>{resultsData.detailedAnalysis.combinationInsight}</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
                   
                   <Separator />
                   
