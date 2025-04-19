@@ -190,16 +190,14 @@ function ComponentSkeleton() {
   );
 }
 
-// Custom dialog content component that accepts themeColor
-interface CustomMegaDialogContentProps {
+// Enhanced MegaDialogContent with theme color styling
+interface StyledMegaDialogContentProps {
   children?: React.ReactNode;
   className?: string;
   themeColor?: string;
-  open: boolean;
-  onClose: () => void;
 }
 
-const CustomMegaDialogContent: React.FC<CustomMegaDialogContentProps> = ({ 
+const StyledMegaDialogContent: React.FC<StyledMegaDialogContentProps> = ({ 
   children, 
   className,
   themeColor
@@ -233,11 +231,9 @@ function SectionDialog({
     : section.props;
   
   return (
-    <CustomMegaDialogContent 
+    <StyledMegaDialogContent 
       className="bg-white dark:bg-gray-950" 
       themeColor={themeColor}
-      open={open}
-      onClose={onClose}
     >
       <MegaDialogHeader>
         <MegaDialogTitle>
@@ -264,7 +260,7 @@ function SectionDialog({
           )}
         </Suspense>
       </MegaDialogBody>
-    </CustomMegaDialogContent>
+    </StyledMegaDialogContent>
   );
 }
 
