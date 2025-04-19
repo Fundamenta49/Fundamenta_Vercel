@@ -389,12 +389,11 @@ export default function InterviewPracticeFullscreen() {
                 <CardContent className="px-4 py-3">
                   <Progress
                     value={analysisResult.rating * 10}
-                    className="h-2 mb-4"
-                    indicatorColor={
-                      analysisResult.rating >= 8 ? "bg-green-500" :
-                      analysisResult.rating >= 6 ? "bg-yellow-500" :
-                      "bg-red-500"
-                    }
+                    className={`h-2 mb-4 ${
+                      analysisResult.rating >= 8 ? "[--progress-foreground:theme(colors.green.500)]" :
+                      analysisResult.rating >= 6 ? "[--progress-foreground:theme(colors.yellow.500)]" :
+                      "[--progress-foreground:theme(colors.red.500)]"
+                    }`}
                   />
                   
                   <div className="space-y-4">

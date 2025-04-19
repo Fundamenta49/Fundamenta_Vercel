@@ -379,30 +379,46 @@ export default function ResumeBuilderFullscreen() {
   // Function to add a new item to an array field
   const addItem = (fieldName: 'experience' | 'education' | 'skills' | 'certifications') => {
     const currentItems = form.getValues(fieldName) || [];
-    let newItem;
     
     switch(fieldName) {
-      case 'experience':
-        newItem = { company: '', position: '', startDate: '', endDate: '', current: false, description: '', achievements: [''] };
+      case 'experience': {
+        const newItem = { company: '', position: '', startDate: '', endDate: '', current: false, description: '', achievements: [''] };
+        form.setValue(fieldName, [...currentItems, newItem]);
         break;
-      case 'education':
-        newItem = { institution: '', degree: '', field: '', startDate: '', endDate: '', current: false, description: '' };
+      }
+      case 'education': {
+        const newItem = { institution: '', degree: '', field: '', startDate: '', endDate: '', current: false, description: '' };
+        form.setValue(fieldName, [...currentItems, newItem]);
         break;
-      case 'skills':
-        newItem = { name: '', level: 'Intermediate' };
+      }
+      case 'skills': {
+        const newItem = { name: '', level: 'Intermediate' as const };
+        form.setValue(fieldName, [...currentItems, newItem]);
         break;
-      case 'certifications':
-        newItem = { name: '', issuer: '', date: '', expiryDate: '', neverExpires: false };
+      }
+      case 'certifications': {
+        const newItem = { name: '', issuer: '', date: '', expiryDate: '', neverExpires: false };
+        form.setValue(fieldName, [...currentItems, newItem]);
         break;
+      }
     }
-    
-    form.setValue(fieldName, [...currentItems, newItem]);
   };
   
   // Function to remove an item from an array field
   const removeItem = (fieldName: 'experience' | 'education' | 'skills' | 'certifications', index: number) => {
-    const currentItems = form.getValues(fieldName) || [];
-    form.setValue(fieldName, currentItems.filter((_, i) => i !== index));
+    if (fieldName === 'experience') {
+      const currentItems = form.getValues('experience') || [];
+      form.setValue('experience', currentItems.filter((_, i) => i !== index));
+    } else if (fieldName === 'education') {
+      const currentItems = form.getValues('education') || [];
+      form.setValue('education', currentItems.filter((_, i) => i !== index));
+    } else if (fieldName === 'skills') {
+      const currentItems = form.getValues('skills') || [];
+      form.setValue('skills', currentItems.filter((_, i) => i !== index));
+    } else if (fieldName === 'certifications') {
+      const currentItems = form.getValues('certifications') || [];
+      form.setValue('certifications', currentItems.filter((_, i) => i !== index));
+    }
   };
   
   // Function to add an achievement to a specific work experience
