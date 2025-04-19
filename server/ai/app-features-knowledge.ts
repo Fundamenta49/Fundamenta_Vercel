@@ -165,14 +165,50 @@ Our mental and emotional wellness tools provide support, guidance, and resources
   * Offers adaptive support based on assessment scores
   * Includes detailed explanations of results
 
+- **Mental Health Assessments** (/wellness?section=assessment): A suite of clinically validated assessment tools that:
+  * Uses evidence-based screening instruments endorsed by leading health organizations
+  * Provides personalized recommendations based on assessment results
+  * Includes safety resources and guidance for seeking professional help when needed
+  * Features regular reassessment options to track progress over time
+  * Offers integrated wellness pathways based on results
+  * Provides educational content about mental health conditions
+  * Includes private results storage with optional security features
+
 - **PHQ-9 Assessment** (/wellness?section=assessment?tool=phq9): A clinical depression screening tool that:
-  * Uses the Patient Health Questionnaire-9, a validated clinical instrument
+  * Uses the Patient Health Questionnaire-9, a validated clinical instrument from NIH
   * Assesses depression symptoms over the past two weeks
   * Provides a severity score from 0-27 (minimal, mild, moderate, moderately severe, severe)
   * Offers specific recommendations based on score results
   * Includes safety planning for high-risk scores
   * Features follow-up recommendations appropriate to severity level
   * Provides self-care steps customized to assessment results
+
+- **GAD-7 Assessment** (/wellness?section=assessment?tool=gad7): An anxiety screening tool that:
+  * Uses the Generalized Anxiety Disorder-7, a validated clinical instrument
+  * Measures anxiety symptoms over the past two weeks
+  * Provides severity scoring (minimal, mild, moderate, severe)
+  * Offers specialized anxiety management techniques based on results
+  * Includes guidance for when to seek professional support
+  * Features educational content about anxiety management
+  * Provides personalized coping strategies
+
+- **PSS Assessment** (/wellness?section=assessment?tool=pss): A stress evaluation tool that:
+  * Uses the Perceived Stress Scale, a widely validated instrument
+  * Measures subjective stress perceptions and coping ability
+  * Provides normalized scoring compared to population averages
+  * Offers stress reduction techniques tailored to results
+  * Includes guided stress management exercises
+  * Features stress trigger identification support
+  * Provides resilience-building recommendations
+
+- **WEMWBS Assessment** (/wellness?section=assessment?tool=wemwbs): A wellbeing measurement tool that:
+  * Uses the Warwick-Edinburgh Mental Wellbeing Scale
+  * Focuses on positive aspects of mental health and functioning
+  * Provides a holistic view of emotional and psychological wellbeing
+  * Offers strategies to enhance positive mental health
+  * Includes tracking of wellbeing improvements over time
+  * Features celebration of strengths and positive attributes
+  * Provides balance to problem-focused assessments
 
 - **PAVS Assessment** (/wellness?section=assessment?tool=pavs): A physical activity evaluation tool that:
   * Uses the Physical Activity Vital Sign clinical assessment
@@ -227,6 +263,24 @@ Our mental and emotional wellness tools provide support, guidance, and resources
   * Provides guidance on supporting others
   * Offers workplace mental health resources
   * Includes professional help-seeking guidance
+
+- **Psychological Frameworks** (/wellness?section=frameworks): Evidence-based psychological approaches that:
+  * Incorporates CBT (Cognitive Behavioral Therapy) techniques for identifying thought patterns
+  * Integrates ACT (Acceptance and Commitment Therapy) principles for values-based living
+  * Includes MBSR (Mindfulness-Based Stress Reduction) practices for present-moment awareness
+  * Features APA Resilience Framework elements for building psychological strength
+  * Offers structured self-help exercises based on clinical approaches
+  * Provides simplified explanations of complex psychological concepts
+  * Adapts therapeutic techniques for everyday application
+
+- **Neurodiversity Support** (/wellness?section=neurodiversity): Specialized resources that:
+  * Provides content tailored for neurodivergent users (ADHD, autism spectrum, etc.)
+  * Features modular, card-based learning to minimize cognitive overwhelm
+  * Offers self-paced navigation to accommodate different processing speeds
+  * Includes visual interfaces with gamified elements for enhanced engagement
+  * Provides minimal required text per action to reduce cognitive load
+  * Features adaptive UI options for different sensory preferences
+  * Offers specialized guidance for executive functioning challenges
 
 - **Wellness Journal** (/wellness?section=journal): A therapeutic writing platform that:
   * Provides guided journaling prompts
@@ -525,6 +579,15 @@ Our educational tools help users acquire new skills, study effectively, and achi
   * Foundational (essential knowledge for beginners)
   * Intermediate (advancing skills for those with basic understanding)
   * Advanced (complex concepts for experienced learners)
+
+- **Safety & Escalation Protocols**: Our user protection system that:
+  * Includes automated flagging for high-risk assessment results
+  * Provides crisis resource overlays with emergency contact information
+  * Offers clear guidance for when to seek professional help
+  * Features private journaling with optional locked mode for privacy
+  * Includes appropriate crisis resources (Suicide Prevention Lifeline, text lines, local services)
+  * Maintains appropriate boundaries between educational content and clinical intervention
+  * Provides clear disclaimers about the non-diagnostic nature of platform tools
 
 - **Why Fundamenta** (/why-fundamenta): Platform mission, vision, and background
 
