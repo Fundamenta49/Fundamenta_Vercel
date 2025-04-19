@@ -6,33 +6,36 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus, Dumbbell, Shield } from "lucide-react";
+import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus, Dumbbell, Shield, ArrowRight } from "lucide-react";
 import { WELLNESS_CATEGORY } from "@/components/chat-interface";
 import ChatRedirect, { ChatCategory } from "@/components/chat-redirect";
-import NutritionTracker from "@/components/nutrition-tracker";
-import ShoppingBuddy from "@/components/shopping-buddy";
-import RiskAssessment from "@/components/risk-assessment";
-import BrainTap from "@/components/brain-tap";
-import ComprehensiveWellnessAssessment from "@/components/comprehensive-wellness-assessment";
-import IntegratedNutrition from "@/components/integrated-nutrition";
-// Emergency checklist has been moved to the Emergency section
-import JournalPopOut from "@/components/journal-pop-out";
-import RiskAssessmentPopOut from "@/components/risk-assessment-pop-out";
-import IntegratedNutritionPopOut from "@/components/integrated-nutrition-pop-out";
-import NutritionTrackerPopOut from "@/components/nutrition-tracker-pop-out";
-import ShoppingBuddyPopOut from "@/components/shopping-buddy-pop-out";
-import WellnessCoachPopOut from "@/components/wellness-coach-pop-out";
-import BrainTapPopOut from "@/components/brain-tap-pop-out";
-import ComprehensiveWellnessPopOut from "@/components/comprehensive-wellness-pop-out";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { cn } from "@/lib/utils";
 import { BookCard, BookCarousel, BookPage } from "@/components/ui/book-card";
 import { Button } from "@/components/ui/button";
 import {
-  FullScreenDialog,
-  FullScreenDialogContent,
-  FullScreenDialogTrigger,
-} from "@/components/ui/full-screen-dialog";
+  MegaDialog,
+  MegaDialogContent,
+  MegaDialogHeader,
+  MegaDialogTitle,
+  MegaDialogBody,
+} from "@/components/ui/mega-dialog";
+
+// Use lazy loading for all components for better performance
+const NutritionTracker = lazy(() => import("@/components/nutrition-tracker"));
+const ShoppingBuddy = lazy(() => import("@/components/shopping-buddy"));
+const RiskAssessment = lazy(() => import("@/components/risk-assessment"));
+const BrainTap = lazy(() => import("@/components/brain-tap"));
+const ComprehensiveWellnessAssessment = lazy(() => import("@/components/comprehensive-wellness-assessment"));
+const IntegratedNutrition = lazy(() => import("@/components/integrated-nutrition"));
+const JournalPopOut = lazy(() => import("@/components/journal-pop-out"));
+const RiskAssessmentPopOut = lazy(() => import("@/components/risk-assessment-pop-out"));
+const IntegratedNutritionPopOut = lazy(() => import("@/components/integrated-nutrition-pop-out"));
+const NutritionTrackerPopOut = lazy(() => import("@/components/nutrition-tracker-pop-out"));
+const ShoppingBuddyPopOut = lazy(() => import("@/components/shopping-buddy-pop-out"));
+const WellnessCoachPopOut = lazy(() => import("@/components/wellness-coach-pop-out"));
+const BrainTapPopOut = lazy(() => import("@/components/brain-tap-pop-out"));
+const ComprehensiveWellnessPopOut = lazy(() => import("@/components/comprehensive-wellness-pop-out"));
 
 type SectionType = {
   id: string;
@@ -158,50 +161,150 @@ export default function Wellness() {
           </AlertDescription>
         </Alert>
 
-        {/* Full-screen dialogs */}
-        <FullScreenDialog open={isJournalOpen} onOpenChange={setIsJournalOpen}>
-          <FullScreenDialogContent themeColor="#a855f7">
-            <JournalPopOut />
-          </FullScreenDialogContent>
-        </FullScreenDialog>
+        {/* MegaDialog implementations for each section */}
+        <MegaDialog open={isJournalOpen} onOpenChange={setIsJournalOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Wellness Journal</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Wellness Journal...</p>
+                </div>
+              }>
+                <JournalPopOut />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
 
-        <FullScreenDialog open={isRiskOpen} onOpenChange={setIsRiskOpen}>
-          <FullScreenDialogContent themeColor="#a855f7">
-            <RiskAssessmentPopOut />
-          </FullScreenDialogContent>
-        </FullScreenDialog>
+        <MegaDialog open={isRiskOpen} onOpenChange={setIsRiskOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Risk Assessment</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Risk Assessment...</p>
+                </div>
+              }>
+                <RiskAssessmentPopOut />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
 
-        <FullScreenDialog open={isNutritionOpen} onOpenChange={setIsNutritionOpen}>
-          <FullScreenDialogContent themeColor="#a855f7">
-            <IntegratedNutritionPopOut />
-          </FullScreenDialogContent>
-        </FullScreenDialog>
+        <MegaDialog open={isNutritionOpen} onOpenChange={setIsNutritionOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Nutrition Guide</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Nutrition Guide...</p>
+                </div>
+              }>
+                <IntegratedNutritionPopOut />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
 
-        <FullScreenDialog open={isTrackerOpen} onOpenChange={setIsTrackerOpen}>
-          <FullScreenDialogContent themeColor="#a855f7">
-            <NutritionTrackerPopOut />
-          </FullScreenDialogContent>
-        </FullScreenDialog>
+        <MegaDialog open={isTrackerOpen} onOpenChange={setIsTrackerOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Food Tracker</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Food Tracker...</p>
+                </div>
+              }>
+                <NutritionTrackerPopOut />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
 
-        <FullScreenDialog open={isShoppingOpen} onOpenChange={setIsShoppingOpen}>
-          <FullScreenDialogContent themeColor="#a855f7">
-            <ShoppingBuddyPopOut />
-          </FullScreenDialogContent>
-        </FullScreenDialog>
+        <MegaDialog open={isShoppingOpen} onOpenChange={setIsShoppingOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Shopping Buddy</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Shopping Buddy...</p>
+                </div>
+              }>
+                <ShoppingBuddyPopOut />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
         
-        <FullScreenDialog open={isBrainTapOpen} onOpenChange={setIsBrainTapOpen}>
-          <FullScreenDialogContent themeColor="#a855f7">
-            <BrainTapPopOut />
-          </FullScreenDialogContent>
-        </FullScreenDialog>
+        <MegaDialog open={isBrainTapOpen} onOpenChange={setIsBrainTapOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>BrainTap Mindfulness</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading BrainTap Mindfulness...</p>
+                </div>
+              }>
+                <BrainTapPopOut />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
         
-        <FullScreenDialog open={isComprehensiveOpen} onOpenChange={setIsComprehensiveOpen}>
-          <FullScreenDialogContent themeColor="#a855f7">
-            <ComprehensiveWellnessPopOut />
-          </FullScreenDialogContent>
-        </FullScreenDialog>
-        
-        {/* Emergency checklist has been moved to the Emergency section */}
+        <MegaDialog open={isComprehensiveOpen} onOpenChange={setIsComprehensiveOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Comprehensive Wellness Assessment</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Comprehensive Assessment...</p>
+                </div>
+              }>
+                <ComprehensiveWellnessPopOut />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
+
+        <MegaDialog open={isCoachOpen} onOpenChange={setIsCoachOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Wellness Coach</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Wellness Coach...</p>
+                </div>
+              }>
+                <WellnessCoachPopOut />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
 
         {/* Grid-style cards layout (similar to Learning section) */}
         <div className="px-2">
