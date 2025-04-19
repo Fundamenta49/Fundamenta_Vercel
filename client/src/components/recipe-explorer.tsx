@@ -42,16 +42,52 @@ const RecipeExplorer = () => {
   const [activeTab, setActiveTab] = useState('discover');
   const [loadingRecipes, setLoadingRecipes] = useState(false);
   const [loadingVideos, setLoadingVideos] = useState(false);
+  const [apiRateLimited, setApiRateLimited] = useState(false);
+  const [apiErrorMessage, setApiErrorMessage] = useState('');
 
   // Load recipes for basic home cooking meals on component mount
   useEffect(() => {
     fetchBasicHomeCookingRecipes();
   }, []);
 
+  // Check API status first
+  const checkApiStatus = async () => {
+    try {
+      const statusResponse = await fetch('/api/cooking/spoonacular-status');
+      const status = await statusResponse.json();
+      
+      if (status.status === 'rate_limited') {
+        setApiRateLimited(true);
+        setApiErrorMessage(status.details || 'API daily limit reached. Please try again later.');
+        return false;
+      } else if (status.status === 'error') {
+        setApiErrorMessage(status.message || 'Spoonacular API error');
+        return false;
+      }
+      
+      // Reset API error states if the API is working
+      setApiRateLimited(false);
+      setApiErrorMessage('');
+      return true;
+    } catch (error) {
+      console.error('Error checking API status:', error);
+      setApiErrorMessage('Could not connect to the recipe API');
+      return false;
+    }
+  };
+
   // Fetch basic home-style recipes that beginners can easily make
   const fetchBasicHomeCookingRecipes = async () => {
     try {
       setLoadingRecipes(true);
+      
+      // Check API status first
+      const apiIsAvailable = await checkApiStatus();
+      if (!apiIsAvailable) {
+        setLoadingRecipes(false);
+        return;
+      }
+      
       // Focus on simple, popular dishes for beginners
       const basicHomeCookingDishes = [
         "mac and cheese", 
@@ -80,12 +116,24 @@ const RecipeExplorer = () => {
       setRandomRecipes(combinedRecipes);
     } catch (error) {
       console.error('Error fetching home cooking recipes:', error);
-      // Fallback to random recipes if the specific search fails
-      try {
-        const response = await SpoonacularService.getRandomRecipes(8);
-        setRandomRecipes(response.recipes || []);
-      } catch (fallbackError) {
-        console.error('Fallback error:', fallbackError);
+      
+      // Check if this is a rate limit error
+      if (typeof error === 'object' && error !== null && 'status' in error && error.status === 402) {
+        setApiRateLimited(true);
+        setApiErrorMessage('Spoonacular API daily points limit has been reached. Please try again tomorrow.');
+      } else {
+        // Fallback to random recipes if the specific search fails
+        try {
+          const response = await SpoonacularService.getRandomRecipes(8);
+          setRandomRecipes(response.recipes || []);
+        } catch (fallbackError) {
+          console.error('Fallback error:', fallbackError);
+          // Check if the fallback also failed due to rate limits
+          if (typeof fallbackError === 'object' && fallbackError !== null && 'status' in fallbackError && fallbackError.status === 402) {
+            setApiRateLimited(true);
+            setApiErrorMessage('Spoonacular API daily points limit has been reached. Please try again tomorrow.');
+          }
+        }
       }
     } finally {
       setLoadingRecipes(false);
@@ -100,19 +148,47 @@ const RecipeExplorer = () => {
       setLoadingRecipes(true);
       setLoadingVideos(true);
       
-      // Search for recipes via Spoonacular
-      const response = await fetch(`/api/cooking/recipes/search?query=${encodeURIComponent(searchQuery)}`);
-      const data = await response.json();
-      setRecipes(data.results || []);
+      // Check API status first
+      const apiIsAvailable = await checkApiStatus();
       
-      // Search for videos on YouTube
-      const videoResults = await searchCookingVideos(searchQuery);
-      setVideos(videoResults);
+      // Only perform Spoonacular search if API is available
+      if (apiIsAvailable) {
+        // Search for recipes via Spoonacular
+        const response = await fetch(`/api/cooking/recipes/search?query=${encodeURIComponent(searchQuery)}`);
+        
+        // Check if this is an error response
+        if (!response.ok) {
+          const errorData = await response.json();
+          if (response.status === 402 || (errorData && errorData.code === 402)) {
+            setApiRateLimited(true);
+            setApiErrorMessage('Spoonacular API daily points limit has been reached. Please try again tomorrow.');
+          } else {
+            console.error('Error from API:', errorData);
+          }
+        } else {
+          const data = await response.json();
+          setRecipes(data.results || []);
+        }
+      }
+      
+      // Search for videos on YouTube (this should work even if Spoonacular is rate limited)
+      try {
+        const videoResults = await searchCookingVideos(searchQuery);
+        setVideos(videoResults);
+      } catch (videoError) {
+        console.error('Error searching for videos:', videoError);
+      }
       
       // Switch to the results tab
       setActiveTab('results');
     } catch (error) {
       console.error('Error searching for recipes:', error);
+      
+      // Check if this is a rate limit error
+      if (typeof error === 'object' && error !== null && 'status' in error && error.status === 402) {
+        setApiRateLimited(true);
+        setApiErrorMessage('Spoonacular API daily points limit has been reached. Please try again tomorrow.');
+      }
     } finally {
       setLoadingRecipes(false);
       setLoadingVideos(false);
