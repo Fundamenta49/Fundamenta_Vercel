@@ -1,5 +1,5 @@
 import { Switch, Route, useLocation } from "wouter";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -188,6 +188,34 @@ function Router() {
             <Route path="/fitness">
               <ProtectedRoute>
                 <FitnessRedirect />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/cooking">
+              <ProtectedRoute>
+                <Suspense fallback={<div>Loading...</div>}>
+                  {lazy(() => import("@/pages/cooking"))}
+                </Suspense>
+              </ProtectedRoute>
+            </Route>
+            <Route path="/cooking/recipes">
+              <ProtectedRoute>
+                <Suspense fallback={<div>Loading...</div>}>
+                  {lazy(() => import("@/pages/cooking/recipes"))}
+                </Suspense>
+              </ProtectedRoute>
+            </Route>
+            <Route path="/cooking/meal-plan">
+              <ProtectedRoute>
+                <Suspense fallback={<div>Loading...</div>}>
+                  {lazy(() => import("@/pages/cooking/meal-plan"))}
+                </Suspense>
+              </ProtectedRoute>
+            </Route>
+            <Route path="/cooking/techniques">
+              <ProtectedRoute>
+                <Suspense fallback={<div>Loading...</div>}>
+                  {lazy(() => import("@/pages/cooking/techniques"))}
+                </Suspense>
               </ProtectedRoute>
             </Route>
             <Route path="/yoga-test">
