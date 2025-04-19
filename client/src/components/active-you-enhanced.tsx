@@ -629,7 +629,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     } else if (exerciseType === 'stretch') {
       setSelectedExercise(stretchExercises[exerciseKey]);
     }
-    setDialogOpen(true);
+    setExerciseDetailOpen(true);
   };
   
   // Function to show exercise details from running exercises component
@@ -655,7 +655,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     };
     
     setSelectedExercise(exerciseDetails);
-    setDialogOpen(true);
+    setExerciseDetailOpen(true);
   };
   
   // Function to handle completion of yoga prompt flow
@@ -2033,207 +2033,202 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       {/* The component content based on the tab */}
       {tabContent}
       
-      {/* Exercise Details Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-3xl">
+      {/* Exercise Details MegaDialog */}
+      <MegaDialog open={exerciseDetailOpen} onOpenChange={setExerciseDetailOpen}>
+        <MegaDialogContent className="bg-white dark:bg-gray-950">
           {selectedExercise && (
             <>
-              <DialogHeader className="pb-2 border-b">
+              <MegaDialogHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <DialogTitle className="text-2xl font-bold text-gray-900">{selectedExercise?.name}</DialogTitle>
-                    <DialogDescription className="text-gray-600 mt-1">
+                    <MegaDialogTitle className="text-2xl font-bold text-gray-900">{selectedExercise?.name}</MegaDialogTitle>
+                    <MegaDialogDescription className="text-gray-600 mt-1">
                       {selectedExercise?.category === 'yoga' ? 'Yoga Pose' : 'Stretching Exercise'}
-                    </DialogDescription>
+                    </MegaDialogDescription>
                   </div>
-                  <button 
-                    className="rounded-full p-2 hover:bg-gray-100 transition-colors" 
-                    onClick={() => setDialogOpen(false)}
-                  >
-                    <X size={20} />
-                  </button>
                 </div>
-              </DialogHeader>
-              
-              <div className="mt-4 space-y-8 max-h-[70vh] overflow-y-auto pr-2">
-                {selectedExercise?.imageUrl && (
-                  <div className="rounded-lg overflow-hidden shadow-md">
-                    <img 
-                      src={selectedExercise?.imageUrl} 
-                      alt={`${selectedExercise?.name} demonstration`} 
-                      className="w-full object-cover h-auto max-h-80 mx-auto" 
-                    />
-                  </div>
-                )}
-                
-                <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
-                  <div className="md:col-span-2 space-y-8">
-                    <div>
-                      <h3 className="text-lg font-medium mb-3 text-gray-800">Description</h3>
-                      <p className="text-gray-700 leading-relaxed">{selectedExercise?.description}</p>
+              </MegaDialogHeader>
+              <MegaDialogBody>
+                <div className="mt-4 space-y-8">
+                  {selectedExercise?.imageUrl && (
+                    <div className="rounded-lg overflow-hidden shadow-md">
+                      <img 
+                        src={selectedExercise?.imageUrl} 
+                        alt={`${selectedExercise?.name} demonstration`} 
+                        className="w-full object-cover h-auto max-h-80 mx-auto" 
+                      />
                     </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-medium mb-3 text-blue-800 flex items-center">
-                        <span>How to Perform</span>
-                      </h3>
-                      <ol className="list-decimal pl-5 space-y-2">
-                        {selectedExercise?.instructions.map((instruction, index) => (
-                          <li key={index} className="text-gray-700">{instruction}</li>
-                        ))}
-                      </ol>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-medium mb-3 text-green-800 flex items-center">
-                        <span>Benefits</span>
-                      </h3>
-                      <ul className="list-disc pl-5 space-y-2">
-                        {selectedExercise?.benefits.map((benefit, index) => (
-                          <li key={index} className="text-gray-700">{benefit}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+                  )}
                   
-                  <div className="space-y-8">
-                    <div>
-                      <h3 className="text-lg font-medium mb-3 text-amber-800 flex items-center">
-                        <span>Tips for Best Results</span>
-                      </h3>
-                      <ul className="list-disc pl-5 space-y-2">
-                        {selectedExercise?.tips.map((tip, index) => (
-                          <li key={index} className="text-gray-700">{tip}</li>
-                        ))}
-                      </ul>
+                  <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
+                    <div className="md:col-span-2 space-y-8">
+                      <div>
+                        <h3 className="text-lg font-medium mb-3 text-gray-800">Description</h3>
+                        <p className="text-gray-700 leading-relaxed">{selectedExercise?.description}</p>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-lg font-medium mb-3 text-blue-800 flex items-center">
+                          <span>How to Perform</span>
+                        </h3>
+                        <ol className="list-decimal pl-5 space-y-2">
+                          {selectedExercise?.instructions.map((instruction, index) => (
+                            <li key={index} className="text-gray-700">{instruction}</li>
+                          ))}
+                        </ol>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-lg font-medium mb-3 text-green-800 flex items-center">
+                          <span>Benefits</span>
+                        </h3>
+                        <ul className="list-disc pl-5 space-y-2">
+                          {selectedExercise?.benefits.map((benefit, index) => (
+                            <li key={index} className="text-gray-700">{benefit}</li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                     
-                    {selectedExercise?.videoUrl && (
-                      <div className="mt-6 mb-4">
-                        <h3 className="text-lg font-medium mb-3 text-gray-800">Video Tutorial</h3>
-                        <div 
-                          className="relative aspect-video w-full overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-all duration-200" 
-                          onClick={() => setVideoFullscreen(true)}
-                        >
-                          {/* Create responsive container for the video that works well on mobile */}
-                          <div className="relative pb-[56.25%] h-0 overflow-hidden">
-                            <iframe 
-                              className="absolute top-0 left-0 w-full h-full"
-                              src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
-                              title={`${selectedExercise.name} tutorial video`}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                              allowFullScreen
-                              loading="lazy"
-                            ></iframe>
-                          </div>
-                          <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 flex items-center justify-center transition-all duration-200">
-                            <Maximize2 className="h-12 w-12 text-white opacity-0 hover:opacity-100 filter drop-shadow-lg" />
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between gap-2 mt-3">
-                          <a 
-                            href={selectedExercise.videoUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
-                          >
-                            <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                            Open on YouTube
-                          </a>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="text-sm flex items-center gap-1.5"
+                    <div className="space-y-8">
+                      <div>
+                        <h3 className="text-lg font-medium mb-3 text-amber-800 flex items-center">
+                          <span>Tips for Best Results</span>
+                        </h3>
+                        <ul className="list-disc pl-5 space-y-2">
+                          {selectedExercise?.tips.map((tip, index) => (
+                            <li key={index} className="text-gray-700">{tip}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      {selectedExercise?.videoUrl && (
+                        <div className="mt-6 mb-4">
+                          <h3 className="text-lg font-medium mb-3 text-gray-800">Video Tutorial</h3>
+                          <div 
+                            className="relative aspect-video w-full overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-all duration-200" 
                             onClick={() => setVideoFullscreen(true)}
                           >
-                            <Maximize2 className="h-3.5 w-3.5" />
-                            Full Screen
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Display animation if available */}
-                    {selectedExercise?.animationUrl && (
-                      <div className="mt-6 mb-4">
-                        <h3 className="text-lg font-medium mb-3 text-gray-800">Animation Guide</h3>
-                        <div className="overflow-hidden rounded-lg border shadow-md">
-                          <div className="relative pb-[75%] h-0 overflow-hidden bg-gray-50 flex items-center justify-center">
-                            <img 
-                              src={selectedExercise.animationUrl}
-                              alt={`${selectedExercise.name} animation`}
-                              className="absolute top-0 left-0 w-full h-full object-contain"
-                              loading="lazy"
-                            />
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-600 mt-2">
-                          This animation demonstrates proper form for the {selectedExercise.name.toLowerCase()}.
-                        </p>
-                      </div>
-                    )}
-                    
-                    {/* Full-screen Video Dialog */}
-                    {videoFullscreen && selectedExercise?.videoUrl && (
-                      <Dialog 
-                        open={videoFullscreen} 
-                        onOpenChange={setVideoFullscreen}
-                        modal={true}
-                      >
-                        <DialogContent className="max-w-[95vw] w-full max-h-[90vh] p-0 border-none bg-black">
-                          <DialogTitle className="sr-only">
-                            {selectedExercise.name} Video Tutorial
-                          </DialogTitle>
-                          <DialogDescription className="sr-only">
-                            Full screen video tutorial for {selectedExercise.name}
-                          </DialogDescription>
-                          <div className="relative w-full h-[90vh]">
-                            {/* Responsive container for fullscreen video that works on mobile too */}
+                            {/* Create responsive container for the video that works well on mobile */}
                             <div className="relative pb-[56.25%] h-0 overflow-hidden">
                               <iframe 
                                 className="absolute top-0 left-0 w-full h-full"
                                 src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
-                                title={`${selectedExercise.name} tutorial video (fullscreen)`}
+                                title={`${selectedExercise.name} tutorial video`}
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                 allowFullScreen
                                 loading="lazy"
                               ></iframe>
                             </div>
-                            <Button 
-                              className="absolute top-2 right-2 rounded-full p-2 h-10 w-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white"
-                              onClick={() => setVideoFullscreen(false)}
+                            <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 flex items-center justify-center transition-all duration-200">
+                              <Maximize2 className="h-12 w-12 text-white opacity-0 hover:opacity-100 filter drop-shadow-lg" />
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between gap-2 mt-3">
+                            <a 
+                              href={selectedExercise.videoUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
                             >
-                              <X className="h-5 w-5" />
+                              <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                              Open on YouTube
+                            </a>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-sm flex items-center gap-1.5"
+                              onClick={() => setVideoFullscreen(true)}
+                            >
+                              <Maximize2 className="h-3.5 w-3.5" />
+                              Full Screen
                             </Button>
                           </div>
-                        </DialogContent>
-                      </Dialog>
-                    )}
-                    
-                    {cameraEnabled && (
-                      <div className="mt-4">
-                        <h3 className="text-lg font-medium mb-3 text-blue-800">Form Analysis</h3>
-                        <div className="flex items-center justify-center gap-2">
-                          <Button 
-                            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 shadow-md"
-                            onClick={() => {
-                              setDialogOpen(false);
-                              setTimeout(() => {
-                                analyzeUserPose();
-                              }, 500);
-                            }}
-                          >
-                            <Camera className="h-4 w-4" />
-                            Analyze My Form
-                          </Button>
                         </div>
-                      </div>
-                    )}
+                      )}
+                      
+                      {/* Display animation if available */}
+                      {selectedExercise?.animationUrl && (
+                        <div className="mt-6 mb-4">
+                          <h3 className="text-lg font-medium mb-3 text-gray-800">Animation Guide</h3>
+                          <div className="overflow-hidden rounded-lg border shadow-md">
+                            <div className="relative pb-[75%] h-0 overflow-hidden bg-gray-50 flex items-center justify-center">
+                              <img 
+                                src={selectedExercise.animationUrl}
+                                alt={`${selectedExercise.name} animation`}
+                                className="absolute top-0 left-0 w-full h-full object-contain"
+                                loading="lazy"
+                              />
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-2">
+                            This animation demonstrates proper form for the {selectedExercise.name.toLowerCase()}.
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* Full-screen Video Dialog */}
+                      {videoFullscreen && selectedExercise?.videoUrl && (
+                        <Dialog 
+                          open={videoFullscreen} 
+                          onOpenChange={setVideoFullscreen}
+                          modal={true}
+                        >
+                          <DialogContent className="max-w-[95vw] w-full max-h-[90vh] p-0 border-none bg-black">
+                            <DialogTitle className="sr-only">
+                              {selectedExercise.name} Video Tutorial
+                            </DialogTitle>
+                            <DialogDescription className="sr-only">
+                              Full screen video tutorial for {selectedExercise.name}
+                            </DialogDescription>
+                            <div className="relative w-full h-[90vh]">
+                              {/* Responsive container for fullscreen video that works on mobile too */}
+                              <div className="relative pb-[56.25%] h-0 overflow-hidden">
+                                <iframe 
+                                  className="absolute top-0 left-0 w-full h-full"
+                                  src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
+                                  title={`${selectedExercise.name} tutorial video (fullscreen)`}
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                  allowFullScreen
+                                  loading="lazy"
+                                ></iframe>
+                              </div>
+                              <Button 
+                                className="absolute top-2 right-2 rounded-full p-2 h-10 w-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white"
+                                onClick={() => setVideoFullscreen(false)}
+                              >
+                                <X className="h-5 w-5" />
+                              </Button>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                      
+                      {cameraEnabled && (
+                        <div className="mt-4">
+                          <h3 className="text-lg font-medium mb-3 text-blue-800">Form Analysis</h3>
+                          <div className="flex items-center justify-center gap-2">
+                            <Button 
+                              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 shadow-md"
+                              onClick={() => {
+                                setExerciseDetailOpen(false);
+                                setTimeout(() => {
+                                  analyzeUserPose();
+                                }, 500);
+                              }}
+                            >
+                              <Camera className="h-4 w-4" />
+                              Analyze My Form
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </MegaDialogBody>
               
-              <DialogFooter className="flex justify-between mt-6 pt-4 border-t">
+              <MegaDialogFooter className="flex justify-between mt-6 pt-4 border-t">
                 <Button
                   variant="outline"
                   onClick={() => alert("Please use Fundi for AI assistance")}
@@ -2244,16 +2239,16 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </Button>
                 
                 <Button
-                  onClick={() => setDialogOpen(false)}
+                  onClick={() => setExerciseDetailOpen(false)}
                   className="shadow-sm hover:shadow-md transition-all"
                 >
                   Close
                 </Button>
-              </DialogFooter>
+              </MegaDialogFooter>
             </>
           )}
-        </DialogContent>
-      </Dialog>
+        </MegaDialogContent>
+      </MegaDialog>
       
       {/* Yoga Prompt Flow */}
       {yogaPromptOpen && (
