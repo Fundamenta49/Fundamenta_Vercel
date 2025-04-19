@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { 
+  FullScreenDialog,
+  FullScreenDialogContent
+} from "@/components/ui/full-screen-dialog";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -168,19 +171,11 @@ export default function CareerNew() {
       </div>
       
       {/* Fullscreen Dialog for selected tool */}
-      <Dialog open={openTool !== null} onOpenChange={(open) => !open && setOpenTool(null)}>
-        <DialogContent className="max-w-6xl w-[calc(100%-2rem)] h-[90vh] block">
-          <DialogHeader className="flex flex-row items-center justify-between">
-            <DialogTitle>{getCurrentTitle()}</DialogTitle>
-            <Button variant="ghost" size="icon" onClick={() => setOpenTool(null)}>
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogHeader>
-          <div className="overflow-y-auto py-4" style={{ maxHeight: 'calc(90vh - 80px)' }}>
-            {ToolComponent && <ToolComponent />}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <FullScreenDialog open={openTool !== null} onOpenChange={(open) => !open && setOpenTool(null)}>
+        <FullScreenDialogContent themeColor="#3b82f6">
+          {ToolComponent && <ToolComponent />}
+        </FullScreenDialogContent>
+      </FullScreenDialog>
     </div>
   );
 }
