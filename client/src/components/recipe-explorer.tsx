@@ -344,7 +344,7 @@ const RecipeExplorer = () => {
               ))
             ) : (
               videos.map(video => (
-                <Card key={video.id} className="overflow-hidden flex flex-col h-full">
+                <Card key={video.id} className="overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow">
                   <div 
                     className="aspect-video relative cursor-pointer" 
                     onClick={() => {
@@ -361,18 +361,18 @@ const RecipeExplorer = () => {
                       <PlayCircle className="h-16 w-16 text-white" />
                     </div>
                   </div>
-                  <CardHeader className="p-4 pb-2">
-                    <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
-                    <CardDescription className="line-clamp-1">
+                  <CardHeader className="p-3 pb-0">
+                    <CardTitle className="text-base line-clamp-2 h-12">{video.title}</CardTitle>
+                    <CardDescription className="line-clamp-1 min-h-[20px]">
                       {video.channelTitle}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-4 pt-0 flex-grow">
-                    <p className="text-sm text-gray-600 line-clamp-3">
+                  <CardContent className="p-3 pt-2 flex-grow">
+                    <p className="text-sm text-gray-600 line-clamp-3 h-[60px]">
                       {video.description}
                     </p>
                   </CardContent>
-                  <CardFooter className="p-4 pt-0">
+                  <CardFooter className="p-3 pt-0">
                     <Button 
                       variant="outline" 
                       className="w-full"
