@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, BookOpen, School, FileText, MessageSquare, Brain, Scale } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Briefcase, BookOpen, School, FileText, MessageSquare, Brain, Scale, Network, ArrowRight, X } from 'lucide-react';
 
 // Import components for Career tools
 import ResumeBuilder from '@/components/career/resume-builder';
@@ -22,8 +23,83 @@ const CAREER_SKILLS = [
   { name: 'Workplace Rights', icon: <Scale className="h-4 w-4" />, level: 'Intermediate' },
 ];
 
+// Career tools data
+const CAREER_TOOLS = [
+  {
+    id: 'resume-builder',
+    title: 'Resume Builder',
+    description: 'Create a professional resume with our step-by-step builder',
+    icon: <FileText className="h-8 w-8" />,
+    component: ResumeBuilder,
+    color: 'bg-blue-50 dark:bg-blue-950'
+  },
+  {
+    id: 'job-search',
+    title: 'Job Search',
+    description: 'Find and apply to jobs that match your skills and interests',
+    icon: <Briefcase className="h-8 w-8" />,
+    component: JobSearch,
+    color: 'bg-green-50 dark:bg-green-950'
+  },
+  {
+    id: 'fundamenta-connects',
+    title: 'Fundamenta Connects',
+    description: 'Connect with professionals, mentors, and networking opportunities',
+    icon: <Network className="h-8 w-8" />,
+    component: JobSearch, // Placeholder - will need its own component
+    color: 'bg-purple-50 dark:bg-purple-950'
+  },
+  {
+    id: 'interview-practice',
+    title: 'Interview Practice',
+    description: 'Prepare for interviews with practice questions and feedback',
+    icon: <MessageSquare className="h-8 w-8" />,
+    component: InterviewPractice,
+    color: 'bg-amber-50 dark:bg-amber-950'
+  },
+  {
+    id: 'career-assessment',
+    title: 'Career Assessment',
+    description: 'Discover your strengths, interests, and career options',
+    icon: <School className="h-8 w-8" />,
+    component: CareerAssessment,
+    color: 'bg-rose-50 dark:bg-rose-950'
+  },
+  {
+    id: 'emotional-resilience',
+    title: 'EQ & Resilience',
+    description: 'Build emotional intelligence and resilience in the workplace',
+    icon: <Brain className="h-8 w-8" />,
+    component: EmotionalResilience,
+    color: 'bg-indigo-50 dark:bg-indigo-950'
+  },
+  {
+    id: 'employment-rights',
+    title: 'Employment Rights',
+    description: 'Learn about your rights and protections in the workplace',
+    icon: <Scale className="h-8 w-8" />,
+    component: EmploymentRights,
+    color: 'bg-cyan-50 dark:bg-cyan-950'
+  }
+];
+
 export default function CareerNew() {
-  const [activeTab, setActiveTab] = useState('resume-builder');
+  const [openTool, setOpenTool] = useState<string | null>(null);
+  
+  // Get the component for the current tool
+  const getCurrentComponent = () => {
+    const tool = CAREER_TOOLS.find(tool => tool.id === openTool);
+    return tool ? tool.component : null;
+  };
+
+  // Get the title for the current tool
+  const getCurrentTitle = () => {
+    const tool = CAREER_TOOLS.find(tool => tool.id === openTool);
+    return tool ? tool.title : '';
+  };
+  
+  // Component to render inside the dialog
+  const ToolComponent = getCurrentComponent();
 
   return (
     <div className="container mx-auto py-6 space-y-8">
@@ -66,77 +142,45 @@ export default function CareerNew() {
         </Card>
       </div>
       
-      {/* Career Tools Tabs */}
-      <Tabs defaultValue="resume-builder" value={activeTab} onValueChange={setActiveTab}>
-        <div className="border-b">
-          <div className="flex items-center justify-between py-2">
-            <TabsList className="w-full justify-start rounded-none bg-transparent p-0">
-              <TabsTrigger 
-                value="resume-builder"
-                className="relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                Resume Builder
-              </TabsTrigger>
-              <TabsTrigger 
-                value="job-search"
-                className="relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                <Briefcase className="h-4 w-4 mr-2" />
-                Job Search
-              </TabsTrigger>
-              <TabsTrigger 
-                value="interview-practice"
-                className="relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Interview Practice
-              </TabsTrigger>
-              <TabsTrigger 
-                value="career-assessment"
-                className="hidden sm:flex relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                <School className="h-4 w-4 mr-2" />
-                Career Assessment
-              </TabsTrigger>
-              <TabsTrigger 
-                value="emotional-resilience"
-                className="hidden md:flex relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                <Brain className="h-4 w-4 mr-2" />
-                EQ & Resilience
-              </TabsTrigger>
-              <TabsTrigger 
-                value="employment-rights"
-                className="hidden lg:flex relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                <Scale className="h-4 w-4 mr-2" />
-                Employment Rights
-              </TabsTrigger>
-            </TabsList>
+      {/* Career Tools Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {CAREER_TOOLS.map((tool) => (
+          <Card key={tool.id} className={`overflow-hidden transition-all hover:shadow-md ${tool.color}`}>
+            <CardHeader className="pb-2">
+              <div className="flex items-start justify-between">
+                <div className="p-2 rounded-md bg-white/20 backdrop-blur-sm dark:bg-black/20">
+                  {tool.icon}
+                </div>
+              </div>
+              <CardTitle className="mt-2">{tool.title}</CardTitle>
+              <CardDescription>
+                {tool.description}
+              </CardDescription>
+            </CardHeader>
+            <CardFooter>
+              <Button variant="secondary" className="w-full" onClick={() => setOpenTool(tool.id)}>
+                Open
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+      
+      {/* Fullscreen Dialog for selected tool */}
+      <Dialog open={openTool !== null} onOpenChange={(open) => !open && setOpenTool(null)}>
+        <DialogContent className="max-w-6xl w-[calc(100%-2rem)] h-[90vh] block">
+          <DialogHeader className="flex flex-row items-center justify-between">
+            <DialogTitle>{getCurrentTitle()}</DialogTitle>
+            <Button variant="ghost" size="icon" onClick={() => setOpenTool(null)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </DialogHeader>
+          <div className="overflow-y-auto py-4" style={{ maxHeight: 'calc(90vh - 80px)' }}>
+            {ToolComponent && <ToolComponent />}
           </div>
-        </div>
-        <div className="py-4">
-          <TabsContent value="resume-builder" className="m-0">
-            <ResumeBuilder />
-          </TabsContent>
-          <TabsContent value="job-search" className="m-0">
-            <JobSearch />
-          </TabsContent>
-          <TabsContent value="interview-practice" className="m-0">
-            <InterviewPractice />
-          </TabsContent>
-          <TabsContent value="career-assessment" className="m-0">
-            <CareerAssessment />
-          </TabsContent>
-          <TabsContent value="emotional-resilience" className="m-0">
-            <EmotionalResilience />
-          </TabsContent>
-          <TabsContent value="employment-rights" className="m-0">
-            <EmploymentRights />
-          </TabsContent>
-        </div>
-      </Tabs>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
