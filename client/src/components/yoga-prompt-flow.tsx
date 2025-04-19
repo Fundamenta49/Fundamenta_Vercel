@@ -16,13 +16,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  FullScreenDialog,
-  FullScreenDialogContent,
-  FullScreenDialogTitle,
-  FullScreenDialogDescription,
-  FullScreenDialogBody,
-  FullScreenDialogHeader,
-} from "@/components/ui/full-screen-dialog";
+  MegaDialog,
+  MegaDialogContent,
+  MegaDialogTitle,
+  MegaDialogDescription,
+  MegaDialogBody,
+  MegaDialogHeader,
+  MegaDialogFooter
+} from "@/components/ui/mega-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -837,54 +838,27 @@ export default function YogaPromptFlow({ onComplete, onClose }: YogaPromptFlowPr
 
   return (
     <>
-      {isMobile ? (
-        <FullScreenDialog
-          open={true}
-          onOpenChange={() => onClose && onClose()}
+      <MegaDialog
+        open={true}
+        onOpenChange={() => onClose && onClose()}
+      >
+        <MegaDialogContent
+          className="bg-background p-0"
+          style={{
+            /* Purple theme color for yoga flow */
+            overflowY: 'auto',
+            overscrollBehavior: 'contain'
+          }}
         >
-          <FullScreenDialogContent
-            className="bg-background p-0"
-            themeColor="#8a63d2" /* Purple theme color for yoga flow */
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              width: '100vw',
-              height: '100vh',
-              maxWidth: '100vw',
-              maxHeight: '100vh',
-              margin: 0,
-              padding: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              borderRadius: 0
-            }}
-          >
+          {/* Hidden MegaDialogTitle for accessibility */}
+          <MegaDialogTitle className="sr-only">Yoga Session Flow</MegaDialogTitle>
+          <MegaDialogDescription className="sr-only">Personalized yoga sessions and prompts</MegaDialogDescription>
+          
+          <MegaDialogBody>
             {renderPrompt()}
-          </FullScreenDialogContent>
-        </FullScreenDialog>
-      ) : (
-        <Dialog 
-          open={true} 
-          onOpenChange={() => onClose && onClose()}
-        >
-          <DialogContent 
-            className="p-0 rounded-lg border bg-background max-w-md md:max-w-lg max-h-[90vh]"
-            style={{
-              overflowY: 'auto',
-              overscrollBehavior: 'contain'
-            }}
-          >
-            {/* Hidden DialogTitle for accessibility */}
-            <DialogTitle className="sr-only">Yoga Session Flow</DialogTitle>
-            <DialogDescription className="sr-only">Personalized yoga sessions and prompts</DialogDescription>
-            
-            {renderPrompt()}
-          </DialogContent>
-        </Dialog>
-      )}
+          </MegaDialogBody>
+        </MegaDialogContent>
+      </MegaDialog>
     </>
   );
 }

@@ -2167,41 +2167,42 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                         </div>
                       )}
                       
-                      {/* Full-screen Video Dialog */}
+                      {/* Full-screen Video MegaDialog */}
                       {videoFullscreen && selectedExercise?.videoUrl && (
-                        <Dialog 
+                        <MegaDialog 
                           open={videoFullscreen} 
                           onOpenChange={setVideoFullscreen}
-                          modal={true}
                         >
-                          <DialogContent className="max-w-[95vw] w-full max-h-[90vh] p-0 border-none bg-black">
-                            <DialogTitle className="sr-only">
+                          <MegaDialogContent className="p-0 border-none bg-black">
+                            <MegaDialogTitle className="sr-only">
                               {selectedExercise.name} Video Tutorial
-                            </DialogTitle>
-                            <DialogDescription className="sr-only">
+                            </MegaDialogTitle>
+                            <MegaDialogDescription className="sr-only">
                               Full screen video tutorial for {selectedExercise.name}
-                            </DialogDescription>
-                            <div className="relative w-full h-[90vh]">
-                              {/* Responsive container for fullscreen video that works on mobile too */}
-                              <div className="relative pb-[56.25%] h-0 overflow-hidden">
-                                <iframe 
-                                  className="absolute top-0 left-0 w-full h-full"
-                                  src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
-                                  title={`${selectedExercise.name} tutorial video (fullscreen)`}
-                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                  allowFullScreen
-                                  loading="lazy"
-                                ></iframe>
+                            </MegaDialogDescription>
+                            <MegaDialogBody className="p-0">
+                              <div className="relative w-full h-[90vh]">
+                                {/* Responsive container for fullscreen video that works on mobile too */}
+                                <div className="relative pb-[56.25%] h-0 overflow-hidden">
+                                  <iframe 
+                                    className="absolute top-0 left-0 w-full h-full"
+                                    src={selectedExercise.videoUrl.replace('watch?v=', 'embed/')} 
+                                    title={`${selectedExercise.name} tutorial video (fullscreen)`}
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowFullScreen
+                                    loading="lazy"
+                                  ></iframe>
+                                </div>
+                                <Button 
+                                  className="absolute top-2 right-2 rounded-full p-2 h-10 w-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white"
+                                  onClick={() => setVideoFullscreen(false)}
+                                >
+                                  <X className="h-5 w-5" />
+                                </Button>
                               </div>
-                              <Button 
-                                className="absolute top-2 right-2 rounded-full p-2 h-10 w-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white"
-                                onClick={() => setVideoFullscreen(false)}
-                              >
-                                <X className="h-5 w-5" />
-                              </Button>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
+                            </MegaDialogBody>
+                          </MegaDialogContent>
+                        </MegaDialog>
                       )}
                       
                       {cameraEnabled && (
