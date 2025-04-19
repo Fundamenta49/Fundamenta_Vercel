@@ -180,8 +180,8 @@ const RecipeExplorer = () => {
               ))
             ) : (
               randomRecipes.map(recipe => (
-                <Card key={recipe.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="relative h-[200px] overflow-hidden">
+                <Card key={recipe.id} className="overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full">
+                  <div className="relative h-[180px] overflow-hidden">
                     {recipe.image ? (
                       <img 
                         src={recipe.image} 
@@ -200,10 +200,10 @@ const RecipeExplorer = () => {
                       </div>
                     )}
                   </div>
-                  <CardHeader className="p-4 pb-0">
-                    <CardTitle className="text-lg line-clamp-2">{recipe.title}</CardTitle>
+                  <CardHeader className="p-3 pb-0">
+                    <CardTitle className="text-base line-clamp-2 h-12">{recipe.title}</CardTitle>
                     {recipe.dishTypes && recipe.dishTypes.length > 0 && (
-                      <CardDescription className="flex flex-wrap gap-1 mt-1">
+                      <CardDescription className="flex flex-wrap gap-1 mt-1 min-h-[24px]">
                         {recipe.dishTypes.slice(0, 2).map(type => (
                           <Badge key={type} variant="outline" className="text-xs">
                             {type}
@@ -212,14 +212,14 @@ const RecipeExplorer = () => {
                       </CardDescription>
                     )}
                   </CardHeader>
-                  <CardContent className="p-4 pt-2">
+                  <CardContent className="p-3 pt-2 flex-grow">
                     {recipe.summary && (
-                      <p className="text-sm text-gray-600 line-clamp-2" 
+                      <p className="text-sm text-gray-600 line-clamp-2 h-10" 
                         dangerouslySetInnerHTML={{ __html: recipe.summary }}
                       />
                     )}
                   </CardContent>
-                  <CardFooter className="p-4 pt-0">
+                  <CardFooter className="p-3 pt-0">
                     <Button 
                       onClick={() => viewRecipeDetails(recipe.id)}
                       variant="outline" 
@@ -262,8 +262,8 @@ const RecipeExplorer = () => {
               ))
             ) : (
               recipes.map(recipe => (
-                <Card key={recipe.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="relative h-[200px] overflow-hidden">
+                <Card key={recipe.id} className="overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full">
+                  <div className="relative h-[180px] overflow-hidden">
                     {recipe.image ? (
                       <img 
                         src={recipe.image} 
@@ -282,10 +282,10 @@ const RecipeExplorer = () => {
                       </div>
                     )}
                   </div>
-                  <CardHeader className="p-4 pb-0">
-                    <CardTitle className="text-lg line-clamp-2">{recipe.title}</CardTitle>
+                  <CardHeader className="p-3 pb-0">
+                    <CardTitle className="text-base line-clamp-2 h-12">{recipe.title}</CardTitle>
                     {recipe.dishTypes && recipe.dishTypes.length > 0 && (
-                      <CardDescription className="flex flex-wrap gap-1 mt-1">
+                      <CardDescription className="flex flex-wrap gap-1 mt-1 min-h-[24px]">
                         {recipe.dishTypes.slice(0, 2).map(type => (
                           <Badge key={type} variant="outline" className="text-xs">
                             {type}
@@ -294,14 +294,14 @@ const RecipeExplorer = () => {
                       </CardDescription>
                     )}
                   </CardHeader>
-                  <CardContent className="p-4 pt-2">
+                  <CardContent className="p-3 pt-2 flex-grow">
                     {recipe.summary && (
-                      <p className="text-sm text-gray-600 line-clamp-2" 
+                      <p className="text-sm text-gray-600 line-clamp-2 h-10" 
                         dangerouslySetInnerHTML={{ __html: recipe.summary }}
                       />
                     )}
                   </CardContent>
-                  <CardFooter className="p-4 pt-0">
+                  <CardFooter className="p-3 pt-0">
                     <Button 
                       onClick={() => viewRecipeDetails(recipe.id)}
                       variant="outline" 

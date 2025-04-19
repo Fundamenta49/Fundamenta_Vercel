@@ -20,6 +20,7 @@ export function RecipeDetailDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-screen h-screen max-w-none p-0 m-0 rounded-none border-none">
+        <DialogTitle className="sr-only">{recipe.title}</DialogTitle>
         <div className="absolute top-4 right-4 z-50">
           <Button 
             variant="outline" 
