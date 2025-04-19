@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import {
   Card,
   CardContent,
@@ -9,19 +9,23 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import ChatInterface, { FITNESS_CATEGORY } from "@/components/chat-interface";
+import { FITNESS_CATEGORY } from "@/components/chat-interface";
 import {
-  FullScreenDialog,
-  FullScreenDialogTrigger,
-  FullScreenDialogContent,
-  FullScreenDialogHeader,
-  FullScreenDialogTitle,
-  FullScreenDialogBody,
-} from "@/components/ui/full-screen-dialog";
+  MegaDialog,
+  MegaDialogContent,
+  MegaDialogHeader,
+  MegaDialogTitle,
+  MegaDialogBody,
+} from "@/components/ui/mega-dialog";
 
-import ActiveYou from "@/components/active-you";
-import FitnessProfile, { FitnessProfile as ProfileType } from "@/components/fitness-profile";
-import ProfileManager from "@/components/profile-manager";
+// Use lazy loading for better performance
+const ChatInterface = lazy(() => import("@/components/chat-interface"));
+const ActiveYou = lazy(() => import("@/components/active-you"));
+const FitnessProfile = lazy(() => import("@/components/fitness-profile"));
+const ProfileManager = lazy(() => import("@/components/profile-manager"));
+
+// Import FitnessProfile type
+import { FitnessProfile as ProfileType } from "@/components/fitness-profile";
 import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, Menu, ArrowRight, Flame, Activity, Waypoints } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -164,14 +168,61 @@ function SectionCard({
   );
 }
 
+// Skeleton loaders for different components
+function ComponentSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4">
+      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-md w-1/3"></div>
+      <div className="space-y-2">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md w-full"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md w-5/6"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md w-4/6"></div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+        <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md w-full"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md w-5/6"></div>
+      </div>
+    </div>
+  );
+}
+
+// Custom dialog content component that accepts themeColor
+interface CustomMegaDialogContentProps {
+  children?: React.ReactNode;
+  className?: string;
+  themeColor?: string;
+  open: boolean;
+  onClose: () => void;
+}
+
+const CustomMegaDialogContent: React.FC<CustomMegaDialogContentProps> = ({ 
+  children, 
+  className,
+  themeColor
+}) => {
+  return (
+    <MegaDialogContent 
+      className={cn("bg-white dark:bg-gray-950", className)}
+    >
+      {children}
+    </MegaDialogContent>
+  );
+};
+
 // Component for section dialog following design system guidelines
 function SectionDialog({ 
   section,
   onProfileUpdate,
+  open,
   onClose
 }: { 
   section: SectionType; 
   onProfileUpdate?: (profile: ProfileType) => void;
+  open: boolean;
   onClose: () => void;
 }) {
   const themeColor = SECTION_COLORS.wellness;
@@ -182,44 +233,38 @@ function SectionDialog({
     : section.props;
   
   return (
-    <FullScreenDialogContent themeColor={themeColor}>
-      {/* Menu button with proper positioning and z-index */}
-      <div className="absolute top-4 right-4 z-50">
-        <button 
-          className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
-          style={{ 
-            backgroundColor: `${themeColor}10`,
-            pointerEvents: "auto"
-          }}
-        >
-          <Menu style={{ color: themeColor }} />
-        </button>
-      </div>
-      
-      <FullScreenDialogHeader>
-        <FullScreenDialogTitle>
+    <CustomMegaDialogContent 
+      className="bg-white dark:bg-gray-950" 
+      themeColor={themeColor}
+      open={open}
+      onClose={onClose}
+    >
+      <MegaDialogHeader>
+        <MegaDialogTitle>
           <div className="flex items-center">
             <div className="h-6 w-6 mr-2 text-wellness-600 flex items-center">
               <section.icon />
             </div>
             <span style={{ color: themeColor }}>{section.title}</span>
           </div>
-        </FullScreenDialogTitle>
+        </MegaDialogTitle>
         <p className="text-sm text-muted-foreground mt-1">{section.description}</p>
-      </FullScreenDialogHeader>
+      </MegaDialogHeader>
       
-      <FullScreenDialogBody>
+      <MegaDialogBody>
         {section.alert && (
           <div className="mb-6">{section.alert}</div>
         )}
         
-        {section.id === 'coach' ? (
-          <ChatInterface category={FITNESS_CATEGORY} />
-        ) : (
-          <section.component {...componentProps} />
-        )}
-      </FullScreenDialogBody>
-    </FullScreenDialogContent>
+        <Suspense fallback={<ComponentSkeleton />}>
+          {section.id === 'coach' ? (
+            <ChatInterface category={FITNESS_CATEGORY} />
+          ) : (
+            <section.component {...componentProps} />
+          )}
+        </Suspense>
+      </MegaDialogBody>
+    </CustomMegaDialogContent>
   );
 }
 
@@ -316,26 +361,33 @@ export default function ActiveRedesigned() {
 
       {/* Grid layout for section cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {SECTIONS.map((section) => (
-          <FullScreenDialog key={section.id}>
-            <FullScreenDialogTrigger asChild>
-              <div className="h-full">
-                <SectionCard
-                  title={section.title}
-                  description={section.description}
-                  icon={section.icon}
-                  onClick={() => setActiveSection(section.id)}
-                />
-              </div>
-            </FullScreenDialogTrigger>
-            
-            <SectionDialog 
-              section={section}
-              onProfileUpdate={section.id === 'activeyou' ? handleProfileComplete : undefined}
-              onClose={() => setActiveSection(null)}
-            />
-          </FullScreenDialog>
-        ))}
+        {SECTIONS.map((section) => {
+          const isActive = activeSection === section.id;
+          
+          return (
+            <div key={section.id} className="h-full">
+              <SectionCard
+                title={section.title}
+                description={section.description}
+                icon={section.icon}
+                onClick={() => setActiveSection(section.id)}
+              />
+              
+              {isActive && (
+                <MegaDialog open={isActive} onOpenChange={(open) => {
+                  if (!open) setActiveSection(null);
+                }}>
+                  <SectionDialog 
+                    section={section}
+                    onProfileUpdate={section.id === 'activeyou' ? handleProfileComplete : undefined}
+                    open={isActive}
+                    onClose={() => setActiveSection(null)}
+                  />
+                </MegaDialog>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
