@@ -1,74 +1,164 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Search, MapPin, Building, Clock, Briefcase, ListFilter, ChevronDown } from 'lucide-react';
+import { Search, MapPin, Building, Clock, Briefcase, ListFilter, ChevronDown, AlertCircle, Loader2 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
-// Placeholder job data
-const SAMPLE_JOBS = [
-  {
-    id: 1,
-    title: 'Marketing Coordinator',
-    company: 'Global Marketing Inc.',
-    location: 'New York, NY',
-    type: 'Full-time',
-    salary: '$45,000 - $60,000',
-    posted: '2 days ago',
-    description: 'We are looking for a Marketing Coordinator to assist in the planning, execution and optimization of our marketing campaigns.',
-    requirements: [
-      'Bachelor\'s degree in Marketing or related field',
-      '1-3 years of experience in marketing',
-      'Excellent communication skills',
-      'Experience with social media platforms'
-    ],
-    tags: ['Marketing', 'Social Media', 'Content Creation']
-  },
-  {
-    id: 2,
-    title: 'Junior Web Developer',
-    company: 'Tech Solutions LLC',
-    location: 'Remote',
-    type: 'Full-time',
-    salary: '$60,000 - $80,000',
-    posted: '5 days ago',
-    description: 'Tech Solutions is seeking a passionate Junior Web Developer to join our innovative team.',
-    requirements: [
-      'Proficiency in HTML, CSS, and JavaScript',
-      'Experience with React or similar framework',
-      'Understanding of REST APIs',
-      'Basic knowledge of Node.js'
-    ],
-    tags: ['React', 'JavaScript', 'Web Development']
-  },
-  {
-    id: 3,
-    title: 'Customer Service Representative',
-    company: 'Customer First Corp',
-    location: 'Chicago, IL',
-    type: 'Part-time',
-    salary: '$18 - $22 per hour',
-    posted: '1 week ago',
-    description: 'Join our customer support team to provide exceptional service to our clients via phone, email, and chat.',
-    requirements: [
-      'High school diploma or equivalent',
-      'Previous customer service experience preferred',
-      'Strong communication skills',
-      'Basic computer proficiency'
-    ],
-    tags: ['Customer Service', 'Communication', 'Support']
+// Job interface matching the API response
+interface JobListing {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  description: string;
+  salary?: string;
+  url: string;
+  source: string;
+  postedDate: string;
+  type?: string;
+  requirements?: string[];
+  tags?: string[];
+}
+
+// Placeholder requirements and tags for jobs that don't have them
+const generateRequirements = (title: string): string[] => {
+  const commonRequirements = [
+    'Excellent communication skills',
+    'Problem-solving abilities',
+    'Team collaboration'
+  ];
+  
+  if (title.toLowerCase().includes('developer') || title.toLowerCase().includes('engineer')) {
+    return [
+      'Proficiency in modern programming languages',
+      'Experience with web development frameworks',
+      'Understanding of software development lifecycle',
+      ...commonRequirements
+    ];
+  } else if (title.toLowerCase().includes('marketing')) {
+    return [
+      'Experience with digital marketing platforms',
+      'Content creation skills',
+      'Understanding of marketing analytics',
+      ...commonRequirements
+    ];
+  } else if (title.toLowerCase().includes('manager')) {
+    return [
+      'Leadership experience',
+      'Project management skills',
+      'Strategic planning abilities',
+      ...commonRequirements
+    ];
   }
-];
+  
+  return commonRequirements;
+};
+
+const generateTags = (title: string, description: string): string[] => {
+  const tags: string[] = [];
+  
+  // Extract potential tags from title and description
+  const text = (title + ' ' + description).toLowerCase();
+  
+  if (text.includes('software') || text.includes('developer') || text.includes('programming')) {
+    tags.push('Software Development');
+  }
+  if (text.includes('marketing') || text.includes('brand') || text.includes('content')) {
+    tags.push('Marketing');
+  }
+  if (text.includes('management') || text.includes('manager') || text.includes('leadership')) {
+    tags.push('Management');
+  }
+  if (text.includes('design') || text.includes('ui') || text.includes('ux')) {
+    tags.push('Design');
+  }
+  if (text.includes('data') || text.includes('analytics') || text.includes('analysis')) {
+    tags.push('Data');
+  }
+  if (text.includes('customer') || text.includes('service') || text.includes('support')) {
+    tags.push('Customer Service');
+  }
+  
+  // Add at least one tag if none were identified
+  if (tags.length === 0) {
+    tags.push('Professional');
+  }
+  
+  return tags;
+};
 
 export default function JobSearch() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedJob, setSelectedJob] = useState<number | null>(null);
+  const [location, setLocation] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [jobs, setJobs] = useState<JobListing[]>([]);
+  const [selectedJob, setSelectedJob] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   // Get selected job details
-  const jobDetails = selectedJob ? SAMPLE_JOBS.find(job => job.id === selectedJob) : null;
+  const jobDetails = selectedJob ? jobs.find(job => job.id === selectedJob) : null;
   
+  // Function to search jobs
+  const searchJobs = async () => {
+    // Validate inputs
+    if (!searchTerm.trim() || !location.trim()) {
+      toast({
+        title: "Missing information",
+        description: "Please enter both job title and location.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSearching(true);
+    setError(null);
+
+    try {
+      const response = await axios.post('/api/jobs/search', {
+        query: searchTerm,
+        location: location,
+        sources: ['adzuna'] // Use Adzuna as the primary source
+      });
+
+      // Process the jobs data to add missing fields
+      const processedJobs = response.data.jobs.map((job: JobListing) => {
+        return {
+          ...job,
+          // Set default job type if not provided by the API
+          type: job.type || 'Full-time',
+          // Generate requirements if not provided
+          requirements: job.requirements || generateRequirements(job.title),
+          // Generate tags if not provided
+          tags: job.tags || generateTags(job.title, job.description)
+        };
+      });
+
+      setJobs(processedJobs);
+      setHasSearched(true);
+      
+      // Select the first job if available
+      if (processedJobs.length > 0) {
+        setSelectedJob(processedJobs[0].id);
+      }
+    } catch (err) {
+      console.error("Error searching for jobs:", err);
+      setError("Failed to search for jobs. Please try again later.");
+      toast({
+        title: "Error",
+        description: "Failed to search for jobs. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
@@ -103,6 +193,8 @@ export default function JobSearch() {
                   type="text"
                   placeholder="Location"
                   className="pl-8"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
                 />
               </div>
             </div>
@@ -126,92 +218,182 @@ export default function JobSearch() {
               </div>
             </div>
             <div>
-              <Button className="w-full">
-                <Search className="mr-2 h-4 w-4" />
-                Search Jobs
+              <Button 
+                className="w-full" 
+                onClick={searchJobs}
+                disabled={isSearching}
+              >
+                {isSearching ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <Search className="mr-2 h-4 w-4" />
+                    Search Jobs
+                  </>
+                )}
               </Button>
             </div>
           </div>
         </div>
       </div>
       
+      {/* Error display */}
+      {error && (
+        <div className="rounded-lg border border-destructive p-4 text-destructive flex items-center gap-2">
+          <AlertCircle className="h-5 w-5" />
+          <p>{error}</p>
+        </div>
+      )}
+      
       {/* Job Results and Details */}
       <div className="grid gap-6 md:grid-cols-5">
         {/* Job Listings */}
         <div className="md:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-medium">Job Listings</h3>
-            <div className="flex items-center gap-2">
-              <ListFilter className="h-4 w-4" />
-              <span className="text-sm">Sort by: Relevance</span>
-            </div>
+            <h3 className="font-medium">
+              {hasSearched ? (
+                jobs.length > 0 ? 
+                  `${jobs.length} Jobs Found` : 
+                  'No Jobs Found'
+              ) : 'Job Listings'}
+            </h3>
+            {jobs.length > 0 && (
+              <div className="flex items-center gap-2">
+                <ListFilter className="h-4 w-4" />
+                <span className="text-sm">Sort by: Relevance</span>
+              </div>
+            )}
           </div>
           
-          <div className="space-y-4">
-            {SAMPLE_JOBS.map(job => (
-              <Card 
-                key={job.id}
-                className={`cursor-pointer transition-all hover:border-primary ${selectedJob === job.id ? 'border-primary' : ''}`}
-                onClick={() => setSelectedJob(job.id)}
-              >
-                <CardHeader className="p-4">
-                  <div className="flex justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{job.title}</CardTitle>
-                      <CardDescription className="flex items-center gap-1 mt-1">
-                        <Building className="h-3 w-3" /> {job.company}
-                      </CardDescription>
+          {/* Loading state */}
+          {isSearching && (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardHeader className="p-4">
+                    <div className="h-6 bg-muted rounded-md w-3/4"></div>
+                    <div className="h-4 bg-muted rounded-md w-1/2 mt-2"></div>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <div className="flex gap-2 mt-2">
+                      <div className="h-5 bg-muted rounded-md w-1/4"></div>
+                      <div className="h-5 bg-muted rounded-md w-1/4"></div>
+                      <div className="h-5 bg-muted rounded-md w-1/4"></div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <div className="flex flex-col space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground gap-3">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" /> {job.location}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+          
+          {/* Job listings */}
+          {!isSearching && (
+            <div className="space-y-4">
+              {jobs.length > 0 ? (
+                jobs.map((job: JobListing) => (
+                  <Card 
+                    key={job.id}
+                    className={`cursor-pointer transition-all hover:border-primary ${selectedJob === job.id ? 'border-primary' : ''}`}
+                    onClick={() => setSelectedJob(job.id)}
+                  >
+                    <CardHeader className="p-4">
+                      <div className="flex justify-between">
+                        <div>
+                          <CardTitle className="text-lg">{job.title}</CardTitle>
+                          <CardDescription className="flex items-center gap-1 mt-1">
+                            <Building className="h-3 w-3" /> {job.company}
+                          </CardDescription>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Briefcase className="h-3 w-3" /> {job.type}
+                    </CardHeader>
+                    <CardContent className="p-4 pt-0">
+                      <div className="flex flex-col space-y-2">
+                        <div className="flex items-center text-sm text-muted-foreground gap-3">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" /> {job.location}
+                          </div>
+                          {job.type && (
+                            <div className="flex items-center gap-1">
+                              <Briefcase className="h-3 w-3" /> {job.type}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {job.postedDate}
+                          </div>
+                        </div>
+                        {job.tags && job.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {job.tags.slice(0, 3).map((tag: string, index: number) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" /> {job.posted}
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {job.tags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : hasSearched ? (
+                <Card className="p-6 text-center">
+                  <p className="text-muted-foreground">No jobs found matching your search criteria.</p>
+                  <p className="text-sm mt-2">Try broadening your search or changing your location.</p>
+                </Card>
+              ) : (
+                <Card className="p-6 text-center">
+                  <p className="text-muted-foreground">Enter job title and location to search for jobs.</p>
+                </Card>
+              )}
+            </div>
+          )}
         </div>
         
         {/* Job Details */}
         <div className="md:col-span-3">
-          {selectedJob ? (
+          {isSearching ? (
+            <Card className="animate-pulse">
+              <CardHeader>
+                <div className="h-7 bg-muted rounded-md w-4/5"></div>
+                <div className="h-5 bg-muted rounded-md w-3/5 mt-2"></div>
+                <div className="flex gap-3 mt-4">
+                  <div className="h-4 bg-muted rounded-md w-1/4"></div>
+                  <div className="h-4 bg-muted rounded-md w-1/4"></div>
+                  <div className="h-4 bg-muted rounded-md w-1/4"></div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="h-5 bg-muted rounded-md w-full"></div>
+                <div className="h-5 bg-muted rounded-md w-full"></div>
+                <div className="h-5 bg-muted rounded-md w-4/5"></div>
+                <div className="h-5 bg-muted rounded-md w-3/5"></div>
+              </CardContent>
+            </Card>
+          ) : selectedJob && jobDetails ? (
             <Card>
               <CardHeader>
-                <CardTitle>{jobDetails?.title}</CardTitle>
+                <CardTitle>{jobDetails.title}</CardTitle>
                 <CardDescription className="flex items-center gap-1">
-                  <Building className="h-3 w-3" /> {jobDetails?.company}
+                  <Building className="h-3 w-3" /> {jobDetails.company}
                 </CardDescription>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-2">
                   <div className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3" /> {jobDetails?.location}
+                    <MapPin className="h-3 w-3" /> {jobDetails.location}
                   </div>
+                  {jobDetails.type && (
+                    <div className="flex items-center gap-1">
+                      <Briefcase className="h-3 w-3" /> {jobDetails.type}
+                    </div>
+                  )}
+                  {jobDetails.salary && (
+                    <div>
+                      {jobDetails.salary}
+                    </div>
+                  )}
                   <div className="flex items-center gap-1">
-                    <Briefcase className="h-3 w-3" /> {jobDetails?.type}
-                  </div>
-                  <div>
-                    {jobDetails?.salary}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Posted {jobDetails?.posted}
+                    <Clock className="h-3 w-3" /> Posted {jobDetails.postedDate}
                   </div>
                 </div>
               </CardHeader>
@@ -223,20 +405,35 @@ export default function JobSearch() {
                     <TabsTrigger value="company">Company</TabsTrigger>
                   </TabsList>
                   <TabsContent value="description" className="space-y-4 pt-4">
-                    <p>{jobDetails?.description}</p>
-                    <div>
-                      <Button>Apply Now</Button>
+                    <p className="whitespace-pre-line">{jobDetails.description}</p>
+                    <div className="flex gap-3 mt-4">
+                      <Button onClick={() => window.open(jobDetails.url, '_blank')}>
+                        Apply Now
+                      </Button>
+                      <Button variant="outline">
+                        Save Job
+                      </Button>
                     </div>
                   </TabsContent>
                   <TabsContent value="requirements" className="space-y-4 pt-4">
-                    <ul className="list-disc pl-5 space-y-2">
-                      {jobDetails?.requirements.map((req, index) => (
-                        <li key={index}>{req}</li>
-                      ))}
-                    </ul>
+                    {jobDetails.requirements && jobDetails.requirements.length > 0 ? (
+                      <ul className="list-disc pl-5 space-y-2">
+                        {jobDetails.requirements.map((req: string, index: number) => (
+                          <li key={index}>{req}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No specific requirements listed for this position.</p>
+                    )}
                   </TabsContent>
                   <TabsContent value="company" className="space-y-4 pt-4">
-                    <p>Company information will appear here.</p>
+                    <div className="space-y-4">
+                      <h3 className="font-medium">About {jobDetails.company}</h3>
+                      <p>Information about {jobDetails.company} is not available at this time.</p>
+                      <Button variant="outline" size="sm" onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(jobDetails.company)}`, '_blank')}>
+                        Research Company
+                      </Button>
+                    </div>
                   </TabsContent>
                 </Tabs>
               </CardContent>
@@ -245,8 +442,16 @@ export default function JobSearch() {
             <Card className="h-full flex items-center justify-center">
               <CardContent className="text-center py-10">
                 <Search className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Select a job to view details</h3>
-                <p className="text-muted-foreground">Click on a job listing to see the full description and requirements.</p>
+                <h3 className="text-lg font-medium mb-2">
+                  {hasSearched && jobs.length > 0 ? 
+                    'Select a job to view details' : 
+                    'Start your job search'}
+                </h3>
+                <p className="text-muted-foreground">
+                  {hasSearched && jobs.length > 0 ? 
+                    'Click on a job listing to see the full description and requirements.' : 
+                    'Enter a job title and location to find opportunities.'}
+                </p>
               </CardContent>
             </Card>
           )}
