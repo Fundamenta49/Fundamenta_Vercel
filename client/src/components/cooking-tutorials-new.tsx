@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import EmbeddedYoutubePlayer from '@/components/embedded-youtube-player';
+import { EmbeddedYouTubePlayer } from '@/components/embedded-youtube-player';
 
 export default function CookingTutorialsNew() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -103,7 +103,7 @@ export default function CookingTutorialsNew() {
           </div>
           
           <div className="aspect-video w-full rounded-lg overflow-hidden border bg-gray-100 dark:bg-gray-900">
-            <EmbeddedYoutubePlayer videoId={selectedVideo.youtubeId} title={selectedVideo.title} />
+            <EmbeddedYouTubePlayer videoId={selectedVideo.youtubeId} title={selectedVideo.title} />
           </div>
           
           <div className="flex flex-wrap gap-2 my-3">
