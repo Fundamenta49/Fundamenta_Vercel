@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { MegaDialog, MegaDialogContent, MegaDialogHeader, MegaDialogTitle, MegaDialogDescription, MegaDialogFooter, MegaDialogBody } from "@/components/ui/mega-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -194,94 +193,6 @@ export default function PoseAnalysisDialog({
                 "Feel the stretch across your chest and shoulders"
               ]
             };
-          } else if (poseName.includes('tree')) {
-            targetedFeedback = {
-              accuracy: randomAccuracy,
-              suggestions: [
-                "Find a focal point to improve your balance",
-                "Engage your standing leg more firmly",
-                "Press your foot into your inner thigh with equal pressure"
-              ],
-              alignmentIssues: [
-                "Hips are slightly tilted instead of level",
-                "Shoulders are raised – try to relax them down"
-              ],
-              strongAreas: [
-                "Good core engagement",
-                "Foot placement on inner thigh is correct",
-                "Spine is nicely elongated"
-              ],
-              targetAreas: [
-                "Focus on keeping your standing foot fully grounded",
-                "Open your chest and broaden your collarbones"
-              ]
-            };
-          } else if (poseName.includes('child')) {
-            targetedFeedback = {
-              accuracy: randomAccuracy,
-              suggestions: [
-                "Allow your forehead to rest more heavily on the mat",
-                "Relax your shoulders completely toward the floor",
-                "Focus on deep, slow breathing to enhance relaxation"
-              ],
-              alignmentIssues: [
-                "Upper back is slightly rounded",
-                "Arms could extend further forward"
-              ],
-              strongAreas: [
-                "Hip flexion is good",
-                "Weight is well-distributed between knees and forehead",
-                "Lower back appears relaxed"
-              ],
-              targetAreas: [
-                "Focus on surrendering your body weight completely",
-                "Feel the stretch across your entire back"
-              ]
-            };
-          } else if (poseName.includes('cobra')) {
-            targetedFeedback = {
-              accuracy: randomAccuracy,
-              suggestions: [
-                "Use your back muscles more than your arms to lift your chest",
-                "Roll your shoulders further back and down",
-                "Maintain a slight bend in your elbows"
-              ],
-              alignmentIssues: [
-                "Shoulders are rising toward ears",
-                "Neck is slightly compressed - try looking forward not up"
-              ],
-              strongAreas: [
-                "Good hip placement on the floor",
-                "Lower body is relaxed",
-                "Chest is opening nicely"
-              ],
-              targetAreas: [
-                "Focus on using back strength rather than arm strength",
-                "Concentrate on the feeling of your spine extending"
-              ]
-            };
-          } else if (poseName.includes('bridge')) {
-            targetedFeedback = {
-              accuracy: randomAccuracy,
-              suggestions: [
-                "Press down more firmly through your feet to lift hips higher",
-                "Try to bring your knees more in line with your ankles",
-                "Engage your glutes more to support your lower back"
-              ],
-              alignmentIssues: [
-                "Knees are splaying slightly outward",
-                "Shoulders could roll under more to open chest"
-              ],
-              strongAreas: [
-                "Good neck alignment - not straining",
-                "Hips are lifted to a good height",
-                "Core seems engaged to support the pose"
-              ],
-              targetAreas: [
-                "Focus on creating a straight line from shoulders to knees",
-                "Feel the opening across your chest and hip flexors"
-              ]
-            };
           } else {
             // Generic feedback for other poses
             targetedFeedback = {
@@ -342,220 +253,219 @@ export default function PoseAnalysisDialog({
             Follow the instructions and use YogaVision to get real-time feedback on your form
           </MegaDialogDescription>
         </MegaDialogHeader>
+        
         <MegaDialogBody>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-          {/* Left side - Pose instruction */}
-          <div className="space-y-4">
-            <div className="rounded-lg border overflow-hidden">
-              <div className="bg-muted/50 p-4">
-                <h3 className="font-medium text-lg">{pose.name}</h3>
-                <p className="text-sm text-muted-foreground">{pose.description}</p>
-              </div>
-              
-              <Separator />
-              
-              <div className="p-4 space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">Instructions:</h4>
-                  <ol className="space-y-1 pl-5 list-decimal text-sm">
-                    {pose.instructions.map((instruction, i) => (
-                      <li key={i}>{instruction}</li>
-                    ))}
-                  </ol>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Tips:</h4>
-                  <ul className="space-y-1 pl-5 list-disc text-sm">
-                    {pose.tips.map((tip, i) => (
-                      <li key={i}>{tip}</li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-2">Key Areas to Focus:</h4>
-                  <ul className="space-y-1 pl-5 list-disc text-sm">
-                    {poseAnalysisResult?.targetAreas ? (
-                      poseAnalysisResult.targetAreas.map((area, i) => (
-                        <li key={i} className="text-blue-700">{area}</li>
-                      ))
-                    ) : (
-                      <>
-                        <li>Maintain proper alignment throughout the pose</li>
-                        <li>Focus on steady breathing while holding the pose</li>
-                        <li>Engage the primary muscle groups needed for stability</li>
-                      </>
-                    )}
-                  </ul>
-                </div>
-              </div>
-            </div>
-            
-            {/* Success celebration when pose is completed */}
-            {poseCompleted && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                <Trophy className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                <h3 className="font-medium text-green-800 text-lg">Pose Mastered!</h3>
-                <p className="text-sm text-green-700 mt-1">
-                  Excellent form! This pose has been marked as completed in your progress tracker.
-                </p>
-                <Button 
-                  variant="outline" 
-                  className="mt-3 border-green-300 text-green-700 hover:bg-green-100"
-                  onClick={() => onOpenChange(false)}
-                >
-                  Continue Practice
-                </Button>
-              </div>
-            )}
-          </div>
-          
-          {/* Right side - Camera view and feedback */}
-          <div className="space-y-4">
-            {/* Camera view */}
-            <div className="relative rounded-lg overflow-hidden bg-gray-900 aspect-video">
-              {cameraEnabled ? (
-                <video 
-                  ref={videoRef} 
-                  autoPlay 
-                  playsInline 
-                  muted 
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
-                  <Camera className="h-12 w-12 mb-3 opacity-60" />
-                  <h3 className="text-lg font-medium mb-1">Enable Camera for Analysis</h3>
-                  <p className="text-sm opacity-80 max-w-md mb-4">
-                    Our AI will analyze your {pose.name} in real-time and provide personalized guidance.
-                  </p>
-                  <Button 
-                    onClick={toggleCamera}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    Enable Camera
-                  </Button>
-                </div>
-              )}
-              
-              {/* Canvas for pose detection (hidden) */}
-              <canvas 
-                ref={canvasRef} 
-                width="640" 
-                height="480" 
-                className="hidden"
-              />
-              
-              {/* Camera controls when enabled */}
-              {cameraEnabled && (
-                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-                  {poseAnalysisResult ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="bg-white/90 hover:bg-white"
-                      onClick={resetAnalysis}
-                    >
-                      <RotateCcw className="h-4 w-4 mr-1" />
-                      Try Again
-                    </Button>
-                  ) : isAnalyzing ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="bg-white/90 hover:bg-white"
-                      disabled
-                    >
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                      Analyzing Form...
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="bg-white/90 hover:bg-white"
-                      onClick={analyzePose}
-                    >
-                      <Activity className="h-4 w-4 mr-1" />
-                      Analyze My {pose.name}
-                    </Button>
-                  )}
-                </div>
-              )}
-            </div>
-            
-            {/* AI Feedback Display */}
-            {poseAnalysisResult && (
-              <div className="mt-4 space-y-4 border rounded-lg p-4 bg-blue-50 border-blue-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-medium text-lg flex items-center">
-                    <CheckCircle2 className="mr-2 h-5 w-5 text-blue-600" />
-                    Form Analysis Complete
-                  </h3>
-                  <Badge 
-                    className="text-lg px-3 py-1"
-                    style={{
-                      backgroundColor: poseAnalysisResult.accuracy >= 90 
-                        ? '#dcfce7' 
-                        : poseAnalysisResult.accuracy >= 80 
-                          ? '#fef9c3' 
-                          : '#fee2e2',
-                      color: poseAnalysisResult.accuracy >= 90 
-                        ? '#166534' 
-                        : poseAnalysisResult.accuracy >= 80 
-                          ? '#854d0e' 
-                          : '#b91c1c',
-                    }}
-                  >
-                    {poseAnalysisResult.accuracy}% Accuracy
-                  </Badge>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            {/* Left side - Pose instruction */}
+            <div className="space-y-4">
+              <div className="rounded-lg border overflow-hidden">
+                <div className="bg-muted/50 p-4">
+                  <h3 className="font-medium text-lg">{pose.name}</h3>
+                  <p className="text-sm text-muted-foreground">{pose.description}</p>
                 </div>
                 
                 <Separator />
                 
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-blue-800 flex items-center">
-                      <AlertCircle className="h-4 w-4 mr-1" />
-                      Areas to Improve
-                    </h4>
-                    <ul className="space-y-1 pl-6 list-disc text-sm">
-                      {poseAnalysisResult.alignmentIssues.map((issue, i) => (
-                        <li key={i} className="text-gray-700">{issue}</li>
+                <div className="p-4 space-y-4">
+                  <div>
+                    <h4 className="font-medium mb-2">Instructions:</h4>
+                    <ol className="space-y-1 pl-5 list-decimal text-sm">
+                      {pose.instructions.map((instruction, i) => (
+                        <li key={i}>{instruction}</li>
+                      ))}
+                    </ol>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">Tips:</h4>
+                    <ul className="space-y-1 pl-5 list-disc text-sm">
+                      {pose.tips.map((tip, i) => (
+                        <li key={i}>{tip}</li>
                       ))}
                     </ul>
                   </div>
                   
+                  <div>
+                    <h4 className="font-medium mb-2">Key Areas to Focus:</h4>
+                    <ul className="space-y-1 pl-5 list-disc text-sm">
+                      {poseAnalysisResult?.targetAreas ? (
+                        poseAnalysisResult.targetAreas.map((area, i) => (
+                          <li key={i} className="text-blue-700">{area}</li>
+                        ))
+                      ) : (
+                        <>
+                          <li>Maintain proper alignment throughout the pose</li>
+                          <li>Focus on steady breathing while holding the pose</li>
+                          <li>Engage the primary muscle groups needed for stability</li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Success celebration when pose is completed */}
+              {poseCompleted && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                  <Trophy className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                  <h3 className="font-medium text-green-800 text-lg">Pose Mastered!</h3>
+                  <p className="text-sm text-green-700 mt-1">
+                    Excellent form! This pose has been marked as completed in your progress tracker.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    className="mt-3 border-green-300 text-green-700 hover:bg-green-100"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Continue Practice
+                  </Button>
+                </div>
+              )}
+            </div>
+            
+            {/* Right side - Camera view and feedback */}
+            <div className="space-y-4">
+              {/* Camera view */}
+              <div className="relative rounded-lg overflow-hidden bg-gray-900 aspect-video">
+                {cameraEnabled ? (
+                  <video 
+                    ref={videoRef} 
+                    autoPlay 
+                    playsInline 
+                    muted 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
+                    <Camera className="h-12 w-12 mb-3 opacity-60" />
+                    <h3 className="text-lg font-medium mb-1">Enable Camera for Analysis</h3>
+                    <p className="text-sm opacity-80 max-w-md mb-4">
+                      Our AI will analyze your {pose.name} in real-time and provide personalized guidance.
+                    </p>
+                    <Button 
+                      onClick={toggleCamera}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      Enable Camera
+                    </Button>
+                  </div>
+                )}
+                
+                {/* Canvas for pose detection (hidden) */}
+                <canvas 
+                  ref={canvasRef} 
+                  width="640" 
+                  height="480" 
+                  className="hidden"
+                />
+                
+                {/* Camera controls when enabled */}
+                {cameraEnabled && (
+                  <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                    {poseAnalysisResult ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="bg-white/90 hover:bg-white"
+                        onClick={resetAnalysis}
+                      >
+                        <RotateCcw className="h-4 w-4 mr-1" />
+                        Try Again
+                      </Button>
+                    ) : isAnalyzing ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="bg-white/90 hover:bg-white"
+                        disabled
+                      >
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                        Analyzing Form...
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="bg-white/90 hover:bg-white"
+                        onClick={analyzePose}
+                      >
+                        <Activity className="h-4 w-4 mr-1" />
+                        Analyze My {pose.name}
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+              
+              {/* AI Feedback Display */}
+              {poseAnalysisResult && (
+                <div className="mt-4 space-y-4 border rounded-lg p-4 bg-blue-50 border-blue-200">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium text-lg flex items-center">
+                      <CheckCircle2 className="mr-2 h-5 w-5 text-blue-600" />
+                      Form Analysis Complete
+                    </h3>
+                    <Badge 
+                      className="text-lg px-3 py-1"
+                      style={{
+                        backgroundColor: poseAnalysisResult.accuracy >= 90 
+                          ? '#dcfce7' 
+                          : poseAnalysisResult.accuracy >= 80 
+                            ? '#fef9c3' 
+                            : '#fee2e2',
+                        color: poseAnalysisResult.accuracy >= 90 
+                          ? '#166534' 
+                          : poseAnalysisResult.accuracy >= 80 
+                            ? '#854d0e' 
+                            : '#b91c1c',
+                      }}
+                    >
+                      {poseAnalysisResult.accuracy}% Accuracy
+                    </Badge>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-blue-800 flex items-center">
+                        <AlertCircle className="h-4 w-4 mr-1" />
+                        Areas to Improve
+                      </h4>
+                      <ul className="space-y-1 pl-6 list-disc text-sm">
+                        {poseAnalysisResult.alignmentIssues.map((issue, i) => (
+                          <li key={i} className="text-gray-700">{issue}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-green-700 flex items-center">
+                        <Check className="h-4 w-4 mr-1" />
+                        You're Doing Well
+                      </h4>
+                      <ul className="space-y-1 pl-6 list-disc text-sm">
+                        {poseAnalysisResult.strongAreas.map((area, i) => (
+                          <li key={i} className="text-gray-700">{area}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <Separator />
+                  
                   <div className="space-y-2">
-                    <h4 className="font-medium text-green-700 flex items-center">
-                      <Check className="h-4 w-4 mr-1" />
-                      You're Doing Well
-                    </h4>
+                    <h4 className="font-medium text-blue-800">Suggestions</h4>
                     <ul className="space-y-1 pl-6 list-disc text-sm">
-                      {poseAnalysisResult.strongAreas.map((area, i) => (
-                        <li key={i} className="text-gray-700">{area}</li>
+                      {poseAnalysisResult.suggestions.map((suggestion, i) => (
+                        <li key={i} className="text-gray-700">{suggestion}</li>
                       ))}
                     </ul>
                   </div>
                 </div>
-                
-                <Separator />
-                
-                <div className="space-y-2">
-                  <h4 className="font-medium text-blue-800">Suggestions</h4>
-                  <ul className="space-y-1 pl-6 list-disc text-sm">
-                    {poseAnalysisResult.suggestions.map((suggestion, i) => (
-                      <li key={i} className="text-gray-700">{suggestion}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-
         </MegaDialogBody>
         
         <MegaDialogFooter className="mt-6 gap-2 flex-wrap">
