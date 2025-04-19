@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { 
   MegaDialog,
   MegaDialogContent,
@@ -11,13 +11,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Briefcase, BookOpen, School, FileText, MessageSquare, Brain, Scale, Network, ArrowRight, X } from 'lucide-react';
 
-// Import components for Career tools
-import ResumeBuilder from '@/components/career/resume-builder';
-import JobSearch from '@/components/career/job-search-fullscreen'; // Using the fullscreen component directly
-import InterviewPractice from '@/components/career/interview-practice';
-import CareerAssessment from '@/components/career/career-assessment/index';
-import EmotionalResilience from '@/components/career/emotional-resilience/index';
-import EmploymentRights from '@/components/career/employment-rights/index';
+// Use lazy loading for all components
+const ResumeBuilder = React.lazy(() => import('@/components/career/resume-builder'));
+const JobSearch = React.lazy(() => import('@/components/career/job-search-fullscreen'));
+const InterviewPractice = React.lazy(() => import('@/components/career/interview-practice'));
+const CareerAssessment = React.lazy(() => import('@/components/career/career-assessment/index'));
+const EmotionalResilience = React.lazy(() => import('@/components/career/emotional-resilience/index'));
+const EmploymentRights = React.lazy(() => import('@/components/career/employment-rights/index'));
 
 // Skills for the skills section
 const CAREER_SKILLS = [
@@ -52,7 +52,7 @@ const CAREER_TOOLS = [
     title: 'Fundamenta Connects',
     description: 'Connect with professionals, mentors, and networking opportunities',
     icon: <Network className="h-8 w-8" />,
-    component: JobSearch, // Using direct fullscreen component
+    component: React.lazy(() => import('@/components/career/fundamenta-connects')),
     color: 'bg-purple-50 dark:bg-purple-950'
   },
   {
@@ -180,7 +180,16 @@ export default function CareerNew() {
             <MegaDialogTitle>{getCurrentTitle()}</MegaDialogTitle>
           </MegaDialogHeader>
           <MegaDialogBody>
-            {ToolComponent && <ToolComponent />}
+            {ToolComponent && (
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                  <p className="text-muted-foreground">Loading {getCurrentTitle()}...</p>
+                </div>
+              }>
+                <ToolComponent />
+              </Suspense>
+            )}
           </MegaDialogBody>
         </MegaDialogContent>
       </MegaDialog>

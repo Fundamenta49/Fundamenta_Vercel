@@ -11,6 +11,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Info, Network, DollarSign, Search } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const FundamentaConnects: React.FC = () => {
   const [jobTitle, setJobTitle] = useState('');
@@ -58,7 +59,7 @@ const FundamentaConnects: React.FC = () => {
         >
           <TabsList className="grid grid-cols-2 mb-6">
             <TabsTrigger value="find-jobs" className="flex items-center justify-center">
-              <Search className="h-4 w-4 mr-2" />
+              <Network className="h-4 w-4 mr-2" />
               Find Jobs
             </TabsTrigger>
             <TabsTrigger value="salary-research" className="flex items-center justify-center">
@@ -78,6 +79,9 @@ const FundamentaConnects: React.FC = () => {
                   <p className="text-muted-foreground mb-6">
                     Discover career opportunities and salary insights tailored to your skills
                   </p>
+                  
+                  <Separator className="my-4" />
+                  
                   <div className="space-y-4">
                     <div>
                       <label htmlFor="job-title" className="block text-sm font-medium mb-2">
