@@ -1,93 +1,86 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { ResumePreviewProps } from './types';
 
-export default function ResumePreview({ resumeData }: ResumePreviewProps) {
-  const formatDate = (date: string, current: boolean | undefined) => {
+export default function ResumePreview({ data }: ResumePreviewProps) {
+  // Format date helper
+  const formatDate = (date: string, current: boolean | undefined): string => {
     if (!date) return '';
     if (current) return 'Present';
     return date;
   };
-  
+
   return (
-    <Card className="p-6 border shadow-sm">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">
-          {resumeData.personalInfo.name || "Your Name"}
-        </h1>
-        {resumeData.jobTitle && (
-          <p className="text-xl text-muted-foreground mt-1">
-            {resumeData.jobTitle}
-          </p>
+    <div className="space-y-6 text-sm">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold">{data.personalInfo.name}</h1>
+        {data.jobTitle && (
+          <h2 className="text-lg text-muted-foreground">{data.jobTitle}</h2>
         )}
         
-        <div className="flex flex-wrap gap-2 mt-3">
-          {resumeData.personalInfo.email && (
-            <span className="text-sm text-muted-foreground">
-              {resumeData.personalInfo.email}
-            </span>
+        <div className="flex flex-wrap gap-3 pt-1">
+          {data.personalInfo.email && (
+            <Badge variant="outline" className="px-2 py-1">
+              {data.personalInfo.email}
+            </Badge>
           )}
-          {resumeData.personalInfo.phone && (
-            <span className="text-sm text-muted-foreground">
-              • {resumeData.personalInfo.phone}
-            </span>
+          {data.personalInfo.phone && (
+            <Badge variant="outline" className="px-2 py-1">
+              {data.personalInfo.phone}
+            </Badge>
           )}
-          {resumeData.personalInfo.location && (
-            <span className="text-sm text-muted-foreground">
-              • {resumeData.personalInfo.location}
-            </span>
+          {data.personalInfo.location && (
+            <Badge variant="outline" className="px-2 py-1">
+              {data.personalInfo.location}
+            </Badge>
           )}
-          {resumeData.personalInfo.website && (
-            <span className="text-sm text-muted-foreground">
-              • {resumeData.personalInfo.website}
-            </span>
+          {data.personalInfo.website && (
+            <Badge variant="outline" className="px-2 py-1">
+              {data.personalInfo.website}
+            </Badge>
           )}
         </div>
       </div>
       
-      {resumeData.personalInfo.summary && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold border-b pb-1 mb-2">Professional Summary</h2>
-          <p className="text-sm">
-            {resumeData.personalInfo.summary}
-          </p>
+      {/* Summary */}
+      {data.personalInfo.summary && (
+        <div className="space-y-1">
+          <h3 className="text-md font-semibold">Professional Summary</h3>
+          <Separator className="my-1" />
+          <p className="text-sm leading-relaxed">{data.personalInfo.summary}</p>
         </div>
       )}
       
-      {resumeData.experience && resumeData.experience.length > 0 && resumeData.experience[0].company && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold border-b pb-1 mb-2">Work Experience</h2>
+      {/* Experience */}
+      {data.experience && data.experience.length > 0 && data.experience[0].company && (
+        <div className="space-y-1">
+          <h3 className="text-md font-semibold">Work Experience</h3>
+          <Separator className="my-1" />
           <div className="space-y-4">
-            {resumeData.experience.map((exp, i) => (
-              <div key={i} className="mb-4">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-md font-semibold">{exp.position}</h3>
-                  <span className="text-sm text-muted-foreground">
+            {data.experience.map((exp, i) => (
+              <div key={i} className="space-y-1">
+                <div className="flex justify-between">
+                  <div>
+                    <h4 className="font-medium">{exp.position}</h4>
+                    <p className="text-sm text-muted-foreground">{exp.company}</p>
+                  </div>
+                  <div className="text-sm text-muted-foreground whitespace-nowrap">
                     {formatDate(exp.startDate, false)} - {formatDate(exp.endDate, exp.current)}
-                  </span>
+                  </div>
                 </div>
-                <h4 className="text-sm text-muted-foreground">{exp.company}</h4>
                 
                 {exp.description && (
-                  <p className="text-sm mt-1">
-                    {exp.description}
-                  </p>
+                  <p className="text-sm">{exp.description}</p>
                 )}
                 
                 {exp.achievements && exp.achievements.length > 0 && exp.achievements[0] && (
-                  <div className="mt-2">
-                    <h5 className="text-sm font-medium">Key Achievements:</h5>
-                    <ul className="list-disc pl-5 mt-1">
-                      {exp.achievements.map((achievement, j) => (
-                        achievement ? (
-                          <li key={j} className="text-sm">
-                            {achievement}
-                          </li>
-                        ) : null
-                      ))}
-                    </ul>
-                  </div>
+                  <ul className="list-disc list-inside text-sm space-y-1 pl-1 pt-1">
+                    {exp.achievements.map((achievement, j) => (
+                      achievement ? <li key={j}>{achievement}</li> : null
+                    ))}
+                  </ul>
                 )}
               </div>
             ))}
@@ -95,26 +88,28 @@ export default function ResumePreview({ resumeData }: ResumePreviewProps) {
         </div>
       )}
       
-      {resumeData.education && resumeData.education.length > 0 && resumeData.education[0].institution && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold border-b pb-1 mb-2">Education</h2>
+      {/* Education */}
+      {data.education && data.education.length > 0 && data.education[0].institution && (
+        <div className="space-y-1">
+          <h3 className="text-md font-semibold">Education</h3>
+          <Separator className="my-1" />
           <div className="space-y-4">
-            {resumeData.education.map((edu, i) => (
-              <div key={i} className="mb-4">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-md font-semibold">
-                    {edu.degree}{edu.field ? ` in ${edu.field}` : ''}
-                  </h3>
-                  <span className="text-sm text-muted-foreground">
+            {data.education.map((edu, i) => (
+              <div key={i} className="space-y-1">
+                <div className="flex justify-between">
+                  <div>
+                    <h4 className="font-medium">
+                      {edu.degree}{edu.field ? ` in ${edu.field}` : ''}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">{edu.institution}</p>
+                  </div>
+                  <div className="text-sm text-muted-foreground whitespace-nowrap">
                     {formatDate(edu.startDate, false)} - {formatDate(edu.endDate, edu.current)}
-                  </span>
+                  </div>
                 </div>
-                <h4 className="text-sm text-muted-foreground">{edu.institution}</h4>
                 
                 {edu.description && (
-                  <p className="text-sm mt-1">
-                    {edu.description}
-                  </p>
+                  <p className="text-sm">{edu.description}</p>
                 )}
               </div>
             ))}
@@ -122,14 +117,17 @@ export default function ResumePreview({ resumeData }: ResumePreviewProps) {
         </div>
       )}
       
-      {resumeData.skills && resumeData.skills.length > 0 && resumeData.skills[0].name && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold border-b pb-1 mb-2">Skills</h2>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {resumeData.skills.map((skill, i) => (
+      {/* Skills */}
+      {data.skills && data.skills.length > 0 && data.skills[0].name && (
+        <div className="space-y-1">
+          <h3 className="text-md font-semibold">Skills</h3>
+          <Separator className="my-1" />
+          <div className="flex flex-wrap gap-2">
+            {data.skills.map((skill, i) => (
               skill.name ? (
-                <Badge key={i} variant="secondary">
-                  {skill.name}{skill.level ? ` (${skill.level})` : ''}
+                <Badge key={i} variant="secondary" className="px-2 py-1">
+                  {skill.name}
+                  {skill.level && <span className="opacity-60 ml-1">({skill.level})</span>}
                 </Badge>
               ) : null
             ))}
@@ -137,33 +135,35 @@ export default function ResumePreview({ resumeData }: ResumePreviewProps) {
         </div>
       )}
       
-      {resumeData.certifications && resumeData.certifications.length > 0 && resumeData.certifications[0].name && (
-        <div className="mb-6">
-          <h2 className="text-lg font-bold border-b pb-1 mb-2">Certifications</h2>
+      {/* Certifications */}
+      {data.certifications && data.certifications.length > 0 && data.certifications[0].name && (
+        <div className="space-y-1">
+          <h3 className="text-md font-semibold">Certifications</h3>
+          <Separator className="my-1" />
           <div className="space-y-3">
-            {resumeData.certifications.map((cert, i) => (
-              <div key={i} className="mb-2">
-                <h3 className="text-md font-semibold">{cert.name}</h3>
-                
-                <div className="flex text-sm text-muted-foreground">
-                  {cert.issuer && (
-                    <span>{cert.issuer}</span>
-                  )}
-                  
+            {data.certifications.map((cert, i) => (
+              cert.name ? (
+                <div key={i} className="flex justify-between">
+                  <div>
+                    <h4 className="font-medium">{cert.name}</h4>
+                    {cert.issuer && (
+                      <p className="text-sm text-muted-foreground">{cert.issuer}</p>
+                    )}
+                  </div>
                   {cert.date && (
-                    <span className="ml-2">
+                    <div className="text-sm text-muted-foreground whitespace-nowrap">
                       Issued: {cert.date}
                       {cert.neverExpires 
-                        ? ' (No Expiration)' 
-                        : cert.expiryDate ? ` - Expires: ${cert.expiryDate}` : ''}
-                    </span>
+                        ? <span className="ml-1">(No Expiration)</span>
+                        : cert.expiryDate ? <span className="ml-1">Expires: {cert.expiryDate}</span> : ''}
+                    </div>
                   )}
                 </div>
-              </div>
+              ) : null
             ))}
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

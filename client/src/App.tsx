@@ -23,6 +23,7 @@ import Emergency from "@/pages/emergency";
 import Finance from "@/pages/finance";
 import MortgagePage from "@/pages/finance/mortgage";
 import Career from "@/pages/career";
+import CareerNew from "@/pages/career-new";
 import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
 import Learning from "@/pages/learning";
@@ -159,6 +160,11 @@ function Router() {
             <Route path="/career">
               <ProtectedRoute>
                 <Career />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/career-new">
+              <ProtectedRoute>
+                <CareerNew />
               </ProtectedRoute>
             </Route>
             <Route path="/wellness">

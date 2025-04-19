@@ -1,71 +1,71 @@
-// Resume Builder Types
-
-export interface PersonalInfo {
-  name: string;
-  email: string;
-  phone: string;
-  location: string;
-  website: string;
-  summary: string;
+// Resume form data types
+export interface Experience {
+  company: string;
+  position: string;
+  startDate: string;
+  endDate?: string;
+  current?: boolean;
+  description?: string;
+  achievements?: string[];
 }
 
 export interface Education {
   institution: string;
   degree: string;
-  field: string;
   startDate: string;
-  endDate: string;
-  current: boolean;
-  description: string;
-}
-
-export interface Experience {
-  company: string;
-  position: string;
-  startDate: string;
-  endDate: string;
-  current: boolean;
-  description: string;
-  achievements: string[];
+  endDate?: string;
+  current?: boolean;
+  field?: string;
+  description?: string;
 }
 
 export interface Skill {
   name: string;
-  level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+  level?: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 }
 
 export interface Certification {
   name: string;
-  issuer: string;
-  date: string;
-  expiryDate: string;
-  neverExpires: boolean;
+  issuer?: string;
+  date?: string;
+  expiryDate?: string;
+  neverExpires?: boolean;
+}
+
+export interface PersonalInfo {
+  name: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  website?: string;
+  summary?: string;
 }
 
 export interface ResumeData {
   personalInfo: PersonalInfo;
-  education: Education[];
+  jobTitle?: string;
   experience: Experience[];
+  education: Education[];
   skills: Skill[];
   certifications: Certification[];
-  jobTitle: string;
-  targetCompany: string;
-  industry: string;
 }
 
-export interface OptimizationSuggestion {
-  section: 'summary' | 'experience' | 'skills' | 'education' | 'overall';
-  suggestion: string;
-  reason: string;
-}
-
+// Component props types
 export interface ResumeFormProps {
-  resumeData: ResumeData;
-  onUpdateResumeData: (data: ResumeData) => void;
+  formData: ResumeData;
+  setFormData: (data: ResumeData) => void;
+  currentSection: string;
+  setCurrentSection: (section: string) => void;
+  onNextSection: () => void;
+  onPrevSection: () => void;
 }
 
 export interface ResumePreviewProps {
-  resumeData: ResumeData;
+  data: ResumeData;
+}
+
+export interface ResumePDFProps {
+  data: ResumeData;
 }
 
 export interface ResumeOptimizerProps {
@@ -75,6 +75,58 @@ export interface ResumeOptimizerProps {
   isOptimizing: boolean;
 }
 
-export interface ResumePDFProps {
-  data: ResumeData;
+export interface OptimizationSuggestion {
+  section: string;
+  suggestion: string;
+  reason?: string;
 }
+
+// Default resume data for initial state
+export const defaultResumeData: ResumeData = {
+  personalInfo: {
+    name: '',
+    email: '',
+    phone: '',
+    location: '',
+    website: '',
+    summary: '',
+  },
+  jobTitle: '',
+  experience: [
+    {
+      company: '',
+      position: '',
+      startDate: '',
+      endDate: '',
+      current: false,
+      description: '',
+      achievements: [''],
+    },
+  ],
+  education: [
+    {
+      institution: '',
+      degree: '',
+      field: '',
+      startDate: '',
+      endDate: '',
+      current: false,
+      description: '',
+    },
+  ],
+  skills: [
+    {
+      name: '',
+      level: 'Intermediate',
+    },
+  ],
+  certifications: [
+    {
+      name: '',
+      issuer: '',
+      date: '',
+      expiryDate: '',
+      neverExpires: false,
+    },
+  ],
+};
