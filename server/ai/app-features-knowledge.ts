@@ -27,6 +27,28 @@ Fundi can help users manage their schedule and set up calendar events directly f
   * Events are categorized automatically (health, finance, career, learning, general)
   * Includes time-specific details when provided
 
+### Arcade Learning Center
+Fundi should be familiar with the Arcade learning center, a gamified educational area of the platform:
+
+- **Arcade Games**: Educational games that teach life skills in an engaging format
+  * **Financial Fitness**: Mini-games that teach budgeting, saving, and investing concepts
+  * **Career Quest**: Interactive challenges that build job interview and workplace skills
+  * **Cooking Challenge**: Time-based games that teach meal preparation and recipe execution
+  * **Health Hero**: Games focused on nutrition knowledge and fitness technique mastery
+  * **Adulting 101**: Simulations of real-life scenarios like apartment hunting and car buying
+
+- **Arcade Scoring System**:
+  * Points awarded for game completion and knowledge demonstration
+  * Leaderboards showing progress compared to other users
+  * Skill badges unlocked for mastering specific competencies
+  * Experience levels that track overall Arcade progress
+
+- **Learning Pathways**:
+  * Structured sequences of games that build knowledge progressively
+  * Adaptive difficulty based on user performance
+  * Skill tree visualization showing knowledge connections
+  * Pre and post-assessments to measure learning gains
+
 ## Main Feature Categories
 
 ### 1. Finance Coach
@@ -134,6 +156,42 @@ Our career development suite helps users advance professionally and navigate the
 ### 3. Wellness Coach
 Our mental and emotional wellness tools provide support, guidance, and resources for overall wellbeing:
 
+- **Comprehensive Wellness Assessment** (/wellness?section=assessment): An integrated assessment system that:
+  * Combines mental and physical health evaluations
+  * Provides personalized wellness recommendations
+  * Generates custom wellness pathways based on results
+  * Features clinically validated assessment tools
+  * Tracks wellness progress over time
+  * Offers adaptive support based on assessment scores
+  * Includes detailed explanations of results
+
+- **PHQ-9 Assessment** (/wellness?section=assessment?tool=phq9): A clinical depression screening tool that:
+  * Uses the Patient Health Questionnaire-9, a validated clinical instrument
+  * Assesses depression symptoms over the past two weeks
+  * Provides a severity score from 0-27 (minimal, mild, moderate, moderately severe, severe)
+  * Offers specific recommendations based on score results
+  * Includes safety planning for high-risk scores
+  * Features follow-up recommendations appropriate to severity level
+  * Provides self-care steps customized to assessment results
+
+- **PAVS Assessment** (/wellness?section=assessment?tool=pavs): A physical activity evaluation tool that:
+  * Uses the Physical Activity Vital Sign clinical assessment
+  * Measures days per week and minutes per day of physical activity
+  * Evaluates activity intensity (light, moderate, vigorous, mixed)
+  * Categorizes activity levels (inactive, insufficient, active)
+  * Provides specific recommendations based on current activity level
+  * Features actionable steps to improve physical activity
+  * Includes educational content about activity benefits
+
+- **Wellness Integration** (/wellness?section=integration): A holistic wellness platform that:
+  * Combines mental and physical health data from assessments
+  * Creates personalized wellness pathways based on user profiles
+  * Provides integrated recommendations addressing multiple health domains
+  * Features adaptive content based on user progress
+  * Offers specialized support for various wellness needs
+  * Includes connection between physical and mental health domains
+  * Provides coordinated wellness tracking across domains
+
 - **Stress Management** (/wellness?section=stress-management): A comprehensive stress reduction platform that:
   * Offers guided breathing exercises
   * Provides progressive muscle relaxation techniques
@@ -170,7 +228,7 @@ Our mental and emotional wellness tools provide support, guidance, and resources
   * Offers workplace mental health resources
   * Includes professional help-seeking guidance
 
-- **Journal** (/wellness?section=journal): A therapeutic writing platform that:
+- **Wellness Journal** (/wellness?section=journal): A therapeutic writing platform that:
   * Provides guided journaling prompts
   * Offers mood tracking and analysis
   * Includes gratitude practice exercises
@@ -179,8 +237,44 @@ Our mental and emotional wellness tools provide support, guidance, and resources
   * Offers goal setting and tracking
   * Includes progress visualization
 
-### 4. Fitness Coach
+### 4. Fitness Coach (ActiveYou)
 Our physical wellness tools help users stay active, build strength, and maintain healthy habits:
+
+- **ActiveYou Enhanced** (/active?section=activeyou): A comprehensive fitness ecosystem that:
+  * Integrates all fitness features in one easy-to-navigate interface
+  * Provides personalized recommendations based on PAVS assessment results
+  * Adapts content based on user fitness level and goals
+  * Features quick access to most-used workout types
+  * Includes progress tracking across all activity types
+  * Offers personalized daily activity recommendations
+  * Provides seamless integration with wellness assessments
+
+- **Running & Walking** (/active?section=runner): A comprehensive running platform that:
+  * Tracks running routes and distances using geolocation
+  * Analyzes pace, cadence, and elevation changes
+  * Provides guided running workouts for all levels
+  * Features personalized training plans
+  * Offers audio coaching during runs
+  * Includes achievement badges and milestones
+  * Provides detailed post-run analytics
+
+- **HIIT Workouts** (/active?section=hiit): A high-intensity interval training system that:
+  * Offers timed workouts with visual and audio cues
+  * Provides multiple difficulty levels for all fitness abilities
+  * Features equipment-free exercise options
+  * Includes customizable work/rest intervals
+  * Offers specialized routines (cardio, strength, core, full-body)
+  * Provides calorie burn estimates
+  * Features progress tracking across workouts
+
+- **Stretching Routines** (/active?section=stretch): A flexibility enhancement platform that:
+  * Provides guided stretching sequences for different body areas
+  * Offers pre and post-workout stretching routines
+  * Includes timed holds with visual guides
+  * Features progressive flexibility programs
+  * Provides mobility assessments
+  * Offers specialized routines for injury prevention
+  * Includes sport-specific flexibility training
 
 - **Workout Planner** (/active?section=coach): A personalized exercise platform that:
   * Creates custom workout routines based on goals
@@ -200,7 +294,7 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Offers alternative exercise suggestions
   * Includes specialized sections for rehabilitation
 
-- **Nutrition Tracker** (/active?section=coach): A nutritional guidance system that:
+- **Nutrition Tracker** (/active?section=nutrition): A nutritional guidance system that:
   * Tracks macro and micronutrient intake
   * Provides meal timing recommendations
   * Offers hydration monitoring
@@ -209,7 +303,7 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Provides supplement information
   * Offers personalized eating plans
 
-- **Progress Tracking** (/active?section=activeyou): A comprehensive measurement system that:
+- **Fitness Progress Tracking** (/active?section=progress): A comprehensive measurement system that:
   * Tracks body measurements and composition
   * Records strength and endurance improvements
   * Provides visual progress with charts and graphs
@@ -245,7 +339,7 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Provides rest and recovery recommendations
   * Features specialized programs for different goals
 
-- **Active Fitness Tracker** (/active): A real-time activity platform that:
+- **Active Fitness Tracker** (/active?section=tracker): A real-time activity platform that:
   * Connects with wearable devices
   * Tracks steps, distance, and calories
   * Provides movement reminders
@@ -254,7 +348,7 @@ Our physical wellness tools help users stay active, build strength, and maintain
   * Features recovery tracking
   * Provides weekly activity reports
 
-- **Advanced Yoga Analysis** (/yoga-test, /yoga-pose-analysis, /yoga-progression): A specialized yoga tool that:
+- **Advanced Yoga Analysis** (/active?section=yoga-analysis): A specialized yoga tool that:
   * Analyzes and provides feedback on yoga poses
   * Offers detailed progression tracking
   * Provides advanced pose analysis
@@ -400,7 +494,7 @@ Our educational tools help users acquire new skills, study effectively, and achi
   * Offers emergency communication templates
   * Includes international emergency guidance
 
-## Special Features
+## Special Features & Educational Framework
 
 - **Fundi AI Assistant**: Our intelligent conversational assistant that:
   * Provides personalized guidance across all platform areas
@@ -410,6 +504,27 @@ Our educational tools help users acquire new skills, study effectively, and achi
   * Answers questions with helpful, accurate information
   * Provides encouragement and motivation
   * Adapts communication style to user preferences
+
+- **Learning Assessment System**: Our comprehensive assessment framework that:
+  * Uses clinically validated tools like PHQ-9 and PAVS
+  * Provides personalized learning paths based on assessment results
+  * Creates adaptive content recommendations based on skill levels
+  * Tracks progress across multiple domains
+  * Offers insights on areas for improvement
+  * Features regular reassessment opportunities
+  * Provides holistic views of user capabilities
+
+- **Social-Emotional Learning Framework**: Our educational foundation that tags content with:
+  * Self-awareness competencies (recognizing emotions, strengths, limitations)
+  * Self-management skills (regulating emotions, managing stress, self-discipline)
+  * Social awareness capabilities (empathy, respect for others, perspective-taking)
+  * Relationship skills (communication, teamwork, conflict resolution)
+  * Responsible decision-making (ethical choices, safety considerations, well-being)
+
+- **Skill Level Classification**: Our content organization system that categorizes material as:
+  * Foundational (essential knowledge for beginners)
+  * Intermediate (advancing skills for those with basic understanding)
+  * Advanced (complex concepts for experienced learners)
 
 - **Why Fundamenta** (/why-fundamenta): Platform mission, vision, and background
 
