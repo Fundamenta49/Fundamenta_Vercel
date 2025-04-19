@@ -32,7 +32,11 @@ interface PAVSResult {
   actions: string[];
 }
 
-export default function PAVSAssessment() {
+interface PAVSAssessmentProps {
+  onComplete?: () => void;
+}
+
+export default function PAVSAssessment({ onComplete }: PAVSAssessmentProps = {}) {
   const [step, setStep] = useState(1);
   const [daysPerWeek, setDaysPerWeek] = useState<number | null>(null);
   const [minutesPerDay, setMinutesPerDay] = useState<number | null>(null);
@@ -128,6 +132,11 @@ export default function PAVSAssessment() {
     try {
       localStorage.setItem('pavsAssessment', JSON.stringify(result));
       localStorage.setItem('pavsAssessmentDate', new Date().toISOString());
+      
+      // Trigger onComplete callback if provided
+      if (onComplete) {
+        onComplete();
+      }
     } catch (error) {
       console.error("Error saving PAVS assessment:", error);
     }

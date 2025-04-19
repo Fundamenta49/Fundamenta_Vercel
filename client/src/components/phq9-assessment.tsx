@@ -32,7 +32,11 @@ interface PHQ9Result {
   followUp: string;
 }
 
-export default function PHQ9Assessment() {
+interface PHQ9AssessmentProps {
+  onComplete?: () => void;
+}
+
+export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {}) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>(new Array(9).fill(-1));
   const [showResults, setShowResults] = useState(false);
@@ -220,6 +224,11 @@ export default function PHQ9Assessment() {
     try {
       localStorage.setItem('phq9Assessment', JSON.stringify(result));
       localStorage.setItem('phq9AssessmentDate', new Date().toISOString());
+      
+      // Trigger onComplete callback if provided
+      if (onComplete) {
+        onComplete();
+      }
     } catch (error) {
       console.error("Error saving PHQ-9 assessment:", error);
     }

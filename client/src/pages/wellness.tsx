@@ -342,6 +342,60 @@ export default function Wellness() {
           </MegaDialogContent>
         </MegaDialog>
 
+        <MegaDialog open={isWellnessProfileOpen} onOpenChange={setIsWellnessProfileOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Your Wellness Profile</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Wellness Profile...</p>
+                </div>
+              }>
+                <WellnessIntegration />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
+
+        <MegaDialog open={isMentalHealthOpen} onOpenChange={setIsMentalHealthOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Mental Health Assessment (PHQ-9)</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Mental Health Assessment...</p>
+                </div>
+              }>
+                <PHQ9Assessment />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
+
+        <MegaDialog open={isPhysicalActivityOpen} onOpenChange={setIsPhysicalActivityOpen}>
+          <MegaDialogContent>
+            <MegaDialogHeader>
+              <MegaDialogTitle>Physical Activity Assessment (PAVS)</MegaDialogTitle>
+            </MegaDialogHeader>
+            <MegaDialogBody>
+              <Suspense fallback={
+                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                  <p className="text-muted-foreground">Loading Physical Activity Assessment...</p>
+                </div>
+              }>
+                <PAVSAssessment />
+              </Suspense>
+            </MegaDialogBody>
+          </MegaDialogContent>
+        </MegaDialog>
+
         {/* Grid-style cards layout (similar to Learning section) */}
         <div className="px-2">
           <div className="mb-4">
