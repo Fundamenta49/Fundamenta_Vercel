@@ -19,57 +19,139 @@ import {
   BarChart
 } from 'lucide-react';
 
-// Sample assessment questions
+// RAISEC (Holland Code) assessment questions
+// R - Realistic, A - Artistic, I - Investigative, S - Social, E - Enterprising, C - Conventional
 const ASSESSMENT_QUESTIONS = [
+  // Realistic questions
   {
     id: 1,
-    question: "I enjoy solving complex problems and analyzing data",
-    category: "analytical"
+    question: "I enjoy working with tools, machines, or my hands",
+    category: "realistic"
   },
   {
     id: 2,
-    question: "I prefer working with people rather than with information or things",
-    category: "social"
+    question: "I prefer practical, hands-on problems to theoretical ones",
+    category: "realistic"
   },
   {
     id: 3,
-    question: "I like to express myself creatively through art, writing, or design",
-    category: "creative"
+    question: "I like building or fixing physical things",
+    category: "realistic"
   },
   {
     id: 4,
-    question: "I enjoy organizing, planning, and creating systems",
-    category: "organizational"
+    question: "I enjoy working outdoors or with plants and animals",
+    category: "realistic"
   },
+  
+  // Artistic questions
   {
     id: 5,
-    question: "I like working with my hands to build or fix things",
-    category: "practical"
+    question: "I enjoy expressing myself creatively",
+    category: "artistic"
   },
   {
     id: 6,
-    question: "I'm interested in scientific research and discovery",
-    category: "scientific"
+    question: "I value aesthetic qualities and artistic expression",
+    category: "artistic"
   },
   {
     id: 7,
-    question: "I enjoy persuading others and taking leadership roles",
-    category: "leadership"
+    question: "I like work that allows me to express my individuality",
+    category: "artistic"
   },
   {
     id: 8,
-    question: "I prefer environments that are structured and predictable",
-    category: "conventional"
+    question: "I enjoy activities that involve visual arts, music, or writing",
+    category: "artistic"
   },
+  
+  // Investigative questions
   {
     id: 9,
-    question: "I'm comfortable taking risks and trying new approaches",
-    category: "enterprising"
+    question: "I enjoy learning about complex subjects and solving puzzles",
+    category: "investigative"
   },
   {
     id: 10,
-    question: "I'm drawn to helping others and making a positive impact",
-    category: "service"
+    question: "I like analyzing data and finding patterns",
+    category: "investigative"
+  },
+  {
+    id: 11,
+    question: "I'm curious about how and why things work",
+    category: "investigative"
+  },
+  {
+    id: 12,
+    question: "I enjoy scientific or mathematical challenges",
+    category: "investigative"
+  },
+  
+  // Social questions
+  {
+    id: 13,
+    question: "I enjoy working with and helping people",
+    category: "social"
+  },
+  {
+    id: 14,
+    question: "I'm good at teaching or explaining things to others",
+    category: "social"
+  },
+  {
+    id: 15,
+    question: "I care about the wellbeing of others",
+    category: "social"
+  },
+  {
+    id: 16,
+    question: "I'm interested in community service and social issues",
+    category: "social"
+  },
+  
+  // Enterprising questions
+  {
+    id: 17,
+    question: "I enjoy persuading or leading others",
+    category: "enterprising"
+  },
+  {
+    id: 18,
+    question: "I like taking risks and initiating projects",
+    category: "enterprising"
+  },
+  {
+    id: 19,
+    question: "I enjoy selling things or promoting ideas",
+    category: "enterprising"
+  },
+  {
+    id: 20,
+    question: "I aspire to positions of leadership or influence",
+    category: "enterprising"
+  },
+  
+  // Conventional questions
+  {
+    id: 21,
+    question: "I enjoy organizing information and maintaining records",
+    category: "conventional"
+  },
+  {
+    id: 22,
+    question: "I like following established procedures and routines",
+    category: "conventional"
+  },
+  {
+    id: 23,
+    question: "I'm detail-oriented and methodical in my work",
+    category: "conventional"
+  },
+  {
+    id: 24,
+    question: "I prefer clear expectations and structured environments",
+    category: "conventional"
   }
 ];
 
@@ -147,27 +229,65 @@ export default function CareerAssessment() {
     }
   };
   
-  // Calculate assessment results
+  // Calculate RAISEC assessment results
   const calculateResults = () => {
-    // In a real implementation, this would use the answers to calculate results
-    // For now, we'll just show a random result
-    const topPaths = [
-      CAREER_PATHS[0], // Technology
-      CAREER_PATHS[2], // Business
-      CAREER_PATHS[3]  // Creative
-    ];
-    
-    const strengthsData = {
-      analytical: 85,
-      leadership: 70,
-      creative: 65,
-      technical: 75,
-      communication: 60
+    // Calculate RAISEC scores from answers
+    const scores = {
+      realistic: 0,
+      artistic: 0,
+      investigative: 0,
+      social: 0,
+      enterprising: 0,
+      conventional: 0
     };
+    
+    // Calculate score for each RAISEC category
+    Object.entries(answers).forEach(([questionId, rating]) => {
+      const question = ASSESSMENT_QUESTIONS.find(q => q.id === parseInt(questionId));
+      if (question) {
+        scores[question.category as keyof typeof scores] += rating;
+      }
+    });
+    
+    // Normalize scores (convert to percentages)
+    const maxPossibleScore = 20; // 4 questions per category, max rating 5
+    const normalizedScores = Object.entries(scores).reduce((acc, [category, score]) => {
+      acc[category] = Math.round((score / maxPossibleScore) * 100);
+      return acc;
+    }, {} as Record<string, number>);
+    
+    // Determine top 3 categories
+    const sortedCategories = Object.entries(normalizedScores)
+      .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)
+      .slice(0, 3)
+      .map(([category]) => category);
+    
+    // Map top categories to career paths
+    // This is a simplified mapping - a real implementation would have more sophisticated matching
+    const categoryToPathMapping: Record<string, string> = {
+      realistic: 'technology',
+      artistic: 'creative',
+      investigative: 'education',
+      social: 'social',
+      enterprising: 'business',
+      conventional: 'technology'
+    };
+    
+    const topPathIds = sortedCategories.map(category => categoryToPathMapping[category]);
+    const uniquePathIds = [...new Set(topPathIds)]; // Remove duplicates
+    const topPaths = uniquePathIds.map(pathId => 
+      CAREER_PATHS.find(path => path.id === pathId)
+    ).filter(Boolean) as typeof CAREER_PATHS;
+    
+    // Create a RAISEC code from the top 3 categories (e.g., "RIC" for Realistic, Investigative, Conventional)
+    const raisecCode = sortedCategories
+      .map(category => category[0].toUpperCase())
+      .join('');
     
     setResultsData({
       topPaths,
-      strengths: strengthsData
+      strengths: normalizedScores,
+      raisecCode
     });
     
     setShowResults(true);
@@ -281,17 +401,33 @@ export default function CareerAssessment() {
                 <CardHeader>
                   <CardTitle>Your Career Assessment Results</CardTitle>
                   <CardDescription>
-                    Based on your responses, we've identified your top career matches and key strengths
+                    Based on your responses, we've identified your Holland Code (RAISEC) and career matches
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  {/* RAISEC Code Display */}
+                  {resultsData && resultsData.raisecCode && (
+                    <div className="bg-primary/10 p-4 rounded-lg text-center">
+                      <h3 className="text-lg font-medium mb-2">Your Holland Code</h3>
+                      <div className="text-3xl font-bold tracking-wider">{resultsData.raisecCode}</div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Your top interest areas form your unique RAISEC code, which helps identify career paths that match your preferences
+                      </p>
+                    </div>
+                  )}
+                  
                   <div>
-                    <h3 className="text-lg font-medium mb-3">Your Key Strengths</h3>
+                    <h3 className="text-lg font-medium mb-3">Your RAISEC Profile</h3>
                     <div className="space-y-4">
                       {resultsData && Object.entries(resultsData.strengths).map(([key, value]: [string, any]) => (
                         <div key={key} className="space-y-1">
                           <div className="flex justify-between items-center">
-                            <span className="capitalize">{key}</span>
+                            <span className="capitalize">{key === 'realistic' ? 'Realistic (R)' : 
+                              key === 'artistic' ? 'Artistic (A)' : 
+                              key === 'investigative' ? 'Investigative (I)' : 
+                              key === 'social' ? 'Social (S)' : 
+                              key === 'enterprising' ? 'Enterprising (E)' : 
+                              'Conventional (C)'}</span>
                             <span>{value}%</span>
                           </div>
                           <Progress value={value} className="h-2" />
