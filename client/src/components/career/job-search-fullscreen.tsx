@@ -683,7 +683,7 @@ export default function JobSearchFullscreen() {
                 {salaryData.stateData && Object.keys(salaryData.stateData).length > 0 && (
                   <div className="mt-4">
                     <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
-                      <BarChart4 className="h-4 w-4 text-primary" />
+                      <TrendingUp className="h-4 w-4 text-primary" />
                       Regional Salary Comparison
                     </h4>
                     <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">

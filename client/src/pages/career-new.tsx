@@ -10,7 +10,7 @@ import { Briefcase, BookOpen, School, FileText, MessageSquare, Brain, Scale, Net
 
 // Import components for Career tools
 import ResumeBuilder from '@/components/career/resume-builder';
-import JobSearch from '@/components/career/job-search';
+import JobSearchPopOut from '@/components/career/job-search-pop-out'; // Updated to use pop-out version
 import InterviewPractice from '@/components/career/interview-practice';
 import CareerAssessment from '@/components/career/career-assessment/index';
 import EmotionalResilience from '@/components/career/emotional-resilience/index';
@@ -41,7 +41,7 @@ const CAREER_TOOLS = [
     title: 'Job Search',
     description: 'Find and apply to jobs that match your skills and interests',
     icon: <Briefcase className="h-8 w-8" />,
-    component: JobSearch,
+    component: JobSearchPopOut,
     color: 'bg-green-50 dark:bg-green-950'
   },
   {
@@ -49,7 +49,7 @@ const CAREER_TOOLS = [
     title: 'Fundamenta Connects',
     description: 'Connect with professionals, mentors, and networking opportunities',
     icon: <Network className="h-8 w-8" />,
-    component: JobSearch, // Using job search component for now with networking features
+    component: JobSearchPopOut, // Updated to use pop-out version
     color: 'bg-purple-50 dark:bg-purple-950'
   },
   {
