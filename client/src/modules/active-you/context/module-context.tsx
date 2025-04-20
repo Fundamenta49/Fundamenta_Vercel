@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type ExerciseType = 'meditation' | 'weightlifting' | 'yoga' | 'running' | 'hiit' | 'stretch';
+export type ExerciseType = 'activeyou' | 'meditation' | 'weightlifting' | 'yoga' | 'running' | 'hiit' | 'stretch';
 
 interface ActiveYouContextType {
   activeTab: ExerciseType;
