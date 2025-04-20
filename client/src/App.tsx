@@ -26,7 +26,6 @@ import Career from "@/pages/career";
 import CareerNew from "@/pages/career-new";
 import Wellness from "@/pages/wellness";
 import Active from "@/pages/active";
-import ActiveFullscreenPage from "@/pages/active-fullscreen";
 import Learning from "@/pages/learning";
 import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";
@@ -186,11 +185,6 @@ function Router() {
             <Route path="/active/:section">
               <ProtectedRoute>
                 <Active />
-              </ProtectedRoute>
-            </Route>
-            <Route path="/active-fullscreen">
-              <ProtectedRoute>
-                <ActiveFullscreenPage />
               </ProtectedRoute>
             </Route>
             <Route path="/yoga">
