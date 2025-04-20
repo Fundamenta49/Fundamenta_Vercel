@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, Flame } from "lucide-react";
+import { AlertCircle, Brain, Dumbbell, Bird as YogaIcon, Timer, User, Flame, X } from "lucide-react";
 import { StretchingIcon } from "@/components/active-you";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile from "@/components/fitness-profile";
@@ -113,14 +113,19 @@ export default function ActivePage() {
               
               <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-                <Dialog.Content className="fixed inset-0 z-50 w-full h-full overflow-auto bg-white shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
+                <Dialog.Content className="fixed inset-0 z-50 w-full h-screen overflow-auto bg-white shadow-xl duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full">
                   <div className="min-h-full">
-                    <div className="sticky top-0 z-10 px-6 py-4 flex items-center justify-between border-b bg-white">
-                      <Dialog.Title className="text-2xl font-semibold leading-none tracking-tight">
+                    {/* Swipe indicator for mobile */}
+                    <div className="absolute top-2 left-0 right-0 flex justify-center items-center pointer-events-none sm:hidden">
+                      <div className="h-1 w-16 bg-pink-300 rounded-full opacity-70"></div>
+                    </div>
+                    
+                    <div className="sticky top-0 z-10 px-6 py-5 sm:pt-4 flex items-center justify-between border-b bg-white shadow-sm">
+                      <Dialog.Title className="text-2xl font-semibold leading-none tracking-tight text-pink-800">
                         {section.title}
                       </Dialog.Title>
                       <Dialog.Close className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-pink-500"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                        <X className="h-6 w-6 text-pink-500" />
                         <span className="sr-only">Close</span>
                       </Dialog.Close>
                     </div>
