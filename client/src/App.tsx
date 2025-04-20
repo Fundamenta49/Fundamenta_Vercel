@@ -25,7 +25,7 @@ import MortgagePage from "@/pages/finance/mortgage";
 import Career from "@/pages/career";
 import CareerNew from "@/pages/career-new";
 import Wellness from "@/pages/wellness";
-import Active from "@/pages/active-fullpage";
+import Active from "@/pages/active-fixed";
 import Learning from "@/pages/learning";
 import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";

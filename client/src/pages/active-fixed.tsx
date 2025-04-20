@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Card } from "@/components/ui/card";
 import { X, Brain, Dumbbell, Bird as YogaIcon, Timer, User, Flame } from "lucide-react";
 import { StretchingIcon } from "@/components/active-you";
 import ActiveYou from "@/components/active-you";
 import FitnessProfile from "@/components/fitness-profile";
 
-// Define a single interface for sections
-interface FitnessSection {
+// Define section type
+type FitnessSection = {
   id: string;
   title: string;
   description: string;
   icon: React.FC<any>;
   defaultTab: string;
   spanCol?: boolean;
-}
+};
 
-export default function ActivePage() {
+const ActivePage = () => {
   const [activeSection, setActiveSection] = useState<FitnessSection | null>(null);
   const [location] = useLocation();
 
@@ -74,28 +73,24 @@ export default function ActivePage() {
     }
   ];
 
-  // Function to open a section as full page
+  // Function to open a section
   const openSection = (section: FitnessSection) => {
     setActiveSection(section);
-    // Add no-scroll class to the body
     document.body.classList.add('overflow-hidden');
   };
 
   // Function to close the active section
   const closeSection = () => {
     setActiveSection(null);
-    // Remove no-scroll class from the body
     document.body.classList.remove('overflow-hidden');
   };
 
-  // Check URL parameters on component mount and when location changes
+  // Handle URL parameters
   useEffect(() => {
-    // Handle URL parameters such as /active?section=yoga
     const params = new URLSearchParams(window.location.search);
     const sectionParam = params.get('section');
     
     if (sectionParam) {
-      // Find the matching section
       const matchedSection = sections.find(
         section => section.id.toLowerCase() === sectionParam.toLowerCase()
       );
@@ -105,6 +100,55 @@ export default function ActivePage() {
       }
     }
   }, [location]);
+
+  // Render the popout/modal if a section is active
+  const renderModal = () => {
+    if (!activeSection) return null;
+    
+    return (
+      <>
+        {/* Backdrop for desktop */}
+        <div 
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm hidden sm:block" 
+          onClick={() => closeSection()}
+          aria-hidden="true"
+        />
+        
+        {/* Modal content */}
+        <div className="fixed inset-0 z-50 w-full h-full bg-white transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-full overflow-auto">
+          {/* Swipe indicator for mobile */}
+          <div className="absolute top-2 left-0 right-0 flex justify-center items-center pointer-events-none sm:hidden">
+            <div className="h-1 w-16 bg-pink-300 rounded-full opacity-70"></div>
+          </div>
+          
+          {/* Header */}
+          <div className="sticky top-0 z-10 px-6 py-5 sm:pt-4 flex items-center justify-between border-b bg-white shadow-sm">
+            <h2 className="text-2xl font-semibold leading-none tracking-tight text-pink-800">
+              {activeSection.title}
+            </h2>
+            <button
+              onClick={() => closeSection()}
+              aria-label="Close"
+              type="button"
+              className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200"
+            >
+              <X className="h-6 w-6 text-pink-500" />
+              <span className="sr-only">Close</span>
+            </button>
+          </div>
+          
+          {/* Content */}
+          <div className="px-6 py-4 pb-16">
+            {activeSection.id === 'activeyou' ? (
+              <FitnessProfile onComplete={() => {}} />
+            ) : (
+              <ActiveYou defaultTab={activeSection.defaultTab as any} />
+            )}
+          </div>
+        </div>
+      </>
+    );
+  };
 
   return (
     <div className="w-full mx-auto p-4 relative">
@@ -148,50 +192,9 @@ export default function ActivePage() {
         </div>
       </div>
 
-      {/* Full-page section modal with backdrop */}
-      {activeSection && (
-        <>
-          {/* Backdrop for desktop */}
-          <div 
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm hidden sm:block" 
-            onClick={() => closeSection()}
-            aria-hidden="true"
-          />
-          
-          {/* Modal content */}
-          <div className="fixed inset-0 z-50 w-full h-full bg-white transition-all duration-300 animate-in fade-in-0 slide-in-from-bottom-full overflow-auto">
-            {/* Swipe indicator for mobile */}
-            <div className="absolute top-2 left-0 right-0 flex justify-center items-center pointer-events-none sm:hidden">
-              <div className="h-1 w-16 bg-pink-300 rounded-full opacity-70"></div>
-            </div>
-            
-            {/* Header */}
-            <div className="sticky top-0 z-10 px-6 py-5 sm:pt-4 flex items-center justify-between border-b bg-white shadow-sm">
-              <h2 className="text-2xl font-semibold leading-none tracking-tight text-pink-800">
-                {activeSection.title}
-              </h2>
-              <button
-                onClick={() => closeSection()}
-                aria-label="Close"
-                type="button"
-                className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200"
-              >
-                <X className="h-6 w-6 text-pink-500" />
-                <span className="sr-only">Close</span>
-              </button>
-            </div>
-            
-            {/* Content */}
-            <div className="px-6 py-4 pb-16">
-              {activeSection.id === 'activeyou' ? (
-                <FitnessProfile onComplete={() => {}} />
-              ) : (
-                <ActiveYou defaultTab={activeSection.defaultTab as any} />
-              )}
-            </div>
-          </div>
-        </>
-      )}
+      {renderModal()}
     </div>
   );
-}
+};
+
+export default ActivePage;
