@@ -6,7 +6,8 @@ import {
   Flame, 
   Activity, 
   User,
-  Home
+  Home,
+  ChevronRight
 } from 'lucide-react';
 import { useModuleContext } from '../context/module-context';
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -81,21 +82,29 @@ function SidebarItem({
   return (
     <div 
       className={cn(
-        "flex items-center p-3 rounded-md cursor-pointer transition-all",
-        isActive ? "bg-primary/10 text-primary" : "hover:bg-gray-100 dark:hover:bg-gray-800"
+        "flex items-center justify-between p-3 rounded-md cursor-pointer transition-all",
+        isActive 
+          ? "bg-primary/10 text-primary" 
+          : "hover:bg-gray-100 dark:hover:bg-gray-800"
       )}
       onClick={onClick}
     >
-      <Icon className={cn(
-        "h-5 w-5 mr-3",
-        isActive ? "text-primary" : "text-gray-500"
-      )} />
-      <span className={cn(
-        "text-sm font-medium",
-        isActive ? "text-primary" : "text-gray-700 dark:text-gray-300"
-      )}>
-        {label}
-      </span>
+      <div className="flex items-center">
+        <Icon className={cn(
+          "h-5 w-5 mr-3",
+          isActive ? "text-primary" : "text-gray-500"
+        )} />
+        <span className={cn(
+          "text-sm font-medium",
+          isActive ? "text-primary" : "text-gray-700 dark:text-gray-300"
+        )}>
+          {label}
+        </span>
+      </div>
+      
+      {isActive && (
+        <ChevronRight className="h-4 w-4 text-primary" />
+      )}
     </div>
   );
 }

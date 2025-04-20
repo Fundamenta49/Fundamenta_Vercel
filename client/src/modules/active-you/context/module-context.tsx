@@ -1,77 +1,78 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useState, useContext, ReactNode } from 'react';
 
-// Define the module types
-export type ModuleType = 'dashboard' | 'yoga' | 'running' | 'meditation' | 'weightlifting' | 'hiit' | 'stretch' | 'profile';
+// Define available module types
+type ModuleType = 
+  | 'dashboard'
+  | 'yoga'
+  | 'running'
+  | 'meditation'
+  | 'weightlifting'
+  | 'hiit'
+  | 'stretch'
+  | 'profile';
 
 // Define context interface
-interface ModuleContextProps {
+interface ModuleContextType {
   activeModule: ModuleType;
   setActiveModule: (module: ModuleType) => void;
-  isFullscreen: boolean;
-  toggleFullscreen: () => void;
   isSidebarVisible: boolean;
   toggleSidebar: () => void;
+  userProfile: any;
+  updateUserProfile: (profile: any) => void;
 }
 
-// Create context with default values
-const ModuleContext = createContext<ModuleContextProps>({
+// Create the context with default values
+const ModuleContext = createContext<ModuleContextType>({
   activeModule: 'dashboard',
   setActiveModule: () => {},
-  isFullscreen: false,
-  toggleFullscreen: () => {},
   isSidebarVisible: true,
   toggleSidebar: () => {},
+  userProfile: null,
+  updateUserProfile: () => {}
 });
 
 // Context provider component
 export function ModuleProvider({ children }: { children: ReactNode }) {
   const [activeModule, setActiveModule] = useState<ModuleType>('dashboard');
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
-  // Toggle fullscreen functionality
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
-      setIsFullscreen(true);
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-        setIsFullscreen(false);
+  // Load saved profile from localStorage if it exists
+  useEffect(() => {
+    try {
+      const savedProfile = localStorage.getItem('fitnessProfile');
+      if (savedProfile) {
+        setUserProfile(JSON.parse(savedProfile));
       }
+    } catch (error) {
+      console.error('Error loading profile:', error);
     }
-  };
+  }, []);
 
   // Toggle sidebar visibility
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
 
-  // Effect to handle fullscreen change events
-  /* useEffect(() => {
-    const onFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    
-    document.addEventListener('fullscreenchange', onFullscreenChange);
-    
-    return () => {
-      document.removeEventListener('fullscreenchange', onFullscreenChange);
-    };
-  }, []); */
+  // Update user profile
+  const updateUserProfile = (profile: any) => {
+    setUserProfile(profile);
+    try {
+      localStorage.setItem('fitnessProfile', JSON.stringify(profile));
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    }
+  };
 
-  // Provide context values
   return (
     <ModuleContext.Provider 
-      value={{ 
-        activeModule, 
-        setActiveModule, 
-        isFullscreen, 
-        toggleFullscreen,
+      value={{
+        activeModule,
+        setActiveModule,
         isSidebarVisible,
-        toggleSidebar
+        toggleSidebar,
+        userProfile,
+        updateUserProfile
       }}
     >
       {children}
@@ -79,7 +80,11 @@ export function ModuleProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Custom hook for easier context consumption
+// Custom hook to use the context
 export function useModuleContext() {
-  return useContext(ModuleContext);
+  const context = useContext(ModuleContext);
+  if (context === undefined) {
+    throw new Error('useModuleContext must be used within a ModuleProvider');
+  }
+  return context;
 }

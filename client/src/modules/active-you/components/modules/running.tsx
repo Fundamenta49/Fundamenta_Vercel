@@ -33,7 +33,8 @@ import {
   CheckCircle2,
   BarChart2,
   Timer,
-  AlertCircle
+  AlertCircle,
+  Plus
 } from 'lucide-react';
 
 // Distance constants for milestone tracking
