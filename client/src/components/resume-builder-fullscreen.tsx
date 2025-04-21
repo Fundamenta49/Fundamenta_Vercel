@@ -1409,6 +1409,50 @@ export default function ResumeBuilderFullscreen({ onClose }: { onClose: () => vo
                               )}
                             />
                           </div>
+                          
+                          <div className="flex gap-3 justify-end mt-6">
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              onClick={() => form.reset()}
+                              className="w-auto"
+                            >
+                              Reset Form
+                            </Button>
+                            <Button 
+                              type="button" 
+                              onClick={() => {
+                                // Validate the form
+                                form.trigger().then(isValid => {
+                                  if (isValid) {
+                                    toast({
+                                      title: "Resume Data Saved",
+                                      description: "Your resume information has been saved. You can now generate a PDF or optimize for a job.",
+                                    });
+                                    
+                                    // Update resumeText with all form data combined for AI optimization
+                                    const values = form.getValues();
+                                    const fullResumeText = `
+                                      ${values.name}
+                                      ${values.email} | ${values.phone}
+                                      
+                                      ${values.summary ? `PROFESSIONAL SUMMARY\n${values.summary}\n\n` : ''}
+                                      ${values.experience ? `EXPERIENCE\n${values.experience}\n\n` : ''}
+                                      ${values.education ? `EDUCATION\n${values.education}\n\n` : ''}
+                                      ${values.skills ? `SKILLS\n${values.skills}\n\n` : ''}
+                                      ${values.projects ? `PROJECTS\n${values.projects}\n\n` : ''}
+                                      ${values.certifications ? `CERTIFICATIONS\n${values.certifications}` : ''}
+                                    `.trim();
+                                    
+                                    form.setValue("resumeText", fullResumeText);
+                                  }
+                                });
+                              }}
+                              className="w-auto px-6"
+                            >
+                              Save Resume
+                            </Button>
+                          </div>
                         </div>
                       </Form>
                     </CardContent>
