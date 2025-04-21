@@ -7,8 +7,10 @@ import {
   upload
 } from "../utils/openai";
 import path from "path";
+import OpenAI from "openai";
 
 const router = Router();
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Parse resume with AI
 router.post("/parse", async (req: Request, res: Response) => {
@@ -120,6 +122,73 @@ router.post("/optimize", async (req: Request, res: Response) => {
     console.error("Resume optimization error:", error);
     return res.status(500).json({ 
       error: "Failed to optimize resume",
+      message: error instanceof Error ? error.message : "Unknown error" 
+    });
+  }
+});
+
+// Analyze resume
+router.post("/analyze", async (req: Request, res: Response) => {
+  try {
+    const { resumeText } = req.body;
+    
+    if (!resumeText || typeof resumeText !== "string") {
+      return res.status(400).json({ 
+        error: "Resume text is required" 
+      });
+    }
+
+    // Process with OpenAI to extract skills and analyze experience level
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
+      messages: [
+        {
+          role: "system",
+          content: `Analyze the resume text and extract key information in JSON format:
+          - List of skills mentioned (technical and soft skills)
+          - Experience level estimation (Entry-level, Mid-level, Senior-level)
+          - Areas for improvement
+          - Resume strengths
+          - Resume weaknesses
+          
+          Format your response as JSON with the following structure:
+          {
+            "skills": ["skill1", "skill2", ...],
+            "experienceLevel": "Entry-level OR Mid-level OR Senior-level",
+            "improvementAreas": ["area1", "area2", ...],
+            "strengths": ["strength1", "strength2", ...],
+            "weaknesses": ["weakness1", "weakness2", ...]
+          }
+          
+          Ensure your response is valid JSON.`
+        },
+        {
+          role: "user",
+          content: resumeText
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.5,
+      max_tokens: 1500
+    });
+
+    if (!response.choices[0].message?.content) {
+      throw new Error("No response received from OpenAI");
+    }
+
+    const result = JSON.parse(response.choices[0].message.content);
+    
+    return res.status(200).json({
+      skills: result.skills || [],
+      experienceLevel: result.experienceLevel || "Entry-level",
+      improvementAreas: result.improvementAreas || [],
+      strengths: result.strengths || [],
+      weaknesses: result.weaknesses || []
+    });
+  } catch (error) {
+    console.error("Resume analysis error:", error);
+    return res.status(500).json({ 
+      error: "Failed to analyze resume",
       message: error instanceof Error ? error.message : "Unknown error" 
     });
   }
