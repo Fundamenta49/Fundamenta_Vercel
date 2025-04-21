@@ -1110,7 +1110,7 @@ export default function ResumeBuilderFullscreen({ onClose }: { onClose: () => vo
               className="hidden sm:flex items-center gap-1.5"
               onClick={() => setShowGuide(true)}
             >
-              <BookOpen className="h-4 w-4" />
+              <BookText className="h-4 w-4" />
               Resume Guide
             </Button>
             
@@ -1492,7 +1492,7 @@ export default function ResumeBuilderFullscreen({ onClose }: { onClose: () => vo
                 <div className="sticky top-[90px]">
                   <div className="mb-4">
                     <h3 className="text-sm font-medium mb-2 flex items-center gap-1.5">
-                      <BookTemplate className="h-4 w-4 text-blue-500" />
+                      <FileText className="h-4 w-4 text-blue-500" />
                       Template Style
                     </h3>
                     <div className="grid grid-cols-2 gap-2">
@@ -1565,7 +1565,7 @@ export default function ResumeBuilderFullscreen({ onClose }: { onClose: () => vo
             className="flex items-center gap-1.5 text-xs h-8"
             onClick={() => setShowGuide(true)}
           >
-            <BookOpen className="h-3 w-3" />
+            <BookText className="h-3 w-3" />
             Guide
           </Button>
             
@@ -1607,7 +1607,7 @@ export default function ResumeBuilderFullscreen({ onClose }: { onClose: () => vo
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-blue-500" />
+              <BookText className="h-5 w-5 text-blue-500" />
               Resume Writing Guide
             </DialogTitle>
           </DialogHeader>
