@@ -1,224 +1,109 @@
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import React from "react";
 
 export function ResumeGuide() {
   return (
-    <div className="space-y-6 py-2">
-      <div>
-        <h3 className="text-lg font-semibold">Resume Format & Structure</h3>
-        <p className="text-sm text-gray-600 mt-1">
-          A well-structured resume makes it easy for recruiters to find the information they need quickly.
+    <div className="space-y-4 p-2">
+      <section>
+        <h3 className="text-lg font-semibold text-blue-600 mb-2">Resume Writing Fundamentals</h3>
+        <p className="text-sm text-gray-700 mb-2">
+          A well-crafted resume is your personal marketing document that showcases your skills, experiences, 
+          and achievements to potential employers. Follow these guidelines to create an effective resume.
         </p>
-        <ul className="mt-3 space-y-2">
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Keep it to one page</span>
-              <p className="text-xs text-gray-600">For most professionals with less than 10 years of experience, a one-page resume is ideal.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Use a clean, professional template</span>
-              <p className="text-xs text-gray-600">Avoid overly fancy designs or graphics that distract from your content.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Include clear section headings</span>
-              <p className="text-xs text-gray-600">Help recruiters navigate your resume with clear sections like Experience, Education, and Skills.</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-semibold">Contact Information</h3>
-        <p className="text-sm text-gray-600 mt-1">
-          Make it easy for employers to contact you.
+      </section>
+
+      <section>
+        <h3 className="text-md font-medium mb-1">1. Keep it Concise</h3>
+        <p className="text-sm text-gray-700 mb-2">
+          Most employers spend less than 30 seconds reviewing a resume initially. Limit your resume to 1-2 pages, 
+          focusing on the most relevant information. Use bullet points and concise language to maximize impact.
         </p>
-        <ul className="mt-3 space-y-2">
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Include your name, email, and phone number</span>
-              <p className="text-xs text-gray-600">These are essential contact details for any resume.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Add your LinkedIn profile</span>
-              <p className="text-xs text-gray-600">Make sure your LinkedIn profile is up-to-date before including it.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Avoid personal information</span>
-              <p className="text-xs text-gray-600">Don't include age, marital status, or a photo (in the US).</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-semibold">Professional Summary</h3>
-        <p className="text-sm text-gray-600 mt-1">
-          A strong summary grabs attention and sets the tone.
+      </section>
+
+      <section>
+        <h3 className="text-md font-medium mb-1">2. Tailor to the Job</h3>
+        <p className="text-sm text-gray-700 mb-2">
+          Customize your resume for each position. Analyze the job description and include relevant keywords 
+          and skills. The job targeting feature in our builder can help optimize your resume for specific positions.
         </p>
-        <ul className="mt-3 space-y-2">
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Keep it brief (2-3 sentences)</span>
-              <p className="text-xs text-gray-600">Highlight your professional identity, experience level, and top strengths.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Tailor it to each job</span>
-              <p className="text-xs text-gray-600">Use keywords from the job description to make your summary relevant.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Include achievements</span>
-              <p className="text-xs text-gray-600">If possible, add a notable achievement that demonstrates your value.</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-semibold">Work Experience</h3>
-        <p className="text-sm text-gray-600 mt-1">
-          This is the most important section of your resume.
+      </section>
+
+      <section>
+        <h3 className="text-md font-medium mb-1">3. Use Action Verbs</h3>
+        <p className="text-sm text-gray-700 mb-2">
+          Begin bullet points with strong action verbs (managed, developed, created, implemented) to convey 
+          your accomplishments effectively. Avoid passive voice and phrases like "responsible for."
         </p>
-        <ul className="mt-3 space-y-2">
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Use bullet points</span>
-              <p className="text-xs text-gray-600">3-5 bullet points per position works best.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Start with action verbs</span>
-              <p className="text-xs text-gray-600">Begin bullets with words like "Developed," "Implemented," or "Managed."</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Quantify achievements</span>
-              <p className="text-xs text-gray-600">Use numbers to measure your impact (e.g., "Increased sales by 20%").</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Avoid generic responsibilities</span>
-              <p className="text-xs text-gray-600">Focus on achievements rather than basic job duties.</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-semibold">Education</h3>
-        <p className="text-sm text-gray-600 mt-1">
-          Keep this section concise unless you're a recent graduate.
+        <div className="bg-blue-50 p-2 rounded text-sm">
+          <p className="font-medium text-blue-700">Examples:</p>
+          <ul className="list-disc list-inside text-gray-700 text-xs space-y-1 mt-1">
+            <li>Weak: "Responsible for managing a team of five"</li>
+            <li>Strong: "Led a five-person team, increasing productivity by 25%"</li>
+            <li>Weak: "Duties included customer service"</li>
+            <li>Strong: "Resolved 50+ customer inquiries daily, maintaining 98% satisfaction rate"</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h3 className="text-md font-medium mb-1">4. Quantify Achievements</h3>
+        <p className="text-sm text-gray-700 mb-2">
+          Use numbers, percentages, and metrics to demonstrate your impact. Quantified achievements are more 
+          compelling than general statements about your responsibilities.
         </p>
-        <ul className="mt-3 space-y-2">
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">List degrees in reverse chronological order</span>
-              <p className="text-xs text-gray-600">Start with your most recent education.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Include GPA if it's above 3.5</span>
-              <p className="text-xs text-gray-600">Otherwise, leave it off.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Add relevant coursework for recent grads</span>
-              <p className="text-xs text-gray-600">Only include courses directly related to the job.</p>
-            </div>
-          </li>
+        <div className="bg-blue-50 p-2 rounded text-sm">
+          <p className="font-medium text-blue-700">Examples:</p>
+          <ul className="list-disc list-inside text-gray-700 text-xs space-y-1 mt-1">
+            <li>Increased sales by 35% over 12 months</li>
+            <li>Reduced operational costs by $50,000 annually</li>
+            <li>Managed a $500,000 budget for marketing campaigns</li>
+            <li>Improved process efficiency by 20%, saving 15 hours weekly</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h3 className="text-md font-medium mb-1">5. Essential Sections</h3>
+        <ul className="list-disc list-inside text-sm text-gray-700 space-y-2 ml-2">
+          <li><span className="font-medium">Contact Information:</span> Include name, phone, email, and LinkedIn profile (optional: location, portfolio website)</li>
+          <li><span className="font-medium">Professional Summary:</span> 2-4 sentences highlighting your experience, key skills, and notable achievements</li>
+          <li><span className="font-medium">Work Experience:</span> List relevant positions in reverse chronological order with company, title, dates, and accomplishments</li>
+          <li><span className="font-medium">Education:</span> List degrees, institutions, graduation dates, and relevant coursework or honors</li>
+          <li><span className="font-medium">Skills:</span> Include technical, professional, and soft skills relevant to the position</li>
+          <li><span className="font-medium">Optional Sections:</span> Certifications, projects, languages, volunteer work (if relevant to your target role)</li>
         </ul>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-semibold">Skills</h3>
-        <p className="text-sm text-gray-600 mt-1">
-          Highlight your relevant technical and soft skills.
+      </section>
+
+      <section>
+        <h3 className="text-md font-medium mb-1">6. Formatting Tips</h3>
+        <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 ml-2">
+          <li>Use a clean, professional font (Arial, Calibri, Helvetica)</li>
+          <li>Maintain consistent formatting for headings, dates, and bullet points</li>
+          <li>Use 10-12 point font size for body text, slightly larger for headings</li>
+          <li>Include sufficient white space to improve readability</li>
+          <li>Save and send as a PDF to preserve formatting</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3 className="text-md font-medium mb-1">7. Avoid Common Mistakes</h3>
+        <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 ml-2">
+          <li>Spelling and grammar errors (proofread multiple times)</li>
+          <li>Including personal information (age, marital status, photo)</li>
+          <li>Using generic objectives or summaries</li>
+          <li>Including irrelevant experience or outdated information</li>
+          <li>Using overly complex language or industry jargon</li>
+        </ul>
+      </section>
+
+      <div className="mt-6 bg-blue-50 p-3 rounded-md">
+        <p className="text-sm text-blue-700 font-medium">Pro Tip:</p>
+        <p className="text-sm text-gray-700">
+          After creating your resume, have at least one other person review it for clarity, 
+          impact, and errors. Consider the feedback and make necessary adjustments.
         </p>
-        <ul className="mt-3 space-y-2">
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Group skills by category</span>
-              <p className="text-xs text-gray-600">E.g., Technical Skills, Language Skills, Soft Skills.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Prioritize skills mentioned in the job description</span>
-              <p className="text-xs text-gray-600">This helps get past ATS (Applicant Tracking Systems).</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Avoid listing basic skills</span>
-              <p className="text-xs text-gray-600">Microsoft Word and email are assumed skills for most professional roles.</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-semibold">Keywords & ATS Optimization</h3>
-        <p className="text-sm text-gray-600 mt-1">
-          Many companies use Applicant Tracking Systems to filter resumes.
-        </p>
-        <ul className="mt-3 space-y-2">
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Use keywords from the job description</span>
-              <p className="text-xs text-gray-600">Include exact phrases and skills mentioned in the posting.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Use standard section headings</span>
-              <p className="text-xs text-gray-600">Stick with "Experience," "Education," and "Skills" instead of creative alternatives.</p>
-            </div>
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <span className="text-sm font-medium">Keep formatting simple</span>
-              <p className="text-xs text-gray-600">Avoid tables, headers/footers, and complex formatting that ATS might not read correctly.</p>
-            </div>
-          </li>
-        </ul>
       </div>
     </div>
   );
 }
+
+export default ResumeGuide;
