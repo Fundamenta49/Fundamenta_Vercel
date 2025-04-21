@@ -687,6 +687,7 @@ const JobTargeting: React.FC<{
               )}
             </Button>
           </div>
+        </Form>
       </div>
     </div>
   );
