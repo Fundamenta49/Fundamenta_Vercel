@@ -25,14 +25,14 @@ const CareerToolCard: React.FC<CareerToolCardProps> = ({
 }) => {
   return (
     <div 
-      className="bg-white rounded-lg p-5 flex flex-col items-center text-center h-full cursor-pointer hover:shadow-md hover:border-blue-300 border border-gray-100 transition-all"
+      className="bg-white rounded-lg p-6 flex flex-col items-center text-center h-full cursor-pointer hover:shadow-md hover:border-blue-300 border border-gray-100 transition-all"
       onClick={onClick}
     >
-      <div className="flex justify-center mb-4 text-blue-500">
+      <div className="flex justify-center mb-5 text-blue-500">
         {icon}
       </div>
-      <h3 className="text-base font-medium mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground leading-snug">{description}</p>
+      <h3 className="text-lg font-medium mb-3">{title}</h3>
+      <p className="text-base text-muted-foreground leading-relaxed">{description}</p>
     </div>
   );
 };
@@ -83,7 +83,7 @@ export default function CareerToolsOriginal() {
   };
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container px-4 mx-auto py-6 max-w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-center text-[#1e3a8a] mb-6">Career Development</h1>
         <div className="pl-4 border-l-4 border-blue-500 mb-4">
@@ -91,11 +91,11 @@ export default function CareerToolsOriginal() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto w-full">
         <CareerToolCard
           title="Career Assessment"
           description="Discover your career interests and strengths"
-          icon={<Briefcase className="h-10 w-10" />}
+          icon={<Briefcase className="h-12 w-12" />}
           toolType="assessment"
           onClick={() => handleOpenTool('assessment')}
         />
@@ -103,7 +103,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="Resume Builder"
           description="Create and manage your professional resume"
-          icon={<FileText className="h-10 w-10" />}
+          icon={<FileText className="h-12 w-12" />}
           toolType="resume"
           onClick={() => handleOpenTool('resume')}
         />
@@ -111,7 +111,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="Fundamenta Connects"
           description="Find opportunities and research salary insights"
-          icon={<Building className="h-10 w-10" />}
+          icon={<Building className="h-12 w-12" />}
           toolType="job-search"
           onClick={() => handleOpenTool('job-search')}
         />
@@ -119,7 +119,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="Interview Practice"
           description="Prepare for job interviews with AI feedback"
-          icon={<MessageSquare className="h-10 w-10" />}
+          icon={<MessageSquare className="h-12 w-12" />}
           toolType="interview"
           onClick={() => handleOpenTool('interview')}
         />
@@ -127,7 +127,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="EQ & Resilience"
           description="Build emotional intelligence and career resilience"
-          icon={<Brain className="h-10 w-10" />}
+          icon={<Brain className="h-12 w-12" />}
           toolType="resilience"
           onClick={() => handleOpenTool('resilience')}
         />
@@ -135,7 +135,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="Employment Rights"
           description="Learn about your workplace rights and protections"
-          icon={<Scale className="h-10 w-10" />}
+          icon={<Scale className="h-12 w-12" />}
           toolType="rights"
           onClick={() => handleOpenTool('rights')}
         />
