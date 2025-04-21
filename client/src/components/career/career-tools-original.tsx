@@ -25,14 +25,14 @@ const CareerToolCard: React.FC<CareerToolCardProps> = ({
 }) => {
   return (
     <div 
-      className="bg-white rounded-lg p-4 md:p-6 flex flex-col items-center text-center h-full cursor-pointer hover:shadow-lg hover:border-blue-300 border border-gray-100 transition-all"
+      className="bg-white rounded-lg p-4 flex flex-col items-center text-center h-full cursor-pointer hover:shadow-lg hover:border-blue-300 border border-gray-100 transition-all"
       onClick={onClick}
     >
-      <div className="flex justify-center mb-4 text-blue-500">
+      <div className="flex justify-center mb-3 text-blue-500">
         {icon}
       </div>
-      <h3 className="text-lg md:text-xl font-medium mb-2">{title}</h3>
-      <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{description}</p>
+      <h3 className="text-lg font-medium mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground leading-normal">{description}</p>
     </div>
   );
 };
@@ -83,7 +83,7 @@ export default function CareerToolsOriginal() {
   };
 
   return (
-    <div className="container mx-auto py-6">
+    <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-center text-[#1e3a8a] mb-6">Career Development</h1>
         <div className="pl-4 border-l-4 border-blue-500 mb-6">
@@ -91,54 +91,66 @@ export default function CareerToolsOriginal() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        <CareerToolCard
-          title="Career Assessment"
-          description="Discover your career interests and strengths"
-          icon={<Briefcase className="h-16 w-16" />}
-          toolType="assessment"
-          onClick={() => handleOpenTool('assessment')}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="w-full">
+          <CareerToolCard
+            title="Career Assessment"
+            description="Discover your career interests and strengths"
+            icon={<Briefcase className="h-14 w-14" />}
+            toolType="assessment"
+            onClick={() => handleOpenTool('assessment')}
+          />
+        </div>
         
-        <CareerToolCard
-          title="Resume Builder"
-          description="Create and manage your professional resume"
-          icon={<FileText className="h-16 w-16" />}
-          toolType="resume"
-          onClick={() => handleOpenTool('resume')}
-        />
+        <div className="w-full">
+          <CareerToolCard
+            title="Resume Builder"
+            description="Create and manage your professional resume"
+            icon={<FileText className="h-14 w-14" />}
+            toolType="resume"
+            onClick={() => handleOpenTool('resume')}
+          />
+        </div>
         
-        <CareerToolCard
-          title="Fundamenta Connects"
-          description="Find opportunities and research salary insights"
-          icon={<Building className="h-16 w-16" />}
-          toolType="job-search"
-          onClick={() => handleOpenTool('job-search')}
-        />
+        <div className="w-full">
+          <CareerToolCard
+            title="Fundamenta Connects"
+            description="Find opportunities and research salary insights"
+            icon={<Building className="h-14 w-14" />}
+            toolType="job-search"
+            onClick={() => handleOpenTool('job-search')}
+          />
+        </div>
         
-        <CareerToolCard
-          title="Interview Practice"
-          description="Prepare for job interviews with AI feedback"
-          icon={<MessageSquare className="h-16 w-16" />}
-          toolType="interview"
-          onClick={() => handleOpenTool('interview')}
-        />
+        <div className="w-full">
+          <CareerToolCard
+            title="Interview Practice"
+            description="Prepare for job interviews with AI feedback"
+            icon={<MessageSquare className="h-14 w-14" />}
+            toolType="interview"
+            onClick={() => handleOpenTool('interview')}
+          />
+        </div>
         
-        <CareerToolCard
-          title="EQ & Resilience"
-          description="Build emotional intelligence and career resilience"
-          icon={<Brain className="h-16 w-16" />}
-          toolType="resilience"
-          onClick={() => handleOpenTool('resilience')}
-        />
+        <div className="w-full">
+          <CareerToolCard
+            title="EQ & Resilience"
+            description="Build emotional intelligence and career resilience"
+            icon={<Brain className="h-14 w-14" />}
+            toolType="resilience"
+            onClick={() => handleOpenTool('resilience')}
+          />
+        </div>
         
-        <CareerToolCard
-          title="Employment Rights"
-          description="Learn about your workplace rights and protections"
-          icon={<Scale className="h-16 w-16" />}
-          toolType="rights"
-          onClick={() => handleOpenTool('rights')}
-        />
+        <div className="w-full">
+          <CareerToolCard
+            title="Employment Rights"
+            description="Learn about your workplace rights and protections"
+            icon={<Scale className="h-14 w-14" />}
+            toolType="rights"
+            onClick={() => handleOpenTool('rights')}
+          />
+        </div>
       </div>
 
       {renderFullscreenComponent()}
