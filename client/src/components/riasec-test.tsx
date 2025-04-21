@@ -114,32 +114,32 @@ export default function RiasecTest() {
     }
 
     return (
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl">Your Career Path Results</CardTitle>
-          <CardDescription>
+      <Card className="max-w-2xl mx-auto w-full border-0 sm:border shadow-none sm:shadow">
+        <CardHeader className="px-4 sm:px-6 py-4 sm:py-6">
+          <CardTitle className="text-xl sm:text-2xl">Your Career Path Results</CardTitle>
+          <CardDescription className="text-sm">
             Based on your answers, here are your top career directions
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
+        <CardContent className="px-4 sm:px-6 pb-5 sm:pb-6">
+          <div className="space-y-4 sm:space-y-6">
             {results.map((result, index) => (
-              <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
-                <h3 className="font-semibold mb-2">#{index + 1}</h3>
-                <p>{result}</p>
+              <div key={index} className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm">
+                <h3 className="font-semibold text-sm sm:text-base mb-2 text-blue-600">#{index + 1}</h3>
+                <p className="text-sm sm:text-base">{result}</p>
               </div>
             ))}
 
-            <div className="space-y-4 pt-6 border-t mt-6">
+            <div className="space-y-3 sm:space-y-4 pt-5 sm:pt-6 border-t mt-4 sm:mt-6">
               <Button 
-                className="w-full"
+                className="w-full h-10 sm:h-11 text-sm sm:text-base"
                 onClick={() => setShowGuidance(true)}
               >
                 Get AI Career Guidance
               </Button>
               <Button 
                 variant="outline"
-                className="w-full"
+                className="w-full h-10 sm:h-11 text-sm sm:text-base"
                 onClick={() => {
                   setShowResults(false);
                   setQuestionIndex(0);
@@ -160,19 +160,19 @@ export default function RiasecTest() {
   const isLastQuestion = questionIndex === QUESTIONS.length - 1;
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Educational Path Assessment</CardTitle>
-        <CardDescription>
+    <Card className="max-w-2xl mx-auto w-full border-0 sm:border shadow-none sm:shadow">
+      <CardHeader className="px-4 sm:px-6 py-4 sm:py-6">
+        <CardTitle className="text-xl sm:text-2xl">Educational Path Assessment</CardTitle>
+        <CardDescription className="text-sm">
           Question {questionIndex + 1} of {QUESTIONS.length} ({Math.round(progress)}% Complete)
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          <Progress value={progress} />
+      <CardContent className="px-4 sm:px-6 pb-5 sm:pb-6">
+        <div className="space-y-5 sm:space-y-6">
+          <Progress value={progress} className="h-2" />
 
-          <div className="space-y-4">
-            <Label className="text-lg font-medium">
+          <div className="space-y-3 sm:space-y-4">
+            <Label className="text-base sm:text-lg font-medium block">
               {QUESTIONS[questionIndex].text}
             </Label>
 
@@ -188,23 +188,30 @@ export default function RiasecTest() {
                 ["agree", "Agree"],
                 ["strongly-agree", "Strongly Agree"]
               ].map(([value, label]) => (
-                <div key={value} className="flex items-center space-x-3 border rounded-lg p-4">
+                <div key={value} className="flex items-center space-x-3 border rounded-lg p-3 sm:p-4 hover:bg-gray-50 transition-colors">
                   <RadioGroupItem value={value} id={value} />
-                  <Label htmlFor={value}>{label}</Label>
+                  <Label htmlFor={value} className="text-sm sm:text-base font-medium cursor-pointer">{label}</Label>
                 </div>
               ))}
             </RadioGroup>
           </div>
 
-          <div className="flex justify-between pt-6 border-t">
+          <div className="flex justify-between items-center pt-5 sm:pt-6 border-t mt-4 sm:mt-6">
             <Button
               variant="outline"
+              size="sm"
+              className="h-9 px-3 sm:h-10 sm:px-4 text-sm"
               onClick={() => setQuestionIndex(prev => prev - 1)}
               disabled={questionIndex === 0}
             >
               Previous
             </Button>
+            <div className="text-xs text-muted-foreground mx-2 hidden sm:block">
+              {questionIndex + 1} of {QUESTIONS.length}
+            </div>
             <Button
+              size="sm"
+              className="h-9 px-3 sm:h-10 sm:px-4 text-sm"
               onClick={() => {
                 if (isLastQuestion) {
                   setShowResults(true);
