@@ -1,48 +1,49 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FileText } from "lucide-react";
 import ResumeBuilderFullscreen from "./resume-builder-fullscreen";
 
 interface ResumeBuilderTriggerProps {
-  buttonSize?: "default" | "sm" | "lg" | "icon";
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?: "default" | "outline" | "secondary" | "ghost" | "link";
+  size?: "default" | "sm" | "lg" | "icon";
+  fullWidth?: boolean; 
+  label?: string;
   className?: string;
-  buttonText?: string;
 }
 
-export default function ResumeBuilderTrigger({
-  buttonSize = "default",
-  variant = "default",
-  className,
-  buttonText = "Resume Builder"
+/**
+ * Trigger button component for the Resume Builder
+ * Opens the Resume Builder in a full-screen dialog when clicked
+ */
+export function ResumeBuilderTrigger({ 
+  variant = "default", 
+  size = "default", 
+  fullWidth = false,
+  label = "Resume Builder", 
+  className = ""
 }: ResumeBuilderTriggerProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const openBuilder = () => {
-    setIsOpen(true);
-    // Disable body scroll when modal is open
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeBuilder = () => {
-    setIsOpen(false);
-    // Re-enable body scroll when modal is closed
-    document.body.style.overflow = "auto";
-  };
+  const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Button
-        size={buttonSize}
+      <Button 
         variant={variant}
-        className={className}
-        onClick={openBuilder}
+        size={size}
+        className={`${fullWidth ? 'w-full' : ''} ${className}`}
+        onClick={() => setOpen(true)}
       >
         <FileText className="mr-2 h-4 w-4" />
-        {buttonText}
+        {label}
       </Button>
-
-      {isOpen && <ResumeBuilderFullscreen onClose={closeBuilder} />}
+      
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-screen-2xl w-[95vw] h-[90vh] p-0">
+          <ResumeBuilderFullscreen onClose={() => setOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
+
+export default ResumeBuilderTrigger;
