@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useRef, ReactNode } from 'react';
 
 interface SwipeToCloseProps {
   children: ReactNode;
@@ -13,41 +13,70 @@ export default function SwipeToClose({
   threshold = 100,
   showIndicator = true
 }: SwipeToCloseProps) {
-  const [startY, setStartY] = useState<number | null>(null);
   const [offsetY, setOffsetY] = useState(0);
   const [opacity, setOpacity] = useState(1);
-
+  const [isClosing, setIsClosing] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const startYRef = useRef<number | null>(null);
+  
   const handleTouchStart = (e: React.TouchEvent) => {
-    setStartY(e.touches[0].clientY);
+    if (isClosing) return;
+    startYRef.current = e.touches[0].clientY;
+    
+    // Cancel any return animations
+    setIsAnimating(false);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (startY === null) return;
+    if (startYRef.current === null || isClosing) return;
     
     const currentY = e.touches[0].clientY;
-    const diff = currentY - startY;
+    const diff = currentY - startYRef.current;
     
     // Only allow swiping down
     if (diff > 0) {
-      setOffsetY(diff);
+      // Add resistance to make it feel more natural (less resistance for better responsiveness)
+      const resistance = 0.6;
+      const newOffset = diff * resistance;
+      setOffsetY(newOffset);
       
       // Decrease opacity as user swipes down
-      const newOpacity = Math.max(1 - (diff / (threshold * 3)), 0.5);
+      const newOpacity = Math.max(0.5, 1 - (newOffset / (threshold * 3)));
       setOpacity(newOpacity);
+      
+      // If we hit the threshold while dragging, start closing immediately
+      if (newOffset > threshold) {
+        triggerClose();
+      }
     }
   };
 
   const handleTouchEnd = () => {
+    if (isClosing) return;
+    
     if (offsetY > threshold) {
-      // Trigger close animation
-      setOpacity(0);
-      setTimeout(onClose, 250);
+      triggerClose();
     } else {
-      // Reset position
+      // Return to original position with animation
+      setIsAnimating(true);
       setOffsetY(0);
       setOpacity(1);
     }
-    setStartY(null);
+    
+    startYRef.current = null;
+  };
+  
+  const triggerClose = () => {
+    if (isClosing) return;
+    
+    setIsClosing(true);
+    
+    // Animate out
+    setOffsetY(window.innerHeight);
+    setOpacity(0);
+    
+    // Call onClose after animation
+    setTimeout(onClose, 150);
   };
 
   return (
@@ -59,7 +88,8 @@ export default function SwipeToClose({
       style={{
         transform: `translateY(${offsetY}px)`,
         opacity: opacity,
-        transition: offsetY === 0 ? 'transform 0.3s ease, opacity 0.3s ease' : 'none'
+        transition: (isAnimating || isClosing) ? 'transform 0.15s ease-out, opacity 0.15s ease-out' : 'none',
+        willChange: 'transform, opacity'
       }}
     >
       {showIndicator && (
