@@ -8,6 +8,7 @@ import ResumeBuilderFullscreen from '@/components/resume-builder-fullscreen';
 import JobSearchFullscreen from '@/components/career/job-search-fullscreen';
 import InterviewPracticeFullscreen from '@/components/career/interview-practice-fullscreen';
 import CareerAssessmentPopOut from '@/components/career-assessment-pop-out';
+import SwipeToClose from '@/components/ui/swipe-to-close';
 import { Button } from '@/components/ui/button';
 
 interface CareerToolCardProps {
@@ -67,29 +68,11 @@ export default function CareerToolsOriginal() {
               <h1 className="text-xl font-semibold">Career Assessment</h1>
               <Button variant="ghost" size="sm" onClick={handleCloseTool}>Close</Button>
             </div>
-            {/* Mobile swipe handle */}
-            <div className="sm:hidden w-full flex flex-col items-center sticky top-0 z-20 py-2 bg-white border-b border-gray-100">
-              <div className="w-10 h-1 rounded-full bg-gray-300" />
-              <p className="text-xs text-gray-500 mt-1">Swipe down to close</p>
-            </div>
-            <div className="overflow-auto h-[calc(100vh-56px)] sm:h-[calc(100vh-56px)]" 
-                 onTouchStart={(e) => {
-                   const startY = e.touches[0].clientY;
-                   const handleTouchMove = (e: TouchEvent) => {
-                     const currentY = e.touches[0].clientY;
-                     if (currentY - startY > 100) {
-                       handleCloseTool();
-                       document.removeEventListener('touchmove', handleTouchMove);
-                     }
-                   };
-                   document.addEventListener('touchmove', handleTouchMove);
-                   document.addEventListener('touchend', () => {
-                     document.removeEventListener('touchmove', handleTouchMove);
-                   }, { once: true });
-                 }}
-            >
-              <CareerAssessmentPopOut />
-            </div>
+            <SwipeToClose onClose={handleCloseTool} threshold={120}>
+              <div className="overflow-auto h-[calc(100vh-56px)]">
+                <CareerAssessmentPopOut />
+              </div>
+            </SwipeToClose>
           </div>
         );
       case 'resilience':
