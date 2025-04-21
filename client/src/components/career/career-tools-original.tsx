@@ -91,11 +91,11 @@ export default function CareerToolsOriginal() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
         <CareerToolCard
           title="Career Assessment"
           description="Discover your career interests and strengths"
-          icon={<Briefcase className="h-12 w-12" />}
+          icon={<Briefcase className="h-10 w-10" />}
           toolType="assessment"
           onClick={() => handleOpenTool('assessment')}
         />
@@ -103,7 +103,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="Resume Builder"
           description="Create and manage your professional resume"
-          icon={<FileText className="h-12 w-12" />}
+          icon={<FileText className="h-10 w-10" />}
           toolType="resume"
           onClick={() => handleOpenTool('resume')}
         />
@@ -111,7 +111,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="Fundamenta Connects"
           description="Find opportunities and research salary insights"
-          icon={<Building className="h-12 w-12" />}
+          icon={<Building className="h-10 w-10" />}
           toolType="job-search"
           onClick={() => handleOpenTool('job-search')}
         />
@@ -119,7 +119,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="Interview Practice"
           description="Prepare for job interviews with AI feedback"
-          icon={<MessageSquare className="h-12 w-12" />}
+          icon={<MessageSquare className="h-10 w-10" />}
           toolType="interview"
           onClick={() => handleOpenTool('interview')}
         />
@@ -127,7 +127,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="EQ & Resilience"
           description="Build emotional intelligence and career resilience"
-          icon={<Brain className="h-12 w-12" />}
+          icon={<Brain className="h-10 w-10" />}
           toolType="resilience"
           onClick={() => handleOpenTool('resilience')}
         />
@@ -135,7 +135,7 @@ export default function CareerToolsOriginal() {
         <CareerToolCard
           title="Employment Rights"
           description="Learn about your workplace rights and protections"
-          icon={<Scale className="h-12 w-12" />}
+          icon={<Scale className="h-10 w-10" />}
           toolType="rights"
           onClick={() => handleOpenTool('rights')}
         />
