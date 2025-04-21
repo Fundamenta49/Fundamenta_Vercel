@@ -7,6 +7,7 @@ import { CareerToolType } from '@/components/career/career-fullscreen-trigger';
 import ResumeBuilderFullscreen from '@/components/resume-builder-fullscreen';
 import JobSearchFullscreen from '@/components/career/job-search-fullscreen';
 import InterviewPracticeFullscreen from '@/components/career/interview-practice-fullscreen';
+import CareerAssessmentPopOut from '@/components/career-assessment-pop-out';
 import { Button } from '@/components/ui/button';
 
 interface CareerToolCardProps {
@@ -60,11 +61,17 @@ export default function CareerToolsOriginal() {
       case 'interview':
         return <InterviewPracticeFullscreen onClose={handleCloseTool} />;
       case 'assessment':
-        // Placeholder for future implementation
-        return <div className="fixed inset-0 bg-background z-50 p-6">
-          <h1>Career Assessment (Coming Soon)</h1>
-          <Button onClick={handleCloseTool}>Close</Button>
-        </div>;
+        return (
+          <div className="fixed inset-0 bg-background z-50 p-6 overflow-y-auto">
+            <div className="max-w-5xl mx-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold">Career Assessment</h1>
+                <Button variant="ghost" onClick={handleCloseTool}>Close</Button>
+              </div>
+              <CareerAssessmentPopOut />
+            </div>
+          </div>
+        );
       case 'resilience':
         // Placeholder for future implementation
         return <div className="fixed inset-0 bg-background z-50 p-6">
