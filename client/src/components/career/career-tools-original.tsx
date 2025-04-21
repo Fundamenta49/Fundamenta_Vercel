@@ -1,41 +1,87 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FileText, MessageSquare, Building, Briefcase, Brain, Scale } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import CareerFullscreenTrigger, { CareerToolType } from '@/components/career/career-fullscreen-trigger';
+import { CareerToolType } from '@/components/career/career-fullscreen-trigger';
+
+// Import the fullscreen components
+import ResumeBuilderFullscreen from '@/components/resume-builder-fullscreen';
+import JobSearchFullscreen from '@/components/career/job-search-fullscreen';
+import InterviewPracticeFullscreen from '@/components/career/interview-practice-fullscreen';
+import { Button } from '@/components/ui/button';
 
 interface CareerToolCardProps {
   title: string;
   description: string;
   icon: React.ReactNode;
   toolType: CareerToolType;
+  onClick: () => void;
 }
 
 const CareerToolCard: React.FC<CareerToolCardProps> = ({
   title,
   description,
   icon,
-  toolType,
+  onClick,
 }) => {
   return (
-    <div className="bg-white rounded-lg p-5 flex flex-col items-center text-center h-full">
+    <div 
+      className="bg-white rounded-lg p-5 flex flex-col items-center text-center h-full cursor-pointer hover:shadow-md transition-shadow"
+      onClick={onClick}
+    >
       <div className="flex justify-center mb-4 text-blue-500">
         {icon}
       </div>
       <h3 className="text-base font-medium mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground mb-4">{description}</p>
-      <div className="mt-auto pt-4 w-full">
-        <CareerFullscreenTrigger
-          toolType={toolType}
-          label="Open"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-          showIcon={false}
-        />
-      </div>
+      <p className="text-sm text-muted-foreground">{description}</p>
     </div>
   );
 };
 
 export default function CareerToolsOriginal() {
+  const [openTool, setOpenTool] = useState<CareerToolType | null>(null);
+
+  const handleOpenTool = (toolType: CareerToolType) => {
+    setOpenTool(toolType);
+  };
+
+  const handleCloseTool = () => {
+    setOpenTool(null);
+  };
+
+  // Render the appropriate fullscreen component based on the tool type
+  const renderFullscreenComponent = () => {
+    if (!openTool) return null;
+
+    switch (openTool) {
+      case 'resume':
+        return <ResumeBuilderFullscreen onClose={handleCloseTool} />;
+      case 'job-search':
+        return <JobSearchFullscreen onClose={handleCloseTool} />;
+      case 'interview':
+        return <InterviewPracticeFullscreen onClose={handleCloseTool} />;
+      case 'assessment':
+        // Placeholder for future implementation
+        return <div className="fixed inset-0 bg-background z-50 p-6">
+          <h1>Career Assessment (Coming Soon)</h1>
+          <Button onClick={handleCloseTool}>Close</Button>
+        </div>;
+      case 'resilience':
+        // Placeholder for future implementation
+        return <div className="fixed inset-0 bg-background z-50 p-6">
+          <h1>EQ & Resilience (Coming Soon)</h1>
+          <Button onClick={handleCloseTool}>Close</Button>
+        </div>;
+      case 'rights':
+        // Placeholder for future implementation
+        return <div className="fixed inset-0 bg-background z-50 p-6">
+          <h1>Employment Rights (Coming Soon)</h1>
+          <Button onClick={handleCloseTool}>Close</Button>
+        </div>;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="container mx-auto py-6">
       <div className="mb-6">
@@ -51,6 +97,7 @@ export default function CareerToolsOriginal() {
           description="Discover your career interests and strengths"
           icon={<Briefcase className="h-12 w-12" />}
           toolType="assessment"
+          onClick={() => handleOpenTool('assessment')}
         />
         
         <CareerToolCard
@@ -58,6 +105,7 @@ export default function CareerToolsOriginal() {
           description="Create and manage your professional resume"
           icon={<FileText className="h-12 w-12" />}
           toolType="resume"
+          onClick={() => handleOpenTool('resume')}
         />
         
         <CareerToolCard
@@ -65,6 +113,7 @@ export default function CareerToolsOriginal() {
           description="Find opportunities and research salary insights"
           icon={<Building className="h-12 w-12" />}
           toolType="job-search"
+          onClick={() => handleOpenTool('job-search')}
         />
         
         <CareerToolCard
@@ -72,6 +121,7 @@ export default function CareerToolsOriginal() {
           description="Prepare for job interviews with AI feedback"
           icon={<MessageSquare className="h-12 w-12" />}
           toolType="interview"
+          onClick={() => handleOpenTool('interview')}
         />
         
         <CareerToolCard
@@ -79,6 +129,7 @@ export default function CareerToolsOriginal() {
           description="Build emotional intelligence and career resilience"
           icon={<Brain className="h-12 w-12" />}
           toolType="resilience"
+          onClick={() => handleOpenTool('resilience')}
         />
         
         <CareerToolCard
@@ -86,8 +137,11 @@ export default function CareerToolsOriginal() {
           description="Learn about your workplace rights and protections"
           icon={<Scale className="h-12 w-12" />}
           toolType="rights"
+          onClick={() => handleOpenTool('rights')}
         />
       </div>
+
+      {renderFullscreenComponent()}
     </div>
   );
 }
