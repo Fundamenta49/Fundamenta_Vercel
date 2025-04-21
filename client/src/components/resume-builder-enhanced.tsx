@@ -250,7 +250,7 @@ const FileUpload: React.FC<{
           const formData = new FormData();
           formData.append('file', file);
           
-          const response = await fetch('/api/resume-analysis/upload', {
+          const response = await fetch('/api/resume/upload', {
             method: 'POST',
             body: formData,
           });
@@ -325,7 +325,7 @@ const FileUpload: React.FC<{
     try {
       // Try server-side AI parsing first
       try {
-        const aiResponse = await fetch('/api/resume-analysis/parse', {
+        const aiResponse = await fetch('/api/resume/parse', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1073,7 +1073,7 @@ export default function ResumeBuilderEnhanced() {
       
       try {
         // First try the real API endpoint
-        const response = await fetch('/api/resume-analysis/optimize', {
+        const response = await fetch('/api/resume/optimize', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

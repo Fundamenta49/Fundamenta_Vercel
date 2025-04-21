@@ -24,7 +24,7 @@ export interface ResumeAnalysis {
  */
 export async function analyzeResume(resumeText: string): Promise<ResumeAnalysis> {
   try {
-    const response = await fetch('/api/resume-analysis/parse', {
+    const response = await fetch('/api/resume/parse', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
