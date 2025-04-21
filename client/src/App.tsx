@@ -23,7 +23,6 @@ import Emergency from "@/pages/emergency";
 import Finance from "@/pages/finance";
 import MortgagePage from "@/pages/finance/mortgage";
 import Career from "@/pages/career";
-import CareerNew from "@/pages/career-new";
 import Wellness from "@/pages/wellness";
 import Active from "@/pages/active-fixed";
 import Learning from "@/pages/learning";
@@ -162,11 +161,7 @@ function Router() {
                 <Career />
               </ProtectedRoute>
             </Route>
-            <Route path="/career-new">
-              <ProtectedRoute>
-                <CareerNew />
-              </ProtectedRoute>
-            </Route>
+{/* Career-new route removed as it's replaced by the updated Career component */}
             <Route path="/wellness">
               <ProtectedRoute>
                 <Wellness />
