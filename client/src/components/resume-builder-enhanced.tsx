@@ -32,7 +32,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { SafeFormProvider } from "@/components/ui/safe-form-provider";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -631,7 +630,8 @@ const JobTargeting: React.FC<{
           Enter a job title and/or paste a job description to tailor your resume
         </p>
         
-        <div className="space-y-3">
+        <Form {...form}>
+          <div className="space-y-3">
             <FormField
               control={form.control}
               name="targetJobTitle"
@@ -1465,9 +1465,8 @@ export default function ResumeBuilderEnhanced() {
                 </TabsContent>
                 
                 <TabsContent value="manual" className="mt-0">
-                  <SafeFormProvider form={form}>
-                    <Form>
-                    <form className="space-y-4 sm:space-y-5" onSubmit={(e) => e.preventDefault()}>
+                  <Form {...form}>
+                    <div className="space-y-4 sm:space-y-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                         <FormField
                           control={form.control}
@@ -1567,7 +1566,7 @@ export default function ResumeBuilderEnhanced() {
                           </FormItem>
                         )}
                       />
-                    </form>
+                    </div>
                   </Form>
                 </TabsContent>
               </Tabs>
