@@ -227,11 +227,12 @@ const ResumePDF: React.FC<ResumePDFProps> = ({
 // File Upload Component
 const FileUpload: React.FC<{
   onUpload: (text: string) => void;
+  uploadMessage: string;
   setUploadMessage: (message: string) => void;
   form: any;
   isUploading: boolean;
   setIsUploading: (value: boolean) => void;
-}> = ({ onUpload, setUploadMessage, form, isUploading, setIsUploading }) => {
+}> = ({ onUpload, uploadMessage, setUploadMessage, form, isUploading, setIsUploading }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -536,6 +537,7 @@ const FileUpload: React.FC<{
         />
       </div>
       
+      {/* Display upload status message if available */}
       {uploadMessage && (
         <Alert className={cn(
           "mt-2",
@@ -1178,6 +1180,7 @@ export default function ResumeBuilderFullscreen({ onClose }: { onClose: () => vo
                     <CardContent className="p-6">
                       <FileUpload 
                         onUpload={handleResumeUpload}
+                        uploadMessage={uploadMessage}
                         setUploadMessage={setUploadMessage}
                         form={form}
                         isUploading={isUploading}
