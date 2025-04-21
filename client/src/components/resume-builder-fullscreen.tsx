@@ -831,7 +831,8 @@ const ResumePreview: React.FC<{
   selectedTemplate: string;
   fileData?: { fileName: string; fileSize: string };
 }> = ({ form, selectedTemplate, fileData }) => {
-  const formValues = form.getValues();
+  // Watch all form fields to ensure the preview updates when form values change
+  const formValues = form.watch();
   
   return (
     <div className="min-h-[300px] border rounded-lg p-4 bg-white">
@@ -1074,13 +1075,37 @@ export default function ResumeBuilderFullscreen({ onClose }: { onClose: () => vo
 
   // Load sample resume data
   const loadSampleResume = () => {
-    // Use sample data
-    form.reset(sampleResumeStructured);
-    setAnalysis(sampleAnalysis);
-    toast({
-      title: "Sample Resume Loaded",
-      description: "A sample resume has been loaded for demonstration purposes.",
-    });
+    try {
+      // Use sample data - explicitly set each field to ensure reactivity
+      form.setValue("name", sampleResumeStructured.name);
+      form.setValue("email", sampleResumeStructured.email);
+      form.setValue("phone", sampleResumeStructured.phone);
+      form.setValue("summary", sampleResumeStructured.summary);
+      form.setValue("education", sampleResumeStructured.education);
+      form.setValue("experience", sampleResumeStructured.experience);
+      form.setValue("skills", sampleResumeStructured.skills);
+      form.setValue("projects", sampleResumeStructured.projects);
+      form.setValue("certifications", sampleResumeStructured.certifications);
+      form.setValue("resumeText", sampleResumeStructured.resumeText);
+      
+      // Trigger form validation to update the form state
+      form.trigger();
+      
+      // Set the analysis
+      setAnalysis(sampleAnalysis);
+      
+      toast({
+        title: "Sample Resume Loaded",
+        description: "A sample resume has been loaded for demonstration purposes.",
+      });
+    } catch (error) {
+      console.error("Error loading sample resume:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load sample resume data.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -1129,7 +1154,17 @@ export default function ResumeBuilderFullscreen({ onClose }: { onClose: () => vo
             <PDFDownloadLink
               document={
                 <ResumePDF 
-                  {...form.getValues()} 
+                  // Use the current form values to ensure PDF contains latest data
+                  name={form.getValues().name}
+                  email={form.getValues().email}
+                  phone={form.getValues().phone}
+                  summary={form.getValues().summary}
+                  education={form.getValues().education}
+                  experience={form.getValues().experience}
+                  skills={form.getValues().skills}
+                  projects={form.getValues().projects}
+                  certifications={form.getValues().certifications}
+                  resumeText={form.getValues().resumeText}
                   template={selectedTemplate}
                 />
               }
