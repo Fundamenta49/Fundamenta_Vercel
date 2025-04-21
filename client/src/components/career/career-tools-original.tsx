@@ -10,6 +10,14 @@ import InterviewPracticeFullscreen from '@/components/career/interview-practice-
 import RiasecTest from '@/components/riasec-test';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  FullScreenDialog,
+  FullScreenDialogContent,
+  FullScreenDialogHeader,
+  FullScreenDialogTitle,
+  FullScreenDialogDescription,
+  FullScreenDialogBody
+} from '@/components/ui/full-screen-dialog';
 
 interface CareerToolCardProps {
   title: string;
@@ -63,23 +71,19 @@ export default function CareerToolsOriginal() {
         return <InterviewPracticeFullscreen onClose={handleCloseTool} />;
       case 'assessment':
         return (
-          <div className="fixed inset-0 bg-background z-50 p-6 overflow-y-auto">
-            <div className="max-w-5xl mx-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Career Assessment</h1>
-                <Button variant="ghost" onClick={handleCloseTool}>Close</Button>
-              </div>
-              <div className="mt-6">
-                <div className="mb-6">
-                  <div className="flex items-center gap-2">
-                    <GraduationCap className="h-6 w-6 text-blue-500" />
-                    <h2 className="text-xl font-semibold">Career Assessment</h2>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Discover your career interests and strengths
-                  </p>
-                </div>
-                
+          <FullScreenDialog open={openTool === 'assessment'} onOpenChange={() => openTool !== 'assessment' && handleCloseTool()}>
+            <FullScreenDialogContent>
+              <FullScreenDialogHeader>
+                <FullScreenDialogTitle className="flex items-center gap-2">
+                  <GraduationCap className="h-6 w-6 text-blue-500" />
+                  Career Assessment
+                </FullScreenDialogTitle>
+                <FullScreenDialogDescription>
+                  Discover your career interests and strengths
+                </FullScreenDialogDescription>
+              </FullScreenDialogHeader>
+              
+              <FullScreenDialogBody>
                 <Alert className="mb-4 border-blue-500 bg-blue-50">
                   <AlertCircle className="h-4 w-4 text-blue-500" />
                   <AlertDescription className="text-blue-800 text-sm">
@@ -90,9 +94,9 @@ export default function CareerToolsOriginal() {
                 </Alert>
                 
                 <RiasecTest />
-              </div>
-            </div>
-          </div>
+              </FullScreenDialogBody>
+            </FullScreenDialogContent>
+          </FullScreenDialog>
         );
       case 'resilience':
         // Placeholder for future implementation
