@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, MessageSquare, Building, Briefcase, Brain, Scale } from 'lucide-react';
+import { FileText, MessageSquare, Building, Briefcase, Brain, Scale, GraduationCap, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CareerToolType } from '@/components/career/career-fullscreen-trigger';
 
@@ -7,8 +7,9 @@ import { CareerToolType } from '@/components/career/career-fullscreen-trigger';
 import ResumeBuilderFullscreen from '@/components/resume-builder-fullscreen';
 import JobSearchFullscreen from '@/components/career/job-search-fullscreen';
 import InterviewPracticeFullscreen from '@/components/career/interview-practice-fullscreen';
-import CareerAssessmentPopOut from '@/components/career-assessment-pop-out';
+import RiasecTest from '@/components/riasec-test';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface CareerToolCardProps {
   title: string;
@@ -68,7 +69,28 @@ export default function CareerToolsOriginal() {
                 <h1 className="text-2xl font-bold">Career Assessment</h1>
                 <Button variant="ghost" onClick={handleCloseTool}>Close</Button>
               </div>
-              <CareerAssessmentPopOut />
+              <div className="mt-6">
+                <div className="mb-6">
+                  <div className="flex items-center gap-2">
+                    <GraduationCap className="h-6 w-6 text-blue-500" />
+                    <h2 className="text-xl font-semibold">Career Assessment</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Discover your career interests and strengths
+                  </p>
+                </div>
+                
+                <Alert className="mb-4 border-blue-500 bg-blue-50">
+                  <AlertCircle className="h-4 w-4 text-blue-500" />
+                  <AlertDescription className="text-blue-800 text-sm">
+                    This assessment uses the RIASEC model to identify career interests. The results 
+                    provide general guidance and should be considered alongside other factors when 
+                    making career decisions.
+                  </AlertDescription>
+                </Alert>
+                
+                <RiasecTest />
+              </div>
             </div>
           </div>
         );
