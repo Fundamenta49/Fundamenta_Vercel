@@ -95,10 +95,16 @@ export default function CareerFullscreenTrigger({
     <>
       <Button
         onClick={handleOpen}
-        className={cn("gap-1.5", className)}
+        variant={className?.includes('bg-blue-500') ? 'default' : 'outline'}
+        size="sm"
+        className={cn(
+          "hover:bg-blue-50 hover:text-blue-600 text-sm transition-colors", 
+          className?.includes('bg-blue-500') ? "bg-blue-500 hover:bg-blue-600 text-white" : "text-blue-500 border-blue-200",
+          className
+        )}
         {...props}
       >
-        {showIcon && <Maximize2 className="h-4 w-4" />}
+        {showIcon && <Maximize2 className="h-3.5 w-3.5 mr-1.5" />}
         {getLabel()}
       </Button>
       
