@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, MessageSquare, Building, Briefcase, Brain, Scale, GraduationCap, AlertCircle } from 'lucide-react';
+import { FileText, MessageSquare, Building, Briefcase, Brain, Scale } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CareerToolType } from '@/components/career/career-fullscreen-trigger';
 
@@ -7,17 +7,8 @@ import { CareerToolType } from '@/components/career/career-fullscreen-trigger';
 import ResumeBuilderFullscreen from '@/components/resume-builder-fullscreen';
 import JobSearchFullscreen from '@/components/career/job-search-fullscreen';
 import InterviewPracticeFullscreen from '@/components/career/interview-practice-fullscreen';
-import RiasecTest from '@/components/riasec-test';
+import CareerAssessmentPopOut from '@/components/career-assessment-pop-out';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  FullScreenDialog,
-  FullScreenDialogContent,
-  FullScreenDialogHeader,
-  FullScreenDialogTitle,
-  FullScreenDialogDescription,
-  FullScreenDialogBody
-} from '@/components/ui/full-screen-dialog';
 
 interface CareerToolCardProps {
   title: string;
@@ -71,32 +62,35 @@ export default function CareerToolsOriginal() {
         return <InterviewPracticeFullscreen onClose={handleCloseTool} />;
       case 'assessment':
         return (
-          <FullScreenDialog open={openTool === 'assessment'} onOpenChange={() => openTool !== 'assessment' && handleCloseTool()}>
-            <FullScreenDialogContent>
-              <FullScreenDialogHeader className="px-4 sm:px-6 py-4 sm:py-6">
-                <FullScreenDialogTitle className="flex items-center gap-2 text-xl sm:text-2xl">
-                  <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
-                  Career Assessment
-                </FullScreenDialogTitle>
-                <FullScreenDialogDescription className="text-sm">
-                  Discover your career interests and strengths
-                </FullScreenDialogDescription>
-              </FullScreenDialogHeader>
-              
-              <FullScreenDialogBody className="px-2 sm:px-6">
-                <Alert className="mb-3 sm:mb-4 border-blue-500 bg-blue-50 p-3 sm:p-4">
-                  <AlertCircle className="h-4 w-4 text-blue-500 shrink-0" />
-                  <AlertDescription className="text-blue-800 text-xs sm:text-sm ml-2">
-                    This assessment uses the RIASEC model to identify career interests. The results 
-                    provide general guidance and should be considered alongside other factors when 
-                    making career decisions.
-                  </AlertDescription>
-                </Alert>
-                
-                <RiasecTest />
-              </FullScreenDialogBody>
-            </FullScreenDialogContent>
-          </FullScreenDialog>
+          <div className="fixed inset-0 bg-white z-50">
+            <div className="flex justify-between items-center px-4 py-3 border-b shadow-sm">
+              <h1 className="text-xl font-semibold">Career Assessment</h1>
+              <Button variant="ghost" size="sm" onClick={handleCloseTool}>Close</Button>
+            </div>
+            {/* Mobile swipe handle */}
+            <div className="sm:hidden w-full flex flex-col items-center sticky top-0 z-20 py-2 bg-white border-b border-gray-100">
+              <div className="w-10 h-1 rounded-full bg-gray-300" />
+              <p className="text-xs text-gray-500 mt-1">Swipe down to close</p>
+            </div>
+            <div className="overflow-auto h-[calc(100vh-56px)] sm:h-[calc(100vh-56px)]" 
+                 onTouchStart={(e) => {
+                   const startY = e.touches[0].clientY;
+                   const handleTouchMove = (e: TouchEvent) => {
+                     const currentY = e.touches[0].clientY;
+                     if (currentY - startY > 100) {
+                       handleCloseTool();
+                       document.removeEventListener('touchmove', handleTouchMove);
+                     }
+                   };
+                   document.addEventListener('touchmove', handleTouchMove);
+                   document.addEventListener('touchend', () => {
+                     document.removeEventListener('touchmove', handleTouchMove);
+                   }, { once: true });
+                 }}
+            >
+              <CareerAssessmentPopOut />
+            </div>
+          </div>
         );
       case 'resilience':
         // Placeholder for future implementation
