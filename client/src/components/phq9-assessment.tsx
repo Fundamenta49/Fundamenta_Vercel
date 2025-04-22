@@ -533,53 +533,86 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
     setResult(null);
   };
 
-  if (showResults && result) {
+  // Render different screens based on the current stage
+  if (stage === "results" && result) {
     return (
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader className="bg-amber-50 border-b border-amber-100">
           <CardTitle className="text-amber-700 flex items-center gap-2">
             <Coffee className="h-5 w-5" /> 
-            Coffee Talk Results
+            Coffee Talk Insights
           </CardTitle>
           <CardDescription>
-            A warm conversation about how you're feeling lately
+            Thanks for the meaningful conversation about how you've been feeling
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6 pb-4">
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-              <h3 className="text-xl font-semibold text-amber-700 mb-4">Coffee Talk Insights</h3>
+              <h3 className="text-xl font-semibold text-amber-700 mb-4">Our Coffee Talk Summary</h3>
               
-              <div className="bg-amber-50 p-4 rounded-lg mb-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-amber-600">Assessment Score</span>
-                  <span className="text-xl font-bold text-amber-700">{result.score}/27</span>
-                </div>
-                <div className="mt-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-amber-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-amber-600">Mood Assessment</span>
+                    <span className="text-lg font-bold text-amber-700">{result.phq9.score}/27</span>
+                  </div>
                   <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
                     <div 
                       className={`h-full rounded-full ${
-                        result.level === "minimal" ? "bg-green-500" :
-                        result.level === "mild" ? "bg-amber-400" :
-                        result.level === "moderate" ? "bg-amber-500" :
-                        result.level === "moderately_severe" ? "bg-amber-600" :
+                        result.phq9.level === "minimal" ? "bg-green-500" :
+                        result.phq9.level === "mild" ? "bg-amber-400" :
+                        result.phq9.level === "moderate" ? "bg-amber-500" :
+                        result.phq9.level === "moderately_severe" ? "bg-amber-600" :
                         "bg-red-500"
                       }`}
-                      style={{ width: `${(result.score / 27) * 100}%` }}
+                      style={{ width: `${(result.phq9.score / 27) * 100}%` }}
                     ></div>
                   </div>
-                  <div className="flex justify-between text-xs mt-1">
-                    <span>Minimal (0-4)</span>
-                    <span>Mild (5-9)</span>
-                    <span>Moderate (10-14)</span>
-                    <span>Severe (20+)</span>
+                  <p className="text-xs text-amber-700 mt-2">{result.phq9.classification}</p>
+                </div>
+                
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-blue-600">Anxiety Check-in</span>
+                    <span className="text-lg font-bold text-blue-700">{result.gad7.score}/21</span>
                   </div>
+                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full ${
+                        result.gad7.level === "minimal" ? "bg-green-500" :
+                        result.gad7.level === "mild" ? "bg-blue-400" :
+                        result.gad7.level === "moderate" ? "bg-blue-500" :
+                        "bg-blue-600"
+                      }`}
+                      style={{ width: `${(result.gad7.score / 21) * 100}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-blue-700 mt-2">{result.gad7.classification}</p>
+                </div>
+                
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-green-600">Well-being Index</span>
+                    <span className="text-lg font-bold text-green-700">{Math.round(result.who5.percentageScore)}%</span>
+                  </div>
+                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full ${
+                        result.who5.level === "high" ? "bg-green-500" :
+                        result.who5.level === "moderate" ? "bg-green-400" :
+                        "bg-yellow-500"
+                      }`}
+                      style={{ width: `${result.who5.percentageScore}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-green-700 mt-2">{result.who5.classification}</p>
                 </div>
               </div>
               
               <div className="mb-6">
-                <h4 className="text-lg font-medium text-amber-700 mb-2">Classification</h4>
-                <p className="text-gray-700 mb-2">{result.classification}</p>
+                <h4 className="text-lg font-medium text-amber-700 mb-2">What Our Conversation Revealed</h4>
+                <p className="text-gray-700 mb-2">{result.integratedAnalysis}</p>
                 <p className="text-gray-600">{result.description}</p>
               </div>
               
@@ -622,14 +655,14 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
               </div>
               
               <div className="mt-6 p-4 bg-amber-50 rounded-lg">
-                <h4 className="text-md font-medium text-amber-700 mb-2">Follow-up Recommendations</h4>
+                <h4 className="text-md font-medium text-amber-700 mb-2">Follow-up Thoughts</h4>
                 <p className="text-gray-700">{result.followUp}</p>
               </div>
             </div>
             
             <Alert className="bg-amber-50 border-amber-100">
               <InfoIcon className="h-4 w-4 text-amber-600" />
-              <AlertTitle>About Your Coffee Talk</AlertTitle>
+              <AlertTitle>About Our Coffee Talk</AlertTitle>
               <AlertDescription className="text-amber-800">
                 This conversation provides a snapshot of your current emotional wellbeing. It's not a diagnostic tool, but can help identify patterns that may benefit from attention. Your results have been saved to your wellness profile to help personalize your experience.
               </AlertDescription>
@@ -660,7 +693,86 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
       </Card>
     );
   }
-
+  
+  // Introduction/welcome screen
+  if (stage === "intro") {
+    return (
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader className="bg-amber-50 border-b border-amber-100">
+          <CardTitle className="text-amber-700 flex items-center gap-2">
+            <Coffee className="h-5 w-5" /> 
+            Coffee Talk
+          </CardTitle>
+          <CardDescription>
+            Let's have a relaxed chat about how you've been feeling lately
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="space-y-6">
+            <div className="bg-amber-50/50 p-5 rounded-lg border border-amber-100">
+              <h3 className="text-lg font-semibold text-amber-700 mb-3">Welcome to Coffee Talk</h3>
+              <p className="text-gray-700 mb-4">
+                Imagine we're sitting together at a cozy coffee shop, taking a moment to check in on how you're really doing. This is a judgment-free space to reflect on your mental wellbeing.
+              </p>
+              <p className="text-gray-700">
+                We'll explore three areas that help paint a complete picture of your emotional health:
+              </p>
+              <div className="mt-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="bg-amber-100 p-2 rounded-full">
+                    <Coffee className="h-5 w-5 text-amber-700" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-amber-700">Mood Check</h4>
+                    <p className="text-sm text-gray-600">How your mood and energy have been recently</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 p-2 rounded-full">
+                    <Wind className="h-5 w-5 text-blue-700" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-blue-700">Anxiety Check</h4>
+                    <p className="text-sm text-gray-600">Your experiences with worry and tension</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="bg-green-100 p-2 rounded-full">
+                    <Sun className="h-5 w-5 text-green-700" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-green-700">Well-being Check</h4>
+                    <p className="text-sm text-gray-600">The positive aspects of your mental health</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <Alert className="bg-amber-50 border-amber-100">
+              <InfoIcon className="h-4 w-4 text-amber-600" />
+              <AlertTitle>A Few Things to Know</AlertTitle>
+              <AlertDescription className="text-amber-800">
+                This conversation takes about 5-7 minutes and your answers are private and stored securely. This isn't a diagnostic tool, but it can help identify patterns and provide personalized insights about your mental wellbeing.
+              </AlertDescription>
+            </Alert>
+          </div>
+        </CardContent>
+        <CardFooter className="pt-2 pb-6">
+          <Button 
+            className="bg-amber-600 hover:bg-amber-700 text-white w-full"
+            onClick={handleStartAssessment}
+          >
+            <Coffee className="h-4 w-4 mr-2" />
+            Start Our Coffee Talk
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  }
+  
+  // Questions screen with tabs for different assessments
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader className="bg-amber-50 border-b border-amber-100">
@@ -669,36 +781,105 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
           Coffee Talk
         </CardTitle>
         <CardDescription>
-          Let's have an honest conversation about how you're doing lately
+          Let's chat about how you've been feeling lately
         </CardDescription>
+        <Tabs value={activeTab} className="mt-2">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger 
+              value="phq9"
+              className={activeTab === "phq9" ? "bg-amber-100 text-amber-800" : ""}
+              disabled={activeTab !== "phq9"}
+            >
+              <Coffee className="h-4 w-4 mr-2" />
+              Mood
+            </TabsTrigger>
+            <TabsTrigger 
+              value="gad7"
+              className={activeTab === "gad7" ? "bg-blue-100 text-blue-800" : ""}
+              disabled={activeTab !== "gad7"}
+            >
+              <Wind className="h-4 w-4 mr-2" />
+              Anxiety
+            </TabsTrigger>
+            <TabsTrigger 
+              value="who5"
+              className={activeTab === "who5" ? "bg-green-100 text-green-800" : ""}
+              disabled={activeTab !== "who5"}
+            >
+              <Sun className="h-4 w-4 mr-2" />
+              Well-being
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </CardHeader>
       <CardContent className="pt-6">
         <div className="mb-6">
           <div className="flex justify-between text-sm mb-1">
-            <span>Question {currentQuestionIndex + 1} of {questions.length}</span>
+            <span>Question {currentQuestionIndex + 1} of {activeQuestions.length}</span>
             <span>{Math.round(progressPercentage)}% complete</span>
           </div>
-          <Progress value={progressPercentage} className="h-2 bg-amber-100 [&>div]:bg-amber-500" />
+          <Progress 
+            value={progressPercentage} 
+            className={`h-2 ${
+              activeTab === "phq9" ? "bg-amber-100 [&>div]:bg-amber-500" :
+              activeTab === "gad7" ? "bg-blue-100 [&>div]:bg-blue-500" :
+              "bg-green-100 [&>div]:bg-green-500"
+            }`} 
+          />
         </div>
         
         <div className="space-y-6">
-          <div className="bg-amber-50 p-4 rounded-lg">
-            <p className="text-sm text-amber-700 font-medium mb-1">In the past 2 weeks, how often have you experienced:</p>
-            <p className="text-lg font-medium text-amber-800">{questions[currentQuestionIndex]}</p>
+          {currentQuestionIndex > 0 && (
+            <div className="text-sm italic text-gray-500 pl-2 border-l-2 border-gray-200">
+              {getTransition()}
+            </div>
+          )}
+          
+          <div className={`p-4 rounded-lg ${
+            activeTab === "phq9" ? "bg-amber-50" :
+            activeTab === "gad7" ? "bg-blue-50" :
+            "bg-green-50"
+          }`}>
+            <p className={`text-sm font-medium mb-1 ${
+              activeTab === "phq9" ? "text-amber-700" :
+              activeTab === "gad7" ? "text-blue-700" :
+              "text-green-700"
+            }`}>
+              {activeTab === "phq9" 
+                ? "Over the past two weeks..." 
+                : activeTab === "gad7" 
+                  ? "How often have you been bothered by..." 
+                  : "Over the last two weeks..."}
+            </p>
+            <p className={`text-lg font-medium ${
+              activeTab === "phq9" ? "text-amber-800" :
+              activeTab === "gad7" ? "text-blue-800" :
+              "text-green-800"
+            }`}>
+              {activeQuestions[currentQuestionIndex]}
+            </p>
           </div>
           
           <div className="space-y-1">
             <RadioGroup
-              value={answers[currentQuestionIndex] >= 0 ? answers[currentQuestionIndex].toString() : ""}
+              value={getActiveAnswers()[currentQuestionIndex] >= 0 ? getActiveAnswers()[currentQuestionIndex].toString() : ""}
               onValueChange={(value) => handleAnswerChange(parseInt(value))}
               className="space-y-3"
             >
-              {frequencyOptions.map((option) => (
-                <div key={option.value} className="flex items-start space-x-2 rounded-md border p-3 hover:bg-gray-50">
+              {getActiveFrequencyOptions().map((option) => (
+                <div key={option.value} className={`flex items-start space-x-2 rounded-md border p-3 hover:bg-gray-50 ${
+                  activeTab === "phq9" ? "hover:border-amber-200" :
+                  activeTab === "gad7" ? "hover:border-blue-200" :
+                  "hover:border-green-200"
+                }`}>
                   <RadioGroupItem 
                     value={option.value.toString()} 
                     id={`q${currentQuestionIndex}-${option.value}`} 
-                    className="mt-1"
+                    className={`mt-1 ${
+                      activeTab === "phq9" ? "text-amber-600" :
+                      activeTab === "gad7" ? "text-blue-600" :
+                      "text-green-600"
+                    }`}
                   />
                   <div>
                     <Label htmlFor={`q${currentQuestionIndex}-${option.value}`} className="text-base font-medium cursor-pointer">
@@ -711,7 +892,8 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
             </RadioGroup>
           </div>
           
-          {currentQuestionIndex === 8 && (
+          {/* Special alert for suicide question on PHQ-9 */}
+          {activeTab === "phq9" && currentQuestionIndex === 8 && (
             <Alert className="bg-amber-50 border-amber-100">
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertTitle>Support Available</AlertTitle>
@@ -725,48 +907,28 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
       <CardFooter className="flex justify-between pt-2 pb-6">
         <Button 
           variant="outline" 
-          className="border-amber-200 text-amber-700 hover:bg-amber-50"
+          className={`${
+            activeTab === "phq9" ? "border-amber-200 text-amber-700 hover:bg-amber-50" :
+            activeTab === "gad7" ? "border-blue-200 text-blue-700 hover:bg-blue-50" :
+            "border-green-200 text-green-700 hover:bg-green-50"
+          }`}
           onClick={handlePrevious}
-          disabled={currentQuestionIndex === 0}
+          disabled={currentQuestionIndex === 0 && activeTab === "phq9"}
         >
           Previous
         </Button>
         
-        {currentQuestionIndex < questions.length - 1 ? (
-          <Button 
-            className="bg-amber-600 hover:bg-amber-700 text-white"
-            onClick={() => {
-              if (answers[currentQuestionIndex] >= 0) {
-                setCurrentQuestionIndex(currentQuestionIndex + 1);
-              } else {
-                toast({
-                  variant: "destructive",
-                  title: "No answer selected",
-                  description: "Please select an answer before proceeding.",
-                });
-              }
-            }}
-          >
-            Next
-          </Button>
-        ) : (
-          <Button 
-            className="bg-amber-600 hover:bg-amber-700 text-white" 
-            onClick={() => {
-              if (answers[currentQuestionIndex] >= 0) {
-                calculateResults(answers);
-              } else {
-                toast({
-                  variant: "destructive",
-                  title: "No answer selected",
-                  description: "Please select an answer before proceeding.",
-                });
-              }
-            }}
-          >
-            Finish Coffee Talk
-          </Button>
-        )}
+        <Button 
+          className={`${
+            activeTab === "phq9" ? "bg-amber-600 hover:bg-amber-700" :
+            activeTab === "gad7" ? "bg-blue-600 hover:bg-blue-700" :
+            "bg-green-600 hover:bg-green-700"
+          } text-white`}
+          onClick={handleNext}
+        >
+          {currentQuestionIndex < activeQuestions.length - 1 ? "Next" : 
+           activeTab === "who5" ? "Complete Coffee Talk" : "Continue"}
+        </Button>
       </CardFooter>
     </Card>
   );
