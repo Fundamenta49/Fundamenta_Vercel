@@ -498,7 +498,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             />
             
             <div className="mb-8">
-              <h3 className="text-lg font-medium mb-4">{mentalHealthQuestions[currentQuestionIndex].text}</h3>
+              <h3 className="text-base sm:text-lg font-medium mb-4 leading-relaxed">{mentalHealthQuestions[currentQuestionIndex].text}</h3>
               
               <RadioGroup
                 className="gap-3"
@@ -510,22 +510,22 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 {mentalHealthQuestions[currentQuestionIndex].category === "wellbeing" ? (
                   // WHO-5 uses a different scale (0-5)
                   who5FrequencyOptions.map((option) => (
-                    <div key={option.value} className="flex items-center space-x-3 rounded-md border p-3">
-                      <RadioGroupItem value={option.value.toString()} id={`who5-option-${option.value}`} />
-                      <Label htmlFor={`who5-option-${option.value}`} className="flex flex-col">
-                        <span className="font-medium">{option.label}</span>
-                        <span className="text-sm text-gray-500">{option.description}</span>
+                    <div key={option.value} className="flex items-start space-x-3 rounded-md border p-3">
+                      <RadioGroupItem value={option.value.toString()} id={`who5-option-${option.value}`} className="mt-1" />
+                      <Label htmlFor={`who5-option-${option.value}`} className="flex flex-col flex-1">
+                        <span className="font-medium text-sm sm:text-base">{option.label}</span>
+                        <span className="text-xs sm:text-sm text-gray-500">{option.description}</span>
                       </Label>
                     </div>
                   ))
                 ) : (
                   // PHQ-9 and GAD-7 use the same scale (0-3)
                   frequencyOptions.map((option) => (
-                    <div key={option.value} className="flex items-center space-x-3 rounded-md border p-3">
-                      <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
-                      <Label htmlFor={`option-${option.value}`} className="flex flex-col">
-                        <span className="font-medium">{option.label}</span>
-                        <span className="text-sm text-gray-500">{option.description}</span>
+                    <div key={option.value} className="flex items-start space-x-3 rounded-md border p-3">
+                      <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} className="mt-1" />
+                      <Label htmlFor={`option-${option.value}`} className="flex flex-col flex-1">
+                        <span className="font-medium text-sm sm:text-base">{option.label}</span>
+                        <span className="text-xs sm:text-sm text-gray-500">{option.description}</span>
                       </Label>
                     </div>
                   ))
