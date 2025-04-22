@@ -838,10 +838,10 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <Button 
             onClick={() => setIsOpen(true)}
             size="lg"
-            className="bg-gradient-to-r from-amber-300 to-orange-300 hover:from-amber-400 hover:to-orange-400 text-amber-900 self-start sm:self-center mt-2 sm:mt-0 w-full sm:w-auto whitespace-nowrap"
+            className="bg-gradient-to-r from-amber-300 to-orange-300 hover:from-amber-400 hover:to-orange-400 text-amber-900 self-start sm:self-center mt-2 sm:mt-0 w-full sm:w-auto min-w-[120px]"
           >
-            <Coffee className="h-5 w-5 mr-2" />
-            <span className="inline-block">Let's Talk</span>
+            <Coffee className="h-5 w-5 mr-2 flex-shrink-0" />
+            <span className="flex-shrink-0">Let's Talk</span>
           </Button>
         </div>
       </CardHeader>
