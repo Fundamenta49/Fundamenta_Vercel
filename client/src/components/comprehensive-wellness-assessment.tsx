@@ -472,11 +472,10 @@ const ComprehensiveWellnessPDF = ({ results }: { results: any }) => (
 // Main component
 export default function ComprehensiveWellnessAssessment() {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
   const [currentMentalQuestionIndex, setCurrentMentalQuestionIndex] = useState(0);
   const [mentalHealthAnswers, setMentalHealthAnswers] = useState<{id: number, value: number}[]>([]);
   const [showResults, setShowResults] = useState(false);
-  const [activeResultsTab, setActiveResultsTab] = useState<"overview" | "physical" | "mental" | "integrated">("overview");
+  const [activeResultsTab, setActiveResultsTab] = useState<"overview" | "mental">("overview");
   const [isPending, setIsPending] = useState(false);
   const [consentToStore, setConsentToStore] = useState(false);
   const [results, setResults] = useState<any>(null);
@@ -791,15 +790,87 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
     }
   };
 
-  // Render appropriate step content based on current step
+  // Render content as a conversational assessment focused only on mental health
   const renderStepContent = () => {
     if (showResults) {
       return renderResults();
     }
     
-    switch (currentStep) {
-      case 1: // Basic Information
-        return (
+    // Just show mental health assessment content directly - Coffee Talk should only include mental health assessments
+    return (
+      <>
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Brain className="h-5 w-5 text-amber-600" />
+            Coffee Talk Check-In
+          </CardTitle>
+          <CardDescription>
+            Over the last 2 weeks, how often have you been bothered by the following?
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="mb-6">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-medium text-gray-500">
+                Question {currentMentalQuestionIndex + 1} of {mentalHealthQuestions.length}
+              </span>
+              <Badge variant="outline" className={
+                mentalHealthQuestions[currentMentalQuestionIndex].category === "wellbeing"
+                  ? "border-amber-200 bg-amber-50 text-amber-700"
+                  : mentalHealthQuestions[currentMentalQuestionIndex].category === "depression"
+                    ? "border-blue-200 bg-blue-50 text-blue-700"
+                    : "border-purple-200 bg-purple-50 text-purple-700"
+              }>
+                {mentalHealthQuestions[currentMentalQuestionIndex].category === "wellbeing"
+                  ? "Well-Being"
+                  : mentalHealthQuestions[currentMentalQuestionIndex].category === "depression"
+                    ? "Depression"
+                    : "Anxiety"} Assessment
+              </Badge>
+            </div>
+            <Progress
+              value={((currentMentalQuestionIndex + 1) / mentalHealthQuestions.length) * 100}
+              className="h-2 mb-6"
+            />
+            
+            <div className="mb-8">
+              <h3 className="text-lg font-medium mb-4">{mentalHealthQuestions[currentMentalQuestionIndex].text}</h3>
+              
+              <RadioGroup
+                className="gap-3"
+                value={
+                  mentalHealthAnswers.find(a => a.id === mentalHealthQuestions[currentMentalQuestionIndex].id)?.value.toString() || ""
+                }
+                onValueChange={(value) => handleMentalHealthAnswer(parseInt(value))}
+              >
+                {mentalHealthQuestions[currentMentalQuestionIndex].category === "wellbeing" ? (
+                  // WHO-5 uses a different scale (0-5)
+                  who5FrequencyOptions.map((option) => (
+                    <div key={option.value} className="flex items-center space-x-3 rounded-md border p-3">
+                      <RadioGroupItem value={option.value.toString()} id={`who5-option-${option.value}`} />
+                      <Label htmlFor={`who5-option-${option.value}`} className="flex flex-col">
+                        <span className="font-medium">{option.label}</span>
+                      </Label>
+                    </div>
+                  ))
+                ) : (
+                  // PHQ-9 and GAD-7 use the same scale (0-3)
+                  frequencyOptions.map((option) => (
+                    <div key={option.value} className="flex items-center space-x-3 rounded-md border p-3">
+                      <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
+                      <Label htmlFor={`option-${option.value}`} className="flex flex-col">
+                        <span className="font-medium">{option.label}</span>
+                        <span className="text-sm text-gray-500">{option.description}</span>
+                      </Label>
+                    </div>
+                  ))
+                )}
+              </RadioGroup>
+            </div>
+          </div>
+        </CardContent>
+      </>
+    );
           <>
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
