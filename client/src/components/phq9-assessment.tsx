@@ -679,13 +679,39 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-between gap-3 pt-2 pb-6">
           <div 
-            className="flex items-center justify-center border border-amber-300 text-amber-700 hover:bg-amber-50 rounded-md cursor-pointer shadow-sm px-4 py-2 transition-all duration-200 hover:shadow w-full sm:w-auto text-center"
+            className="flex items-center justify-center rounded-md cursor-pointer shadow-sm px-4 py-2 transition-all duration-200 w-full sm:w-auto text-center"
             onClick={resetAssessment}
+            style={{
+              backgroundColor: 'white',
+              color: '#b45309', /* amber-700 */
+              border: '1px solid #fcd34d', /* amber-300 */
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#fffbeb'; /* amber-50 */
+              e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'white';
+              e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+            }}
           >
             <span className="font-medium whitespace-nowrap text-center">Start a New Coffee Talk</span>
           </div>
           <div 
-            className="flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white rounded-md cursor-pointer shadow-sm border border-amber-700 transition-all duration-200 hover:shadow px-4 py-2 w-full sm:w-auto text-center"
+            className="flex items-center justify-center rounded-md cursor-pointer shadow-sm px-4 py-2 w-full sm:w-auto text-center"
+            style={{
+              backgroundColor: '#d97706', /* amber-600 */
+              color: 'white',
+              border: '1px solid #b45309', /* amber-700 */
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#b45309'; /* amber-700 */
+              e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = '#d97706'; /* amber-600 */
+              e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+            }}
           >
             <Coffee className="h-5 w-5 mr-2 flex-shrink-0" />
             <span className="font-medium whitespace-nowrap text-center">Save to Wellness Profile</span>
@@ -762,8 +788,15 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
         </CardContent>
         <CardFooter className="pt-2 pb-6">
           <div 
-            className="flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white w-full py-3 px-6 rounded-md cursor-pointer shadow-sm border border-amber-700 transition-all duration-200 hover:shadow text-center"
+            className="flex items-center justify-center w-full py-3 px-6 rounded-md cursor-pointer shadow-sm transition-all duration-200 hover:shadow text-center"
             onClick={handleStartAssessment}
+            style={{
+              backgroundColor: '#d97706', /* amber-600 */
+              color: 'white',
+              border: '1px solid #b45309', /* amber-700 */
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b45309'} /* amber-700 */
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#d97706'} /* amber-600 */
           >
             <Coffee className="h-5 w-5 mr-3 flex-shrink-0" />
             <span className="font-medium whitespace-nowrap text-center">Start Our Coffee Talk</span>
@@ -907,25 +940,70 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
       </CardContent>
       <CardFooter className="flex justify-between pt-2 pb-6">
         <div 
-          className={`flex items-center justify-center rounded-md cursor-pointer shadow-sm transition-all duration-200 px-4 py-2 ${
-            currentQuestionIndex === 0 && activeTab === "phq9" ? "opacity-50 cursor-not-allowed border border-gray-200 text-gray-400" :
-            activeTab === "phq9" ? "border border-amber-300 text-amber-700 hover:bg-amber-50 hover:shadow" :
-            activeTab === "gad7" ? "border border-blue-300 text-blue-700 hover:bg-blue-50 hover:shadow" :
-            "border border-green-300 text-green-700 hover:bg-green-50 hover:shadow"
-          }`}
+          className="flex items-center justify-center rounded-md cursor-pointer shadow-sm transition-all duration-200 px-4 py-2"
           onClick={handlePrevious}
-          style={{pointerEvents: (currentQuestionIndex === 0 && activeTab === "phq9") ? "none" : "auto"}}
+          style={{
+            backgroundColor: 'white',
+            color: currentQuestionIndex === 0 && activeTab === "phq9" ? '#9ca3af' /* gray-400 */ : 
+                  activeTab === "phq9" ? '#b45309' /* amber-700 */ : 
+                  activeTab === "gad7" ? '#1d4ed8' /* blue-700 */ : 
+                  '#15803d' /* green-700 */,
+            border: `1px solid ${
+              currentQuestionIndex === 0 && activeTab === "phq9" ? '#e5e7eb' /* gray-200 */ : 
+              activeTab === "phq9" ? '#fcd34d' /* amber-300 */ : 
+              activeTab === "gad7" ? '#93c5fd' /* blue-300 */ : 
+              '#86efac' /* green-300 */
+            }`,
+            opacity: currentQuestionIndex === 0 && activeTab === "phq9" ? 0.5 : 1,
+            cursor: currentQuestionIndex === 0 && activeTab === "phq9" ? 'not-allowed' : 'pointer',
+            pointerEvents: (currentQuestionIndex === 0 && activeTab === "phq9") ? "none" : "auto"
+          }}
+          onMouseOver={(e) => {
+            if (!(currentQuestionIndex === 0 && activeTab === "phq9")) {
+              e.currentTarget.style.backgroundColor = 
+                activeTab === "phq9" ? '#fffbeb' /* amber-50 */ : 
+                activeTab === "gad7" ? '#eff6ff' /* blue-50 */ : 
+                '#f0fdf4' /* green-50 */;
+              e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)';
+            }
+          }}
+          onMouseOut={(e) => {
+            if (!(currentQuestionIndex === 0 && activeTab === "phq9")) {
+              e.currentTarget.style.backgroundColor = 'white';
+              e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+            }
+          }}
         >
           <span className="font-medium whitespace-nowrap text-center">Previous</span>
         </div>
         
         <div 
-          className={`flex items-center justify-center rounded-md cursor-pointer shadow-sm transition-all duration-200 hover:shadow px-4 py-2 text-white ${
-            activeTab === "phq9" ? "bg-amber-600 hover:bg-amber-700 border border-amber-700" :
-            activeTab === "gad7" ? "bg-blue-600 hover:bg-blue-700 border border-blue-700" :
-            "bg-green-600 hover:bg-green-700 border border-green-700"
-          }`}
+          className="flex items-center justify-center rounded-md cursor-pointer shadow-sm transition-all duration-200 px-4 py-2 text-white"
           onClick={handleNext}
+          style={{
+            backgroundColor: activeTab === "phq9" ? '#d97706' /* amber-600 */ : 
+                            activeTab === "gad7" ? '#2563eb' /* blue-600 */ : 
+                            '#16a34a' /* green-600 */,
+            border: `1px solid ${
+              activeTab === "phq9" ? '#b45309' /* amber-700 */ : 
+              activeTab === "gad7" ? '#1d4ed8' /* blue-700 */ : 
+              '#15803d' /* green-700 */
+            }`
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = 
+              activeTab === "phq9" ? '#b45309' /* amber-700 */ : 
+              activeTab === "gad7" ? '#1d4ed8' /* blue-700 */ : 
+              '#15803d' /* green-700 */;
+            e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 
+              activeTab === "phq9" ? '#d97706' /* amber-600 */ : 
+              activeTab === "gad7" ? '#2563eb' /* blue-600 */ : 
+              '#16a34a' /* green-600 */;
+            e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+          }}
         >
           <span className="font-medium whitespace-nowrap text-center">
             {currentQuestionIndex < activeQuestions.length - 1 ? "Next" : 
