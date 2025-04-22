@@ -384,7 +384,7 @@ export default function Wellness() {
                 >
                   <button
                     onClick={() => handleCardClick(section.id)}
-                    className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md ${section.id === 'mental-health' ? 'hover:border-amber-500' : 'hover:border-purple-500'} min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`}
+                    className={`relative flex flex-col items-center justify-between p-4 rounded-lg border ${section.id === 'mental-health' ? 'bg-amber-50 hover:border-amber-500 text-amber-800 hover:bg-amber-100' : 'bg-white hover:border-purple-500'} shadow-sm transition-all duration-200 hover:shadow-md min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`}
                     aria-label={`Open ${section.title}`}
                   >
                     <div className={`flex items-center justify-center h-12 sm:h-14 md:h-14 ${section.id === 'shopping' ? 'sm:mr-6' : 'w-full'} mb-2`}>
@@ -392,9 +392,9 @@ export default function Wellness() {
                     </div>
                     
                     <div className={`flex flex-col ${section.id === 'shopping' ? 'sm:items-start items-center' : 'items-center'} w-full`}>
-                      <span className={`text-sm sm:text-base md:text-lg font-medium ${section.id === 'shopping' ? 'sm:text-left text-center' : 'text-center'} line-clamp-2 w-full`}>{section.title}</span>
+                      <span className={`text-sm sm:text-base md:text-lg font-medium ${section.id === 'shopping' ? 'sm:text-left text-center' : 'text-center'} line-clamp-2 w-full whitespace-normal ${section.id === 'mental-health' ? 'text-amber-800' : ''}`}>{section.title}</span>
                       
-                      <p className={`text-xs sm:text-sm text-gray-500 mt-1 md:mt-2 line-clamp-3 ${section.id === 'shopping' ? 'sm:text-left text-center' : 'text-center'} block`}>
+                      <p className={`text-xs sm:text-sm ${section.id === 'mental-health' ? 'text-amber-700' : 'text-gray-500'} mt-1 md:mt-2 line-clamp-3 ${section.id === 'shopping' ? 'sm:text-left text-center' : 'text-center'} block whitespace-normal`}>
                         {section.description.length > (section.id === 'shopping' ? 100 : 80) 
                           ? `${section.description.substring(0, section.id === 'shopping' ? 100 : 80)}...` 
                           : section.description}
