@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { Brain, AlertCircle, InfoIcon, HelpCircle, Heart } from "lucide-react";
+import { Brain, AlertCircle, InfoIcon, HelpCircle, Heart, Coffee } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 // PHQ-9 Assessment based on official clinical guidelines

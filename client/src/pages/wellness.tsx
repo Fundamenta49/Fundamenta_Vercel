@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus, Dumbbell, Shield, ArrowRight, Activity, Clipboard } from "lucide-react";
+import { Brain, Heart, Apple, Book, MessageSquare, ShoppingBag, Calendar, AlertCircle, Plus, Dumbbell, Shield, ArrowRight, Activity, Clipboard, Coffee } from "lucide-react";
 import { WELLNESS_CATEGORY } from "@/components/chat-interface";
 import ChatRedirect, { ChatCategory } from "@/components/chat-redirect";
 import { useState, useRef, useEffect, Suspense, lazy } from "react";
@@ -60,9 +60,9 @@ const SECTIONS: SectionType[] = [
   },
   {
     id: 'mental-health',
-    title: 'Mental Health Assessment',
-    description: 'Evaluate your emotional wellbeing with the PHQ-9 screening tool',
-    icon: Brain,
+    title: 'Coffee Talk',
+    description: "Let's connect—and realign—with what really matters",
+    icon: Coffee,
     component: PHQ9Assessment
   },
   {
@@ -363,13 +363,13 @@ export default function Wellness() {
         <MegaDialog open={isMentalHealthOpen} onOpenChange={setIsMentalHealthOpen}>
           <MegaDialogContent>
             <MegaDialogHeader>
-              <MegaDialogTitle>Mental Health Assessment (PHQ-9)</MegaDialogTitle>
+              <MegaDialogTitle>Coffee Talk</MegaDialogTitle>
             </MegaDialogHeader>
             <MegaDialogBody>
               <Suspense fallback={
                 <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-                  <p className="text-muted-foreground">Loading Mental Health Assessment...</p>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                  <p className="text-muted-foreground">Brewing your Coffee Talk experience...</p>
                 </div>
               }>
                 <PHQ9Assessment />
@@ -410,11 +410,11 @@ export default function Wellness() {
                 >
                   <button
                     onClick={() => handleCardClick(section.id)}
-                    className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-purple-500 min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`}
+                    className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md ${section.id === 'mental-health' ? 'hover:border-amber-500' : 'hover:border-purple-500'} min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`}
                     aria-label={`Open ${section.title}`}
                   >
                     <div className={`flex items-center justify-center h-12 sm:h-14 md:h-14 ${section.id === 'shopping' ? 'sm:mr-6' : 'w-full'} mb-2`}>
-                      <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 text-purple-500" />
+                      <section.icon className={`w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 ${section.id === 'mental-health' ? 'text-amber-600' : 'text-purple-500'}`} />
                     </div>
                     
                     <div className={`flex flex-col ${section.id === 'shopping' ? 'sm:items-start items-center' : 'items-center'} w-full`}>
