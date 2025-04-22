@@ -245,24 +245,24 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
   if (showResults && result) {
     return (
       <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader className="bg-wellness-50 border-b border-wellness-100">
-          <CardTitle className="text-wellness-700 flex items-center gap-2">
-            <Brain className="h-5 w-5" /> 
-            PHQ-9 Assessment Results
+        <CardHeader className="bg-amber-50 border-b border-amber-100">
+          <CardTitle className="text-amber-700 flex items-center gap-2">
+            <Coffee className="h-5 w-5" /> 
+            Coffee Talk Results
           </CardTitle>
           <CardDescription>
-            Patient Health Questionnaire-9 - Depression screening assessment
+            A warm conversation about how you're feeling lately
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6 pb-4">
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-              <h3 className="text-xl font-semibold text-wellness-700 mb-4">Assessment Summary</h3>
+              <h3 className="text-xl font-semibold text-amber-700 mb-4">Coffee Talk Insights</h3>
               
-              <div className="bg-wellness-50 p-4 rounded-lg mb-6">
+              <div className="bg-amber-50 p-4 rounded-lg mb-6">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-wellness-600">Total PHQ-9 Score</span>
-                  <span className="text-xl font-bold text-wellness-700">{result.score}/27</span>
+                  <span className="text-sm font-medium text-amber-600">Assessment Score</span>
+                  <span className="text-xl font-bold text-amber-700">{result.score}/27</span>
                 </div>
                 <div className="mt-2">
                   <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
@@ -287,7 +287,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
               </div>
               
               <div className="mb-6">
-                <h4 className="text-lg font-medium text-wellness-700 mb-2">Classification</h4>
+                <h4 className="text-lg font-medium text-amber-700 mb-2">Classification</h4>
                 <p className="text-gray-700 mb-2">{result.classification}</p>
                 <p className="text-gray-600">{result.description}</p>
               </div>
@@ -303,7 +303,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
               )}
               
               <div className="space-y-4">
-                <h4 className="text-lg font-medium text-wellness-700">Recommendations</h4>
+                <h4 className="text-lg font-medium text-amber-700">Recommendations</h4>
                 <ul className="space-y-2 list-disc pl-5">
                   {result.recommendations.map((rec, index) => (
                     <li key={index} className="text-gray-700">{rec}</li>
@@ -314,11 +314,11 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
               <Separator className="my-6" />
               
               <div className="space-y-4">
-                <h4 className="text-lg font-medium text-wellness-700">Self-Care Steps</h4>
+                <h4 className="text-lg font-medium text-amber-700">Self-Care Steps</h4>
                 <ul className="space-y-2">
                   {result.selfCareSteps.map((step, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <div className="mt-0.5 text-wellness-500">
+                      <div className="mt-0.5 text-amber-500">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="9 11 12 14 22 4"></polyline>
                           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
@@ -330,8 +330,8 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
                 </ul>
               </div>
               
-              <div className="mt-6 p-4 bg-wellness-50 rounded-lg">
-                <h4 className="text-md font-medium text-wellness-700 mb-2">Follow-up Recommendations</h4>
+              <div className="mt-6 p-4 bg-amber-50 rounded-lg">
+                <h4 className="text-md font-medium text-amber-700 mb-2">Follow-up Recommendations</h4>
                 <p className="text-gray-700">{result.followUp}</p>
               </div>
             </div>
@@ -356,13 +356,13 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
         <CardFooter className="flex flex-col sm:flex-row justify-between gap-3 pt-2 pb-6">
           <Button 
             variant="outline" 
-            className="border-wellness-200 text-wellness-700 hover:bg-wellness-50"
+            className="border-amber-200 text-amber-700 hover:bg-amber-50"
             onClick={resetAssessment}
           >
-            Retake Assessment
+            Start a New Coffee Talk
           </Button>
-          <Button className="bg-wellness-600 hover:bg-wellness-700 text-white">
-            <Heart className="h-4 w-4 mr-2" />
+          <Button className="bg-amber-600 hover:bg-amber-700 text-white">
+            <Coffee className="h-4 w-4 mr-2" />
             Save to Wellness Profile
           </Button>
         </CardFooter>
@@ -372,13 +372,13 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="bg-wellness-50 border-b border-wellness-100">
-        <CardTitle className="text-wellness-700 flex items-center gap-2">
-          <Brain className="h-5 w-5" /> 
-          PHQ-9 Assessment
+      <CardHeader className="bg-amber-50 border-b border-amber-100">
+        <CardTitle className="text-amber-700 flex items-center gap-2">
+          <Coffee className="h-5 w-5" /> 
+          Coffee Talk
         </CardTitle>
         <CardDescription>
-          Patient Health Questionnaire-9 - Depression screening assessment
+          Let's have an honest conversation about how you're doing lately
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
@@ -391,9 +391,9 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
         </div>
         
         <div className="space-y-6">
-          <div className="bg-wellness-50 p-4 rounded-lg">
-            <p className="text-sm text-wellness-700 font-medium mb-1">Over the last 2 weeks, how often have you been bothered by the following problem:</p>
-            <p className="text-lg font-medium text-wellness-800">{questions[currentQuestionIndex]}</p>
+          <div className="bg-amber-50 p-4 rounded-lg">
+            <p className="text-sm text-amber-700 font-medium mb-1">In the past 2 weeks, how often have you experienced:</p>
+            <p className="text-lg font-medium text-amber-800">{questions[currentQuestionIndex]}</p>
           </div>
           
           <div className="space-y-1">
@@ -434,6 +434,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
       <CardFooter className="flex justify-between pt-2 pb-6">
         <Button 
           variant="outline" 
+          className="border-amber-200 text-amber-700 hover:bg-amber-50"
           onClick={handlePrevious}
           disabled={currentQuestionIndex === 0}
         >
@@ -442,6 +443,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
         
         {currentQuestionIndex < questions.length - 1 ? (
           <Button 
+            className="bg-amber-600 hover:bg-amber-700 text-white"
             onClick={() => {
               if (answers[currentQuestionIndex] >= 0) {
                 setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -458,7 +460,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
           </Button>
         ) : (
           <Button 
-            className="bg-wellness-600 hover:bg-wellness-700" 
+            className="bg-amber-600 hover:bg-amber-700 text-white" 
             onClick={() => {
               if (answers[currentQuestionIndex] >= 0) {
                 calculateResults(answers);
@@ -471,7 +473,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
               }
             }}
           >
-            Complete Assessment
+            Finish Coffee Talk
           </Button>
         )}
       </CardFooter>
