@@ -269,9 +269,9 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
                     <div 
                       className={`h-full rounded-full ${
                         result.level === "minimal" ? "bg-green-500" :
-                        result.level === "mild" ? "bg-blue-500" :
-                        result.level === "moderate" ? "bg-yellow-500" :
-                        result.level === "moderately_severe" ? "bg-orange-500" :
+                        result.level === "mild" ? "bg-amber-400" :
+                        result.level === "moderate" ? "bg-amber-500" :
+                        result.level === "moderately_severe" ? "bg-amber-600" :
                         "bg-red-500"
                       }`}
                       style={{ width: `${(result.score / 27) * 100}%` }}
@@ -293,11 +293,11 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
               </div>
               
               {result.warningLevel === "severe" && (
-                <Alert className="bg-red-50 border-red-100 mb-6">
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                  <AlertTitle className="text-red-700">Important</AlertTitle>
-                  <AlertDescription className="text-red-800">
-                    Based on your responses, we recommend speaking with a healthcare professional as soon as possible. If you're experiencing thoughts of harming yourself, please contact a crisis service such as the National Suicide Prevention Lifeline at 988, or go to your nearest emergency room.
+                <Alert className="bg-orange-50 border-orange-100 mb-6">
+                  <AlertCircle className="h-4 w-4 text-orange-600" />
+                  <AlertTitle className="text-orange-700">Support Available</AlertTitle>
+                  <AlertDescription className="text-orange-800">
+                    Based on our conversation, it might be helpful to speak with a healthcare professional soon. If you're experiencing thoughts of harming yourself, please contact a crisis service such as the National Suicide Prevention Lifeline at 988, or go to your nearest emergency room.
                   </AlertDescription>
                 </Alert>
               )}
@@ -336,19 +336,19 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
               </div>
             </div>
             
-            <Alert className="bg-blue-50 border-blue-100">
-              <InfoIcon className="h-4 w-4 text-blue-600" />
-              <AlertTitle>How to use these results</AlertTitle>
-              <AlertDescription className="text-blue-800">
-                This assessment provides a snapshot of your current emotional wellbeing. It's not a diagnostic tool, but can help identify patterns that may benefit from attention. Your results have been saved to your wellness profile to help personalize your experience.
+            <Alert className="bg-amber-50 border-amber-100">
+              <InfoIcon className="h-4 w-4 text-amber-600" />
+              <AlertTitle>About Your Coffee Talk</AlertTitle>
+              <AlertDescription className="text-amber-800">
+                This conversation provides a snapshot of your current emotional wellbeing. It's not a diagnostic tool, but can help identify patterns that may benefit from attention. Your results have been saved to your wellness profile to help personalize your experience.
               </AlertDescription>
             </Alert>
             
-            <Alert className="bg-yellow-50 border-yellow-100">
-              <HelpCircle className="h-4 w-4 text-yellow-600" />
+            <Alert className="bg-amber-50/70 border-amber-100">
+              <Coffee className="h-4 w-4 text-amber-600" />
               <AlertTitle>Seeking Support</AlertTitle>
-              <AlertDescription className="text-yellow-800">
-                Mental health is an important part of your overall wellbeing. If you're struggling, remember that help is available. Explore the mental wellness resources in the app, or reach out to a healthcare provider for professional support.
+              <AlertDescription className="text-amber-800">
+                Emotional wellbeing is an important part of your overall health. If you're struggling, remember that support is available. Explore the wellness resources in the app, or reach out to a trusted friend, family member, or healthcare provider for additional support.
               </AlertDescription>
             </Alert>
           </div>
@@ -387,7 +387,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
             <span>Question {currentQuestionIndex + 1} of {questions.length}</span>
             <span>{Math.round(progressPercentage)}% complete</span>
           </div>
-          <Progress value={progressPercentage} className="h-2" />
+          <Progress value={progressPercentage} className="h-2 bg-amber-100 [&>div]:bg-amber-500" />
         </div>
         
         <div className="space-y-6">
@@ -421,10 +421,10 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
           </div>
           
           {currentQuestionIndex === 8 && (
-            <Alert className="bg-yellow-50 border-yellow-100">
-              <AlertCircle className="h-4 w-4 text-yellow-600" />
-              <AlertTitle>Important</AlertTitle>
-              <AlertDescription className="text-yellow-800">
+            <Alert className="bg-amber-50 border-amber-100">
+              <AlertCircle className="h-4 w-4 text-amber-600" />
+              <AlertTitle>Support Available</AlertTitle>
+              <AlertDescription className="text-amber-800">
                 If you're experiencing thoughts of harming yourself, please reach out for help. The National Suicide Prevention Lifeline is available 24/7 at 988, or you can text HOME to 741741 to reach the Crisis Text Line.
               </AlertDescription>
             </Alert>
