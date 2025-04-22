@@ -678,17 +678,18 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
           </div>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-between gap-3 pt-2 pb-6">
-          <Button 
-            variant="outline" 
-            className="border-amber-200 text-amber-700 hover:bg-amber-50"
+          <div 
+            className="flex items-center justify-center border border-amber-300 text-amber-700 hover:bg-amber-50 rounded-md cursor-pointer shadow-sm px-4 py-2 transition-all duration-200 hover:shadow w-full sm:w-auto text-center"
             onClick={resetAssessment}
           >
-            Start a New Coffee Talk
-          </Button>
-          <Button className="bg-amber-600 hover:bg-amber-700 text-white">
-            <Coffee className="h-4 w-4 mr-2" />
-            Save to Wellness Profile
-          </Button>
+            <span className="font-medium whitespace-nowrap text-center">Start a New Coffee Talk</span>
+          </div>
+          <div 
+            className="flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white rounded-md cursor-pointer shadow-sm border border-amber-700 transition-all duration-200 hover:shadow px-4 py-2 w-full sm:w-auto text-center"
+          >
+            <Coffee className="h-5 w-5 mr-2 flex-shrink-0" />
+            <span className="font-medium whitespace-nowrap text-center">Save to Wellness Profile</span>
+          </div>
         </CardFooter>
       </Card>
     );
@@ -761,11 +762,11 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
         </CardContent>
         <CardFooter className="pt-2 pb-6">
           <div 
-            className="flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white w-full py-2 px-4 rounded-md cursor-pointer"
+            className="flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white w-full py-3 px-6 rounded-md cursor-pointer shadow-sm border border-amber-700 transition-all duration-200 hover:shadow text-center"
             onClick={handleStartAssessment}
           >
             <Coffee className="h-5 w-5 mr-3 flex-shrink-0" />
-            <span className="font-medium whitespace-nowrap">Start Our Coffee Talk</span>
+            <span className="font-medium whitespace-nowrap text-center">Start Our Coffee Talk</span>
           </div>
         </CardFooter>
       </Card>
@@ -905,30 +906,32 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
         </div>
       </CardContent>
       <CardFooter className="flex justify-between pt-2 pb-6">
-        <Button 
-          variant="outline" 
-          className={`${
-            activeTab === "phq9" ? "border-amber-200 text-amber-700 hover:bg-amber-50" :
-            activeTab === "gad7" ? "border-blue-200 text-blue-700 hover:bg-blue-50" :
-            "border-green-200 text-green-700 hover:bg-green-50"
+        <div 
+          className={`flex items-center justify-center rounded-md cursor-pointer shadow-sm transition-all duration-200 px-4 py-2 ${
+            currentQuestionIndex === 0 && activeTab === "phq9" ? "opacity-50 cursor-not-allowed border border-gray-200 text-gray-400" :
+            activeTab === "phq9" ? "border border-amber-300 text-amber-700 hover:bg-amber-50 hover:shadow" :
+            activeTab === "gad7" ? "border border-blue-300 text-blue-700 hover:bg-blue-50 hover:shadow" :
+            "border border-green-300 text-green-700 hover:bg-green-50 hover:shadow"
           }`}
           onClick={handlePrevious}
-          disabled={currentQuestionIndex === 0 && activeTab === "phq9"}
+          style={{pointerEvents: (currentQuestionIndex === 0 && activeTab === "phq9") ? "none" : "auto"}}
         >
-          Previous
-        </Button>
+          <span className="font-medium whitespace-nowrap text-center">Previous</span>
+        </div>
         
-        <Button 
-          className={`${
-            activeTab === "phq9" ? "bg-amber-600 hover:bg-amber-700" :
-            activeTab === "gad7" ? "bg-blue-600 hover:bg-blue-700" :
-            "bg-green-600 hover:bg-green-700"
-          } text-white`}
+        <div 
+          className={`flex items-center justify-center rounded-md cursor-pointer shadow-sm transition-all duration-200 hover:shadow px-4 py-2 text-white ${
+            activeTab === "phq9" ? "bg-amber-600 hover:bg-amber-700 border border-amber-700" :
+            activeTab === "gad7" ? "bg-blue-600 hover:bg-blue-700 border border-blue-700" :
+            "bg-green-600 hover:bg-green-700 border border-green-700"
+          }`}
           onClick={handleNext}
         >
-          {currentQuestionIndex < activeQuestions.length - 1 ? "Next" : 
-           activeTab === "who5" ? "Complete Coffee Talk" : "Continue"}
-        </Button>
+          <span className="font-medium whitespace-nowrap text-center">
+            {currentQuestionIndex < activeQuestions.length - 1 ? "Next" : 
+             activeTab === "who5" ? "Complete Coffee Talk" : "Continue"}
+          </span>
+        </div>
       </CardFooter>
     </Card>
   );
