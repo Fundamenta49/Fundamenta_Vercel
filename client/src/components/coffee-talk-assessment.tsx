@@ -568,7 +568,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             <TabsContent value="overview" className="space-y-6 pt-4">
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Mental Wellness Summary</h3>
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
                   <Card className="overflow-hidden">
                     <CardHeader className="p-4 pb-2">
                       <CardTitle className="text-sm font-medium">Well-being</CardTitle>
@@ -665,7 +665,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="wellbeing">
                     <AccordionTrigger>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Wellbeing</Badge>
                         <span className="font-medium">{results.mentalMetrics.wellbeingScore}/25 ({results.mentalMetrics.wellbeingPercentage}%)</span>
                         <span className="text-sm text-gray-500">- {results.mentalMetrics.wellbeingLevel}</span>
@@ -685,7 +685,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   
                   <AccordionItem value="depression">
                     <AccordionTrigger>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Depression</Badge>
                         <span className="font-medium">{results.mentalMetrics.depressionScore}/27</span>
                         <span className="text-sm text-gray-500">- {results.mentalMetrics.depressionLevel}</span>
@@ -705,7 +705,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   
                   <AccordionItem value="anxiety">
                     <AccordionTrigger>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">Anxiety</Badge>
                         <span className="font-medium">{results.mentalMetrics.anxietyScore}/21</span>
                         <span className="text-sm text-gray-500">- {results.mentalMetrics.anxietyLevel}</span>
@@ -768,16 +768,18 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
   const renderNavButtons = () => {
     if (showResults) {
       return (
-        <div className="flex justify-between w-full">
+        <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
           <Button 
             variant="outline" 
             onClick={resetAssessment}
+            className="w-full sm:w-auto"
           >
             Take Assessment Again
           </Button>
           <Button 
             variant="outline" 
             onClick={() => setIsOpen(false)}
+            className="w-full sm:w-auto"
           >
             Close
           </Button>
@@ -786,20 +788,22 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
     }
     
     return (
-      <div className="flex justify-between w-full">
+      <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
         <Button 
           variant="outline" 
           onClick={handlePreviousQuestion}
           disabled={currentQuestionIndex === 0}
+          className="order-2 sm:order-1 w-full sm:w-auto"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Previous
         </Button>
         
-        <div className="flex gap-2">
+        <div className="flex gap-2 order-1 sm:order-2 w-full sm:w-auto justify-end">
           <Button 
             variant="ghost" 
             onClick={handleSkipQuestion}
+            className="w-full sm:w-auto"
           >
             Skip
           </Button>
@@ -807,7 +811,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             variant="default"
             onClick={submitAssessment}
             disabled={isPending}
-            className={currentQuestionIndex === mentalHealthQuestions.length - 1 ? "" : "hidden"}
+            className={`${currentQuestionIndex === mentalHealthQuestions.length - 1 ? "" : "hidden"} w-full sm:w-auto`}
           >
             {isPending ? "Processing..." : "Complete Assessment"}
           </Button>
