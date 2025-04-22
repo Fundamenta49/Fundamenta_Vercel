@@ -143,6 +143,54 @@ export async function enhanceResumeSection(
   content: string
 ): Promise<string[]> {
   try {
+    // Prepare section-specific instructions
+    let sectionInstructions = '';
+    switch (section.toLowerCase()) {
+      case 'summary':
+        sectionInstructions = `
+          - Keep the summary concise (3-5 sentences maximum)
+          - Begin with a strong statement about professional identity
+          - Highlight key skills, experience, and achievements
+          - End with a statement on value proposition or career goals
+          - Ensure it's written in first person without using "I" (implied first person)
+        `;
+        break;
+      case 'experience':
+        sectionInstructions = `
+          - Format each position as: Job Title | Company | Date Range
+          - Use bullet points (•) for each achievement
+          - Start each bullet with a strong action verb in past tense (or present for current roles)
+          - Include metrics and quantifiable results where possible (%, $, numbers)
+          - Focus on achievements rather than job duties
+          - Maintain consistent formatting between positions
+        `;
+        break;
+      case 'education':
+        sectionInstructions = `
+          - Format as: Degree | Institution | Year
+          - List relevant coursework, honors, or GPA if impressive (3.5+)
+          - Keep formatting consistent
+          - List education in reverse chronological order
+        `;
+        break;
+      case 'skills':
+        sectionInstructions = `
+          - Group skills by category if applicable (e.g., Technical Skills, Soft Skills)
+          - Use bullet points (•) for clear separation
+          - Prioritize skills most relevant to candidate's target role
+          - Be specific rather than generic (e.g., "JavaScript" instead of "Programming")
+          - Include proficiency level only if it adds value
+        `;
+        break;
+      default:
+        sectionInstructions = `
+          - Use bullet points (•) for easy scanning
+          - Be concise and specific
+          - Quantify achievements where possible
+          - Ensure consistent formatting
+        `;
+    }
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
@@ -151,16 +199,22 @@ export async function enhanceResumeSection(
           content: `You are a professional resume writer who specializes in creating impactful ${section} sections. 
           Your task is to improve the provided ${section} content to be more professional, concise, and impactful.
           
-          For each improvement:
-          - Use strong action verbs
+          Follow these resume best practices:
+          - Use strong action verbs (achieved, led, implemented, etc.)
           - Include specific, quantifiable achievements when possible
           - Eliminate fluff and redundancy
           - Ensure proper formatting and consistency
           - Focus on relevant skills and accomplishments
           
-          Return your response as a JSON array with exactly 3 different, improved versions of the content.
-          Each suggestion should be complete and ready to be used directly in a resume.
-          Format: { "suggestions": [string, string, string] }
+          ${sectionInstructions}
+          
+          IMPORTANT: Preserve appropriate line breaks and bullet points in your response.
+          If the original content has a specific structure, maintain that structure unless
+          it needs improvement.
+          
+          Return your response as a JSON array with exactly 1 improved version of the content.
+          The suggestion should be complete and ready to be used directly in a resume.
+          Format: { "suggestions": [string] }
           
           Ensure your response is valid JSON.`
         },
@@ -170,7 +224,7 @@ export async function enhanceResumeSection(
         }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.7,
+      temperature: 0.5,
       max_tokens: 1500
     });
 

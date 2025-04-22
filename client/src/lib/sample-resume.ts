@@ -6,11 +6,36 @@ export const sampleResumeStructured = {
   email: "alex.johnson@example.com",
   phone: "(555) 123-4567",
   summary: "Detail-oriented Full Stack Developer with 4+ years of experience building responsive web applications using React, Node.js, and TypeScript. Passionate about clean code, user experience, and solving complex problems with elegant solutions.",
-  education: "Bachelor of Science in Computer Science\nUniversity of Technology, 2015-2019\n• GPA: 3.8/4.0\n• Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems",
-  experience: "Senior Frontend Developer | TechCorp Inc. | 2021-Present\n• Led development of customer portal that improved client retention by 25%\n• Refactored legacy code base reducing load time by 40% and improving maintainability\n• Mentored 3 junior developers through code reviews and pair programming\n• Implemented CI/CD pipeline reducing deployment time by 65%\n\nWeb Developer | InnovateSoft | 2019-2021\n• Developed responsive web applications for clients across financial and healthcare sectors\n• Built RESTful APIs with Node.js and Express to power data-driven applications\n• Collaborated with UX team to implement pixel-perfect designs with high accessibility standards",
-  skills: "• Languages: JavaScript, TypeScript, HTML5, CSS3, SQL\n• Frameworks & Libraries: React, Redux, Node.js, Express, Jest, React Testing Library\n• Tools & Platforms: Git, AWS, Docker, Webpack, Figma\n• Soft Skills: Problem Solving, Team Leadership, Agile Methodologies, Technical Writing",
-  projects: "E-commerce Platform Redesign | 2021\n• Architected and implemented scalable front-end using React and Redux\n• Achieved 99/100 Lighthouse performance score through optimizations\n• Integrated payment processing with Stripe API\n\nCommunity Health Tracker | 2020\n• Created mobile-responsive dashboard to visualize public health data\n• Implemented data visualization using D3.js\n• Open-source project with 500+ GitHub stars",
-  certifications: "• AWS Certified Developer – Associate | 2022\n• Google Professional Cloud Developer | 2021\n• MongoDB Certified Developer | 2020",
+  education: `Bachelor of Science in Computer Science
+University of Technology, 2015-2019
+• GPA: 3.8/4.0
+• Relevant coursework: Data Structures, Algorithms, Web Development, Database Systems`,
+  experience: `Senior Frontend Developer | TechCorp Inc. | 2021-Present
+• Led development of customer portal that improved client retention by 25%
+• Refactored legacy code base reducing load time by 40% and improving maintainability
+• Mentored 3 junior developers through code reviews and pair programming
+• Implemented CI/CD pipeline reducing deployment time by 65%
+
+Web Developer | InnovateSoft | 2019-2021
+• Developed responsive web applications for clients across financial and healthcare sectors
+• Built RESTful APIs with Node.js and Express to power data-driven applications
+• Collaborated with UX team to implement pixel-perfect designs with high accessibility standards`,
+  skills: `• Languages: JavaScript, TypeScript, HTML5, CSS3, SQL
+• Frameworks & Libraries: React, Redux, Node.js, Express, Jest, React Testing Library
+• Tools & Platforms: Git, AWS, Docker, Webpack, Figma
+• Soft Skills: Problem Solving, Team Leadership, Agile Methodologies, Technical Writing`,
+  projects: `E-commerce Platform Redesign | 2021
+• Architected and implemented scalable front-end using React and Redux
+• Achieved 99/100 Lighthouse performance score through optimizations
+• Integrated payment processing with Stripe API
+
+Community Health Tracker | 2020
+• Created mobile-responsive dashboard to visualize public health data
+• Implemented data visualization using D3.js
+• Open-source project with 500+ GitHub stars`,
+  certifications: `• AWS Certified Developer – Associate | 2022
+• Google Professional Cloud Developer | 2021
+• MongoDB Certified Developer | 2020`,
   resumeText: `Alex Johnson
 alex.johnson@example.com | (555) 123-4567 | linkedin.com/in/alexjohnson
 

@@ -718,7 +718,7 @@ const BulletPointEnhancer: React.FC<{
     setError(null);
     
     try {
-      const response = await fetch('/api/resume-analysis/enhance', {
+      const response = await fetch('/api/resume/enhance', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -866,42 +866,54 @@ const ResumePreview: React.FC<{
         {formValues.summary && (
           <div className="mt-3">
             <h4 className="text-sm font-semibold mb-1">Professional Summary</h4>
-            <p className="text-xs whitespace-pre-wrap">{formValues.summary}</p>
+            <div className="text-xs whitespace-pre-line border-l-2 border-blue-100 pl-2">
+              {formValues.summary.replace(/\\n/g, '\n')}
+            </div>
           </div>
         )}
         
         {formValues.experience && (
           <div className="mt-3">
             <h4 className="text-sm font-semibold mb-1">Experience</h4>
-            <p className="text-xs whitespace-pre-wrap">{formValues.experience}</p>
+            <div className="text-xs whitespace-pre-line border-l-2 border-blue-100 pl-2">
+              {formValues.experience.replace(/\\n/g, '\n')}
+            </div>
           </div>
         )}
         
         {formValues.education && (
           <div className="mt-3">
             <h4 className="text-sm font-semibold mb-1">Education</h4>
-            <p className="text-xs whitespace-pre-wrap">{formValues.education}</p>
+            <div className="text-xs whitespace-pre-line border-l-2 border-blue-100 pl-2">
+              {formValues.education.replace(/\\n/g, '\n')}
+            </div>
           </div>
         )}
         
         {formValues.skills && (
           <div className="mt-3">
             <h4 className="text-sm font-semibold mb-1">Skills</h4>
-            <p className="text-xs whitespace-pre-wrap">{formValues.skills}</p>
+            <div className="text-xs whitespace-pre-line border-l-2 border-blue-100 pl-2">
+              {formValues.skills.replace(/\\n/g, '\n')}
+            </div>
           </div>
         )}
         
         {formValues.projects && (
           <div className="mt-3">
             <h4 className="text-sm font-semibold mb-1">Projects</h4>
-            <p className="text-xs whitespace-pre-wrap">{formValues.projects}</p>
+            <div className="text-xs whitespace-pre-line border-l-2 border-blue-100 pl-2">
+              {formValues.projects.replace(/\\n/g, '\n')}
+            </div>
           </div>
         )}
         
         {formValues.certifications && (
           <div className="mt-3">
             <h4 className="text-sm font-semibold mb-1">Certifications</h4>
-            <p className="text-xs whitespace-pre-wrap">{formValues.certifications}</p>
+            <div className="text-xs whitespace-pre-line border-l-2 border-blue-100 pl-2">
+              {formValues.certifications.replace(/\\n/g, '\n')}
+            </div>
           </div>
         )}
       </div>
