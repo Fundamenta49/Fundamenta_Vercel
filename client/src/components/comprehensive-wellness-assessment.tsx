@@ -1265,10 +1265,12 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                       
                       <div className="pl-3 border-l-2 border-amber-200 ml-1 mb-4">
                         <p className="text-gray-700 mb-2">
-                          {wellbeingSeverity.find(s => s.level === wellbeingLevel)?.description.replace("Your wellbeing score", "Your sharing").replace("suggests", "indicates")}
+                          {wellbeingSeverity.find(s => s.level === wellbeingLevel)?.description?.replace("Your wellbeing score", "Your sharing").replace("suggests", "indicates") || 
+                          "Your sharing indicates you have some positive moments in your life, along with areas where you might want more energy or joy."}
                         </p>
                         <p className="text-gray-700">
-                          {wellbeingSeverity.find(s => s.level === wellbeingLevel)?.recommendation}
+                          {wellbeingSeverity.find(s => s.level === wellbeingLevel)?.recommendation || 
+                          "Consider adding small activities that bring you energy and joy to your daily routine."}
                         </p>
                       </div>
                       
@@ -1709,10 +1711,12 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 <div className="flex flex-col">
                   <div className="bg-amber-50 p-4 rounded-lg mb-4">
                     <p className="text-gray-700 text-sm leading-relaxed mb-3">
-                      {wellbeingSeverity.find(s => s.level === (results.mentalMetrics.wellbeingLevel || "Moderate"))?.description.replace("Your wellbeing score", "Your sharing").replace("suggests", "indicates")}
+                      {wellbeingSeverity.find(s => s.level === (results.mentalMetrics.wellbeingLevel || "Moderate"))?.description?.replace("Your wellbeing score", "Your sharing").replace("suggests", "indicates") || 
+                       "Your sharing indicates you have some positive moments in your life, along with areas where you might want more energy or joy."}
                     </p>
                     <p className="text-gray-700 text-sm leading-relaxed">
-                      {wellbeingSeverity.find(s => s.level === (results.mentalMetrics.wellbeingLevel || "Moderate"))?.recommendation}
+                      {wellbeingSeverity.find(s => s.level === (results.mentalMetrics.wellbeingLevel || "Moderate"))?.recommendation || 
+                       "Consider adding small activities that bring you energy and joy to your daily routine."}
                     </p>
                   </div>
                   
