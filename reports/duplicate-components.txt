@@ -1,7 +1,13 @@
 index.tsx
+interview-practice-pop-out.tsx
+job-search-pop-out.tsx
+layout.tsx
 life-skills.tsx
 login.tsx
 repair-assistant.tsx
+resume-builder-fullscreen.tsx
+resume-builder-pop-out.tsx
 saved-quizzes.tsx
 shopping-buddy.tsx
+sidebar.tsx
 yoga-progression.tsx
