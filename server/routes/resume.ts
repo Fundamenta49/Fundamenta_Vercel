@@ -87,8 +87,12 @@ router.post("/enhance", async (req: Request, res: Response) => {
     // Process with OpenAI
     const suggestions = await enhanceResumeSection(section, content);
     
-    // Return the enhanced content
-    return res.status(200).json({ suggestions });
+    // Return the enhanced content - use the first suggestion as the enhanced content
+    // but also include all suggestions for future implementation
+    return res.status(200).json({ 
+      enhanced: suggestions[0] || content, 
+      suggestions: suggestions 
+    });
   } catch (error) {
     console.error("Resume enhancement error:", error);
     return res.status(500).json({ 
