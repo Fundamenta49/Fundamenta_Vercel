@@ -13,17 +13,33 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { Brain, AlertCircle, InfoIcon, HelpCircle, Heart, Coffee } from "lucide-react";
+import { Brain, AlertCircle, InfoIcon, HelpCircle, Heart, Coffee, Sun, Wind } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// PHQ-9 Assessment based on official clinical guidelines
-// Reference: Kroenke K, Spitzer RL, Williams JB. The PHQ-9: validity of a brief depression severity measure.
-// J Gen Intern Med. 2001;16(9):606-613.
+// Mental health assessment tools based on clinical guidelines
+// PHQ-9: Kroenke K, Spitzer RL, Williams JB. The PHQ-9: validity of a brief depression severity measure. J Gen Intern Med. 2001;16(9):606-613.
+// GAD-7: Spitzer RL, Kroenke K, Williams JB, Löwe B. A brief measure for assessing generalized anxiety disorder: the GAD-7. Arch Intern Med. 2006;166(10):1092-1097.
+// WHO-5: Topp CW, Østergaard SD, Søndergaard S, Bech P. The WHO-5 Well-Being Index: a systematic review of the literature. Psychother Psychosom. 2015;84(3):167-176.
 
-interface PHQ9Result {
-  score: number;
-  level: "minimal" | "mild" | "moderate" | "moderately_severe" | "severe";
-  classification: string;
+interface MentalHealthResult {
+  phq9: {
+    score: number;
+    level: "minimal" | "mild" | "moderate" | "moderately_severe" | "severe";
+    classification: string;
+  };
+  gad7: {
+    score: number;
+    level: "minimal" | "mild" | "moderate" | "severe";
+    classification: string;
+  };
+  who5: {
+    score: number;
+    percentageScore: number;
+    level: "low" | "moderate" | "high";
+    classification: string;
+  };
+  integratedAnalysis: string;
   description: string;
   recommendations: string[];
   mentalHealthPathway: string;
@@ -36,47 +52,174 @@ interface PHQ9AssessmentProps {
   onComplete?: () => void;
 }
 
+type AssessmentType = "phq9" | "gad7" | "who5";
+type AssessmentStage = "intro" | "questions" | "results";
+
 export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {}) {
+  const [stage, setStage] = useState<AssessmentStage>("intro");
+  const [activeTab, setActiveTab] = useState<AssessmentType>("phq9");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[]>(new Array(9).fill(-1));
+  const [phq9Answers, setPhq9Answers] = useState<number[]>(new Array(9).fill(-1));
+  const [gad7Answers, setGad7Answers] = useState<number[]>(new Array(7).fill(-1));
+  const [who5Answers, setWho5Answers] = useState<number[]>(new Array(5).fill(-1));
   const [showResults, setShowResults] = useState(false);
-  const [result, setResult] = useState<PHQ9Result | null>(null);
+  const [result, setResult] = useState<MentalHealthResult | null>(null);
 
-  // PHQ-9 questions
-  const questions = [
-    "Little interest or pleasure in doing things",
-    "Feeling down, depressed, or hopeless",
-    "Trouble falling or staying asleep, or sleeping too much",
-    "Feeling tired or having little energy",
-    "Poor appetite or overeating",
-    "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
-    "Trouble concentrating on things, such as reading the newspaper or watching television",
-    "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual",
-    "Thoughts that you would be better off dead or of hurting yourself in some way"
+  // Modified PHQ-9 questions in a more conversational tone
+  const phq9Questions = [
+    "How interested have you been in activities you usually enjoy?",
+    "Have you been feeling down or like things aren't going to get better?",
+    "How has your sleep been lately? Any trouble falling asleep, staying asleep, or sleeping too much?",
+    "How have your energy levels been? Do you feel tired or worn out even after resting?",
+    "How has your appetite been? Have you noticed changes in how much or little you eat?",
+    "Have you been feeling good about yourself, or have you been pretty hard on yourself lately?",
+    "Have you found it difficult to focus on everyday things like reading or watching TV?",
+    "Have others commented on how quickly or slowly you've been moving or speaking? Or have you felt restless and fidgety?",
+    "Have you had thoughts that you'd be better off not being here, or thoughts of hurting yourself?"
   ];
 
-  // Frequency options
-  const frequencyOptions = [
-    { value: 0, label: "Not at all", description: "0 days" },
-    { value: 1, label: "Several days", description: "1-7 days" },
-    { value: 2, label: "More than half the days", description: "8-12 days" },
-    { value: 3, label: "Nearly every day", description: "13+ days" }
+  // GAD-7 questions in conversational tone
+  const gad7Questions = [
+    "Have you been feeling nervous, anxious, or on edge?",
+    "Have you found it difficult to stop worrying or control your worries?",
+    "Have you been worrying too much about different things?",
+    "How easy or difficult has it been for you to relax?",
+    "Have you been so restless that it's been hard to sit still?",
+    "Have you been feeling easily annoyed or irritable?",
+    "Have you been feeling afraid, as if something awful might happen?"
   ];
 
-  // Calculate progress percentage
-  const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+  // WHO-5 Well-Being Index questions in conversational tone
+  const who5Questions = [
+    "How often have you felt cheerful and in good spirits?",
+    "How often have you felt calm and relaxed?",
+    "How often have you felt active and vigorous?",
+    "How often have you woken up feeling fresh and rested?",
+    "How often has your daily life been filled with things that interest you?"
+  ];
+
+  // Transition prompts between questions
+  const transitionPrompts = [
+    "Thanks for sharing that. Let's talk about...",
+    "I appreciate your honesty. Now I'm curious about...",
+    "That's really helpful to know. Moving on to...",
+    "Thanks for reflecting on that. Next, I'd like to ask about...",
+    "I understand. Let's switch gears and talk about...",
+    "That gives me a better picture. How about..."
+  ];
+
+  // Get random transition prompt
+  const getTransition = () => {
+    return transitionPrompts[Math.floor(Math.random() * transitionPrompts.length)];
+  };
+
+  // PHQ-9 Frequency options - more conversational
+  const phq9FrequencyOptions = [
+    { value: 0, label: "Rarely or never", description: "I haven't noticed this" },
+    { value: 1, label: "Sometimes", description: "A few days" },
+    { value: 2, label: "Often", description: "More than half the time" },
+    { value: 3, label: "Almost always", description: "Nearly every day" }
+  ];
+
+  // GAD-7 Frequency options - more conversational
+  const gad7FrequencyOptions = [
+    { value: 0, label: "Hardly at all", description: "This hasn't been an issue" },
+    { value: 1, label: "A little bit", description: "Some days" },
+    { value: 2, label: "Quite a bit", description: "More than half the time" },
+    { value: 3, label: "A lot", description: "Almost every day" }
+  ];
+
+  // WHO-5 Frequency options - note these are scored differently (positive framing)
+  const who5FrequencyOptions = [
+    { value: 0, label: "Never", description: "At no time" },
+    { value: 1, label: "Occasionally", description: "Some of the time" },
+    { value: 2, label: "Sometimes", description: "Less than half the time" },
+    { value: 3, label: "Often", description: "More than half the time" },
+    { value: 4, label: "Usually", description: "Most of the time" },
+    { value: 5, label: "Always", description: "All of the time" }
+  ];
+
+  // Get active questions, frequency options and answers based on current tab
+  const getActiveQuestions = () => {
+    switch (activeTab) {
+      case "phq9": return phq9Questions;
+      case "gad7": return gad7Questions;
+      case "who5": return who5Questions;
+      default: return phq9Questions;
+    }
+  };
+
+  const getActiveFrequencyOptions = () => {
+    switch (activeTab) {
+      case "phq9": return phq9FrequencyOptions;
+      case "gad7": return gad7FrequencyOptions;
+      case "who5": return who5FrequencyOptions;
+      default: return phq9FrequencyOptions;
+    }
+  };
+
+  const getActiveAnswers = () => {
+    switch (activeTab) {
+      case "phq9": return phq9Answers;
+      case "gad7": return gad7Answers;
+      case "who5": return who5Answers;
+      default: return phq9Answers;
+    }
+  };
+
+  const setActiveAnswers = (answers: number[]) => {
+    switch (activeTab) {
+      case "phq9": setPhq9Answers(answers); break;
+      case "gad7": setGad7Answers(answers); break;
+      case "who5": setWho5Answers(answers); break;
+    }
+  };
+
+  // Calculate progress percentage for active assessment
+  const activeQuestions = getActiveQuestions();
+  const progressPercentage = ((currentQuestionIndex + 1) / activeQuestions.length) * 100;
+
+  // Handle starting the assessment
+  const handleStartAssessment = () => {
+    setStage("questions");
+    setCurrentQuestionIndex(0);
+  };
+
+  // Handle tab change
+  const handleTabChange = (tab: AssessmentType) => {
+    setActiveTab(tab);
+    setCurrentQuestionIndex(0);
+  };
 
   // Handle answer change
   const handleAnswerChange = (value: number) => {
+    const answers = getActiveAnswers();
     const newAnswers = [...answers];
     newAnswers[currentQuestionIndex] = value;
-    setAnswers(newAnswers);
+    setActiveAnswers(newAnswers);
 
-    // Move to next question or show results if last question
+    // Move to next question or switch tabs/show results based on completion
+    const questions = getActiveQuestions();
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      calculateResults(newAnswers);
+      // Completed the current assessment
+      switch (activeTab) {
+        case "phq9": 
+          // Move to GAD-7 assessment
+          setActiveTab("gad7");
+          setCurrentQuestionIndex(0);
+          break;
+        case "gad7":
+          // Move to WHO-5 assessment
+          setActiveTab("who5");
+          setCurrentQuestionIndex(0);
+          break;
+        case "who5":
+          // Calculate and show final results
+          calculateResults();
+          break;
+      }
     }
   };
 
@@ -84,131 +227,274 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
+    } else if (activeTab === "gad7") {
+      // Go back to PHQ-9 if at first GAD-7 question
+      setActiveTab("phq9");
+      setCurrentQuestionIndex(phq9Questions.length - 1);
+    } else if (activeTab === "who5") {
+      // Go back to GAD-7 if at first WHO-5 question
+      setActiveTab("gad7");
+      setCurrentQuestionIndex(gad7Questions.length - 1);
     }
   };
 
-  // Calculate results
-  const calculateResults = (answers: number[]) => {
-    const totalScore = answers.reduce((acc, value) => acc + value, 0);
+  // Manual next question button (for when you want to see the question without answering)
+  const handleNext = () => {
+    const answers = getActiveAnswers();
+    if (answers[currentQuestionIndex] >= 0) {
+      // If answered, go to next
+      const questions = getActiveQuestions();
+      if (currentQuestionIndex < questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        // Completed the current assessment, move to next assessment or results
+        switch (activeTab) {
+          case "phq9": 
+            setActiveTab("gad7");
+            setCurrentQuestionIndex(0);
+            break;
+          case "gad7":
+            setActiveTab("who5");
+            setCurrentQuestionIndex(0);
+            break;
+          case "who5":
+            calculateResults();
+            break;
+        }
+      }
+    } else {
+      // Error message if trying to advance without answering
+      toast({
+        variant: "destructive",
+        title: "No answer selected",
+        description: "Please select an answer before proceeding.",
+      });
+    }
+  };
+
+  // Calculate results from all three assessments
+  const calculateResults = () => {
+    // Calculate PHQ-9 score (depression)
+    const phq9Score = phq9Answers.reduce((acc, value) => acc + value, 0);
     
-    let level: "minimal" | "mild" | "moderate" | "moderately_severe" | "severe" = "minimal";
-    let classification = "";
+    // Determine PHQ-9 level
+    let phq9Level: "minimal" | "mild" | "moderate" | "moderately_severe" | "severe";
+    let phq9Classification = "";
+    
+    if (phq9Score <= 4) {
+      phq9Level = "minimal";
+      phq9Classification = "Minimal or no depression symptoms";
+    } else if (phq9Score <= 9) {
+      phq9Level = "mild";
+      phq9Classification = "Mild depression symptoms";
+    } else if (phq9Score <= 14) {
+      phq9Level = "moderate";
+      phq9Classification = "Moderate depression symptoms";
+    } else if (phq9Score <= 19) {
+      phq9Level = "moderately_severe";
+      phq9Classification = "Moderately severe depression symptoms";
+    } else {
+      phq9Level = "severe";
+      phq9Classification = "Severe depression symptoms";
+    }
+    
+    // Calculate GAD-7 score (anxiety)
+    const gad7Score = gad7Answers.reduce((acc, value) => acc + value, 0);
+    
+    // Determine GAD-7 level
+    let gad7Level: "minimal" | "mild" | "moderate" | "severe";
+    let gad7Classification = "";
+    
+    if (gad7Score <= 4) {
+      gad7Level = "minimal";
+      gad7Classification = "Minimal anxiety symptoms";
+    } else if (gad7Score <= 9) {
+      gad7Level = "mild";
+      gad7Classification = "Mild anxiety symptoms";
+    } else if (gad7Score <= 14) {
+      gad7Level = "moderate";
+      gad7Classification = "Moderate anxiety symptoms";
+    } else {
+      gad7Level = "severe";
+      gad7Classification = "Severe anxiety symptoms";
+    }
+    
+    // Calculate WHO-5 score (well-being) - note this is positively scored
+    const who5Score = who5Answers.reduce((acc, value) => acc + value, 0);
+    
+    // WHO-5 is scored 0-25, convert to percentage
+    const who5Percentage = (who5Score / 25) * 100;
+    
+    // Determine WHO-5 level
+    let who5Level: "low" | "moderate" | "high";
+    let who5Classification = "";
+    
+    if (who5Percentage <= 30) {
+      who5Level = "low";
+      who5Classification = "Low well-being, possible depression";
+    } else if (who5Percentage <= 70) {
+      who5Level = "moderate";
+      who5Classification = "Moderate well-being";
+    } else {
+      who5Level = "high";
+      who5Classification = "High well-being";
+    }
+    
+    // Integrated analysis
+    let integratedAnalysis = "";
     let description = "";
     let recommendations: string[] = [];
     let mentalHealthPathway = "";
     let warningLevel: "none" | "caution" | "warning" | "severe" = "none";
     let selfCareSteps: string[] = [];
     let followUp = "";
-
-    // Determine severity level based on score
-    if (totalScore <= 4) {
-      level = "minimal";
-      classification = "Minimal depression";
-      description = "Your responses suggest minimal symptoms of depression. This is a normal range.";
+    
+    // Determine overall severity based on worst score
+    if (phq9Level === "severe" || gad7Level === "severe" || who5Level === "low") {
+      warningLevel = "severe";
+      integratedAnalysis = "Your responses suggest you might be experiencing significant mental health challenges right now.";
+      
+      if (phq9Level === "severe" && gad7Level === "severe") {
+        description = "You appear to be dealing with both significant depression and anxiety symptoms, which can feel overwhelming.";
+        mentalHealthPathway = "critical_support";
+      } else if (phq9Level === "severe") {
+        description = "You seem to be experiencing significant depression symptoms that might be affecting your daily life.";
+        mentalHealthPathway = "depression_support";
+      } else if (gad7Level === "severe") {
+        description = "You appear to be experiencing considerable anxiety that might be interfering with your day-to-day activities.";
+        mentalHealthPathway = "anxiety_support";
+      } else {
+        description = "Your overall sense of well-being seems to be lower than ideal right now.";
+        mentalHealthPathway = "wellbeing_support";
+      }
+      
       recommendations = [
-        "Maintain your current wellness practices",
-        "Continue regular self-care activities",
-        "Practice mindfulness and gratitude",
-        "Stay connected with friends and family"
+        "Consider speaking with a mental health professional for guidance and support",
+        "Establish a daily self-care routine that includes rest, movement, and social connection",
+        "Try to maintain regular sleep and eating patterns even when difficult",
+        "Reach out to supportive friends or family for connection"
       ];
-      mentalHealthPathway = "wellness_maintenance";
-      warningLevel = "none";
+      
       selfCareSteps = [
-        "Regular physical activity",
-        "Healthy sleep habits",
-        "Social connections",
-        "Enjoyable activities"
+        "Daily brief mindfulness practice (even 5 minutes helps)",
+        "Gentle physical movement as you're able",
+        "Connect with someone supportive each day",
+        "Create small moments of joy or comfort in your routine"
       ];
-      followUp = "Consider reassessment in 3 months to monitor your mental wellbeing.";
-    } else if (totalScore <= 9) {
-      level = "mild";
-      classification = "Mild depression";
-      description = "Your responses suggest mild symptoms of depression. Some of these feelings may come and go.";
+      
+      followUp = "Based on your responses, speaking with a healthcare professional soon would be beneficial.";
+    } 
+    else if (phq9Level === "moderately_severe" || phq9Level === "moderate" || 
+             gad7Level === "moderate" || who5Level === "moderate") {
+      warningLevel = "warning";
+      integratedAnalysis = "Your responses suggest you might be experiencing some mental health challenges.";
+      
+      if (phq9Level === "moderately_severe" || phq9Level === "moderate") {
+        description = "You appear to be experiencing moderate depression symptoms. These can affect your energy, mood, and enjoyment of activities.";
+        mentalHealthPathway = "moderate_support";
+      } else if (gad7Level === "moderate") {
+        description = "Your responses indicate moderate anxiety symptoms, which can affect your ability to relax and feel at ease.";
+        mentalHealthPathway = "anxiety_support";
+      } else {
+        description = "Your sense of well-being is in the moderate range, suggesting there could be room for improvement in how you're feeling.";
+        mentalHealthPathway = "wellbeing_support";
+      }
+      
       recommendations = [
-        "Increase physical activity (30 minutes daily if possible)",
-        "Practice stress reduction techniques",
-        "Maintain social connections",
-        "Consider a structured self-help program"
+        "Consider speaking with a healthcare provider about your mental health",
+        "Establish consistent routines for sleep, meals, and physical activity",
+        "Practice stress reduction techniques like deep breathing or meditation",
+        "Spend time in activities that typically bring you joy or meaning"
       ];
-      mentalHealthPathway = "mild_support";
+      
+      selfCareSteps = [
+        "Daily mood tracking in a journal or app",
+        "Regular physical activity (aim for 30 minutes daily)",
+        "Connect with supportive people in your life",
+        "Mindfulness or relaxation practice (10-15 minutes daily)"
+      ];
+      
+      followUp = "Consider following up with a healthcare provider if these symptoms persist or worsen.";
+    }
+    else if (phq9Level === "mild" || gad7Level === "mild") {
       warningLevel = "caution";
-      selfCareSteps = [
-        "Daily journaling",
-        "Mindfulness meditation (10-15 minutes daily)",
-        "Regular sleep schedule",
-        "Limit alcohol and caffeine"
-      ];
-      followUp = "Consider reassessment in 4-6 weeks to monitor your symptoms.";
-    } else if (totalScore <= 14) {
-      level = "moderate";
-      classification = "Moderate depression";
-      description = "Your responses suggest moderate symptoms of depression that may be impacting your daily life.";
+      integratedAnalysis = "Your responses suggest you might be experiencing mild mental health symptoms.";
+      
+      if (phq9Level === "mild" && gad7Level === "mild") {
+        description = "You seem to be experiencing mild symptoms of both depression and anxiety. While these are common, they can still affect your quality of life.";
+        mentalHealthPathway = "mild_support";
+      } else if (phq9Level === "mild") {
+        description = "You appear to be experiencing mild depression symptoms, which might occasionally affect your mood and energy.";
+        mentalHealthPathway = "mild_support";
+      } else {
+        description = "Your responses suggest mild anxiety symptoms, which might sometimes make you feel on edge or worried.";
+        mentalHealthPathway = "mild_support";
+      }
+      
       recommendations = [
-        "Consider speaking with a mental health professional",
-        "Practice daily mood management techniques",
-        "Establish regular routines for sleep, meals, and exercise",
-        "Use the Wellness Journal to track mood patterns"
+        "Continue monitoring your mood and mental health",
+        "Maintain regular physical activity and good sleep habits",
+        "Practice stress reduction techniques that work for you",
+        "Stay connected with supportive people in your life"
       ];
-      mentalHealthPathway = "moderate_support";
-      warningLevel = "warning";
+      
       selfCareSteps = [
-        "Daily mood tracking",
-        "Guided meditation or relaxation techniques",
+        "Regular physical activity (walking, yoga, etc.)",
+        "Consistent sleep schedule",
+        "Mindfulness practice or relaxation techniques",
+        "Social connection and enjoyable activities"
+      ];
+      
+      followUp = "Consider reassessing in 4-6 weeks to monitor any changes in your symptoms.";
+    }
+    else {
+      warningLevel = "none";
+      integratedAnalysis = "Your responses suggest your mental health is in a generally positive state right now.";
+      description = "You appear to be experiencing minimal symptoms of depression or anxiety, and your sense of well-being seems good.";
+      mentalHealthPathway = "wellness_maintenance";
+      
+      recommendations = [
+        "Continue your current wellness practices",
+        "Maintain regular physical activity and good sleep habits",
+        "Practice stress management for everyday challenges",
+        "Stay connected with your support network"
+      ];
+      
+      selfCareSteps = [
         "Regular physical activity",
-        "Scheduled enjoyable activities"
+        "Healthy sleep routine",
+        "Social connections",
+        "Activities that bring you joy and meaning"
       ];
-      followUp = "Consider consulting with a healthcare provider for a professional assessment.";
-    } else if (totalScore <= 19) {
-      level = "moderately_severe";
-      classification = "Moderately severe depression";
-      description = "Your responses suggest moderately severe symptoms of depression that are likely impacting multiple areas of your life.";
-      recommendations = [
-        "Consult with a mental health professional",
-        "Follow structured self-care routines",
-        "Engage your support network",
-        "Use the resources in the Mental Wellness section"
-      ];
-      mentalHealthPathway = "mental_health_support";
-      warningLevel = "warning";
-      selfCareSteps = [
-        "Structured daily routine",
-        "Regular communication with supportive people",
-        "Physical activity as possible",
-        "Professional guidance for coping strategies"
-      ];
-      followUp = "We recommend consulting with a healthcare provider for a professional assessment and treatment options.";
-    } else {
-      level = "severe";
-      classification = "Severe depression";
-      description = "Your responses suggest severe symptoms of depression that are significantly impacting your daily functioning.";
-      recommendations = [
-        "Seek professional help from a healthcare provider",
-        "Consider a comprehensive mental health evaluation",
-        "Engage in supported self-care activities",
-        "Maintain close contact with your support network"
-      ];
-      mentalHealthPathway = "critical_support";
-      warningLevel = "severe";
-      selfCareSteps = [
-        "Immediate connection with healthcare provider",
-        "Daily check-ins with trusted support person",
-        "Simple self-care activities as manageable",
-        "Safety planning if having thoughts of suicide"
-      ];
-      followUp = "We strongly recommend consulting with a healthcare provider as soon as possible for a professional assessment and treatment.";
+      
+      followUp = "Consider reassessing in 3-6 months to ensure continued well-being.";
     }
-
-    // Special warning for suicide risk (question 9)
-    if (answers[8] >= 1) {
+    
+    // Special warning for suicide risk (question 9 on PHQ-9)
+    if (phq9Answers[8] >= 1) {
       warningLevel = "severe";
-      followUp = "Your response to question 9 indicates thoughts of self-harm or suicide. Please speak with a healthcare provider or mental health professional right away, or contact a crisis helpline such as the National Suicide Prevention Lifeline at 988.";
+      followUp = "Your response to the question about thoughts of self-harm or suicide is important. Please speak with a healthcare provider or mental health professional right away, or contact a crisis helpline such as the National Suicide Prevention Lifeline at 988.";
     }
-
+    
     // Set results
-    const result: PHQ9Result = {
-      score: totalScore,
-      level,
-      classification,
+    const finalResult: MentalHealthResult = {
+      phq9: {
+        score: phq9Score,
+        level: phq9Level,
+        classification: phq9Classification
+      },
+      gad7: {
+        score: gad7Score,
+        level: gad7Level,
+        classification: gad7Classification
+      },
+      who5: {
+        score: who5Score,
+        percentageScore: who5Percentage,
+        level: who5Level,
+        classification: who5Classification
+      },
+      integratedAnalysis,
       description,
       recommendations,
       mentalHealthPathway,
@@ -216,28 +502,33 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
       selfCareSteps,
       followUp
     };
-
-    setResult(result);
+    
+    setResult(finalResult);
+    setStage("results");
     setShowResults(true);
-
+    
     // Save results to localStorage for integration with other components
     try {
-      localStorage.setItem('phq9Assessment', JSON.stringify(result));
-      localStorage.setItem('phq9AssessmentDate', new Date().toISOString());
+      localStorage.setItem('mentalHealthAssessment', JSON.stringify(finalResult));
+      localStorage.setItem('mentalHealthAssessmentDate', new Date().toISOString());
       
       // Trigger onComplete callback if provided
       if (onComplete) {
         onComplete();
       }
     } catch (error) {
-      console.error("Error saving PHQ-9 assessment:", error);
+      console.error("Error saving mental health assessment:", error);
     }
   };
-
+  
   // Reset assessment
   const resetAssessment = () => {
+    setStage("intro");
+    setActiveTab("phq9");
     setCurrentQuestionIndex(0);
-    setAnswers(new Array(9).fill(-1));
+    setPhq9Answers(new Array(9).fill(-1));
+    setGad7Answers(new Array(7).fill(-1));
+    setWho5Answers(new Array(5).fill(-1));
     setShowResults(false);
     setResult(null);
   };
