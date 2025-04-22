@@ -472,6 +472,7 @@ const ComprehensiveWellnessPDF = ({ results }: { results: any }) => (
 // Main component
 export default function ComprehensiveWellnessAssessment() {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1); // Track steps in the assessment flow
   const [currentMentalQuestionIndex, setCurrentMentalQuestionIndex] = useState(0);
   const [mentalHealthAnswers, setMentalHealthAnswers] = useState<{id: number, value: number}[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -482,6 +483,9 @@ export default function ComprehensiveWellnessAssessment() {
   
   // Calculate progress percentage for mental health assessment
   const progressPercentage = ((currentMentalQuestionIndex + 1) / mentalHealthQuestions.length) * 100;
+  
+  // Coffee Talk only includes the three mental health assessments
+  const totalSteps = 3; // Introduction, Assessment, Results
   
   // Physical health assessment state
   const [physicalAssessment, setPhysicalAssessment] = useState<PhysicalAssessment>({
@@ -777,7 +781,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       return renderResults();
     }
     
-    // Just show mental health assessment content directly - Coffee Talk should only include mental health assessments
+    // Coffee Talk is now only for mental health assessments (GAD-7, WHO-5, PHQ-9)
     return (
       <>
         <CardHeader>
