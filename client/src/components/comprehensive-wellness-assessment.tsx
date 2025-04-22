@@ -480,27 +480,8 @@ export default function ComprehensiveWellnessAssessment() {
   const [consentToStore, setConsentToStore] = useState(false);
   const [results, setResults] = useState<any>(null);
   
-  // Define types for physical assessment
-  interface CurrentDiet {
-    mealFrequency: number;
-    typicalFoods: string[];
-    restrictions: string[];
-    otherRestriction?: string;
-    supplements: string[];
-  }
-  
-  interface PhysicalAssessment {
-    age: number;
-    gender: string;
-    heightFeet: number;
-    heightInches: number;
-    weight: number;
-    activityLevel: string;
-    dietaryPreferences: string[];
-    healthGoals: string[];
-    existingConditions: string[];
-    currentDiet: CurrentDiet;
-  }
+  // Calculate progress percentage for mental health assessment
+  const progressPercentage = ((currentMentalQuestionIndex + 1) / mentalHealthQuestions.length) * 100;
   
   // Physical health assessment state
   const [physicalAssessment, setPhysicalAssessment] = useState<PhysicalAssessment>({
