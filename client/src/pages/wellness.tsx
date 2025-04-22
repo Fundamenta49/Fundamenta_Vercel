@@ -399,6 +399,28 @@ export default function Wellness() {
                           ? `${section.description.substring(0, section.id === 'shopping' ? 100 : 80)}...` 
                           : section.description}
                       </p>
+                      
+                      {section.id === 'mental-health' && (
+                        <div 
+                          className="w-full flex justify-center items-center mt-3 md:mt-4"
+                          style={{pointerEvents: 'none'}} // This prevents the button from capturing its own click events
+                        >
+                          <div 
+                            className="px-3 py-1 rounded-md text-center"
+                            style={{
+                              backgroundColor: '#d97706', /* amber-600 */
+                              color: 'white',
+                              border: '1px solid #b45309', /* amber-700 */
+                              fontSize: '0.875rem',
+                              fontWeight: 500,
+                              whiteSpace: 'nowrap',
+                              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
+                            }}
+                          >
+                            Let's Talk
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </button>
                 </div>
