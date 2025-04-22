@@ -790,7 +790,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             Coffee Talk Check-In
           </CardTitle>
           <CardDescription>
-            Over the last 2 weeks, how often have you been bothered by the following?
+            Let's have a conversation about how you've been feeling. Over the last 2 weeks, how often have you experienced the following?
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -807,10 +807,10 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     : "border-purple-200 bg-purple-50 text-purple-700"
               }>
                 {mentalHealthQuestions[currentMentalQuestionIndex].category === "wellbeing"
-                  ? "Well-Being"
+                  ? "About Your Well-Being"
                   : mentalHealthQuestions[currentMentalQuestionIndex].category === "depression"
-                    ? "Depression"
-                    : "Anxiety"} Assessment
+                    ? "Mood Check-In"
+                    : "Stress & Worry"}
               </Badge>
             </div>
             <Progress
@@ -2068,10 +2068,10 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 <div className="rounded-full bg-amber-100 p-1">
                   <Share2 className="h-4 w-4 text-amber-600" />
                 </div>
-                <h4 className="font-medium text-amber-700">Conversational Approach</h4>
+                <h4 className="font-medium text-amber-700">Friendly Mental Health Check-In</h4>
               </div>
               <p className="text-gray-700 text-sm">
-                Our conversational assessment helps us understand your mental wellbeing from different angles, providing personalized insights and recommendations.
+                A warm, conversation-style assessment focusing on your wellbeing, mood, and stress levels. This brief chat helps us understand how you're feeling and provides personalized support.
               </p>
             </div>
           </div>
