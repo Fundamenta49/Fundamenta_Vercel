@@ -56,7 +56,8 @@ type AssessmentType = "phq9" | "gad7" | "who5";
 type AssessmentStage = "intro" | "questions" | "results";
 
 export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {}) {
-  const [stage, setStage] = useState<AssessmentStage>("intro");
+  // Start directly with the questions instead of the intro screen
+  const [stage, setStage] = useState<AssessmentStage>("questions");
   const [activeTab, setActiveTab] = useState<AssessmentType>("phq9");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [phq9Answers, setPhq9Answers] = useState<number[]>(new Array(9).fill(-1));
