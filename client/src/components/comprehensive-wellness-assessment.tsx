@@ -2037,44 +2037,56 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <div className="w-full">
             <h3 className="text-xl font-semibold text-amber-800 mb-3">Our Coffee Talk Journey</h3>
             <p className="text-gray-700 mb-4">
-              Let's have a friendly conversation about both your physical wellness and mental wellbeing to understand the complete picture.
+              Let's have a friendly conversation about your mental wellbeing in a comfortable, casual setting.
             </p>
             
-            <div className="grid md:grid-cols-2 gap-8 mt-6">
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm">
-                <div className="flex items-center mb-4">
-                  <Apple className="h-6 w-6 text-green-500 mr-3" />
-                  <h4 className="font-medium text-green-700 text-lg">Physical Health</h4>
+            <div className="grid md:grid-cols-3 gap-6 mt-6">
+              <div className="bg-white/80 backdrop-blur-sm p-5 rounded-lg shadow-sm">
+                <div className="flex items-center mb-3">
+                  <div className="rounded-full bg-blue-100 p-2 mr-3">
+                    <Heart className="h-5 w-5 text-blue-500" />
+                  </div>
+                  <h4 className="font-medium text-blue-700 text-base">Depression Screening</h4>
                 </div>
-                <ul className="list-disc ml-5 text-sm text-gray-600 space-y-2">
-                  <li className="pl-1">Analyze your diet & nutritional needs</li>
-                  <li className="pl-1">Determine optimal caloric intake</li>
-                  <li className="pl-1">Assess BMI & weight status</li>
-                  <li className="pl-1">Personalized diet recommendations</li>
-                </ul>
+                <p className="text-sm text-gray-600">
+                  A brief PHQ-9 assessment to help understand your mood and identify potential depression symptoms.
+                </p>
               </div>
               
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm">
-                <div className="flex items-center mb-4">
-                  <Coffee className="h-6 w-6 text-amber-600 mr-3" />
-                  <h4 className="font-medium text-amber-700 text-lg">Coffee Talk</h4>
+              <div className="bg-white/80 backdrop-blur-sm p-5 rounded-lg shadow-sm">
+                <div className="flex items-center mb-3">
+                  <div className="rounded-full bg-purple-100 p-2 mr-3">
+                    <Brain className="h-5 w-5 text-purple-500" />
+                  </div>
+                  <h4 className="font-medium text-purple-700 text-base">Anxiety Check-In</h4>
                 </div>
-                <ul className="list-disc ml-5 text-sm text-gray-600 space-y-2">
-                  <li className="pl-1">Understand your positive wellbeing</li>
-                  <li className="pl-1">Check in on mood and anxiety</li>
-                  <li className="pl-1">Friendly, conversational approach</li>
-                  <li className="pl-1">Personalized wellness strategies</li>
-                </ul>
+                <p className="text-sm text-gray-600">
+                  Using the GAD-7 to assess anxiety levels and help identify strategies to manage worry or nervousness.
+                </p>
+              </div>
+              
+              <div className="bg-white/80 backdrop-blur-sm p-5 rounded-lg shadow-sm">
+                <div className="flex items-center mb-3">
+                  <div className="rounded-full bg-amber-100 p-2 mr-3">
+                    <Coffee className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <h4 className="font-medium text-amber-700 text-base">Positive Wellbeing</h4>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Measure your overall sense of wellbeing and positive mental health with the WHO-5 assessment.
+                </p>
               </div>
             </div>
             
             <div className="mt-6">
-              <div className="flex items-center gap-1 mb-2">
-                <Sun className="h-4 w-4 text-amber-500" />
-                <h4 className="font-medium text-amber-700">Holistic Perspective</h4>
+              <div className="flex items-center gap-1.5 mb-2">
+                <div className="rounded-full bg-amber-100 p-1">
+                  <Share2 className="h-4 w-4 text-amber-600" />
+                </div>
+                <h4 className="font-medium text-amber-700">Conversational Approach</h4>
               </div>
               <p className="text-gray-700 text-sm">
-                See how your physical health and emotional wellbeing connect and influence each other, with personalized insights that address the whole you.
+                Our conversational assessment helps us understand your mental wellbeing from different angles, providing personalized insights and recommendations.
               </p>
             </div>
           </div>
