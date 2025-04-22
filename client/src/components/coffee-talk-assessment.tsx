@@ -824,7 +824,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
   return (
     <Card className="shadow-md transition-all hover:shadow-lg">
       <CardHeader>
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
           <div>
             <CardTitle className="flex items-center gap-2">
               <Coffee className="h-6 w-6 text-amber-600" />
@@ -838,10 +838,10 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <Button 
             onClick={() => setIsOpen(true)}
             size="lg"
-            className="bg-gradient-to-r from-amber-300 to-orange-300 hover:from-amber-400 hover:to-orange-400 text-amber-900 self-start mt-2 sm:mt-0 w-full sm:w-auto"
+            className="bg-gradient-to-r from-amber-300 to-orange-300 hover:from-amber-400 hover:to-orange-400 text-amber-900 self-start sm:self-center mt-2 sm:mt-0 w-full sm:w-auto whitespace-nowrap"
           >
             <Coffee className="h-5 w-5 mr-2" />
-            <span>Let's Talk</span>
+            <span className="inline-block">Let's Talk</span>
           </Button>
         </div>
       </CardHeader>
