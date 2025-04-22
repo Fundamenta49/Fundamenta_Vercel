@@ -1322,7 +1322,9 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     <div className="pt-3 border-t border-amber-100 mt-3">
                       <div className="pl-3 border-l-2 border-amber-200 ml-1 mb-3 mt-3">
                         <p className="text-gray-700 mb-2">
-                          {anxietySeverity.find(s => s.level === anxietyLevel)?.description.replace("You may be experiencing", "I'm noticing that you might be feeling").replace("You're showing", "You seem to have")} It's normal to feel this way sometimes, and recognizing it is an important first step.
+                          {anxietySeverity.find(s => s.level === anxietyLevel)?.description.replace("You may be experiencing", "I'm noticing that you might be feeling").replace("You're showing", "You seem to have")} 
+                          
+                          It's normal to feel this way sometimes, and recognizing it is an important first step.
                         </p>
                       </div>
                       
