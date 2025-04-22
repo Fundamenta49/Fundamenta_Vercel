@@ -141,6 +141,15 @@ export default function NutritionTracker() {
   const addFoodEntry = (entry: FoodEntry) => {
     setEntries((prev) => [...prev, entry]);
   };
+  
+  // Function to remove a food entry
+  const removeFoodEntry = (entryId: string) => {
+    setEntries((prev) => prev.filter(entry => entry.id !== entryId));
+    toast({
+      title: "Entry removed",
+      description: "Food entry has been removed from your log",
+    });
+  };
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -359,11 +368,39 @@ export default function NutritionTracker() {
                           <Utensils className="h-4 w-4 text-muted-foreground" />
                           <CardTitle className="text-lg">{entry.name}</CardTitle>
                         </div>
-                        {entry.aiAnalyzed && (
-                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                            AI Analyzed
-                          </span>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {entry.aiAnalyzed && (
+                            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                              AI Analyzed
+                            </span>
+                          )}
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 w-7 p-0 rounded-full"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeFoodEntry(entry.id);
+                            }}
+                          >
+                            <span className="sr-only">Remove entry</span>
+                            <svg 
+                              xmlns="http://www.w3.org/2000/svg" 
+                              width="16" 
+                              height="16" 
+                              viewBox="0 0 24 24" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              strokeWidth="2" 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round"
+                              className="text-muted-foreground hover:text-destructive"
+                            >
+                              <path d="M18 6 6 18"></path>
+                              <path d="m6 6 12 12"></path>
+                            </svg>
+                          </Button>
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
