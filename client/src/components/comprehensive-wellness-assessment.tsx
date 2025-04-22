@@ -1955,11 +1955,11 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       </CardHeader>
       
       <CardContent className="pt-6">
-        <div className="rounded-xl bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 p-6 md:p-8 relative overflow-hidden">
+        <div className="rounded-xl bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 p-6 md:p-8 relative overflow-hidden">
           <div className="w-full">
-            <h3 className="text-xl font-semibold text-purple-900 mb-3">Body & Mind Wellness Profile</h3>
+            <h3 className="text-xl font-semibold text-amber-800 mb-3">Our Coffee Talk Journey</h3>
             <p className="text-gray-700 mb-4">
-              This comprehensive assessment combines nutrition and mental health analysis to create a holistic view of your wellbeing.
+              Let's have a friendly conversation about both your physical wellness and mental wellbeing to understand the complete picture.
             </p>
             
             <div className="grid md:grid-cols-2 gap-8 mt-6">
@@ -1978,31 +1978,31 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               
               <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm">
                 <div className="flex items-center mb-4">
-                  <Brain className="h-6 w-6 text-blue-500 mr-3" />
-                  <h4 className="font-medium text-blue-700 text-lg">Mental Health</h4>
+                  <Coffee className="h-6 w-6 text-amber-600 mr-3" />
+                  <h4 className="font-medium text-amber-700 text-lg">Coffee Talk</h4>
                 </div>
                 <ul className="list-disc ml-5 text-sm text-gray-600 space-y-2">
-                  <li className="pl-1">Screen for anxiety & depression</li>
-                  <li className="pl-1">Evidence-based questionnaires</li>
-                  <li className="pl-1">Identify stress patterns</li>
-                  <li className="pl-1">Personalized coping strategies</li>
+                  <li className="pl-1">Understand your positive wellbeing</li>
+                  <li className="pl-1">Check in on mood and anxiety</li>
+                  <li className="pl-1">Friendly, conversational approach</li>
+                  <li className="pl-1">Personalized wellness strategies</li>
                 </ul>
               </div>
             </div>
             
             <div className="mt-6">
               <div className="flex items-center gap-1 mb-2">
-                <Sparkles className="h-4 w-4 text-purple-500" />
-                <h4 className="font-medium text-purple-700">Integrated Approach</h4>
+                <Sun className="h-4 w-4 text-amber-500" />
+                <h4 className="font-medium text-amber-700">Holistic Perspective</h4>
               </div>
               <p className="text-gray-700 text-sm">
-                Discover the powerful connections between physical and mental wellness with AI-powered recommendations that address both aspects of your health simultaneously.
+                See how your physical health and emotional wellbeing connect and influence each other, with personalized insights that address the whole you.
               </p>
             </div>
           </div>
           
           <div className="absolute right-0 bottom-0 w-64 h-64 -mb-12 -mr-12 opacity-10">
-            <Dumbbell className="absolute w-full h-full text-purple-900" />
+            <Coffee className="absolute w-full h-full text-amber-700" />
           </div>
         </div>
       </CardContent>
