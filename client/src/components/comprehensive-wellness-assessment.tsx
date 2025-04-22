@@ -56,6 +56,8 @@ import {
   FileText,
   Heart,
   Dumbbell,
+  Coffee,
+  Sun,
 } from "lucide-react";
 import { FullScreenDialog, FullScreenDialogContent, FullScreenDialogHeader, FullScreenDialogTitle, FullScreenDialogDescription, FullScreenDialogBody, FullScreenDialogFooter } from "./ui/full-screen-dialog";
 import { toast } from "@/hooks/use-toast";
@@ -73,6 +75,15 @@ const phq9Questions = [
   "Thoughts that you would be better off dead, or of hurting yourself in some way"
 ];
 
+// WHO-5 questions (well-being screening)
+const who5Questions = [
+  "I have felt cheerful and in good spirits",
+  "I have felt calm and relaxed",
+  "I have felt active and vigorous",
+  "I woke up feeling fresh and rested",
+  "My daily life has been filled with things that interest me"
+];
+
 // GAD-7 questions (anxiety screening)
 const gad7Questions = [
   "Feeling nervous, anxious, or on edge",
@@ -86,11 +97,12 @@ const gad7Questions = [
 
 // Combined questions for the unified assessment
 const mentalHealthQuestions = [
-  ...phq9Questions.map((q, i) => ({ id: i, text: q, category: "depression" })),
-  ...gad7Questions.map((q, i) => ({ id: i + 9, text: q, category: "anxiety" }))
+  ...who5Questions.map((q, i) => ({ id: i, text: q, category: "wellbeing" })),
+  ...phq9Questions.map((q, i) => ({ id: i + 5, text: q, category: "depression" })),
+  ...gad7Questions.map((q, i) => ({ id: i + 14, text: q, category: "anxiety" }))
 ];
 
-// Frequency options for scoring
+// Frequency options for PHQ-9 and GAD-7 scoring
 const frequencyOptions = [
   { value: 0, label: "Not at all", description: "0 days" },
   { value: 1, label: "Several days", description: "1-7 days" },
@@ -98,13 +110,55 @@ const frequencyOptions = [
   { value: 3, label: "Nearly every day", description: "13+ days" }
 ];
 
-// Severity levels for PHQ-9 (depression)
+// WHO-5 frequency options (different scale, positive framing)
+const who5FrequencyOptions = [
+  { value: 0, label: "At no time", description: "" },
+  { value: 1, label: "Some of the time", description: "" },
+  { value: 2, label: "Less than half of the time", description: "" },
+  { value: 3, label: "More than half of the time", description: "" },
+  { value: 4, label: "Most of the time", description: "" },
+  { value: 5, label: "All of the time", description: "" }
+];
+
+// Severity levels for PHQ-9 (depression) - follows official clinical guidelines
+// Reference: Kroenke K, Spitzer RL, Williams JB. The PHQ-9: validity of a brief depression severity measure.
+// J Gen Intern Med. 2001;16(9):606-613.
 const depressionSeverity = [
-  { range: [0, 4], level: "Minimal", description: "You're showing minimal signs of depression.", color: "bg-green-500" },
-  { range: [5, 9], level: "Mild", description: "You may be experiencing mild depression.", color: "bg-blue-500" },
-  { range: [10, 14], level: "Moderate", description: "You may be experiencing moderate depression.", color: "bg-yellow-500" },
-  { range: [15, 19], level: "Moderately Severe", description: "You may be experiencing moderately severe depression.", color: "bg-orange-500" },
-  { range: [20, 27], level: "Severe", description: "You may be experiencing severe depression.", color: "bg-red-500" }
+  { 
+    range: [0, 4], 
+    level: "Minimal", 
+    description: "You're showing minimal signs of depression.", 
+    color: "bg-green-500",
+    recommendation: "Your responses suggest minimal symptoms of depression. Continue your self-care and wellness practices." 
+  },
+  { 
+    range: [5, 9], 
+    level: "Mild", 
+    description: "You may be experiencing mild depression.", 
+    color: "bg-blue-500",
+    recommendation: "Your responses suggest mild symptoms of depression. Consider physical activity, stress reduction techniques, and maintaining social connections." 
+  },
+  { 
+    range: [10, 14], 
+    level: "Moderate", 
+    description: "You may be experiencing moderate depression.", 
+    color: "bg-yellow-500",
+    recommendation: "Your responses suggest moderate symptoms of depression. Consider speaking with a mental health professional and practicing regular self-care." 
+  },
+  { 
+    range: [15, 19], 
+    level: "Moderately Severe", 
+    description: "You may be experiencing moderately severe depression.", 
+    color: "bg-orange-500",
+    recommendation: "Your responses suggest moderately severe symptoms of depression. We recommend consulting with a healthcare provider for assessment and support." 
+  },
+  { 
+    range: [20, 27], 
+    level: "Severe", 
+    description: "You may be experiencing severe depression.", 
+    color: "bg-red-500",
+    recommendation: "Your responses suggest severe symptoms of depression. We strongly recommend consulting with a healthcare provider as soon as possible." 
+  }
 ];
 
 // Severity levels for GAD-7 (anxiety)
@@ -113,6 +167,42 @@ const anxietySeverity = [
   { range: [5, 9], level: "Mild", description: "You may be experiencing mild anxiety.", color: "bg-blue-500" },
   { range: [10, 14], level: "Moderate", description: "You may be experiencing moderate anxiety.", color: "bg-yellow-500" },
   { range: [15, 21], level: "Severe", description: "You may be experiencing severe anxiety.", color: "bg-red-500" }
+];
+
+// WHO-5 wellbeing levels (0-25 scale, transformed to 0-100%)
+const wellbeingSeverity = [
+  { 
+    range: [0, 25], 
+    level: "Low", 
+    percent: "0-25%",
+    description: "Your wellbeing score suggests you may be experiencing significant challenges with your quality of life.", 
+    color: "bg-red-500",
+    recommendation: "Taking small steps to prioritize activities that bring you joy and meaning could be valuable. Consider reaching out for support from friends, family, or professionals." 
+  },
+  { 
+    range: [26, 50], 
+    level: "Moderate", 
+    percent: "26-50%",
+    description: "Your wellbeing score suggests you're experiencing some moments of positivity, but there's room to enhance your overall quality of life.", 
+    color: "bg-yellow-500",
+    recommendation: "Consider incorporating more activities that bring you energy and joy. Small daily practices like mindfulness or connecting with others can gradually improve your sense of wellbeing." 
+  },
+  { 
+    range: [51, 75], 
+    level: "Good", 
+    percent: "51-75%",
+    description: "Your wellbeing score shows you're experiencing positive feelings and energy in many areas of your life.", 
+    color: "bg-blue-500",
+    recommendation: "You're on a positive track! Continue nurturing the aspects of your life that bring you joy, while exploring ways to address the areas where you'd like to feel even better." 
+  },
+  { 
+    range: [76, 100], 
+    level: "Excellent", 
+    percent: "76-100%",
+    description: "Your wellbeing score indicates you're experiencing high levels of positive emotions, energy, and satisfaction in your daily life.", 
+    color: "bg-green-500",
+    recommendation: "Wonderful! You seem to have established practices and circumstances that support your flourishing. Consider how you might maintain these positive patterns during challenging times." 
+  }
 ];
 
 // Options for nutritional assessment
@@ -219,8 +309,28 @@ const getAnxietyLevel = (score: number) => {
   return level ? level.level : "Unknown";
 };
 
+// Helper function for WHO-5 wellbeing level 
+const getWellbeingLevel = (score: number) => {
+  // The WHO-5 raw score ranges from 0 to 25, we convert to percentage (0-100)
+  const percentScore = (score / 25) * 100;
+  const level = wellbeingSeverity.find(s => percentScore >= s.range[0] && percentScore <= s.range[1]);
+  return level ? level.level : "Unknown";
+};
+
+// Helper function to get WHO-5 percentage score
+const getWellbeingPercentage = (score: number) => {
+  // Convert raw score (0-25) to percentage (0-100)
+  return Math.round((score / 25) * 100);
+};
+
 // Helper function to get severity color
-const getSeverityColor = (score: number, isDepression: boolean) => {
+const getSeverityColor = (score: number, isDepression: boolean, isWellbeing = false) => {
+  if (isWellbeing) {
+    const percentScore = (score / 25) * 100;
+    const level = wellbeingSeverity.find(s => percentScore >= s.range[0] && percentScore <= s.range[1]);
+    return level ? level.color : "bg-gray-400";
+  }
+  
   const levels = isDepression ? depressionSeverity : anxietySeverity;
   const level = levels.find(s => score >= s.range[0] && score <= s.range[1]);
   return level ? level.color : "bg-gray-400";
@@ -549,22 +659,45 @@ export default function ComprehensiveWellnessAssessment() {
     setIsPending(true);
     
     try {
-      // Prepare mental health data
-      const phq9Answers = mentalHealthAnswers.filter(a => a.id < 9);
-      const gad7Answers = mentalHealthAnswers.filter(a => a.id >= 9);
+      // Prepare mental health data based on new question ordering
+      const who5Answers = mentalHealthAnswers.filter(a => a.id >= 0 && a.id <= 4);
+      const phq9Answers = mentalHealthAnswers.filter(a => a.id >= 5 && a.id <= 13);
+      const gad7Answers = mentalHealthAnswers.filter(a => a.id >= 14 && a.id <= 20);
+      
+      // Calculate WHO-5 wellbeing score and percentage
+      const who5Score = who5Answers.reduce((sum, curr) => sum + curr.value, 0);
+      const wellbeingPercentage = getWellbeingPercentage(who5Score);
+      const wellbeingLevel = getWellbeingLevel(who5Score);
       
       // Structure the data for the API
       const assessmentData = {
         physicalHealth: physicalAssessment,
         mentalHealth: {
+          who5Answers,
           phq9Answers,
-          gad7Answers
+          gad7Answers,
+          who5Score,
+          wellbeingPercentage,
+          wellbeingLevel
         }
       };
       
+      // Check for suicidal ideation (PHQ-9 question 9 - now at index 13)
+      const suicidalIdeation = mentalHealthAnswers.find(a => a.id === 13 && a.value >= 1) !== undefined;
+      
       // Call the API
       const response = await axios.post('/api/wellness/comprehensive/assessment', assessmentData);
-      setResults(response.data);
+      
+      // Add suicidal ideation flag to results
+      const resultsWithSuicidalIdeation = {
+        ...response.data,
+        mentalMetrics: {
+          ...response.data.mentalMetrics,
+          suicidalIdeation
+        }
+      };
+      
+      setResults(resultsWithSuicidalIdeation);
       
       // Save results if user consented
       if (consentToStore) {
@@ -608,6 +741,7 @@ export default function ComprehensiveWellnessAssessment() {
 - Daily Caloric Needs: ${Math.round(results.physicalMetrics.tdee)} calories
 
 ## Mental Health Metrics
+- Well-Being Score (WHO-5): ${results.mentalMetrics.wellbeingScore || 0}/25 (${results.mentalMetrics.wellbeingPercentage || 0}%) - ${results.mentalMetrics.wellbeingLevel || "Not assessed"}
 - Depression Score (PHQ-9): ${results.mentalMetrics.depressionScore}/27 - ${results.mentalMetrics.depressionLevel}
 - Anxiety Score (GAD-7): ${results.mentalMetrics.anxietyScore}/21 - ${results.mentalMetrics.anxietyLevel}
 
@@ -995,11 +1129,17 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     Question {currentMentalQuestionIndex + 1} of {mentalHealthQuestions.length}
                   </span>
                   <Badge variant="outline" className={
-                    mentalHealthQuestions[currentMentalQuestionIndex].category === "depression" 
-                      ? "border-blue-200 bg-blue-50 text-blue-700" 
-                      : "border-purple-200 bg-purple-50 text-purple-700"
+                    mentalHealthQuestions[currentMentalQuestionIndex].category === "wellbeing" 
+                      ? "border-amber-200 bg-amber-50 text-amber-700"
+                      : mentalHealthQuestions[currentMentalQuestionIndex].category === "depression" 
+                        ? "border-blue-200 bg-blue-50 text-blue-700" 
+                        : "border-purple-200 bg-purple-50 text-purple-700"
                   }>
-                    {mentalHealthQuestions[currentMentalQuestionIndex].category === "depression" ? "Depression" : "Anxiety"} Screening
+                    {mentalHealthQuestions[currentMentalQuestionIndex].category === "wellbeing" 
+                      ? "Well-Being" 
+                      : mentalHealthQuestions[currentMentalQuestionIndex].category === "depression" 
+                        ? "Depression" 
+                        : "Anxiety"} Screening
                   </Badge>
                 </div>
                 <Progress 
@@ -1017,18 +1157,35 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     }
                     onValueChange={(value) => handleMentalHealthAnswer(parseInt(value))}
                   >
-                    {frequencyOptions.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-2 border p-3 rounded-md hover:bg-gray-50">
-                        <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
-                        <Label 
-                          htmlFor={`option-${option.value}`}
-                          className="flex-1 flex justify-between items-center cursor-pointer"
-                        >
-                          <span className="font-medium">{option.label}</span>
-                          <span className="text-sm text-gray-500">{option.description}</span>
-                        </Label>
-                      </div>
-                    ))}
+                    {mentalHealthQuestions[currentMentalQuestionIndex].category === "wellbeing" ? (
+                      // WHO-5 uses a different scale with positive framing
+                      who5FrequencyOptions.map((option) => (
+                        <div key={option.value} className="flex items-center space-x-2 border p-3 rounded-md hover:bg-amber-50 border-amber-100">
+                          <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
+                          <Label 
+                            htmlFor={`option-${option.value}`}
+                            className="flex-1 flex justify-between items-center cursor-pointer"
+                          >
+                            <span className="font-medium">{option.label}</span>
+                            <span className="text-sm text-amber-600">{option.description}</span>
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      // Standard options for PHQ-9 and GAD-7
+                      frequencyOptions.map((option) => (
+                        <div key={option.value} className="flex items-center space-x-2 border p-3 rounded-md hover:bg-gray-50">
+                          <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
+                          <Label 
+                            htmlFor={`option-${option.value}`}
+                            className="flex-1 flex justify-between items-center cursor-pointer"
+                          >
+                            <span className="font-medium">{option.label}</span>
+                            <span className="text-sm text-gray-500">{option.description}</span>
+                          </Label>
+                        </div>
+                      ))
+                    )}
                   </RadioGroup>
                 </div>
               </div>
@@ -1037,15 +1194,21 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         );
         
       case 5: // Review & Submit
-        // Calculate depression and anxiety scores for review
+        // Calculate WHO-5, depression and anxiety scores for review
+        const who5Score = mentalHealthAnswers
+          .filter(a => a.id >= 0 && a.id <= 4) // WHO-5 questions
+          .reduce((sum, curr) => sum + curr.value, 0);
+          
         const phq9Score = mentalHealthAnswers
-          .filter(a => a.id < 9)
+          .filter(a => a.id >= 5 && a.id <= 13) // PHQ-9 questions
           .reduce((sum, curr) => sum + curr.value, 0);
           
         const gad7Score = mentalHealthAnswers
-          .filter(a => a.id >= 9)
+          .filter(a => a.id >= 14 && a.id <= 20) // GAD-7 questions
           .reduce((sum, curr) => sum + curr.value, 0);
           
+        const wellbeingPercentage = getWellbeingPercentage(who5Score);
+        const wellbeingLevel = getWellbeingLevel(who5Score);
         const depressionLevel = getDepressionLevel(phq9Score);
         const anxietyLevel = getAnxietyLevel(gad7Score);
         
@@ -1090,25 +1253,89 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   </div>
                 </div>
                 
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h3 className="text-md font-medium mb-2">Mental Health Summary</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-3 mb-2">
-                      <p><span className="font-medium">Depression Score:</span> {phq9Score}/27</p>
-                      <Badge className={`${getSeverityColor(phq9Score, true)} text-white`}>
-                        {depressionLevel}
-                      </Badge>
+                <div className="p-4 bg-amber-50 rounded-lg border border-amber-100">
+                  <h3 className="text-md font-medium mb-2 flex items-center">
+                    <Coffee className="h-5 w-5 text-amber-600 mr-2" />
+                    <span>Our Coffee Talk Insights</span>
+                  </h3>
+                  <div className="space-y-4 text-sm">
+                    {/* WHO-5 Wellbeing Assessment Section */}
+                    <div>
+                      <p className="text-gray-700 mb-3">Based on our conversation, here's what I'm hearing:</p>
+                      
+                      <div className="pl-3 border-l-2 border-amber-200 ml-1 mb-4">
+                        <p className="text-gray-700 mb-2">
+                          {wellbeingSeverity.find(s => s.level === wellbeingLevel)?.description.replace("Your wellbeing score", "Your sharing").replace("suggests", "indicates")}
+                        </p>
+                        <p className="text-gray-700">
+                          {wellbeingSeverity.find(s => s.level === wellbeingLevel)?.recommendation}
+                        </p>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 mt-3 mb-4">
+                        <span className="text-sm text-gray-600">Your wellbeing:</span>
+                        <Badge className={`${getSeverityColor(who5Score, false, true)} text-white ml-2`}>
+                          {wellbeingLevel} ({wellbeingPercentage}%)
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <p><span className="font-medium">Anxiety Score:</span> {gad7Score}/21</p>
-                      <Badge className={`${getSeverityColor(gad7Score, false)} text-white`}>
-                        {anxietyLevel}
-                      </Badge>
+                    
+                    {/* PHQ-9 Depression Assessment Section */}
+                    <div className="pt-3 border-t border-amber-100">
+                      <div className="pl-3 border-l-2 border-amber-200 ml-1 mb-3 mt-3">
+                        <p className="text-gray-700 mb-2">
+                          {depressionSeverity.find(s => s.level === depressionLevel)?.description.replace("You may be experiencing", "You seem to be experiencing").replace("You're showing", "I notice you're showing")}
+                        </p>
+                        <p className="text-gray-700">
+                          {depressionSeverity.find(s => s.level === depressionLevel)?.recommendation.replace("Your responses suggest", "Our conversation suggests").replace("consulting with a healthcare provider", "connecting with someone who can help")}
+                        </p>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 mt-3">
+                        <span className="text-sm text-gray-600">Where you are right now:</span>
+                        <Badge className={`${getSeverityColor(phq9Score, true)} text-white`}>
+                          {depressionLevel}
+                        </Badge>
+                      </div>
+                      
+                      {/* Special warning for suicide risk - PHQ-9 question 9 */}
+                      {mentalHealthAnswers.find(a => a.id >= 5 && a.id <= 13 && a.id === 13 && a.value >= 1) && (
+                        <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-md">
+                          <p className="text-sm font-medium text-red-800 flex items-center gap-2">
+                            <AlertCircle className="h-4 w-4" />
+                            I'm Concerned About You
+                          </p>
+                          <p className="text-sm mt-2 text-red-700 leading-relaxed">
+                            I noticed something in our conversation that has me concerned about your wellbeing. 
+                            It sounds like you might be having some thoughts about harming yourself.
+                            
+                            This is really important - please reach out to someone who can help right now. 
+                            You can call or text 988 anytime (24/7) to speak with someone who cares.
+                          </p>
+                        </div>
+                      )}
                     </div>
-                    <p className="mt-2 text-gray-600 italic">
+                    
+                    {/* GAD-7 Anxiety Assessment Section */}
+                    <div className="pt-3 border-t border-amber-100 mt-3">
+                      <div className="pl-3 border-l-2 border-amber-200 ml-1 mb-3 mt-3">
+                        <p className="text-gray-700 mb-2">
+                          {anxietySeverity.find(s => s.level === anxietyLevel)?.description.replace("You may be experiencing", "I'm noticing that you might be feeling").replace("You're showing", "You seem to have")} It's normal to feel this way sometimes, and recognizing it is an important first step.
+                        </p>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 mt-3">
+                        <span className="text-sm text-gray-600">Your tension level:</span>
+                        <Badge className={`${getSeverityColor(gad7Score, false)} text-white ml-2`}>
+                          {anxietyLevel}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="mt-3 text-gray-600 text-sm">
                       {mentalHealthAnswers.length < mentalHealthQuestions.length ? 
-                        `Note: You skipped ${mentalHealthQuestions.length - mentalHealthAnswers.length} questions.` : 
-                        'You answered all mental health questions.'}
+                        `It looks like we left a few questions for another time, and that's perfectly fine. We can always revisit them when you're ready.` : 
+                        `Thanks for sharing so openly during our chat. It helps me understand where you're at right now.`}
                     </p>
                   </div>
                 </div>
@@ -1128,10 +1355,11 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 </div>
               </div>
               
-              <Alert variant="default" className="mt-4 border-purple-500 bg-purple-50">
-                <AlertCircle className="h-4 w-4 text-purple-500" />
-                <AlertDescription className="text-purple-800 text-sm">
-                  This assessment will generate personalized wellness recommendations based on your input. These are general suggestions, not medical advice.
+              <Alert variant="default" className="mt-4 border-amber-200 bg-amber-50">
+                <Coffee className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-gray-700 text-sm">
+                  Our conversation will help us create some personalized ideas that might support your wellbeing. 
+                  Just remember, this is more like chatting with a thoughtful friend than visiting a doctor - I'm here to listen and suggest, not to diagnose.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -1178,7 +1406,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-6 grid grid-cols-4 gap-4">
+          <div className="mb-6 grid grid-cols-5 gap-4">
             <div className="bg-purple-50 p-3 rounded-lg text-center">
               <p className="text-sm text-purple-700 font-medium">BMI</p>
               <p className="text-xl font-bold">{results.physicalMetrics.bmi.toFixed(1)}</p>
@@ -1189,6 +1417,12 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               <p className="text-sm text-purple-700 font-medium">Daily Calories</p>
               <p className="text-xl font-bold">{Math.round(results.physicalMetrics.tdee)}</p>
               <p className="text-xs text-purple-600">calories/day</p>
+            </div>
+            
+            <div className="bg-amber-50 p-3 rounded-lg text-center border border-amber-100">
+              <p className="text-sm text-amber-700 font-medium">Well-Being</p>
+              <p className="text-xl font-bold">{results.mentalMetrics.wellbeingScore || 0}/25</p>
+              <p className="text-xs text-amber-600">{results.mentalMetrics.wellbeingLevel || "Not assessed"}</p>
             </div>
             
             <div className="bg-purple-50 p-3 rounded-lg text-center">
@@ -1234,12 +1468,13 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   
                   <div>
                     <h4 className="font-medium mb-2 flex items-center">
-                      <Badge className="mr-2 bg-blue-100 text-blue-700 hover:bg-blue-200">Mental</Badge>
+                      <Badge className="mr-2 bg-amber-100 text-amber-700 hover:bg-amber-200">Mental</Badge>
                       Emotional Wellbeing
                     </h4>
                     <p className="text-gray-700">
-                      You're showing {results.mentalMetrics.depressionLevel.toLowerCase()} signs of depression and {results.mentalMetrics.anxietyLevel.toLowerCase()} signs of anxiety.
-                      {(results.mentalMetrics.depressionLevel !== "Minimal" || results.mentalMetrics.anxietyLevel !== "Minimal") && 
+                      Your wellbeing score is {results.mentalMetrics.wellbeingPercentage || 0}% ({results.mentalMetrics.wellbeingLevel || "Moderate"}), with {results.mentalMetrics.depressionLevel.toLowerCase()} signs of depression and {results.mentalMetrics.anxietyLevel.toLowerCase()} signs of anxiety.
+                      {(results.mentalMetrics.depressionLevel !== "Minimal" || results.mentalMetrics.anxietyLevel !== "Minimal" || 
+                        (results.mentalMetrics.wellbeingPercentage && results.mentalMetrics.wellbeingPercentage < 50)) && 
                         " We've provided recommendations to help support your mental wellbeing."}
                     </p>
                   </div>
@@ -1368,48 +1603,155 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             
             <TabsContent value="mental" className="space-y-4">
               <div className="p-4 bg-white rounded-lg border">
-                <h3 className="text-lg font-medium mb-2">Depression Assessment (PHQ-9)</h3>
+                <h3 className="text-lg font-medium mb-2 flex items-center">
+                  <Coffee className="h-5 w-5 text-amber-600 mr-2" />
+                  <span>How You're Feeling</span>
+                </h3>
                 <div className="flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Your Score: {results.mentalMetrics.depressionScore}/27</span>
-                    <Badge className={`${getSeverityColor(results.mentalMetrics.depressionScore, true)} text-white`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm text-gray-700">Based on our conversation, here's what I'm hearing:</p>
+                  </div>
+                  
+                  <div className="bg-amber-50 p-4 rounded-lg mb-4">
+                    <p className="text-gray-700 text-sm leading-relaxed mb-3">
+                      {depressionSeverity.find(s => s.level === results.mentalMetrics.depressionLevel)?.description.replace("You may be experiencing", "You seem to be experiencing").replace("You're showing", "You're showing")}
+                    </p>
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      {depressionSeverity.find(s => s.level === results.mentalMetrics.depressionLevel)?.recommendation.replace("Your responses suggest", "Our conversation suggests").replace("consulting with a healthcare provider", "connecting with someone who can help")}
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center mb-3">
+                    <span className="text-sm font-medium text-gray-600">Where you are right now:</span>
+                    <Badge className={`${getSeverityColor(results.mentalMetrics.depressionScore, true)} text-white ml-2`}>
                       {results.mentalMetrics.depressionLevel}
                     </Badge>
                   </div>
-                  <Progress
-                    value={(results.mentalMetrics.depressionScore / 27) * 100}
-                    className="h-2 mb-4"
-                  />
-                  <p className="text-sm text-gray-600">
-                    {depressionSeverity.find(s => s.level === results.mentalMetrics.depressionLevel)?.description}
-                  </p>
+                  
+                  <div className="grid grid-cols-5 gap-1 text-xs text-gray-500 mb-6">
+                    <div className="text-center">
+                      <div className="h-1 bg-green-500 mb-1"></div>
+                      <span>Doing Well</span>
+                    </div>
+                    <div className="text-center">
+                      <div className="h-1 bg-blue-500 mb-1"></div>
+                      <span>Mild Dip</span>
+                    </div>
+                    <div className="text-center">
+                      <div className="h-1 bg-yellow-500 mb-1"></div>
+                      <span>Challenging</span>
+                    </div>
+                    <div className="text-center">
+                      <div className="h-1 bg-orange-500 mb-1"></div>
+                      <span>Difficult</span>
+                    </div>
+                    <div className="text-center">
+                      <div className="h-1 bg-red-500 mb-1"></div>
+                      <span>Very Tough</span>
+                    </div>
+                  </div>
+                  
+                  {/* Special warning for suicide risk (if Question 9 score was >= 1) */}
+                  {results.mentalMetrics.suicidalIdeation && (
+                    <div className="mt-2 p-4 bg-red-50 border border-red-100 rounded-md">
+                      <p className="text-sm font-medium text-red-800 flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4" />
+                        I'm Concerned About You
+                      </p>
+                      <p className="text-sm mt-2 text-red-700 leading-relaxed">
+                        I noticed something in our conversation that has me concerned about your wellbeing. 
+                        It sounds like you might be having some thoughts about harming yourself.
+                        
+                        This is really important - please reach out to someone who can help right now. 
+                        You can call or text 988 anytime (24/7) to speak with someone who cares.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
               
               <div className="p-4 bg-white rounded-lg border">
-                <h3 className="text-lg font-medium mb-2">Anxiety Assessment (GAD-7)</h3>
+                <h3 className="text-lg font-medium mb-2 flex items-center">
+                  <Coffee className="h-5 w-5 text-amber-600 mr-2" />
+                  <span>Your Stress & Worry Levels</span>
+                </h3>
                 <div className="flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Your Score: {results.mentalMetrics.anxietyScore}/21</span>
-                    <Badge className={`${getSeverityColor(results.mentalMetrics.anxietyScore, false)} text-white`}>
+                  <div className="bg-amber-50 p-4 rounded-lg mb-4">
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      {anxietySeverity.find(s => s.level === results.mentalMetrics.anxietyLevel)?.description.replace("You may be experiencing", "I'm noticing that you might be feeling").replace("You're showing", "You seem to have")} It's normal to feel this way sometimes, and recognizing it is an important first step.
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center mb-3">
+                    <span className="text-sm font-medium text-gray-600">Your tension level:</span>
+                    <Badge className={`${getSeverityColor(results.mentalMetrics.anxietyScore, false)} text-white ml-2`}>
                       {results.mentalMetrics.anxietyLevel}
                     </Badge>
                   </div>
+                  
                   <Progress
                     value={(results.mentalMetrics.anxietyScore / 21) * 100}
-                    className="h-2 mb-4"
+                    className="h-2 mb-2"
                   />
-                  <p className="text-sm text-gray-600">
-                    {anxietySeverity.find(s => s.level === results.mentalMetrics.anxietyLevel)?.description}
-                  </p>
+                  <div className="flex justify-between text-xs text-gray-500 mb-4">
+                    <span>Calm</span>
+                    <span>Balanced</span>
+                    <span>On Edge</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 bg-white rounded-lg border border-amber-100">
+                <h3 className="text-lg font-medium mb-2 flex items-center">
+                  <Sun className="h-5 w-5 text-amber-600 mr-2" />
+                  <span>Your Well-Being</span>
+                </h3>
+                <div className="flex flex-col">
+                  <div className="bg-amber-50 p-4 rounded-lg mb-4">
+                    <p className="text-gray-700 text-sm leading-relaxed mb-3">
+                      {wellbeingSeverity.find(s => s.level === (results.mentalMetrics.wellbeingLevel || "Moderate"))?.description.replace("Your wellbeing score", "Your sharing").replace("suggests", "indicates")}
+                    </p>
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      {wellbeingSeverity.find(s => s.level === (results.mentalMetrics.wellbeingLevel || "Moderate"))?.recommendation}
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center mb-3">
+                    <span className="text-sm font-medium text-gray-600">Your wellbeing score:</span>
+                    <Badge className={`${getSeverityColor(results.mentalMetrics.wellbeingScore || 0, false, true)} text-white ml-2`}>
+                      {results.mentalMetrics.wellbeingLevel || "Not assessed"} ({results.mentalMetrics.wellbeingPercentage || 0}%)
+                    </Badge>
+                  </div>
+                  
+                  <Progress
+                    value={(results.mentalMetrics.wellbeingScore || 0) / 25 * 100}
+                    className="h-2 mb-2 bg-amber-100"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mb-2">
+                    <span>Could use a boost</span>
+                    <span>Doing well</span>
+                    <span>Thriving</span>
+                  </div>
+                  
+                  <div className="mt-3">
+                    <p className="text-sm text-gray-500">
+                      Based on the WHO-5 Well-Being Index, which measures positive psychological well-being on a scale from 0-100%.
+                    </p>
+                  </div>
                 </div>
               </div>
               
               <div className="p-4 bg-white rounded-lg border">
-                <h3 className="text-lg font-medium mb-2">Mental Wellness Recommendations</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                <h3 className="text-lg font-medium mb-2 flex items-center">
+                  <Coffee className="h-5 w-5 text-amber-600 mr-2" />
+                  <span>Ideas Worth Sipping On</span>
+                </h3>
+                <p className="text-sm text-gray-700 mb-4">
+                  Here are some thoughts that might resonate with you. Take what feels right, leave what doesn't.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                   {results.recommendations.mentalWellness.map((rec: string, index: number) => (
-                    <div key={index} className="bg-white p-2 rounded-md border text-sm shadow-sm hover:shadow-md transition-shadow">
+                    <div key={index} className="bg-amber-50 p-3 rounded-md border border-amber-100 text-sm hover:shadow-md transition-shadow">
                       {rec}
                     </div>
                   ))}
@@ -1417,14 +1759,15 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               </div>
               
               {(results.mentalMetrics.depressionScore > 9 || results.mentalMetrics.anxietyScore > 9) && (
-                <Alert variant="default" className="border-yellow-500 bg-yellow-50">
-                  <AlertCircle className="h-4 w-4 text-yellow-500" />
-                  <AlertTitle>Important Note</AlertTitle>
-                  <AlertDescription className="text-yellow-800 text-sm">
-                    Your scores suggest you may be experiencing {results.mentalMetrics.depressionScore > 9 ? "moderate to severe depression" : ""} 
+                <Alert variant="default" className="border-amber-200 bg-amber-50">
+                  <Coffee className="h-4 w-4 text-amber-600" />
+                  <AlertTitle>A gentle nudge</AlertTitle>
+                  <AlertDescription className="text-gray-700 text-sm leading-relaxed">
+                    Based on our conversation, it sounds like you've been going through a lot lately with 
+                    {results.mentalMetrics.depressionScore > 9 ? " some challenging feelings" : ""} 
                     {results.mentalMetrics.depressionScore > 9 && results.mentalMetrics.anxietyScore > 9 ? " and " : ""}
-                    {results.mentalMetrics.anxietyScore > 9 ? "moderate to severe anxiety" : ""}. 
-                    Consider speaking with a mental health professional for additional support.
+                    {results.mentalMetrics.anxietyScore > 9 ? " some ongoing stress and worry" : ""}. 
+                    Finding someone to talk to who specializes in this stuff can make a real difference. You don't have to figure it all out alone.
                   </AlertDescription>
                 </Alert>
               )}
@@ -1588,21 +1931,21 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
             <CardTitle className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-              <Heart className="h-6 w-6 text-purple-600 fill-purple-100" />
-              Comprehensive Wellness Assessment
+              <Coffee className="h-6 w-6 text-purple-600" />
+              Coffee Talk
             </CardTitle>
             <CardDescription className="text-gray-600">
-              An integrated approach to your physical and mental wellbeing
+              Let's connect—and realign—with what really matters
             </CardDescription>
           </div>
           
           <Button 
             onClick={() => setIsOpen(true)}
             size="lg"
-            className="bg-gradient-to-r from-purple-300 to-indigo-300 hover:from-purple-400 hover:to-indigo-400 text-purple-900 self-start mt-2 sm:mt-0 w-full sm:w-auto"
+            className="bg-gradient-to-r from-amber-300 to-orange-300 hover:from-amber-400 hover:to-orange-400 text-amber-900 self-start mt-2 sm:mt-0 w-full sm:w-auto"
           >
-            <Heart className="h-5 w-5 mr-2 fill-purple-200" />
-            <span>Start Assessment</span>
+            <Coffee className="h-5 w-5 mr-2" />
+            <span>Let's Chat</span>
           </Button>
         </div>
       </CardHeader>
@@ -1664,8 +2007,8 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         <FullScreenDialogContent>
           <FullScreenDialogHeader className="mb-6">
             <FullScreenDialogTitle className="flex items-center gap-2">
-              <Heart className="h-6 w-6 text-purple-600" />
-              Comprehensive Wellness Assessment
+              <Coffee className="h-6 w-6 text-amber-600" />
+              Coffee Talk
             </FullScreenDialogTitle>
             <FullScreenDialogDescription>
               {!showResults && (
