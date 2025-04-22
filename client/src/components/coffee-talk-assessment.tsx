@@ -16,6 +16,12 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   FullScreenDialog,
   FullScreenDialogContent,
   FullScreenDialogHeader,
@@ -44,15 +50,15 @@ import {
 
 // PHQ-9 questions (depression screening)
 const phq9Questions = [
-  "Little interest or pleasure in doing things",
-  "Feeling down, depressed, or hopeless",
-  "Trouble falling or staying asleep, or sleeping too much",
-  "Feeling tired or having little energy",
-  "Poor appetite or overeating",
-  "Feeling bad about yourself - or that you are a failure or have let yourself or your family down",
-  "Trouble concentrating on things, such as reading the newspaper or watching television",
-  "Moving or speaking so slowly that other people could have noticed. Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual",
-  "Thoughts that you would be better off dead, or of hurting yourself in some way"
+  "I have little interest or pleasure in doing things",
+  "I feel down, depressed, or hopeless",
+  "I have trouble falling asleep or staying asleep, or I sleep too much",
+  "I feel tired or have little energy",
+  "I have poor appetite or I overeat",
+  "I feel bad about myself - as if I am a failure or have let myself or my family down",
+  "I have trouble concentrating on things, such as reading or watching TV",
+  "I move or speak so slowly that others could notice, or I'm so fidgety and restless that I move around much more than usual",
+  "I have thoughts that I would be better off dead, or of hurting myself"
 ];
 
 // WHO-5 questions (well-being screening)
@@ -66,13 +72,13 @@ const who5Questions = [
 
 // GAD-7 questions (anxiety screening)
 const gad7Questions = [
-  "Feeling nervous, anxious, or on edge",
-  "Not being able to stop or control worrying",
-  "Worrying too much about different things",
-  "Trouble relaxing",
-  "Being so restless that it's hard to sit still",
-  "Becoming easily annoyed or irritable",
-  "Feeling afraid, as if something awful might happen"
+  "I feel nervous, anxious, or on edge",
+  "I cannot stop or control worrying",
+  "I worry too much about different things",
+  "I have trouble relaxing",
+  "I feel so restless that it's hard to sit still",
+  "I become easily annoyed or irritable",
+  "I feel afraid, as if something awful might happen"
 ];
 
 // Combined questions for the unified assessment
@@ -92,12 +98,12 @@ const frequencyOptions = [
 
 // WHO-5 frequency options (different scale, positive framing)
 const who5FrequencyOptions = [
-  { value: 0, label: "At no time", description: "" },
-  { value: 1, label: "Some of the time", description: "" },
-  { value: 2, label: "Less than half of the time", description: "" },
-  { value: 3, label: "More than half of the time", description: "" },
-  { value: 4, label: "Most of the time", description: "" },
-  { value: 5, label: "All of the time", description: "" }
+  { value: 0, label: "At no time", description: "Never experienced this" },
+  { value: 1, label: "Some of the time", description: "Occasionally" },
+  { value: 2, label: "Less than half of the time", description: "Sometimes" },
+  { value: 3, label: "More than half of the time", description: "Often" },
+  { value: 4, label: "Most of the time", description: "Usually" },
+  { value: 5, label: "All of the time", description: "Always" }
 ];
 
 // Severity levels for PHQ-9 (depression) - follows official clinical guidelines
@@ -508,6 +514,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                       <RadioGroupItem value={option.value.toString()} id={`who5-option-${option.value}`} />
                       <Label htmlFor={`who5-option-${option.value}`} className="flex flex-col">
                         <span className="font-medium">{option.label}</span>
+                        <span className="text-sm text-gray-500">{option.description}</span>
                       </Label>
                     </div>
                   ))
