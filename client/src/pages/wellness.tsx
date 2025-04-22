@@ -26,7 +26,7 @@ const NutritionTracker = lazy(() => import("@/components/nutrition-tracker"));
 const ShoppingBuddy = lazy(() => import("@/components/shopping-buddy"));
 const RiskAssessment = lazy(() => import("@/components/risk-assessment"));
 const BrainTap = lazy(() => import("@/components/brain-tap"));
-const ComprehensiveWellnessAssessment = lazy(() => import("@/components/comprehensive-wellness-assessment"));
+// Comprehensive wellness assessment components removed as they were redundant
 const WellnessIntegration = lazy(() => import("@/components/wellness-integration"));
 const PHQ9Assessment = lazy(() => import("@/components/phq9-assessment"));
 const PAVSAssessment = lazy(() => import("@/components/pavs-assessment"));
@@ -38,7 +38,6 @@ const NutritionTrackerPopOut = lazy(() => import("@/components/nutrition-tracker
 const ShoppingBuddyPopOut = lazy(() => import("@/components/shopping-buddy-pop-out"));
 const WellnessCoachPopOut = lazy(() => import("@/components/wellness-coach-pop-out"));
 const BrainTapPopOut = lazy(() => import("@/components/brain-tap-pop-out"));
-const ComprehensiveWellnessPopOut = lazy(() => import("@/components/comprehensive-wellness-pop-out"));
 
 type SectionType = {
   id: string;
@@ -71,13 +70,6 @@ const SECTIONS: SectionType[] = [
     description: 'Evaluate your activity level and get personalized recommendations',
     icon: Activity, 
     component: PAVSAssessment
-  },
-  {
-    id: 'comprehensive',
-    title: 'Comprehensive Assessment',
-    description: 'Complete physical and mental health evaluation with integrated recommendations',
-    icon: Clipboard,
-    component: ComprehensiveWellnessAssessment
   },
   {
     id: 'journal',
@@ -118,7 +110,7 @@ export default function Wellness() {
   const [isTrackerOpen, setIsTrackerOpen] = useState(false);
   const [isShoppingOpen, setIsShoppingOpen] = useState(false);
   const [isCoachOpen, setIsCoachOpen] = useState(false);
-  const [isComprehensiveOpen, setIsComprehensiveOpen] = useState(false);
+  // Comprehensive assessment removed as it was redundant
   const [isWellnessProfileOpen, setIsWellnessProfileOpen] = useState(false);
   const [isMentalHealthOpen, setIsMentalHealthOpen] = useState(false);
   const [isPhysicalActivityOpen, setIsPhysicalActivityOpen] = useState(false);
@@ -164,9 +156,7 @@ export default function Wellness() {
     else if (sectionId === 'shopping') {
       setIsShoppingOpen(true);
     }
-    else if (sectionId === 'comprehensive') {
-      setIsComprehensiveOpen(true);
-    }
+    // Comprehensive section removed as it was redundant
     else if (sectionId === 'wellness-profile') {
       setIsWellnessProfileOpen(true);
     }
@@ -306,23 +296,7 @@ export default function Wellness() {
           </MegaDialogContent>
         </MegaDialog>
         
-        <MegaDialog open={isComprehensiveOpen} onOpenChange={setIsComprehensiveOpen}>
-          <MegaDialogContent>
-            <MegaDialogHeader>
-              <MegaDialogTitle>Comprehensive Wellness Assessment</MegaDialogTitle>
-            </MegaDialogHeader>
-            <MegaDialogBody>
-              <Suspense fallback={
-                <div className="flex flex-col items-center justify-center h-full p-8 space-y-4">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-                  <p className="text-muted-foreground">Loading Comprehensive Assessment...</p>
-                </div>
-              }>
-                <ComprehensiveWellnessPopOut />
-              </Suspense>
-            </MegaDialogBody>
-          </MegaDialogContent>
-        </MegaDialog>
+        {/* Comprehensive Assessment dialog removed as it was redundant */}
 
         <MegaDialog open={isCoachOpen} onOpenChange={setIsCoachOpen}>
           <MegaDialogContent>
