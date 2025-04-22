@@ -129,21 +129,88 @@ const createStyles = (color = "#3b82f6") => StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginTop: 15,
-    marginBottom: 5,
+    marginBottom: 8,
     color: color,
     textTransform: 'uppercase',
   },
   sectionContent: {
     fontSize: 11,
-    marginBottom: 10,
+    marginBottom: 15,
     lineHeight: 1.5,
     color: '#1F2937',
+  },
+  bulletPoint: {
+    flexDirection: 'row',
+    marginBottom: 4,
+  },
+  bullet: {
+    fontSize: 11,
+    marginRight: 5,
+    color: '#1F2937',
+  },
+  bulletText: {
+    fontSize: 11,
+    flex: 1,
+    color: '#1F2937',
+  },
+  jobTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  jobDetails: {
+    fontSize: 10,
+    color: '#4B5563',
+    marginBottom: 5,
   },
 });
 
 interface ResumePDFProps extends ResumeFormData {
   template: string;
 }
+
+// Helper to render text with proper line breaks and bullet points
+const RenderFormattedText = ({ text, styles }: { text: string, styles: any }) => {
+  if (!text) return null;
+  
+  // Parse the text into lines
+  const lines = text.replace(/\\n/g, '\n').split('\n');
+  
+  return (
+    <>
+      {lines.map((line, index) => {
+        const trimmedLine = line.trim();
+        
+        // Skip empty lines
+        if (!trimmedLine) return null;
+        
+        // Check if this is a bullet point
+        if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-') || trimmedLine.startsWith('*')) {
+          return (
+            <View key={index} style={styles.bulletPoint}>
+              <Text style={styles.bullet}>•</Text>
+              <Text style={styles.bulletText}>{trimmedLine.substring(1).trim()}</Text>
+            </View>
+          );
+        } 
+        
+        // Check if this is a job title or role (typically has | characters)
+        else if (trimmedLine.includes('|')) {
+          return (
+            <View key={index} style={{ marginBottom: 3 }}>
+              <Text style={styles.jobTitle}>{trimmedLine}</Text>
+            </View>
+          );
+        }
+        
+        // Regular text
+        else {
+          return <Text key={index} style={styles.sectionContent}>{trimmedLine}</Text>;
+        }
+      })}
+    </>
+  );
+};
 
 const ResumePDF: React.FC<ResumePDFProps> = ({
   name,
@@ -176,42 +243,42 @@ const ResumePDF: React.FC<ResumePDFProps> = ({
         {summary && (
           <>
             <Text style={styles.sectionTitle}>Professional Summary</Text>
-            <Text style={styles.sectionContent}>{summary}</Text>
+            <RenderFormattedText text={summary} styles={styles} />
           </>
         )}
 
         {experience && (
           <>
             <Text style={styles.sectionTitle}>Work Experience</Text>
-            <Text style={styles.sectionContent}>{experience}</Text>
+            <RenderFormattedText text={experience} styles={styles} />
           </>
         )}
 
         {education && (
           <>
             <Text style={styles.sectionTitle}>Education</Text>
-            <Text style={styles.sectionContent}>{education}</Text>
+            <RenderFormattedText text={education} styles={styles} />
           </>
         )}
 
         {skills && (
           <>
             <Text style={styles.sectionTitle}>Skills</Text>
-            <Text style={styles.sectionContent}>{skills}</Text>
+            <RenderFormattedText text={skills} styles={styles} />
           </>
         )}
         
         {projects && (
           <>
             <Text style={styles.sectionTitle}>Projects</Text>
-            <Text style={styles.sectionContent}>{projects}</Text>
+            <RenderFormattedText text={projects} styles={styles} />
           </>
         )}
         
         {certifications && (
           <>
             <Text style={styles.sectionTitle}>Certifications</Text>
-            <Text style={styles.sectionContent}>{certifications}</Text>
+            <RenderFormattedText text={certifications} styles={styles} />
           </>
         )}
         
