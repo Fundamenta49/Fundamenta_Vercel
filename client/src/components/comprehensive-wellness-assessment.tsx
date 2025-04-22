@@ -1268,7 +1268,8 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                           {wellbeingSeverity.find(s => s.level === wellbeingLevel)?.description?.replace("Your wellbeing score", "Your sharing").replace("suggests", "indicates") || 
                           "Your sharing indicates you have some positive moments in your life, along with areas where you might want more energy or joy."}
                         </p>
-                        <p className="text-gray-700">
+                        
+                        <p className="text-gray-700 mt-3">
                           {wellbeingSeverity.find(s => s.level === wellbeingLevel)?.recommendation || 
                           "Consider adding small activities that bring you energy and joy to your daily routine."}
                         </p>
@@ -1288,7 +1289,8 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                         <p className="text-gray-700 mb-2">
                           {depressionSeverity.find(s => s.level === depressionLevel)?.description.replace("You may be experiencing", "You seem to be experiencing").replace("You're showing", "I notice you're showing")}
                         </p>
-                        <p className="text-gray-700">
+                        
+                        <p className="text-gray-700 mt-3">
                           {depressionSeverity.find(s => s.level === depressionLevel)?.recommendation.replace("Your responses suggest", "Our conversation suggests").replace("consulting with a healthcare provider", "connecting with someone who can help")}
                         </p>
                       </div>
@@ -1310,7 +1312,8 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                           <p className="text-sm mt-2 text-red-700 leading-relaxed">
                             I noticed something in our conversation that has me concerned about your wellbeing. 
                             It sounds like you might be having some thoughts about harming yourself.
-                            
+                          </p>
+                          <p className="text-sm mt-3 text-red-700 leading-relaxed">
                             This is really important - please reach out to someone who can help right now. 
                             You can call or text 988 anytime (24/7) to speak with someone who cares.
                           </p>
@@ -1363,6 +1366,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 <Coffee className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-gray-700 text-sm">
                   Our conversation will help us create some personalized ideas that might support your wellbeing. 
+                  <br/>
                   Just remember, this is more like chatting with a thoughtful friend than visiting a doctor - I'm here to listen and suggest, not to diagnose.
                 </AlertDescription>
               </Alert>
@@ -1766,13 +1770,14 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               
               {(results.mentalMetrics.depressionScore > 9 || results.mentalMetrics.anxietyScore > 9) && (
                 <Alert variant="default" className="border-amber-200 bg-amber-50">
-                  <Coffee className="h-4 w-4 text-amber-600" />
+                  <Coffee className="h-4 w-4 text-amber-600 mr-2" />
                   <AlertTitle>A gentle nudge</AlertTitle>
                   <AlertDescription className="text-gray-700 text-sm leading-relaxed">
                     Based on our conversation, it sounds like you've been going through a lot lately with 
                     {results.mentalMetrics.depressionScore > 9 ? " some challenging feelings" : ""} 
                     {results.mentalMetrics.depressionScore > 9 && results.mentalMetrics.anxietyScore > 9 ? " and " : ""}
-                    {results.mentalMetrics.anxietyScore > 9 ? " some ongoing stress and worry" : ""}. 
+                    {results.mentalMetrics.anxietyScore > 9 ? " some ongoing stress and worry" : ""}.
+                    <br/><br/> 
                     Finding someone to talk to who specializes in this stuff can make a real difference. You don't have to figure it all out alone.
                   </AlertDescription>
                 </Alert>
