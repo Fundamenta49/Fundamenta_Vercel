@@ -760,13 +760,13 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
           </div>
         </CardContent>
         <CardFooter className="pt-2 pb-6">
-          <Button 
-            className="bg-amber-600 hover:bg-amber-700 text-white w-full"
+          <div 
+            className="flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white w-full py-2 px-4 rounded-md cursor-pointer"
             onClick={handleStartAssessment}
           >
-            <Coffee className="h-4 w-4 mr-2" />
-            Start Our Coffee Talk
-          </Button>
+            <Coffee className="h-5 w-5 mr-3 flex-shrink-0" />
+            <span className="font-medium whitespace-nowrap">Start Our Coffee Talk</span>
+          </div>
         </CardFooter>
       </Card>
     );
