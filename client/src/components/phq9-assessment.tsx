@@ -904,7 +904,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
                         "border-gray-300"
                       }`}
                     />
-                    <div>
+                    <div className="flex flex-col">
                       <Label htmlFor={`q${currentQuestionIndex}-${option.value}`} className="text-base font-medium cursor-pointer">
                         {option.label}
                       </Label>
