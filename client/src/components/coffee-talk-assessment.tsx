@@ -534,13 +534,13 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               </RadioGroup>
             </div>
             
-            {/* Special alert for suicide question on PHQ-9 */}
+            {/* Gentler support notice for question about thoughts of harming oneself */}
             {mentalHealthQuestions[currentQuestionIndex].id === 13 && (
               <Alert className="bg-amber-50 border-amber-100 mt-4">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <AlertTitle>Support Available</AlertTitle>
+                <Brain className="h-4 w-4 text-amber-600" />
+                <AlertTitle>A gentle reminder</AlertTitle>
                 <AlertDescription className="text-amber-800">
-                  If you're experiencing thoughts of harming yourself, please reach out for help. The National Suicide Prevention Lifeline is available 24/7 at 988, or you can text HOME to 741741 to reach the Crisis Text Line.
+                  Your mental health matters. If you're having difficult thoughts, remember that reaching out to someone you trust or a mental health professional can help.
                 </AlertDescription>
               </Alert>
             )}
@@ -617,11 +617,11 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               </div>
               
               {results.mentalMetrics.suicidalIdeation && (
-                <Alert variant="destructive" className="bg-red-50 text-red-900 border-red-200">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>Important notice</AlertTitle>
-                  <AlertDescription>
-                    Based on your responses, we recommend speaking with a mental health professional as soon as possible. If you're in crisis, please call a crisis helpline or text HOME to 741741 to reach the Crisis Text Line.
+                <Alert className="bg-amber-50 border-amber-100">
+                  <Brain className="h-4 w-4 text-amber-600" />
+                  <AlertTitle>Wellness suggestion</AlertTitle>
+                  <AlertDescription className="text-amber-800">
+                    Based on your responses, connecting with a supportive friend, family member, or mental health professional could be beneficial for your wellbeing. Taking care of your mental health is just as important as physical health.
                   </AlertDescription>
                 </Alert>
               )}
