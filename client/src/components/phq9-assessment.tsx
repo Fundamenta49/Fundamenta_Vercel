@@ -192,36 +192,15 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
     setCurrentQuestionIndex(0);
   };
 
-  // Handle answer change
+  // Handle answer change - only record the answer, don't advance automatically
   const handleAnswerChange = (value: number) => {
     const answers = getActiveAnswers();
     const newAnswers = [...answers];
     newAnswers[currentQuestionIndex] = value;
     setActiveAnswers(newAnswers);
-
-    // Move to next question or switch tabs/show results based on completion
-    const questions = getActiveQuestions();
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      // Completed the current assessment
-      switch (activeTab) {
-        case "phq9": 
-          // Move to GAD-7 assessment
-          setActiveTab("gad7");
-          setCurrentQuestionIndex(0);
-          break;
-        case "gad7":
-          // Move to WHO-5 assessment
-          setActiveTab("who5");
-          setCurrentQuestionIndex(0);
-          break;
-        case "who5":
-          // Calculate and show final results
-          calculateResults();
-          break;
-      }
-    }
+    
+    // No longer automatically advancing to the next question
+    // User must click the Next button to proceed
   };
 
   // Move to previous question
@@ -918,10 +897,11 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
                     <RadioGroupItem 
                       value={option.value.toString()} 
                       id={`q${currentQuestionIndex}-${option.value}`} 
-                      className={`mt-1 ${
-                        activeTab === "phq9" ? "text-amber-600 border-amber-600" :
-                        activeTab === "gad7" ? "text-blue-600 border-blue-600" :
-                        "text-green-600 border-green-600"
+                      className={`mt-1 border-2 ${
+                        isSelected && activeTab === "phq9" ? "border-amber-600 text-amber-600" :
+                        isSelected && activeTab === "gad7" ? "border-blue-600 text-blue-600" :
+                        isSelected && activeTab === "who5" ? "border-green-600 text-green-600" :
+                        "border-gray-300"
                       }`}
                     />
                     <div>
