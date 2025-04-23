@@ -511,7 +511,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   // WHO-5 uses a different scale (0-5)
                   who5FrequencyOptions.map((option) => (
                     <div key={option.value} className="flex items-start space-x-3 rounded-md border p-3">
-                      <RadioGroupItem value={option.value.toString()} id={`who5-option-${option.value}`} className="mt-1" />
+                      <RadioGroupItem value={option.value.toString()} id={`who5-option-${option.value}`} className="mt-1 h-5 w-5 !border-amber-600 data-[state=checked]:!text-amber-600 data-[state=checked]:!ring-2 data-[state=checked]:!ring-amber-300" />
                       <Label htmlFor={`who5-option-${option.value}`} className="flex flex-col flex-1">
                         <span className="font-medium text-sm sm:text-base">{option.label}</span>
                         <span className="text-xs sm:text-sm text-gray-500">{option.description}</span>
@@ -522,7 +522,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   // PHQ-9 and GAD-7 use the same scale (0-3)
                   frequencyOptions.map((option) => (
                     <div key={option.value} className="flex items-start space-x-3 rounded-md border p-3">
-                      <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} className="mt-1" />
+                      <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} className="mt-1 h-5 w-5 !border-amber-600 data-[state=checked]:!text-amber-600 data-[state=checked]:!ring-2 data-[state=checked]:!ring-amber-300" />
                       <Label htmlFor={`option-${option.value}`} className="flex flex-col flex-1">
                         <span className="font-medium text-sm sm:text-base">{option.label}</span>
                         <span className="text-xs sm:text-sm text-gray-500">{option.description}</span>

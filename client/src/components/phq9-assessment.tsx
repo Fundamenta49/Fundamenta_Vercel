@@ -897,10 +897,10 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
                     <RadioGroupItem 
                       value={option.value.toString()} 
                       id={`q${currentQuestionIndex}-${option.value}`} 
-                      className={`mt-1 border-2 ${
-                        isSelected && activeTab === "phq9" ? "border-amber-600 text-amber-600 ring-2 ring-amber-300" :
-                        isSelected && activeTab === "gad7" ? "border-blue-600 text-blue-600 ring-2 ring-blue-300" :
-                        isSelected && activeTab === "who5" ? "border-green-600 text-green-600 ring-2 ring-green-300" :
+                      className={`mt-1 border-2 h-5 w-5 ${
+                        isSelected && activeTab === "phq9" ? "!border-amber-600 !text-amber-600 !ring-2 !ring-amber-300" :
+                        isSelected && activeTab === "gad7" ? "!border-blue-600 !text-blue-600 !ring-2 !ring-blue-300" :
+                        isSelected && activeTab === "who5" ? "!border-green-600 !text-green-600 !ring-2 !ring-green-300" :
                         "border-gray-300"
                       }`}
                     />
