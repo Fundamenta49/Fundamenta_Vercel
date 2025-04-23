@@ -1231,14 +1231,14 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     ) : (
                       // Standard options for PHQ-9 and GAD-7
                       frequencyOptions.map((option) => (
-                        <div key={option.value} className="flex items-center space-x-2 border p-3 rounded-md hover:bg-gray-50">
-                          <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
+                        <div key={option.value} className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50">
+                          <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} className="mt-1" />
                           <Label 
                             htmlFor={`option-${option.value}`}
-                            className="flex-1 flex justify-between items-center cursor-pointer"
+                            className="flex flex-col flex-1"
                           >
-                            <span className="font-medium">{option.label}</span>
-                            <span className="text-sm text-gray-500">{option.description}</span>
+                            <span className="font-medium text-sm sm:text-base">{option.label}</span>
+                            <span className="text-xs sm:text-sm text-gray-500">{option.description}</span>
                           </Label>
                         </div>
                       ))
