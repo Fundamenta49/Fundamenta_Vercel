@@ -38,6 +38,7 @@ const NutritionTrackerPopOut = lazy(() => import("@/components/nutrition-tracker
 const ShoppingBuddyPopOut = lazy(() => import("@/components/shopping-buddy-pop-out"));
 const WellnessCoachPopOut = lazy(() => import("@/components/wellness-coach-pop-out"));
 const BrainTapPopOut = lazy(() => import("@/components/brain-tap-pop-out"));
+const CoffeeTalkAssessment = lazy(() => import("@/components/coffee-talk-assessment-new"));
 
 type SectionType = {
   id: string;
@@ -62,7 +63,7 @@ const SECTIONS: SectionType[] = [
     title: 'Coffee Talk',
     description: "Let's connect—and realign—with what really matters",
     icon: Coffee,
-    component: PHQ9Assessment
+    component: CoffeeTalkAssessment
   },
   {
     id: 'physical-activity',
@@ -346,7 +347,7 @@ export default function Wellness() {
                   <p className="text-muted-foreground">Brewing your Coffee Talk experience...</p>
                 </div>
               }>
-                <PHQ9Assessment />
+                <CoffeeTalkAssessment />
               </Suspense>
             </MegaDialogBody>
           </MegaDialogContent>
