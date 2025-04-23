@@ -49,37 +49,37 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-// PHQ-9 questions (depression screening)
+// PHQ-9 questions (depression screening) with conversational language
 const phq9Questions = [
-  "I have little interest or pleasure in doing things",
-  "I feel down, depressed, or hopeless",
-  "I have trouble falling asleep or staying asleep, or I sleep too much",
-  "I feel tired or have little energy",
-  "I have poor appetite or I overeat",
-  "I feel bad about myself - as if I am a failure or have let myself or my family down",
-  "I have trouble concentrating on things, such as reading or watching TV",
-  "I move or speak so slowly that others could notice, or I'm so fidgety and restless that I move around much more than usual",
-  "I have thoughts that I would be better off dead, or of hurting myself"
+  "Have you found yourself not enjoying the things you usually care about?",
+  "Have you been feeling low or emotionally stuck lately?",
+  "Have you been having trouble sleeping or sleeping way more than usual?",
+  "Have you been feeling drained or low-energy lately?",
+  "Have you noticed changes in your appetite, like eating too little or too much?",
+  "Have you been feeling down on yourself or struggling with self-worth?",
+  "Have you had a hard time focusing on simple things, like reading or watching something?",
+  "Have you felt noticeably slowed down—or super restless and unable to sit still?",
+  "Have dark thoughts about hurting yourself or feeling like giving up shown up recently?"
 ];
 
-// WHO-5 questions (well-being screening)
+// WHO-5 questions (well-being screening) with conversational language
 const who5Questions = [
-  "I have felt cheerful and in good spirits",
-  "I have felt calm and relaxed",
-  "I have felt active and vigorous",
-  "I woke up feeling fresh and rested",
-  "My daily life has been filled with things that interest me"
+  "Have you felt genuinely happy or in good spirits lately?",
+  "Have you had moments where you felt peaceful or at ease?",
+  "Have you felt energized or ready to take on the day?",
+  "Have you been waking up feeling recharged and rested?",
+  "Have you had things in your day that made you curious or excited?"
 ];
 
-// GAD-7 questions (anxiety screening)
+// GAD-7 questions (anxiety screening) with conversational language
 const gad7Questions = [
-  "Feeling nervous, anxious, or on edge",
-  "Not being able to stop or control worrying",
-  "Worrying too much about different things",
-  "Having trouble relaxing",
-  "Being so restless that it's hard to sit still",
-  "Becoming easily annoyed or irritable",
-  "Feeling afraid, as if something awful might happen"
+  "Have you felt nervous or like something's been buzzing under the surface?",
+  "Have your worries been hard to quiet or control lately?",
+  "Have you caught yourself worrying about a bunch of different things all at once?",
+  "Have you found it tough to fully relax or slow your mind down?",
+  "Have you felt so restless or jumpy that staying still is hard?",
+  "Have you felt extra irritable or like little things are setting you off?",
+  "Have you had a sense that something bad might happen, even without a clear reason?"
 ];
 
 // Combined questions for the unified assessment
