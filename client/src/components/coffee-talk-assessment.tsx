@@ -255,7 +255,8 @@ const getSeverityColor = (score: number, isDepression: boolean, isWellbeing = fa
 
 // Main component
 export default function CoffeeTalkAssessment() {
-  const [isOpen, setIsOpen] = useState(false);
+  // Auto-open assessment when component mounts
+  const [isOpen, setIsOpen] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<{id: number, value: number}[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -854,66 +855,13 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       </CardHeader>
       
       <CardContent className="pt-6">
-        <div className="rounded-xl bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 p-6 md:p-8 relative overflow-hidden">
-          <div className="w-full">
-            <h3 className="text-xl font-semibold text-amber-800 mb-3">Our Coffee Talk Journey</h3>
-            <p className="text-gray-700 mb-4">
-              Let's have a friendly conversation about your mental wellbeing to understand how you're doing.
+        <div className="rounded-xl bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 p-6 relative overflow-hidden flex items-center justify-center">
+          <div className="text-center">
+            <Coffee className="h-16 w-16 mx-auto text-amber-600 mb-4" />
+            <h3 className="text-xl font-semibold text-amber-800 mb-3">Opening Coffee Talk...</h3>
+            <p className="text-gray-700">
+              Your wellbeing assessment will open automatically
             </p>
-            
-            <div className="grid md:grid-cols-3 gap-6 mt-6">
-              <div className="bg-white/80 backdrop-blur-sm p-5 rounded-lg shadow-sm">
-                <div className="flex items-center mb-3">
-                  <div className="rounded-full bg-blue-100 p-2 mr-3">
-                    <Heart className="h-5 w-5 text-blue-500" />
-                  </div>
-                  <h4 className="font-medium text-blue-700 text-base">Depression Screening</h4>
-                </div>
-                <p className="text-sm text-gray-600">
-                  A brief PHQ-9 assessment to help understand your mood and identify potential depression symptoms.
-                </p>
-              </div>
-              
-              <div className="bg-white/80 backdrop-blur-sm p-5 rounded-lg shadow-sm">
-                <div className="flex items-center mb-3">
-                  <div className="rounded-full bg-purple-100 p-2 mr-3">
-                    <Brain className="h-5 w-5 text-purple-500" />
-                  </div>
-                  <h4 className="font-medium text-purple-700 text-base">Anxiety Check-In</h4>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Using the GAD-7 to assess anxiety levels and help identify strategies to manage worry or nervousness.
-                </p>
-              </div>
-              
-              <div className="bg-white/80 backdrop-blur-sm p-5 rounded-lg shadow-sm">
-                <div className="flex items-center mb-3">
-                  <div className="rounded-full bg-amber-100 p-2 mr-3">
-                    <Coffee className="h-5 w-5 text-amber-600" />
-                  </div>
-                  <h4 className="font-medium text-amber-700 text-base">Positive Wellbeing</h4>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Measure your overall sense of wellbeing and positive mental health with the WHO-5 assessment.
-                </p>
-              </div>
-            </div>
-            
-            <div className="mt-6">
-              <div className="flex items-center gap-1.5 mb-2">
-                <div className="rounded-full bg-amber-100 p-1">
-                  <Share2 className="h-4 w-4 text-amber-600" />
-                </div>
-                <h4 className="font-medium text-amber-700">Holistic Approach</h4>
-              </div>
-              <p className="text-gray-700 text-sm">
-                Our conversational assessment helps us understand your mental wellbeing from different angles, providing personalized insights and recommendations.
-              </p>
-            </div>
-          </div>
-          
-          <div className="absolute right-0 bottom-0 w-64 h-64 -mb-12 -mr-12 opacity-10">
-            <Coffee className="absolute w-full h-full text-amber-700" />
           </div>
         </div>
       </CardContent>
