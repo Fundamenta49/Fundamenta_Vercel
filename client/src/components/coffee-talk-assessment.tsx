@@ -40,6 +40,7 @@ import {
   ArrowRight,
   ArrowLeft,
   AlertTriangle,
+  AlertCircle,
   Save,
   ExternalLink,
   FileText,
@@ -532,6 +533,17 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 )}
               </RadioGroup>
             </div>
+            
+            {/* Special alert for suicide question on PHQ-9 */}
+            {mentalHealthQuestions[currentQuestionIndex].id === 13 && (
+              <Alert className="bg-amber-50 border-amber-100 mt-4">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertTitle>Support Available</AlertTitle>
+                <AlertDescription className="text-amber-800">
+                  If you're experiencing thoughts of harming yourself, please reach out for help. The National Suicide Prevention Lifeline is available 24/7 at 988, or you can text HOME to 741741 to reach the Crisis Text Line.
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
         </CardContent>
       </>
