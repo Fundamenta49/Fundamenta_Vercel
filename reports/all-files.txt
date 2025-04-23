@@ -278,9 +278,9 @@ client/src/components/resume-builder-enhanced.tsx
 client/src/components/resume-builder-fullscreen.tsx
 client/src/components/nutrition-tracker.tsx
 client/src/components/comprehensive-wellness-pop-out.tsx
-client/src/components/phq9-assessment.tsx
 client/src/components/comprehensive-wellness-assessment.tsx
 client/src/components/coffee-talk-assessment.tsx
+client/src/components/phq9-assessment.tsx
 client/src/hooks/use-mobile.tsx
 client/src/hooks/use-time-gradient.ts
 client/src/hooks/use-mood-theme.ts

@@ -1731,16 +1731,6 @@ client/src/components/nutrition-tracker.tsx:import { useToast } from "@/hooks/us
 client/src/components/comprehensive-wellness-pop-out.tsx:import { Button } from "@/components/ui/button";
 client/src/components/comprehensive-wellness-pop-out.tsx:import { Coffee, Sun } from "lucide-react";
 client/src/components/comprehensive-wellness-pop-out.tsx:import ComprehensiveWellnessAssessment from "@/components/comprehensive-wellness-assessment";
-client/src/components/phq9-assessment.tsx:import { useState } from "react";
-client/src/components/phq9-assessment.tsx:import { Button } from "@/components/ui/button";
-client/src/components/phq9-assessment.tsx:import { Progress } from "@/components/ui/progress";
-client/src/components/phq9-assessment.tsx:import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-client/src/components/phq9-assessment.tsx:import { Label } from "@/components/ui/label";
-client/src/components/phq9-assessment.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-client/src/components/phq9-assessment.tsx:import { Separator } from "@/components/ui/separator";
-client/src/components/phq9-assessment.tsx:import { Brain, AlertCircle, InfoIcon, HelpCircle, Heart, Coffee, Sun, Wind } from "lucide-react";
-client/src/components/phq9-assessment.tsx:import { toast } from "@/hooks/use-toast";
-client/src/components/phq9-assessment.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 client/src/components/comprehensive-wellness-assessment.tsx:import { useState, useEffect } from "react";
 client/src/components/comprehensive-wellness-assessment.tsx:import { Button } from "@/components/ui/button";
 client/src/components/comprehensive-wellness-assessment.tsx:import { Input } from "@/components/ui/input";
@@ -1769,6 +1759,16 @@ client/src/components/coffee-talk-assessment.tsx:import { RadioGroup, RadioGroup
 client/src/components/coffee-talk-assessment.tsx:import { Checkbox } from "@/components/ui/checkbox";
 client/src/components/coffee-talk-assessment.tsx:import { toast } from "@/hooks/use-toast";
 client/src/components/coffee-talk-assessment.tsx:import axios from "axios";
+client/src/components/phq9-assessment.tsx:import { useState } from "react";
+client/src/components/phq9-assessment.tsx:import { Button } from "@/components/ui/button";
+client/src/components/phq9-assessment.tsx:import { Progress } from "@/components/ui/progress";
+client/src/components/phq9-assessment.tsx:import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+client/src/components/phq9-assessment.tsx:import { Label } from "@/components/ui/label";
+client/src/components/phq9-assessment.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+client/src/components/phq9-assessment.tsx:import { Separator } from "@/components/ui/separator";
+client/src/components/phq9-assessment.tsx:import { Brain, AlertCircle, InfoIcon, HelpCircle, Heart, Coffee, Sun, Wind } from "lucide-react";
+client/src/components/phq9-assessment.tsx:import { toast } from "@/hooks/use-toast";
+client/src/components/phq9-assessment.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 client/src/hooks/use-mobile.tsx:import * as React from "react"
 client/src/hooks/use-time-gradient.ts:import { useState, useEffect } from 'react';
 client/src/hooks/use-mood-theme.ts:import { useState, useEffect } from 'react';
