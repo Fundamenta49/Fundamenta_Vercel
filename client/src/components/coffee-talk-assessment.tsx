@@ -73,13 +73,13 @@ const who5Questions = [
 
 // GAD-7 questions (anxiety screening)
 const gad7Questions = [
-  "I feel nervous, anxious, or on edge",
-  "I cannot stop or control worrying",
-  "I worry too much about different things",
-  "I have trouble relaxing",
-  "I feel so restless that it's hard to sit still",
-  "I become easily annoyed or irritable",
-  "I feel afraid, as if something awful might happen"
+  "Feeling nervous, anxious, or on edge",
+  "Not being able to stop or control worrying",
+  "Worrying too much about different things",
+  "Having trouble relaxing",
+  "Being so restless that it's hard to sit still",
+  "Becoming easily annoyed or irritable",
+  "Feeling afraid, as if something awful might happen"
 ];
 
 // Combined questions for the unified assessment
@@ -479,13 +479,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               <span className="text-sm font-medium text-gray-500">
                 Question {currentQuestionIndex + 1} of {mentalHealthQuestions.length}
               </span>
-              <Badge variant="outline" className={
-                mentalHealthQuestions[currentQuestionIndex].category === "wellbeing"
-                  ? "border-amber-200 bg-amber-50 text-amber-700"
-                  : mentalHealthQuestions[currentQuestionIndex].category === "depression"
-                    ? "border-blue-200 bg-blue-50 text-blue-700"
-                    : "border-purple-200 bg-purple-50 text-purple-700"
-              }>
+              <Badge variant="outline" className="border-amber-200 bg-amber-50 text-amber-700">
                 {mentalHealthQuestions[currentQuestionIndex].category === "wellbeing"
                   ? "Well-Being"
                   : mentalHealthQuestions[currentQuestionIndex].category === "depression"
@@ -698,7 +692,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   <AccordionItem value="depression">
                     <AccordionTrigger>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Depression</Badge>
+                        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Depression</Badge>
                         <span className="font-medium">{results.mentalMetrics.depressionScore}/27</span>
                         <span className="text-sm text-gray-500">- {results.mentalMetrics.depressionLevel}</span>
                       </div>
@@ -718,7 +712,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   <AccordionItem value="anxiety">
                     <AccordionTrigger>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">Anxiety</Badge>
+                        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Anxiety</Badge>
                         <span className="font-medium">{results.mentalMetrics.anxietyScore}/21</span>
                         <span className="text-sm text-gray-500">- {results.mentalMetrics.anxietyLevel}</span>
                       </div>
