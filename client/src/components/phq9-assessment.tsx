@@ -114,7 +114,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
     return transitionPrompts[Math.floor(Math.random() * transitionPrompts.length)];
   };
 
-  // PHQ-9 Frequency options - more conversational
+  // PHQ-9 Frequency options - more conversational with proper spacing
   const phq9FrequencyOptions = [
     { value: 0, label: "Rarely or never", description: "I haven't noticed this" },
     { value: 1, label: "Sometimes", description: "A few days" },
@@ -122,7 +122,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
     { value: 3, label: "Almost always", description: "Nearly every day" }
   ];
 
-  // GAD-7 Frequency options - more conversational
+  // GAD-7 Frequency options - more conversational with proper spacing
   const gad7FrequencyOptions = [
     { value: 0, label: "Hardly at all", description: "This hasn't been an issue" },
     { value: 1, label: "A little bit", description: "Some days" },
@@ -901,29 +901,38 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
               onValueChange={(value) => handleAnswerChange(parseInt(value))}
               className="space-y-3"
             >
-              {getActiveFrequencyOptions().map((option) => (
-                <div key={option.value} className={`flex items-start space-x-2 rounded-md border p-3 hover:bg-gray-50 ${
-                  activeTab === "phq9" ? "hover:border-amber-200" :
-                  activeTab === "gad7" ? "hover:border-blue-200" :
-                  "hover:border-green-200"
-                }`}>
-                  <RadioGroupItem 
-                    value={option.value.toString()} 
-                    id={`q${currentQuestionIndex}-${option.value}`} 
-                    className={`mt-1 ${
-                      activeTab === "phq9" ? "text-amber-600" :
-                      activeTab === "gad7" ? "text-blue-600" :
-                      "text-green-600"
+              {getActiveFrequencyOptions().map((option) => {
+                const isSelected = getActiveAnswers()[currentQuestionIndex]?.toString() === option.value.toString();
+                return (
+                  <div 
+                    key={option.value} 
+                    className={`flex items-start space-x-2 rounded-md border p-3 hover:bg-gray-50 ${
+                      isSelected && activeTab === "phq9" ? "bg-amber-50 border-amber-400" :
+                      isSelected && activeTab === "gad7" ? "bg-blue-50 border-blue-400" :
+                      isSelected && activeTab === "who5" ? "bg-green-50 border-green-400" :
+                      activeTab === "phq9" ? "hover:border-amber-200" :
+                      activeTab === "gad7" ? "hover:border-blue-200" :
+                      "hover:border-green-200"
                     }`}
-                  />
-                  <div>
-                    <Label htmlFor={`q${currentQuestionIndex}-${option.value}`} className="text-base font-medium cursor-pointer">
-                      {option.label}
-                    </Label>
-                    <p className="text-sm text-gray-500">{option.description}</p>
+                  >
+                    <RadioGroupItem 
+                      value={option.value.toString()} 
+                      id={`q${currentQuestionIndex}-${option.value}`} 
+                      className={`mt-1 ${
+                        activeTab === "phq9" ? "text-amber-600 border-amber-600" :
+                        activeTab === "gad7" ? "text-blue-600 border-blue-600" :
+                        "text-green-600 border-green-600"
+                      }`}
+                    />
+                    <div>
+                      <Label htmlFor={`q${currentQuestionIndex}-${option.value}`} className="text-base font-medium cursor-pointer">
+                        {option.label}
+                      </Label>
+                      <p className="text-sm text-gray-500 mt-1">{option.description}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </RadioGroup>
           </div>
           
