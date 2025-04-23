@@ -255,8 +255,6 @@ const getSeverityColor = (score: number, isDepression: boolean, isWellbeing = fa
 
 // Main component
 export default function CoffeeTalkAssessment() {
-  // Auto-open assessment when component mounts
-  const [isOpen, setIsOpen] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<{id: number, value: number}[]>([]);
   const [showResults, setShowResults] = useState(false);
@@ -785,10 +783,10 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           </Button>
           <Button 
             variant="outline" 
-            onClick={() => setIsOpen(false)}
+            onClick={() => window.location.href = '/wellness'}
             className="w-full sm:w-auto"
           >
-            Close
+            Back to Wellness Center
           </Button>
         </div>
       );
@@ -829,86 +827,38 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
   
   // Main JSX
   return (
-    <Card className="shadow-md transition-all hover:shadow-lg">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Coffee className="h-6 w-6 text-amber-600" />
-              Coffee Talk
-            </CardTitle>
-            <CardDescription className="text-gray-600">
-              Let's connect—and realign—with what really matters
-            </CardDescription>
-          </div>
-          
-          <div className="w-full sm:w-auto">
-            <div 
-              onClick={() => setIsOpen(true)}
-              className="cursor-pointer px-5 py-3 rounded-md bg-amber-400 hover:bg-amber-500 text-amber-950 font-medium text-base flex items-center justify-center gap-3 w-full sm:w-auto"
-            >
-              <Coffee className="h-5 w-5 flex-shrink-0" />
-              <div className="whitespace-nowrap">Let's Talk</div>
-            </div>
-          </div>
+    <div className="max-w-6xl mx-auto">
+      <div className="mb-6">
+        <div className="flex items-center gap-2">
+          <Coffee className="h-7 w-7 text-amber-600" />
+          <h1 className="text-2xl font-semibold text-gray-800">Coffee Talk</h1>
         </div>
-      </CardHeader>
+        <p className="text-gray-600 mt-1">Let's connect—and realign—with what really matters</p>
+      </div>
       
-      <CardContent className="pt-6">
-        <div className="rounded-xl bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 p-6 relative overflow-hidden flex items-center justify-center">
-          <div className="text-center">
-            <Coffee className="h-16 w-16 mx-auto text-amber-600 mb-4" />
-            <h3 className="text-xl font-semibold text-amber-800 mb-3">Opening Coffee Talk...</h3>
-            <p className="text-gray-700">
-              Your wellbeing assessment will open automatically
-            </p>
-          </div>
-        </div>
-      </CardContent>
-      
-      <FullScreenDialog open={isOpen} onOpenChange={setIsOpen}>
-        <FullScreenDialogContent themeColor="#f59e0b">
-          <FullScreenDialogHeader className="mb-6">
-            <FullScreenDialogTitle className="flex items-center gap-2">
-              <Coffee className="h-6 w-6 text-amber-600" />
-              Coffee Talk
-            </FullScreenDialogTitle>
-            <FullScreenDialogDescription>
-              {!showResults && (
-                <div className="w-full">
-                  <div className="flex justify-between items-center mb-2 text-sm text-gray-500">
-                    <span>Question {currentQuestionIndex + 1} of {mentalHealthQuestions.length}</span>
-                    <span>{Math.round(progressPercentage)}% Complete</span>
-                  </div>
-                  <Progress value={progressPercentage} className="h-2" />
-                </div>
-              )}
-            </FullScreenDialogDescription>
-          </FullScreenDialogHeader>
-          
-          <FullScreenDialogBody className="pt-6">
-            <div className="max-w-4xl mx-auto w-full">
-              <Card className="border shadow-sm">
-                {renderContent()}
-                
-                <CardFooter className="flex pt-6">
-                  {renderNavButtons()}
-                </CardFooter>
-              </Card>
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="p-6 pb-0">
+          {!showResults && (
+            <div className="w-full mb-6">
+              <div className="flex justify-between items-center mb-2 text-sm text-gray-500">
+                <span>Question {currentQuestionIndex + 1} of {mentalHealthQuestions.length}</span>
+                <span>{Math.round(progressPercentage)}% Complete</span>
+              </div>
+              <Progress value={progressPercentage} className="h-2" />
             </div>
-          </FullScreenDialogBody>
-          
-          <FullScreenDialogFooter>
-            <Button 
-              variant="ghost"
-              onClick={() => setIsOpen(false)}
-              className="mx-auto"
-            >
-              Close
-            </Button>
-          </FullScreenDialogFooter>
-        </FullScreenDialogContent>
-      </FullScreenDialog>
-    </Card>
+          )}
+        </div>
+        
+        <div className="p-6">
+          <Card className="border-0 shadow-none">
+            {renderContent()}
+            
+            <CardFooter className="flex pt-6 px-0">
+              {renderNavButtons()}
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }
