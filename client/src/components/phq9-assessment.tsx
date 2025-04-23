@@ -116,7 +116,7 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
 
   // PHQ-9 Frequency options - more conversational with proper spacing
   const phq9FrequencyOptions = [
-    { value: 0, label: "Rarely or never", description: "I haven't noticed this" },
+    { value: 0, label: "Rarely or never", description: "I haven't experienced this" },
     { value: 1, label: "Sometimes", description: "A few days" },
     { value: 2, label: "Often", description: "More than half the time" },
     { value: 3, label: "Almost always", description: "Nearly every day" }
@@ -898,9 +898,9 @@ export default function PHQ9Assessment({ onComplete }: PHQ9AssessmentProps = {})
                       value={option.value.toString()} 
                       id={`q${currentQuestionIndex}-${option.value}`} 
                       className={`mt-1 border-2 ${
-                        isSelected && activeTab === "phq9" ? "border-amber-600 text-amber-600" :
-                        isSelected && activeTab === "gad7" ? "border-blue-600 text-blue-600" :
-                        isSelected && activeTab === "who5" ? "border-green-600 text-green-600" :
+                        isSelected && activeTab === "phq9" ? "border-amber-600 text-amber-600 ring-2 ring-amber-300" :
+                        isSelected && activeTab === "gad7" ? "border-blue-600 text-blue-600 ring-2 ring-blue-300" :
+                        isSelected && activeTab === "who5" ? "border-green-600 text-green-600 ring-2 ring-green-300" :
                         "border-gray-300"
                       }`}
                     />
