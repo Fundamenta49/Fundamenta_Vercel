@@ -295,12 +295,7 @@ export default function CoffeeTalkAssessment() {
       }
     });
     
-    // Move to next question or show results if last question
-    if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      submitAssessment();
-    }
+    // Don't automatically progress - user must click "Next" button
   };
   
   // Handle skipping a question
