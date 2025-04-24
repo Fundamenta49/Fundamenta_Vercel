@@ -958,7 +958,7 @@ export default function WellnessJournal() {
         <FullScreenDialogContent themeColor="#7c3aed">
           <FullScreenDialogHeader className="px-4 sm:px-6 pt-6">
             <FullScreenDialogTitle className="flex items-center gap-2 text-slate-800 font-serif">
-              <Book className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+              <Book className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
               <span className="text-base sm:text-xl">Create New Journal Entry</span>
             </FullScreenDialogTitle>
             <FullScreenDialogDescription className="text-slate-500 text-xs sm:text-sm mt-1">
@@ -971,14 +971,14 @@ export default function WellnessJournal() {
               <TabsList className="h-12 sm:h-14 w-full justify-start gap-2 sm:gap-4">
                 <TabsTrigger 
                   value="write" 
-                  className="text-sm sm:text-base data-[state=active]:text-blue-600 data-[state=active]:border-blue-600 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
+                  className="text-sm sm:text-base data-[state=active]:text-purple-600 data-[state=active]:border-purple-600 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
                 >
                   Write
                 </TabsTrigger>
                 {showInsights && (
                   <TabsTrigger 
                     value="insights" 
-                    className="text-sm sm:text-base data-[state=active]:text-blue-600 data-[state=active]:border-blue-600 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
+                    className="text-sm sm:text-base data-[state=active]:text-purple-600 data-[state=active]:border-purple-600 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
                   >
                     AI Insights
                   </TabsTrigger>
@@ -1009,13 +1009,13 @@ export default function WellnessJournal() {
                     </SelectContent>
                   </Select>
 
-                  <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">
-                    <p className="text-sm font-medium mb-2 text-blue-800">Today's Prompt:</p>
-                    <p className="text-blue-700">{currentPrompt}</p>
+                  <div className="bg-purple-50 border border-purple-100 p-4 rounded-lg">
+                    <p className="text-sm font-medium mb-2 text-purple-800">Today's Prompt:</p>
+                    <p className="text-purple-700">{currentPrompt}</p>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="mt-2 border-blue-200 text-blue-700 hover:bg-blue-100 rounded-full"
+                      className="mt-2 border-purple-200 text-purple-700 hover:bg-purple-100 rounded-full"
                       onClick={() => setCurrentPrompt(getRandomPrompt(selectedCategory))}
                     >
                       Try Another Prompt
@@ -1057,11 +1057,11 @@ export default function WellnessJournal() {
                   
                   {/* Detected mood indicator */}
                   {detectedMood && (
-                    <div className="flex items-center gap-2 mb-2 bg-blue-50 p-2 rounded-md text-sm">
-                      <Brain className="h-4 w-4 text-blue-500" />
-                      <span className="text-blue-700">
+                    <div className="flex items-center gap-2 mb-2 bg-purple-50 p-2 rounded-md text-sm">
+                      <Brain className="h-4 w-4 text-purple-500" />
+                      <span className="text-purple-700">
                         AI detected: {detectedMood.emoji} {detectedMood.label} 
-                        <span className="text-blue-500 ml-1">
+                        <span className="text-purple-500 ml-1">
                           ({Math.round(detectedMood.confidence * 100)}% confidence)
                         </span>
                       </span>
