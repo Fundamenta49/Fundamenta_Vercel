@@ -714,24 +714,24 @@ export default function WellnessJournal() {
   };
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto px-2 sm:px-0 wellness-journal">
-      <FullScreenDialogHeader className="mb-4 md:mb-6">
+    <div className="w-full max-w-screen-xl mx-auto px-2 sm:px-0 wellness-journal bg-gradient-to-b from-white to-slate-50">
+      <FullScreenDialogHeader className="mb-6 md:mb-8 pt-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
-            <Book className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+          <FullScreenDialogTitle className="flex items-center gap-2 text-slate-800 font-serif">
+            <Book className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
             Wellness Journal
           </FullScreenDialogTitle>
           <div className="flex gap-2 mt-1 sm:mt-0">
             <Button 
               onClick={openNewEntry} 
-              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg px-3 py-1 h-9 text-sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm transition-all hover:shadow px-4 py-2 h-10 rounded-full text-sm"
             >
-              <Plus className="h-4 w-4 mr-1.5" />
+              <Plus className="h-4 w-4 mr-2" />
               New Entry
             </Button>
           </div>
         </div>
-        <FullScreenDialogDescription className="text-purple-600/80 text-sm">
+        <FullScreenDialogDescription className="text-slate-500 text-sm mt-1">
           Track your thoughts, feelings, and personal growth journey
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
@@ -740,19 +740,19 @@ export default function WellnessJournal() {
         {/* Journal entries view with filters and controls */}
         <div className="mb-6 space-y-4 pt-6">
           <div className="flex flex-col sm:flex-row justify-between gap-4">
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap">
               <div className="relative w-full sm:w-auto">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   placeholder="Search journal entries..."
-                  className="pl-9 w-full sm:w-64"
+                  className="pl-9 w-full sm:w-64 border-slate-200 rounded-full bg-white focus:ring-blue-500 focus:border-blue-500"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               
               <Select value={timeframe} onValueChange={(value) => setTimeframe(value as '7days' | '30days' | 'all')}>
-                <SelectTrigger className="w-full sm:w-36 z-20">
+                <SelectTrigger className="w-full sm:w-40 z-20 border-slate-200 rounded-full focus:ring-blue-500 focus:border-blue-500">
                   <SelectValue placeholder="Timeframe" />
                 </SelectTrigger>
                 <SelectContent>
@@ -762,39 +762,42 @@ export default function WellnessJournal() {
                 </SelectContent>
               </Select>
               
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="outline" size="icon" onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}>
-                      {sortOrder === 'newest' ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{sortOrder === 'newest' ? 'Newest first' : 'Oldest first'}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="outline" size="icon" onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}>
-                      {viewMode === 'grid' ? <PanelLeftOpen className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{viewMode === 'grid' ? 'Grid view' : 'List view'}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="flex items-center bg-white border border-slate-200 rounded-full p-0.5">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="rounded-full h-8 w-8" onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}>
+                        {sortOrder === 'newest' ? <ChevronDown className="h-4 w-4 text-blue-600" /> : <ChevronUp className="h-4 w-4 text-blue-600" />}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{sortOrder === 'newest' ? 'Newest first' : 'Oldest first'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="rounded-full h-8 w-8" onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}>
+                        {viewMode === 'grid' ? <PanelLeftOpen className="h-4 w-4 text-blue-600" /> : <PanelRightOpen className="h-4 w-4 text-blue-600" />}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{viewMode === 'grid' ? 'Grid view' : 'List view'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
             
             <div className="flex items-center gap-2">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" size="icon" onClick={exportJournal}>
-                      <Download className="h-4 w-4" />
+                    <Button variant="outline" size="sm" className="rounded-full border-blue-200 text-blue-600 hover:bg-blue-50" onClick={exportJournal}>
+                      <Download className="h-4 w-4 mr-1" />
+                      Export
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -806,7 +809,7 @@ export default function WellnessJournal() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" size="icon" className="text-red-500" onClick={clearJournal}>
+                    <Button variant="outline" size="icon" className="rounded-full text-red-500 border-red-200 hover:bg-red-50" onClick={clearJournal}>
                       <Eraser className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -821,21 +824,27 @@ export default function WellnessJournal() {
           {/* Tag filters */}
           {entries.length > 0 && (
             <ScrollArea className="whitespace-nowrap pb-2 max-w-full">
-              <div className="flex gap-2">
+              <div className="flex gap-2 py-1">
                 <Button
                   variant={!filterTag ? "default" : "outline"}
                   size="sm"
-                  className={!filterTag ? "bg-purple-600 hover:bg-purple-700" : ""}
+                  className={cn(
+                    "rounded-full text-xs px-4 font-medium", 
+                    !filterTag ? "bg-blue-600 hover:bg-blue-700 text-white" : "border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-200"
+                  )}
                   onClick={() => setFilterTag(null)}
                 >
-                  All
+                  All Topics
                 </Button>
                 {getTagCounts().map(({text}) => (
                   <Button
                     key={text}
                     variant={filterTag === text ? "default" : "outline"}
                     size="sm"
-                    className={filterTag === text ? "bg-purple-600 hover:bg-purple-700" : ""}
+                    className={cn(
+                      "rounded-full text-xs px-4 font-medium", 
+                      filterTag === text ? "bg-blue-600 hover:bg-blue-700 text-white" : "border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-200"
+                    )}
                     onClick={() => setFilterTag(text)}
                   >
                     #{text}
@@ -847,18 +856,18 @@ export default function WellnessJournal() {
           
           {/* Mood trend chart */}
           {moodTrends && moodTrends.moodData && moodTrends.moodData.length > 1 && (
-            <Card className="shadow-sm border-purple-100 overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-purple-600"></div>
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden bg-white">
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-400 to-blue-600"></div>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base text-purple-700">Mood Trends</CardTitle>
+                  <CardTitle className="text-base font-medium text-slate-800">Mood Insights</CardTitle>
                   <ToggleGroup type="single" value={timeframe} onValueChange={(value) => value && setTimeframe(value as '7days' | '30days' | 'all')}>
-                    <ToggleGroupItem value="7days" size="sm" className="data-[state=on]:bg-purple-600 data-[state=on]:text-white">7 Days</ToggleGroupItem>
-                    <ToggleGroupItem value="30days" size="sm" className="data-[state=on]:bg-purple-600 data-[state=on]:text-white">30 Days</ToggleGroupItem>
-                    <ToggleGroupItem value="all" size="sm" className="data-[state=on]:bg-purple-600 data-[state=on]:text-white">All</ToggleGroupItem>
+                    <ToggleGroupItem value="7days" size="sm" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white rounded-full">7 Days</ToggleGroupItem>
+                    <ToggleGroupItem value="30days" size="sm" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white rounded-full">30 Days</ToggleGroupItem>
+                    <ToggleGroupItem value="all" size="sm" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white rounded-full">All</ToggleGroupItem>
                   </ToggleGroup>
                 </div>
-                <CardDescription className="text-purple-600/80">
+                <CardDescription className="text-slate-500">
                   {moodTrends.insightSummary}
                 </CardDescription>
               </CardHeader>
@@ -872,24 +881,27 @@ export default function WellnessJournal() {
 
           {/* Entry list */}
           {entries.length > 0 ? (
-            <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6" : "space-y-3 sm:space-y-4"}>
+            <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6" : "space-y-4 sm:space-y-5"}>
               {timeframeEntries.map((entry) => (
                 <Card 
                   key={entry.id} 
                   className={cn(
-                    "cursor-pointer hover:shadow-md transition-all duration-300 border border-purple-100 hover:border-purple-300 bg-white/50 backdrop-blur-sm",
+                    "cursor-pointer hover:shadow-lg transition-all duration-300 border border-slate-200 hover:border-blue-200 bg-white rounded-xl overflow-hidden",
                     viewMode === 'list' ? "flex flex-col sm:flex-row" : ""
                   )}
                   onClick={() => openEntryView(entry.id)}
                 >
-                  <CardHeader className={cn("pb-2 px-3 sm:px-4", viewMode === 'list' ? "sm:w-1/3" : "")}>
+                  {entry.mood && (
+                    <div className="w-full h-1.5 bg-gradient-to-r from-blue-400 to-blue-600" />
+                  )}
+                  <CardHeader className={cn("pb-1 px-4 sm:px-5 pt-4", viewMode === 'list' ? "sm:w-1/3" : "")}>
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-sm sm:text-base truncate mr-2">{entry.title}</CardTitle>
+                      <CardTitle className="text-sm sm:text-base font-medium text-slate-800 truncate mr-2">{entry.title}</CardTitle>
                       {entry.isPrivate && (
-                        <Lock className="h-4 w-4 text-purple-500 ml-1 flex-shrink-0" />
+                        <Lock className="h-4 w-4 text-blue-500 ml-1 flex-shrink-0" />
                       )}
                     </div>
-                    <CardDescription className="text-xs flex items-center gap-1.5 flex-wrap">
+                    <CardDescription className="text-xs flex items-center gap-1.5 flex-wrap text-slate-500 mt-1">
                       <CalendarIcon className="h-3 w-3" />
                       <span className="truncate">{format(new Date(entry.timestamp), "MMM d, yyyy")}</span>
                       {entry.mood && (
@@ -900,19 +912,19 @@ export default function WellnessJournal() {
                       )}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className={cn("pt-0 px-3 sm:px-4", viewMode === 'list' ? "sm:w-2/3" : "")}>
-                    <p className="text-xs sm:text-sm line-clamp-3 text-muted-foreground mb-2">
+                  <CardContent className={cn("pt-0 px-4 sm:px-5 pb-4", viewMode === 'list' ? "sm:w-2/3" : "")}>
+                    <p className="text-xs sm:text-sm line-clamp-3 text-slate-600 mb-2">
                       {entry.content}
                     </p>
                     {entry.tags && entry.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
+                      <div className="flex flex-wrap gap-1 mt-3">
                         {entry.tags.slice(0, viewMode === 'list' ? 3 : 2).map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0">
+                          <Badge key={tag} variant="outline" className="text-[10px] sm:text-xs px-2 py-0.5 bg-blue-50 text-blue-600 border-blue-100 rounded-full">
                             #{tag}
                           </Badge>
                         ))}
                         {entry.tags.length > (viewMode === 'list' ? 3 : 2) && (
-                          <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0">
+                          <Badge variant="outline" className="text-[10px] sm:text-xs px-2 py-0.5 bg-slate-50 text-slate-600 border-slate-100 rounded-full">
                             +{entry.tags.length - (viewMode === 'list' ? 3 : 2)}
                           </Badge>
                         )}
@@ -923,16 +935,18 @@ export default function WellnessJournal() {
               ))}
             </div>
           ) : (
-            <div className="col-span-full flex flex-col items-center py-8 sm:py-16 text-center text-muted-foreground px-3">
-              <Book className="h-12 w-12 sm:h-16 sm:w-16 mb-4 sm:mb-6 opacity-20" />
-              <p className="text-base sm:text-lg mb-2">Your journal is empty</p>
-              <p className="text-xs sm:text-sm mb-4 sm:mb-6 max-w-md">Start writing to track your wellness journey and gain insights into your emotional patterns</p>
+            <div className="col-span-full flex flex-col items-center py-12 sm:py-20 text-center px-4">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-blue-50 flex items-center justify-center mb-6 sm:mb-8">
+                <Book className="h-12 w-12 sm:h-16 sm:w-16 text-blue-300" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-serif text-slate-800 mb-3">Your Journal Awaits</h3>
+              <p className="text-sm sm:text-base text-slate-500 mb-6 sm:mb-8 max-w-md">Start capturing your thoughts, tracking your mood patterns, and unlocking personal insights through regular journaling</p>
               <Button 
                 onClick={openNewEntry} 
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg text-sm h-9"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm transition-all hover:shadow px-5 py-2 h-11 rounded-full text-sm"
               >
-                <Plus className="h-4 w-4 mr-1.5" />
-                Create Your First Entry
+                <Plus className="h-4 w-4 mr-2" />
+                Write Your First Entry
               </Button>
             </div>
           )}
@@ -941,30 +955,30 @@ export default function WellnessJournal() {
 
       {/* New Entry Dialog */}
       <FullScreenDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
-          <FullScreenDialogHeader className="px-3 sm:px-4">
-            <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
-              <Book className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
-              <span className="text-base sm:text-lg">Create New Journal Entry</span>
+        <FullScreenDialogContent themeColor="#2563eb">
+          <FullScreenDialogHeader className="px-4 sm:px-6 pt-6">
+            <FullScreenDialogTitle className="flex items-center gap-2 text-slate-800 font-serif">
+              <Book className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+              <span className="text-base sm:text-xl">Create New Journal Entry</span>
             </FullScreenDialogTitle>
-            <FullScreenDialogDescription className="text-purple-600/80 text-xs sm:text-sm">
-              Write freely and reflect on your thoughts and feelings
+            <FullScreenDialogDescription className="text-slate-500 text-xs sm:text-sm mt-1">
+              Capture your thoughts, reflections, and personal insights
             </FullScreenDialogDescription>
           </FullScreenDialogHeader>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="px-3 sm:px-6 border-b">
+            <div className="px-4 sm:px-6 border-b">
               <TabsList className="h-12 sm:h-14 w-full justify-start gap-2 sm:gap-4">
                 <TabsTrigger 
                   value="write" 
-                  className="text-sm sm:text-base data-[state=active]:text-purple-700 data-[state=active]:border-purple-700 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
+                  className="text-sm sm:text-base data-[state=active]:text-blue-600 data-[state=active]:border-blue-600 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
                 >
                   Write
                 </TabsTrigger>
                 {showInsights && (
                   <TabsTrigger 
                     value="insights" 
-                    className="text-sm sm:text-base data-[state=active]:text-purple-700 data-[state=active]:border-purple-700 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
+                    className="text-sm sm:text-base data-[state=active]:text-blue-600 data-[state=active]:border-blue-600 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
                   >
                     AI Insights
                   </TabsTrigger>
@@ -995,13 +1009,13 @@ export default function WellnessJournal() {
                     </SelectContent>
                   </Select>
 
-                  <div className="bg-purple-50 border border-purple-100 p-4 rounded-lg">
-                    <p className="text-sm font-medium mb-2 text-purple-800">Today's Prompt:</p>
-                    <p className="text-purple-700">{currentPrompt}</p>
+                  <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">
+                    <p className="text-sm font-medium mb-2 text-blue-800">Today's Prompt:</p>
+                    <p className="text-blue-700">{currentPrompt}</p>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="mt-2 border-purple-200 text-purple-700 hover:bg-purple-100"
+                      className="mt-2 border-blue-200 text-blue-700 hover:bg-blue-100 rounded-full"
                       onClick={() => setCurrentPrompt(getRandomPrompt(selectedCategory))}
                     >
                       Try Another Prompt
@@ -1063,7 +1077,12 @@ export default function WellnessJournal() {
                         onClick={() =>
                           setCurrentEntry((prev) => ({ ...prev, mood: mood.label }))
                         }
-                        className={currentEntry.mood === mood.label ? "bg-purple-600 hover:bg-purple-700" : ""}
+                        className={cn(
+                          "rounded-full", 
+                          currentEntry.mood === mood.label 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "border-slate-200 hover:border-blue-200 hover:text-blue-600"
+                        )}
                       >
                         <span className="mr-1">{mood.emoji}</span>
                         {mood.label}
@@ -1121,7 +1140,12 @@ export default function WellnessJournal() {
                         variant={selectedTags.includes(tag) ? "default" : "outline"}
                         size="sm"
                         onClick={() => handleTagSelect(tag)}
-                        className={selectedTags.includes(tag) ? "bg-purple-600 hover:bg-purple-700" : ""}
+                        className={cn(
+                          "rounded-full", 
+                          selectedTags.includes(tag) 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "border-slate-200 hover:border-blue-200 hover:text-blue-600"
+                        )}
                       >
                         #{tag}
                       </Button>
