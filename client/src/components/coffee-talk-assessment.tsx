@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -265,22 +265,76 @@ export default function CoffeeTalkAssessment() {
 
   // Calculate progress percentage
   const progressPercentage = ((currentQuestionIndex + 1) / mentalHealthQuestions.length) * 100;
+  
+  // Add effect to scroll to top when question changes
+  useEffect(() => {
+    // Small delay to ensure DOM is updated
+    const timer = setTimeout(() => {
+      scrollToTop();
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, [currentQuestionIndex]);
 
   // Utility function to scroll to top of page with smooth animation
   const scrollToTop = () => {
     console.log("Scrolling to top of page");
-    // Try multiple scroll methods for maximum compatibility
-    window.scrollTo(0, 0); // Immediate scroll
-
-    // Smooth scroll as backup
+    
+    // First try to find any scrollable containers in the Coffee Talk UI
+    const scrollContainers = [
+      '.coffee-talk-container', // Target by class 
+      '.bg-white.rounded-xl', // The main container 
+      '.card-content', // Card content area
+      '.p-6' // The padding container
+    ];
+    
+    let scrolled = false;
+    
+    // Try each potential container
+    for (const selector of scrollContainers) {
+      const element = document.querySelector(selector);
+      if (element) {
+        console.log(`Found scrollable element: ${selector}`);
+        // Set scrollTop directly
+        element.scrollTop = 0;
+        
+        // Also try scrollTo with smooth behavior if supported
+        try {
+          element.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        } catch (e) {
+          console.log(`Smooth scroll not supported on ${selector}`);
+        }
+        
+        scrolled = true;
+      }
+    }
+    
+    // Always apply window methods as fallback
+    window.scrollTo(0, 0);
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
-
-    // Force the window to be at the top (backup method)
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
+    
+    // Force the window to be at the top (backup methods)
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    
+    // Try once more with a small delay to ensure DOM has updated
+    setTimeout(() => {
+      for (const selector of scrollContainers) {
+        const element = document.querySelector(selector);
+        if (element) {
+          element.scrollTop = 0;
+        }
+      }
+      
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }, 50);
   };
 
   // Reset assessment
@@ -319,11 +373,8 @@ export default function CoffeeTalkAssessment() {
   const handleSkipQuestion = () => {
     console.log("Next button clicked, current index:", currentQuestionIndex);
     if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
-      // First scroll to top smoothly
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      // Use the comprehensive scrollToTop function instead of just window.scrollTo
+      scrollToTop();
 
       // Then update the question index after a small delay
       setTimeout(() => {
@@ -331,7 +382,7 @@ export default function CoffeeTalkAssessment() {
           console.log("Updating index from", prev, "to", prev + 1);
           return prev + 1;
         });
-      }, 300); // Delay to allow smooth scroll to complete
+      }, 100); // Reduced delay since scrollToTop is more comprehensive
     } else {
       submitAssessment();
     }
@@ -912,11 +963,14 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             onClick={() => {
               // Direct implementation instead of handler function
               console.log("NEXT DIRECT BUTTON CLICKED");
+              
+              // Ensure proper scrolling behavior
               scrollToTop();
 
               if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
+                // Using a delay to let the scroll complete first
                 setTimeout(() => {
-                  setCurrentQuestionIndex(currentQuestionIndex + 1);
+                  setCurrentQuestionIndex(prev => prev + 1);
                 }, 100);
               } else {
                 submitAssessment();
@@ -951,7 +1005,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
 
   // Main JSX
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto" id="coffee-talk-assessment">
       <div className="mb-6">
         <div className="flex items-center gap-2">
           <Coffee className="h-7 w-7 text-amber-600" />
@@ -960,7 +1014,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         <p className="text-gray-600 mt-1">Let's connect—and realign—with what really matters</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden coffee-talk-container" id="coffee-talk-scroll-container">
         <div className="p-6 pb-0">
           {!showResults && (
             <div className="w-full mb-6">
@@ -973,7 +1027,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           )}
         </div>
 
-        <div className="p-6">
+        <div className="p-6" id="coffee-talk-content">
           <Card className="border-0 shadow-none">
             {renderContent()}
 
