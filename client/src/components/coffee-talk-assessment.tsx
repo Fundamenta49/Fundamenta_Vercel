@@ -804,23 +804,15 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           Previous
         </Button>
         
-        <div className="flex gap-2 order-1 sm:order-2 w-full sm:w-auto justify-end">
-          <Button 
-            variant="ghost" 
-            onClick={handleSkipQuestion}
-            className="w-full sm:w-auto"
-          >
-            Skip
-          </Button>
-          <Button 
-            variant="default"
-            onClick={submitAssessment}
-            disabled={isPending}
-            className={`${currentQuestionIndex === mentalHealthQuestions.length - 1 ? "" : "hidden"} w-full sm:w-auto`}
-          >
-            {isPending ? "Processing..." : "Complete Assessment"}
-          </Button>
-        </div>
+        <Button 
+          variant="default"
+          onClick={currentQuestionIndex === mentalHealthQuestions.length - 1 ? submitAssessment : handleSkipQuestion}
+          disabled={isPending}
+          className="order-1 sm:order-2 w-full sm:w-auto"
+        >
+          {isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}
+          {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="ml-2 h-4 w-4" />}
+        </Button>
       </div>
     );
   };
