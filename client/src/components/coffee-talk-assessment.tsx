@@ -324,8 +324,8 @@ export default function CoffeeTalkAssessment() {
         console.log("Updating index from", prev, "to", prev + 1);
         return prev + 1;
       });
-      // Scroll to the top of the page
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Use the comprehensive scrollToTop function
+      scrollToTop();
     } else {
       submitAssessment();
     }
@@ -340,8 +340,8 @@ export default function CoffeeTalkAssessment() {
         console.log("Updating index from", prev, "to", prev - 1);
         return prev - 1;
       });
-      // Scroll to the top of the page
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Use the comprehensive scrollToTop function
+      scrollToTop();
     }
   };
   
