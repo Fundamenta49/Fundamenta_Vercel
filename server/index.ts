@@ -6,6 +6,7 @@ import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { runMigrations } from "./db/index";
 import { initializeFundiCore } from "./fundi-core/fundi-integration";
+import { performDatabaseMaintenance } from "./maintenance";
 
 const startTime = Date.now();
 log("Starting server...");
