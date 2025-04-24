@@ -199,6 +199,31 @@ export default function CoffeeTalkAssessment() {
   // Calculate progress percentage
   const progressPercentage = ((currentQuestionIndex + 1) / coffeeTalkQuestions.length) * 100;
   
+  // Utility function to scroll to top of page with smooth animation
+  const scrollToTop = () => {
+    console.log("Scrolling to top of page");
+    
+    // Try multiple scroll methods for maximum compatibility
+    // 1. Standard method
+    window.scrollTo(0, 0);
+    
+    // 2. Smooth scroll
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+    
+    // 3. Fallback methods
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    
+    // 4. If within a dialog or container, try to scroll that too
+    const dialogBody = document.querySelector('.full-screen-dialog-body');
+    if (dialogBody) {
+      dialogBody.scrollTop = 0;
+    }
+  };
+  
   // Reset assessment
   const resetAssessment = () => {
     setCurrentQuestionIndex(0);
@@ -230,7 +255,13 @@ export default function CoffeeTalkAssessment() {
     
     // Move to next question or show results if last question
     if (currentQuestionIndex < coffeeTalkQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      // First scroll to top
+      scrollToTop();
+      
+      // Then update the question index with a slight delay to let scroll complete
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev + 1);
+      }, 300);
     } else {
       submitAssessment();
     }
@@ -239,7 +270,13 @@ export default function CoffeeTalkAssessment() {
   // Handle skipping a question
   const handleSkipQuestion = () => {
     if (currentQuestionIndex < coffeeTalkQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      // First scroll to top
+      scrollToTop();
+      
+      // Then update the question index with a slight delay to let scroll complete
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev + 1);
+      }, 300);
     } else {
       submitAssessment();
     }
@@ -248,7 +285,13 @@ export default function CoffeeTalkAssessment() {
   // Handle going back to a previous question
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      // First scroll to top
+      scrollToTop();
+      
+      // Then update the question index with a slight delay to let scroll complete
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev - 1);
+      }, 300);
     }
   };
   
