@@ -1578,7 +1578,7 @@ export default function WellnessJournal() {
                 <Button
                   variant="outline"
                   onClick={() => setIsViewDialogOpen(false)}
-                  className="border-purple-200 text-purple-700 hover:bg-purple-50 hover:text-purple-800 transition-all"
+                  className="rounded-full border-slate-200 text-slate-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Journal
