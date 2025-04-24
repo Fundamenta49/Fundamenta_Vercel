@@ -266,6 +266,15 @@ export default function CoffeeTalkAssessment() {
   // Calculate progress percentage
   const progressPercentage = ((currentQuestionIndex + 1) / mentalHealthQuestions.length) * 100;
   
+  // Utility function to scroll to top of page with smooth animation
+  const scrollToTop = () => {
+    console.log("Scrolling to top of page");
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+  
   // Reset assessment
   const resetAssessment = () => {
     setCurrentQuestionIndex(0);
@@ -828,11 +837,16 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
     const handleNextClick = () => {
       console.log("Next button clicked, current index:", currentQuestionIndex);
       if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
-        setCurrentQuestionIndex(prev => {
-          console.log("Updating index from", prev, "to", prev + 1);
-          return prev + 1;
-        });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // First scroll to top immediately
+        scrollToTop();
+        
+        // Then update the question index
+        setTimeout(() => {
+          setCurrentQuestionIndex(prev => {
+            console.log("Updating index from", prev, "to", prev + 1);
+            return prev + 1;
+          });
+        }, 100); // Small delay to ensure smooth scroll starts before state change
       } else {
         submitAssessment();
       }
@@ -841,11 +855,16 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
     const handlePrevClick = () => {
       console.log("Previous button clicked, current index:", currentQuestionIndex);
       if (currentQuestionIndex > 0) {
-        setCurrentQuestionIndex(prev => {
-          console.log("Updating index from", prev, "to", prev - 1);
-          return prev - 1;
-        });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // First scroll to top immediately
+        scrollToTop();
+        
+        // Then update the question index
+        setTimeout(() => {
+          setCurrentQuestionIndex(prev => {
+            console.log("Updating index from", prev, "to", prev - 1);
+            return prev - 1;
+          });
+        }, 100); // Small delay to ensure smooth scroll starts before state change
       }
     };
     
