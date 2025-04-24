@@ -319,13 +319,19 @@ export default function CoffeeTalkAssessment() {
   const handleSkipQuestion = () => {
     console.log("Next button clicked, current index:", currentQuestionIndex);
     if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
-      // Flash effect will be triggered by active state in CSS
-      setCurrentQuestionIndex(prev => {
-        console.log("Updating index from", prev, "to", prev + 1);
-        return prev + 1;
+      // First scroll to top smoothly
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
       });
-      // Use the comprehensive scrollToTop function
-      scrollToTop();
+
+      // Then update the question index after a small delay
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => {
+          console.log("Updating index from", prev, "to", prev + 1);
+          return prev + 1;
+        });
+      }, 300); // Delay to allow smooth scroll to complete
     } else {
       submitAssessment();
     }
