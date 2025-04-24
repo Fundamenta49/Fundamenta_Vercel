@@ -203,25 +203,69 @@ export default function CoffeeTalkAssessment() {
   const scrollToTop = () => {
     console.log("Scrolling to top of page");
     
-    // Try multiple scroll methods for maximum compatibility
-    // 1. Standard method
-    window.scrollTo(0, 0);
+    // Log when the next/previous button is clicked
+    console.log("NEXT/PREV BUTTON CLICKED");
     
-    // 2. Smooth scroll
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    // Try multiple selectors to find the dialog body
+    const dialogBodySelectors = [
+      // Try our specific coffee talk dialog elements first
+      '#coffee-talk-scroll-container',
+      '#coffee-talk-dialog #fullscreen-dialog-body',
+      '#coffee-talk-dialog .full-screen-dialog-body',
+      '#coffee-talk-dialog .h-\\[calc\\(100vh-48px\\)]',
+      // Then try generic selectors
+      '#fullscreen-dialog-body',
+      '.full-screen-dialog-body',
+      '.mobile-dialog-body',
+      '#fullscreen-dialog-content-mobile .h-\\[calc\\(100vh-48px\\)]', // Mobile dialog content
+      '#fullscreen-dialog-content-desktop'  // Desktop dialog content
+    ];
     
-    // 3. Fallback methods
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    let scrolled = false;
     
-    // 4. If within a dialog or container, try to scroll that too
-    const dialogBody = document.querySelector('.full-screen-dialog-body');
-    if (dialogBody) {
-      dialogBody.scrollTop = 0;
+    // Try each selector
+    for (const selector of dialogBodySelectors) {
+      const element = document.querySelector(selector);
+      if (element) {
+        console.log(`Found scrollable element: ${selector}`);
+        element.scrollTop = 0;
+        
+        try {
+          element.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        } catch (e) {
+          console.log(`Smooth scroll not supported on ${selector}`);
+        }
+        
+        scrolled = true;
+      }
     }
+    
+    // Try scrolling the card directly
+    const cardContent = document.querySelector('.card-content');
+    if (cardContent) {
+      console.log("Found card content, scrolling to top");
+      cardContent.scrollTop = 0;
+    }
+    
+    // If no specific element was found, fallback to standard methods
+    if (!scrolled) {
+      console.log("No specific element found, using fallback scroll methods");
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0; // For Safari
+      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+    
+    // Try one more specific approach targeting the mobile dialog scrollable area
+    setTimeout(() => {
+      const mobileScrollArea = document.querySelector('#fullscreen-dialog-content-mobile div.h-\\[calc\\(100vh-48px\\)]');
+      if (mobileScrollArea) {
+        console.log("Found mobile scroll area, scrolling with delay");
+        mobileScrollArea.scrollTop = 0;
+      }
+    }, 50);
   };
   
   // Reset assessment
@@ -380,7 +424,7 @@ export default function CoffeeTalkAssessment() {
             Let's have a friendly conversation about how you're feeling
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="card-content">
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-gray-500">
@@ -817,7 +861,7 @@ export default function CoffeeTalkAssessment() {
       </CardContent>
       
       <FullScreenDialog open={isOpen} onOpenChange={setIsOpen}>
-        <FullScreenDialogContent themeColor="#f59e0b">
+        <FullScreenDialogContent themeColor="#f59e0b" id="coffee-talk-dialog">
           <FullScreenDialogHeader className="mb-6">
             <FullScreenDialogTitle className="flex items-center gap-2">
               <Coffee className="h-6 w-6 text-amber-600" />
@@ -837,7 +881,7 @@ export default function CoffeeTalkAssessment() {
           </FullScreenDialogHeader>
           
           <FullScreenDialogBody className="pt-6">
-            <div className="max-w-4xl mx-auto w-full">
+            <div className="max-w-4xl mx-auto w-full" id="coffee-talk-scroll-container">
               <Card className="border shadow-sm">
                 {renderContent()}
                 

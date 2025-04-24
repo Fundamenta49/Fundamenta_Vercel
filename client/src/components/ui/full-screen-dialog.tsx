@@ -225,8 +225,8 @@ const FullScreenDialogBody = ({
   return (
     <div
       className={cn(
-        "px-6 py-4 w-full max-w-full box-border overflow-x-hidden",
-        "min-w-full flex-shrink-0 flex-grow",
+        "px-6 py-4 w-full max-w-full box-border overflow-x-hidden overflow-y-auto",
+        "min-w-full flex-shrink-0 flex-grow full-screen-dialog-body",
         isMobile ? "pb-24 mobile-dialog-body" : "", 
         className
       )}
