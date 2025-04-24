@@ -276,7 +276,7 @@ export default function CoffeeTalkAssessment() {
     return () => clearTimeout(timer);
   }, [currentQuestionIndex]);
 
-  // Professional smooth scrolling function
+  // Professional smooth scrolling function with gentle animations
   const scrollToTop = () => {
     console.log("Smooth scrolling to top");
     
@@ -601,13 +601,16 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               </RadioGroup>
             </div>
 
-            {/* Gentler support notice for question about thoughts of harming oneself */}
-            {mentalHealthQuestions[currentQuestionIndex].id === 13 && (
-              <Alert className="bg-amber-50 border-amber-100 mt-4">
+            {currentQuestionIndex === 13 && (
+              <Alert variant="warning" className="bg-amber-50 text-amber-800 border-amber-300 mb-4">
                 <Brain className="h-4 w-4 text-amber-600" />
                 <AlertTitle>A gentle reminder</AlertTitle>
                 <AlertDescription className="text-amber-800">
-                  Your mental health matters. If you're having difficult thoughts, remember that reaching out to someone you trust or a mental health professional can help.
+                  If you're struggling with thoughts of suicide, please reach out for help immediately. 
+                  The National Suicide Prevention Lifeline is available 24/7 at 
+                  <a href="tel:988" className="font-bold underline mx-1">988</a>
+                  or
+                  <a href="tel:1-800-273-8255" className="font-bold underline mx-1">1-800-273-8255</a>
                 </AlertDescription>
               </Alert>
             )}
@@ -619,221 +622,314 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
 
   // Render results
   const renderResults = () => {
-    if (!results) return null;
+    if (!results) {
+      return <div className="p-6">Loading your results...</div>;
+    }
 
     return (
       <>
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
-            <Heart className="h-5 w-5 text-red-500" />
-            Your Coffee Talk Results
+            <Coffee className="h-5 w-5 text-amber-600" />
+            Your Assessment Results
           </CardTitle>
           <CardDescription>
-            Thank you for taking the time to complete this wellness check-in
+            Here's a snapshot of your mental wellness based on your responses
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <Tabs 
-            defaultValue="overview" 
-            value={activeResultsTab} 
-            onValueChange={(value) => setActiveResultsTab(value as "overview" | "mental")}
-            className="w-full"
-          >
+          <Tabs value={activeResultsTab} onValueChange={(val) => setActiveResultsTab(val as any)}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="mental">Mental Wellness</TabsTrigger>
+              <TabsTrigger value="mental">Mental Health</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-6 pt-4">
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Mental Wellness Summary</h3>
-                <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
-                  <Card className="overflow-hidden">
-                    <CardHeader className="p-4 pb-2">
-                      <CardTitle className="text-sm font-medium">Well-being</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0">
-                      <div className="text-2xl font-bold">{results.mentalMetrics.wellbeingPercentage}%</div>
-                      <p className="text-xs text-muted-foreground">{results.mentalMetrics.wellbeingLevel}</p>
-                    </CardContent>
-                    <div className={`${getSeverityColor(results.mentalMetrics.wellbeingScore, false, true)} h-1 w-full`} />
-                  </Card>
-
-                  <Card className="overflow-hidden">
-                    <CardHeader className="p-4 pb-2">
-                      <CardTitle className="text-sm font-medium">Depression</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0">
-                      <div className="text-2xl font-bold">{results.mentalMetrics.depressionScore}/27</div>
-                      <p className="text-xs text-muted-foreground">{results.mentalMetrics.depressionLevel}</p>
-                    </CardContent>
-                    <div className={`${getSeverityColor(results.mentalMetrics.depressionScore, true)} h-1 w-full`} />
-                  </Card>
-
-                  <Card className="overflow-hidden">
-                    <CardHeader className="p-4 pb-2">
-                      <CardTitle className="text-sm font-medium">Anxiety</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0">
-                      <div className="text-2xl font-bold">{results.mentalMetrics.anxietyScore}/21</div>
-                      <p className="text-xs text-muted-foreground">{results.mentalMetrics.anxietyLevel}</p>
-                    </CardContent>
-                    <div className={`${getSeverityColor(results.mentalMetrics.anxietyScore, false)} h-1 w-full`} />
-                  </Card>
-                </div>
-              </div>
-
-              {results.mentalMetrics.suicidalIdeation && (
-                <Alert className="bg-amber-50 border-amber-100">
-                  <Brain className="h-4 w-4 text-amber-600" />
-                  <AlertTitle>Wellness suggestion</AlertTitle>
-                  <AlertDescription className="text-amber-800">
-                    Based on your responses, connecting with a supportive friend, family member, or mental health professional could be beneficial for your wellbeing. Taking care of your mental health is just as important as physical health.
+            <TabsContent value="overview" className="space-y-4">
+              <div className="space-y-4 mt-4">
+                <Alert className="bg-amber-50 border-amber-200">
+                  <AlertCircle className="h-4 w-4 text-amber-600" />
+                  <AlertTitle>About Your Results</AlertTitle>
+                  <AlertDescription>
+                    This assessment is not a diagnostic tool. The results are meant to provide
+                    general guidance about your mental wellbeing and should not replace professional
+                    medical advice.
                   </AlertDescription>
                 </Alert>
-              )}
 
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Recommendations</h3>
-                <div className="space-y-2">
-                  {results.recommendations.integratedWellness.map((recommendation: string, index: number) => (
-                    <div key={index} className="flex items-start gap-2 rounded-lg border p-3">
-                      <Check className="h-5 w-5 mt-0.5 text-green-500" />
-                      <p>{recommendation}</p>
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Wellbeing Score</h3>
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium">WHO-5 Wellbeing Index</span>
+                      <Badge className="bg-amber-600 text-white">
+                        {results.mentalMetrics.wellbeingScore}/25 ({results.mentalMetrics.wellbeingPercentage}%)
+                      </Badge>
                     </div>
-                  ))}
+                    <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                      <div className={`${getSeverityColor(results.mentalMetrics.wellbeingScore, false, true)} h-2`} style={{ width: `${results.mentalMetrics.wellbeingPercentage}%` }} />
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Your wellbeing level: <span className="font-medium">{results.mentalMetrics.wellbeingLevel}</span>
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-center justify-between pt-4">
-                <div className="flex items-center space-x-2">
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Depression Screening</h3>
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium">PHQ-9 Score</span>
+                      <Badge className="bg-amber-600 text-white">{results.mentalMetrics.depressionScore}/27</Badge>
+                    </div>
+                    <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                      <div className={`${getSeverityColor(results.mentalMetrics.depressionScore, true)} h-1 w-full`} />
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Depression severity: <span className="font-medium">{results.mentalMetrics.depressionLevel}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Anxiety Screening</h3>
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium">GAD-7 Score</span>
+                      <Badge className="bg-amber-600 text-white">{results.mentalMetrics.anxietyScore}/21</Badge>
+                    </div>
+                    <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                      <div className={`${getSeverityColor(results.mentalMetrics.anxietyScore, false)} h-1 w-full`} />
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Anxiety severity: <span className="font-medium">{results.mentalMetrics.anxietyLevel}</span>
+                    </p>
+                  </div>
+                </div>
+
+                {results.mentalMetrics.suicidalIdeation && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Important Notice</AlertTitle>
+                    <AlertDescription>
+                      Your responses indicate you may be experiencing thoughts of suicide or self-harm.
+                      Please speak with a mental health professional as soon as possible.
+                      The National Suicide Prevention Lifeline is available 24/7 at 988 or 1-800-273-8255.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="space-y-4 mt-6">
+                  <h3 className="text-lg font-medium">Wellness Recommendations</h3>
+                  <Accordion type="single" collapsible className="border rounded-md">
+                    <AccordionItem value="mental" className="border-b-0">
+                      <AccordionTrigger className="py-4 px-5 hover:bg-gray-50 group">
+                        <div className="flex items-center gap-2">
+                          <Brain className="h-5 w-5 text-amber-600" />
+                          <span>Mental Wellness</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-5 pb-4 pt-0">
+                        <ul className="space-y-2 list-disc pl-4">
+                          {results.recommendations.mentalWellness.map((rec: string, i: number) => (
+                            <li key={i} className="text-gray-600">{rec}</li>
+                          ))}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="integrated" className="border-b-0">
+                      <AccordionTrigger className="py-4 px-5 hover:bg-gray-50">
+                        <div className="flex items-center gap-2">
+                          <Heart className="h-5 w-5 text-amber-600" />
+                          <span>Integrated Wellness</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-5 pb-4 pt-0">
+                        <ul className="space-y-2 list-disc pl-4">
+                          {results.recommendations.integratedWellness.map((rec: string, i: number) => (
+                            <li key={i} className="text-gray-600">{rec}</li>
+                          ))}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+
+                <div className="flex items-center gap-2 mt-6">
                   <Checkbox 
-                    id="consent" 
-                    checked={consentToStore} 
-                    onCheckedChange={(checked) => setConsentToStore(checked === true)}
+                    id="storeConsent" 
+                    checked={consentToStore}
+                    onCheckedChange={(checked) => setConsentToStore(!!checked)}
                   />
-                  <label
-                    htmlFor="consent"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Save to my wellness journal
-                  </label>
+                  <Label htmlFor="storeConsent">
+                    I consent to save these results to my wellness journal
+                  </Label>
                 </div>
-
-                <Button 
-                  onClick={saveToJournal} 
-                  disabled={!consentToStore} 
-                  size="sm" 
-                  variant="outline"
-                  className="text-sm"
-                >
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Results
-                </Button>
-              </div>
-
-              <div className="pt-2 text-center text-sm text-gray-500">
-                This assessment is not a diagnostic tool. Please consult a healthcare professional for medical advice.
               </div>
             </TabsContent>
 
-            <TabsContent value="mental" className="space-y-6 pt-4">
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Mental Health Scores</h3>
-
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="wellbeing">
-                    <AccordionTrigger>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Wellbeing</Badge>
-                        <span className="font-medium">{results.mentalMetrics.wellbeingScore}/25 ({results.mentalMetrics.wellbeingPercentage}%)</span>
-                        <span className="text-sm text-gray-500">- {results.mentalMetrics.wellbeingLevel}</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4">
-                      <p className="mb-4">The WHO-5 Well-Being Index is a short questionnaire measuring subjective well-being and positive mood, vitality, and interest in daily activities.</p>
-                      <div className={`h-2 w-full mb-2 ${getSeverityColor(results.mentalMetrics.wellbeingScore, false, true)} rounded-full`} />
-                      <p className="text-sm">
-                        {wellbeingSeverity.find(s => 
-                          results.mentalMetrics.wellbeingPercentage >= s.range[0] && 
-                          results.mentalMetrics.wellbeingPercentage <= s.range[1]
-                        )?.description}
-                      </p>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="depression">
-                    <AccordionTrigger>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Depression</Badge>
-                        <span className="font-medium">{results.mentalMetrics.depressionScore}/27</span>
-                        <span className="text-sm text-gray-500">- {results.mentalMetrics.depressionLevel}</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4">
-                      <p className="mb-4">The PHQ-9 is a 9-question instrument used to screen for depression severity.</p>
-                      <div className={`h-2 w-full mb-2 ${getSeverityColor(results.mentalMetrics.depressionScore, true)} rounded-full`} />
-                      <p className="text-sm">
-                        {depressionSeverity.find(s => 
-                          results.mentalMetrics.depressionScore >= s.range[0] && 
-                          results.mentalMetrics.depressionScore <= s.range[1]
-                        )?.description}
-                      </p>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="anxiety">
-                    <AccordionTrigger>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Anxiety</Badge>
-                        <span className="font-medium">{results.mentalMetrics.anxietyScore}/21</span>
-                        <span className="text-sm text-gray-500">- {results.mentalMetrics.anxietyLevel}</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4">
-                      <p className="mb-4">The GAD-7 is a 7-question instrument used to screen for anxiety severity.</p>
-                      <div className={`h-2 w-full mb-2 ${getSeverityColor(results.mentalMetrics.anxietyScore, false)} rounded-full`} />
-                      <p className="text-sm">
-                        {anxietySeverity.find(s =>                          results.mentalMetrics.anxietyScore >= s.range[0] && 
-                          results.mentalMetrics.anxietyScore <= s.range[1]
-                        )?.description}
-                      </p>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Mental Wellness Recommendations</h3>
-                <div className="space-y-2">
-                  {results.recommendations.mentalWellness.map((recommendation: string, index: number) => (
-                    <div key={index} className="flex items-start gap-2 rounded-lg border p-3">
-                      <Check className="h-5 w-5 mt-0.5 text-green-500" />
-                      <p>{recommendation}</p>
+            <TabsContent value="mental" className="space-y-4">
+              <div className="space-y-8 mt-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                    Wellbeing Assessment (WHO-5)
+                    <Badge className={getSeverityColor(results.mentalMetrics.wellbeingScore, false, true)}>
+                      {results.mentalMetrics.wellbeingLevel}
+                    </Badge>
+                  </h3>
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <p className="text-sm text-gray-600 mb-2">
+                      The WHO-5 Well-Being Index is a measure of overall wellbeing and positive mental health.
+                    </p>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium">Raw Score</span>
+                      <span className="text-sm">{results.mentalMetrics.wellbeingScore}/25</span>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Percentage</span>
+                      <span className="text-sm">{results.mentalMetrics.wellbeingPercentage}%</span>
+                    </div>
 
-              <div className="rounded-lg border p-4 bg-gray-50">
-                <div className="flex items-center gap-2 mb-2">
-                  <FileText className="h-5 w-5 text-blue-500" />
-                  <h3 className="text-md font-medium">Resources</h3>
+                    <div className="mt-4">
+                      <div className="w-full bg-gray-200 h-4 rounded-full overflow-hidden">
+                        <div
+                          className={`${getSeverityColor(results.mentalMetrics.wellbeingScore, false, true)} h-4 transition-all duration-500 ease-in-out`}
+                          style={{ width: `${results.mentalMetrics.wellbeingPercentage}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between mt-1 text-xs text-gray-500">
+                        <span>0%</span>
+                        <span>25%</span>
+                        <span>50%</span>
+                        <span>75%</span>
+                        <span>100%</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-1">
-                    <ChevronRight className="h-4 w-4 text-gray-500" />
-                    <a href="#" className="text-blue-600 hover:underline">Understanding Mental Health</a>
-                  </li>
-                  <li className="flex items-center gap-1">
-                    <ChevronRight className="h-4 w-4 text-gray-500" />
-                    <a href="#" className="text-blue-600 hover:underline">Mindfulness and Meditation Techniques</a>
-                  </li>
-                  <li className="flex items-center gap-1">
-                    <ChevronRight className="h-4 w-4 text-gray-500" />
-                    <a href="#" className="text-blue-600 hover:underline">Finding Mental Health Support</a>
-                  </li>
-                </ul>
+
+                <div>
+                  <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                    Depression Screening (PHQ-9)
+                    <Badge className={getSeverityColor(results.mentalMetrics.depressionScore, true)}>
+                      {results.mentalMetrics.depressionLevel}
+                    </Badge>
+                  </h3>
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <p className="text-sm text-gray-600 mb-2">
+                      The PHQ-9 is a depression screening tool that helps assess the severity of depressive symptoms.
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Total Score</span>
+                      <span className="text-sm">{results.mentalMetrics.depressionScore}/27</span>
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      <div>
+                        <div className="mb-1 flex justify-between text-xs">
+                          <span>Minimal</span>
+                          <span>Mild</span>
+                          <span>Moderate</span>
+                          <span>Mod. Severe</span>
+                          <span>Severe</span>
+                        </div>
+                        <div className="w-full h-4 rounded-full overflow-hidden flex">
+                          <div className="h-4 bg-green-500 flex-1" />
+                          <div className="h-4 bg-yellow-400 flex-1" />
+                          <div className="h-4 bg-orange-400 flex-1" />
+                          <div className="h-4 bg-red-400 flex-1" />
+                          <div className="h-4 bg-red-600 flex-1" />
+                        </div>
+                        <div className="flex justify-between mt-1 text-xs text-gray-500">
+                          <span>0</span>
+                          <span>5</span>
+                          <span>10</span>
+                          <span>15</span>
+                          <span>20</span>
+                          <span>27</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center">
+                        <div className="flex-grow h-0.5 bg-gray-300 relative">
+                          <div
+                            className="absolute top-0 w-3 h-3 rounded-full bg-amber-600 transform -translate-y-1/2"
+                            style={{ left: `${(results.mentalMetrics.depressionScore / 27) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                    Anxiety Screening (GAD-7)
+                    <Badge className={getSeverityColor(results.mentalMetrics.anxietyScore, false)}>
+                      {results.mentalMetrics.anxietyLevel}
+                    </Badge>
+                  </h3>
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <p className="text-sm text-gray-600 mb-2">
+                      The GAD-7 is an anxiety screening tool that helps assess the severity of anxiety symptoms.
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Total Score</span>
+                      <span className="text-sm">{results.mentalMetrics.anxietyScore}/21</span>
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      <div>
+                        <div className="mb-1 flex justify-between text-xs">
+                          <span>Minimal</span>
+                          <span>Mild</span>
+                          <span>Moderate</span>
+                          <span>Severe</span>
+                        </div>
+                        <div className="w-full h-4 rounded-full overflow-hidden flex">
+                          <div className="h-4 bg-green-500 flex-grow" style={{ flexBasis: '25%' }} />
+                          <div className="h-4 bg-yellow-400 flex-grow" style={{ flexBasis: '25%' }} />
+                          <div className="h-4 bg-orange-400 flex-grow" style={{ flexBasis: '25%' }} />
+                          <div className="h-4 bg-red-500 flex-grow" style={{ flexBasis: '25%' }} />
+                        </div>
+                        <div className="flex justify-between mt-1 text-xs text-gray-500">
+                          <span>0</span>
+                          <span>5</span>
+                          <span>10</span>
+                          <span>15</span>
+                          <span>21</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center">
+                        <div className="flex-grow h-0.5 bg-gray-300 relative">
+                          <div
+                            className="absolute top-0 w-3 h-3 rounded-full bg-amber-600 transform -translate-y-1/2"
+                            style={{ left: `${(results.mentalMetrics.anxietyScore / 21) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {results.mentalMetrics.suicidalIdeation && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Important Safety Notice</AlertTitle>
+                    <AlertDescription>
+                      <p className="mb-2">
+                        Your responses indicate you may be experiencing thoughts of suicide or self-harm.
+                        Please contact a mental health professional or crisis service immediately.
+                      </p>
+                      <p>
+                        National Suicide Prevention Lifeline:
+                        <a href="tel:988" className="font-bold block">988</a>
+                        <a href="tel:1-800-273-8255" className="font-bold block">1-800-273-8255</a>
+                        Available 24/7. Free and confidential.
+                      </p>
+                    </AlertDescription>
+                  </Alert>
+                )}
               </div>
             </TabsContent>
           </Tabs>
@@ -846,104 +942,54 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
   const renderNavButtons = () => {
     if (showResults) {
       return (
-        <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
-          <div className="w-full sm:w-auto">
-            <button 
-              type="button"
-              onClick={() => resetAssessment()}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
-            >
-              <div className="flex items-center justify-center">
-                <span>Take Assessment Again</span>
-              </div>
-            </button>
-          </div>
-          <div className="w-full sm:w-auto">
-            <button 
-              type="button"
-              onClick={() => window.location.href = '/wellness'}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 h-10 px-4 py-2 w-full"
-            >
-              <div className="flex items-center justify-center gap-1.5">
-                <span>Back to Wellness Center</span>
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="16" 
-                  height="16" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  className="h-4 w-4"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </div>
-            </button>
-          </div>
+        <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
+          <Button 
+            variant="outline" 
+            onClick={resetAssessment}
+            className="bg-white hover:bg-gray-50"
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Take Again
+          </Button>
+          
+          <Button 
+            onClick={saveToJournal}
+            disabled={!consentToStore}
+            className="bg-amber-600 text-white hover:bg-amber-700"
+          >
+            <Save className="mr-2 h-4 w-4" />
+            Save to Journal
+          </Button>
         </div>
       );
     }
 
-    // Navigation buttons for questions
-    const handleNextClick = () => {
-      console.log("Next button clicked, current index:", currentQuestionIndex);
-      if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
-        // First scroll to top immediately
-        scrollToTop();
-
-        // Then update the question index
-        setTimeout(() => {
-          setCurrentQuestionIndex(prev => {
-            console.log("Updating index from", prev, "to", prev + 1);
-            return prev + 1;
-          });
-        }, 100); // Small delay to ensure smooth scroll starts before state change
-      } else {
-        submitAssessment();
-      }
-    };
-
-    const handlePrevClick = () => {
-      console.log("Previous button clicked, current index:", currentQuestionIndex);
-      if (currentQuestionIndex > 0) {
-        // First scroll to top immediately
-        scrollToTop();
-
-        // Then update the question index
-        setTimeout(() => {
-          setCurrentQuestionIndex(prev => {
-            console.log("Updating index from", prev, "to", prev - 1);
-            return prev - 1;
-          });
-        }, 100); // Small delay to ensure smooth scroll starts before state change
-      }
-    };
-
     return (
-      <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
-        <div className="order-2 sm:order-1 w-full sm:w-auto">
+      <div className="flex flex-col sm:flex-row gap-3 w-full">
+        <div className="order-2 sm:order-1">
           <button 
             type="button"
-            onClick={() => {
-              // Direct implementation instead of handler function
-              console.log("PREV DIRECT BUTTON CLICKED");
-              scrollToTop();
-
-              if (currentQuestionIndex > 0) {
-                setTimeout(() => {
-                  setCurrentQuestionIndex(currentQuestionIndex - 1);
-                }, 100);
-              }
-            }}
+            onClick={handlePreviousQuestion} 
             disabled={currentQuestionIndex === 0}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-amber-100 active:border-amber-300 h-10 px-4 py-2 w-full"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-10 px-4 py-2 w-full"
           >
-            <div className="flex items-center justify-center">
-              <span>Previous</span>
+            <div className="flex items-center justify-center gap-1.5">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="h-4 w-4"
+              >
+                <path d="m12 19-7-7 7-7"></path>
+                <path d="M19 12H5"></path>
+              </svg>
+              <span>Back</span>
             </div>
           </button>
         </div>
@@ -952,8 +998,8 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <button 
             type="button"
             onClick={() => {
-              // Ultra-aggressive "nuclear option" implementation
-              console.log("💣 NEXT BUTTON - NUCLEAR SCROLL OPTION 💣");
+              // Professional smooth implementation
+              console.log("Smooth scrolling and navigation");
               
               if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
                 // First scroll to top BEFORE state changes
@@ -964,7 +1010,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 if (scrollAnchor instanceof HTMLElement) {
                   try {
                     scrollAnchor.focus();
-                    scrollAnchor.scrollIntoView({behavior: 'auto', block: 'start'});
+                    scrollAnchor.scrollIntoView({behavior: 'smooth', block: 'start'});
                   } catch (e) {
                     console.error("Anchor focus/scroll error:", e);
                   }
@@ -976,27 +1022,8 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   const newIndex = currentQuestionIndex + 1;
                   setCurrentQuestionIndex(newIndex);
                   
-                  // Multiple levels of scrolling with increasing delays
-                  scrollToTop();
-                  
-                  setTimeout(scrollToTop, 50);
-                  setTimeout(scrollToTop, 150);
-                  setTimeout(scrollToTop, 300);
-                  
-                  // Final scroll after all animations and state changes have settled
-                  setTimeout(() => {
-                    scrollToTop();
-                    
-                    // Direct DOM manipulation as a last resort
-                    window.scrollTo(0, 0);
-                    document.body.scrollTop = 0;
-                    document.documentElement.scrollTop = 0;
-                    
-                    // Force anchor to top again
-                    if (scrollAnchor instanceof HTMLElement) {
-                      scrollAnchor.scrollIntoView({behavior: 'auto', block: 'start'});
-                    }
-                  }, 500);
+                  // Apply scrolling again after the change
+                  setTimeout(scrollToTop, 100);
                 }, 10);
               } else {
                 submitAssessment();
