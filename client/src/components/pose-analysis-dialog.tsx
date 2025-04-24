@@ -13,7 +13,8 @@ import {
   Check, 
   MessageSquare,
   DownloadCloud,
-  Trophy
+  Trophy,
+  X
 } from "lucide-react";
 
 // Interface for pose feedback
@@ -245,13 +246,26 @@ export default function PoseAnalysisDialog({
     <MegaDialog open={open} onOpenChange={onOpenChange}>
       <MegaDialogContent className="max-w-4xl overflow-auto">
         <MegaDialogHeader>
-          <MegaDialogTitle className="flex items-center text-xl gap-2">
-            <Activity className="h-5 w-5 text-blue-600" />
-            Analyze Your {pose.name}
-          </MegaDialogTitle>
-          <MegaDialogDescription>
-            Follow the instructions and use YogaVision to get real-time feedback on your form
-          </MegaDialogDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <MegaDialogTitle className="flex items-center text-xl gap-2">
+                <Activity className="h-5 w-5 text-blue-600" />
+                Analyze Your {pose.name}
+              </MegaDialogTitle>
+              <MegaDialogDescription>
+                Follow the instructions and use YogaVision to get real-time feedback on your form
+              </MegaDialogDescription>
+            </div>
+            <button
+              onClick={() => onOpenChange(false)}
+              aria-label="Close"
+              type="button"
+              className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200"
+            >
+              <X className="h-6 w-6 text-pink-500" />
+              <span className="sr-only">Close</span>
+            </button>
+          </div>
         </MegaDialogHeader>
         
         <MegaDialogBody>
