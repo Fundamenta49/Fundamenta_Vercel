@@ -775,22 +775,20 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       return (
         <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
           <div className="w-full sm:w-auto">
-            <Button 
-              variant="outline" 
+            <button 
               onClick={resetAssessment}
-              className="w-full flex items-center justify-center gap-2 px-4"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
             >
               Take Assessment Again
-            </Button>
+            </button>
           </div>
           <div className="w-full sm:w-auto">
-            <Button 
-              variant="outline" 
+            <button 
               onClick={() => window.location.href = '/wellness'}
-              className="w-full flex items-center justify-center gap-2 px-4"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
             >
               Back to Wellness Center
-            </Button>
+            </button>
           </div>
         </div>
       );
@@ -799,27 +797,25 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
     return (
       <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
         <div className="order-2 sm:order-1 w-full sm:w-auto">
-          <Button 
-            variant="outline" 
+          <button 
             onClick={handlePreviousQuestion}
             disabled={currentQuestionIndex === 0}
-            className="w-full flex items-center justify-center gap-2 px-4"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Previous
-          </Button>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            <span>Previous</span>
+          </button>
         </div>
         
         <div className="order-1 sm:order-2 w-full sm:w-auto">
-          <Button 
-            variant="default"
+          <button 
             onClick={currentQuestionIndex === mentalHealthQuestions.length - 1 ? submitAssessment : handleSkipQuestion}
             disabled={isPending}
-            className="w-full flex items-center justify-center gap-2 px-4"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-900/90 h-10 px-4 py-2 w-full"
           >
-            {isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}
-            {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="h-4 w-4" />}
-          </Button>
+            <span>{isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}</span>
+            {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="h-4 w-4 ml-2" />}
+          </button>
         </div>
       </div>
     );
