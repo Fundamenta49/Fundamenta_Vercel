@@ -357,24 +357,24 @@ export default function WellnessIntegration() {
               </ul>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 xs:gap-4">
               <Card className="overflow-hidden">
-                <CardHeader className="py-4 bg-purple-50 border-b border-purple-100">
-                  <CardTitle className="text-base text-purple-700 flex items-center gap-2">
+                <CardHeader className="py-3 xs:py-4 bg-purple-50 border-b border-purple-100">
+                  <CardTitle className="text-sm xs:text-base text-purple-700 flex items-center gap-2">
                     <Brain className="h-4 w-4" /> 
                     Mental Wellbeing
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-4">
+                <CardContent className="p-3 xs:p-4">
                   {wellnessProfile.mentalHealth ? (
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">PHQ-9 Score:</span>
-                        <span className="font-medium">{wellnessProfile.mentalHealth.score}/27</span>
+                        <span className="text-xs xs:text-sm text-gray-600">PHQ-9 Score:</span>
+                        <span className="font-medium text-xs xs:text-sm">{wellnessProfile.mentalHealth.score}/27</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Classification:</span>
-                        <span className="font-medium capitalize">{wellnessProfile.mentalHealth.level.replace('_', ' ')}</span>
+                        <span className="text-xs xs:text-sm text-gray-600">Classification:</span>
+                        <span className="font-medium text-xs xs:text-sm capitalize">{wellnessProfile.mentalHealth.level.replace('_', ' ')}</span>
                       </div>
                       <div className="text-xs text-gray-500 pt-2">
                         {getAssessmentStatus(wellnessProfile.mentalHealth.date)}
@@ -382,11 +382,11 @@ export default function WellnessIntegration() {
                     </div>
                   ) : (
                     <div className="text-center py-2">
-                      <p className="text-sm text-gray-500 mb-2">Assessment not completed</p>
+                      <p className="text-xs xs:text-sm text-gray-500 mb-2">Assessment not completed</p>
                       <Button 
                         size="sm" 
                         variant="outline" 
-                        className="border-purple-200 text-purple-700 hover:bg-purple-50 w-full"
+                        className="border-purple-200 text-purple-700 hover:bg-purple-50 w-full text-xs xs:text-sm"
                         onClick={() => setShowPHQ9(true)}
                       >
                         Complete PHQ-9
@@ -409,22 +409,22 @@ export default function WellnessIntegration() {
               </Card>
               
               <Card className="overflow-hidden">
-                <CardHeader className="py-4 bg-blue-50 border-b border-blue-100">
-                  <CardTitle className="text-base text-blue-700 flex items-center gap-2">
+                <CardHeader className="py-3 xs:py-4 bg-blue-50 border-b border-blue-100">
+                  <CardTitle className="text-sm xs:text-base text-blue-700 flex items-center gap-2">
                     <Dumbbell className="h-4 w-4" /> 
                     Physical Activity
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-4">
+                <CardContent className="p-3 xs:p-4">
                   {wellnessProfile.physicalActivity ? (
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Minutes/Week:</span>
-                        <span className="font-medium">{wellnessProfile.physicalActivity.minutesPerWeek}</span>
+                        <span className="text-xs xs:text-sm text-gray-600">Minutes/Week:</span>
+                        <span className="font-medium text-xs xs:text-sm">{wellnessProfile.physicalActivity.minutesPerWeek}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Classification:</span>
-                        <span className="font-medium capitalize">{wellnessProfile.physicalActivity.classificationLevel}</span>
+                        <span className="text-xs xs:text-sm text-gray-600">Classification:</span>
+                        <span className="font-medium text-xs xs:text-sm capitalize">{wellnessProfile.physicalActivity.classificationLevel}</span>
                       </div>
                       <div className="text-xs text-gray-500 pt-2">
                         {getAssessmentStatus(wellnessProfile.physicalActivity.date)}
@@ -432,11 +432,11 @@ export default function WellnessIntegration() {
                     </div>
                   ) : (
                     <div className="text-center py-2">
-                      <p className="text-sm text-gray-500 mb-2">Assessment not completed</p>
+                      <p className="text-xs xs:text-sm text-gray-500 mb-2">Assessment not completed</p>
                       <Button 
                         size="sm" 
                         variant="outline" 
-                        className="border-blue-200 text-blue-700 hover:bg-blue-50 w-full"
+                        className="border-blue-200 text-blue-700 hover:bg-blue-50 w-full text-xs xs:text-sm"
                         onClick={() => setShowPAVS(true)}
                       >
                         Complete PAVS
@@ -458,23 +458,23 @@ export default function WellnessIntegration() {
                 )}
               </Card>
               
-              <Card className="overflow-hidden">
-                <CardHeader className="py-4 bg-green-50 border-b border-green-100">
-                  <CardTitle className="text-base text-green-700 flex items-center gap-2">
+              <Card className="overflow-hidden sm:col-span-2 md:col-span-1">
+                <CardHeader className="py-3 xs:py-4 bg-green-50 border-b border-green-100">
+                  <CardTitle className="text-sm xs:text-base text-green-700 flex items-center gap-2">
                     <Apple className="h-4 w-4" /> 
                     Nutrition
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-4">
+                <CardContent className="p-3 xs:p-4">
                   {wellnessProfile.nutrition ? (
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Fruits & Vegetables:</span>
-                        <span className="font-medium">{wellnessProfile.nutrition.fruitsVegetablesDaily} servings/day</span>
+                        <span className="text-xs xs:text-sm text-gray-600">Fruits & Vegetables:</span>
+                        <span className="font-medium text-xs xs:text-sm">{wellnessProfile.nutrition.fruitsVegetablesDaily} servings/day</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Water Intake:</span>
-                        <span className="font-medium">{wellnessProfile.nutrition.waterIntake} oz/day</span>
+                        <span className="text-xs xs:text-sm text-gray-600">Water Intake:</span>
+                        <span className="font-medium text-xs xs:text-sm">{wellnessProfile.nutrition.waterIntake} oz/day</span>
                       </div>
                       <div className="text-xs text-gray-500 pt-2">
                         {getAssessmentStatus(wellnessProfile.nutrition.date)}
@@ -482,11 +482,11 @@ export default function WellnessIntegration() {
                     </div>
                   ) : (
                     <div className="text-center py-2">
-                      <p className="text-sm text-gray-500 mb-2">Assessment not completed</p>
+                      <p className="text-xs xs:text-sm text-gray-500 mb-2">Assessment not completed</p>
                       <Button 
                         size="sm" 
                         variant="outline" 
-                        className="border-green-200 text-green-700 hover:bg-green-50 w-full"
+                        className="border-green-200 text-green-700 hover:bg-green-50 w-full text-xs xs:text-sm"
                       >
                         Complete Assessment
                       </Button>
