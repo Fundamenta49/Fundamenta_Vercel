@@ -785,7 +785,8 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
           <div className="w-full sm:w-auto">
             <button 
-              onClick={resetAssessment}
+              type="button"
+              onClick={() => resetAssessment()}
               className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
             >
               <div className="flex items-center justify-center">
@@ -795,6 +796,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           </div>
           <div className="w-full sm:w-auto">
             <button 
+              type="button"
               onClick={() => window.location.href = '/wellness'}
               className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 h-10 px-4 py-2 w-full"
             >
@@ -822,17 +824,39 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       );
     }
     
+    // Navigation buttons for questions
+    const handleNextClick = () => {
+      console.log("Next button clicked, current index:", currentQuestionIndex);
+      if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
+        setCurrentQuestionIndex(prev => {
+          console.log("Updating index from", prev, "to", prev + 1);
+          return prev + 1;
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        submitAssessment();
+      }
+    };
+
+    const handlePrevClick = () => {
+      console.log("Previous button clicked, current index:", currentQuestionIndex);
+      if (currentQuestionIndex > 0) {
+        setCurrentQuestionIndex(prev => {
+          console.log("Updating index from", prev, "to", prev - 1);
+          return prev - 1;
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+    
     return (
       <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
         <div className="order-2 sm:order-1 w-full sm:w-auto">
           <button 
-            onClick={(e) => {
-              e.preventDefault();
-              console.log("Previous button clicked directly");
-              handlePreviousQuestion();
-            }}
+            type="button"
+            onClick={handlePrevClick}
             disabled={currentQuestionIndex === 0}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-amber-100 active:border-amber-300 h-10 px-4 py-2 w-full"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-amber-100 active:border-amber-300 h-10 px-4 py-2 w-full"
           >
             <div className="flex items-center justify-center">
               <span>Previous</span>
@@ -842,17 +866,10 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         
         <div className="order-1 sm:order-2 w-full sm:w-auto">
           <button 
-            onClick={(e) => {
-              e.preventDefault();
-              console.log("Next button clicked directly");
-              if (currentQuestionIndex === mentalHealthQuestions.length - 1) {
-                submitAssessment();
-              } else {
-                handleSkipQuestion();
-              }
-            }}
+            type="button"
+            onClick={handleNextClick}
             disabled={isPending}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 active:bg-amber-800 active:scale-[0.98] h-10 px-4 py-2 w-full"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 active:bg-amber-800 active:scale-[0.98] h-10 px-4 py-2 w-full"
           >
             <div className="flex items-center justify-center gap-1.5">
               <span>{isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}</span>
