@@ -6,7 +6,7 @@ import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { runMigrations } from "./db/index";
 import { initializeFundiCore } from "./fundi-core/fundi-integration";
-import { performDatabaseMaintenance } from "./maintenance";
+import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintenance";
 
 const startTime = Date.now();
 log("Starting server...");
@@ -73,6 +73,33 @@ app.get("/api/health", (_req, res) => {
   res.json(health);
 });
 
+// Maintenance endpoint - protected with a simple key to prevent unauthorized access
+app.post("/api/maintenance/sessions", async (req, res) => {
+  // Simple security check - require a maintenance key
+  const { key, aggressive } = req.body;
+  if (key !== process.env.MAINTENANCE_KEY && key !== "fundi-maintenance-key") {
+    log("Unauthorized maintenance attempt detected");
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    log(`Manual session cleanup requested (aggressive: ${!!aggressive})`);
+    if (aggressive) {
+      const deletedCount = await performAggressiveCleanup();
+      return res.json({ success: true, message: `Aggressively cleaned up ${deletedCount} sessions` });
+    } else {
+      const result = await performDatabaseMaintenance();
+      return res.json({ success: true, message: "Session cleanup completed successfully" });
+    }
+  } catch (error) {
+    log(`Manual session cleanup error: ${error instanceof Error ? error.message : String(error)}`);
+    return res.status(500).json({ 
+      error: "Session cleanup failed", 
+      message: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
 // Staged server initialization
 (async () => {
   try {
@@ -87,6 +114,16 @@ app.get("/api/health", (_req, res) => {
       log(`Database migration error: ${error instanceof Error ? error.message : String(error)}`);
       // Continue with server startup even if migrations fail
       // This is to prevent the server from crashing during development
+    }
+    
+    // Run session cleanup to prevent database bloat
+    log("Running session database cleanup...");
+    try {
+      await performDatabaseMaintenance();
+      log(`Session cleanup completed (${Date.now() - startTime}ms)`);
+    } catch (error) {
+      log(`Session cleanup error: ${error instanceof Error ? error.message : String(error)}`);
+      // Continue with server startup even if cleanup fails
     }
     
     const server = await registerRoutes(app);
@@ -156,6 +193,20 @@ app.get("/api/health", (_req, res) => {
     }
 
     log(`Server fully initialized (total startup time: ${Date.now() - startTime}ms)`);
+    
+    // Set up periodic session cleanup (runs every 24 hours)
+    const HOURS_24 = 24 * 60 * 60 * 1000;
+    setInterval(async () => {
+      log("Running scheduled session cleanup...");
+      try {
+        await performDatabaseMaintenance();
+        log("Scheduled session cleanup completed successfully");
+      } catch (error) {
+        log(`Scheduled session cleanup error: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }, HOURS_24);
+    log("Scheduled session cleanup initialized (will run every 24 hours)");
+    
   } catch (error) {
     log(`Server startup error: ${error instanceof Error ? error.message : String(error)}`);
     console.error("Server startup error details:", error);

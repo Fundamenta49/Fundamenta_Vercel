@@ -39,8 +39,9 @@ export async function performAggressiveCleanup() {
   }
 }
 
-// If this script is run directly (e.g. via 'node maintenance.js'), run the maintenance tasks
-if (require.main === module) {
+// Direct execution handling for ES modules (can be called via 'node --experimental-specifier-resolution=node maintenance.js')
+// This check is different in ES modules vs CommonJS
+if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
     const isAggressive = process.argv.includes('--aggressive');
     
