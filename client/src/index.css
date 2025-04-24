@@ -356,6 +356,26 @@
   pointer-events: auto !important;
 }
 
+/* Ensure Fundi chat is always clickable and visible */
+.close-chat-button {
+  position: relative !important;
+  z-index: 9999999 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Ensure wellness journal doesn't block the chat */
+.wellness-journal * {
+  z-index: auto !important;
+}
+
+/* Make chat interface clickable */
+[data-fundi-robot="true"] {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 9999999 !important;
+}
+
 /* Category-specific accent colors */
 .accent-financial {
   color: var(--financial-color);

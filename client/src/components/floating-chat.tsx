@@ -143,7 +143,8 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               maxWidth: '95vw',
               maxHeight: '80vh',
               width: '358px', // Further reduced by 4px (12px total reduction from original 370px)
-              transform: 'none' // Force no transform to prevent inheriting Fundi's position
+              transform: 'none', // Force no transform to prevent inheriting Fundi's position
+              zIndex: 999999 // Ensure chat appears above all other content
             }}
           >
             <ChatInterface 

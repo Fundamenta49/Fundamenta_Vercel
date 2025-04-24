@@ -841,9 +841,20 @@ export default function ChatInterface({
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-6 w-6 sm:h-7 sm:w-7"
-              onClick={onToggleExpand}
-              aria-label={expanded ? "Minimize chat" : "Expand chat"}
+              className="h-6 w-6 sm:h-7 sm:w-7 close-chat-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (onToggleExpand) {
+                  onToggleExpand();
+                }
+              }}
+              aria-label="Close chat"
+              style={{ 
+                position: 'relative',
+                zIndex: 9999999,
+                pointerEvents: 'auto'
+              }}
             >
               <ArrowRight className={`h-4 w-4 sm:h-5 sm:w-5 ${expanded ? 'rotate-90' : '-rotate-90'}`} />
             </Button>
