@@ -301,7 +301,10 @@ export default function CoffeeTalkAssessment() {
   // Handle skipping a question
   const handleSkipQuestion = () => {
     if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
+      // Flash effect will be triggered by active state in CSS
       setCurrentQuestionIndex(prev => prev + 1);
+      // Scroll to the top of the page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       submitAssessment();
     }
@@ -310,7 +313,10 @@ export default function CoffeeTalkAssessment() {
   // Handle going back to a previous question
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
+      // Flash effect will be triggered by active state in CSS
       setCurrentQuestionIndex(prev => prev - 1);
+      // Scroll to the top of the page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
   
@@ -814,7 +820,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <button 
             onClick={handlePreviousQuestion}
             disabled={currentQuestionIndex === 0}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-amber-100 active:border-amber-300 h-10 px-4 py-2 w-full"
           >
             <div className="flex items-center justify-center">
               <span>Previous</span>
@@ -826,7 +832,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <button 
             onClick={currentQuestionIndex === mentalHealthQuestions.length - 1 ? submitAssessment : handleSkipQuestion}
             disabled={isPending}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 h-10 px-4 py-2 w-full"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 active:bg-amber-800 active:scale-[0.98] h-10 px-4 py-2 w-full"
           >
             <div className="flex items-center justify-center gap-1.5">
               <span>{isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}</span>
