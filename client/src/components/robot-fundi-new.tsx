@@ -59,6 +59,8 @@ export default function RobotFundi({
   const [isHovered, setIsHovered] = useState(false);
   const [dragEndTime, setDragEndTime] = useState(0);
   const [isMinimized, setIsMinimized] = useState(getStoredMinimizedState());
+  // Added to better track if we just finished dragging to prevent accidental opens
+  const justFinishedDraggingRef = useRef(false);
   const { lastResponse } = useAIEventStore();
   
   // For double click/tap detection - click counter approach
@@ -145,6 +147,9 @@ export default function RobotFundi({
       setDragEndTime(now);
       (window as any).lastDragTime = now;
       
+      // Set the flag to prevent accidental opening after dragging
+      justFinishedDraggingRef.current = true;
+      
       // Important: NEVER set disableClicks to true anymore
       (window as any).disableClicks = false;
       
@@ -152,6 +157,12 @@ export default function RobotFundi({
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('fundiPosition', JSON.stringify(position));
+          
+          // Dispatch an event to prevent chat opening
+          const preventChatOpenEvent = new CustomEvent('preventFundiChatOpen', {
+            detail: { timestamp: Date.now() }
+          });
+          window.dispatchEvent(preventChatOpenEvent);
         } catch (e) {
           console.error('Failed to save position to localStorage', e);
         }
@@ -161,6 +172,11 @@ export default function RobotFundi({
       setTimeout(() => {
         setWasDragged(false);
       }, 50);
+      
+      // Clear the dragging flag after a longer delay
+      setTimeout(() => {
+        justFinishedDraggingRef.current = false;
+      }, 700); // Longer delay to prevent accidental taps
     }
   };
 
@@ -175,6 +191,9 @@ export default function RobotFundi({
       setDragEndTime(now);
       (window as any).lastDragTime = now;
       
+      // Set the flag to prevent accidental opening after dragging
+      justFinishedDraggingRef.current = true;
+      
       // Important: NEVER set disableClicks to true anymore
       (window as any).disableClicks = false;
       
@@ -182,6 +201,12 @@ export default function RobotFundi({
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('fundiPosition', JSON.stringify(position));
+          
+          // Dispatch an event to prevent chat opening
+          const preventChatOpenEvent = new CustomEvent('preventFundiChatOpen', {
+            detail: { timestamp: Date.now() }
+          });
+          window.dispatchEvent(preventChatOpenEvent);
         } catch (e) {
           console.error('Failed to save position to localStorage', e);
         }
@@ -191,6 +216,11 @@ export default function RobotFundi({
       setTimeout(() => {
         setWasDragged(false);
       }, 50);
+      
+      // Clear the dragging flag after a longer delay
+      setTimeout(() => {
+        justFinishedDraggingRef.current = false;
+      }, 700); // Longer delay to prevent accidental taps
     }
   };
 
