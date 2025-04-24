@@ -1184,12 +1184,12 @@ export default function WellnessJournal() {
 
                 {/* Future email feature */}
                 {selectedCategory === "future" && (
-                  <div className="space-y-2 bg-purple-50 border border-purple-100 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium mb-2 flex items-center gap-2 text-purple-800">
-                      <Mail className="h-4 w-4 text-purple-600" />
+                  <div className="space-y-2 bg-blue-50 border border-blue-100 p-4 rounded-lg">
+                    <h3 className="text-sm font-medium mb-2 flex items-center gap-2 text-blue-800">
+                      <Mail className="h-4 w-4 text-blue-600" />
                       Send to Future Self
                     </h3>
-                    <p className="text-sm text-purple-700 mb-4">Schedule this entry to be emailed to you in the future as a reminder of your thoughts today.</p>
+                    <p className="text-sm text-blue-700 mb-4">Schedule this entry to be emailed to you in the future as a reminder of your thoughts today.</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <Input
                         type="email"
@@ -1261,6 +1261,7 @@ export default function WellnessJournal() {
                   <Button
                     variant="outline"
                     onClick={() => setIsCreateDialogOpen(false)}
+                    className="rounded-full text-slate-600 border-slate-200 hover:text-slate-800"
                   >
                     Cancel
                   </Button>
@@ -1272,7 +1273,7 @@ export default function WellnessJournal() {
                       }}
                       variant="outline"
                       disabled={!currentEntry.content || currentEntry.content.length < 20 || analyzeEntryMutation.isPending}
-                      className="border-purple-200 text-purple-700 hover:bg-purple-50"
+                      className="rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
                     >
                       {analyzeEntryMutation.isPending ? (
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1285,7 +1286,7 @@ export default function WellnessJournal() {
                     <Button
                       onClick={handleEntrySubmit}
                       disabled={!currentEntry.title || !currentEntry.content}
-                      className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg"
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md transition-all hover:shadow-lg rounded-full"
                     >
                       <Save className="h-4 w-4 mr-2" />
                       Save Entry
@@ -1421,6 +1422,7 @@ export default function WellnessJournal() {
                   <Button
                     variant="outline"
                     onClick={() => setActiveTab("write")}
+                    className="rounded-full text-slate-600 border-slate-200 hover:text-slate-800"
                   >
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back to Writing
@@ -1429,7 +1431,7 @@ export default function WellnessJournal() {
                   <Button
                     onClick={handleEntrySubmit}
                     disabled={!currentEntry.title || !currentEntry.content}
-                    className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md transition-all hover:shadow-lg rounded-full"
                   >
                     <Save className="h-4 w-4 mr-2" />
                     Save Entry
@@ -1443,20 +1445,20 @@ export default function WellnessJournal() {
       
       {/* View Entry Dialog */}
       <FullScreenDialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <FullScreenDialogContent themeColor="#a855f7">
+        <FullScreenDialogContent themeColor="#2563eb">
           {selectedEntry && (
             <>
-              <FullScreenDialogHeader>
+              <FullScreenDialogHeader className="pt-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
-                      <Book className="h-6 w-6 text-purple-600" />
+                    <FullScreenDialogTitle className="flex items-center gap-2 text-slate-800 font-serif">
+                      <Book className="h-6 w-6 text-blue-600" />
                       {selectedEntry.title}
                       {selectedEntry.isPrivate && (
-                        <Lock className="h-4 w-4 text-purple-600 ml-1" />
+                        <Lock className="h-4 w-4 text-blue-500 ml-1" />
                       )}
                     </FullScreenDialogTitle>
-                    <FullScreenDialogDescription className="text-purple-600/80">
+                    <FullScreenDialogDescription className="text-slate-500 mt-1">
                       {format(new Date(selectedEntry.timestamp), "PPP 'at' p")}
                       {selectedEntry.mood && (
                         <span className="ml-2">• Feeling {moods.find(m => m.label === selectedEntry.mood)?.emoji || ''} {selectedEntry.mood}</span>
@@ -1466,7 +1468,7 @@ export default function WellnessJournal() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="text-red-500 hover:bg-red-50 hover:text-red-600 hover:shadow-sm transition-all"
+                    className="text-red-500 border-red-100 hover:bg-red-50 hover:text-red-600 hover:shadow-sm transition-all rounded-full"
                     onClick={() => deleteEntry(selectedEntry.id)}
                   >
                     <Trash className="h-4 w-4" />
@@ -1477,27 +1479,27 @@ export default function WellnessJournal() {
               <FullScreenDialogBody className="space-y-6">
                 {/* Prompt used */}
                 {selectedEntry.prompt && (
-                  <Alert variant="default" className="bg-purple-50 border-purple-200">
-                    <Sparkles className="h-4 w-4 text-purple-500" />
-                    <AlertTitle>Prompt: {
+                  <Alert variant="default" className="bg-blue-50 border-blue-200 rounded-xl">
+                    <Sparkles className="h-4 w-4 text-blue-500" />
+                    <AlertTitle className="text-blue-700">Prompt: {
                       promptCategories.find(cat => cat.value === selectedEntry.category)?.label
                     }</AlertTitle>
-                    <AlertDescription className="text-purple-800 italic">
+                    <AlertDescription className="text-blue-700 italic">
                       "{selectedEntry.prompt}"
                     </AlertDescription>
                   </Alert>
                 )}
                 
                 {/* Entry content */}
-                <div className="bg-white p-6 rounded-lg border border-purple-100 shadow-sm bg-gradient-to-r from-white to-purple-50/30">
-                  <p className="whitespace-pre-wrap leading-relaxed text-gray-700">{selectedEntry.content}</p>
+                <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                  <p className="whitespace-pre-wrap leading-relaxed text-slate-700">{selectedEntry.content}</p>
                 </div>
                 
                 {/* Tags */}
                 {selectedEntry.tags && selectedEntry.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {selectedEntry.tags.map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-sm">
+                      <Badge key={tag} variant="outline" className="text-sm px-3 py-1 bg-blue-50 text-blue-600 border-blue-100 rounded-full">
                         #{tag}
                       </Badge>
                     ))}
@@ -1528,26 +1530,26 @@ export default function WellnessJournal() {
                 
                 {/* AI Analysis */}
                 {selectedEntry.analysis && (
-                  <Card className="border-purple-100 mt-6 shadow-sm bg-white/80 backdrop-blur-sm overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-700"></div>
+                  <Card className="border-slate-100 mt-6 shadow-sm bg-white/80 backdrop-blur-sm overflow-hidden rounded-xl">
+                    <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-400 to-blue-600"></div>
                     <CardHeader>
-                      <CardTitle className="text-base flex items-center gap-2 text-purple-700">
-                        <Brain className="h-5 w-5 text-purple-600" />
+                      <CardTitle className="text-base flex items-center gap-2 text-slate-800">
+                        <Brain className="h-5 w-5 text-blue-600" />
                         AI Analysis
                       </CardTitle>
-                      <CardDescription className="text-purple-600/70">
+                      <CardDescription className="text-slate-500">
                         Insights from your journal entry
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-3 bg-purple-50/50 p-3 rounded-lg border border-purple-100">
-                          <h4 className="font-medium text-sm text-purple-700">Emotional Wellness</h4>
+                        <div className="space-y-3 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+                          <h4 className="font-medium text-sm text-blue-700">Emotional Wellness</h4>
                           <Progress 
                             value={selectedEntry.analysis.emotionalScore} 
-                            className="h-2.5 bg-purple-100" 
+                            className="h-2.5 bg-blue-100" 
                           />
-                          <p className="text-sm text-purple-800 flex items-center gap-1.5">
+                          <p className="text-sm text-blue-800 flex items-center gap-1.5">
                             <Heart className="h-3.5 w-3.5" />
                             Primary emotion: <span className="font-medium">{selectedEntry.analysis.sentiment}</span>
                           </p>
