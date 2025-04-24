@@ -300,9 +300,13 @@ export default function CoffeeTalkAssessment() {
   
   // Handle skipping a question
   const handleSkipQuestion = () => {
+    console.log("Next button clicked, current index:", currentQuestionIndex);
     if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
       // Flash effect will be triggered by active state in CSS
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex(prev => {
+        console.log("Updating index from", prev, "to", prev + 1);
+        return prev + 1;
+      });
       // Scroll to the top of the page
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -312,9 +316,13 @@ export default function CoffeeTalkAssessment() {
   
   // Handle going back to a previous question
   const handlePreviousQuestion = () => {
+    console.log("Previous button clicked, current index:", currentQuestionIndex);
     if (currentQuestionIndex > 0) {
       // Flash effect will be triggered by active state in CSS
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex(prev => {
+        console.log("Updating index from", prev, "to", prev - 1);
+        return prev - 1;
+      });
       // Scroll to the top of the page
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -818,7 +826,11 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
         <div className="order-2 sm:order-1 w-full sm:w-auto">
           <button 
-            onClick={handlePreviousQuestion}
+            onClick={(e) => {
+              e.preventDefault();
+              console.log("Previous button clicked directly");
+              handlePreviousQuestion();
+            }}
             disabled={currentQuestionIndex === 0}
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-amber-100 active:border-amber-300 h-10 px-4 py-2 w-full"
           >
@@ -830,7 +842,15 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         
         <div className="order-1 sm:order-2 w-full sm:w-auto">
           <button 
-            onClick={currentQuestionIndex === mentalHealthQuestions.length - 1 ? submitAssessment : handleSkipQuestion}
+            onClick={(e) => {
+              e.preventDefault();
+              console.log("Next button clicked directly");
+              if (currentQuestionIndex === mentalHealthQuestions.length - 1) {
+                submitAssessment();
+              } else {
+                handleSkipQuestion();
+              }
+            }}
             disabled={isPending}
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 active:bg-amber-800 active:scale-[0.98] h-10 px-4 py-2 w-full"
           >
