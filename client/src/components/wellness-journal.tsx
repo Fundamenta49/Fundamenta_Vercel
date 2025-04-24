@@ -955,7 +955,7 @@ export default function WellnessJournal() {
 
       {/* New Entry Dialog */}
       <FullScreenDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <FullScreenDialogContent themeColor="#2563eb">
+        <FullScreenDialogContent themeColor="#7c3aed">
           <FullScreenDialogHeader className="px-4 sm:px-6 pt-6">
             <FullScreenDialogTitle className="flex items-center gap-2 text-slate-800 font-serif">
               <Book className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
@@ -1184,12 +1184,12 @@ export default function WellnessJournal() {
 
                 {/* Future email feature */}
                 {selectedCategory === "future" && (
-                  <div className="space-y-2 bg-blue-50 border border-blue-100 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium mb-2 flex items-center gap-2 text-blue-800">
-                      <Mail className="h-4 w-4 text-blue-600" />
+                  <div className="space-y-2 bg-purple-50 border border-purple-100 p-4 rounded-lg">
+                    <h3 className="text-sm font-medium mb-2 flex items-center gap-2 text-purple-800">
+                      <Mail className="h-4 w-4 text-purple-600" />
                       Send to Future Self
                     </h3>
-                    <p className="text-sm text-blue-700 mb-4">Schedule this entry to be emailed to you in the future as a reminder of your thoughts today.</p>
+                    <p className="text-sm text-purple-700 mb-4">Schedule this entry to be emailed to you in the future as a reminder of your thoughts today.</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <Input
                         type="email"
@@ -1325,8 +1325,8 @@ export default function WellnessJournal() {
                             </div>
                           </div>
                           
-                          <div className="col-span-2 p-3 bg-blue-50 rounded-lg">
-                            <p className="text-sm text-blue-800 italic">
+                          <div className="col-span-2 p-3 bg-purple-50 rounded-lg">
+                            <p className="text-sm text-purple-800 italic">
                               "{currentAnalysis.affirmation}"
                             </p>
                           </div>
@@ -1445,17 +1445,17 @@ export default function WellnessJournal() {
       
       {/* View Entry Dialog */}
       <FullScreenDialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <FullScreenDialogContent themeColor="#2563eb">
+        <FullScreenDialogContent themeColor="#7c3aed">
           {selectedEntry && (
             <>
               <FullScreenDialogHeader className="pt-6">
                 <div className="flex justify-between items-start">
                   <div>
                     <FullScreenDialogTitle className="flex items-center gap-2 text-slate-800 font-serif">
-                      <Book className="h-6 w-6 text-blue-600" />
+                      <Book className="h-6 w-6 text-purple-600" />
                       {selectedEntry.title}
                       {selectedEntry.isPrivate && (
-                        <Lock className="h-4 w-4 text-blue-500 ml-1" />
+                        <Lock className="h-4 w-4 text-purple-500 ml-1" />
                       )}
                     </FullScreenDialogTitle>
                     <FullScreenDialogDescription className="text-slate-500 mt-1">
@@ -1556,13 +1556,13 @@ export default function WellnessJournal() {
                         </div>
                         
                         {selectedEntry.analysis.keyInsights && selectedEntry.analysis.keyInsights.length > 0 && (
-                          <div className="space-y-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
-                            <h4 className="font-medium text-sm text-blue-700">Key Insights</h4>
+                          <div className="space-y-2 bg-purple-50/50 p-3 rounded-lg border border-purple-100">
+                            <h4 className="font-medium text-sm text-purple-700">Key Insights</h4>
                             <ul className="text-sm space-y-1.5">
                               {selectedEntry.analysis.keyInsights.map((insight, index) => (
                                 <li key={index} className="flex items-center gap-2">
-                                  <CheckCircle className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
-                                  <span className="text-blue-800">{insight}</span>
+                                  <CheckCircle className="h-3.5 w-3.5 text-purple-500 flex-shrink-0" />
+                                  <span className="text-purple-800">{insight}</span>
                                 </li>
                               ))}
                             </ul>
@@ -1578,7 +1578,7 @@ export default function WellnessJournal() {
                 <Button
                   variant="outline"
                   onClick={() => setIsViewDialogOpen(false)}
-                  className="rounded-full border-slate-200 text-slate-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all"
+                  className="rounded-full border-slate-200 text-slate-600 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 transition-all"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Journal
