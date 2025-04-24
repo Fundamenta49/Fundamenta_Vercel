@@ -357,7 +357,8 @@
 }
 
 /* Ensure Fundi chat is always clickable and visible */
-.close-chat-button {
+.close-chat-button,
+[data-fundi-close-button="true"] {
   position: relative !important;
   z-index: 9999999 !important;
   pointer-events: auto !important;

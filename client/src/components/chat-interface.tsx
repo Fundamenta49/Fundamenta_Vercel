@@ -855,6 +855,7 @@ export default function ChatInterface({
                 zIndex: 9999999,
                 pointerEvents: 'auto'
               }}
+              data-fundi-close-button="true"
             >
               <ArrowRight className={`h-4 w-4 sm:h-5 sm:w-5 ${expanded ? 'rotate-90' : '-rotate-90'}`} />
             </Button>

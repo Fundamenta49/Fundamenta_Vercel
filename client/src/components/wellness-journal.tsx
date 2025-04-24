@@ -714,7 +714,7 @@ export default function WellnessJournal() {
   };
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto px-2 sm:px-0">
+    <div className="w-full max-w-screen-xl mx-auto px-2 sm:px-0 wellness-journal">
       <FullScreenDialogHeader className="mb-4 md:mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
