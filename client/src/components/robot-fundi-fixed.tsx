@@ -2,10 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAIEventStore } from "@/lib/ai-event-system";
 
-// This is now a wrapper that imports the fixed version
-// to maintain compatibility with existing code
-import RobotFundiFixed from './robot-fundi-fixed';
-
 interface RobotFundiProps {
   speaking?: boolean;
   thinking?: boolean;
@@ -25,21 +21,6 @@ export default function RobotFundi({
   emotion = 'neutral',
   onOpen
 }: RobotFundiProps) {
-  // Get stored position from localStorage or use default
-  const getStoredPosition = () => {
-    if (typeof window !== 'undefined') {
-      const storedPosition = localStorage.getItem('fundiPosition');
-      if (storedPosition) {
-        try {
-          return JSON.parse(storedPosition);
-        } catch (e) {
-          console.error('Failed to parse stored position', e);
-        }
-      }
-    }
-    return { x: 63, y: 8 }; // Default position
-  };
-  
   // Get stored minimized state from localStorage or use default
   const getStoredMinimizedState = () => {
     if (typeof window !== 'undefined') {
@@ -55,225 +36,18 @@ export default function RobotFundi({
     return false; // Default to not minimized
   };
   
-  const [position, setPosition] = useState(getStoredPosition());
-  const [isDragging, setIsDragging] = useState(false);
-  const [wasDragged, setWasDragged] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [showClickIndicator, setShowClickIndicator] = useState(false);
+  // State variables - simplified with no dragging functionality
   const [isHovered, setIsHovered] = useState(false);
-  const [dragEndTime, setDragEndTime] = useState(0);
   const [isMinimized, setIsMinimized] = useState(getStoredMinimizedState());
-  // Added to better track if we just finished dragging to prevent accidental opens
-  const justFinishedDraggingRef = useRef(false);
   const { lastResponse } = useAIEventStore();
   
-  // For double click/tap detection - click counter approach
+  // For double click/tap detection
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const preventNextClickRef = useRef(false);
   const wasMinimizedRef = useRef(getStoredMinimizedState()); // Track previous minimized state
   
-  // Track if this is the first render to avoid auto-opening immediately after page load
-  const isFirstRender = useRef(true);
-  
-  // Removed emergency click handlers since they were causing auto-opening after dragging
-  useEffect(() => {
-    // Previously had logging here - removed for cleaner console output
-    return () => {};
-  }, []);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!interactive) return;
-    
-    // If we recently detected a double-click, don't start dragging
-    if (preventNextClickRef.current) {
-      e.stopPropagation();
-      return;
-    }
-    
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    });
-    // Prevent event propagation to avoid triggering onClick
-    e.stopPropagation();
-  };
-  
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!interactive) return;
-    
-    // Handle clicks using our counter approach
-    handleTapEvent(e);
-    
-    // Only set up dragging if we're not handling a double-tap
-    if (!preventNextClickRef.current) {
-      setIsDragging(true);
-      setDragStart({
-        x: e.touches[0].clientX - position.x,
-        y: e.touches[0].clientY - position.y
-      });
-    }
-    
-    // Prevent event propagation
-    e.stopPropagation();
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging) return;
-    // Mark that we've actually moved (dragged)
-    setWasDragged(true);
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y
-    });
-  };
-
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    // Mark that we've actually moved (dragged)
-    setWasDragged(true);
-    setPosition({
-      x: e.touches[0].clientX - dragStart.x,
-      y: e.touches[0].clientY - dragStart.y
-    });
-  };
-
-  const handleMouseUp = (e: MouseEvent) => {
-    // Set isDragging to false immediately
-    setIsDragging(false);
-    
-    // If we've been dragging, save the position but don't block any clicks
-    if (wasDragged) {
-      // Store the last drag time for reference
-      const now = Date.now();
-      setDragEndTime(now);
-      (window as any).lastDragTime = now;
-      
-      // Set the flag to prevent accidental opening after dragging
-      justFinishedDraggingRef.current = true;
-      
-      // Important: NEVER set disableClicks to true anymore
-      (window as any).disableClicks = false;
-      
-      // Save Fundi's position to localStorage immediately after drag ends
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.setItem('fundiPosition', JSON.stringify(position));
-          
-          // Dispatch an event to prevent chat opening
-          const preventChatOpenEvent = new CustomEvent('preventFundiChatOpen', {
-            detail: { timestamp: Date.now() }
-          });
-          window.dispatchEvent(preventChatOpenEvent);
-        } catch (e) {
-          console.error('Failed to save position to localStorage', e);
-        }
-      }
-      
-      // Reset wasDragged very quickly now
-      setTimeout(() => {
-        setWasDragged(false);
-      }, 50);
-      
-      // Clear the dragging flag after a longer delay
-      setTimeout(() => {
-        justFinishedDraggingRef.current = false;
-      }, 700); // Longer delay to prevent accidental taps
-    }
-  };
-
-  const handleTouchEnd = (e: TouchEvent) => {
-    // Set isDragging to false immediately
-    setIsDragging(false);
-    
-    // If we've been dragging, save the position but don't block any clicks
-    if (wasDragged) {
-      // Store the last drag time for reference
-      const now = Date.now();
-      setDragEndTime(now);
-      (window as any).lastDragTime = now;
-      
-      // Set the flag to prevent accidental opening after dragging
-      justFinishedDraggingRef.current = true;
-      
-      // Important: NEVER set disableClicks to true anymore
-      (window as any).disableClicks = false;
-      
-      // Save Fundi's position to localStorage immediately after drag ends
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.setItem('fundiPosition', JSON.stringify(position));
-          
-          // Dispatch an event to prevent chat opening
-          const preventChatOpenEvent = new CustomEvent('preventFundiChatOpen', {
-            detail: { timestamp: Date.now() }
-          });
-          window.dispatchEvent(preventChatOpenEvent);
-        } catch (e) {
-          console.error('Failed to save position to localStorage', e);
-        }
-      }
-      
-      // Reset wasDragged very quickly now
-      setTimeout(() => {
-        setWasDragged(false);
-      }, 50);
-      
-      // Clear the dragging flag after a longer delay
-      setTimeout(() => {
-        justFinishedDraggingRef.current = false;
-      }, 700); // Longer delay to prevent accidental taps
-    }
-  };
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-      window.addEventListener('touchmove', handleTouchMove, { passive: false });
-      window.addEventListener('touchend', handleTouchEnd);
-      window.addEventListener('touchcancel', handleTouchEnd);
-    }
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('touchcancel', handleTouchEnd);
-    };
-  }, [isDragging, dragStart]);
-  
-  // Reset wasDragged after a shorter delay to make Fundi more responsive
-  useEffect(() => {
-    if (wasDragged) {
-      const timer = setTimeout(() => {
-        setWasDragged(false);
-        // Also reset the disableClicks flag to ensure clickability returns
-        (window as any).disableClicks = false;
-      }, 500); // Increased from 300ms to 500ms for better stability
-      
-      return () => clearTimeout(timer);
-    }
-  }, [wasDragged]);
-  
-  // Store position in localStorage to persist across page refreshes
-  useEffect(() => {
-    // Save position to localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('fundiPosition', JSON.stringify(position));
-    }
-  }, [position.x, position.y]);
-  
-  // Hide the "Click to chat" indicator after 6 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowClickIndicator(false);
-    }, 6000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  // Flag to prevent opening chat right after restoring from minimized
+  const justRestoredFromMinimizedRef = useRef(false);
   
   // Save minimized state to localStorage when it changes
   useEffect(() => {
@@ -305,7 +79,7 @@ export default function RobotFundi({
     }
   }, [isMinimized]);
 
-  // Much smaller size variants
+  // Size variants
   const sizeVariants = {
     xs: 'w-16 h-16',  // 64px
     sm: 'w-20 h-20',  // 80px
@@ -314,6 +88,7 @@ export default function RobotFundi({
     xl: 'w-32 h-32'   // 128px
   };
 
+  // Category colors
   const categoryColors: Record<string, string> = {
     finance: '#22c55e',
     career: '#3b82f6',
@@ -327,31 +102,10 @@ export default function RobotFundi({
   };
 
   const color = categoryColors[category] || categoryColors.general;
-
-  // Track when a Fundi restore from minimized happens for chat prevention
-  const justRestoredFromMinimizedRef = useRef(false);
   
   // Function to handle tap/click events in a unified way
   const handleTapEvent = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
-    
-    // If we were just dragging or have the "just finished dragging" flag set, don't process clicks
-    if (wasDragged || isDragging || justFinishedDraggingRef.current) {
-      // Prevent all click handling when just finished dragging
-      if (justFinishedDraggingRef.current) {
-        console.log('Preventing click after drag');
-        e.preventDefault();
-        
-        // Dispatch event to notify floating-chat to prevent opening
-        if (typeof window !== 'undefined') {
-          const preventChatOpenEvent = new CustomEvent('preventFundiChatOpen', {
-            detail: { timestamp: Date.now() }
-          });
-          window.dispatchEvent(preventChatOpenEvent);
-        }
-      }
-      return;
-    }
     
     // Increment the click count
     clickCountRef.current += 1;
@@ -372,7 +126,7 @@ export default function RobotFundi({
             // Call the onOpen callback to open the chat
             if (onOpen) {
               // Check if we just restored from minimized state
-              if (justRestoredFromMinimizedRef.current || justFinishedDraggingRef.current) {
+              if (justRestoredFromMinimizedRef.current) {
                 // Reset prevention flags
                 justRestoredFromMinimizedRef.current = false;
                 
@@ -384,41 +138,28 @@ export default function RobotFundi({
                   window.dispatchEvent(preventChatOpenEvent);
                 }
               } else {
-                // Wait a tiny bit to ensure proper operation
-                setTimeout(() => {
-                  // If we're still not in a dragging or prevention state
-                  if (!wasDragged && !isDragging && !justFinishedDraggingRef.current) {
-                    // Reset all flags to ensure proper operation
-                    (window as any).disableClicks = false;
-                    setWasDragged(false);
-                    
-                    onOpen();
-                    
-                    // Dispatch positioning event
-                    if (typeof window !== 'undefined') {
-                      const openFundiEvent = new CustomEvent('forceFundiOpen', { 
-                        detail: { position: { x: position.x, y: position.y } }
-                      });
-                      window.dispatchEvent(openFundiEvent);
-                    }
-                  }
-                }, 10);
+                // Open the chat
+                onOpen();
+                
+                // Dispatch positioning event with fixed position
+                if (typeof window !== 'undefined') {
+                  const openFundiEvent = new CustomEvent('forceFundiOpen', { 
+                    detail: { position: { x: 0, y: 0 } }
+                  });
+                  window.dispatchEvent(openFundiEvent);
+                }
               }
             }
           }
         }
         
         // Reset flags and click count
-        preventNextClickRef.current = false;
         clickCountRef.current = 0;
         clickTimerRef.current = null;
       }, 300);
     } 
     // If this is the second click, handle as a double-click
     else if (clickCountRef.current === 2) {
-      // Prevent drag operations that might be started by the second tap
-      preventNextClickRef.current = true;
-      
       // If we're going from minimized to normal, set the justRestored flag
       if (isMinimized) {
         justRestoredFromMinimizedRef.current = true;
@@ -441,11 +182,6 @@ export default function RobotFundi({
         clickTimerRef.current = null;
       }
       
-      // Reset the prevention flag after a short delay
-      setTimeout(() => {
-        preventNextClickRef.current = false;
-      }, 100);
-      
       // Prevent default and stop propagation
       e.preventDefault();
     }
@@ -464,7 +200,6 @@ export default function RobotFundi({
       data-fundi-robot="true"
       className={cn(
         "fixed",
-        // Using cursor-pointer instead of cursor-grab since we're not draggable anymore
         "cursor-pointer",
         sizeVariants[size],
         interactive && "hover:scale-105 transition-transform"
@@ -489,7 +224,6 @@ export default function RobotFundi({
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleTapEvent}
     >
-      {/* Removed "Click to chat" indicator as requested by the user */}
       <svg
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
