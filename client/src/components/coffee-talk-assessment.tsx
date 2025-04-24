@@ -777,16 +777,16 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <Button 
             variant="outline" 
             onClick={resetAssessment}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto flex items-center justify-center"
           >
-            Take Assessment Again
+            <span>Take Assessment Again</span>
           </Button>
           <Button 
             variant="outline" 
             onClick={() => window.location.href = '/wellness'}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto flex items-center justify-center"
           >
-            Back to Wellness Center
+            <span>Back to Wellness Center</span>
           </Button>
         </div>
       );
@@ -798,20 +798,20 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           variant="outline" 
           onClick={handlePreviousQuestion}
           disabled={currentQuestionIndex === 0}
-          className="order-2 sm:order-1 w-full sm:w-auto"
+          className="order-2 sm:order-1 w-full sm:w-auto flex items-center justify-center"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Previous
+          <ArrowLeft className="mr-2 h-4 w-4 flex-shrink-0" />
+          <span>Previous</span>
         </Button>
         
         <Button 
           variant="default"
           onClick={currentQuestionIndex === mentalHealthQuestions.length - 1 ? submitAssessment : handleSkipQuestion}
           disabled={isPending}
-          className="order-1 sm:order-2 w-full sm:w-auto"
+          className="order-1 sm:order-2 w-full sm:w-auto flex items-center justify-center"
         >
-          {isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}
-          {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="ml-2 h-4 w-4" />}
+          <span>{isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}</span>
+          {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />}
         </Button>
       </div>
     );
