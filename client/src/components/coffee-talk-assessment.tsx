@@ -276,64 +276,107 @@ export default function CoffeeTalkAssessment() {
     return () => clearTimeout(timer);
   }, [currentQuestionIndex]);
 
-  // Utility function to scroll to top of page with smooth animation
+  // Ultra-aggressive function to forcefully scroll to top of page
   const scrollToTop = () => {
-    console.log("Scrolling to top of page");
+    console.log("🔥 SUPER-AGGRESSIVE SCROLLING TO TOP 🔥");
     
-    // First try to find any scrollable containers in the Coffee Talk UI
-    const scrollContainers = [
-      '.coffee-talk-container', // Target by class 
-      '.bg-white.rounded-xl', // The main container 
-      '.card-content', // Card content area
-      '.p-6' // The padding container
-    ];
-    
-    let scrolled = false;
-    
-    // Try each potential container
-    for (const selector of scrollContainers) {
-      const element = document.querySelector(selector);
-      if (element) {
-        console.log(`Found scrollable element: ${selector}`);
-        // Set scrollTop directly
-        element.scrollTop = 0;
-        
-        // Also try scrollTo with smooth behavior if supported
+    // PRIMARY METHOD: Scroll to our explicit anchor at the very top
+    const scrollAnchor = document.getElementById('coffee-talk-scroll-anchor');
+    if (scrollAnchor) {
+      // Try multiple approaches with the anchor
+      scrollAnchor.scrollIntoView({behavior: 'auto', block: 'start'});
+      
+      // Focus it to bring browser attention to it
+      if (scrollAnchor instanceof HTMLElement) {
         try {
-          element.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
+          scrollAnchor.focus();
         } catch (e) {
-          console.log(`Smooth scroll not supported on ${selector}`);
-        }
-        
-        scrolled = true;
-      }
-    }
-    
-    // Always apply window methods as fallback
-    window.scrollTo(0, 0);
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-    
-    // Force the window to be at the top (backup methods)
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    
-    // Try once more with a small delay to ensure DOM has updated
-    setTimeout(() => {
-      for (const selector of scrollContainers) {
-        const element = document.querySelector(selector);
-        if (element) {
-          element.scrollTop = 0;
+          console.error("Focus error:", e);
         }
       }
       
+      console.log("Used scroll anchor at the top");
+    }
+    
+    // BACKUP METHOD 1: Direct document/window scrolling
+    window.scrollTo({top: 0, left: 0, behavior: 'auto'});
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    
+    // BACKUP METHOD 2: Find the main dialog container and scroll it
+    const dialogContainer = document.getElementById('coffee-talk-assessment');
+    if (dialogContainer) {
+      dialogContainer.scrollIntoView({behavior: 'auto', block: 'start'});
+      dialogContainer.scrollTop = 0;
+      console.log("Found and scrolling dialogContainer");
+    }
+    
+    // BACKUP METHOD 3: Use the scroll container
+    const scrollContainer = document.getElementById('coffee-talk-scroll-container');
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
+      scrollContainer.scrollIntoView({behavior: 'auto', block: 'start'});
+      console.log("Set scrollTop on scrollContainer");
+    }
+    
+    // BACKUP METHOD 4: Try to find the title and scroll to it
+    const titleElement = document.querySelector('h1');
+    if (titleElement && titleElement instanceof HTMLElement) {
+      titleElement.scrollIntoView({behavior: 'auto', block: 'start'});
+      console.log("Scrolling to title element");
+    }
+    
+    // BACKUP METHOD 5: Force any dialogs or modals to scroll
+    document.querySelectorAll('[role="dialog"], .dialog, .modal, .popup')
+      .forEach(dialog => {
+        if (dialog instanceof HTMLElement) {
+          dialog.scrollTop = 0;
+        }
+      });
+    
+    console.log("Applied all scroll methods");
+    
+    // Schedule another scroll after any animations might have finished
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      if (scrollAnchor && scrollAnchor instanceof HTMLElement) {
+        scrollAnchor.scrollIntoView({behavior: 'auto', block: 'start'});
+      }
+    }, 50);
+    
+    // Method 6: Use more aggressive scrolling with a slight delay
+    setTimeout(() => {
+      window.scrollTo(0, 0);
       document.body.scrollTop = 0;
       document.documentElement.scrollTop = 0;
+      
+      // Try to find ANY scrollable parent
+      // Use a more targeted approach to avoid TypeScript errors
+      const scrollableElements = [
+        document.getElementById('coffee-talk-assessment'),
+        document.getElementById('coffee-talk-scroll-container'),
+        document.getElementById('coffee-talk-content'),
+        document.querySelector('.coffee-talk-container'),
+        document.querySelector('.bg-white.rounded-xl')
+      ];
+      
+      // Apply scroll to all potential elements
+      scrollableElements.forEach(el => {
+        if (el) {
+          el.scrollTop = 0;
+          try {
+            el.scrollIntoView({behavior: 'auto', block: 'start'});
+          } catch (e) {
+            console.error("ScrollIntoView error:", e);
+          }
+        }
+      });
+      
+      // As a last resort, try to find the heading and scroll to it
+      const heading = document.querySelector('h3');
+      if (heading instanceof HTMLElement) {
+        heading.scrollIntoView({behavior: 'auto', block: 'start'});
+      }
     }, 50);
   };
 
@@ -961,17 +1004,52 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <button 
             type="button"
             onClick={() => {
-              // Direct implementation instead of handler function
-              console.log("NEXT DIRECT BUTTON CLICKED");
+              // Ultra-aggressive "nuclear option" implementation
+              console.log("💣 NEXT BUTTON - NUCLEAR SCROLL OPTION 💣");
               
-              // Ensure proper scrolling behavior
-              scrollToTop();
-
               if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
-                // Using a delay to let the scroll complete first
+                // First scroll to top BEFORE state changes
+                scrollToTop();
+                
+                // Focus the scroll anchor explicitly
+                const scrollAnchor = document.getElementById('coffee-talk-scroll-anchor');
+                if (scrollAnchor instanceof HTMLElement) {
+                  try {
+                    scrollAnchor.focus();
+                    scrollAnchor.scrollIntoView({behavior: 'auto', block: 'start'});
+                  } catch (e) {
+                    console.error("Anchor focus/scroll error:", e);
+                  }
+                }
+                
+                // Then update the state with a small delay
                 setTimeout(() => {
-                  setCurrentQuestionIndex(prev => prev + 1);
-                }, 100);
+                  // Update question index
+                  const newIndex = currentQuestionIndex + 1;
+                  setCurrentQuestionIndex(newIndex);
+                  
+                  // Multiple levels of scrolling with increasing delays
+                  scrollToTop();
+                  
+                  setTimeout(scrollToTop, 50);
+                  setTimeout(scrollToTop, 150);
+                  setTimeout(scrollToTop, 300);
+                  
+                  // Final scroll after all animations and state changes have settled
+                  setTimeout(() => {
+                    scrollToTop();
+                    
+                    // Direct DOM manipulation as a last resort
+                    window.scrollTo(0, 0);
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                    
+                    // Force anchor to top again
+                    if (scrollAnchor instanceof HTMLElement) {
+                      scrollAnchor.scrollIntoView({behavior: 'auto', block: 'start'});
+                    }
+                  }, 500);
+                }, 10);
               } else {
                 submitAssessment();
               }
@@ -1005,7 +1083,16 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
 
   // Main JSX
   return (
-    <div className="max-w-6xl mx-auto" id="coffee-talk-assessment">
+    // Add a scroll anchor at the top that we can target
+    <div className="flex flex-col max-w-6xl mx-auto" id="coffee-talk-assessment">
+      {/* This div serves as a scroll anchor target at the very top with tabindex for focus */}
+      <div 
+        id="coffee-talk-scroll-anchor" 
+        className="h-1 w-full outline-none" 
+        tabIndex={-1}
+        aria-hidden="true"
+      ></div>
+      
       <div className="mb-6">
         <div className="flex items-center gap-2">
           <Coffee className="h-7 w-7 text-amber-600" />
