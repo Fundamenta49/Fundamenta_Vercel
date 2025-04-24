@@ -377,42 +377,42 @@ export default function Wellness() {
             <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-purple-50 text-purple-800 rounded-md border-l-4 border-purple-500">
               Wellness Tools
             </h2>
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-3 xs:gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 px-1 sm:px-0 max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 px-1 sm:px-0 max-w-6xl mx-auto">
               {SECTIONS.map((section) => (
                 <div 
                   key={section.id} 
-                  className={`flex flex-col h-full ${section.id === 'shopping' ? 'col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-4 xl:col-span-4' : ''}`}
+                  className={`flex flex-col h-full ${section.id === 'shopping' ? 'col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-4 xl:col-span-4' : ''}`}
                 >
                   <button
                     onClick={() => handleCardClick(section.id)}
-                    className={`relative flex flex-col items-center justify-between p-3 xs:p-4 rounded-lg border ${section.id === 'mental-health' ? 'bg-amber-50 hover:border-amber-500 text-amber-800 hover:bg-amber-100' : 'bg-white hover:border-purple-500'} shadow-sm transition-all duration-200 hover:shadow-md min-h-[110px] xs:min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'shopping' ? 'xs:flex-row xs:items-start xs:text-left xs:justify-start xs:min-h-[130px] sm:min-h-[140px] md:min-h-[150px]' : ''}`}
+                    className={`relative flex flex-col items-center justify-between p-4 rounded-lg border ${section.id === 'mental-health' ? 'bg-amber-50 hover:border-amber-500 text-amber-800 hover:bg-amber-100' : 'bg-white hover:border-purple-500'} shadow-sm transition-all duration-200 hover:shadow-md min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'shopping' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`}
                     aria-label={`Open ${section.title}`}
                   >
-                    <div className={`flex items-center justify-center h-10 xs:h-12 sm:h-14 md:h-14 ${section.id === 'shopping' ? 'xs:mr-4 sm:mr-6' : 'w-full'} mb-1 xs:mb-2`}>
-                      <section.icon className={`w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 ${section.id === 'mental-health' ? 'text-amber-600' : 'text-purple-500'}`} />
+                    <div className={`flex items-center justify-center h-12 sm:h-14 md:h-14 ${section.id === 'shopping' ? 'sm:mr-6' : 'w-full'} mb-2`}>
+                      <section.icon className={`w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 ${section.id === 'mental-health' ? 'text-amber-600' : 'text-purple-500'}`} />
                     </div>
                     
-                    <div className={`flex flex-col ${section.id === 'shopping' ? 'xs:items-start items-center' : 'items-center'} w-full`}>
-                      <span className={`text-xs xs:text-sm sm:text-base md:text-lg font-medium ${section.id === 'shopping' ? 'xs:text-left text-center' : 'text-center'} line-clamp-2 w-full whitespace-normal ${section.id === 'mental-health' ? 'text-amber-800' : ''}`}>{section.title}</span>
+                    <div className={`flex flex-col ${section.id === 'shopping' ? 'sm:items-start items-center' : 'items-center'} w-full`}>
+                      <span className={`text-sm sm:text-base md:text-lg font-medium ${section.id === 'shopping' ? 'sm:text-left text-center' : 'text-center'} line-clamp-2 w-full whitespace-normal ${section.id === 'mental-health' ? 'text-amber-800' : ''}`}>{section.title}</span>
                       
-                      <p className={`text-xs xs:text-xs sm:text-sm ${section.id === 'mental-health' ? 'text-amber-700' : 'text-gray-500'} mt-1 md:mt-2 line-clamp-2 xs:line-clamp-3 ${section.id === 'shopping' ? 'xs:text-left text-center' : 'text-center'} block whitespace-normal`}>
-                        {section.description.length > (section.id === 'shopping' ? 100 : 60) 
-                          ? `${section.description.substring(0, section.id === 'shopping' ? 100 : 60)}...` 
+                      <p className={`text-xs sm:text-sm ${section.id === 'mental-health' ? 'text-amber-700' : 'text-gray-500'} mt-1 md:mt-2 line-clamp-3 ${section.id === 'shopping' ? 'sm:text-left text-center' : 'text-center'} block whitespace-normal`}>
+                        {section.description.length > (section.id === 'shopping' ? 100 : 80) 
+                          ? `${section.description.substring(0, section.id === 'shopping' ? 100 : 80)}...` 
                           : section.description}
                       </p>
                       
                       {section.id === 'mental-health' && (
                         <div 
-                          className="w-full flex justify-center items-center mt-2 xs:mt-3 md:mt-4"
+                          className="w-full flex justify-center items-center mt-3 md:mt-4"
                           style={{pointerEvents: 'none'}} // This prevents the button from capturing its own click events
                         >
                           <div 
-                            className="px-2 xs:px-3 py-1 rounded-md text-center"
+                            className="px-3 py-1 rounded-md text-center"
                             style={{
                               backgroundColor: '#d97706', /* amber-600 */
                               color: 'white',
                               border: '1px solid #b45309', /* amber-700 */
-                              fontSize: '0.75rem',
+                              fontSize: '0.875rem',
                               fontWeight: 500,
                               whiteSpace: 'nowrap',
                               boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'

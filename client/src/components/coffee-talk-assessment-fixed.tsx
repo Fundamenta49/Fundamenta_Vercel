@@ -602,7 +602,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             </div>
 
             {currentQuestionIndex === 13 && (
-              <Alert className="bg-amber-50 text-amber-800 border-amber-300 mb-4">
+              <Alert variant="warning" className="bg-amber-50 text-amber-800 border-amber-300 mb-4">
                 <Brain className="h-4 w-4 text-amber-600" />
                 <AlertTitle>A gentle reminder</AlertTitle>
                 <AlertDescription className="text-amber-800">
