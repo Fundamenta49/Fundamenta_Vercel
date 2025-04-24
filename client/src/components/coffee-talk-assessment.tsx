@@ -269,10 +269,18 @@ export default function CoffeeTalkAssessment() {
   // Utility function to scroll to top of page with smooth animation
   const scrollToTop = () => {
     console.log("Scrolling to top of page");
+    // Try multiple scroll methods for maximum compatibility
+    window.scrollTo(0, 0); // Immediate scroll
+    
+    // Smooth scroll as backup
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
+    
+    // Force the window to be at the top (backup method)
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
   };
   
   // Reset assessment
@@ -873,7 +881,17 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         <div className="order-2 sm:order-1 w-full sm:w-auto">
           <button 
             type="button"
-            onClick={handlePrevClick}
+            onClick={() => {
+              // Direct implementation instead of handler function
+              console.log("PREV DIRECT BUTTON CLICKED");
+              scrollToTop();
+              
+              if (currentQuestionIndex > 0) {
+                setTimeout(() => {
+                  setCurrentQuestionIndex(currentQuestionIndex - 1);
+                }, 100);
+              }
+            }}
             disabled={currentQuestionIndex === 0}
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-amber-100 active:border-amber-300 h-10 px-4 py-2 w-full"
           >
@@ -886,7 +904,19 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         <div className="order-1 sm:order-2 w-full sm:w-auto">
           <button 
             type="button"
-            onClick={handleNextClick}
+            onClick={() => {
+              // Direct implementation instead of handler function
+              console.log("NEXT DIRECT BUTTON CLICKED");
+              scrollToTop();
+              
+              if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
+                setTimeout(() => {
+                  setCurrentQuestionIndex(currentQuestionIndex + 1);
+                }, 100);
+              } else {
+                submitAssessment();
+              }
+            }}
             disabled={isPending}
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 active:bg-amber-800 active:scale-[0.98] h-10 px-4 py-2 w-full"
           >
