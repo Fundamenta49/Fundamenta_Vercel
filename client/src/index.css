@@ -370,8 +370,15 @@
   z-index: auto !important;
 }
 
+/* Special case for chat inside wellness journal */
+.wellness-journal .fundi-chat-expanded {
+  position: relative !important;
+  z-index: 9999999 !important;
+}
+
 /* Make chat interface clickable */
-[data-fundi-robot="true"] {
+[data-fundi-robot="true"],
+.fundi-chat-expanded {
   cursor: pointer !important;
   pointer-events: auto !important;
   z-index: 9999999 !important;

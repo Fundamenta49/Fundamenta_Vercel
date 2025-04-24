@@ -129,7 +129,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       <AnimatePresence>
         {isExpanded ? (
           <motion.div 
-            className="fixed z-[999999] flex items-end justify-end"
+            className="fixed z-[999999] flex items-end justify-end fundi-chat-expanded"
             // Start at full opacity and without animation to prevent scroll flickering
             initial={{ opacity: 1, scale: 1, y: 0 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
