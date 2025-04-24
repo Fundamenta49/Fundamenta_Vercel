@@ -779,15 +779,21 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               onClick={resetAssessment}
               className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
             >
-              Take Assessment Again
+              <div className="flex items-center justify-center">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="ml-1.5">Take Assessment Again</span>
+              </div>
             </button>
           </div>
           <div className="w-full sm:w-auto">
             <button 
               onClick={() => window.location.href = '/wellness'}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 h-10 px-4 py-2 w-full"
             >
-              Back to Wellness Center
+              <div className="flex items-center justify-center">
+                <span>Back to Wellness Center</span>
+                <ArrowRight className="h-4 w-4 ml-1.5" />
+              </div>
             </button>
           </div>
         </div>
@@ -802,8 +808,10 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             disabled={currentQuestionIndex === 0}
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2 w-full"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            <span>Previous</span>
+            <div className="flex items-center justify-center">
+              <ArrowLeft className="h-4 w-4" />
+              <span className="ml-1.5">Previous</span>
+            </div>
           </button>
         </div>
         
@@ -811,10 +819,12 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           <button 
             onClick={currentQuestionIndex === mentalHealthQuestions.length - 1 ? submitAssessment : handleSkipQuestion}
             disabled={isPending}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-900/90 h-10 px-4 py-2 w-full"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-amber-600 text-slate-50 hover:bg-amber-700 h-10 px-4 py-2 w-full"
           >
-            <span>{isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}</span>
-            {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="h-4 w-4 ml-2" />}
+            <div className="flex items-center justify-center">
+              <span>{isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}</span>
+              {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="h-4 w-4 ml-1.5" />}
+            </div>
           </button>
         </div>
       </div>
