@@ -818,7 +818,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
           >
             <div className="flex items-center justify-center">
               <span>{isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}</span>
-              {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="h-4 w-4 ml-1.5" />}
+              <ArrowRight className="h-4 w-4 ml-1.5" />
             </div>
           </button>
         </div>
