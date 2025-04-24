@@ -714,24 +714,24 @@ export default function WellnessJournal() {
   };
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto">
-      <FullScreenDialogHeader className="mb-6">
-        <div className="flex items-center justify-between">
+    <div className="w-full max-w-screen-xl mx-auto px-2 sm:px-0">
+      <FullScreenDialogHeader className="mb-4 md:mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
-            <Book className="h-6 w-6 text-purple-600" />
+            <Book className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
             Wellness Journal
           </FullScreenDialogTitle>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-1 sm:mt-0">
             <Button 
               onClick={openNewEntry} 
-              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg"
+              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg px-3 py-1 h-9 text-sm"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-1.5" />
               New Entry
             </Button>
           </div>
         </div>
-        <FullScreenDialogDescription className="text-purple-600/80">
+        <FullScreenDialogDescription className="text-purple-600/80 text-sm">
           Track your thoughts, feelings, and personal growth journey
         </FullScreenDialogDescription>
       </FullScreenDialogHeader>
@@ -872,7 +872,7 @@ export default function WellnessJournal() {
 
           {/* Entry list */}
           {entries.length > 0 ? (
-            <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
+            <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6" : "space-y-3 sm:space-y-4"}>
               {timeframeEntries.map((entry) => (
                 <Card 
                   key={entry.id} 
@@ -882,16 +882,16 @@ export default function WellnessJournal() {
                   )}
                   onClick={() => openEntryView(entry.id)}
                 >
-                  <CardHeader className={cn("pb-2", viewMode === 'list' ? "sm:w-1/3" : "")}>
+                  <CardHeader className={cn("pb-2 px-3 sm:px-4", viewMode === 'list' ? "sm:w-1/3" : "")}>
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-base truncate">{entry.title}</CardTitle>
+                      <CardTitle className="text-sm sm:text-base truncate mr-2">{entry.title}</CardTitle>
                       {entry.isPrivate && (
-                        <Lock className="h-4 w-4 text-purple-500 ml-2 flex-shrink-0" />
+                        <Lock className="h-4 w-4 text-purple-500 ml-1 flex-shrink-0" />
                       )}
                     </div>
-                    <CardDescription className="text-xs flex items-center gap-2">
+                    <CardDescription className="text-xs flex items-center gap-1.5 flex-wrap">
                       <CalendarIcon className="h-3 w-3" />
-                      {format(new Date(entry.timestamp), "PP")}
+                      <span className="truncate">{format(new Date(entry.timestamp), "MMM d, yyyy")}</span>
                       {entry.mood && (
                         <span className="flex items-center gap-1">
                           <span>•</span> 
@@ -900,17 +900,22 @@ export default function WellnessJournal() {
                       )}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className={cn("pt-0", viewMode === 'list' ? "sm:w-2/3" : "")}>
-                    <p className="text-sm line-clamp-3 text-muted-foreground mb-2">
+                  <CardContent className={cn("pt-0 px-3 sm:px-4", viewMode === 'list' ? "sm:w-2/3" : "")}>
+                    <p className="text-xs sm:text-sm line-clamp-3 text-muted-foreground mb-2">
                       {entry.content}
                     </p>
                     {entry.tags && entry.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {entry.tags.map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
+                        {entry.tags.slice(0, viewMode === 'list' ? 3 : 2).map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0">
                             #{tag}
                           </Badge>
                         ))}
+                        {entry.tags.length > (viewMode === 'list' ? 3 : 2) && (
+                          <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0">
+                            +{entry.tags.length - (viewMode === 'list' ? 3 : 2)}
+                          </Badge>
+                        )}
                       </div>
                     )}
                   </CardContent>
@@ -918,15 +923,15 @@ export default function WellnessJournal() {
               ))}
             </div>
           ) : (
-            <div className="col-span-full flex flex-col items-center py-16 text-center text-muted-foreground">
-              <Book className="h-16 w-16 mb-6 opacity-20" />
-              <p className="text-lg mb-2">Your journal is empty</p>
-              <p className="text-sm mb-6 max-w-md">Start writing to track your wellness journey and gain insights into your emotional patterns</p>
+            <div className="col-span-full flex flex-col items-center py-8 sm:py-16 text-center text-muted-foreground px-3">
+              <Book className="h-12 w-12 sm:h-16 sm:w-16 mb-4 sm:mb-6 opacity-20" />
+              <p className="text-base sm:text-lg mb-2">Your journal is empty</p>
+              <p className="text-xs sm:text-sm mb-4 sm:mb-6 max-w-md">Start writing to track your wellness journey and gain insights into your emotional patterns</p>
               <Button 
                 onClick={openNewEntry} 
-                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg"
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md transition-all hover:shadow-lg text-sm h-9"
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4 mr-1.5" />
                 Create Your First Entry
               </Button>
             </div>
@@ -937,29 +942,29 @@ export default function WellnessJournal() {
       {/* New Entry Dialog */}
       <FullScreenDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <FullScreenDialogContent themeColor="#a855f7">
-          <FullScreenDialogHeader>
+          <FullScreenDialogHeader className="px-3 sm:px-4">
             <FullScreenDialogTitle className="flex items-center gap-2 text-purple-700">
-              <Book className="h-6 w-6 text-purple-600" />
-              Create New Journal Entry
+              <Book className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+              <span className="text-base sm:text-lg">Create New Journal Entry</span>
             </FullScreenDialogTitle>
-            <FullScreenDialogDescription className="text-purple-600/80">
+            <FullScreenDialogDescription className="text-purple-600/80 text-xs sm:text-sm">
               Write freely and reflect on your thoughts and feelings
             </FullScreenDialogDescription>
           </FullScreenDialogHeader>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="px-6 border-b">
-              <TabsList className="h-14 w-full justify-start gap-4">
+            <div className="px-3 sm:px-6 border-b">
+              <TabsList className="h-12 sm:h-14 w-full justify-start gap-2 sm:gap-4">
                 <TabsTrigger 
                   value="write" 
-                  className="data-[state=active]:text-purple-700 data-[state=active]:border-purple-700 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-14"
+                  className="text-sm sm:text-base data-[state=active]:text-purple-700 data-[state=active]:border-purple-700 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
                 >
                   Write
                 </TabsTrigger>
                 {showInsights && (
                   <TabsTrigger 
                     value="insights" 
-                    className="data-[state=active]:text-purple-700 data-[state=active]:border-purple-700 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-14"
+                    className="text-sm sm:text-base data-[state=active]:text-purple-700 data-[state=active]:border-purple-700 data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-b-2 rounded-none h-12 sm:h-14"
                   >
                     AI Insights
                   </TabsTrigger>
