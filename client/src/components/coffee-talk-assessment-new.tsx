@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -196,6 +196,20 @@ export default function CoffeeTalkAssessment() {
   const [consentToStore, setConsentToStore] = useState(false);
   const [results, setResults] = useState<any>(null);
   
+  // Use effect to scroll to top when question changes
+  useEffect(() => {
+    if (isOpen) {
+      console.log("Question index changed, scrolling to top via useEffect");
+      
+      // Use a small delay to ensure DOM has updated
+      const timer = setTimeout(() => {
+        scrollToTop();
+      }, 10);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentQuestionIndex, isOpen]);
+  
   // Calculate progress percentage
   const progressPercentage = ((currentQuestionIndex + 1) / coffeeTalkQuestions.length) * 100;
   
@@ -203,44 +217,11 @@ export default function CoffeeTalkAssessment() {
   const scrollToTop = () => {
     console.log("Scrolling to top of page");
     
-    // Log when the next/previous button is clicked
-    console.log("NEXT/PREV BUTTON CLICKED");
-    
-    // Try multiple selectors to find the dialog body
-    const dialogBodySelectors = [
-      // Try our specific coffee talk dialog elements first
-      '#coffee-talk-scroll-container',
-      '#coffee-talk-dialog #fullscreen-dialog-body',
-      '#coffee-talk-dialog .full-screen-dialog-body',
-      '#coffee-talk-dialog .h-\\[calc\\(100vh-48px\\)]',
-      // Then try generic selectors
-      '#fullscreen-dialog-body',
-      '.full-screen-dialog-body',
-      '.mobile-dialog-body',
-      '#fullscreen-dialog-content-mobile .h-\\[calc\\(100vh-48px\\)]', // Mobile dialog content
-      '#fullscreen-dialog-content-desktop'  // Desktop dialog content
-    ];
-    
-    let scrolled = false;
-    
-    // Try each selector
-    for (const selector of dialogBodySelectors) {
-      const element = document.querySelector(selector);
-      if (element) {
-        console.log(`Found scrollable element: ${selector}`);
-        element.scrollTop = 0;
-        
-        try {
-          element.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        } catch (e) {
-          console.log(`Smooth scroll not supported on ${selector}`);
-        }
-        
-        scrolled = true;
-      }
+    // Immediate attempt to scroll the mobile container
+    const mobileScrollableContainer = document.querySelector('#fullscreen-dialog-content-mobile > div.h-\\[calc\\(100vh-48px\\)]');
+    if (mobileScrollableContainer) {
+      console.log("Found mobile scrollable container");
+      mobileScrollableContainer.scrollTop = 0;
     }
     
     // Try scrolling the card directly
@@ -250,20 +231,47 @@ export default function CoffeeTalkAssessment() {
       cardContent.scrollTop = 0;
     }
     
-    // If no specific element was found, fallback to standard methods
-    if (!scrolled) {
-      console.log("No specific element found, using fallback scroll methods");
-      window.scrollTo(0, 0);
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    // Try scrolling the coffee talk container
+    const coffeeContainer = document.querySelector('#coffee-talk-scroll-container');
+    if (coffeeContainer) {
+      console.log("Found coffee talk container, scrolling to top");
+      coffeeContainer.scrollTop = 0;
     }
     
-    // Try one more specific approach targeting the mobile dialog scrollable area
+    // Fallback to other scrollable elements
+    [
+      '#coffee-talk-dialog .h-\\[calc\\(100vh-48px\\)]',
+      '#fullscreen-dialog-body',
+      '.full-screen-dialog-body',
+      '.mobile-dialog-body',
+      '.h-\\[calc\\(100vh-48px\\)]'
+    ].forEach(selector => {
+      const element = document.querySelector(selector);
+      if (element) {
+        console.log(`Found scrollable element: ${selector}`);
+        element.scrollTop = 0;
+      }
+    });
+    
+    // Fallback to window scroll methods
+    window.scrollTo(0, 0);
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    
+    // Try again with a delay (helps with DOM updates)
     setTimeout(() => {
-      const mobileScrollArea = document.querySelector('#fullscreen-dialog-content-mobile div.h-\\[calc\\(100vh-48px\\)]');
-      if (mobileScrollArea) {
+      if (mobileScrollableContainer) {
+        mobileScrollableContainer.scrollTop = 0;
+      }
+      
+      if (cardContent) {
+        cardContent.scrollTop = 0;
+      }
+      
+      const scrollArea = document.querySelector('#fullscreen-dialog-content-mobile div.h-\\[calc\\(100vh-48px\\)]');
+      if (scrollArea) {
         console.log("Found mobile scroll area, scrolling with delay");
-        mobileScrollArea.scrollTop = 0;
+        scrollArea.scrollTop = 0;
       }
     }, 50);
   };
