@@ -774,45 +774,53 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
     if (showResults) {
       return (
         <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
-          <Button 
-            variant="outline" 
-            onClick={resetAssessment}
-            className="w-full sm:w-auto flex items-center justify-center"
-          >
-            <span>Take Assessment Again</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => window.location.href = '/wellness'}
-            className="w-full sm:w-auto flex items-center justify-center"
-          >
-            <span>Back to Wellness Center</span>
-          </Button>
+          <div className="w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              onClick={resetAssessment}
+              className="w-full flex items-center justify-center gap-2 px-4"
+            >
+              Take Assessment Again
+            </Button>
+          </div>
+          <div className="w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.href = '/wellness'}
+              className="w-full flex items-center justify-center gap-2 px-4"
+            >
+              Back to Wellness Center
+            </Button>
+          </div>
         </div>
       );
     }
     
     return (
       <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
-        <Button 
-          variant="outline" 
-          onClick={handlePreviousQuestion}
-          disabled={currentQuestionIndex === 0}
-          className="order-2 sm:order-1 w-full sm:w-auto flex items-center justify-center"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4 flex-shrink-0" />
-          <span>Previous</span>
-        </Button>
+        <div className="order-2 sm:order-1 w-full sm:w-auto">
+          <Button 
+            variant="outline" 
+            onClick={handlePreviousQuestion}
+            disabled={currentQuestionIndex === 0}
+            className="w-full flex items-center justify-center gap-2 px-4"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Previous
+          </Button>
+        </div>
         
-        <Button 
-          variant="default"
-          onClick={currentQuestionIndex === mentalHealthQuestions.length - 1 ? submitAssessment : handleSkipQuestion}
-          disabled={isPending}
-          className="order-1 sm:order-2 w-full sm:w-auto flex items-center justify-center"
-        >
-          <span>{isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}</span>
-          {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />}
-        </Button>
+        <div className="order-1 sm:order-2 w-full sm:w-auto">
+          <Button 
+            variant="default"
+            onClick={currentQuestionIndex === mentalHealthQuestions.length - 1 ? submitAssessment : handleSkipQuestion}
+            disabled={isPending}
+            className="w-full flex items-center justify-center gap-2 px-4"
+          >
+            {isPending ? "Processing..." : currentQuestionIndex === mentalHealthQuestions.length - 1 ? "Complete" : "Next"}
+            {currentQuestionIndex !== mentalHealthQuestions.length - 1 && <ArrowRight className="h-4 w-4" />}
+          </Button>
+        </div>
       </div>
     );
   };
