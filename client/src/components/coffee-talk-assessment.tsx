@@ -247,7 +247,7 @@ const getSeverityColor = (score: number, isDepression: boolean, isWellbeing = fa
     const level = wellbeingSeverity.find(s => percentScore >= s.range[0] && percentScore <= s.range[1]);
     return level ? level.color : "bg-gray-400";
   }
-  
+
   const levels = isDepression ? depressionSeverity : anxietySeverity;
   const level = levels.find(s => score >= s.range[0] && score <= s.range[1]);
   return level ? level.color : "bg-gray-400";
@@ -262,27 +262,27 @@ export default function CoffeeTalkAssessment() {
   const [isPending, setIsPending] = useState(false);
   const [consentToStore, setConsentToStore] = useState(false);
   const [results, setResults] = useState<any>(null);
-  
+
   // Calculate progress percentage
   const progressPercentage = ((currentQuestionIndex + 1) / mentalHealthQuestions.length) * 100;
-  
+
   // Utility function to scroll to top of page with smooth animation
   const scrollToTop = () => {
     console.log("Scrolling to top of page");
     // Try multiple scroll methods for maximum compatibility
     window.scrollTo(0, 0); // Immediate scroll
-    
+
     // Smooth scroll as backup
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
-    
+
     // Force the window to be at the top (backup method)
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
   };
-  
+
   // Reset assessment
   const resetAssessment = () => {
     setCurrentQuestionIndex(0);
@@ -292,15 +292,15 @@ export default function CoffeeTalkAssessment() {
     setResults(null);
     setConsentToStore(false);
   };
-  
+
   // Handle question answer
   const handleAnswer = (value: number) => {
     const questionId = mentalHealthQuestions[currentQuestionIndex].id;
-    
+
     // Update answers
     setAnswers(prev => {
       const existingAnswerIndex = prev.findIndex(a => a.id === questionId);
-      
+
       if (existingAnswerIndex >= 0) {
         // Update existing answer
         const newAnswers = [...prev];
@@ -311,10 +311,10 @@ export default function CoffeeTalkAssessment() {
         return [...prev, { id: questionId, value }];
       }
     });
-    
+
     // Don't automatically progress - user must click "Next" button
   };
-  
+
   // Handle skipping a question
   const handleSkipQuestion = () => {
     console.log("Next button clicked, current index:", currentQuestionIndex);
@@ -330,7 +330,7 @@ export default function CoffeeTalkAssessment() {
       submitAssessment();
     }
   };
-  
+
   // Handle going back to a previous question
   const handlePreviousQuestion = () => {
     console.log("Previous button clicked, current index:", currentQuestionIndex);
@@ -344,30 +344,30 @@ export default function CoffeeTalkAssessment() {
       scrollToTop();
     }
   };
-  
+
   // Submit the assessment
   const submitAssessment = async () => {
     setIsPending(true);
-    
+
     try {
       // Prepare mental health data
       const who5Answers = answers.filter(a => a.id >= 0 && a.id <= 4);
       const phq9Answers = answers.filter(a => a.id >= 5 && a.id <= 13);
       const gad7Answers = answers.filter(a => a.id >= 14 && a.id <= 20);
-      
+
       // Calculate WHO-5 wellbeing score and percentage
       const who5Score = who5Answers.reduce((sum, curr) => sum + curr.value, 0);
       const wellbeingPercentage = getWellbeingPercentage(who5Score);
       const wellbeingLevel = getWellbeingLevel(who5Score);
-      
+
       // Calculate PHQ-9 depression score
       const depressionScore = phq9Answers.reduce((sum, curr) => sum + curr.value, 0);
       const depressionLevel = getDepressionLevel(depressionScore);
-      
+
       // Calculate GAD-7 anxiety score
       const anxietyScore = gad7Answers.reduce((sum, curr) => sum + curr.value, 0);
       const anxietyLevel = getAnxietyLevel(anxietyScore);
-      
+
       // Structure the data
       const assessmentData = {
         mentalHealth: {
@@ -383,10 +383,10 @@ export default function CoffeeTalkAssessment() {
           anxietyLevel
         }
       };
-      
+
       // Check for suicidal ideation (PHQ-9 question 9 - now at index 13)
       const suicidalIdeation = answers.find(a => a.id === 13 && a.value >= 1) !== undefined;
-      
+
       // For now, we'll simulate an API response
       const simulatedResults = {
         mentalMetrics: {
@@ -414,14 +414,14 @@ export default function CoffeeTalkAssessment() {
           ]
         }
       };
-      
+
       // If there's suicidal ideation, add a crisis recommendation
       if (suicidalIdeation) {
         simulatedResults.recommendations.mentalWellness.unshift(
           "Please reach out to a mental health professional or crisis helpline immediately"
         );
       }
-      
+
       setResults(simulatedResults);
       setShowResults(true);
     } catch (error) {
@@ -435,15 +435,15 @@ export default function CoffeeTalkAssessment() {
       setIsPending(false);
     }
   };
-  
+
   // Save assessment to journal
   const saveToJournal = async () => {
     if (!results) return;
-    
+
     try {
       // Format the date
       const date = new Date().toLocaleDateString();
-      
+
       // Create journal entry content
       const journalContent = `
 # Coffee Talk Assessment (${date})
@@ -461,10 +461,10 @@ ${results.recommendations.integratedWellness.map((rec: string) => `- ${rec}`).jo
 
 This assessment is not a diagnostic tool. The results are meant to provide general guidance and should not replace professional medical advice.
 `;
-      
+
       // Create a new journal entry (would normally call API)
       console.log('Would save to journal:', journalContent);
-      
+
       toast({
         title: "Saved to Journal",
         description: "Your assessment has been saved to your Wellness Journal",
@@ -479,13 +479,13 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       });
     }
   };
-  
+
   // Render assessment content
   const renderContent = () => {
     if (showResults) {
       return renderResults();
     }
-    
+
     // Show mental health assessment questions
     return (
       <>
@@ -516,10 +516,10 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               value={progressPercentage}
               className="h-2 mb-6"
             />
-            
+
             <div className="mb-8">
               <h3 className="text-base sm:text-lg font-medium mb-4 leading-relaxed">{mentalHealthQuestions[currentQuestionIndex].text}</h3>
-              
+
               <RadioGroup
                 className="gap-3"
                 value={
@@ -552,7 +552,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                 )}
               </RadioGroup>
             </div>
-            
+
             {/* Gentler support notice for question about thoughts of harming oneself */}
             {mentalHealthQuestions[currentQuestionIndex].id === 13 && (
               <Alert className="bg-amber-50 border-amber-100 mt-4">
@@ -568,11 +568,11 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       </>
     );
   };
-  
+
   // Render results
   const renderResults = () => {
     if (!results) return null;
-    
+
     return (
       <>
         <CardHeader>
@@ -595,7 +595,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="mental">Mental Wellness</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="overview" className="space-y-6 pt-4">
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Mental Wellness Summary</h3>
@@ -610,7 +610,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     </CardContent>
                     <div className={`${getSeverityColor(results.mentalMetrics.wellbeingScore, false, true)} h-1 w-full`} />
                   </Card>
-                  
+
                   <Card className="overflow-hidden">
                     <CardHeader className="p-4 pb-2">
                       <CardTitle className="text-sm font-medium">Depression</CardTitle>
@@ -621,7 +621,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     </CardContent>
                     <div className={`${getSeverityColor(results.mentalMetrics.depressionScore, true)} h-1 w-full`} />
                   </Card>
-                  
+
                   <Card className="overflow-hidden">
                     <CardHeader className="p-4 pb-2">
                       <CardTitle className="text-sm font-medium">Anxiety</CardTitle>
@@ -634,7 +634,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   </Card>
                 </div>
               </div>
-              
+
               {results.mentalMetrics.suicidalIdeation && (
                 <Alert className="bg-amber-50 border-amber-100">
                   <Brain className="h-4 w-4 text-amber-600" />
@@ -644,7 +644,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   </AlertDescription>
                 </Alert>
               )}
-              
+
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Recommendations</h3>
                 <div className="space-y-2">
@@ -656,7 +656,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   ))}
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between pt-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox 
@@ -671,7 +671,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                     Save to my wellness journal
                   </label>
                 </div>
-                
+
                 <Button 
                   onClick={saveToJournal} 
                   disabled={!consentToStore} 
@@ -683,16 +683,16 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   Save Results
                 </Button>
               </div>
-              
+
               <div className="pt-2 text-center text-sm text-gray-500">
                 This assessment is not a diagnostic tool. Please consult a healthcare professional for medical advice.
               </div>
             </TabsContent>
-            
+
             <TabsContent value="mental" className="space-y-6 pt-4">
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Mental Health Scores</h3>
-                
+
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="wellbeing">
                     <AccordionTrigger>
@@ -713,7 +713,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                       </p>
                     </AccordionContent>
                   </AccordionItem>
-                  
+
                   <AccordionItem value="depression">
                     <AccordionTrigger>
                       <div className="flex flex-wrap items-center gap-2">
@@ -733,7 +733,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                       </p>
                     </AccordionContent>
                   </AccordionItem>
-                  
+
                   <AccordionItem value="anxiety">
                     <AccordionTrigger>
                       <div className="flex flex-wrap items-center gap-2">
@@ -746,8 +746,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                       <p className="mb-4">The GAD-7 is a 7-question instrument used to screen for anxiety severity.</p>
                       <div className={`h-2 w-full mb-2 ${getSeverityColor(results.mentalMetrics.anxietyScore, false)} rounded-full`} />
                       <p className="text-sm">
-                        {anxietySeverity.find(s => 
-                          results.mentalMetrics.anxietyScore >= s.range[0] && 
+                        {anxietySeverity.find(s =>                          results.mentalMetrics.anxietyScore >= s.range[0] && 
                           results.mentalMetrics.anxietyScore <= s.range[1]
                         )?.description}
                       </p>
@@ -755,7 +754,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   </AccordionItem>
                 </Accordion>
               </div>
-              
+
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Mental Wellness Recommendations</h3>
                 <div className="space-y-2">
@@ -767,7 +766,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
                   ))}
                 </div>
               </div>
-              
+
               <div className="rounded-lg border p-4 bg-gray-50">
                 <div className="flex items-center gap-2 mb-2">
                   <FileText className="h-5 w-5 text-blue-500" />
@@ -794,7 +793,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       </>
     );
   };
-  
+
   // Render navigation buttons
   const renderNavButtons = () => {
     if (showResults) {
@@ -840,14 +839,14 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         </div>
       );
     }
-    
+
     // Navigation buttons for questions
     const handleNextClick = () => {
       console.log("Next button clicked, current index:", currentQuestionIndex);
       if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
         // First scroll to top immediately
         scrollToTop();
-        
+
         // Then update the question index
         setTimeout(() => {
           setCurrentQuestionIndex(prev => {
@@ -865,7 +864,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       if (currentQuestionIndex > 0) {
         // First scroll to top immediately
         scrollToTop();
-        
+
         // Then update the question index
         setTimeout(() => {
           setCurrentQuestionIndex(prev => {
@@ -875,7 +874,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         }, 100); // Small delay to ensure smooth scroll starts before state change
       }
     };
-    
+
     return (
       <div className="flex flex-col sm:flex-row justify-between w-full gap-3">
         <div className="order-2 sm:order-1 w-full sm:w-auto">
@@ -885,7 +884,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               // Direct implementation instead of handler function
               console.log("PREV DIRECT BUTTON CLICKED");
               scrollToTop();
-              
+
               if (currentQuestionIndex > 0) {
                 setTimeout(() => {
                   setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -900,7 +899,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             </div>
           </button>
         </div>
-        
+
         <div className="order-1 sm:order-2 w-full sm:w-auto">
           <button 
             type="button"
@@ -908,7 +907,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
               // Direct implementation instead of handler function
               console.log("NEXT DIRECT BUTTON CLICKED");
               scrollToTop();
-              
+
               if (currentQuestionIndex < mentalHealthQuestions.length - 1) {
                 setTimeout(() => {
                   setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -943,7 +942,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
       </div>
     );
   };
-  
+
   // Main JSX
   return (
     <div className="max-w-6xl mx-auto">
@@ -954,7 +953,7 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
         </div>
         <p className="text-gray-600 mt-1">Let's connect—and realign—with what really matters</p>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <div className="p-6 pb-0">
           {!showResults && (
@@ -967,11 +966,11 @@ This assessment is not a diagnostic tool. The results are meant to provide gener
             </div>
           )}
         </div>
-        
+
         <div className="p-6">
           <Card className="border-0 shadow-none">
             {renderContent()}
-            
+
             <CardFooter className="flex pt-6 px-0">
               {renderNavButtons()}
             </CardFooter>
