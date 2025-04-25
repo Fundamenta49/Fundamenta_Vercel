@@ -257,7 +257,7 @@ export default function PoseAnalysisDialog({
               </MegaDialogDescription>
             </div>
             <button
-              onClick={() => onOpenChange(false)}
+              onClick={() => onOpenChange && onOpenChange(false)}
               aria-label="Close"
               type="button"
               className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200"
@@ -329,7 +329,7 @@ export default function PoseAnalysisDialog({
                   <Button 
                     variant="outline" 
                     className="mt-3 border-green-300 text-green-700 hover:bg-green-100"
-                    onClick={() => onOpenChange(false)}
+                    onClick={() => onOpenChange && onOpenChange(false)}
                   >
                     Continue Practice
                   </Button>
@@ -485,7 +485,7 @@ export default function PoseAnalysisDialog({
         <MegaDialogFooter className="mt-6 gap-2 flex-wrap">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => onOpenChange && onOpenChange(false)}
           >
             Close
           </Button>

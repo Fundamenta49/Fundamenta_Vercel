@@ -2047,7 +2047,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     </MegaDialogDescription>
                   </div>
                   <button
-                    onClick={() => setExerciseDetailOpen(false)}
+                    onClick={() => setExerciseDetailOpen && setExerciseDetailOpen(false)}
                     aria-label="Close"
                     type="button"
                     className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200"
@@ -2116,7 +2116,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           <h3 className="text-lg font-medium mb-3 text-gray-800">Video Tutorial</h3>
                           <div 
                             className="relative aspect-video w-full overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-all duration-200" 
-                            onClick={() => setVideoFullscreen(true)}
+                            onClick={() => setVideoFullscreen && setVideoFullscreen(true)}
                           >
                             {/* Create responsive container for the video that works well on mobile */}
                             <div className="relative pb-[56.25%] h-0 overflow-hidden">
@@ -2147,7 +2147,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                               variant="outline" 
                               size="sm" 
                               className="text-sm flex items-center gap-1.5"
-                              onClick={() => setVideoFullscreen(true)}
+                              onClick={() => setVideoFullscreen && setVideoFullscreen(true)}
                             >
                               <Maximize2 className="h-3.5 w-3.5" />
                               Full Screen
@@ -2185,7 +2185,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           <MegaDialogContent className="p-0 border-none bg-black">
                             <div className="absolute top-2 right-2 z-50">
                               <button
-                                onClick={() => setVideoFullscreen(false)}
+                                onClick={() => setVideoFullscreen && setVideoFullscreen(false)}
                                 aria-label="Close"
                                 type="button"
                                 className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200"
@@ -2226,7 +2226,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                             <Button 
                               className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 shadow-md"
                               onClick={() => {
-                                setExerciseDetailOpen(false);
+                                setExerciseDetailOpen && setExerciseDetailOpen(false);
                                 setTimeout(() => {
                                   analyzeUserPose();
                                 }, 500);
@@ -2254,7 +2254,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </Button>
                 
                 <Button
-                  onClick={() => setExerciseDetailOpen(false)}
+                  onClick={() => setExerciseDetailOpen && setExerciseDetailOpen(false)}
                   className="shadow-sm hover:shadow-md transition-all"
                 >
                   Close
@@ -2268,8 +2268,8 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       {/* Yoga Prompt Flow */}
       {yogaPromptOpen && (
         <YogaPromptFlow 
-          onComplete={handleYogaPromptComplete}
-          onClose={() => setYogaPromptOpen(false)}
+          onComplete={(session) => handleYogaPromptComplete && handleYogaPromptComplete(session)}
+          onClose={() => setYogaPromptOpen && setYogaPromptOpen(false)}
         />
       )}
       
@@ -2281,9 +2281,9 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         poseId={analysisPoseId}
         onPoseCompletion={(poseId, accuracy) => {
           // Update pose status in the progression context
-          updatePoseStatus(poseId, 'completed', accuracy);
+          updatePoseStatus && updatePoseStatus(poseId, 'completed', accuracy);
           // Close the dialog after completion
-          setPoseAnalysisOpen(false);
+          setPoseAnalysisOpen && setPoseAnalysisOpen(false);
         }}
       />
     </>
