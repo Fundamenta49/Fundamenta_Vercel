@@ -66,8 +66,7 @@ import FitnessExercises from "./fitness-exercises";
 import RunningTracker from "./running-tracker";
 import RunnersCompass from "./runners-compass";
 import RunningSpecificExercises from "./running-specific-exercises";
-import HIITSpecificExercises from "./hiit-specific-exercises";
-import { HIIT_EXERCISE_SETS } from "./hiit-specific-exercises";
+import HIITSpecificExercises, { HIIT_EXERCISE_SETS } from "./hiit-specific-exercises";
 import YogaSpecificExercises from "./yoga-specific-exercises";
 import StretchSpecificExercises from "./stretch-specific-exercises";
 import YogaPromptFlow, { YogaSession } from "./yoga-prompt-flow";
@@ -539,7 +538,11 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     } else if (exerciseType === 'stretch') {
       setSelectedExercise(stretchExercises[exerciseKey]);
     } else if (exerciseType === 'hiit') {
-      setSelectedExercise(HIIT_EXERCISE_SETS[exerciseKey]);
+      // Check if the key exists in HIIT_EXERCISE_SETS
+      if (exerciseKey in HIIT_EXERCISE_SETS) {
+        // Use type assertion to tell TypeScript the index is valid
+        setSelectedExercise(HIIT_EXERCISE_SETS[exerciseKey as keyof typeof HIIT_EXERCISE_SETS]);
+      }
     }
     setExerciseDetailOpen(true);
   };
