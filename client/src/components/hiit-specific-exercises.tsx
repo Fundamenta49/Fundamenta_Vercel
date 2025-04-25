@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Info, ChevronDown, ChevronUp, Plus, ArrowRight } from "lucide-react";
 import { EmbeddedYouTubePlayer } from '@/components/embedded-youtube-player';
 import { searchSectionSpecificExerciseVideos, YouTubeVideo } from '@/lib/youtube-service';
+import { PinkCloseButton } from "@/components/ui/pink-close-button";
 
 // Define Exercise interface with added fields to match ExerciseDetails in active-you-enhanced
 interface Exercise {

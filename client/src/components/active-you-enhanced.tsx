@@ -182,127 +182,15 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   const [analysisPoseId, setAnalysisPoseId] = useState<string>("");
   const [poseAnalysisOpen, setPoseAnalysisOpen] = useState(false);
 
-  // Camera and YogaVision States
-  const [cameraEnabled, setCameraEnabled] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [hasWebcamPermission, setHasWebcamPermission] = useState<boolean | null>(null);
-  const [poseAnalysisResult, setPoseAnalysisResult] = useState<PoseFeedback | null>(null);
-  // AI Coach functionality removed as Fundi now handles all AI interactions
+  // Simplified state (removed camera and analysis functionality)
+  // Note: This functionality has been removed but some state variables are kept
+  // as they may be referenced elsewhere in the component
+  const [cameraEnabled] = useState(false);
+  const [hasWebcamPermission] = useState<boolean>(true);
+  
+  // These references are kept but not actually used
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-
-  // Check for webcam permission when component mounts
-  useEffect(() => {
-    async function checkCameraPermission() {
-      try {
-        // Just check if we can access the camera
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const hasCamera = devices.some(device => device.kind === 'videoinput');
-        setHasWebcamPermission(hasCamera);
-      } catch (error) {
-        console.error("Error checking camera permission:", error);
-        setHasWebcamPermission(false);
-      }
-    }
-
-    checkCameraPermission();
-
-    // Cleanup function to stop any active streams
-    return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, []);
-
-  // Function to toggle camera
-  const toggleCamera = async () => {
-    if (!cameraEnabled) {
-      try {
-        // Start camera
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { 
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            facingMode: "user" 
-          } 
-        });
-
-        streamRef.current = stream;
-
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          setHasWebcamPermission(true);
-          setCameraEnabled(true);
-        }
-      } catch (error) {
-        console.error("Error accessing camera:", error);
-        setHasWebcamPermission(false);
-      }
-    } else {
-      // Stop camera
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-        streamRef.current = null;
-      }
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
-      }
-
-      setCameraEnabled(false);
-      setIsAnalyzing(false);
-    }
-  };
-
-  // Function to analyze pose
-  const analyzeUserPose = () => {
-    setIsAnalyzing(true);
-
-    // Capture a frame from video to canvas (if needed)
-    if (videoRef.current && canvasRef.current && streamRef.current) {
-      const context = canvasRef.current.getContext('2d');
-      if (context) {
-        context.drawImage(
-          videoRef.current, 
-          0, 0, 
-          canvasRef.current.width, 
-          canvasRef.current.height
-        );
-
-        // For demo, we'll simulate AI analysis with a timeout
-        setTimeout(() => {
-          // Example feedback that would come from AI
-          const feedback: PoseFeedback = {
-            accuracy: Math.floor(Math.random() * 30) + 70, // Random accuracy between 70-99%
-            suggestions: [
-              "Extend your arms fully to maximize the stretch",
-              "Keep your shoulders away from your ears",
-              "Try to maintain a straight spine throughout the pose"
-            ],
-            alignmentIssues: [
-              "Knees are slightly bent, try to straighten them more",
-              "Hips need to be rotated slightly forward"
-            ],
-            strongAreas: [
-              "Good head positioning",
-              "Weight distribution is balanced",
-              "Breathing rhythm is consistent"
-            ]
-          };
-
-          setPoseAnalysisResult(feedback);
-          setIsAnalyzing(false);
-        }, 2000);
-      }
-    }
-  };
-
-  // Reset the pose analysis
-  const resetAnalysis = () => {
-    setPoseAnalysisResult(null);
-  };
 
   // Database of yoga exercises
   const yogaExercises: Record<string, ExerciseDetails> = {
@@ -2203,15 +2091,14 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                         >
                           <MegaDialogContent className="p-0 border-none bg-black">
                             <div className="absolute top-2 right-2 z-[100]">
-                              <button
-                                onClick={() => setVideoFullscreen && setVideoFullscreen(false)}
-                                aria-label="Close"
-                                type="button"
-                                className="rounded-full p-2 opacity-90 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200 shadow-md"
-                              >
-                                <X className="h-6 w-6 text-pink-500" />
-                                <span className="sr-only">Close</span>
-                              </button>
+                              <PinkCloseButton 
+                                onClose={() => {
+                                  console.log("Full screen video close button clicked");
+                                  if (setVideoFullscreen) {
+                                    setVideoFullscreen(false);
+                                  }
+                                }} 
+                              />
                             </div>
                             <MegaDialogTitle className="sr-only">
                               {selectedExercise.name} Video Tutorial
