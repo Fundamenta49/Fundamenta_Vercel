@@ -588,8 +588,14 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       videoUrl: exercise.videoUrl
     };
 
-    setSelectedExercise(exerciseDetails);
-    setExerciseDetailOpen(true);
+    // Use a special dialog for HIIT exercises to fix close button issues
+    if (exercise.category === 'hiit') {
+      setHiitExercise(exerciseDetails);
+      setHiitDetailOpen(true);
+    } else {
+      setSelectedExercise(exerciseDetails);
+      setExerciseDetailOpen(true);
+    }
   };
 
   // Function to handle completion of yoga prompt flow
@@ -2198,6 +2204,19 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       )}
 
       {/* Pose-Specific Analysis Dialog */}
+      {/* HIIT-specific Detail Dialog - Uses separate implementation for reliable close button */}
+      <HIITDetailDialog 
+        exercise={hiitExercise}
+        isOpen={hiitDetailOpen}
+        onClose={() => setHiitDetailOpen(false)}
+        onAnalyzeForm={() => {
+          if (hiitExercise) {
+            setAnalysisPose(hiitExercise);
+            setPoseAnalysisOpen(true);
+          }
+        }}
+      />
+      
       <PoseAnalysisDialog
         open={poseAnalysisOpen}
         onOpenChange={setPoseAnalysisOpen}
