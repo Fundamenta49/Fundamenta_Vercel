@@ -2254,8 +2254,21 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </Button>
                 
                 <Button
-                  onClick={() => setExerciseDetailOpen && setExerciseDetailOpen(false)}
-                  className="shadow-sm hover:shadow-md transition-all"
+                  onClick={() => {
+                    console.log('Close button clicked');
+                    if (setExerciseDetailOpen) {
+                      setExerciseDetailOpen(false);
+                    } else {
+                      console.log('setExerciseDetailOpen is not defined');
+                      // Force close as fallback method
+                      const closeButton = document.querySelector('.MegaDialogClose') as HTMLButtonElement;
+                      if (closeButton) {
+                        console.log('Found close button, clicking it');
+                        closeButton.click();
+                      }
+                    }
+                  }}
+                  className="shadow-sm hover:shadow-md transition-all bg-pink-100 hover:bg-pink-200 text-pink-800"
                 >
                   Close
                 </Button>
