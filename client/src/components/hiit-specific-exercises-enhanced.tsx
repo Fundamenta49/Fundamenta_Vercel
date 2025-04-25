@@ -292,6 +292,8 @@ export const HIITSpecificExercisesEnhanced = () => {
   const [activeTab, setActiveTab] = useState('tabata');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Track which exercises have been closed by the user
+  const [closedExercises, setClosedExercises] = useState<Record<string, boolean>>({});
   
   // Find video for an exercise using the YouTube API
   const findExerciseVideo = async (exercise: HIITExercise) => {
@@ -377,7 +379,14 @@ export const HIITSpecificExercisesEnhanced = () => {
                     loadExerciseVideo={findExerciseVideo}
                     onShowExerciseDetail={handleShowDetail}
                     fallbackVideos={allFallbacks}
-                    onClose={() => console.log("Exercise card closed:", exercise.name)}
+                    onClose={() => {
+                      console.log("Exercise card closed:", exercise.name);
+                      // Update the closed exercises state
+                      setClosedExercises(prev => ({
+                        ...prev,
+                        [exercise.id]: true
+                      }));
+                    }}
                   />
                 ))}
               </div>

@@ -37,9 +37,15 @@ export function CloseableExerciseCard<T extends BaseExercise>({
     }
   };
 
-  // If not visible, don't render anything
+  // If not visible, render a placeholder to maintain layout and prevent container collapse
   if (!isVisible) {
-    return null;
+    return (
+      <div 
+        id={`closed-card-${exercise.id}`} 
+        className="w-full opacity-0 h-0 overflow-hidden transition-all duration-500"
+        aria-hidden="true"
+      />
+    );
   }
 
   // Render the exercise card with an extra close button that manages visibility
