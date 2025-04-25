@@ -211,13 +211,17 @@ interface HIITSpecificExercisesProps {
   title: string;
   description?: string;
   backgroundColor?: string;
+  maxExercises?: number;
+  onShowExerciseDetail?: (exercise: Exercise) => void;
 }
 
 export default function HIITSpecificExercises({
   category,
   title,
   description,
-  backgroundColor = "bg-red-50"
+  backgroundColor = "bg-red-50",
+  maxExercises = 4,
+  onShowExerciseDetail
 }: HIITSpecificExercisesProps) {
   
   // Map categories

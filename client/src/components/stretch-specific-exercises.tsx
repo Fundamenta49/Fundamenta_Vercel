@@ -211,13 +211,15 @@ interface StretchSpecificExercisesProps {
   title: string;
   description?: string;
   backgroundColor?: string;
+  maxExercises?: number;
 }
 
 export default function StretchSpecificExercises({
   category,
   title,
   description,
-  backgroundColor = "bg-green-50"
+  backgroundColor = "bg-green-50",
+  maxExercises = 4
 }: StretchSpecificExercisesProps) {
   
   // Map categories

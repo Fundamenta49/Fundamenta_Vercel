@@ -211,13 +211,15 @@ interface YogaSpecificExercisesProps {
   title: string;
   description?: string;
   backgroundColor?: string;
+  maxExercises?: number;
 }
 
 export default function YogaSpecificExercises({
   category,
   title,
   description,
-  backgroundColor = "bg-blue-50"
+  backgroundColor = "bg-blue-50",
+  maxExercises = 4
 }: YogaSpecificExercisesProps) {
   
   // Map categories

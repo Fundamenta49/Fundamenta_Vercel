@@ -543,16 +543,49 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     } else if (exerciseType === 'stretch') {
       setSelectedExercise(stretchExercises[exerciseKey]);
     } else if (exerciseType === 'hiit') {
-      // Handle HIIT exercise sets differently since they're organized by protocol type
-      // Each protocol (tabata, amrap, etc.) has an array of exercises
-      Object.entries(HIIT_EXERCISE_SETS).forEach(([protocol, exercises]) => {
-        // Type assertion for exercises array
-        const exercisesArray = exercises as any[];
-        const foundExercise = exercisesArray.find(ex => ex.id === exerciseKey);
-        if (foundExercise) {
-          setSelectedExercise(foundExercise as unknown as ExerciseDetails);
+      // Since we're using simplified components now, we'll use a different approach
+      // Define the standard HIIT exercises directly here
+      const hiitExercises = [
+        {
+          id: "tabata1",
+          name: "Jump Squats",
+          description: "An explosive lower-body exercise perfect for the Tabata protocol.",
+          muscleGroups: ["quads", "glutes", "calves"],
+          equipment: ["none"],
+          difficulty: "intermediate",
+          instructions: [
+            "Stand with feet shoulder-width apart",
+            "Lower into a squat position, keeping chest up",
+            "Explosively jump upward",
+            "Land softly and repeat"
+          ],
+          imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/04/jump-squat.jpg",
+          benefits: ["Builds explosive power", "Increases heart rate quickly"],
+          tips: ["Land softly with knees slightly bent", "Maintain proper form"]
+        },
+        {
+          id: "amrap1",
+          name: "Push-ups",
+          description: "A fundamental upper body strength exercise.",
+          muscleGroups: ["chest", "shoulders", "triceps", "core"],
+          equipment: ["none"],
+          difficulty: "intermediate",
+          instructions: [
+            "Start in a high plank position",
+            "Lower body until chest nearly touches the floor",
+            "Push back up to starting position",
+            "Maintain a tight core throughout"
+          ],
+          imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2020/01/push-up.jpg",
+          benefits: ["Builds upper body strength", "Improves core stability"],
+          tips: ["Keep elbows at 45° angle", "Maintain neutral neck"]
         }
-      });
+      ];
+      
+      const foundExercise = hiitExercises.find(ex => ex.id === exerciseKey);
+      if (foundExercise) {
+        setSelectedExercise(foundExercise as unknown as ExerciseDetails);
+      }
     }
     setExerciseDetailOpen(true);
   };
