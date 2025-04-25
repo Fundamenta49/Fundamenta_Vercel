@@ -4,6 +4,9 @@ import { Card } from "@/components/ui/card";
 import HIITSpecificExercisesEnhanced from './hiit-specific-exercises-enhanced';
 import YogaSpecificExercisesEnhanced from './yoga-specific-exercises-enhanced';
 import StretchSpecificExercisesEnhanced from './stretch-specific-exercises-enhanced';
+import RunningSpecificExercisesEnhanced from './running-specific-exercises-enhanced';
+import WeightliftingSpecificExercisesEnhanced from './weightlifting-specific-exercises-enhanced';
+import MeditationSpecificExercisesEnhanced from './meditation-specific-exercises-enhanced';
 import { Activity } from 'lucide-react';
 
 // Export the StretchingIcon for backward compatibility with active-you.tsx
@@ -34,7 +37,7 @@ export default function ActiveYouEnhanced() {
       <Card className="shadow-md border-pink-100 mb-8">
         <Tabs defaultValue="hiit" value={activeTab} onValueChange={handleTabChange} className="w-full">
           <div className="p-4 border-b bg-gradient-to-r from-pink-50 to-white">
-            <TabsList className="grid w-full grid-cols-3 bg-pink-100">
+            <TabsList className="grid w-full grid-cols-6 bg-pink-100">
               <TabsTrigger 
                 value="hiit" 
                 className="data-[state=active]:bg-pink-500 data-[state=active]:text-white"
@@ -48,10 +51,28 @@ export default function ActiveYouEnhanced() {
                 Yoga
               </TabsTrigger>
               <TabsTrigger 
+                value="running" 
+                className="data-[state=active]:bg-pink-500 data-[state=active]:text-white"
+              >
+                Running
+              </TabsTrigger>
+              <TabsTrigger 
+                value="weightlifting" 
+                className="data-[state=active]:bg-pink-500 data-[state=active]:text-white"
+              >
+                Weightlifting
+              </TabsTrigger>
+              <TabsTrigger 
                 value="stretch" 
                 className="data-[state=active]:bg-pink-500 data-[state=active]:text-white"
               >
                 Stretching
+              </TabsTrigger>
+              <TabsTrigger 
+                value="meditation" 
+                className="data-[state=active]:bg-pink-500 data-[state=active]:text-white"
+              >
+                Meditation
               </TabsTrigger>
             </TabsList>
           </div>
@@ -79,6 +100,28 @@ export default function ActiveYouEnhanced() {
               <YogaSpecificExercisesEnhanced />
             </TabsContent>
             
+            <TabsContent value="running" className="mt-0">
+              <div className="bg-gradient-to-br from-pink-50 to-white p-4 rounded-md mb-4">
+                <h2 className="text-xl font-semibold text-pink-700 mb-1">Running Training</h2>
+                <p className="text-gray-600">
+                  Running is a versatile cardio exercise that improves endurance, strengthens your heart, and helps with weight management.
+                  These exercises will help you build running strength, endurance, and proper form.
+                </p>
+              </div>
+              <RunningSpecificExercisesEnhanced />
+            </TabsContent>
+            
+            <TabsContent value="weightlifting" className="mt-0">
+              <div className="bg-gradient-to-br from-pink-50 to-white p-4 rounded-md mb-4">
+                <h2 className="text-xl font-semibold text-pink-700 mb-1">Strength Training</h2>
+                <p className="text-gray-600">
+                  Strength training builds muscle, increases bone density, and improves overall body composition.
+                  These exercises will help you develop functional strength for everyday activities and sports.
+                </p>
+              </div>
+              <WeightliftingSpecificExercisesEnhanced />
+            </TabsContent>
+            
             <TabsContent value="stretch" className="mt-0">
               <div className="bg-gradient-to-br from-pink-50 to-white p-4 rounded-md mb-4">
                 <h2 className="text-xl font-semibold text-pink-700 mb-1">Stretching Exercises</h2>
@@ -88,6 +131,17 @@ export default function ActiveYouEnhanced() {
                 </p>
               </div>
               <StretchSpecificExercisesEnhanced />
+            </TabsContent>
+            
+            <TabsContent value="meditation" className="mt-0">
+              <div className="bg-gradient-to-br from-pink-50 to-white p-4 rounded-md mb-4">
+                <h2 className="text-xl font-semibold text-pink-700 mb-1">Meditation Practices</h2>
+                <p className="text-gray-600">
+                  Meditation reduces stress, improves focus, and enhances overall mental wellbeing.
+                  These guided sessions will help you develop mindfulness and relaxation techniques.
+                </p>
+              </div>
+              <MeditationSpecificExercisesEnhanced />
             </TabsContent>
           </div>
         </Tabs>
