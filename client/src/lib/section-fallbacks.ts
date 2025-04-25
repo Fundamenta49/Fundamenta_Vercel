@@ -221,7 +221,7 @@ export const STRETCH_RECOVERY_VIDEOS: YouTubeVideo[] = [
   }
 ];
 
-// HIIT VIDEOS
+// HIIT VIDEOS - GENERAL
 export const HIIT_VIDEOS: YouTubeVideo[] = [
   {
     id: "ml6cT4AZdqI",
@@ -254,6 +254,150 @@ export const HIIT_VIDEOS: YouTubeVideo[] = [
     thumbnailUrl: "https://img.youtube.com/vi/OWoSE0WK4eE/maxresdefault.jpg",
     channelTitle: "Heather Robertson",
     publishedAt: "2019-05-25T00:00:00Z"
+  }
+];
+
+// HIIT VIDEOS - TABATA
+export const HIIT_TABATA_VIDEOS: YouTubeVideo[] = [
+  {
+    id: "XIeCMhNWFQQ",
+    title: "Tabata Workout - Jump Squats and Burpees",
+    description: "20 seconds on, 10 seconds rest - classic Tabata jump squats and burpees",
+    thumbnailUrl: "https://img.youtube.com/vi/XIeCMhNWFQQ/maxresdefault.jpg",
+    channelTitle: "FitnessBlender",
+    publishedAt: "2019-06-15T00:00:00Z"
+  },
+  {
+    id: "mmq1RgbOe0g",
+    title: "20-Minute Tabata Workout - Mountain Climbers & Push-ups",
+    description: "High intensity Tabata workout focusing on mountain climbers and push-ups",
+    thumbnailUrl: "https://img.youtube.com/vi/mmq1RgbOe0g/maxresdefault.jpg",
+    channelTitle: "SELF",
+    publishedAt: "2020-04-22T00:00:00Z"
+  },
+  {
+    id: "2KY7ggzB8iE",
+    title: "High Knees & Plank to Shoulder Tap Tabata",
+    description: "Tabata protocol with high knees and plank to shoulder tap exercises",
+    thumbnailUrl: "https://img.youtube.com/vi/2KY7ggzB8iE/maxresdefault.jpg",
+    channelTitle: "Heather Robertson",
+    publishedAt: "2019-10-05T00:00:00Z"
+  },
+  {
+    id: "aUYRVSNz4lU",
+    title: "Complete Tabata Workout - 8 Rounds of 20/10",
+    description: "Full Tabata session with all essential exercises for maximum effectiveness",
+    thumbnailUrl: "https://img.youtube.com/vi/aUYRVSNz4lU/maxresdefault.jpg",
+    channelTitle: "MadFit",
+    publishedAt: "2020-01-10T00:00:00Z"
+  }
+];
+
+// HIIT VIDEOS - AMRAP
+export const HIIT_AMRAP_VIDEOS: YouTubeVideo[] = [
+  {
+    id: "kwkXyHjgoDM",
+    title: "AMRAP Workout - As Many Rounds As Possible",
+    description: "High intensity AMRAP challenge with bodyweight exercises",
+    thumbnailUrl: "https://img.youtube.com/vi/kwkXyHjgoDM/maxresdefault.jpg",
+    channelTitle: "FitnessBlender",
+    publishedAt: "2019-08-22T00:00:00Z"
+  },
+  {
+    id: "pYcz8RtZXpg",
+    title: "15-Minute AMRAP - Full Body Conditioning",
+    description: "Complete as many rounds as possible in this 15-minute challenge",
+    thumbnailUrl: "https://img.youtube.com/vi/pYcz8RtZXpg/maxresdefault.jpg",
+    channelTitle: "MadFit",
+    publishedAt: "2020-03-12T00:00:00Z"
+  },
+  {
+    id: "H2YIMe3pKKU",
+    title: "CrossFit-Style AMRAP Workout",
+    description: "Push your limits with this challenging AMRAP workout",
+    thumbnailUrl: "https://img.youtube.com/vi/H2YIMe3pKKU/maxresdefault.jpg",
+    channelTitle: "Heather Robertson",
+    publishedAt: "2019-11-18T00:00:00Z"
+  },
+  {
+    id: "Mvo2snJGhtM",
+    title: "AMRAP Bodyweight Workout - No Equipment",
+    description: "Home workout using just your bodyweight in AMRAP format",
+    thumbnailUrl: "https://img.youtube.com/vi/Mvo2snJGhtM/maxresdefault.jpg",
+    channelTitle: "Bodyweight Warrior",
+    publishedAt: "2020-02-05T00:00:00Z"
+  }
+];
+
+// HIIT VIDEOS - EMOM
+export const HIIT_EMOM_VIDEOS: YouTubeVideo[] = [
+  {
+    id: "_JytV33vFqE",
+    title: "EMOM Workout - Every Minute On the Minute",
+    description: "Challenge yourself with this EMOM workout format",
+    thumbnailUrl: "https://img.youtube.com/vi/_JytV33vFqE/maxresdefault.jpg",
+    channelTitle: "FitnessBlender",
+    publishedAt: "2019-09-10T00:00:00Z"
+  },
+  {
+    id: "doN3kiQApBY",
+    title: "20-Minute EMOM Workout - Bodyweight Only",
+    description: "Effective EMOM workout you can do anywhere with no equipment",
+    thumbnailUrl: "https://img.youtube.com/vi/doN3kiQApBY/maxresdefault.jpg",
+    channelTitle: "MadFit",
+    publishedAt: "2020-01-08T00:00:00Z"
+  },
+  {
+    id: "8p8kuo70zQU",
+    title: "EMOM Training for Beginners",
+    description: "Learn how to structure and perform effective EMOM workouts",
+    thumbnailUrl: "https://img.youtube.com/vi/8p8kuo70zQU/maxresdefault.jpg",
+    channelTitle: "Heather Robertson",
+    publishedAt: "2019-12-05T00:00:00Z"
+  },
+  {
+    id: "WU_d3QcHPxo",
+    title: "Full Body EMOM - 30 Minutes of Work",
+    description: "Challenge every muscle group with this complete EMOM workout",
+    thumbnailUrl: "https://img.youtube.com/vi/WU_d3QcHPxo/maxresdefault.jpg",
+    channelTitle: "SELF",
+    publishedAt: "2020-03-03T00:00:00Z"
+  }
+];
+
+// HIIT VIDEOS - CIRCUIT
+export const HIIT_CIRCUIT_VIDEOS: YouTubeVideo[] = [
+  {
+    id: "CBKcMoEKiNM",
+    title: "30-Minute Circuit Training Workout",
+    description: "Full body circuit training to build strength and endurance",
+    thumbnailUrl: "https://img.youtube.com/vi/CBKcMoEKiNM/maxresdefault.jpg",
+    channelTitle: "FitnessBlender",
+    publishedAt: "2019-10-18T00:00:00Z"
+  },
+  {
+    id: "TkaYafQ-XC4",
+    title: "HIIT Circuit Workout - 15 Minutes",
+    description: "Quick and effective circuit training for fat burning",
+    thumbnailUrl: "https://img.youtube.com/vi/TkaYafQ-XC4/maxresdefault.jpg",
+    channelTitle: "MadFit",
+    publishedAt: "2020-01-03T00:00:00Z"
+  },
+  {
+    id: "oAPCPjnU1wA",
+    title: "Bodyweight Circuit Training - No Equipment",
+    description: "Complete circuit training session you can do anywhere",
+    thumbnailUrl: "https://img.youtube.com/vi/oAPCPjnU1wA/maxresdefault.jpg",
+    channelTitle: "SELF",
+    publishedAt: "2020-03-28T00:00:00Z"
+  },
+  {
+    id: "edM1costi4s",
+    title: "Full Body Circuit - 20-Minute Workout",
+    description: "Efficient circuit training targeting all major muscle groups",
+    thumbnailUrl: "https://img.youtube.com/vi/edM1costi4s/maxresdefault.jpg",
+    channelTitle: "Heather Robertson",
+    publishedAt: "2019-11-22T00:00:00Z"
   }
 ];
 
@@ -312,8 +456,16 @@ export function getFallbackVideosForCategory(
     if (category === 'recovery') return STRETCH_RECOVERY_VIDEOS;
   }
   
-  // For other sections
-  if (workoutSection === 'hiit') return HIIT_VIDEOS;
+  // For HIIT sections
+  if (workoutSection === 'hiit') {
+    if (category === 'tabata') return HIIT_TABATA_VIDEOS;
+    if (category === 'amrap') return HIIT_AMRAP_VIDEOS;
+    if (category === 'emom') return HIIT_EMOM_VIDEOS;
+    if (category === 'circuit') return HIIT_CIRCUIT_VIDEOS;
+    return HIIT_VIDEOS; // default HIIT videos
+  }
+  
+  // For Running
   if (workoutSection === 'running') return RUNNING_VIDEOS;
   
   // Default

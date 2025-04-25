@@ -430,16 +430,21 @@ export default function YogaSpecificExercises({
                 {expandedExercise === exercise.id && (
                   <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 relative">
                     {/* Close button in top-right corner */}
-                    <button 
-                      className="absolute top-4 right-4 rounded-full p-1 bg-pink-100 hover:bg-pink-200 text-pink-700 z-10"
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="absolute top-4 right-4 rounded-full p-1 bg-pink-300 hover:bg-pink-400 text-pink-800 z-50"
                       onClick={(e) => {
-                        e.stopPropagation();
+                        e.preventDefault();
+                        e.stopPropagation(); 
+                        console.log("Yoga close button clicked, resetting expandedExercise");
                         setExpandedExercise(null);
                       }}
                       aria-label="Close"
                     >
                       <X size={16} />
-                    </button>
+                      <span className="sr-only">Close</span>
+                    </Button>
                     
                     {/* Exercise instructions */}
                     <div className="mb-4">

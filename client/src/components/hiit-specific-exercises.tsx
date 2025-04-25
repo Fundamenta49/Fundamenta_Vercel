@@ -689,16 +689,21 @@ export default function HIITSpecificExercises({
                   {isExpanded && (
                     <div className="mt-3 pt-3 border-t relative">
                       {/* Close button in top-right corner of expanded content */}
-                      <button 
-                        className="absolute top-3 right-0 rounded-full p-1 bg-pink-100 hover:bg-pink-200 text-pink-700"
+                      <Button 
+                        variant="outline"
+                        size="sm"
+                        className="absolute top-3 right-0 rounded-full p-1 bg-pink-300 hover:bg-pink-400 text-pink-800 z-50"
                         onClick={(e) => {
+                          e.preventDefault();
                           e.stopPropagation();
+                          console.log("Close button clicked, resetting expandedExercise");
                           setExpandedExercise(null);
                         }}
                         aria-label="Close"
                       >
                         <X size={16} />
-                      </button>
+                        <span className="sr-only">Close</span>
+                      </Button>
                       
                       {/* Show either the embedded YouTube video if available or fallback to image */}
                       {exerciseVideos[exercise.id]?.length > 0 ? (
