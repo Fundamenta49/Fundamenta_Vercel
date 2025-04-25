@@ -78,34 +78,50 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
     }
   };
   
-  // Enhanced robust close handler with logging and scroll management
+  // Completely redesigned close handler with direct DOM manipulation
   const handleClose = (e: React.MouseEvent) => {
-    // Prevent default browser behavior and stop event propagation
+    // Always stop event propagation - this is critical
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
     
     // Debug output
-    console.log("Close button clicked - closing exercise card");
+    console.log("Close button clicked with critical fix implementation");
     
-    // Force card to close state
-    setIsOpen(false);
-    setIsVideoExpanded(false);
-    
-    // Add a delay to ensure proper UI update and to scroll back to a sensible position
-    setTimeout(() => {
-      const cardElement = document.getElementById(`exercise-card-${exercise.id}`);
-      if (cardElement) {
-        cardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } else {
-        // Fallback to scrolling to top if element not found
+    try {
+      // Force card to close state immediately
+      setIsOpen(false);
+      
+      // Reset video expanded state if applicable
+      setIsVideoExpanded(false);
+      
+      // Force scroll to parent element
+      const cardContainer = document.getElementById(`exercise-card-${exercise.id}`);
+      if (cardContainer) {
+        // Set focus to the container to ensure keyboard navigation works
+        (cardContainer as HTMLElement).focus();
+        
+        // Explicitly scroll to the container
         window.scrollTo({
-          top: window.scrollY - 300, // Scroll up a bit
+          top: cardContainer.offsetTop - 100,
           behavior: 'smooth'
         });
       }
-    }, 100);
+      
+      // Add a defensive timeout to ensure UI state is updated
+      setTimeout(() => {
+        if (isOpen) {
+          console.log("Enforcing closed state");
+          setIsOpen(false);
+        }
+      }, 100);
+    } catch (error) {
+      console.error("Error in close handler:", error);
+      // Fallback close - last resort
+      setIsOpen(false);
+      window.scrollTo(0, 0);
+    }
   };
   
   // Load video using the provided function or fallback to stored videos
@@ -154,7 +170,11 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
   };
   
   return (
-    <div id={`exercise-card-${exercise.id}`} className="transition-opacity duration-200">
+    <div 
+      id={`exercise-card-${exercise.id}`} 
+      className="transition-opacity duration-200" 
+      tabIndex={-1} // Make focusable for accessibility and programmatic focus
+    >
       <Card className="overflow-hidden border shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardContent className="p-0">
           {/* Card Header - Always visible */}
