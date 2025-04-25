@@ -581,7 +581,13 @@ export default function HIITSpecificExercises({
   const [loadingVideos, setLoadingVideos] = useState<Record<string, boolean>>({});
   
   // Use our hardcoded exercise data directly
-  const exerciseData = exercises.slice(0, maxExercises);
+  // Ensure all HIIT exercises have the 'hiit' category for our special dialog handling
+  const exerciseData = exercises
+    .slice(0, maxExercises)
+    .map(exercise => ({
+      ...exercise,
+      category: 'hiit' // Override category to ensure consistent dialog handling
+    }));
   
   // Create a loading state for a brief moment to simulate data fetching
   const [isDataLoading, setIsDataLoading] = useState(true);
