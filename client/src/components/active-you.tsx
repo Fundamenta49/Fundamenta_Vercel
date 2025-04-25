@@ -25,6 +25,13 @@ import {
 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { recordArcadeActivity, isExerciseInActiveChallenge, getExercisePointValue } from '@/lib/learning-path-integration';
+import { 
+  notifyExerciseStarted, 
+  notifyExerciseCompleted, 
+  notifyPoseAnalyzed, 
+  notifyRunTracked, 
+  notifyMeditationCompleted 
+} from '@/lib/active-you-ai-integration';
 
 // Re-export the StretchingIcon for backward compatibility
 export { StretchingIcon };
@@ -56,6 +63,15 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
     
     // Set potential points to be earned
     setPointsEarned(getExercisePointValue(defaultTab));
+    
+    // Notify Fundi about this exercise session
+    notifyExerciseStarted(defaultTab);
+    
+    return () => {
+      // When unmounting the component, we can assume the user navigated away
+      // This is a good place to notify Fundi that the session has ended
+      console.log(`Exercise session for ${defaultTab} has ended`);
+    };
   }, [defaultTab]);
   
   // Handle exercise completion
@@ -65,6 +81,9 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
     
     // Record completion with arcade system
     recordArcadeActivity(userId, defaultTab, 'completed');
+    
+    // Notify Fundi about the completed exercise
+    notifyExerciseCompleted(defaultTab, exerciseId, 15 * 60); // assume 15 min duration for demo
     
     // Hide points after 3 seconds
     setTimeout(() => {
@@ -169,6 +188,20 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
                   onClose={() => setIsYogaVisionOpen(false)}
                   onAnalysisComplete={(analysis) => {
                     console.log('Analysis completed:', analysis);
+                    
+                    // Notify Fundi about the pose analysis
+                    if (analysis) {
+                      notifyPoseAnalyzed(
+                        analysis.poseName || 'Unknown Pose',
+                        analysis.score || 0,
+                        analysis.feedback || ['Analysis completed successfully']
+                      );
+                      
+                      // If this was a complete analysis, also count it as an exercise completion
+                      if (analysis.score > 0.7) {
+                        handleExerciseCompleted('yoga-pose-' + (analysis.poseId || 'unknown'));
+                      }
+                    }
                   }}
                 />
               </DialogContent>
