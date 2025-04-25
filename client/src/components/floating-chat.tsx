@@ -19,7 +19,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [chatPosition, setChatPosition] = useState({ right: 24, top: 8 });
+  const [chatPosition, setChatPosition] = useState<{ right: number; top?: number; bottom?: number }>({ right: 24, bottom: 130 });
   const { lastResponse, currentCategory } = useAIEventStore();
   // Tour context removed to prevent conflicts
   const isTourActive = false;
@@ -37,9 +37,9 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
 
   // Set fixed chat position - no longer linked to Fundi's position
   useEffect(() => {
-    // Fixed position for chat, always in the same spot for consistency
+    // Fixed position for chat, adjusted to match Fundi's new position at bottom right
     setChatPosition({ 
-      top: 85, // Position below Fundi
+      bottom: 130, // Position above Fundi (accounting for Fundi's height)
       right: 24 // Align with right edge
     });
   }, []);
@@ -49,7 +49,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     const handleForcedOpen = (event: Event) => {
       // We maintain the event listener for compatibility but position is now fixed
       setChatPosition({ 
-        top: 85, // Position below Fundi 
+        bottom: 130, // Position above Fundi
         right: 24 // Align with right edge
       });
     };
@@ -139,7 +139,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
               position: 'fixed',
               right: chatPosition.right ? `${chatPosition.right}px` : '16px',
               top: chatPosition.top ? `${chatPosition.top}px` : 'auto',
-              bottom: !chatPosition.top ? '16px' : 'auto',
+              bottom: chatPosition.bottom ? `${chatPosition.bottom}px` : 'auto',
               maxWidth: '95vw',
               maxHeight: '80vh',
               width: '358px', // Further reduced by 4px (12px total reduction from original 370px)
@@ -160,7 +160,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed right-2 sm:right-4 md:right-10 top-2 sm:top-2 md:top-2 z-[99999] flex flex-col items-center"
+            className="fixed right-2 sm:right-4 md:right-10 bottom-6 sm:bottom-6 md:bottom-6 z-[99999] flex flex-col items-center"
             initial={{ opacity: 1, scale: 1 }}
             animate={{ 
               opacity: 1, 

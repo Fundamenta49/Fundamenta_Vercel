@@ -226,9 +226,9 @@ export default function RobotFundi({
       )}
       style={{
         position: 'fixed',
-        top: '8px',
+        bottom: '24px',
         right: '24px',
-        zIndex: 9999,
+        zIndex: 999999,
         touchAction: 'none',
         userSelect: 'none',
         width: size === 'xl' ? '128px' : size === 'lg' ? '112px' : size === 'md' ? '96px' : size === 'sm' ? '80px' : '64px',
