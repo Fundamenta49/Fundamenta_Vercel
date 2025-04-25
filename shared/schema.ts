@@ -93,24 +93,7 @@ export const learningProgress = pgTable("learning_progress", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Quiz Progress Tracking Table
-export const quizProgress = pgTable("quiz_progress", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
-  pathwayId: text("pathway_id"),
-  moduleId: text("module_id"),
-  subject: text("subject").notNull(),
-  difficulty: text("difficulty").notNull().default("beginner"),
-  currentQuestionIndex: integer("current_question_index").notNull().default(0),
-  score: integer("score").notNull().default(0),
-  questions: json("questions").notNull(), // Store the quiz questions
-  userAnswers: json("user_answers").notNull(), // Array of user's answers
-  adaptiveLearning: boolean("adaptive_learning").notNull().default(false),
-  completed: boolean("completed").notNull().default(false),
-  lastAccessedAt: timestamp("last_accessed_at").notNull().defaultNow(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+
 
 // Sessions Table for express-session with connect-pg-simple
 export const sessions = pgTable("sessions", {
@@ -135,8 +118,7 @@ export const insertUserInfoSchema = createInsertSchema(userInfo)
 export const insertLearningProgressSchema = createInsertSchema(learningProgress)
   .omit({ id: true, createdAt: true, updatedAt: true });
 
-export const insertQuizProgressSchema = createInsertSchema(quizProgress)
-  .omit({ id: true, createdAt: true, updatedAt: true });
+
   
 export const insertSessionSchema = createInsertSchema(sessions);
 
@@ -158,8 +140,7 @@ export type SelectUserInfoType = typeof userInfo.$inferSelect;
 export type InsertLearningProgressType = z.infer<typeof insertLearningProgressSchema>;
 export type SelectLearningProgressType = typeof learningProgress.$inferSelect;
 
-export type InsertQuizProgressType = z.infer<typeof insertQuizProgressSchema>;
-export type SelectQuizProgressType = typeof quizProgress.$inferSelect;
+
 
 export type InsertSessionType = z.infer<typeof insertSessionSchema>;
 export type SelectSessionType = typeof sessions.$inferSelect;

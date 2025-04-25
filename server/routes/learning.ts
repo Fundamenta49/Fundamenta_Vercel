@@ -7,7 +7,7 @@ import { generateAdaptiveQuiz, recordQuizResults } from '../services/adaptive-qu
 import { generatePersonalizedLearningPlan } from '../services/recommendation-engine';
 import { db } from '../db';
 import { and, eq, desc } from 'drizzle-orm';
-import { learningProgress, quizProgress, insertQuizProgressSchema, learningModuleTags } from '../../shared/schema';
+import { learningProgress } from '../../shared/schema';
 import { learningPathways } from '../../client/src/pages/learning/pathways-data';
 
 const router = Router();
