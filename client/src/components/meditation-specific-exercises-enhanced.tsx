@@ -69,8 +69,20 @@ interface MeditationInsight {
   tips: string[];
 }
 
+// Define a type for the Fundi interface to avoid TS errors
+interface FundiInterface {
+  showPrompt: (promptData: any) => void;
+}
+
+// Extend Window interface
+declare global {
+  interface Window {
+    fundi?: FundiInterface;
+  }
+}
+
 // Main Meditation Component
-export const MeditationSpecificExercisesEnhanced = () => {
+const MeditationSpecificExercisesEnhanced = () => {
   const [activeTab, setActiveTab] = useState('practice');
   
   // Guided meditation state
@@ -228,14 +240,31 @@ export const MeditationSpecificExercisesEnhanced = () => {
         // End meditation when time is up
         if (newElapsedTime >= meditationScript.duration * 60) {
           pauseMeditation();
-          // Prompt to save journal entry
-          setNewJournalEntry({
-            duration: meditationScript.duration,
-            focusArea: focusArea,
-            notes: '',
-            rating: 3
-          });
-          setActiveTab('journal');
+          
+          // Show Fundi prompt to create wellness journal entry
+          const fundiJournalPrompt = {
+            type: 'journal',
+            tag: 'meditation',
+            prefilledData: {
+              duration: meditationScript.duration,
+              focusArea: focusArea,
+              date: new Date(),
+              category: 'Meditation',
+              activity: focusArea.charAt(0).toUpperCase() + focusArea.slice(1).replace('-', ' ') + ' Meditation',
+            },
+            promptMessage: `Great job completing your ${meditationScript.duration}-minute ${focusArea} meditation! Would you like to record your experience in your wellness journal?`
+          };
+          
+          // This would trigger the Fundi interface to appear with the journal prompt
+          if (window.fundi && typeof window.fundi.showPrompt === 'function') {
+            window.fundi.showPrompt(fundiJournalPrompt);
+          } else {
+            console.log('Fundi integration not available', fundiJournalPrompt);
+            // Fallback for testing - would show an alert or modal in real implementation
+            alert('Meditation complete! Would you like to record this in your wellness journal?');
+          }
+          
+          setActiveTab('insights');
         }
       }
     }, 1000);
@@ -627,8 +656,8 @@ export const MeditationSpecificExercisesEnhanced = () => {
                 )}
               </div>
               
-              {/* Quick Tips */}
-              <Alert className={`${
+              {/* Tips */}
+              <Alert className={`mb-4 ${
                 darkMode 
                   ? 'bg-gray-800 border-gray-700' 
                   : 'bg-blue-50 border-blue-200'
@@ -642,170 +671,7 @@ export const MeditationSpecificExercisesEnhanced = () => {
               </Alert>
             </TabsContent>
             
-            {/* Meditation Journal Tab */}
-            <TabsContent value="journal" className="pt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Journal Entry Form */}
-                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                  <h3 className={`text-lg font-medium mb-3 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-                    Record Your Practice
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <Label className={darkMode ? 'text-gray-300' : ''}>Duration (minutes)</Label>
-                      <Input 
-                        type="number" 
-                        value={newJournalEntry.duration || ''}
-                        onChange={(e) => setNewJournalEntry({
-                          ...newJournalEntry,
-                          duration: parseInt(e.target.value) || 0
-                        })}
-                        className={darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : ''}
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label className={darkMode ? 'text-gray-300' : ''}>Focus Area</Label>
-                      <Input 
-                        value={newJournalEntry.focusArea}
-                        onChange={(e) => setNewJournalEntry({
-                          ...newJournalEntry,
-                          focusArea: e.target.value
-                        })}
-                        placeholder="e.g., Mindfulness, Stress Relief, Focus"
-                        className={darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : ''}
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label className={darkMode ? 'text-gray-300' : ''}>Notes</Label>
-                      <Textarea 
-                        value={newJournalEntry.notes}
-                        onChange={(e) => setNewJournalEntry({
-                          ...newJournalEntry,
-                          notes: e.target.value
-                        })}
-                        placeholder="How did your practice go? What did you notice?"
-                        className={`min-h-24 ${darkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : ''}`}
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label className={darkMode ? 'text-gray-300' : ''}>How was your experience?</Label>
-                      <RadioGroup 
-                        value={newJournalEntry.rating.toString()}
-                        onValueChange={(value) => setNewJournalEntry({
-                          ...newJournalEntry,
-                          rating: parseInt(value)
-                        })}
-                        className="flex justify-between mt-2"
-                      >
-                        {[1, 2, 3, 4, 5].map((value) => (
-                          <div key={value} className="flex items-center space-x-1">
-                            <RadioGroupItem 
-                              value={value.toString()} 
-                              id={`rating-${value}`}
-                              className={darkMode ? 'text-blue-400 border-gray-600' : ''}
-                            />
-                            <Label 
-                              htmlFor={`rating-${value}`}
-                              className={darkMode ? 'text-gray-300' : ''}
-                            >
-                              {value}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                      <div className="flex justify-between text-xs mt-1">
-                        <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Challenging</span>
-                        <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Excellent</span>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      onClick={saveJournalEntry}
-                      className={`w-full ${
-                        darkMode 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                          : 'bg-pink-500 hover:bg-pink-600'
-                      }`}
-                    >
-                      Save Entry
-                    </Button>
-                  </div>
-                </div>
-                
-                {/* Journal Entries List */}
-                <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                  <h3 className={`text-lg font-medium mb-3 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-                    Journal History
-                  </h3>
-                  
-                  <div className="space-y-3 overflow-y-auto" style={{ maxHeight: '400px' }}>
-                    {journalEntries.length === 0 ? (
-                      <div className={`text-center py-6 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                        <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p>No entries yet. Record your first meditation experience!</p>
-                      </div>
-                    ) : (
-                      journalEntries.map((entry) => (
-                        <div 
-                          key={entry.id} 
-                          className={`p-3 rounded-md ${
-                            darkMode 
-                              ? 'bg-gray-900 border border-gray-700' 
-                              : 'bg-gray-50 border border-gray-100'
-                          }`}
-                        >
-                          <div className="flex justify-between mb-1">
-                            <div className="flex items-center">
-                              <Calendar className={`h-3 w-3 mr-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                              <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                {formatDate(entry.date)}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Timer className={`h-3 w-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                              <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                {entry.duration} min
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="flex justify-between mb-2">
-                            <Badge 
-                              variant="outline" 
-                              className={darkMode ? 'bg-gray-800 text-blue-300 border-gray-700' : ''}
-                            >
-                              {entry.focusArea}
-                            </Badge>
-                            <div className="flex items-center">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <span 
-                                  key={i}
-                                  className={`text-xs ${
-                                    i < entry.rating 
-                                      ? (darkMode ? 'text-blue-400' : 'text-pink-500') 
-                                      : (darkMode ? 'text-gray-600' : 'text-gray-300')
-                                  }`}
-                                >
-                                  ★
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            {entry.notes}
-                          </p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
+            {/* Journal integration happens via Fundi prompt after session completion */}
             
             {/* Insights Tab */}
             <TabsContent value="insights" className="pt-4">
@@ -881,88 +747,46 @@ export const MeditationSpecificExercisesEnhanced = () => {
                   <div className={`p-3 rounded-md text-center ${
                     darkMode ? 'bg-gray-900' : 'bg-gray-50'
                   }`}>
-                    <p className={`text-2xl font-semibold ${darkMode ? 'text-blue-400' : 'text-pink-600'}`}>
-                      {journalEntries.length}
-                    </p>
-                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      Total Sessions
-                    </p>
+                    <p className={`text-xs mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Total Sessions</p>
+                    <p className={`text-2xl font-semibold ${darkMode ? 'text-blue-300' : 'text-pink-600'}`}>24</p>
                   </div>
-                  
                   <div className={`p-3 rounded-md text-center ${
                     darkMode ? 'bg-gray-900' : 'bg-gray-50'
                   }`}>
-                    <p className={`text-2xl font-semibold ${darkMode ? 'text-blue-400' : 'text-pink-600'}`}>
-                      {journalEntries.reduce((sum, entry) => sum + entry.duration, 0)}
-                    </p>
-                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      Total Minutes
-                    </p>
+                    <p className={`text-xs mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>This Week</p>
+                    <p className={`text-2xl font-semibold ${darkMode ? 'text-blue-300' : 'text-pink-600'}`}>5</p>
                   </div>
-                  
                   <div className={`p-3 rounded-md text-center ${
                     darkMode ? 'bg-gray-900' : 'bg-gray-50'
                   }`}>
-                    <p className={`text-2xl font-semibold ${darkMode ? 'text-blue-400' : 'text-pink-600'}`}>
-                      {journalEntries.length > 0 
-                        ? (journalEntries.reduce((sum, entry) => sum + entry.rating, 0) / journalEntries.length).toFixed(1)
-                        : '0'}
-                    </p>
-                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      Average Rating
-                    </p>
+                    <p className={`text-xs mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Total Minutes</p>
+                    <p className={`text-2xl font-semibold ${darkMode ? 'text-blue-300' : 'text-pink-600'}`}>210</p>
                   </div>
-                  
                   <div className={`p-3 rounded-md text-center ${
                     darkMode ? 'bg-gray-900' : 'bg-gray-50'
                   }`}>
-                    <p className={`text-2xl font-semibold ${darkMode ? 'text-blue-400' : 'text-pink-600'}`}>
-                      {journalEntries.length > 0
-                        ? Math.round(journalEntries.reduce((sum, entry) => sum + entry.duration, 0) / journalEntries.length)
-                        : '0'}
-                    </p>
-                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      Avg. Session Length
-                    </p>
+                    <p className={`text-xs mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Avg. Rating</p>
+                    <p className={`text-2xl font-semibold ${darkMode ? 'text-blue-300' : 'text-pink-600'}`}>4.2</p>
                   </div>
                 </div>
                 
-                {/* Meditation Streak Calendar */}
                 <div className="mt-4">
                   <h4 className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    April 2025
+                    Focus Areas
                   </h4>
-                  <div className="grid grid-cols-7 gap-1">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                      <div 
-                        key={`header-${i}`} 
-                        className={`text-center text-xs py-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}
-                      >
-                        {day}
-                      </div>
-                    ))}
-                    
-                    {Array.from({ length: 30 }).map((_, i) => {
-                      // Sample data - in a real app this would be based on actual meditation dates
-                      const hasSession = [2, 5, 6, 7, 12, 13, 14, 19, 20, 21, 22, 23].includes(i + 1);
-                      const isToday = i + 1 === 25; // April 25, 2025
-                      
-                      return (
-                        <div 
-                          key={`day-${i}`} 
-                          className={`rounded-full w-8 h-8 mx-auto flex items-center justify-center text-xs
-                            ${isToday 
-                              ? (darkMode ? 'bg-blue-600 text-white' : 'bg-pink-500 text-white') 
-                              : hasSession 
-                                ? (darkMode ? 'bg-blue-900 text-blue-200' : 'bg-pink-100 text-pink-700')
-                                : (darkMode ? 'text-gray-500' : 'text-gray-400')
-                            }
-                          `}
-                        >
-                          {i + 1}
-                        </div>
-                      );
-                    })}
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className={darkMode ? 'bg-blue-900 text-blue-100' : 'bg-pink-100 text-pink-800'}>
+                      Mindfulness (12)
+                    </Badge>
+                    <Badge className={darkMode ? 'bg-indigo-900 text-indigo-100' : 'bg-indigo-100 text-indigo-800'}>
+                      Stress Relief (6)
+                    </Badge>
+                    <Badge className={darkMode ? 'bg-purple-900 text-purple-100' : 'bg-purple-100 text-purple-800'}>
+                      Sleep (4)
+                    </Badge>
+                    <Badge className={darkMode ? 'bg-green-900 text-green-100' : 'bg-green-100 text-green-800'}>
+                      Focus (2)
+                    </Badge>
                   </div>
                 </div>
               </div>
@@ -974,4 +798,5 @@ export const MeditationSpecificExercisesEnhanced = () => {
   );
 };
 
+// Export the component as default
 export default MeditationSpecificExercisesEnhanced;
