@@ -39,8 +39,8 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   useEffect(() => {
     // Fixed position for chat, adjusted to match Fundi's new position at bottom right
     setChatPosition({ 
-      bottom: 124, // Position above Fundi (accounting for Fundi's height)
-      right: 18 // Align with right edge
+      bottom: 130, // Position above Fundi (accounting for Fundi's height)
+      right: 30 // Align with right edge
     });
   }, []);
   
@@ -50,7 +50,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       // We maintain the event listener for compatibility but position is now fixed
       setChatPosition({ 
         bottom: 130, // Position above Fundi
-        right: 24 // Align with right edge
+        right: 30 // Align with right edge
       });
     };
     
@@ -160,7 +160,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
           </motion.div>
         ) : (
           <motion.div
-            className="fixed right-2 sm:right-4 md:right-10 bottom-6 sm:bottom-6 md:bottom-6 z-[99999] flex flex-col items-center"
+            className="fixed right-7 bottom-7 z-[99999] flex flex-col items-center"
             initial={{ opacity: 1, scale: 1 }}
             animate={{ 
               opacity: 1, 
