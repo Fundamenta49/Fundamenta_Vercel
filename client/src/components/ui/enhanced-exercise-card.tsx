@@ -78,12 +78,34 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
     }
   };
   
-  // Handle close button click - with proper event stopping
+  // Enhanced robust close handler with logging and scroll management
   const handleClose = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("Close button clicked");
+    // Prevent default browser behavior and stop event propagation
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Debug output
+    console.log("Close button clicked - closing exercise card");
+    
+    // Force card to close state
     setIsOpen(false);
+    setIsVideoExpanded(false);
+    
+    // Add a delay to ensure proper UI update and to scroll back to a sensible position
+    setTimeout(() => {
+      const cardElement = document.getElementById(`exercise-card-${exercise.id}`);
+      if (cardElement) {
+        cardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        // Fallback to scrolling to top if element not found
+        window.scrollTo({
+          top: window.scrollY - 300, // Scroll up a bit
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
   };
   
   // Load video using the provided function or fallback to stored videos
@@ -132,7 +154,7 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
   };
   
   return (
-    <div className="transition-opacity duration-200">
+    <div id={`exercise-card-${exercise.id}`} className="transition-opacity duration-200">
       <Card className="overflow-hidden border shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardContent className="p-0">
           {/* Card Header - Always visible */}
@@ -205,16 +227,16 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                 maxHeight: isOpen ? '2000px' : '0px',
               }}
             >
-                {/* Close button */}
-                <div className="absolute top-4 right-4 z-50">
+                {/* Close button - larger, more prominent */}
+                <div className="absolute top-3 right-3 z-50">
                   <Button 
                     variant="destructive"
                     size="sm"
-                    className="h-8 w-8 p-0 rounded-full shadow-md hover:shadow-lg"
+                    className="h-10 w-10 p-0 rounded-full shadow-md hover:shadow-lg border-2 border-white animate-pulse"
                     onClick={handleClose}
                     aria-label="Close"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-5 w-5" />
                     <span className="sr-only">Close</span>
                   </Button>
                 </div>
@@ -365,6 +387,17 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                         Load Tutorial
                       </Button>
                     )}
+                    
+                    {/* Additional close button at the bottom */}
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      className="text-xs ml-auto"
+                      onClick={handleClose}
+                    >
+                      <X className="h-3.5 w-3.5 mr-1" />
+                      Close Exercise
+                    </Button>
                   </div>
                 </div>
               </div>
