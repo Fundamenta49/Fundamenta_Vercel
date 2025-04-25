@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Info, ChevronDown, ChevronUp, Plus, ArrowRight } from "lucide-react";
+import { AlertCircle, Info, ChevronDown, ChevronUp, Plus, ArrowRight, X } from "lucide-react";
 import { EmbeddedYouTubePlayer } from '@/components/embedded-youtube-player';
 import { YouTubeVideo } from '@/lib/youtube-service';
 import { searchSectionSpecificExerciseVideos } from '@/lib/temp-fix';
