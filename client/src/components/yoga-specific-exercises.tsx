@@ -428,7 +428,19 @@ export default function YogaSpecificExercises({
                 </div>
                 
                 {expandedExercise === exercise.id && (
-                  <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+                  <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 relative">
+                    {/* Close button in top-right corner */}
+                    <button 
+                      className="absolute top-4 right-4 rounded-full p-1 bg-pink-100 hover:bg-pink-200 text-pink-700 z-10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpandedExercise(null);
+                      }}
+                      aria-label="Close"
+                    >
+                      <X size={16} />
+                    </button>
+                    
                     {/* Exercise instructions */}
                     <div className="mb-4">
                       <h4 className="font-medium mb-2 flex items-center">

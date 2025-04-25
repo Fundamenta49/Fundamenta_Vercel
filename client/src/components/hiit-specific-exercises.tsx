@@ -687,7 +687,19 @@ export default function HIITSpecificExercises({
                   </div>
                   
                   {isExpanded && (
-                    <div className="mt-3 pt-3 border-t">
+                    <div className="mt-3 pt-3 border-t relative">
+                      {/* Close button in top-right corner of expanded content */}
+                      <button 
+                        className="absolute top-3 right-0 rounded-full p-1 bg-pink-100 hover:bg-pink-200 text-pink-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedExercise(null);
+                        }}
+                        aria-label="Close"
+                      >
+                        <X size={16} />
+                      </button>
+                      
                       {/* Show either the embedded YouTube video if available or fallback to image */}
                       {exerciseVideos[exercise.id]?.length > 0 ? (
                         <div className="mb-3 overflow-hidden rounded-md" style={{ aspectRatio: '16/9' }}>
