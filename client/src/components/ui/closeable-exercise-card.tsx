@@ -45,19 +45,6 @@ export function CloseableExerciseCard<T extends BaseExercise>({
   // Render the exercise card with an extra close button that manages visibility
   return (
     <div className="relative" id={`closeable-card-${exercise.id}`}>
-      {/* Absolute positioned close button that sits on top */}
-      <div className="absolute top-2 right-2 z-50">
-        <Button
-          variant="destructive"
-          size="sm"
-          className="h-9 w-9 p-0 rounded-full shadow-md hover:shadow-lg border-2 border-white"
-          onClick={handleClose}
-          aria-label="Close exercise"
-        >
-          <X className="h-5 w-5" />
-        </Button>
-      </div>
-      
       {/* Render the original enhanced exercise card */}
       <EnhancedExerciseCard
         exercise={exercise}
@@ -67,6 +54,31 @@ export function CloseableExerciseCard<T extends BaseExercise>({
         onShowExerciseDetail={onShowExerciseDetail}
         fallbackVideos={fallbackVideos}
       />
+      
+      {/* Absolute positioned close button with ultra-high z-index to prevent any blocking */}
+      <div 
+        className="fixed top-2 right-2 z-[9999]" 
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          pointerEvents: 'auto'
+        }}
+      >
+        <Button
+          variant="destructive"
+          size="sm"
+          className="h-10 w-10 p-0 rounded-full shadow-lg hover:shadow-xl border-2 border-white animate-pulse hover:animate-none"
+          onClick={handleClose}
+          aria-label="Close exercise"
+          style={{ 
+            pointerEvents: 'auto',
+            animation: 'pulse 2s infinite'
+          }}
+        >
+          <X className="h-6 w-6" />
+        </Button>
+      </div>
     </div>
   );
 }
