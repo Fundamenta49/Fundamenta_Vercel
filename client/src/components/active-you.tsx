@@ -1,4 +1,5 @@
 // Import the enhanced version and the specific exercise components
+import { useState } from 'react';
 import { StretchingIcon } from "./active-you-enhanced";
 import HIITSpecificExercisesEnhanced from './hiit-specific-exercises-enhanced';
 import YogaSpecificExercisesEnhanced from './yoga-specific-exercises-enhanced';
@@ -6,8 +7,21 @@ import StretchSpecificExercisesEnhanced from './stretch-specific-exercises-enhan
 import RunningSpecificExercisesEnhanced from './running-specific-exercises-enhanced';
 import WeightliftingSpecificExercisesEnhanced from './weightlifting-specific-exercises-enhanced';
 import MeditationSpecificExercisesEnhanced from './meditation-specific-exercises-enhanced';
+import YogaVisionEnhanced from './yoga-vision-enhanced';
 import { Card } from "@/components/ui/card";
 import { ExerciseType } from "../modules/active-you/context/module-context";
+import { Button } from "@/components/ui/button";
+import { 
+  Camera, 
+  ArrowLeft,
+  Brain,
+  Timer,
+  MapPin,
+  Activity,
+  Heart,
+  ArrowRight
+} from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 // Re-export the StretchingIcon for backward compatibility
 export { StretchingIcon };
@@ -18,6 +32,48 @@ interface ActiveYouProps {
 }
 
 export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps) {
+  // State for AI feature dialogs
+  const [isYogaVisionOpen, setIsYogaVisionOpen] = useState(false);
+  const [selectedYogaPoseId, setSelectedYogaPoseId] = useState<string>("");
+  
+  // Render the appropriate AI feature button based on exercise type
+  const renderAIFeatureButton = () => {
+    switch (defaultTab) {
+      case 'yoga':
+        return (
+          <Button 
+            onClick={() => setIsYogaVisionOpen(true)} 
+            className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white"
+          >
+            <Camera className="w-5 h-5 mr-2" />
+            Open YogaVision AI Pose Analysis
+          </Button>
+        );
+      case 'meditation':
+        return (
+          <Button 
+            onClick={() => console.log('Generate AI Meditation')} 
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+          >
+            <Brain className="w-5 h-5 mr-2" />
+            Generate AI-Guided Meditation
+          </Button>
+        );
+      case 'running':
+        return (
+          <Button 
+            onClick={() => console.log('Start GPS Run Tracking')} 
+            className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white"
+          >
+            <MapPin className="w-5 h-5 mr-2" />
+            Start GPS Run Tracking
+          </Button>
+        );
+      default:
+        return null;
+    }
+  };
+
   // Render only the selected exercise component based on the tab
   const renderExerciseContent = () => {
     switch (defaultTab) {
@@ -40,7 +96,47 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
               Yoga combines physical postures with breathing techniques and mindfulness.
               Regular practice can improve flexibility, strength, balance, and mental wellbeing.
             </p>
+            
+            {/* YogaVision AI Feature Button */}
+            <div className="my-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-pink-100">
+              <div className="flex items-center mb-2">
+                <div className="bg-pink-100 p-2 rounded-full mr-3">
+                  <Camera className="h-6 w-6 text-pink-700" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-pink-800">YogaVision AI Pose Analysis</h3>
+                  <p className="text-sm text-gray-600">Upload a photo of your yoga pose for real-time AI feedback on form and alignment</p>
+                </div>
+              </div>
+              <Button 
+                onClick={() => setIsYogaVisionOpen(true)} 
+                className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white"
+              >
+                <Camera className="w-5 h-5 mr-2" />
+                Open YogaVision
+              </Button>
+            </div>
+            
             <YogaSpecificExercisesEnhanced />
+            
+            {/* YogaVision AI Dialog */}
+            <Dialog open={isYogaVisionOpen} onOpenChange={setIsYogaVisionOpen}>
+              <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>YogaVision AI Pose Analysis</DialogTitle>
+                  <DialogDescription>
+                    Upload a photo of your yoga pose to receive AI-powered feedback on form and alignment
+                  </DialogDescription>
+                </DialogHeader>
+                <YogaVisionEnhanced 
+                  initialPoseId={selectedYogaPoseId}
+                  onClose={() => setIsYogaVisionOpen(false)}
+                  onAnalysisComplete={(analysis) => {
+                    console.log('Analysis completed:', analysis);
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         );
       case 'running':
@@ -51,6 +147,26 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
               Running is a versatile cardio exercise that improves endurance, strengthens your heart, and helps with weight management.
               These exercises will help you build running strength, endurance, and proper form.
             </p>
+            
+            {/* GPS Run Tracking Feature Button */}
+            <div className="my-4 p-3 bg-gradient-to-r from-green-50 to-teal-50 rounded-lg border border-green-100">
+              <div className="flex items-center mb-2">
+                <div className="bg-green-100 p-2 rounded-full mr-3">
+                  <MapPin className="h-6 w-6 text-green-700" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-green-800">GPS Run Tracking</h3>
+                  <p className="text-sm text-gray-600">Track your runs with real-time pace, distance, and route mapping</p>
+                </div>
+              </div>
+              <Button 
+                className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white"
+              >
+                <MapPin className="w-5 h-5 mr-2" />
+                Start GPS Run Tracking
+              </Button>
+            </div>
+            
             <RunningSpecificExercisesEnhanced />
           </div>
         );
@@ -85,6 +201,26 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
               Meditation reduces stress, improves focus, and enhances overall mental wellbeing.
               These guided sessions will help you develop mindfulness and relaxation techniques.
             </p>
+            
+            {/* AI Meditation Generation Feature Button */}
+            <div className="my-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+              <div className="flex items-center mb-2">
+                <div className="bg-blue-100 p-2 rounded-full mr-3">
+                  <Brain className="h-6 w-6 text-blue-700" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-blue-800">AI-Guided Meditation</h3>
+                  <p className="text-sm text-gray-600">Generate a personalized meditation script based on your preferences</p>
+                </div>
+              </div>
+              <Button 
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+              >
+                <Brain className="w-5 h-5 mr-2" />
+                Generate AI Meditation
+              </Button>
+            </div>
+            
             <MeditationSpecificExercisesEnhanced />
           </div>
         );
@@ -106,7 +242,10 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
       
       <div className="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto">
         <Card className="flex-1 p-4 border shadow-sm">
-          <h3 className="text-lg font-semibold text-pink-700 mb-2">Personalized Recommendations</h3>
+          <h3 className="text-lg font-semibold text-pink-700 mb-2">
+            <Activity className="h-5 w-5 inline-block mr-1 text-pink-600" /> 
+            Personalized Recommendations
+          </h3>
           <p className="text-gray-600 text-sm mb-3">
             Our AI assistant Fundi can analyze your exercise preferences and create a custom plan tailored to your goals and constraints.
           </p>
@@ -122,7 +261,10 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
         </Card>
         
         <Card className="flex-1 p-4 border shadow-sm">
-          <h3 className="text-lg font-semibold text-pink-700 mb-2">Exercise Tracking</h3>
+          <h3 className="text-lg font-semibold text-pink-700 mb-2">
+            <Heart className="h-5 w-5 inline-block mr-1 text-pink-600" />
+            Exercise Tracking
+          </h3>
           <p className="text-gray-600 text-sm mb-3">
             Monitor your progress and build consistency with our simple tracking tools. See improvements over time and stay motivated.
           </p>
