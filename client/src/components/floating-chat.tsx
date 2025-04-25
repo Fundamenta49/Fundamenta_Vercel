@@ -39,8 +39,8 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
   useEffect(() => {
     // Fixed position for chat, adjusted to match Fundi's new position at bottom right
     setChatPosition({ 
-      bottom: 130, // Position above Fundi (accounting for Fundi's height)
-      right: 24 // Align with right edge
+      bottom: 124, // Position above Fundi (accounting for Fundi's height)
+      right: 18 // Align with right edge
     });
   }, []);
   
