@@ -165,16 +165,16 @@ export default ActiveYouEnhancedWithProvider;
 function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   // Access yoga progression context
   const { poses, updatePoseStatus, getPoseById } = useYogaProgression();
-  
+
   // State for managing tab selection
   const [activeTab, setActiveTab] = useState<TabType>(defaultTab);
-  
+
   // State for managing the exercise detail MegaDialog
   const [selectedExercise, setSelectedExercise] = useState<ExerciseDetails | null>(null);
   const [exerciseDetailOpen, setExerciseDetailOpen] = useState(false);
   const [videoFullscreen, setVideoFullscreen] = useState(false);
   const [yogaPromptOpen, setYogaPromptOpen] = useState(false);
-  
+
   // State for pose analysis MegaDialog
   const [analysisPose, setAnalysisPose] = useState<ExerciseDetails | null>(null);
   const [analysisPoseId, setAnalysisPoseId] = useState<string>("");
@@ -203,9 +203,9 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         setHasWebcamPermission(false);
       }
     }
-    
+
     checkCameraPermission();
-    
+
     // Cleanup function to stop any active streams
     return () => {
       if (streamRef.current) {
@@ -226,9 +226,9 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
             facingMode: "user" 
           } 
         });
-        
+
         streamRef.current = stream;
-        
+
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           setHasWebcamPermission(true);
@@ -244,11 +244,11 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         streamRef.current.getTracks().forEach(track => track.stop());
         streamRef.current = null;
       }
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = null;
       }
-      
+
       setCameraEnabled(false);
       setIsAnalyzing(false);
     }
@@ -257,7 +257,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   // Function to analyze pose
   const analyzeUserPose = () => {
     setIsAnalyzing(true);
-    
+
     // Capture a frame from video to canvas (if needed)
     if (videoRef.current && canvasRef.current && streamRef.current) {
       const context = canvasRef.current.getContext('2d');
@@ -268,7 +268,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           canvasRef.current.width, 
           canvasRef.current.height
         );
-        
+
         // For demo, we'll simulate AI analysis with a timeout
         setTimeout(() => {
           // Example feedback that would come from AI
@@ -289,7 +289,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               "Breathing rhythm is consistent"
             ]
           };
-          
+
           setPoseAnalysisResult(feedback);
           setIsAnalyzing(false);
         }, 2000);
@@ -502,7 +502,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       videoUrl: "https://www.youtube.com/watch?v=NnbvPeAIhmA"
     }
   };
-  
+
   // Database of stretching exercises
   const stretchExercises: Record<string, ExerciseDetails> = {
     "hamstringStretch": {
@@ -631,7 +631,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     }
     setExerciseDetailOpen(true);
   };
-  
+
   // Function to show exercise details from running exercises component
   const showExerciseDetails = (exercise: any) => {
     // Convert the Exercise type from running-specific-exercises to ExerciseDetails if needed
@@ -653,11 +653,11 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       imageUrl: exercise.imageUrl,
       videoUrl: exercise.videoUrl
     };
-    
+
     setSelectedExercise(exerciseDetails);
     setExerciseDetailOpen(true);
   };
-  
+
   // Function to handle completion of yoga prompt flow
   const handleYogaPromptComplete = (session?: YogaSession) => {
     // Only close if no session was selected (user manually closed it)
@@ -669,7 +669,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
 
   // Create a variable to hold the content based on the tab
   let tabContent;
-  
+
   // Yoga tab content with AI-powered pose analysis
   const renderYogaSection = () => (
     <div className="space-y-4">
@@ -694,7 +694,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           Get real-time form corrections and personalized yoga guidance
         </p>
       </div>
-      
+
       {/* Yoga Specific Exercise Components */}
       <div className="space-y-8 mt-6">
         <Tabs defaultValue="beginner" className="w-full">
@@ -732,7 +732,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           </TabsContent>
         </Tabs>
       </div>
-      
+
       {/* AI Pose Analysis Feature */}
       <Card className="overflow-hidden">
         <CardHeader className="pb-2">
@@ -758,7 +758,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </AlertDescription>
             </Alert>
           )}
-          
+
           {/* Camera view and controls */}
           <div className="relative rounded-lg overflow-hidden bg-gray-900 aspect-video">
             {cameraEnabled ? (
@@ -784,7 +784,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </Button>
               </div>
             )}
-            
+
             {/* Canvas for pose detection (hidden) */}
             <canvas 
               ref={canvasRef} 
@@ -792,7 +792,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               height="480" 
               className="hidden"
             />
-            
+
             {/* Camera controls when enabled */}
             {cameraEnabled && (
               <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
@@ -827,7 +827,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     Analyze Pose
                   </Button>
                 )}
-                
+
                 <Button
                   size="sm"
                   variant="outline"
@@ -840,7 +840,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </div>
             )}
           </div>
-          
+
           {/* AI Feedback Display */}
           {poseAnalysisResult && (
             <div className="mt-4 space-y-4 border rounded-lg p-4 bg-blue-50 border-blue-200">
@@ -867,9 +867,9 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   {poseAnalysisResult.accuracy}% Accuracy
                 </Badge>
               </div>
-              
+
               <Separator />
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <h4 className="font-medium text-blue-800 flex items-center">
@@ -882,7 +882,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div className="space-y-2">
                   <h4 className="font-medium text-green-700 flex items-center">
                     <Check className="h-4 w-4 mr-1" />
@@ -895,9 +895,9 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   </ul>
                 </div>
               </div>
-              
+
               <Separator />
-              
+
               <div className="space-y-2">
                 <h4 className="font-medium text-blue-800">Suggestions</h4>
                 <ul className="space-y-1 pl-6 list-disc text-sm">
@@ -906,7 +906,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   ))}
                 </ul>
               </div>
-              
+
               <div className="flex justify-between mt-4">
                 <Button
                   variant="outline"
@@ -916,7 +916,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <RotateCcw className="h-4 w-4 mr-1" />
                   Reset Analysis
                 </Button>
-                
+
                 <Button
                   onClick={() => alert("Please use Fundi for AI assistance")}
                   className="bg-blue-600 hover:bg-blue-700"
@@ -929,7 +929,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           )}
         </CardContent>
       </Card>
-      
+
       {/* Yoga Poses Card */}
       <Card className="overflow-hidden">
         <CardHeader className="pb-0">
@@ -944,7 +944,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               Find poses and sequences for all levels, from beginner to advanced
             </AlertDescription>
           </Alert>
-          
+
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-medium text-lg">Yoga Progression Path</h3>
@@ -998,7 +998,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Video size={14} />
                     <span className="ml-1">Practice Pose</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1010,7 +1010,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Pose 2 - Beginner (Mastered) */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-green-200">
                 <div className="flex items-center justify-between">
@@ -1050,7 +1050,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Video size={14} />
                     <span className="ml-1">Practice Pose</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1062,7 +1062,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Pose 3 - Beginner (In Progress) */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-yellow-200">
                 <div className="flex items-center justify-between">
@@ -1102,7 +1102,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Video size={14} />
                     <span className="ml-1">Practice Pose</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1114,7 +1114,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Pose 4 - Beginner (Mastered) */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-green-200">
                 <div className="flex items-center justify-between">
@@ -1141,7 +1141,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-                  
+
                   <button 
                     className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
                     onClick={() => {
@@ -1154,7 +1154,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Video size={14} />
                     <span className="ml-1">Practice Pose</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1166,7 +1166,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Pose 5 - Intermediate (In Progress) */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-yellow-200">
                 <div className="flex items-center justify-between">
@@ -1193,7 +1193,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-                  
+
                   <button 
                     className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
                     onClick={() => {
@@ -1206,7 +1206,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Video size={14} />
                     <span className="ml-1">Practice Pose</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1218,7 +1218,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Pose 6 - Intermediate (Locked) */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-gray-300 bg-gray-50">
                 <div className="flex items-center justify-between">
@@ -1245,7 +1245,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1257,7 +1257,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Pose 7 - Advanced (Locked) */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors border-gray-300 bg-gray-50">
                 <div className="flex items-center justify-between">
@@ -1284,7 +1284,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1298,7 +1298,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </div>
             </div>
           </div>
-          
+
           {/* Additional Flows */}
           <div className="mt-6">
             <h3 className="font-medium text-lg my-3">Other Yoga Sequences</h3>
@@ -1318,14 +1318,14 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Progress tracking */}
       <FitnessProgress />
-      
+
       {/* AI Coach Dialog - removed as Fundi now handles all AI interactions */}
     </div>
   );
-  
+
   // Stretching tab content with AI-powered analysis
   const renderStretchingSection = () => (
     <div className="space-y-4">
@@ -1340,7 +1340,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           Get personalized form corrections and guided stretching routines
         </p>
       </div>
-      
+
       {/* Stretch Specific Exercise Components */}
       <div className="space-y-8 mt-6">
         <Tabs defaultValue="dynamic" className="w-full">
@@ -1378,7 +1378,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           </TabsContent>
         </Tabs>
       </div>
-      
+
       {/* AI Pose Analysis Feature */}
       <Card className="overflow-hidden">
         <CardHeader className="pb-2">
@@ -1419,7 +1419,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                 </Button>
               </div>
             )}
-            
+
             {/* Canvas for pose detection (hidden) */}
             <canvas 
               ref={canvasRef} 
@@ -1427,7 +1427,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               height="480" 
               className="hidden"
             />
-            
+
             {/* Camera controls when enabled */}
             {cameraEnabled && (
               <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
@@ -1462,7 +1462,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     Analyze Form
                   </Button>
                 )}
-                
+
                 <Button
                   size="sm"
                   variant="outline"
@@ -1475,7 +1475,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </div>
             )}
           </div>
-          
+
           {/* AI Feedback Display - same format as yoga section */}
           {poseAnalysisResult && (
             <div className="mt-4 space-y-4 border rounded-lg p-4 bg-blue-50 border-blue-200">
@@ -1502,9 +1502,9 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   {poseAnalysisResult.accuracy}% Accuracy
                 </Badge>
               </div>
-              
+
               <Separator />
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <h4 className="font-medium text-blue-800 flex items-center">
@@ -1517,7 +1517,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     ))}
                   </ul>
                 </div>
-                
+
                 <div className="space-y-2">
                   <h4 className="font-medium text-green-700 flex items-center">
                     <Check className="h-4 w-4 mr-1" />
@@ -1530,9 +1530,9 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   </ul>
                 </div>
               </div>
-              
+
               <Separator />
-              
+
               <div className="space-y-2">
                 <h4 className="font-medium text-blue-800">Suggestions</h4>
                 <ul className="space-y-1 pl-6 list-disc text-sm">
@@ -1541,7 +1541,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   ))}
                 </ul>
               </div>
-              
+
               <div className="flex justify-between mt-4">
                 <Button
                   variant="outline"
@@ -1551,7 +1551,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <RotateCcw className="h-4 w-4 mr-1" />
                   Reset Analysis
                 </Button>
-                
+
                 <Button
                   onClick={() => alert("Please use Fundi for AI assistance")}
                   className="bg-blue-600 hover:bg-blue-700"
@@ -1564,7 +1564,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           )}
         </CardContent>
       </Card>
-      
+
       <Card className="overflow-hidden">
         <CardHeader className="pb-0">
           <CardTitle>Stretching Routines</CardTitle>
@@ -1578,7 +1578,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               Find stretches to improve mobility and aid recovery
             </AlertDescription>
           </Alert>
-          
+
           <div className="mb-6">
             <h3 className="font-medium text-lg mb-3">Recommended Routines</h3>
             <div className="grid gap-4">
@@ -1594,7 +1594,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <div><span className="font-medium">6.</span> Triceps Stretch: Stretches back of upper arms</div>
                 </div>
               </div>
-              
+
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="warm-up-routine" className="border-none">
@@ -1618,7 +1618,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </div>
             </div>
           </div>
-          
+
           {/* Custom Stretch Cards */}
           <div>
             <h3 className="font-medium text-lg mb-3">Essential Stretches</h3>
@@ -1640,7 +1640,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1652,7 +1652,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Stretch 2 */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
                 <div className="font-medium text-lg mb-1">Figure Four Stretch</div>
@@ -1670,7 +1670,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1682,7 +1682,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Stretch 3 */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
                 <div className="font-medium text-lg mb-1">Doorway Chest Stretch</div>
@@ -1700,7 +1700,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1712,7 +1712,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   )}
                 </div>
               </div>
-              
+
               {/* Stretch 4 */}
               <div className="border rounded-md p-4 hover:bg-gray-50 transition-colors">
                 <div className="font-medium text-lg mb-1">Cat-Cow Stretch</div>
@@ -1730,7 +1730,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                     <Info size={14} />
                     <span className="ml-1">Show Details</span>
                   </button>
-                  
+
                   {cameraEnabled && (
                     <button 
                       className="text-sm text-green-600 hover:text-green-800 flex items-center"
@@ -1744,7 +1744,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </div>
             </div>
           </div>
-          
+
           <div>
             <h3 className="font-medium text-lg mb-3">Exercise Library</h3>
             <FitnessExercises 
@@ -1760,19 +1760,19 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           </div>
         </CardContent>
       </Card>
-      
+
       <FitnessProgress />
-      
+
       {/* AI Coach Dialog - removed as Fundi now handles all AI interactions */}
     </div>
   );
-  
+
   // Switch statement to determine which tab content to render
   switch (defaultTab) {
     case "meditation":
       tabContent = <MeditationGuide />;
       break;
-      
+
     case "weightlifting":
       tabContent = (
         <div className="space-y-4">
@@ -1800,7 +1800,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   Find exercises that match your equipment and experience level
                 </AlertDescription>
               </Alert>
-              
+
               <div className="mb-6">
                 <h3 className="font-medium text-lg my-3">Sample Routine</h3>
                 <div className="grid gap-4">
@@ -1828,7 +1828,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   </div>
                 </div>
               </div>
-              
+
               <FitnessExercises 
                 muscleFilter="strength" 
                 equipmentFilter="barbell" 
@@ -1845,11 +1845,11 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         </div>
       );
       break;
-      
+
     case "yoga":
       tabContent = renderYogaSection();
       break;
-      
+
     case "running":
       tabContent = (
         <div className="space-y-4">
@@ -1864,7 +1864,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               Track your runs, set goals, and improve your performance
             </p>
           </div>
-          
+
           {/* Essential Running Warm-up Stretches */}
           <Card className="overflow-hidden">
             <CardHeader className="pb-0">
@@ -1879,7 +1879,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   Always warm up properly before running to improve performance and reduce injury risk
                 </AlertDescription>
               </Alert>
-              
+
               <div className="mb-6">
                 <h3 className="font-medium text-lg my-3">Dynamic Warm-up Stretches</h3>
                 <div className="grid gap-4">
@@ -1911,13 +1911,13 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
               </div>
             </CardContent>
           </Card>
-          
+
           {/* Our comprehensive RunnersCompass component provides all running functionality */}
           <RunnersCompass />
         </div>
       );
       break;
-      
+
     case "hiit":
       tabContent = (
         <div className="space-y-4">
@@ -1946,7 +1946,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <p>HIIT alternates between short, intense bursts of exercise and less-intense recovery periods, keeping your heart rate up to burn more fat in less time.</p>
                 </AlertDescription>
               </Alert>
-              
+
               <div className="mb-6">
                 <h3 className="font-medium text-lg my-3">HIIT Protocols</h3>
                 <div className="grid grid-cols-1 gap-4">
@@ -1964,7 +1964,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="mb-6 pb-2 border-b border-gray-200">
                     <h4 className="font-medium text-lg mb-3">AMRAP (As Many Rounds As Possible)</h4>
                     <p className="text-gray-700 mb-3">Complete as many rounds of a circuit as possible in a set time (typically 10-20 minutes)</p>
@@ -1979,7 +1979,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="mb-6 pb-2 border-b border-gray-200">
                     <h4 className="font-medium text-lg mb-3">EMOM (Every Minute On the Minute)</h4>
                     <p className="text-gray-700 mb-3">At the start of each minute, perform a specific exercise. Rest for the remainder of the minute.</p>
@@ -1994,7 +1994,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-medium text-lg mb-3">Circuit Training</h4>
                     <p className="text-gray-700 mb-3">Move through 5-10 exercises with minimal rest between movements.</p>
@@ -2017,22 +2017,22 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
         </div>
       );
       break;
-    
+
     case "stretch":
       tabContent = renderStretchingSection();
       break;
-      
+
     default:
       tabContent = null;
       break;
   }
-  
+
   // Return both the tab content and the dialog
   return (
     <>
       {/* The component content based on the tab */}
       {tabContent}
-      
+
       {/* Exercise Details MegaDialog */}
       <MegaDialog open={exerciseDetailOpen} onOpenChange={setExerciseDetailOpen}>
         <MegaDialogContent className="bg-white dark:bg-gray-950">
@@ -2068,14 +2068,14 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                       />
                     </div>
                   )}
-                  
+
                   <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
                     <div className="md:col-span-2 space-y-8">
                       <div>
                         <h3 className="text-lg font-medium mb-3 text-gray-800">Description</h3>
                         <p className="text-gray-700 leading-relaxed">{selectedExercise?.description}</p>
                       </div>
-                      
+
                       <div>
                         <h3 className="text-lg font-medium mb-3 text-blue-800 flex items-center">
                           <span>How to Perform</span>
@@ -2086,7 +2086,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           ))}
                         </ol>
                       </div>
-                      
+
                       <div>
                         <h3 className="text-lg font-medium mb-3 text-green-800 flex items-center">
                           <span>Benefits</span>
@@ -2098,7 +2098,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                         </ul>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-8">
                       <div>
                         <h3 className="text-lg font-medium mb-3 text-amber-800 flex items-center">
@@ -2110,7 +2110,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           ))}
                         </ul>
                       </div>
-                      
+
                       {selectedExercise?.videoUrl && (
                         <div className="mt-6 mb-4">
                           <h3 className="text-lg font-medium mb-3 text-gray-800">Video Tutorial</h3>
@@ -2155,7 +2155,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           </div>
                         </div>
                       )}
-                      
+
                       {/* Display animation if available */}
                       {selectedExercise?.animationUrl && (
                         <div className="mt-6 mb-4">
@@ -2175,7 +2175,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           </p>
                         </div>
                       )}
-                      
+
                       {/* Full-screen Video MegaDialog */}
                       {videoFullscreen && selectedExercise?.videoUrl && (
                         <MegaDialog 
@@ -2212,13 +2212,13 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                                     allowFullScreen
                                     loading="lazy"
                                   ></iframe>
-                                </div>
+                               </div>
                               </div>
                             </MegaDialogBody>
                           </MegaDialogContent>
                         </MegaDialog>
                       )}
-                      
+
                       {cameraEnabled && (
                         <div className="mt-4">
                           <h3 className="text-lg font-medium mb-3 text-blue-800">Form Analysis</h3>
@@ -2242,7 +2242,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   </div>
                 </div>
               </MegaDialogBody>
-              
+
               <MegaDialogFooter className="flex justify-between mt-6 pt-4 border-t">
                 <Button
                   variant="outline"
@@ -2252,24 +2252,18 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                   <MessageSquare className="h-4 w-4" />
                   Use Fundi Instead
                 </Button>
-                
+
                 <Button
                   onClick={() => {
-                    console.log('Close button clicked');
-                    if (setExerciseDetailOpen) {
-                      setExerciseDetailOpen(false);
-                    } else {
-                      console.log('setExerciseDetailOpen is not defined');
-                      // Force close as fallback method
-                      const closeButton = document.querySelector('.MegaDialogClose') as HTMLButtonElement;
-                      if (closeButton) {
-                        console.log('Found close button, clicking it');
-                        closeButton.click();
-                      }
+                    setExerciseDetailOpen(false);
+                    if (videoFullscreen) {
+                      setVideoFullscreen(false);
                     }
                   }}
+                  variant="secondary"
                   className="shadow-sm hover:shadow-md transition-all bg-pink-100 hover:bg-pink-200 text-pink-800"
                 >
+                  <X className="h-4 w-4 mr-2" />
                   Close
                 </Button>
               </MegaDialogFooter>
@@ -2277,7 +2271,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           )}
         </MegaDialogContent>
       </MegaDialog>
-      
+
       {/* Yoga Prompt Flow */}
       {yogaPromptOpen && (
         <YogaPromptFlow 
@@ -2285,7 +2279,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           onClose={() => setYogaPromptOpen && setYogaPromptOpen(false)}
         />
       )}
-      
+
       {/* Pose-Specific Analysis Dialog */}
       <PoseAnalysisDialog
         open={poseAnalysisOpen}
