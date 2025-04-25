@@ -61,9 +61,9 @@ export function CloseableExerciseCard<T extends BaseExercise>({
         fallbackVideos={fallbackVideos}
       />
       
-      {/* Absolute positioned close button with ultra-high z-index to prevent any blocking */}
+      {/* Absolute positioned close button with ultra-ultra-high z-index to prevent any blocking */}
       <div 
-        className="fixed top-2 right-2 z-[9999]" 
+        className="fixed top-2 right-2 z-[99999]" 
         style={{
           position: 'absolute',
           top: '10px',
@@ -79,7 +79,10 @@ export function CloseableExerciseCard<T extends BaseExercise>({
           aria-label="Close exercise"
           style={{ 
             pointerEvents: 'auto',
-            animation: 'pulse 2s infinite'
+            animation: 'pulse 2s infinite',
+            // Add a higher stacking context to ensure this is absolutely on top
+            position: 'relative',
+            zIndex: 99999
           }}
         >
           <X className="h-6 w-6" />

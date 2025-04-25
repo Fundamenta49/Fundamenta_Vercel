@@ -202,11 +202,13 @@ export default function RobotFundi({
         "fixed",
         "cursor-pointer",
         sizeVariants[size],
-        interactive && "hover:scale-105 transition-transform"
+        interactive && "hover:scale-105 transition-transform",
+        // Important: when minimized, restrict pointer events to only the visible robot parts
+        isMinimized && "fundi-minimized"
       )}
       style={{
         position: 'fixed',
-        top: '8px',
+        bottom: '24px',
         right: '24px',
         zIndex: 9999,
         touchAction: 'none',
@@ -218,6 +220,10 @@ export default function RobotFundi({
         opacity: isMinimized ? 0.3 : 1,
         transform: isMinimized ? 'scale(0.5)' : 'scale(1)',
         transition: 'opacity 0.3s ease, transform 0.3s ease',
+        // When minimized, minimize the container's impact on other elements
+        pointerEvents: isMinimized ? 'none' : 'auto', 
+        // When minimized, add an indicator to show users it can be restored
+        boxShadow: isMinimized ? '0 0 10px rgba(0,0,0,0.2)' : 'none',
       }}
       title={isMinimized ? "Double-tap to restore Fundi" : "Tap to chat or double-tap to minimize"}
       onMouseEnter={() => setIsHovered(true)}
@@ -390,16 +396,31 @@ export default function RobotFundi({
           />
         )}
         
-        {/* Invisible click target overlay - ensures we have a reliable clickable element */}
-        <rect 
-          x="0" 
-          y="0" 
-          width="100" 
-          height="100" 
-          fill="transparent"
-          onClick={handleTapEvent}
-          style={{ cursor: 'pointer' }}
-        />
+        {/* Invisible click target overlay - when not minimized */}
+        {!isMinimized && (
+          <rect 
+            x="0" 
+            y="0" 
+            width="100" 
+            height="100" 
+            fill="transparent"
+            onClick={handleTapEvent}
+            style={{ cursor: 'pointer' }}
+          />
+        )}
+        
+        {/* Smaller click target only when minimized */}
+        {isMinimized && (
+          <rect 
+            x="25" 
+            y="30" 
+            width="50" 
+            height="40" 
+            fill="transparent"
+            onClick={handleTapEvent}
+            style={{ cursor: 'pointer' }}
+          />
+        )}
       </svg>
     </div>
   );
