@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -133,13 +132,7 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
   };
   
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
+    <div className="transition-opacity duration-200">
       <Card className="overflow-hidden border shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardContent className="p-0">
           {/* Card Header - Always visible */}
@@ -203,16 +196,15 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
           </div>
           
           {/* Expanded Content */}
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div 
-                ref={contentRef}
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="border-t relative bg-white"
-              >
+          {isOpen && (
+            <div 
+              ref={contentRef}
+              className="border-t relative bg-white transition-all duration-300 overflow-hidden"
+              style={{
+                opacity: isOpen ? 1 : 0,
+                maxHeight: isOpen ? '2000px' : '0px',
+              }}
+            >
                 {/* Close button */}
                 <div className="absolute top-4 right-4 z-50">
                   <Button 
@@ -375,11 +367,10 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   );
 }

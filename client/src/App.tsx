@@ -25,6 +25,7 @@ import MortgagePage from "@/pages/finance/mortgage";
 import Career from "@/pages/career";
 import Wellness from "@/pages/wellness";
 import Active from "@/pages/active-fixed";
+import ActiveEnhanced from "@/pages/active-enhanced";
 import Learning from "@/pages/learning";
 import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";
@@ -180,6 +181,11 @@ function Router() {
             <Route path="/active/:section">
               <ProtectedRoute>
                 <Active />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/active-enhanced">
+              <ProtectedRoute>
+                <ActiveEnhanced />
               </ProtectedRoute>
             </Route>
             <Route path="/yoga">
