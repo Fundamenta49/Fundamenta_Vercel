@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { EnhancedExerciseCard, BaseExercise } from "@/components/ui/enhanced-exercise-card";
+import { BaseExercise } from "@/components/ui/enhanced-exercise-card";
+import { CloseableExerciseCard } from "@/components/ui/closeable-exercise-card";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -364,7 +365,7 @@ export const HIITSpecificExercisesEnhanced = () => {
               </div>
               <div className="space-y-4">
                 {HIIT_EXERCISES.tabata.map((exercise) => (
-                  <EnhancedExerciseCard 
+                  <CloseableExerciseCard 
                     key={exercise.id}
                     exercise={exercise}
                     category="tabata"
@@ -372,6 +373,7 @@ export const HIITSpecificExercisesEnhanced = () => {
                     loadExerciseVideo={findExerciseVideo}
                     onShowExerciseDetail={handleShowDetail}
                     fallbackVideos={allFallbacks}
+                    onClose={() => console.log("Exercise card closed:", exercise.name)}
                   />
                 ))}
               </div>
@@ -386,7 +388,7 @@ export const HIITSpecificExercisesEnhanced = () => {
               </div>
               <div className="space-y-4">
                 {HIIT_EXERCISES.amrap.map((exercise) => (
-                  <EnhancedExerciseCard 
+                  <CloseableExerciseCard 
                     key={exercise.id}
                     exercise={exercise}
                     category="amrap"
@@ -394,6 +396,7 @@ export const HIITSpecificExercisesEnhanced = () => {
                     loadExerciseVideo={findExerciseVideo}
                     onShowExerciseDetail={handleShowDetail}
                     fallbackVideos={allFallbacks}
+                    onClose={() => console.log("Exercise card closed:", exercise.name)}
                   />
                 ))}
               </div>
@@ -408,7 +411,7 @@ export const HIITSpecificExercisesEnhanced = () => {
               </div>
               <div className="space-y-4">
                 {HIIT_EXERCISES.emom.map((exercise) => (
-                  <EnhancedExerciseCard 
+                  <CloseableExerciseCard 
                     key={exercise.id}
                     exercise={exercise}
                     category="emom"
@@ -416,6 +419,7 @@ export const HIITSpecificExercisesEnhanced = () => {
                     loadExerciseVideo={findExerciseVideo}
                     onShowExerciseDetail={handleShowDetail}
                     fallbackVideos={allFallbacks}
+                    onClose={() => console.log("Exercise card closed:", exercise.name)}
                   />
                 ))}
               </div>
@@ -430,7 +434,7 @@ export const HIITSpecificExercisesEnhanced = () => {
               </div>
               <div className="space-y-4">
                 {HIIT_EXERCISES.circuit.map((exercise) => (
-                  <EnhancedExerciseCard 
+                  <CloseableExerciseCard 
                     key={exercise.id}
                     exercise={exercise}
                     category="circuit"
@@ -438,6 +442,7 @@ export const HIITSpecificExercisesEnhanced = () => {
                     loadExerciseVideo={findExerciseVideo}
                     onShowExerciseDetail={handleShowDetail}
                     fallbackVideos={allFallbacks}
+                    onClose={() => console.log("Exercise card closed:", exercise.name)}
                   />
                 ))}
               </div>
