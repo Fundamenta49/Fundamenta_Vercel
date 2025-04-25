@@ -187,10 +187,24 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   // as they may be referenced elsewhere in the component
   const [cameraEnabled] = useState(false);
   const [hasWebcamPermission] = useState<boolean>(true);
+  const [isAnalyzing] = useState(false);
+  
+  // Mock data for pose analysis result to avoid TypeScript errors
+  const [poseAnalysisResult] = useState<PoseFeedback>({
+    accuracy: 85,
+    suggestions: ["Keep practicing - feature disabled"],
+    alignmentIssues: ["Camera feature disabled"],
+    strongAreas: ["Great job using the app"]
+  });
   
   // These references are kept but not actually used
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Empty stub functions to replace removed camera functionality
+  const toggleCamera = () => console.log("Camera functionality removed");
+  const analyzeUserPose = () => console.log("Pose analysis functionality removed");
+  const resetAnalysis = () => console.log("Reset analysis functionality removed");
 
   // Database of yoga exercises
   const yogaExercises: Record<string, ExerciseDetails> = {
