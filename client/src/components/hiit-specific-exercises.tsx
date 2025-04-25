@@ -24,7 +24,7 @@ interface Exercise {
 }
 
 // Define hardcoded exercise data for HIIT workouts by protocol type
-const HIIT_EXERCISE_SETS = {
+export const HIIT_EXERCISE_SETS = {
   tabata: [
     {
       id: "tabata1",

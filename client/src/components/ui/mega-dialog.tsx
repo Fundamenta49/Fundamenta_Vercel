@@ -53,8 +53,12 @@ const MegaDialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <MegaDialogClose className="absolute right-4 top-4 rounded-full p-2 opacity-90 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-[100] bg-pink-100 hover:bg-pink-200">
-        <X className="h-5 w-5 text-pink-500" />
+      <MegaDialogClose className="absolute right-4 top-4 rounded-full p-2 opacity-100 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-[999] bg-pink-200 hover:bg-pink-300 border border-pink-300 shadow-md" 
+      onClick={() => {
+        console.log('MegaDialog close button clicked');
+      }}
+      style={{ boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' }}>
+        <X className="h-5 w-5 text-pink-600" />
         <span className="sr-only">Close</span>
       </MegaDialogClose>
     </DialogPrimitive.Content>
