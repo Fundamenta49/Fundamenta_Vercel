@@ -14,3 +14,8 @@ client/src/components/absolute-fullscreen-components.tsx
 client/src/lib/nhtsa-service.ts
 client/src/lib/mortgage-constants.ts
 client/src/types/speech-recognition.d.ts
+client/src/components/absolute-fullscreen-components.tsx
+client/src/components/coffee-talk-questions.ts
+client/src/lib/nhtsa-service.ts
+client/src/lib/mortgage-constants.ts
+client/src/types/speech-recognition.d.ts

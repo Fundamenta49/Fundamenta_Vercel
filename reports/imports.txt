@@ -60,10 +60,6 @@ client/src/components/ui/popover.tsx:import { cn } from "@/lib/utils"
 client/src/components/ui/progress.tsx:import * as React from "react"
 client/src/components/ui/progress.tsx:import * as ProgressPrimitive from "@radix-ui/react-progress"
 client/src/components/ui/progress.tsx:import { cn } from "@/lib/utils"
-client/src/components/ui/radio-group.tsx:import * as React from "react"
-client/src/components/ui/radio-group.tsx:import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
-client/src/components/ui/radio-group.tsx:import { Circle } from "lucide-react"
-client/src/components/ui/radio-group.tsx:import { cn } from "@/lib/utils"
 client/src/components/ui/resizable.tsx:import { GripVertical } from "lucide-react"
 client/src/components/ui/resizable.tsx:import * as ResizablePrimitive from "react-resizable-panels"
 client/src/components/ui/resizable.tsx:import { cn } from "@/lib/utils"
@@ -178,18 +174,8 @@ client/src/components/ui/dialog.tsx:import { X } from "lucide-react"
 client/src/components/ui/dialog.tsx:import { cn } from "@/lib/utils"
 client/src/components/ui/dialog.tsx:import { useIsMobile } from "@/hooks/use-mobile"
 client/src/components/ui/dialog.tsx:import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion"
-client/src/components/ui/full-screen-dialog.tsx:import * as React from "react";
-client/src/components/ui/full-screen-dialog.tsx:import * as DialogPrimitive from "@radix-ui/react-dialog";
-client/src/components/ui/full-screen-dialog.tsx:import { X, ChevronDown } from "lucide-react";
-client/src/components/ui/full-screen-dialog.tsx:import { cn } from "@/lib/utils";
-client/src/components/ui/full-screen-dialog.tsx:import { useIsMobile } from "@/hooks/use-mobile";
-client/src/components/ui/full-screen-dialog.tsx:import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
 client/src/components/ui/content.tsx:import React from 'react';
 client/src/components/ui/content.tsx:import { cn } from '@/lib/utils';
-client/src/components/ui/mega-dialog.tsx:import * as React from "react"
-client/src/components/ui/mega-dialog.tsx:import * as DialogPrimitive from "@radix-ui/react-dialog"
-client/src/components/ui/mega-dialog.tsx:import { X } from "lucide-react"
-client/src/components/ui/mega-dialog.tsx:import { cn } from "@/lib/utils"
 client/src/components/ui/safe-form-provider.tsx:import React from 'react';
 client/src/components/ui/safe-form-provider.tsx:import { FormProvider, UseFormReturn } from 'react-hook-form';
 client/src/components/ui/form.tsx:import * as React from "react"
@@ -198,6 +184,20 @@ client/src/components/ui/form.tsx:import { Slot } from "@radix-ui/react-slot"
 client/src/components/ui/form.tsx:import { cn } from "@/lib/utils"
 client/src/components/ui/form.tsx:import { Label } from "@/components/ui/label"
 client/src/components/ui/swipe-to-close.tsx:import React, { useState, useRef, ReactNode } from 'react';
+client/src/components/ui/radio-group.tsx:import * as React from "react"
+client/src/components/ui/radio-group.tsx:import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
+client/src/components/ui/radio-group.tsx:import { Circle } from "lucide-react"
+client/src/components/ui/radio-group.tsx:import { cn } from "@/lib/utils"
+client/src/components/ui/full-screen-dialog.tsx:import * as React from "react";
+client/src/components/ui/full-screen-dialog.tsx:import * as DialogPrimitive from "@radix-ui/react-dialog";
+client/src/components/ui/full-screen-dialog.tsx:import { X, ChevronDown } from "lucide-react";
+client/src/components/ui/full-screen-dialog.tsx:import { cn } from "@/lib/utils";
+client/src/components/ui/full-screen-dialog.tsx:import { useIsMobile } from "@/hooks/use-mobile";
+client/src/components/ui/full-screen-dialog.tsx:import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
+client/src/components/ui/mega-dialog.tsx:import * as React from "react"
+client/src/components/ui/mega-dialog.tsx:import * as DialogPrimitive from "@radix-ui/react-dialog"
+client/src/components/ui/mega-dialog.tsx:import { X } from "lucide-react"
+client/src/components/ui/mega-dialog.tsx:import { cn } from "@/lib/utils"
 client/src/components/cpr-guide.tsx:import { useState } from "react";
 client/src/components/cpr-guide.tsx:import { Button } from "@/components/ui/button";
 client/src/components/cpr-guide.tsx:import { Progress } from "@/components/ui/progress";
@@ -782,25 +782,6 @@ client/src/components/integrated-nutrition.tsx:import { Button } from "@/compone
 client/src/components/integrated-nutrition.tsx:import { Alert, AlertDescription } from "@/components/ui/alert";
 client/src/components/integrated-nutrition.tsx:import { Separator } from "@/components/ui/separator";
 client/src/components/integrated-nutrition.tsx:import NutritionAssessment from "@/components/nutrition-assessment";
-client/src/components/wellness-journal.tsx:import { useState, useEffect, useRef } from "react";
-client/src/components/wellness-journal.tsx:import { Button } from "@/components/ui/button";
-client/src/components/wellness-journal.tsx:import { Input } from "@/components/ui/input";
-client/src/components/wellness-journal.tsx:import { Textarea } from "@/components/ui/textarea";
-client/src/components/wellness-journal.tsx:import { ScrollArea } from "@/components/ui/scroll-area";
-client/src/components/wellness-journal.tsx:import { format, subDays, isAfter, parseISO } from "date-fns";
-client/src/components/wellness-journal.tsx:import WordCloud from "./word-cloud";
-client/src/components/wellness-journal.tsx:import { Progress } from "@/components/ui/progress";
-client/src/components/wellness-journal.tsx:import { useQuery, useMutation } from "@tanstack/react-query";
-client/src/components/wellness-journal.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-client/src/components/wellness-journal.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-client/src/components/wellness-journal.tsx:import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-client/src/components/wellness-journal.tsx:import { Switch } from "@/components/ui/switch";
-client/src/components/wellness-journal.tsx:import { Label } from "@/components/ui/label";
-client/src/components/wellness-journal.tsx:import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-client/src/components/wellness-journal.tsx:import { cn } from "@/lib/utils";
-client/src/components/wellness-journal.tsx:import { Badge } from "@/components/ui/badge";
-client/src/components/wellness-journal.tsx:import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-client/src/components/wellness-journal.tsx:// import { Line } from 'react-chartjs-2';
 client/src/components/shopping-buddy.tsx:import { useState } from "react";
 client/src/components/shopping-buddy.tsx:import { Button } from "@/components/ui/button";
 client/src/components/shopping-buddy.tsx:import { Input } from "@/components/ui/input";
@@ -977,32 +958,6 @@ client/src/components/founder-message-dialog.tsx:import { X } from "lucide-react
 client/src/components/founder-message-dialog.tsx:import { Button } from "@/components/ui/button";
 client/src/components/founder-message-dialog.tsx:import { Dialog, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 client/src/components/founder-message-dialog.tsx:import { useIsMobile } from "@/hooks/use-mobile";
-client/src/components/robot-fundi-new.tsx:import { useRef, useState, useEffect } from "react";
-client/src/components/robot-fundi-new.tsx:import { cn } from "@/lib/utils";
-client/src/components/robot-fundi-new.tsx:import { useAIEventStore } from "@/lib/ai-event-system";
-client/src/components/floating-chat.tsx:import { useState, useEffect } from 'react';
-client/src/components/floating-chat.tsx:import { Bot, MessageSquare } from 'lucide-react';
-client/src/components/floating-chat.tsx:import { Button } from '@/components/ui/button';
-client/src/components/floating-chat.tsx:import { Card } from '@/components/ui/card';
-client/src/components/floating-chat.tsx:import ChatInterface from '@/components/chat-interface';
-client/src/components/floating-chat.tsx:import RobotFundi from '@/components/robot-fundi-new';
-client/src/components/floating-chat.tsx:import FundiPersonalityAdapter from '@/components/fundi-personality-adapter';
-client/src/components/floating-chat.tsx:import { motion, AnimatePresence } from 'framer-motion';
-client/src/components/floating-chat.tsx:import { useAIEventStore } from '@/lib/ai-event-system';
-client/src/components/chat-interface.tsx:import { useState, useRef, useEffect } from 'react';
-client/src/components/chat-interface.tsx:import { Send, Sparkles, Loader2, MessageSquare, ArrowRight } from 'lucide-react';
-client/src/components/chat-interface.tsx:import { useLocation } from 'wouter';
-client/src/components/chat-interface.tsx:import { AIResponse, useAIEventStore, useAIContext, processPendingActions, AppSuggestion } from '@/lib/ai-event-system';
-client/src/components/chat-interface.tsx:import { Button } from '@/components/ui/button';
-client/src/components/chat-interface.tsx:import { Textarea } from '@/components/ui/textarea';
-client/src/components/chat-interface.tsx:import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-client/src/components/chat-interface.tsx:import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-client/src/components/chat-interface.tsx:import { Badge } from '@/components/ui/badge';
-client/src/components/chat-interface.tsx:import { ScrollArea } from '@/components/ui/scroll-area';
-client/src/components/chat-interface.tsx:import { apiRequest } from '@/lib/queryClient';
-client/src/components/chat-interface.tsx:import { toast } from '@/hooks/use-toast';
-client/src/components/chat-interface.tsx:import { useUserMemory } from '@/hooks/use-user-memory';
-client/src/components/chat-interface.tsx:import useConversationStore from '@/hooks/use-conversation-store';
 client/src/components/reset-tour-button.tsx:import React from 'react';
 client/src/components/reset-tour-button.tsx:import { useOnboarding } from '@/lib/onboarding-context';
 client/src/components/reset-tour-button.tsx:import { Button } from "@/components/ui/button";
@@ -1174,7 +1129,6 @@ client/src/components/emergency-ai-pop-out.tsx:import ChatInterface, { EMERGENCY
 client/src/components/employment-rights-pop-out.tsx:import { Scale, AlertCircle } from "lucide-react";
 client/src/components/employment-rights-pop-out.tsx:import { Alert, AlertDescription } from "@/components/ui/alert";
 client/src/components/employment-rights-pop-out.tsx:import EmploymentRights from "@/components/employment-rights";
-client/src/components/journal-pop-out.tsx:import WellnessJournal from "./wellness-journal";
 client/src/components/nutrition-tracker-pop-out.tsx:import { useState } from "react";
 client/src/components/nutrition-tracker-pop-out.tsx:import { Button } from "@/components/ui/button";
 client/src/components/nutrition-tracker-pop-out.tsx:import { Calendar } from "lucide-react";
@@ -1602,14 +1556,6 @@ client/src/components/career/career-tools-original.tsx:import InterviewPracticeF
 client/src/components/career/career-tools-original.tsx:import CareerAssessmentPopOut from '@/components/career-assessment-pop-out';
 client/src/components/career/career-tools-original.tsx:import SwipeToClose from '@/components/ui/swipe-to-close';
 client/src/components/career/career-tools-original.tsx:import { Button } from '@/components/ui/button';
-client/src/components/wellness-integration.tsx:import { useState, useEffect } from "react";
-client/src/components/wellness-integration.tsx:import { Button } from "@/components/ui/button";
-client/src/components/wellness-integration.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-client/src/components/wellness-integration.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-client/src/components/wellness-integration.tsx:import { Separator } from "@/components/ui/separator";
-client/src/components/wellness-integration.tsx:import { toast } from "@/hooks/use-toast";
-client/src/components/wellness-integration.tsx:import PHQ9Assessment from "./phq9-assessment";
-client/src/components/wellness-integration.tsx:import PAVSAssessment from "./pavs-assessment";
 client/src/components/pavs-assessment.tsx:import { useState } from "react";
 client/src/components/pavs-assessment.tsx:import { Button } from "@/components/ui/button";
 client/src/components/pavs-assessment.tsx:import { Progress } from "@/components/ui/progress";
@@ -1620,39 +1566,6 @@ client/src/components/pavs-assessment.tsx:import { Alert, AlertDescription, Aler
 client/src/components/pavs-assessment.tsx:import { Separator } from "@/components/ui/separator";
 client/src/components/pavs-assessment.tsx:import { Dumbbell, AlertCircle, FileText, Heart, InfoIcon } from "lucide-react";
 client/src/components/pavs-assessment.tsx:import { toast } from "@/hooks/use-toast";
-client/src/components/active-you-enhanced.tsx:import { useState, useRef, useEffect } from "react";
-client/src/components/active-you-enhanced.tsx:import { Link } from "wouter";
-client/src/components/active-you-enhanced.tsx:import PoseAnalysisDialog from "./pose-analysis-dialog";
-client/src/components/active-you-enhanced.tsx:import { YogaProgressionProvider, useYogaProgression } from "../contexts/yoga-progression-context";
-client/src/components/active-you-enhanced.tsx:import { Switch } from "@/components/ui/switch";
-client/src/components/active-you-enhanced.tsx:import { Slider } from "@/components/ui/slider";
-client/src/components/active-you-enhanced.tsx:import { Badge } from "@/components/ui/badge";
-client/src/components/active-you-enhanced.tsx:import { Button } from "@/components/ui/button";
-client/src/components/active-you-enhanced.tsx:import { Label } from "@/components/ui/label";
-client/src/components/active-you-enhanced.tsx:import { Separator } from "@/components/ui/separator";
-client/src/components/active-you-enhanced.tsx:import { ScrollArea } from "@/components/ui/scroll-area";
-client/src/components/active-you-enhanced.tsx:import { Progress } from "@/components/ui/progress";
-client/src/components/active-you-enhanced.tsx:import MeditationGuide from "./meditation-guide";
-client/src/components/active-you-enhanced.tsx:import FitnessProgress from "./fitness-progress";
-client/src/components/active-you-enhanced.tsx:import FitnessExercises from "./fitness-exercises";
-client/src/components/active-you-enhanced.tsx:import RunningTracker from "./running-tracker";
-client/src/components/active-you-enhanced.tsx:import RunnersCompass from "./runners-compass";
-client/src/components/active-you-enhanced.tsx:import RunningSpecificExercises from "./running-specific-exercises";
-client/src/components/active-you-enhanced.tsx:import HIITSpecificExercises from "./hiit-specific-exercises";
-client/src/components/active-you-enhanced.tsx:import YogaSpecificExercises from "./yoga-specific-exercises";
-client/src/components/active-you-enhanced.tsx:import StretchSpecificExercises from "./stretch-specific-exercises";
-client/src/components/active-you-enhanced.tsx:import YogaPromptFlow, { YogaSession } from "./yoga-prompt-flow";
-client/src/components/yoga-prompt-flow.tsx:import React, { useState, useRef, useEffect } from 'react';
-client/src/components/yoga-prompt-flow.tsx:import { useIsMobile } from "@/hooks/use-mobile";
-client/src/components/yoga-prompt-flow.tsx:import { Button } from "@/components/ui/button";
-client/src/components/yoga-prompt-flow.tsx:import { Badge } from "@/components/ui/badge";
-client/src/components/yoga-prompt-flow.tsx:import { Separator } from "@/components/ui/separator";
-client/src/components/yoga-prompt-flow.tsx:import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight, Play, PauseCircle, Headphones, Volume1, X } from "lucide-react";
-client/src/components/pose-analysis-dialog.tsx:import { useState, useRef, useEffect } from "react";
-client/src/components/pose-analysis-dialog.tsx:import { MegaDialog, MegaDialogContent, MegaDialogHeader, MegaDialogTitle, MegaDialogDescription, MegaDialogFooter, MegaDialogBody } from "@/components/ui/mega-dialog";
-client/src/components/pose-analysis-dialog.tsx:import { Button } from "@/components/ui/button";
-client/src/components/pose-analysis-dialog.tsx:import { Badge } from "@/components/ui/badge";
-client/src/components/pose-analysis-dialog.tsx:import { Separator } from "@/components/ui/separator";
 client/src/components/resume-builder-trigger.tsx:import { useState } from "react";
 client/src/components/resume-builder-trigger.tsx:import { Button } from "@/components/ui/button";
 client/src/components/resume-builder-trigger.tsx:import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -1748,17 +1661,6 @@ client/src/components/comprehensive-wellness-assessment.tsx:import axios from "a
 client/src/components/comprehensive-wellness-assessment.tsx:import { cn } from "@/lib/utils";
 client/src/components/comprehensive-wellness-assessment.tsx:import { FullScreenDialog, FullScreenDialogContent, FullScreenDialogHeader, FullScreenDialogTitle, FullScreenDialogDescription, FullScreenDialogBody, FullScreenDialogFooter } from "./ui/full-screen-dialog";
 client/src/components/comprehensive-wellness-assessment.tsx:import { toast } from "@/hooks/use-toast";
-client/src/components/coffee-talk-assessment.tsx:import { useState } from "react";
-client/src/components/coffee-talk-assessment.tsx:import { Button } from "@/components/ui/button";
-client/src/components/coffee-talk-assessment.tsx:import { Progress } from "@/components/ui/progress";
-client/src/components/coffee-talk-assessment.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-client/src/components/coffee-talk-assessment.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-client/src/components/coffee-talk-assessment.tsx:import { Badge } from "@/components/ui/badge";
-client/src/components/coffee-talk-assessment.tsx:import { Label } from "@/components/ui/label";
-client/src/components/coffee-talk-assessment.tsx:import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-client/src/components/coffee-talk-assessment.tsx:import { Checkbox } from "@/components/ui/checkbox";
-client/src/components/coffee-talk-assessment.tsx:import { toast } from "@/hooks/use-toast";
-client/src/components/coffee-talk-assessment.tsx:import axios from "axios";
 client/src/components/phq9-assessment.tsx:import { useState } from "react";
 client/src/components/phq9-assessment.tsx:import { Button } from "@/components/ui/button";
 client/src/components/phq9-assessment.tsx:import { Progress } from "@/components/ui/progress";
@@ -1769,6 +1671,119 @@ client/src/components/phq9-assessment.tsx:import { Separator } from "@/component
 client/src/components/phq9-assessment.tsx:import { Brain, AlertCircle, InfoIcon, HelpCircle, Heart, Coffee, Sun, Wind } from "lucide-react";
 client/src/components/phq9-assessment.tsx:import { toast } from "@/hooks/use-toast";
 client/src/components/phq9-assessment.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { useState, useEffect } from "react";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { Button } from "@/components/ui/button";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { Progress } from "@/components/ui/progress";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { Badge } from "@/components/ui/badge";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { Label } from "@/components/ui/label";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { Checkbox } from "@/components/ui/checkbox";
+client/src/components/coffee-talk-assessment-fixed.tsx:import { toast } from "@/hooks/use-toast";
+client/src/components/coffee-talk-assessment-fixed.tsx:import axios from "axios";
+client/src/components/coffee-talk-assessment.tsx:import { useState, useEffect } from "react";
+client/src/components/coffee-talk-assessment.tsx:import { Button } from "@/components/ui/button";
+client/src/components/coffee-talk-assessment.tsx:import { Progress } from "@/components/ui/progress";
+client/src/components/coffee-talk-assessment.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+client/src/components/coffee-talk-assessment.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+client/src/components/coffee-talk-assessment.tsx:import { Badge } from "@/components/ui/badge";
+client/src/components/coffee-talk-assessment.tsx:import { Label } from "@/components/ui/label";
+client/src/components/coffee-talk-assessment.tsx:import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+client/src/components/coffee-talk-assessment.tsx:import { Checkbox } from "@/components/ui/checkbox";
+client/src/components/coffee-talk-assessment.tsx:import { toast } from "@/hooks/use-toast";
+client/src/components/coffee-talk-assessment.tsx:import axios from "axios";
+client/src/components/wellness-integration.tsx:import { useState, useEffect } from "react";
+client/src/components/wellness-integration.tsx:import { Button } from "@/components/ui/button";
+client/src/components/wellness-integration.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+client/src/components/wellness-integration.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+client/src/components/wellness-integration.tsx:import { Separator } from "@/components/ui/separator";
+client/src/components/wellness-integration.tsx:import { toast } from "@/hooks/use-toast";
+client/src/components/wellness-integration.tsx:import PHQ9Assessment from "./phq9-assessment";
+client/src/components/wellness-integration.tsx:import PAVSAssessment from "./pavs-assessment";
+client/src/components/journal-pop-out.tsx:import WellnessJournal from "./wellness-journal";
+client/src/components/robot-fundi-fixed.tsx:import { useRef, useState, useEffect } from "react";
+client/src/components/robot-fundi-fixed.tsx:import { cn } from "@/lib/utils";
+client/src/components/robot-fundi-fixed.tsx:import { useAIEventStore } from "@/lib/ai-event-system";
+client/src/components/robot-fundi-fixed-position.tsx:import { useRef, useState, useEffect } from "react";
+client/src/components/robot-fundi-fixed-position.tsx:import { cn } from "@/lib/utils";
+client/src/components/robot-fundi-fixed-position.tsx:import { useAIEventStore } from "@/lib/ai-event-system";
+client/src/components/robot-fundi-new.tsx:import RobotFundiFixedPosition from './robot-fundi-fixed-position';
+client/src/components/chat-interface.tsx:import { useState, useRef, useEffect } from 'react';
+client/src/components/chat-interface.tsx:import { Send, Sparkles, Loader2, MessageSquare, ArrowRight } from 'lucide-react';
+client/src/components/chat-interface.tsx:import { useLocation } from 'wouter';
+client/src/components/chat-interface.tsx:import { AIResponse, useAIEventStore, useAIContext, processPendingActions, AppSuggestion } from '@/lib/ai-event-system';
+client/src/components/chat-interface.tsx:import { Button } from '@/components/ui/button';
+client/src/components/chat-interface.tsx:import { Textarea } from '@/components/ui/textarea';
+client/src/components/chat-interface.tsx:import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+client/src/components/chat-interface.tsx:import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+client/src/components/chat-interface.tsx:import { Badge } from '@/components/ui/badge';
+client/src/components/chat-interface.tsx:import { ScrollArea } from '@/components/ui/scroll-area';
+client/src/components/chat-interface.tsx:import { apiRequest } from '@/lib/queryClient';
+client/src/components/chat-interface.tsx:import { toast } from '@/hooks/use-toast';
+client/src/components/chat-interface.tsx:import { useUserMemory } from '@/hooks/use-user-memory';
+client/src/components/chat-interface.tsx:import useConversationStore from '@/hooks/use-conversation-store';
+client/src/components/floating-chat.tsx:import { useState, useEffect } from 'react';
+client/src/components/floating-chat.tsx:import { Bot, MessageSquare } from 'lucide-react';
+client/src/components/floating-chat.tsx:import { Button } from '@/components/ui/button';
+client/src/components/floating-chat.tsx:import { Card } from '@/components/ui/card';
+client/src/components/floating-chat.tsx:import ChatInterface from '@/components/chat-interface';
+client/src/components/floating-chat.tsx:import RobotFundi from '@/components/robot-fundi-fixed-position';
+client/src/components/floating-chat.tsx:import FundiPersonalityAdapter from '@/components/fundi-personality-adapter';
+client/src/components/floating-chat.tsx:import { motion, AnimatePresence } from 'framer-motion';
+client/src/components/floating-chat.tsx:import { useAIEventStore } from '@/lib/ai-event-system';
+client/src/components/wellness-journal.tsx:import { useState, useEffect, useRef } from "react";
+client/src/components/wellness-journal.tsx:import { Button } from "@/components/ui/button";
+client/src/components/wellness-journal.tsx:import { Input } from "@/components/ui/input";
+client/src/components/wellness-journal.tsx:import { Textarea } from "@/components/ui/textarea";
+client/src/components/wellness-journal.tsx:import { ScrollArea } from "@/components/ui/scroll-area";
+client/src/components/wellness-journal.tsx:import { format, subDays, isAfter, parseISO } from "date-fns";
+client/src/components/wellness-journal.tsx:import WordCloud from "./word-cloud";
+client/src/components/wellness-journal.tsx:import { Progress } from "@/components/ui/progress";
+client/src/components/wellness-journal.tsx:import { useQuery, useMutation } from "@tanstack/react-query";
+client/src/components/wellness-journal.tsx:import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+client/src/components/wellness-journal.tsx:import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+client/src/components/wellness-journal.tsx:import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+client/src/components/wellness-journal.tsx:import { Switch } from "@/components/ui/switch";
+client/src/components/wellness-journal.tsx:import { Label } from "@/components/ui/label";
+client/src/components/wellness-journal.tsx:import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+client/src/components/wellness-journal.tsx:import { cn } from "@/lib/utils";
+client/src/components/wellness-journal.tsx:import { Badge } from "@/components/ui/badge";
+client/src/components/wellness-journal.tsx:import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+client/src/components/wellness-journal.tsx:// import { Line } from 'react-chartjs-2';
+client/src/components/active-you-enhanced.tsx:import { useState, useRef, useEffect } from "react";
+client/src/components/active-you-enhanced.tsx:import { Link } from "wouter";
+client/src/components/active-you-enhanced.tsx:import PoseAnalysisDialog from "./pose-analysis-dialog";
+client/src/components/active-you-enhanced.tsx:import { YogaProgressionProvider, useYogaProgression } from "../contexts/yoga-progression-context";
+client/src/components/active-you-enhanced.tsx:import { Switch } from "@/components/ui/switch";
+client/src/components/active-you-enhanced.tsx:import { Slider } from "@/components/ui/slider";
+client/src/components/active-you-enhanced.tsx:import { Badge } from "@/components/ui/badge";
+client/src/components/active-you-enhanced.tsx:import { Button } from "@/components/ui/button";
+client/src/components/active-you-enhanced.tsx:import { Label } from "@/components/ui/label";
+client/src/components/active-you-enhanced.tsx:import { Separator } from "@/components/ui/separator";
+client/src/components/active-you-enhanced.tsx:import { ScrollArea } from "@/components/ui/scroll-area";
+client/src/components/active-you-enhanced.tsx:import { Progress } from "@/components/ui/progress";
+client/src/components/active-you-enhanced.tsx:import MeditationGuide from "./meditation-guide";
+client/src/components/active-you-enhanced.tsx:import FitnessProgress from "./fitness-progress";
+client/src/components/active-you-enhanced.tsx:import FitnessExercises from "./fitness-exercises";
+client/src/components/active-you-enhanced.tsx:import RunningTracker from "./running-tracker";
+client/src/components/active-you-enhanced.tsx:import RunnersCompass from "./runners-compass";
+client/src/components/active-you-enhanced.tsx:import RunningSpecificExercises from "./running-specific-exercises";
+client/src/components/active-you-enhanced.tsx:import HIITSpecificExercises from "./hiit-specific-exercises";
+client/src/components/active-you-enhanced.tsx:import YogaSpecificExercises from "./yoga-specific-exercises";
+client/src/components/active-you-enhanced.tsx:import StretchSpecificExercises from "./stretch-specific-exercises";
+client/src/components/active-you-enhanced.tsx:import YogaPromptFlow, { YogaSession } from "./yoga-prompt-flow";
+client/src/components/pose-analysis-dialog.tsx:import { useState, useRef, useEffect } from "react";
+client/src/components/pose-analysis-dialog.tsx:import { MegaDialog, MegaDialogContent, MegaDialogHeader, MegaDialogTitle, MegaDialogDescription, MegaDialogFooter, MegaDialogBody } from "@/components/ui/mega-dialog";
+client/src/components/pose-analysis-dialog.tsx:import { Button } from "@/components/ui/button";
+client/src/components/pose-analysis-dialog.tsx:import { Badge } from "@/components/ui/badge";
+client/src/components/pose-analysis-dialog.tsx:import { Separator } from "@/components/ui/separator";
+client/src/components/yoga-prompt-flow.tsx:import React, { useState, useRef, useEffect } from 'react';
+client/src/components/yoga-prompt-flow.tsx:import { useIsMobile } from "@/hooks/use-mobile";
+client/src/components/yoga-prompt-flow.tsx:import { Button } from "@/components/ui/button";
+client/src/components/yoga-prompt-flow.tsx:import { Badge } from "@/components/ui/badge";
+client/src/components/yoga-prompt-flow.tsx:import { Separator } from "@/components/ui/separator";
+client/src/components/yoga-prompt-flow.tsx:import { AlertCircle, CheckCircle2, Info, ArrowRight, Music, Volume2, VolumeX, Clock, Smile, Frown, MoveRight, Play, PauseCircle, Headphones, Volume1, X } from "lucide-react";
 client/src/hooks/use-mobile.tsx:import * as React from "react"
 client/src/hooks/use-time-gradient.ts:import { useState, useEffect } from 'react';
 client/src/hooks/use-mood-theme.ts:import { useState, useEffect } from 'react';
