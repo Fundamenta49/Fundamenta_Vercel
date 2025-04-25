@@ -54,17 +54,19 @@ const MegaDialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <PinkCloseButton
-        className="absolute right-4 top-4 z-[9999]"
-        onClose={() => {
-          console.log('MegaDialog PinkCloseButton clicked');
-          // This will programmatically trigger the MegaDialogClose
-          const closeButton = document.querySelector('[data-megadialog-close-button]');
-          if (closeButton instanceof HTMLElement) {
-            closeButton.click();
-          }
-        }}
-      />
+      <div className="absolute right-0 top-0 p-4 z-[9999]">
+        <PinkCloseButton
+          className=""
+          onClose={() => {
+            console.log('MegaDialog PinkCloseButton clicked');
+            // This will programmatically trigger the MegaDialogClose
+            const closeButton = document.querySelector('[data-megadialog-close-button]');
+            if (closeButton instanceof HTMLElement) {
+              closeButton.click();
+            }
+          }}
+        />
+      </div>
       <MegaDialogClose 
         className="sr-only" 
         data-megadialog-close-button
