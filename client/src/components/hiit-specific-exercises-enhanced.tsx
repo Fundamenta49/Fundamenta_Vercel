@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle } from "lucide-react";
-import { searchSectionSpecificExerciseVideos, YouTubeVideo } from '@/lib/youtube-service';
+import { YouTubeVideo } from '@/lib/youtube-service';
+import { searchExerciseVideos } from '@/lib/exercise-search';
 import { 
   HIIT_TABATA_VIDEOS, 
   HIIT_AMRAP_VIDEOS, 
@@ -298,14 +299,17 @@ export const HIITSpecificExercisesEnhanced = () => {
     setError(null);
     
     try {
-      // Search for specific exercise videos by name and HIIT type
+      // Create an array of search terms in priority order
       const searchTerms = [
-        `${exercise.name} ${activeTab} HIIT exercise`,
-        `${exercise.name} HIIT workout`,
-        `how to do ${exercise.name} properly`
+        `${exercise.name} ${activeTab} HIIT exercise tutorial`,
+        `${exercise.name} HIIT workout proper form`,
+        `how to do ${exercise.name} correctly`,
+        `${exercise.name} fitness demonstration`
       ];
       
-      const videos = await searchSectionSpecificExerciseVideos(searchTerms);
+      // Use our custom search function that handles arrays of search terms
+      const videos = await searchExerciseVideos(searchTerms);
+      
       setIsLoading(false);
       return videos;
     } catch (err) {
