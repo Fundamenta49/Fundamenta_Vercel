@@ -64,27 +64,21 @@ export default function HIITDetailDialog({
         className="w-[90vw] max-w-4xl max-h-[90vh] overflow-y-auto bg-white shadow-xl rounded-lg"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the card
       >
-        <div className="sticky top-0 z-40 flex items-center justify-between p-4 bg-white border-b">
-          <div>
+        <div className="sticky top-0 z-40 p-4 bg-white border-b">
+          <div className="flex flex-col items-center justify-center text-center mb-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mb-2 text-pink-700 hover:text-pink-800 hover:bg-pink-50 font-medium"
+              onClick={onClose}
+            >
+              ← Back to ActiveYou
+            </Button>
             <h2 className="text-2xl font-bold text-gray-900">{exercise.name}</h2>
             <p className="text-gray-600 mt-1">
               {exercise.category === 'hiit' ? 'HIIT Exercise' : 'Exercise'}
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-full p-2 opacity-100 
-              bg-pink-300 hover:bg-pink-400 text-pink-800 border border-pink-400 
-              shadow-md z-50"
-            onClick={onClose}
-            style={{ 
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-            }}
-          >
-            <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
-          </Button>
         </div>
         
         <CardContent className="p-6">
@@ -214,23 +208,14 @@ export default function HIITDetailDialog({
               </div>
             </div>
           </div>
-          <div className="flex justify-between mt-6 pt-4 border-t">
-            <Button
-              variant="outline"
-              onClick={() => alert("Please use Fundi for AI assistance")}
-              className="gap-2 shadow-sm hover:shadow-md transition-all"
-            >
-              <MessageSquare className="h-4 w-4" />
-              Use Fundi Instead
-            </Button>
-
+          <div className="flex justify-center mt-6 pt-4 border-t">
             <Button
               onClick={onClose}
-              variant="secondary"
-              className="shadow-sm hover:shadow-md transition-all bg-pink-100 hover:bg-pink-200 text-pink-800"
+              variant="ghost" 
+              size="lg"
+              className="text-pink-700 hover:text-pink-800 hover:bg-pink-50 font-medium"
             >
-              <X className="h-4 w-4 mr-2" />
-              Close
+              ← Back to ActiveYou
             </Button>
           </div>
         </CardContent>
