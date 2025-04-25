@@ -1968,22 +1968,13 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
           {selectedExercise && (
             <>
               <MegaDialogHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center">
                   <div>
                     <MegaDialogTitle className="text-2xl font-bold text-gray-900">{selectedExercise?.name}</MegaDialogTitle>
                     <MegaDialogDescription className="text-gray-600 mt-1">
-                      {selectedExercise?.category === 'yoga' ? 'Yoga Pose' : 'Stretching Exercise'}
+                      {selectedExercise?.category === 'yoga' ? 'Yoga Pose' : selectedExercise?.category === 'hiit' ? 'HIIT Exercise' : 'Stretching Exercise'}
                     </MegaDialogDescription>
                   </div>
-                  <PinkCloseButton 
-                    onClose={() => {
-                      console.log("Close button clicked");
-                      if (setExerciseDetailOpen) {
-                        setExerciseDetailOpen(false);
-                      }
-                    }} 
-                    className="relative right-0 top-0"
-                  />
                 </div>
               </MegaDialogHeader>
               <MegaDialogBody>
@@ -2112,16 +2103,6 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           onOpenChange={setVideoFullscreen}
                         >
                           <MegaDialogContent className="p-0 border-none bg-black">
-                            <div className="absolute top-2 right-2 z-[100]">
-                              <PinkCloseButton 
-                                onClose={() => {
-                                  console.log("Full screen video close button clicked");
-                                  if (setVideoFullscreen) {
-                                    setVideoFullscreen(false);
-                                  }
-                                }} 
-                              />
-                            </div>
                             <MegaDialogTitle className="sr-only">
                               {selectedExercise.name} Video Tutorial
                             </MegaDialogTitle>

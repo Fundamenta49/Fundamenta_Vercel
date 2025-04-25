@@ -10,9 +10,8 @@ interface PinkCloseButtonProps {
 export function PinkCloseButton({ onClose, className = "" }: PinkCloseButtonProps) {
   console.log("PinkCloseButton rendered");
   
-  // This will ensure the button is highly visible and positioned above other content
+  // Add a keydown event listener to handle Escape key
   useEffect(() => {
-    // Add a keydown event listener to handle Escape key
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         console.log('Escape key pressed, triggering onClose');
@@ -54,7 +53,7 @@ export function PinkCloseButton({ onClose, className = "" }: PinkCloseButtonProp
       size="sm"
       className={`rounded-full p-2 opacity-100 
         bg-pink-300 hover:bg-pink-400 text-pink-800 border border-pink-400 
-        shadow-md ${className}`}
+        shadow-md z-50 ${className}`}
       onClick={handleClick}
       style={{ 
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
