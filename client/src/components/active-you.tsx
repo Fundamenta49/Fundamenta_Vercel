@@ -10,6 +10,15 @@ import MeditationSpecificExercisesEnhanced from './meditation-specific-exercises
 import YogaVisionEnhanced from './yoga-vision-enhanced';
 import { Card } from "@/components/ui/card";
 import { ExerciseType } from "../modules/active-you/context/module-context";
+
+// Interface for YogaVision analysis results
+interface PoseAnalysis {
+  poseName?: string;
+  poseId?: string;
+  score?: number;
+  feedback?: string[];
+  [key: string]: any;
+}
 import { Button } from "@/components/ui/button";
 import { 
   Camera, 
@@ -186,7 +195,7 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
                 <YogaVisionEnhanced 
                   initialPoseId={selectedYogaPoseId}
                   onClose={() => setIsYogaVisionOpen(false)}
-                  onAnalysisComplete={(analysis) => {
+                  onAnalysisComplete={(analysis: PoseAnalysis | null) => {
                     console.log('Analysis completed:', analysis);
                     
                     // Notify Fundi about the pose analysis
@@ -198,7 +207,7 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
                       );
                       
                       // If this was a complete analysis, also count it as an exercise completion
-                      if (analysis.score > 0.7) {
+                      if (analysis.score && analysis.score > 0.7) {
                         handleExerciseCompleted('yoga-pose-' + (analysis.poseId || 'unknown'));
                       }
                     }
@@ -229,6 +238,13 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
                 </div>
               </div>
               <Button 
+                onClick={() => {
+                  console.log('Start GPS Run Tracking');
+                  // Notify Fundi about run tracking
+                  notifyRunTracked(3.2, 25 * 60, 7.8); // 3.2 miles, 25 min, 7.8 min/mile pace
+                  // Trigger completion for arcade points
+                  handleExerciseCompleted('running-gps-track');
+                }}
                 className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white"
               >
                 <MapPin className="w-5 h-5 mr-2" />
@@ -283,6 +299,13 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
                 </div>
               </div>
               <Button 
+                onClick={() => {
+                  console.log('Generate AI Meditation');
+                  // Notify Fundi about meditation generation
+                  notifyMeditationCompleted(10 * 60, 'mindfulness');
+                  // Trigger completion for arcade points
+                  handleExerciseCompleted('guided-meditation-mindfulness');
+                }}
                 className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
               >
                 <Brain className="w-5 h-5 mr-2" />
