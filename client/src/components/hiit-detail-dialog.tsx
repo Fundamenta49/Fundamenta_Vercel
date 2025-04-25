@@ -64,16 +64,19 @@ export default function HIITDetailDialog({
         className="w-[90vw] max-w-4xl max-h-[90vh] overflow-y-auto bg-white shadow-xl rounded-lg"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the card
       >
-        <div className="sticky top-0 z-40 p-4 bg-white border-b">
-          <div className="flex flex-col items-center justify-center text-center mb-2">
+        <div className="sticky top-0 z-40 p-4 bg-white border-b relative">
+          <div className="absolute top-3 right-3">
             <Button
               variant="ghost"
-              size="sm"
-              className="mb-2 text-pink-700 hover:text-pink-800 hover:bg-pink-50 font-medium"
+              size="icon"
+              className="rounded-full p-1 text-pink-700 hover:bg-pink-50"
               onClick={onClose}
             >
-              ← Back to ActiveYou
+              <X className="h-5 w-5" />
+              <span className="sr-only">Close</span>
             </Button>
+          </div>
+          <div className="flex flex-col items-center justify-center text-center mb-2">
             <h2 className="text-2xl font-bold text-gray-900">{exercise.name}</h2>
             <p className="text-gray-600 mt-1">
               {exercise.category === 'hiit' ? 'HIIT Exercise' : 'Exercise'}
