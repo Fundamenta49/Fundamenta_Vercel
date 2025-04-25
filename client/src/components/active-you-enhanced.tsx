@@ -649,15 +649,6 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     }
   };
 
-  // Function to close the detail dialog
-  const handleCloseDetails = () => {
-    setSelectedExercise(null);
-    setExerciseDetailOpen(false);
-    if (videoFullscreen) {
-      setVideoFullscreen(false);
-    }
-  };
-
   // Function to show exercise details from running exercises component
   const showExerciseDetails = (exercise: any) => {
     // Convert the Exercise type from running-specific-exercises to ExerciseDetails if needed
@@ -2281,8 +2272,11 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
 
                 <Button
                   onClick={() => {
-                    setExerciseDetailOpen(false);
-                    if (videoFullscreen) {
+                    console.log('Close button clicked');
+                    if (setExerciseDetailOpen) {
+                      setExerciseDetailOpen(false);
+                    }
+                    if (videoFullscreen && setVideoFullscreen) {
                       setVideoFullscreen(false);
                     }
                   }}
