@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "wouter";
 import PoseAnalysisDialog from "./pose-analysis-dialog";
+import HIITDetailDialog from "./hiit-detail-dialog";
 import { YogaProgressionProvider, useYogaProgression } from "../contexts/yoga-progression-context";
 import {
   Card,
@@ -175,6 +176,10 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
   const [exerciseDetailOpen, setExerciseDetailOpen] = useState(false);
   const [videoFullscreen, setVideoFullscreen] = useState(false);
   const [yogaPromptOpen, setYogaPromptOpen] = useState(false);
+  
+  // State for HIIT-specific exercise detail dialog
+  const [hiitExercise, setHiitExercise] = useState<ExerciseDetails | null>(null);
+  const [hiitDetailOpen, setHiitDetailOpen] = useState(false);
 
   // State for pose analysis MegaDialog
   const [analysisPose, setAnalysisPose] = useState<ExerciseDetails | null>(null);
