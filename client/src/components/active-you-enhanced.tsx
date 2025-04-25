@@ -622,14 +622,29 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     }
   };
 
-  // Function to handle opening the detail dialog
+  // Function to handle opening and closing the detail dialog
   const handleShowDetails = (exerciseType: string, exerciseKey: string) => {
+    if (!exerciseType || !exerciseKey) {
+      setSelectedExercise(null);
+      setExerciseDetailOpen(false);
+      return;
+    }
+    
     if (exerciseType === 'yoga') {
       setSelectedExercise(yogaExercises[exerciseKey]);
     } else if (exerciseType === 'stretch') {
       setSelectedExercise(stretchExercises[exerciseKey]);
     }
     setExerciseDetailOpen(true);
+  };
+
+  // Function to close the detail dialog
+  const handleCloseDetails = () => {
+    setSelectedExercise(null);
+    setExerciseDetailOpen(false);
+    if (videoFullscreen) {
+      setVideoFullscreen(false);
+    }
   };
 
   // Function to show exercise details from running exercises component
@@ -2034,7 +2049,7 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       {tabContent}
 
       {/* Exercise Details MegaDialog */}
-      <MegaDialog open={exerciseDetailOpen} onOpenChange={setExerciseDetailOpen}>
+      <MegaDialog open={exerciseDetailOpen} onOpenChange={handleCloseDetails}>
         <MegaDialogContent className="bg-white dark:bg-gray-950">
           {selectedExercise && (
             <>
