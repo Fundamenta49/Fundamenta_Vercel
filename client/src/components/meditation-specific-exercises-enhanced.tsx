@@ -385,7 +385,7 @@ export const MeditationSpecificExercisesEnhanced = () => {
             onValueChange={setActiveTab} 
             className="w-full"
           >
-            <TabsList className={`w-full grid grid-cols-3 ${darkMode ? 'bg-gray-800' : 'bg-pink-100'}`}>
+            <TabsList className={`w-full grid grid-cols-2 ${darkMode ? 'bg-gray-800' : 'bg-pink-100'}`}>
               <TabsTrigger 
                 value="practice" 
                 className={darkMode 
@@ -395,16 +395,6 @@ export const MeditationSpecificExercisesEnhanced = () => {
               >
                 <Timer className="h-4 w-4 mr-2" />
                 Practice
-              </TabsTrigger>
-              <TabsTrigger 
-                value="journal" 
-                className={darkMode 
-                  ? 'data-[state=active]:bg-gray-700 data-[state=active]:text-blue-300' 
-                  : 'data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800'
-                }
-              >
-                <BookOpen className="h-4 w-4 mr-2" />
-                Journal
               </TabsTrigger>
               <TabsTrigger 
                 value="insights" 
