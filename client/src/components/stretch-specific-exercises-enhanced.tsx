@@ -1,194 +1,218 @@
-import { useState, useEffect } from 'react';
-import { EnhancedExerciseCard, BaseExercise } from "@/components/ui/enhanced-exercise-card";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { CloseableExerciseCard } from "@/components/ui/closeable-exercise-card";
+import { BaseExercise } from "@/components/ui/enhanced-exercise-card";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle } from "lucide-react";
-import { searchSectionSpecificExerciseVideos, YouTubeVideo } from '@/lib/youtube-service';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, Info } from "lucide-react";
+import { searchExerciseVideos } from '@/lib/exercise-search';
+import { YouTubeVideo } from '@/lib/youtube-service';
 import { 
   STRETCH_DYNAMIC_VIDEOS,
   STRETCH_STATIC_VIDEOS,
   STRETCH_RECOVERY_VIDEOS
 } from '@/lib/section-fallbacks';
 
-// Define Stretch Exercise interface that extends the BaseExercise
+// Define Stretch Exercise interface extending BaseExercise
 interface StretchExercise extends BaseExercise {
+  duration?: number; // in seconds
   holdTime?: number; // in seconds
-  repetitions?: number;
-  targetAreas?: string[];
-  // Additional stretch-specific properties can be added here
+  recommendedBreaths?: number;
+  targetFlexibility?: string[];
+  isActive?: boolean; // for active vs. passive stretches
 }
 
 // Sample exercise data
 export const STRETCH_EXERCISES = {
   dynamic: [
     {
-      id: "stretch1",
-      name: "Shoulder Rolls",
-      description: "A gentle dynamic stretch that releases tension in the shoulders and upper back.",
-      muscleGroups: ["shoulders", "upper back", "neck"],
+      id: "dyn1",
+      name: "Leg Swings",
+      description: "A dynamic stretch for hip mobility and flexibility in the hamstrings and hip flexors.",
+      muscleGroups: ["hips", "hamstrings", "hip flexors"],
       equipment: ["none"],
       difficulty: "beginner",
       instructions: [
-        "Sit or stand with good posture",
-        "Lift your shoulders toward your ears",
-        "Roll shoulders backward and down",
-        "Repeat 8-10 times backward, then forward"
+        "Stand beside a wall or sturdy object for support",
+        "Shift your weight to your left leg and slightly bend the knee",
+        "Swing your right leg forward and backward in a controlled motion",
+        "Keep your core engaged and back straight",
+        "Perform 10-15 swings, then switch legs"
       ],
-      imageUrl: "https://thumbs.dreamstime.com/b/shoulder-rolls-exercise-woman-doing-shoulders-roll-workout-fitness-sport-training-concept-vector-illustration-isolated-white-219962161.jpg",
+      imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/06/leg-swings.gif",
       benefits: [
-        "Releases tension in shoulder muscles",
-        "Improves shoulder mobility",
-        "Can help reduce headaches from neck tension"
+        "Improves hip mobility and range of motion",
+        "Warms up the hip joint and surrounding muscles",
+        "Enhances dynamic flexibility for activities like running",
+        "Helps prevent injury by preparing muscles for more intensive movements"
       ],
       tips: [
-        "Focus on a full range of motion",
-        "Keep breathing steady throughout",
-        "Perform the movement slowly and deliberately"
+        "Focus on controlled movements rather than height",
+        "Keep your torso stable throughout the movement",
+        "Gradually increase the range of motion as you warm up",
+        "Maintain good posture with shoulders back and chest up"
       ],
-      repetitions: 10,
-      targetAreas: ["Office workers", "Computer users", "Stress relief"]
+      duration: 30,
+      isActive: true
     },
     {
-      id: "stretch2",
+      id: "dyn2",
       name: "Arm Circles",
-      description: "A dynamic stretch that mobilizes the shoulder joints and warms up the upper body.",
-      muscleGroups: ["shoulders", "arms", "upper back"],
+      description: "A dynamic stretch for shoulder mobility and warming up the upper body.",
+      muscleGroups: ["shoulders", "upper back", "chest"],
       equipment: ["none"],
       difficulty: "beginner",
       instructions: [
         "Stand with feet shoulder-width apart",
-        "Extend arms out to sides at shoulder height",
-        "Make small circles with arms, gradually increasing size",
-        "Perform forward for 20-30 seconds, then backward"
+        "Extend arms out to the sides at shoulder height",
+        "Begin making small circles with your arms",
+        "Gradually increase the size of the circles",
+        "Reverse direction after 10-15 circles"
       ],
-      imageUrl: "https://hips.hearstapps.com/hmg-prod/images/workouts/2016/03/armcircles-1457044203.gif",
+      imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/06/arm-circles.gif",
       benefits: [
-        "Warms up shoulder joints",
-        "Increases blood flow to upper body",
-        "Helps prevent shoulder injuries during workouts"
+        "Improves shoulder mobility and circulation",
+        "Relieves tension in the upper back and neck",
+        "Warms up the rotator cuff muscles",
+        "Prepares the upper body for exercise"
       ],
       tips: [
-        "Keep core engaged and posture tall",
-        "Start with smaller circles and gradually increase",
-        "If you have shoulder issues, keep circles small"
+        "Keep your core engaged throughout the movement",
+        "Maintain proper posture with a neutral spine",
+        "If you feel shoulder pain, reduce the size of your circles",
+        "Breathe deeply and evenly as you move"
       ],
-      repetitions: 20,
-      targetAreas: ["Pre-workout", "Upper body preparation", "Morning routine"]
+      duration: 30,
+      isActive: true
     }
   ],
   static: [
     {
-      id: "stretch3",
-      name: "Seated Forward Fold",
-      description: "A static stretch that targets the entire posterior chain, especially the hamstrings.",
-      muscleGroups: ["hamstrings", "lower back", "calves"],
-      equipment: ["yoga mat (optional)"],
+      id: "stat1",
+      name: "Hamstring Stretch",
+      description: "A static stretch targeting the hamstrings to improve flexibility and reduce tightness.",
+      muscleGroups: ["hamstrings", "lower back"],
+      equipment: ["none"],
       difficulty: "beginner",
       instructions: [
-        "Sit on the floor with legs extended forward",
-        "Hinge at hips and reach toward toes",
-        "Hold the stretch at a point of mild tension",
-        "Keep back as straight as possible, bend from hips"
+        "Sit on the floor with your right leg extended straight in front of you",
+        "Bend your left leg and place the sole of your left foot against your right inner thigh",
+        "Keeping your back straight, hinge at the hips and reach toward your right foot",
+        "Hold the position for 20-30 seconds, feeling a stretch in your hamstring",
+        "Repeat on the other side"
       ],
-      imageUrl: "https://www.verywellfit.com/thmb/b-R1Ck3hmAQHFzFiUEtjgvXpYE0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Verywell-01-3567192-PascimottanasanaSeatedForwardBend-598b919e16614fa7bab0580bd447416c.jpg",
+      imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/05/seated-hamstring-stretch.jpg",
       benefits: [
-        "Relieves tension in hamstrings and lower back",
-        "Calms the nervous system",
-        "Improves posture and spinal flexibility"
+        "Reduces hamstring tightness and improves flexibility",
+        "May help alleviate lower back pain",
+        "Improves posture and alignment",
+        "Enhances range of motion for activities like running and squatting"
       ],
       tips: [
-        "Don't force the stretch - reach only as far as comfortable",
-        "Bend knees slightly if hamstrings are tight",
-        "Focus on hinging at hips rather than rounding back"
+        "Focus on hinging at the hips rather than rounding your back",
+        "Breathe deeply into the stretch, exhaling as you deepen it",
+        "Avoid bouncing - use gentle, sustained pressure",
+        "If you can't reach your foot, use a towel or strap around your foot"
       ],
       holdTime: 30,
-      targetAreas: ["Desk workers", "Runners", "Post-workout recovery"]
+      recommendedBreaths: 5,
+      isActive: false
     },
     {
-      id: "stretch4",
-      name: "Standing Quad Stretch",
-      description: "A static stretch that targets the quadriceps muscles in the front of the thigh.",
-      muscleGroups: ["quadriceps", "hip flexors"],
-      equipment: ["wall or chair for balance (optional)"],
+      id: "stat2",
+      name: "Chest Stretch",
+      description: "A static stretch for the chest and anterior shoulders to improve posture and counteract sitting.",
+      muscleGroups: ["chest", "shoulders", "biceps"],
+      equipment: ["doorway"],
       difficulty: "beginner",
       instructions: [
-        "Stand on left foot, right hand on wall for balance if needed",
-        "Bend right knee and grab right foot with right hand",
-        "Pull heel toward buttocks until you feel a stretch",
-        "Keep knees close together and stand tall",
-        "Hold, then switch sides"
+        "Stand in a doorway with your arms bent at 90 degrees",
+        "Place your forearms and palms against the doorframe",
+        "Step forward with one foot, maintaining a straight line from head to heel",
+        "Lean your body weight forward until you feel a stretch across your chest",
+        "Hold for 20-30 seconds"
       ],
-      imageUrl: "https://www.verywellfit.com/thmb/mVFD5ui6uCH5I-cHCj9opxqmwZk=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/standing-quadriceps-stretch-b9780bd0b5964c1b90ef20240c4fa334.jpg",
+      imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/05/doorway-chest-stretch.jpg",
       benefits: [
-        "Relieves tight quadricep muscles",
-        "Improves knee mobility",
-        "Counteracts prolonged sitting"
+        "Opens the chest and helps correct rounded shoulders",
+        "Counteracts the effects of prolonged sitting and computer work",
+        "Improves upper body posture",
+        "Increases chest flexibility for activities like swimming and pushing movements"
       ],
       tips: [
-        "Keep core engaged for balance",
-        "Don't pull too hard - gentle tension is enough",
-        "If balance is difficult, hold onto something stable"
+        "Keep your core engaged to prevent arching your lower back",
+        "Adjust the height of your arms to target different parts of the chest",
+        "For a deeper stretch, take a larger step forward",
+        "Maintain normal breathing throughout the stretch"
       ],
       holdTime: 30,
-      targetAreas: ["Runners", "Cyclists", "Post-leg workout"]
+      recommendedBreaths: 5,
+      isActive: false
     }
   ],
-  recovery: [
+  mobility: [
     {
-      id: "stretch5",
-      name: "Child's Pose",
-      description: "A gentle resting pose that stretches the back, hips, and shoulders.",
-      muscleGroups: ["lower back", "shoulders", "hips"],
-      equipment: ["yoga mat or soft surface"],
-      difficulty: "beginner",
+      id: "mob1",
+      name: "World's Greatest Stretch",
+      description: "A comprehensive mobility exercise that targets multiple areas of the body in a flowing sequence.",
+      muscleGroups: ["hips", "shoulders", "thoracic spine", "hamstrings", "quads"],
+      equipment: ["none"],
+      difficulty: "intermediate",
       instructions: [
-        "Kneel on floor with knees wide, big toes touching",
-        "Sit back on heels and reach arms forward",
-        "Rest forehead on floor and relax completely",
-        "Breathe deeply and hold for 1-3 minutes"
+        "Start in a push-up position",
+        "Step your right foot outside your right hand",
+        "Drop your left knee to the ground and lift your right hand",
+        "Rotate your torso to the right, reaching your right arm toward the ceiling",
+        "Return to the lunge position, place your right elbow near your right foot",
+        "Repeat on the other side"
       ],
-      imageUrl: "https://www.verywellfit.com/thmb/tLE_yo98CiZI74-q_ccmfcvZdRg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Verywell-03-3567287-ChildsPose-598cec803df78c537bf19cdc.gif",
+      imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/07/worlds-greatest-stretch.jpg",
       benefits: [
-        "Gently stretches spine, shoulders and hips",
-        "Reduces stress and anxiety",
-        "Relieves back and neck tension"
+        "Improves total body mobility in multiple planes of movement",
+        "Targets hip flexors, hamstrings, glutes, shoulders, and spine",
+        "Enhances athletic performance by improving multi-planar movement",
+        "Excellent warm-up for any workout"
       ],
       tips: [
-        "Place a pillow under forehead or torso for comfort if needed",
-        "Arms can rest alongside body if shoulder tension exists",
-        "Focus on deep, slow breathing to enhance relaxation"
+        "Focus on smooth, controlled movements throughout the sequence",
+        "Keep your front heel flat on the ground during the lunge",
+        "Breathe deeply, especially during the rotation portion",
+        "Modify the depth of the lunge based on your flexibility"
       ],
-      holdTime: 90,
-      targetAreas: ["Stress relief", "Back pain", "Post-workout recovery"]
+      duration: 60,
+      isActive: true,
+      targetFlexibility: ["hips", "shoulders", "thoracic spine"]
     },
     {
-      id: "stretch6",
-      name: "Supine Figure Four Stretch",
-      description: "A gentle hip opener that targets the glutes and piriformis muscles.",
-      muscleGroups: ["glutes", "hips", "lower back"],
-      equipment: ["yoga mat or soft surface"],
+      id: "mob2",
+      name: "Cat-Cow Stretch",
+      description: "A flowing mobility exercise for the spine that alternates between flexion and extension.",
+      muscleGroups: ["spine", "core", "neck", "back"],
+      equipment: ["none"],
       difficulty: "beginner",
       instructions: [
-        "Lie on back with knees bent, feet flat on floor",
-        "Cross right ankle over left thigh just above knee",
-        "Thread right hand between legs, left hand around outside",
-        "Clasp hands behind left thigh and gently pull toward chest",
-        "Hold, then switch sides"
+        "Start on your hands and knees in a tabletop position",
+        "For Cat: Exhale as you round your spine toward the ceiling, tucking your chin to your chest",
+        "For Cow: Inhale as you arch your back, lifting your head and tailbone toward the ceiling",
+        "Move smoothly between these two positions",
+        "Continue for 1-2 minutes, synchronizing breath with movement"
       ],
-      imageUrl: "https://www.verywellfit.com/thmb/9iQJYAToHMj-wdizO5JgLTRdwJk=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Verywell-42-3567607-SupinePiriformisStretch-598ca45b519de20011df16d6.gif",
+      imageUrl: "https://www.nerdfitness.com/wp-content/uploads/2019/04/cat-cow.gif",
       benefits: [
-        "Relieves hip and lower back tension",
-        "Targets hard-to-stretch piriformis muscle",
-        "Can help with sciatic nerve pain"
+        "Improves spinal mobility and flexibility",
+        "Relieves tension in the back, shoulders, and neck",
+        "Gently massages and stimulates organs in the abdominal region",
+        "Coordinates movement with breath for mindfulness benefits"
       ],
       tips: [
-        "Keep both feet flexed to protect knees",
-        "Only pull as far as comfortable",
-        "If neck strains, place a small pillow under head"
+        "Move at a pace that allows you to fully coordinate breath with movement",
+        "Keep your wrists directly under your shoulders and knees under your hips",
+        "Focus on feeling the movement through each segment of your spine",
+        "For sensitive wrists, perform on forearms or use wrist supports"
       ],
-      holdTime: 45,
-      targetAreas: ["Runners", "Cyclists", "Lower back pain", "Sciatica"]
+      duration: 60,
+      isActive: true,
+      targetFlexibility: ["spine", "neck"]
     }
   ]
 };
@@ -199,36 +223,36 @@ export const STRETCH_EXERCISE_SETS = STRETCH_EXERCISES;
 // Type for the fallback videos mapping
 type FallbackVideoMapping = Record<string, YouTubeVideo[]>;
 
-// Mapping stretch exercise IDs to fallback videos
+// Create fallback video collections
 const dynamicFallbacks: FallbackVideoMapping = {
-  "stretch1": STRETCH_DYNAMIC_VIDEOS.slice(0, 2),
-  "stretch2": STRETCH_DYNAMIC_VIDEOS.slice(2, 4)
+  "dyn1": STRETCH_DYNAMIC_VIDEOS ? STRETCH_DYNAMIC_VIDEOS.slice(0, 2) : [],
+  "dyn2": STRETCH_DYNAMIC_VIDEOS ? STRETCH_DYNAMIC_VIDEOS.slice(2, 4) : []
 };
 
-// Mapping static exercise IDs to fallback videos
 const staticFallbacks: FallbackVideoMapping = {
-  "stretch3": STRETCH_STATIC_VIDEOS.slice(0, 2),
-  "stretch4": STRETCH_STATIC_VIDEOS.slice(2, 4)
+  "stat1": STRETCH_STATIC_VIDEOS ? STRETCH_STATIC_VIDEOS.slice(0, 2) : [],
+  "stat2": STRETCH_STATIC_VIDEOS ? STRETCH_STATIC_VIDEOS.slice(2, 4) : []
 };
 
-// Mapping recovery exercise IDs to fallback videos
-const recoveryFallbacks: FallbackVideoMapping = {
-  "stretch5": STRETCH_RECOVERY_VIDEOS.slice(0, 2),
-  "stretch6": STRETCH_RECOVERY_VIDEOS.slice(2, 4)
+const mobilityFallbacks: FallbackVideoMapping = {
+  "mob1": STRETCH_RECOVERY_VIDEOS ? STRETCH_RECOVERY_VIDEOS.slice(0, 2) : [],
+  "mob2": STRETCH_RECOVERY_VIDEOS ? STRETCH_RECOVERY_VIDEOS.slice(2, 4) : []
 };
 
-// Combine fallbacks for use in the component
+// Combine all fallbacks
 const allFallbacks = {
   ...dynamicFallbacks,
   ...staticFallbacks,
-  ...recoveryFallbacks
+  ...mobilityFallbacks
 };
 
-// Main Stretch Exercises Component
+// Main Stretching Component
 export const StretchSpecificExercisesEnhanced = () => {
   const [activeTab, setActiveTab] = useState('dynamic');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Track which exercises have been closed by the user
+  const [closedExercises, setClosedExercises] = useState<Record<string, boolean>>({});
   
   // Find video for an exercise using the YouTube API
   const findExerciseVideo = async (exercise: StretchExercise) => {
@@ -236,40 +260,52 @@ export const StretchSpecificExercisesEnhanced = () => {
     setError(null);
     
     try {
-      // Search for specific exercise videos by name and type
+      // Create an array of search terms in priority order
       const searchTerms = [
-        `${exercise.name} ${activeTab} stretch tutorial`,
-        `how to do ${exercise.name} stretch properly`,
-        `${exercise.name} flexibility exercise`
+        `${exercise.name} stretch tutorial proper form`,
+        `how to do ${exercise.name} stretch correctly`,
+        `${exercise.name} flexibility exercise demonstration`,
+        `${activeTab} stretching ${exercise.name}`
       ];
       
-      const videos = await searchSectionSpecificExerciseVideos(searchTerms);
+      // Use our exercise search service that can handle multiple search terms
+      const videos = await searchExerciseVideos(searchTerms);
+      
       setIsLoading(false);
       return videos;
     } catch (err) {
-      console.error('Error fetching stretch video:', err);
+      console.error('Error fetching stretch videos:', err);
       setError('Unable to load video. Using backup videos.');
       setIsLoading(false);
       return [];
     }
   };
   
-  // Handle showing detailed exercise information
+  // Handler for showing detailed exercise information
   const handleShowDetail = (exercise: StretchExercise) => {
     console.log('Showing detail for:', exercise.name);
-    // This could open a dialog with more comprehensive information
-    // For now, just log the action
+    // This would open a modal or dialog with comprehensive information
+    // For now, we just log the action
   };
   
   return (
     <div className="mx-auto w-full max-w-4xl">
       <Card className="shadow-md border-pink-100">
         <div className="p-4 bg-gradient-to-r from-pink-50 to-white">
-          <h2 className="text-2xl font-semibold text-pink-700 mb-2">Stretching Exercises</h2>
+          <h2 className="text-2xl font-semibold text-pink-700 mb-2">Stretching & Mobility</h2>
           <p className="text-gray-600 mb-4">
-            Regular stretching improves flexibility, range of motion, and helps prevent injuries.
-            Choose a stretching style below to get started.
+            Improve your flexibility, mobility, and recovery with these stretching exercises.
+            Choose from dynamic, static, and mobility-focused movements for a comprehensive approach.
           </p>
+          
+          <Alert className="mb-4 bg-blue-50 border-blue-200">
+            <Info className="h-4 w-4 text-blue-700" />
+            <AlertTitle className="text-blue-700">Stretching Tip</AlertTitle>
+            <AlertDescription className="text-blue-600">
+              For dynamic stretches, focus on smooth movements. For static stretches, 
+              hold for 20-30 seconds without bouncing. Breathe deeply and relax into each stretch.
+            </AlertDescription>
+          </Alert>
           
           {error && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4 flex items-start">
@@ -280,82 +316,119 @@ export const StretchSpecificExercisesEnhanced = () => {
           
           <Tabs defaultValue="dynamic" value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full grid grid-cols-3 bg-pink-100">
-              <TabsTrigger value="dynamic" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
+              <TabsTrigger 
+                value="dynamic" 
+                className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
+              >
                 Dynamic
               </TabsTrigger>
-              <TabsTrigger value="static" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
+              <TabsTrigger 
+                value="static" 
+                className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
+              >
                 Static
               </TabsTrigger>
-              <TabsTrigger value="recovery" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
-                Recovery
+              <TabsTrigger 
+                value="mobility" 
+                className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
+              >
+                Mobility
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="dynamic" className="pt-4">
               <div className="mb-3 bg-pink-50 p-3 rounded-md">
-                <h3 className="font-medium text-pink-800 mb-1">Dynamic Stretching</h3>
+                <h3 className="font-medium text-pink-800 mb-1">Dynamic Stretches</h3>
                 <p className="text-sm text-gray-600">
-                  Moving stretches that prepare muscles for activity. Ideal for warming up before exercise
-                  to increase blood flow and range of motion.
+                  Dynamic stretches involve active movements where joints and muscles go through a full range of motion.
+                  These are ideal for warming up before a workout or activity.
                 </p>
               </div>
               <div className="space-y-4">
                 {STRETCH_EXERCISES.dynamic.map((exercise) => (
-                  <EnhancedExerciseCard 
-                    key={exercise.id}
-                    exercise={exercise}
-                    category="dynamic"
-                    sectionColor="#FF3B77"
-                    loadExerciseVideo={findExerciseVideo}
-                    onShowExerciseDetail={handleShowDetail}
-                    fallbackVideos={allFallbacks}
-                  />
+                  !closedExercises[exercise.id] && (
+                    <CloseableExerciseCard 
+                      key={exercise.id}
+                      exercise={exercise}
+                      category="dynamic"
+                      sectionColor="#FF3B77"
+                      loadExerciseVideo={findExerciseVideo}
+                      onShowExerciseDetail={handleShowDetail}
+                      fallbackVideos={allFallbacks}
+                      onClose={() => {
+                        console.log("Exercise card closed:", exercise.name);
+                        // Update the closed exercises state
+                        setClosedExercises(prev => ({
+                          ...prev,
+                          [exercise.id]: true
+                        }));
+                      }}
+                    />
+                  )
                 ))}
               </div>
             </TabsContent>
             
             <TabsContent value="static" className="pt-4">
               <div className="mb-3 bg-pink-50 p-3 rounded-md">
-                <h3 className="font-medium text-pink-800 mb-1">Static Stretching</h3>
+                <h3 className="font-medium text-pink-800 mb-1">Static Stretches</h3>
                 <p className="text-sm text-gray-600">
-                  Holding a position for a period of time to gradually lengthen a muscle. Best performed after
-                  workouts or as a separate flexibility routine.
+                  Static stretches involve holding a position for a period of time, usually 20-60 seconds.
+                  These are best performed after exercise when your muscles are warm.
                 </p>
               </div>
               <div className="space-y-4">
                 {STRETCH_EXERCISES.static.map((exercise) => (
-                  <EnhancedExerciseCard 
-                    key={exercise.id}
-                    exercise={exercise}
-                    category="static"
-                    sectionColor="#FF3B77"
-                    loadExerciseVideo={findExerciseVideo}
-                    onShowExerciseDetail={handleShowDetail}
-                    fallbackVideos={allFallbacks}
-                  />
+                  !closedExercises[exercise.id] && (
+                    <CloseableExerciseCard 
+                      key={exercise.id}
+                      exercise={exercise}
+                      category="static"
+                      sectionColor="#FF3B77"
+                      loadExerciseVideo={findExerciseVideo}
+                      onShowExerciseDetail={handleShowDetail}
+                      fallbackVideos={allFallbacks}
+                      onClose={() => {
+                        console.log("Exercise card closed:", exercise.name);
+                        setClosedExercises(prev => ({
+                          ...prev,
+                          [exercise.id]: true
+                        }));
+                      }}
+                    />
+                  )
                 ))}
               </div>
             </TabsContent>
             
-            <TabsContent value="recovery" className="pt-4">
+            <TabsContent value="mobility" className="pt-4">
               <div className="mb-3 bg-pink-50 p-3 rounded-md">
-                <h3 className="font-medium text-pink-800 mb-1">Recovery Stretches</h3>
+                <h3 className="font-medium text-pink-800 mb-1">Mobility Exercises</h3>
                 <p className="text-sm text-gray-600">
-                  Gentle, relaxing stretches designed to promote recovery and reduce muscle soreness.
-                  Perfect for cool-downs and rest days.
+                  Mobility exercises combine elements of stretching, strength, and controlled movement
+                  to improve your functional range of motion and joint health.
                 </p>
               </div>
               <div className="space-y-4">
-                {STRETCH_EXERCISES.recovery.map((exercise) => (
-                  <EnhancedExerciseCard 
-                    key={exercise.id}
-                    exercise={exercise}
-                    category="recovery"
-                    sectionColor="#FF3B77"
-                    loadExerciseVideo={findExerciseVideo}
-                    onShowExerciseDetail={handleShowDetail}
-                    fallbackVideos={allFallbacks}
-                  />
+                {STRETCH_EXERCISES.mobility.map((exercise) => (
+                  !closedExercises[exercise.id] && (
+                    <CloseableExerciseCard 
+                      key={exercise.id}
+                      exercise={exercise}
+                      category="mobility"
+                      sectionColor="#FF3B77"
+                      loadExerciseVideo={findExerciseVideo}
+                      onShowExerciseDetail={handleShowDetail}
+                      fallbackVideos={allFallbacks}
+                      onClose={() => {
+                        console.log("Exercise card closed:", exercise.name);
+                        setClosedExercises(prev => ({
+                          ...prev,
+                          [exercise.id]: true
+                        }));
+                      }}
+                    />
+                  )
                 ))}
               </div>
             </TabsContent>

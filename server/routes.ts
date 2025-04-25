@@ -27,6 +27,7 @@ import shoppingRoutes from './routes/shopping';
 import cookingRoutes from './routes/cooking';
 import fitnessRoutes from './routes/fitness';
 import yogaRoutes from './routes/yoga';
+import meditationRoutes from './routes/meditation';
 import repairRoutes from './routes/repair';
 import calendarRoutes from './routes/calendar';
 import financeRoutes from './routes/finance';
@@ -1089,6 +1090,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register yoga routes
   app.use('/api/yoga', yogaRoutes);
+  
+  // Register meditation routes
+  app.use('/api/meditation', meditationRoutes);
+  
   // Register the repair routes
   app.use('/api/repair', repairRoutes);
   
