@@ -356,7 +356,8 @@ export default function YogaVisionEnhanced({
   // Get selected pose if available
   const selectedPose = getPoseById(selectedPoseId);
   const currentReferencePose = referencePoses.find(pose => pose.id === selectedPoseId);
-  const userPoseAchievement = userProgress.poseAchievements[selectedPoseId];
+  // Safely access user pose achievements, checking if the property exists
+  const userPoseAchievement = userProgress?.poseAchievements?.[selectedPoseId];
 
   return (
     <div className="space-y-6">
@@ -379,7 +380,7 @@ export default function YogaVisionEnhanced({
               {availablePoses.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                   {availablePoses.map((pose) => {
-                    const achievement = userProgress.poseAchievements[pose.id];
+                    const achievement = userProgress?.poseAchievements?.[pose.id];
                     
                     return (
                       <Button
@@ -550,7 +551,7 @@ export default function YogaVisionEnhanced({
                         const prereqPose = getPoseById(prereqId);
                         if (!prereqPose) return null;
                         
-                        const prereqAchievement = userProgress.poseAchievements[prereqId];
+                        const prereqAchievement = userProgress?.poseAchievements?.[prereqId];
                         const isCompleted = prereqAchievement && prereqAchievement.masteryLevel >= 3;
                         
                         return (

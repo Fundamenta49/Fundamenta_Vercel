@@ -16,14 +16,28 @@ export interface PoseProgress {
   completionDate?: string;
 }
 
+// Structure for yoga pose achievements
+export interface PoseAchievement {
+  masteryLevel: number;
+  bestScore?: number;
+  completionDate?: string;
+  attempts?: number;
+}
+
 // Context state interface
 interface YogaProgressionState {
   poses: PoseProgress[];
   currentLevel: PoseDifficulty;
   totalCompleted: number;
+  userProgress?: {
+    poseAchievements?: Record<string, PoseAchievement>;
+  };
   updatePoseStatus: (poseId: string, status: PoseStatus, accuracy?: number) => void;
   getPoseById: (poseId: string) => PoseProgress | undefined;
   unlockNextLevelPoses: () => void;
+  updatePoseMastery?: (poseId: string, masteryLevel: number) => void;
+  earnXp?: (amount: number) => void;
+  isPoseUnlocked?: (poseId: string) => boolean;
 }
 
 // Initial pose data
@@ -164,14 +178,49 @@ export const YogaProgressionProvider: React.FC<{children: ReactNode}> = ({ child
     }
   };
   
+  // Mock implementation of additional functions
+  const updatePoseMastery = (poseId: string, masteryLevel: number) => {
+    console.log(`Updating mastery level for pose ${poseId} to ${masteryLevel}`);
+    // This would be implemented in a real context
+  };
+  
+  const earnXp = (amount: number) => {
+    console.log(`Earning ${amount} XP`);
+    // This would be implemented in a real context
+  };
+  
+  const isPoseUnlocked = (poseId: string): boolean => {
+    const pose = getPoseById(poseId);
+    return pose?.status === 'unlocked' || pose?.status === 'completed';
+  };
+  
+  // Mock user progress data with achievements
+  const userProgress = {
+    poseAchievements: {} as Record<string, PoseAchievement>
+  };
+  
+  // Initialize achievements for unlocked poses
+  poses.forEach(pose => {
+    if (pose.status === 'unlocked' || pose.status === 'completed') {
+      userProgress.poseAchievements[pose.id] = {
+        masteryLevel: pose.status === 'completed' ? 3 : 0,
+        attempts: 0
+      };
+    }
+  });
+
   // Context value
   const value = {
     poses,
     currentLevel,
     totalCompleted,
+    userProgress,
     updatePoseStatus,
     getPoseById,
-    unlockNextLevelPoses
+    unlockNextLevelPoses,
+    updatePoseMastery,
+    earnXp,
+    isPoseUnlocked
   };
   
   return (
