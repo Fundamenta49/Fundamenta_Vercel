@@ -634,8 +634,19 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
       setSelectedExercise(yogaExercises[exerciseKey]);
     } else if (exerciseType === 'stretch') {
       setSelectedExercise(stretchExercises[exerciseKey]);
+    } else if (exerciseType === 'hiit') {
+      setSelectedExercise(HIIT_EXERCISE_SETS[exerciseKey]);
     }
     setExerciseDetailOpen(true);
+  };
+
+  // Function to close the detail dialog
+  const handleCloseDetails = () => {
+    setSelectedExercise(null);
+    setExerciseDetailOpen(false);
+    if (videoFullscreen) {
+      setVideoFullscreen(false);
+    }
   };
 
   // Function to close the detail dialog
