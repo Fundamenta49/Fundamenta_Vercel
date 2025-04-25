@@ -1,5 +1,5 @@
 // Import the enhanced version and the specific exercise components
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StretchingIcon } from "./active-you-enhanced";
 import HIITSpecificExercisesEnhanced from './hiit-specific-exercises-enhanced';
 import YogaSpecificExercisesEnhanced from './yoga-specific-exercises-enhanced';
@@ -19,9 +19,12 @@ import {
   MapPin,
   Activity,
   Heart,
-  ArrowRight
+  ArrowRight,
+  Trophy,
+  Award
 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { recordArcadeActivity, isExerciseInActiveChallenge, getExercisePointValue } from '@/lib/learning-path-integration';
 
 // Re-export the StretchingIcon for backward compatibility
 export { StretchingIcon };
@@ -35,6 +38,39 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
   // State for AI feature dialogs
   const [isYogaVisionOpen, setIsYogaVisionOpen] = useState(false);
   const [selectedYogaPoseId, setSelectedYogaPoseId] = useState<string>("");
+  const [showPointsEarned, setShowPointsEarned] = useState(false);
+  const [pointsEarned, setPointsEarned] = useState(0);
+  const [inChallenge, setInChallenge] = useState(false);
+  
+  // For demo purposes, we'll use a hardcoded user ID
+  const userId = 1;
+  
+  // Track the exercise activity with the arcade and learning path on component mount
+  useEffect(() => {
+    // Record that the user started this exercise type
+    recordArcadeActivity(userId, defaultTab, 'started');
+    
+    // Check if this exercise is part of an active challenge
+    const isInChallenge = isExerciseInActiveChallenge(defaultTab);
+    setInChallenge(isInChallenge);
+    
+    // Set potential points to be earned
+    setPointsEarned(getExercisePointValue(defaultTab));
+  }, [defaultTab]);
+  
+  // Handle exercise completion
+  const handleExerciseCompleted = (exerciseId: string) => {
+    // Show points earned animation
+    setShowPointsEarned(true);
+    
+    // Record completion with arcade system
+    recordArcadeActivity(userId, defaultTab, 'completed');
+    
+    // Hide points after 3 seconds
+    setTimeout(() => {
+      setShowPointsEarned(false);
+    }, 3000);
+  };
   
   // Render the appropriate AI feature button based on exercise type
   const renderAIFeatureButton = () => {
@@ -236,6 +272,43 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
         </p>
       </div>
       
+      {/* Challenge Banner - Only show when exercise is part of an active challenge */}
+      {inChallenge && (
+        <div className="bg-gradient-to-r from-amber-100 to-amber-50 p-4 rounded-lg mb-6 border border-amber-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="bg-amber-200 rounded-full p-2 mr-3">
+                <Trophy className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="font-medium text-amber-800">Challenge Active</h3>
+                <p className="text-sm text-amber-700">
+                  This activity is part of an active learning path challenge! Complete it to earn {pointsEarned} points.
+                </p>
+              </div>
+            </div>
+            <Button variant="outline" className="bg-white border-amber-200 text-amber-700 hover:bg-amber-50">
+              View Challenge
+            </Button>
+          </div>
+        </div>
+      )}
+      
+      {/* Points Earned Animation */}
+      {showPointsEarned && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+          <div className="bg-gradient-to-br from-amber-500 to-orange-500 text-white p-6 rounded-lg shadow-xl animate-bounce">
+            <div className="flex items-center">
+              <Award className="h-10 w-10 mr-3" />
+              <div>
+                <h3 className="text-2xl font-bold">+{pointsEarned} Points</h3>
+                <p>Great job completing this exercise!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <Card className="shadow-md border-pink-100 mb-8 p-4">
         {renderExerciseContent()}
       </Card>
@@ -276,6 +349,25 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
             <div className="bg-pink-50 p-2 rounded-md">
               <p className="text-pink-700 font-medium text-xl">83%</p>
               <p className="text-xs text-gray-600">Weekly goal progress</p>
+            </div>
+          </div>
+          
+          {/* Learning Path Integration */}
+          <div className="mt-4 border-t pt-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium text-gray-700 flex items-center">
+                <Trophy className="h-4 w-4 mr-1 text-amber-500" />
+                Learning Path Progress
+              </h4>
+              <span className="text-xs text-blue-600 cursor-pointer">View All</span>
+            </div>
+            <div className="mt-2 space-y-2">
+              <div className="bg-gray-50 p-2 rounded text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700">Fitness Wellness Path</span>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">42% Complete</span>
+                </div>
+              </div>
             </div>
           </div>
         </Card>
