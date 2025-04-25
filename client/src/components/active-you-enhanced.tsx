@@ -538,11 +538,16 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
     } else if (exerciseType === 'stretch') {
       setSelectedExercise(stretchExercises[exerciseKey]);
     } else if (exerciseType === 'hiit') {
-      // Check if the key exists in HIIT_EXERCISE_SETS
-      if (exerciseKey in HIIT_EXERCISE_SETS) {
-        // Use type assertion to tell TypeScript the index is valid
-        setSelectedExercise(HIIT_EXERCISE_SETS[exerciseKey as keyof typeof HIIT_EXERCISE_SETS]);
-      }
+      // Handle HIIT exercise sets differently since they're organized by protocol type
+      // Each protocol (tabata, amrap, etc.) has an array of exercises
+      Object.entries(HIIT_EXERCISE_SETS).forEach(([protocol, exercises]) => {
+        // Type assertion for exercises array
+        const exercisesArray = exercises as any[];
+        const foundExercise = exercisesArray.find(ex => ex.id === exerciseKey);
+        if (foundExercise) {
+          setSelectedExercise(foundExercise as unknown as ExerciseDetails);
+        }
+      });
     }
     setExerciseDetailOpen(true);
   };
