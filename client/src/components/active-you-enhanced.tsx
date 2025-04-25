@@ -2183,12 +2183,12 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                           onOpenChange={setVideoFullscreen}
                         >
                           <MegaDialogContent className="p-0 border-none bg-black">
-                            <div className="absolute top-2 right-2 z-50">
+                            <div className="absolute top-2 right-2 z-[100]">
                               <button
                                 onClick={() => setVideoFullscreen && setVideoFullscreen(false)}
                                 aria-label="Close"
                                 type="button"
-                                className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200"
+                                className="rounded-full p-2 opacity-90 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200 shadow-md"
                               >
                                 <X className="h-6 w-6 text-pink-500" />
                                 <span className="sr-only">Close</span>
