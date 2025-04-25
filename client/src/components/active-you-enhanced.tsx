@@ -32,6 +32,7 @@ import {
   MegaDialogFooter,
   MegaDialogDescription,
 } from "@/components/ui/mega-dialog";
+import { PinkCloseButton } from "@/components/ui/pink-close-button";
 import {
   Tabs,
   TabsContent,
@@ -2064,15 +2065,15 @@ function ActiveYouEnhanced({ defaultTab }: ActiveYouProps) {
                       {selectedExercise?.category === 'yoga' ? 'Yoga Pose' : 'Stretching Exercise'}
                     </MegaDialogDescription>
                   </div>
-                  <button
-                    onClick={() => setExerciseDetailOpen && setExerciseDetailOpen(false)}
-                    aria-label="Close"
-                    type="button"
-                    className="rounded-full p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none bg-pink-100 hover:bg-pink-200"
-                  >
-                    <X className="h-6 w-6 text-pink-500" />
-                    <span className="sr-only">Close</span>
-                  </button>
+                  <PinkCloseButton 
+                    onClose={() => {
+                      console.log("Close button clicked");
+                      if (setExerciseDetailOpen) {
+                        setExerciseDetailOpen(false);
+                      }
+                    }} 
+                    className="relative right-0 top-0"
+                  />
                 </div>
               </MegaDialogHeader>
               <MegaDialogBody>
