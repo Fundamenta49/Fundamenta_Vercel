@@ -2,6 +2,7 @@ import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { PinkCloseButton } from "./pink-close-button"
 
 const MegaDialog = DialogPrimitive.Root
 
@@ -53,14 +54,24 @@ const MegaDialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <MegaDialogClose className="absolute right-4 top-4 rounded-full p-2 opacity-100 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-[999] bg-pink-200 hover:bg-pink-300 border border-pink-300 shadow-md" 
-      onClick={() => {
-        console.log('MegaDialog close button clicked');
-      }}
-      style={{ boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' }}>
-        <X className="h-5 w-5 text-pink-600" />
-        <span className="sr-only">Close</span>
-      </MegaDialogClose>
+      <PinkCloseButton
+        className="absolute right-4 top-4 z-[9999]"
+        onClose={() => {
+          console.log('MegaDialog PinkCloseButton clicked');
+          // This will programmatically trigger the MegaDialogClose
+          const closeButton = document.querySelector('[data-megadialog-close-button]');
+          if (closeButton instanceof HTMLElement) {
+            closeButton.click();
+          }
+        }}
+      />
+      <MegaDialogClose 
+        className="sr-only" 
+        data-megadialog-close-button
+        onClick={() => {
+          console.log('Hidden MegaDialogClose clicked programmatically');
+        }}
+      />
     </DialogPrimitive.Content>
   </MegaDialogPortal>
 ))
