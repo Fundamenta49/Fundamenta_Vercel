@@ -15,13 +15,18 @@
     "name": "Corpse Pose (Savasana)"
   },
   {
+    "id": "downward_dog",
+    "filename": "downward_dog.jpg",
+    "name": "Downward Facing Dog (Adho Mukha Svanasana)"
+  },
+  {
     "id": "cat_cow",
     "filename": "cat_cow.png",
     "name": "Cat-Cow Pose (Marjaryasana-Bitilasana)"
   },
   {
     "id": "forward_fold",
-    "filename": "forward_fold.png",
+    "filename": "forward_fold.jpg",
     "name": "Forward Fold (Uttanasana)"
   },
   {
@@ -51,7 +56,7 @@
   },
   {
     "id": "bridge",
-    "filename": "bridge.png",
+    "filename": "bridge.jpg",
     "name": "Bridge Pose (Setu Bandha Sarvangasana)"
   },
   {
@@ -66,12 +71,22 @@
   },
   {
     "id": "pigeon",
-    "filename": "pigeon.png",
+    "filename": "pigeon.jpg",
     "name": "Pigeon Pose (Eka Pada Rajakapotasana)"
   },
   {
     "id": "side_plank",
     "filename": "side_plank.png",
     "name": "Side Plank (Vasisthasana)"
+  },
+  {
+    "id": "crow",
+    "filename": "crow_3.jpg",
+    "name": "Crow Pose (Bakasana)"
+  },
+  {
+    "id": "boat",
+    "filename": "boat.jpg",
+    "name": "Boat Pose (Navasana)"
   }
 ]
