@@ -65,12 +65,14 @@ const DialogContent = React.forwardRef<
             zIndex: 50,
             width: '94vw',
             maxWidth: '450px',
-            maxHeight: '85vh',
+            maxHeight: '90vh',
             transform: 'translate(-50%, -50%)',
             overflow: 'hidden',
             backgroundColor: 'white',
             boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-            borderRadius: '0.75rem'
+            borderRadius: '0.75rem',
+            display: 'flex',
+            flexDirection: 'column'
           }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
@@ -79,17 +81,17 @@ const DialogContent = React.forwardRef<
           className="rounded-lg border bg-background shadow-lg"
         >
           {/* Swipe handle indicator - Apple-style minimal design */}
-          <div className="w-full flex flex-col items-center pt-3 pb-1 bg-white absolute top-0 z-20 border-b border-gray-50">
-            <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
+          <div className="w-full flex flex-col items-center pt-3 pb-1 bg-white sticky top-0 z-20 border-b border-gray-50/80">
+            <div className="w-12 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700" />
           </div>
           
           <DialogPrimitive.Content
             ref={ref}
             className={cn(
-              "grid w-full gap-3 pt-8 px-4 pb-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto bg-white",
+              "grid w-full gap-3 pt-8 px-4 pb-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto bg-white flex-grow",
               className
             )}
-            style={{ maxHeight: 'calc(85vh - 40px)', backgroundColor: 'white' }}
+            style={{ maxHeight: 'calc(88vh - 40px)', backgroundColor: 'white', overscrollBehavior: 'contain' }}
             {...props}
           >
             {children}
