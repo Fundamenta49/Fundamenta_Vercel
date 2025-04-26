@@ -19,6 +19,8 @@ import {
   Upload,
   ArrowRight,
   Loader2,
+  Video,
+  VideoOff,
 } from "lucide-react";
 import AiFeedbackOverlay from './ai-feedback-overlay';
 
@@ -50,8 +52,15 @@ export default function YogaVisionSimplified({
   const [rewardEarned, setRewardEarned] = useState<{xp: number, newMasteryLevel: number} | null>(null);
   const [useCameraMode, setUseCameraMode] = useState<boolean>(true);
   const [showAnalysisOverlay, setShowAnalysisOverlay] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedVideo, setRecordedVideo] = useState<string | null>(null);
+  const [recordingTime, setRecordingTime] = useState(0);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const webcamRef = useRef<Webcam>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const videoChunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<number | null>(null);
   const { toast } = useToast();
   
   // Get progression context
@@ -253,6 +262,7 @@ export default function YogaVisionSimplified({
     setImagePreview(null);
     setAnalysis(null);
     setRewardEarned(null);
+    setRecordedVideo(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -261,6 +271,100 @@ export default function YogaVisionSimplified({
   // Close the analysis overlay
   const handleCloseAnalysis = () => {
     setShowAnalysisOverlay(false);
+  };
+  
+  // Start/stop video recording
+  const toggleRecording = async () => {
+    if (isRecording) {
+      // Stop recording
+      stopRecording();
+    } else {
+      // Start recording
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: true,
+          audio: true 
+        });
+        
+        if (webcamRef.current) {
+          // Update webcam stream
+          webcamRef.current.video!.srcObject = stream;
+        }
+        
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        videoChunksRef.current = [];
+        
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            videoChunksRef.current.push(event.data);
+          }
+        };
+        
+        mediaRecorder.onstop = () => {
+          const videoBlob = new Blob(videoChunksRef.current, { type: 'video/webm' });
+          const videoUrl = URL.createObjectURL(videoBlob);
+          setRecordedVideo(videoUrl);
+          
+          toast({
+            title: "Recording saved",
+            description: "Your yoga practice video has been saved",
+          });
+        };
+        
+        // Start recording
+        mediaRecorder.start();
+        setIsRecording(true);
+        
+        // Start timer
+        timerRef.current = window.setInterval(() => {
+          setRecordingTime(prev => prev + 1);
+        }, 1000);
+        
+        toast({
+          title: "Recording started",
+          description: "Recording your yoga practice...",
+        });
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        toast({
+          title: "Camera access denied",
+          description: "Please allow camera access to record your practice.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
+  // Stop recording
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    
+    // Stop all tracks in the stream
+    if (webcamRef.current && webcamRef.current.video && webcamRef.current.video.srcObject) {
+      const stream = webcamRef.current.video.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      
+      // Reset webcam stream to default
+      navigator.mediaDevices.getUserMedia({ 
+        video: true,
+        audio: false
+      }).then(stream => {
+        if (webcamRef.current && webcamRef.current.video) {
+          webcamRef.current.video.srcObject = stream;
+        }
+      });
+    }
+    
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
+    setIsRecording(false);
+    setRecordingTime(0);
   };
 
   return (
@@ -271,8 +375,14 @@ export default function YogaVisionSimplified({
           <img 
             src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
             alt={`${selectedPose?.name || 'Yoga pose'} reference`}
-            className="w-full object-cover rounded-md"
-            style={{ aspectRatio: "16/9", maxHeight: "168px" }}
+            className="w-full rounded-md"
+            style={{ 
+              objectFit: "contain", 
+              backgroundColor: "#f8f9fa",
+              aspectRatio: "16/9", 
+              maxHeight: "180px",
+              width: "100%"
+            }}
             onError={(e) => {
               const videoInfo = getYogaPoseVideoInfo(poseId);
               if (videoInfo?.videoId) {
@@ -282,6 +392,10 @@ export default function YogaVisionSimplified({
               }
             }}
           />
+          {/* Pose name overlay */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+            <p className="text-white text-xs font-medium">{selectedPose?.name || 'Yoga Pose'}</p>
+          </div>
         </div>
       </div>
       
@@ -289,7 +403,36 @@ export default function YogaVisionSimplified({
       <div className="relative mb-2">
         {useCameraMode ? (
           // Camera mode
-          !imagePreview ? (
+          recordedVideo ? (
+            // Show recorded video playback
+            <div className="w-full pb-2">
+              <div className="relative w-full mx-auto">
+                <video 
+                  src={recordedVideo} 
+                  controls
+                  className="w-full rounded-md"
+                  style={{ 
+                    maxWidth: "100%", 
+                    height: "auto",
+                    maxHeight: "228px",
+                    aspectRatio: "16/9"
+                  }}
+                />
+                {/* Reset button overlay */}
+                <div className="absolute bottom-2 left-2">
+                  <Button 
+                    onClick={() => handleReset()}
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs rounded-full px-3 bg-black/40 hover:bg-black/50 text-white"
+                  >
+                    <Video className="h-3 w-3 mr-1" />
+                    Record Again
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : !imagePreview ? (
             <div className="w-full pb-2">
               <Webcam
                 audio={false}
@@ -309,16 +452,40 @@ export default function YogaVisionSimplified({
                   aspectRatio: "16/9"
                 }}
               />
-              {/* Center-positioned capture button */}
-              <div className="flex justify-center">
+              {/* Center-positioned capture/record buttons */}
+              <div className="flex justify-center space-x-3">
                 <Button 
                   onClick={handleWebcamCapture} 
                   variant="default"
                   size="sm"
                   className="h-10 text-sm rounded-full px-5 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                  disabled={isRecording}
                 >
                   <Camera className="h-4 w-4 mr-2" />
                   Capture Photo
+                </Button>
+                
+                <Button 
+                  onClick={toggleRecording}
+                  variant={isRecording ? "destructive" : "outline"}
+                  size="sm"
+                  className={`h-10 text-sm rounded-full px-5 shadow-sm ${
+                    isRecording 
+                      ? "bg-red-600 hover:bg-red-700 text-white" 
+                      : "border-blue-600 text-blue-600 hover:bg-blue-50"
+                  }`}
+                >
+                  {isRecording ? (
+                    <>
+                      <VideoOff className="h-4 w-4 mr-2" />
+                      Stop Recording {recordingTime > 0 && `(${Math.floor(recordingTime / 60)}:${(recordingTime % 60).toString().padStart(2, '0')})`}
+                    </>
+                  ) : (
+                    <>
+                      <Video className="h-4 w-4 mr-2" />
+                      Record Video
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
