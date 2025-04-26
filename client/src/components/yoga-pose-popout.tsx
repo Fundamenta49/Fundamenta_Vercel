@@ -23,6 +23,9 @@ interface YogaPosePopoutProps {
     alternativeImageUrl?: string;
     allImagePaths?: string[];
     possibleImagePaths?: string[];
+    level?: number;
+    imageUrl?: string;
+    category?: string;
   };
   unlocked: boolean;
   achievement?: {
@@ -310,6 +313,25 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                     alt={pose.name} 
                     className={`object-cover w-full h-full ${getPoseClass(pose.id)}`}
                     onError={(e) => {
+                      // Try the next path in our possiblePaths array
+                      if (possiblePaths && possiblePaths.length > 0) {
+                        // Find the current path in our array of possibilities
+                        const currentSrc = e.currentTarget.src;
+                        const currentIndex = possiblePaths.findIndex(path => 
+                          currentSrc.includes(path.replace(/^\//, ''))
+                        );
+                        
+                        // If we found it and there's a next path, try that
+                        if (currentIndex !== -1 && currentIndex < possiblePaths.length - 1) {
+                          console.log(`Image path failed: ${currentSrc}, trying next path: ${possiblePaths[currentIndex + 1]}`);
+                          e.currentTarget.src = possiblePaths[currentIndex + 1];
+                          return;
+                        }
+                      }
+                      
+                      // If we've exhausted all possible paths or couldn't find the current path,
+                      // fall back to our category-based external images
+                      console.log(`All image paths failed for ${pose.id}, using external fallback`);
                       e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
                     }}
                     style={getPositionStyle(pose.id)}
@@ -407,6 +429,25 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                         alt={pose.name} 
                         className={`object-cover w-full h-full ${getPoseClass(pose.id)}`}
                         onError={(e) => {
+                          // Try the next path in our possiblePaths array
+                          if (possiblePaths && possiblePaths.length > 0) {
+                            // Find the current path in our array of possibilities
+                            const currentSrc = e.currentTarget.src;
+                            const currentIndex = possiblePaths.findIndex(path => 
+                              currentSrc.includes(path.replace(/^\//, ''))
+                            );
+                            
+                            // If we found it and there's a next path, try that
+                            if (currentIndex !== -1 && currentIndex < possiblePaths.length - 1) {
+                              console.log(`Dialog image path failed: ${currentSrc}, trying next path: ${possiblePaths[currentIndex + 1]}`);
+                              e.currentTarget.src = possiblePaths[currentIndex + 1];
+                              return;
+                            }
+                          }
+                          
+                          // If we've exhausted all possible paths or couldn't find the current path,
+                          // fall back to our category-based external images
+                          console.log(`All dialog image paths failed for ${pose.id}, using external fallback`);
                           e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
                         }}
                         style={getPositionStyle(pose.id)}
