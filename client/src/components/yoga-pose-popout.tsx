@@ -51,6 +51,57 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     // If no protocol, assume https
     return `https://${url}`;
   };
+  
+  // Get fallback image URL based on pose type/category
+  const getFallbackImageUrl = () => {
+    // Define the valid categories that we're using in our system
+    type YogaCategory = 'standing' | 'balance' | 'resting' | 'forward_bend' | 
+                         'backbend' | 'hip_opener' | 'core' | 'arm_balance' | 
+                         'foundation' | 'flow';
+    
+    // Safety check to ensure category is one of our defined types
+    const defaultCategory: YogaCategory = 'standing';
+    const category: YogaCategory = (pose.category as YogaCategory) || defaultCategory;
+    const poseId = pose.id || 'yoga';
+    
+    // Try to provide category-specific images
+    const categoryImages: Record<YogaCategory, string> = {
+      'standing': 'https://images.unsplash.com/photo-1508672019048-805c876b67e2',
+      'balance': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b',
+      'resting': 'https://images.unsplash.com/photo-1588286840104-8957b019727f',
+      'forward_bend': 'https://images.unsplash.com/photo-1610508500445-a4592435e5d7',
+      'backbend': 'https://images.unsplash.com/photo-1556816723-1ce827b9cfca',
+      'hip_opener': 'https://images.unsplash.com/photo-1562088287-e716c080a17f',
+      'core': 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6',
+      'arm_balance': 'https://images.unsplash.com/photo-1507120410856-1f35574c3b45',
+      'foundation': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773',
+      'flow': 'https://images.unsplash.com/photo-1593164842264-854604db2260'
+    };
+    
+    // Create a mapping of pose IDs to specific images for unique poses
+    const poseSpecificImages: Record<string, string> = {
+      'mountain': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773',
+      'tree': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b',
+      'warrior_1': 'https://images.unsplash.com/photo-1508672019048-805c876b67e2',
+      'warrior_2': 'https://images.unsplash.com/photo-1517374148663-13d26488791e',
+      'downward_dog': 'https://images.unsplash.com/photo-1610508500445-a4592435e5d7',
+      'corpse': 'https://images.unsplash.com/photo-1588286840104-8957b019727f',
+      'child': 'https://images.unsplash.com/photo-1601325039356-6bbe403a13bf'
+    };
+    
+    // First try to get a pose-specific image
+    if (poseId in poseSpecificImages) {
+      return poseSpecificImages[poseId];
+    }
+    
+    // Otherwise fall back to category-based image
+    if (category in categoryImages) {
+      return categoryImages[category];
+    }
+    
+    // Default fallback if all else fails
+    return 'https://images.unsplash.com/photo-1545389336-cf090694435e';
+  };
 
   // Render mastery stars
   const renderMasteryStars = (level: number) => {
@@ -81,7 +132,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   alt={pose.name} 
                   className="object-cover w-full h-full"
                   onError={(e) => {
-                    e.currentTarget.src = 'https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80';
+                    e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
                   }}
                 />
               </div>
@@ -171,7 +222,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                       alt={pose.name} 
                       className="object-cover w-full h-full"
                       onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80';
+                        e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
                       }}
                     />
                   </div>
