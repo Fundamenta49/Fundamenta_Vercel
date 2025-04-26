@@ -125,26 +125,47 @@ export default function YogaProgressionPage() {
           </TabsContent>
           
           <TabsContent value="vision" className="space-y-4">
-            <YogaVisionEnhanced />
+            <Card className="shadow-md border-0 overflow-hidden">
+              <CardContent className="p-0">
+                <div className="px-4 sm:px-6 py-6">
+                  <YogaVisionEnhanced />
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
         
         {/* YogaVision Dialog */}
         <Dialog open={showCamera} onOpenChange={setShowCamera}>
-          <DialogContent className="max-w-3xl">
-            <DialogHeader>
-              <DialogTitle>YogaVision Analysis</DialogTitle>
-              <DialogDescription>
-                Get detailed form feedback on your yoga pose
-              </DialogDescription>
-            </DialogHeader>
+          <DialogContent 
+            className="max-w-4xl p-0 rounded-xl shadow-lg mx-auto"
+            style={{
+              width: "94vw",
+              height: "auto",
+              maxHeight: "95vh",
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              overflow: "auto"
+            }}>
+            <div className="px-4 sm:px-6 pt-4 sm:pt-6">
+              <DialogHeader>
+                <DialogTitle>YogaVision Analysis</DialogTitle>
+                <DialogDescription>
+                  Get detailed form feedback on your yoga pose
+                </DialogDescription>
+              </DialogHeader>
+            </div>
             
-            {selectedPoseId && (
-              <YogaVisionEnhanced 
-                initialPoseId={selectedPoseId}
-                onClose={handleCloseCamera}
-              />
-            )}
+            <div className="px-4 sm:px-6 pb-6">
+              {selectedPoseId && (
+                <YogaVisionEnhanced 
+                  initialPoseId={selectedPoseId}
+                  onClose={handleCloseCamera}
+                />
+              )}
+            </div>
           </DialogContent>
         </Dialog>
       </div>

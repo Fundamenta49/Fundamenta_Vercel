@@ -27,29 +27,33 @@ export default function YogaPoseAnalysisPage() {
         </TabsList>
         
         <TabsContent value="form-analysis" className="space-y-4">
-          <Card>
+          <Card className="shadow-md border-0 overflow-hidden p-0">
             <CardHeader>
               <CardTitle>YogaVision</CardTitle>
               <CardDescription>
                 Upload a photo of your yoga pose and receive real-time form feedback from our AI assistant
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <YogaVision />
+            <CardContent className="p-0">
+              <div className="px-4 sm:px-6 py-6">
+                <YogaVision />
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="guided-sessions" className="space-y-4">
-          <Card>
+          <Card className="shadow-md border-0 overflow-hidden p-0">
             <CardHeader>
               <CardTitle>Personalized Yoga Sessions</CardTitle>
               <CardDescription>
                 Discover yoga sessions tailored to your mood, available time, and preferences
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <YogaPromptFlow />
+            <CardContent className="p-0">
+              <div className="px-4 sm:px-6 py-6">
+                <YogaPromptFlow />
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

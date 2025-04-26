@@ -169,34 +169,50 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
             {/* The old YogaVision dialog code is kept for reference */}
             {/*
             <Dialog open={isYogaVisionOpen} onOpenChange={setIsYogaVisionOpen}>
-              <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>YogaVision AI Pose Analysis</DialogTitle>
-                  <DialogDescription>
-                    Upload a photo of your yoga pose to receive AI-powered feedback on form and alignment
-                  </DialogDescription>
-                </DialogHeader>
-                <YogaVisionEnhanced 
-                  initialPoseId={selectedYogaPoseId}
-                  onClose={() => setIsYogaVisionOpen(false)}
-                  onAnalysisComplete={(analysis: PoseAnalysis | null) => {
-                    console.log('Analysis completed:', analysis);
-                    
-                    // Notify Fundi about the pose analysis
-                    if (analysis) {
-                      notifyPoseAnalyzed(
-                        analysis.poseName || 'Unknown Pose',
-                        analysis.score || 0,
-                        analysis.feedback || ['Analysis completed successfully']
-                      );
+              <DialogContent 
+                className="max-w-4xl p-0 rounded-xl shadow-lg mx-auto"
+                style={{
+                  width: "94vw",
+                  height: "auto",
+                  maxHeight: "95vh",
+                  position: "fixed",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  overflow: "auto"
+                }}>
+                <div className="px-4 sm:px-6 pt-4 sm:pt-6">
+                  <DialogHeader>
+                    <DialogTitle>YogaVision AI Pose Analysis</DialogTitle>
+                    <DialogDescription>
+                      Upload a photo of your yoga pose to receive AI-powered feedback on form and alignment
+                    </DialogDescription>
+                  </DialogHeader>
+                </div>
+                
+                <div className="px-4 sm:px-6 pb-6">
+                  <YogaVisionEnhanced 
+                    initialPoseId={selectedYogaPoseId}
+                    onClose={() => setIsYogaVisionOpen(false)}
+                    onAnalysisComplete={(analysis: PoseAnalysis | null) => {
+                      console.log('Analysis completed:', analysis);
                       
-                      // If this was a complete analysis, also count it as an exercise completion
-                      if (analysis.score && analysis.score > 0.7) {
-                        handleExerciseCompleted('yoga-pose-' + (analysis.poseId || 'unknown'));
+                      // Notify Fundi about the pose analysis
+                      if (analysis) {
+                        notifyPoseAnalyzed(
+                          analysis.poseName || 'Unknown Pose',
+                          analysis.score || 0,
+                          analysis.feedback || ['Analysis completed successfully']
+                        );
+                        
+                        // If this was a complete analysis, also count it as an exercise completion
+                        if (analysis.score && analysis.score > 0.7) {
+                          handleExerciseCompleted('yoga-pose-' + (analysis.poseId || 'unknown'));
+                        }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                </div>
               </DialogContent>
             </Dialog>
             */}
