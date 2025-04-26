@@ -64,7 +64,7 @@ const DialogContent = React.forwardRef<
             top: '50%',
             zIndex: 50,
             width: '94vw',
-            maxWidth: '520px', /* Width that matches the screenshot */
+            maxWidth: '580px', /* Width that matches the screenshot exactly */
             maxHeight: '85vh',
             transform: 'translate(-50%, -50%)',
             overflow: 'hidden',

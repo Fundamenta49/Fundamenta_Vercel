@@ -72,6 +72,34 @@ export default function YogaVisionSimplified({
   // Get the selected pose data
   const selectedPose = getPoseById(poseId);
   
+  // Initialize camera immediately when component mounts
+  useEffect(() => {
+    // Request camera access on component mount
+    const initCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: true,
+          audio: false 
+        });
+        
+        if (webcamRef.current && webcamRef.current.video) {
+          webcamRef.current.video.srcObject = stream;
+        }
+      } catch (error) {
+        console.error('Error accessing camera on mount:', error);
+        toast({
+          title: "Camera permission",
+          description: "Please allow camera access to use all features",
+          variant: "default",
+        });
+      }
+    };
+    
+    if (useCameraMode) {
+      initCamera();
+    }
+  }, [useCameraMode, toast]);
+  
   // Handle file selection
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -460,9 +488,15 @@ export default function YogaVisionSimplified({
                   size="sm"
                   className="h-10 text-sm rounded-full px-5 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
                   disabled={isRecording}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: "160px" 
+                  }}
                 >
                   <Camera className="h-4 w-4 mr-2" />
-                  Capture Photo
+                  <span>Capture Photo</span>
                 </Button>
                 
                 <Button 
@@ -472,8 +506,14 @@ export default function YogaVisionSimplified({
                   className={`h-10 text-sm rounded-full px-5 shadow-sm ${
                     isRecording 
                       ? "bg-red-600 hover:bg-red-700 text-white" 
-                      : "border-blue-600 text-blue-600 hover:bg-blue-50"
+                      : "bg-white hover:bg-gray-50 text-blue-600 border-none"
                   }`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: "160px" 
+                  }}
                 >
                   {isRecording ? (
                     <>
@@ -483,7 +523,7 @@ export default function YogaVisionSimplified({
                   ) : (
                     <>
                       <Video className="h-4 w-4 mr-2" />
-                      Record Video
+                      <span className="text-blue-600 font-normal">Record Video</span>
                     </>
                   )}
                 </Button>
