@@ -1097,19 +1097,29 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
                       <Award className="h-5 w-5 text-pink-500 mr-2" />
                       <h4 className="font-medium">Personal Records</h4>
                     </div>
-                    <div className="space-y-2">
-                      <div className="text-sm">
-                        <div className="font-medium">Bench Press</div>
-                        <div className="text-gray-500">195 lbs × 1 rep</div>
-                      </div>
-                      <div className="text-sm">
-                        <div className="font-medium">Squat</div>
-                        <div className="text-gray-500">265 lbs × 1 rep</div>
-                      </div>
-                      <div className="text-sm">
-                        <div className="font-medium">Deadlift</div>
-                        <div className="text-gray-500">315 lbs × 1 rep</div>
-                      </div>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {personalRecords.length > 0 ? (
+                        SAMPLE_EXERCISES
+                          .filter(exercise => personalRecords.some(record => record.exerciseId === exercise.id))
+                          .map(exercise => {
+                            const bestRecord = personalRecords
+                              .filter(record => record.exerciseId === exercise.id)
+                              .sort((a, b) => b.weight - a.weight)[0];
+                            
+                            return (
+                              <div key={exercise.id} className="text-sm">
+                                <div className="font-medium">{exercise.name}</div>
+                                <div className="text-gray-500">
+                                  {bestRecord.weight} lbs × {bestRecord.reps} {bestRecord.reps === 1 ? 'rep' : 'reps'}
+                                </div>
+                              </div>
+                            );
+                          })
+                      ) : (
+                        <div className="text-sm text-gray-500 italic">
+                          No personal records yet. Complete workouts to set records.
+                        </div>
+                      )}
                     </div>
                   </Card>
                   
@@ -1118,20 +1128,65 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
                       <BarChart3 className="h-5 w-5 text-pink-500 mr-2" />
                       <h4 className="font-medium">Monthly Volume</h4>
                     </div>
-                    <div className="h-24 flex items-end justify-between gap-1 mt-2">
-                      {[40, 60, 75, 55, 80, 65, 90].map((value, i) => (
-                        <div 
-                          key={i} 
-                          className="bg-pink-200 rounded-t w-full"
-                          style={{ height: `${value}%` }}
-                        ></div>
-                      ))}
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500 mt-1">
-                      {['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7'].map((week, i) => (
-                        <div key={i}>{week}</div>
-                      ))}
-                    </div>
+                    {workoutHistory.length > 0 ? (
+                      <>
+                        <div className="h-24 flex items-end justify-between gap-1 mt-2">
+                          {/* Get volume data for last 7 workouts (or fewer if not available) */}
+                          {(() => {
+                            // Calculate total volume (weight * reps) for each workout
+                            const volumeData = workoutHistory
+                              .slice(0, 7)
+                              .map(workout => {
+                                let totalVolume = 0;
+                                workout.exercises.forEach(ex => {
+                                  ex.sets.forEach(set => {
+                                    if (set.completed) {
+                                      totalVolume += set.weight * set.reps;
+                                    }
+                                  });
+                                });
+                                return totalVolume;
+                              });
+                            
+                            // Find max volume for scaling
+                            const maxVolume = Math.max(...volumeData, 1);
+                            
+                            // Return scaled percentages (minimum 5% height for visibility)
+                            return volumeData.map((volume, i) => {
+                              const percentage = Math.max(5, Math.round((volume / maxVolume) * 100));
+                              return (
+                                <div 
+                                  key={i} 
+                                  className="bg-pink-200 rounded-t w-full relative group"
+                                  style={{ height: `${percentage}%` }}
+                                >
+                                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 
+                                      bg-gray-800 text-white text-xs px-1.5 py-0.5 rounded opacity-0 
+                                      group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                    {volume.toLocaleString()} lbs
+                                  </div>
+                                </div>
+                              );
+                            });
+                          })()}
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          {workoutHistory.slice(0, 7).map((workout, i) => {
+                            // Format date as day/month
+                            const date = workout.date;
+                            return (
+                              <div key={i} className="whitespace-nowrap overflow-hidden">
+                                {date.getMonth() + 1}/{date.getDate()}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="h-24 flex items-center justify-center text-sm text-gray-500">
+                        No workout data available
+                      </div>
+                    )}
                   </Card>
                   
                   <Card className="p-4">
@@ -1139,23 +1194,104 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
                       <TrendingUp className="h-5 w-5 text-pink-500 mr-2" />
                       <h4 className="font-medium">Workout Streak</h4>
                     </div>
-                    <div className="text-center py-2">
-                      <div className="text-4xl font-bold text-pink-500">8</div>
-                      <div className="text-sm text-gray-500">days in a row</div>
-                    </div>
-                    <div className="flex justify-between mt-3">
-                      {[1, 1, 0, 1, 1, 1, 1].map((day, i) => (
-                        <div 
-                          key={i} 
-                          className={`h-2 w-2 rounded-full ${
-                            day ? 'bg-pink-500' : 'bg-gray-200'
-                          }`}
-                        ></div>
-                      ))}
-                    </div>
-                    <div className="text-xs text-center text-gray-500 mt-1">
-                      Last 7 days
-                    </div>
+                    
+                    {(() => {
+                      // We'll calculate the current streak based on workout history
+                      if (workoutHistory.length === 0) {
+                        return (
+                          <div className="text-center py-2">
+                            <div className="text-4xl font-bold text-gray-300">0</div>
+                            <div className="text-sm text-gray-500">days in a row</div>
+                          </div>
+                        );
+                      }
+                      
+                      // Sort workouts by date (newest first)
+                      const sortedWorkouts = [...workoutHistory].sort((a, b) => 
+                        b.date.getTime() - a.date.getTime()
+                      );
+                      
+                      // Calculate streak
+                      let streak = 1;
+                      let currentDate = new Date(sortedWorkouts[0].date);
+                      currentDate.setHours(0, 0, 0, 0); // Normalize to start of day
+                      
+                      // Check if most recent workout is today or yesterday
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      
+                      const yesterday = new Date(today);
+                      yesterday.setDate(yesterday.getDate() - 1);
+                      
+                      const isActive = currentDate.getTime() === today.getTime() || 
+                                      currentDate.getTime() === yesterday.getTime();
+                      
+                      // Calculate presence of workouts in last 7 days
+                      const last7Days = [];
+                      for (let i = 6; i >= 0; i--) {
+                        const day = new Date();
+                        day.setDate(day.getDate() - i);
+                        day.setHours(0, 0, 0, 0);
+                        
+                        // Check if any workout happened on this day
+                        const hasWorkout = sortedWorkouts.some(workout => {
+                          const workoutDate = new Date(workout.date);
+                          workoutDate.setHours(0, 0, 0, 0);
+                          return workoutDate.getTime() === day.getTime();
+                        });
+                        
+                        last7Days.push(hasWorkout ? 1 : 0);
+                      }
+                      
+                      // Only count continuous streak if it's active (today or yesterday)
+                      if (isActive) {
+                        // Calculate continuous streak
+                        for (let i = 1; i < sortedWorkouts.length; i++) {
+                          const prevDate = new Date(sortedWorkouts[i].date);
+                          prevDate.setHours(0, 0, 0, 0);
+                          
+                          // Check if the previous workout was the day before the current streak
+                          const expectedPrevDate = new Date(currentDate);
+                          expectedPrevDate.setDate(expectedPrevDate.getDate() - 1);
+                          
+                          if (prevDate.getTime() === expectedPrevDate.getTime()) {
+                            streak++;
+                            currentDate = prevDate;
+                          } else {
+                            break;
+                          }
+                        }
+                      } else {
+                        // If not active, no current streak
+                        streak = 0;
+                      }
+                      
+                      return (
+                        <>
+                          <div className="text-center py-2">
+                            <div className={`text-4xl font-bold ${streak > 0 ? 'text-pink-500' : 'text-gray-300'}`}>
+                              {streak}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {streak === 1 ? 'day' : 'days'} in a row
+                            </div>
+                          </div>
+                          <div className="flex justify-between mt-3">
+                            {last7Days.map((day, i) => (
+                              <div 
+                                key={i} 
+                                className={`h-2 w-2 rounded-full ${
+                                  day ? 'bg-pink-500' : 'bg-gray-200'
+                                }`}
+                              ></div>
+                            ))}
+                          </div>
+                          <div className="text-xs text-center text-gray-500 mt-1">
+                            Last 7 days
+                          </div>
+                        </>
+                      );
+                    })()}
                   </Card>
                 </div>
               </div>
