@@ -92,8 +92,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
     channelTitle: 'Yoga With Adriene' 
   },
   'eagle': { 
-    videoId: 'cTx_VbcHCDI', 
-    title: 'Eagle Pose (Garudasana)',
+    videoId: 'la7t8YJNJeY', 
+    title: 'Eagle Pose | Garudasana',
     channelTitle: 'Yoga With Adriene' 
   },
   'pigeon': { 
