@@ -785,6 +785,42 @@ pre code {
   transition: all 0.3s ease;
 }
 
+/* Yoga pose display styles */
+.pose-mountain-level2,
+.pose-child-level2, 
+.pose-corpse-level2,
+.pose-downward_dog-level2,
+.pose-cat-cow-level2,
+.pose-forward-fold-level2 {
+  transform: scale(3);
+  transform-origin: center;
+}
+
+.pose-tree-level3,
+.pose-warrior-1-level3,
+.pose-warrior-2-level3,
+.pose-triangle-level3,
+.pose-chair-level3,
+.pose-bridge-level3 {
+  transform: scale(3);
+  transform-origin: center;
+}
+
+/* For specific poses within the multi-pose gallery */
+.pose-mountain-level2 { transform-origin: 15% 15%; }
+.pose-child-level2 { transform-origin: 50% 15%; }
+.pose-corpse-level2 { transform-origin: 85% 15%; }
+.pose-downward-dog-level2 { transform-origin: 15% 85%; }
+.pose-cat-cow-level2 { transform-origin: 50% 85%; }
+.pose-forward-fold-level2 { transform-origin: 85% 85%; }
+
+.pose-tree-level3 { transform-origin: 15% 15%; }
+.pose-warrior-1-level3 { transform-origin: 50% 15%; }
+.pose-warrior-2-level3 { transform-origin: 85% 15%; }
+.pose-triangle-level3 { transform-origin: 15% 85%; }
+.pose-chair-level3 { transform-origin: 50% 85%; }
+.pose-bridge-level3 { transform-origin: 85% 85%; }
+
 /* Silly animation for Fundi when mentioned in the tour */
 @keyframes fundiSillyAnimation {
   0% { transform: translate(63px, 8px) rotate(0deg) scale(1); }

@@ -38,7 +38,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [poseImage, setPoseImage] = useState<string | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Simplified direct image loading without complex validation
+  // Direct hardcoded image mapping based on pose ID
   useEffect(() => {
     const loadPoseImage = () => {
       // Only load if we have a valid pose ID
@@ -47,13 +47,41 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
       try {
         setIsLoadingImage(true);
         
-        // Use a much simpler approach: directly set a main path with fallbacks in the onError handler
-        // This avoids HEAD requests which might be causing timing/loading issues
-        const mainPath = `/images/yoga/${pose.id}.png`;
-        console.log(`Setting main image path for ${pose.id}: ${mainPath}`);
+        // Create a direct mapping to the source images in attached_assets
+        const poseImageMap: Record<string, string> = {
+          // Level 1-2 poses from image_1745636127273.png
+          'mountain': '/images/yoga/yoga_poses_level2.jpg',
+          'child': '/images/yoga/yoga_poses_level2.jpg',
+          'corpse': '/images/yoga/yoga_poses_level2.jpg',
+          'downward_dog': '/images/yoga/yoga_poses_level2.jpg',
+          'cat_cow': '/images/yoga/yoga_poses_level2.jpg',
+          'forward_fold': '/images/yoga/yoga_poses_level2.jpg',
+          
+          // Level 3-4 poses from image_1745636114084.png
+          'tree': '/images/yoga/yoga_poses_level3.jpg',
+          'warrior_1': '/images/yoga/yoga_poses_level3.jpg',
+          'warrior_2': '/images/yoga/yoga_poses_level3.jpg',
+          'triangle': '/images/yoga/yoga_poses_level3.jpg',
+          'chair': '/images/yoga/yoga_poses_level3.jpg',
+          'bridge': '/images/yoga/yoga_poses_level3.jpg',
+          
+          // Additional poses (using fallback external images if needed)
+          'crow': '/images/yoga/crow.jpg',
+          'half_moon': '/images/yoga/half_moon.png',
+          'eagle': '/images/yoga/eagle.png',
+          'side_plank': '/images/yoga/side_plank.png',
+          'pigeon': '/images/yoga/pigeon.jpg'
+        };
         
-        // Just set the path directly - the img element's onError will handle fallbacks if needed
-        setPoseImage(mainPath);
+        if (poseImageMap[pose.id]) {
+          setPoseImage(poseImageMap[pose.id]);
+          console.log(`Setting image path for ${pose.id}: ${poseImageMap[pose.id]}`);
+        } else {
+          // For any other poses, try the basic path
+          const fallbackPath = `/images/yoga/${pose.id}.png`;
+          setPoseImage(fallbackPath);
+          console.log(`Using fallback path for ${pose.id}: ${fallbackPath}`);
+        }
       } catch (error) {
         console.error('Error setting pose image path:', error);
         setPoseImage(null);
@@ -87,6 +115,64 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     return `https://${url}`;
   };
   
+  // Get special CSS class for positioning within the gallery images
+  const getPoseClass = (poseId: string): string => {
+    const level2Classes: Record<string, string> = {
+      'mountain': 'pose-mountain-level2',
+      'child': 'pose-child-level2',
+      'corpse': 'pose-corpse-level2',
+      'downward_dog': 'pose-downward-dog-level2',
+      'cat_cow': 'pose-cat-cow-level2',
+      'forward_fold': 'pose-forward-fold-level2'
+    };
+    
+    const level3Classes: Record<string, string> = {
+      'tree': 'pose-tree-level3',
+      'warrior_1': 'pose-warrior-1-level3',
+      'warrior_2': 'pose-warrior-2-level3',
+      'triangle': 'pose-triangle-level3',
+      'chair': 'pose-chair-level3',
+      'bridge': 'pose-bridge-level3'
+    };
+    
+    // Return the specific CSS class for the pose if it exists
+    if (level2Classes[poseId]) return level2Classes[poseId];
+    if (level3Classes[poseId]) return level3Classes[poseId];
+    
+    // Default to a standard class
+    return 'pose-default';
+  };
+  
+  // Get specific positioning styles for each pose in the gallery
+  const getPositionStyle = (poseId: string): React.CSSProperties => {
+    // Define position adjustments for poses in level 2 gallery
+    const level2Styles: Record<string, React.CSSProperties> = {
+      'mountain': { objectPosition: 'left top', objectFit: 'cover' },
+      'child': { objectPosition: 'center top', objectFit: 'cover' },
+      'corpse': { objectPosition: 'right top', objectFit: 'cover' },
+      'downward_dog': { objectPosition: 'left bottom', objectFit: 'cover' },
+      'cat_cow': { objectPosition: 'center bottom', objectFit: 'cover' },
+      'forward_fold': { objectPosition: 'right bottom', objectFit: 'cover' }
+    };
+    
+    // Define position adjustments for poses in level 3 gallery
+    const level3Styles: Record<string, React.CSSProperties> = {
+      'tree': { objectPosition: 'left top', objectFit: 'cover' },
+      'warrior_1': { objectPosition: 'center top', objectFit: 'cover' },
+      'warrior_2': { objectPosition: 'right top', objectFit: 'cover' },
+      'triangle': { objectPosition: 'left bottom', objectFit: 'cover' },
+      'chair': { objectPosition: 'center bottom', objectFit: 'cover' },
+      'bridge': { objectPosition: 'right bottom', objectFit: 'cover' }
+    };
+    
+    // Return the specific style for the pose if it exists
+    if (level2Styles[poseId]) return level2Styles[poseId];
+    if (level3Styles[poseId]) return level3Styles[poseId];
+    
+    // Default style
+    return { objectFit: 'cover', objectPosition: 'center' };
+  };
+
   // Get fallback image URL based on pose type/category
   const getFallbackImageUrl = () => {
     // Define the valid categories that we're using in our system
@@ -190,14 +276,17 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   <span className="text-xs text-muted-foreground">Loading pose image...</span>
                 </div>
               ) : (
-                <img 
-                  src={poseImage || formatImageUrl(pose.imageUrl || '')} 
-                  alt={pose.name} 
-                  className="object-cover w-full h-full"
-                  onError={(e) => {
-                    e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
-                  }}
-                />
+                <div className="w-full h-full relative overflow-hidden">
+                  <img 
+                    src={poseImage || formatImageUrl(pose.imageUrl || '')} 
+                    alt={pose.name} 
+                    className={`object-cover w-full h-full ${getPoseClass(pose.id)}`}
+                    onError={(e) => {
+                      e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
+                    }}
+                    style={getPositionStyle(pose.id)}
+                  />
+                </div>
               )}
             </div>
             
@@ -284,14 +373,17 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                       <span className="text-sm text-muted-foreground">Loading pose image...</span>
                     </div>
                   ) : (
-                    <img 
-                      src={poseImage || formatImageUrl(pose.imageUrl || '')} 
-                      alt={pose.name} 
-                      className="object-cover w-full h-full"
-                      onError={(e) => {
-                        e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
-                      }}
-                    />
+                    <div className="w-full h-full relative overflow-hidden">
+                      <img 
+                        src={poseImage || formatImageUrl(pose.imageUrl || '')} 
+                        alt={pose.name} 
+                        className={`object-cover w-full h-full ${getPoseClass(pose.id)}`}
+                        onError={(e) => {
+                          e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
+                        }}
+                        style={getPositionStyle(pose.id)}
+                      />
+                    </div>
                   )}
                 </div>
                 
