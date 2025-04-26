@@ -53,8 +53,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
   
   // Level 3 - Intermediate poses
   'tree': { 
-    videoId: 'yVE4tAJBJSE', 
-    title: 'Tree Pose (Vrksasana)',
+    videoId: 'Fr5kiIygm0c', 
+    title: 'Tree Pose | Vrksasana',
     channelTitle: 'Yoga With Adriene' 
   },
   'warrior_1': { 
