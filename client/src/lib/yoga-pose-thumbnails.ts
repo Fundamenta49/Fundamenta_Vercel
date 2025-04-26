@@ -70,8 +70,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
   
   // Level 4 - Intermediate poses
   'triangle': { 
-    videoId: 'upP-nMdCX5M', 
-    title: 'Triangle Pose (Trikonasana)',
+    videoId: 'IuwhGXTc2f0', 
+    title: 'Triangle Pose | Trikonasana',
     channelTitle: 'Yoga With Adriene' 
   },
   'chair': { 
