@@ -304,7 +304,7 @@ const YogaSpecificExercisesEnhanced = () => {
           )}
           
           <Tabs defaultValue="beginner" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full grid grid-cols-3 bg-pink-100">
+            <TabsList className="w-full grid grid-cols-4 bg-pink-100">
               <TabsTrigger value="beginner" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
                 Beginner
               </TabsTrigger>
@@ -313,6 +313,9 @@ const YogaSpecificExercisesEnhanced = () => {
               </TabsTrigger>
               <TabsTrigger value="advanced" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
                 Advanced
+              </TabsTrigger>
+              <TabsTrigger value="recommendations" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
+                For You
               </TabsTrigger>
             </TabsList>
             
@@ -383,6 +386,14 @@ const YogaSpecificExercisesEnhanced = () => {
                   />
                 ))}
               </div>
+            </TabsContent>
+            
+            {/* Recommendations Tab */}
+            <TabsContent value="recommendations" className="pt-4">
+              <ActivitySpecificRecommendations 
+                activityType="yoga" 
+                onStartWorkout={handleStartWorkout}
+              />
             </TabsContent>
           </Tabs>
         </div>

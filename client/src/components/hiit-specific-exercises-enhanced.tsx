@@ -13,6 +13,9 @@ import {
   HIIT_EMOM_VIDEOS, 
   HIIT_CIRCUIT_VIDEOS 
 } from '@/lib/section-fallbacks';
+import ActivitySpecificRecommendations from './activity-specific-recommendations';
+import { Workout, HIITWorkout } from '@/lib/workout-generation-service';
+import { ExerciseType } from '@/modules/active-you/context/module-context';
 
 // Define HIIT Exercise interface that extends the BaseExercise
 interface HIITExercise extends BaseExercise {
@@ -294,6 +297,8 @@ export const HIITSpecificExercisesEnhanced = () => {
   const [error, setError] = useState<string | null>(null);
   // Track which exercises have been closed by the user
   const [closedExercises, setClosedExercises] = useState<Record<string, boolean>>({});
+  // Store AI-generated workout plans
+  const [aiWorkout, setAiWorkout] = useState<HIITWorkout | null>(null);
   
   // Find video for an exercise using the YouTube API
   const findExerciseVideo = async (exercise: HIITExercise) => {
