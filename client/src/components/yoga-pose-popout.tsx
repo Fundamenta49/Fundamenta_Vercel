@@ -69,14 +69,13 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         setPoseImage(commonImagePath);
         console.log(`Using common image for ${pose.id}: ${commonImagePath}`);
         
-        if (poseData) {
-          // Set both the JSON path and the common image as possible paths
-          // Always putting common image first since we know it exists
-          setPossiblePaths([commonImagePath, poseData.filename]);
-        } else {
-          // If pose somehow not found in our JSON (shouldn't happen), still use the common image
+        // Only set the common image path that we know exists
+        // Don't try to use any other paths since they don't exist
+        setPossiblePaths([commonImagePath]);
+        
+        // Log for debugging
+        if (!poseData) {
           console.warn(`Pose ${pose.id} not found in poses_with_paths.json, using common image`);
-          setPossiblePaths([commonImagePath]);
         }
       } catch (error) {
         console.error('Error setting pose image path:', error);
@@ -274,30 +273,13 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               ) : (
                 <div className="w-full h-full relative overflow-hidden">
                   <img 
-                    src={poseImage || formatImageUrl(pose.imageUrl || '')} 
+                    src="/images/yoga-poses/original_yoga_image.jpg" 
                     alt={pose.name} 
                     className={`object-cover w-full h-full ${getPoseClass(pose.id)}`}
                     onError={(e) => {
-                      // Try the next path in our possiblePaths array
-                      if (possiblePaths && possiblePaths.length > 0) {
-                        // Find the current path in our array of possibilities
-                        const currentSrc = e.currentTarget.src;
-                        const currentIndex = possiblePaths.findIndex(path => 
-                          currentSrc.includes(path.replace(/^\//, ''))
-                        );
-                        
-                        // If we found it and there's a next path, try that
-                        if (currentIndex !== -1 && currentIndex < possiblePaths.length - 1) {
-                          console.log(`Image path failed: ${currentSrc}, trying next path: ${possiblePaths[currentIndex + 1]}`);
-                          e.currentTarget.src = possiblePaths[currentIndex + 1];
-                          return;
-                        }
-                      }
-                      
-                      // If we've exhausted all possible paths or couldn't find the current path,
-                      // fall back to our category-based external images
-                      console.log(`All image paths failed for ${pose.id}, using external fallback`);
-                      e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
+                      // If the direct path fails, log and use external fallback
+                      console.log(`Image path failed for ${pose.id}, using external fallback`);
+                      e.currentTarget.src = `${getFallbackImageUrl()}?auto=format&fit=crop&w=764&q=80`;
                     }}
                     style={getPositionStyle(pose.id)}
                   />
