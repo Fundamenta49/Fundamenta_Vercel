@@ -332,7 +332,7 @@ export default function YogaVisionSimplified({
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "220px",
+                    maxHeight: "228px", /* 8px taller */
                     aspectRatio: "16/9"
                   }}
                 />
@@ -382,7 +382,7 @@ export default function YogaVisionSimplified({
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "220px",
+                    maxHeight: "228px", /* 8px taller */
                     aspectRatio: "16/9"
                   }}
                 />
