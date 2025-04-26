@@ -42,6 +42,7 @@ import {
   notifyRunTracked, 
   notifyMeditationCompleted 
 } from '@/lib/active-you-ai-integration';
+import { useLocation } from 'wouter';
 
 // Re-export the StretchingIcon for backward compatibility
 export { StretchingIcon };
@@ -58,6 +59,9 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
   const [showPointsEarned, setShowPointsEarned] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
   const [inChallenge, setInChallenge] = useState(false);
+  
+  // Navigation hooks
+  const [, navigate] = useLocation();
   
   // For demo purposes, we'll use a hardcoded user ID
   const userId = 1;
@@ -99,6 +103,13 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
     setTimeout(() => {
       setShowPointsEarned(false);
     }, 3000);
+  };
+  
+  // Handle navigation to challenge details page
+  const handleViewChallenge = () => {
+    console.log('Viewing challenge details for:', defaultTab);
+    // Navigate to the arcade challenges page
+    navigate('/arcade?tab=challenges');
   };
   
   // Render the appropriate AI feature button based on exercise type
@@ -344,7 +355,11 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
                 </p>
               </div>
             </div>
-            <Button variant="outline" className="bg-white border-amber-200 text-amber-700 hover:bg-amber-50">
+            <Button 
+              onClick={handleViewChallenge}
+              variant="outline" 
+              className="bg-white border-amber-200 text-amber-700 hover:bg-amber-50"
+            >
               View Challenge
             </Button>
           </div>
