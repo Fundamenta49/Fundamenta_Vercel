@@ -334,6 +334,24 @@ export const HIITSpecificExercisesEnhanced = () => {
     // For now, just log the action
   };
   
+  // Handle start of an AI-generated workout
+  const handleStartWorkout = (workout: Workout) => {
+    console.log("Starting HIIT workout:", workout);
+    
+    // Since this is the HIIT component, we can safely assume this is a HIIT workout
+    const hiitWorkout = workout as HIITWorkout;
+    
+    // Set the workout in our state
+    setAiWorkout(hiitWorkout);
+    
+    // Show success notification
+    console.log("Workout plan ready:", hiitWorkout);
+    
+    // Switch to appropriate tab based on workout type
+    // In a real implementation, we would determine the protocol from the workout
+    setActiveTab('tabata');
+  };
+  
   return (
     <div className="mx-auto w-full max-w-4xl">
       <Card className="shadow-md border-pink-100">
@@ -352,7 +370,7 @@ export const HIITSpecificExercisesEnhanced = () => {
           )}
           
           <Tabs defaultValue="tabata" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full grid grid-cols-4 bg-pink-100">
+            <TabsList className="w-full grid grid-cols-5 bg-pink-100">
               <TabsTrigger value="tabata" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
                 Tabata
               </TabsTrigger>
@@ -364,6 +382,9 @@ export const HIITSpecificExercisesEnhanced = () => {
               </TabsTrigger>
               <TabsTrigger value="circuit" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
                 Circuit
+              </TabsTrigger>
+              <TabsTrigger value="recommendations" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
+                For You
               </TabsTrigger>
             </TabsList>
             
@@ -464,6 +485,14 @@ export const HIITSpecificExercisesEnhanced = () => {
                   />
                 ))}
               </div>
+            </TabsContent>
+            
+            {/* Recommendations Tab */}
+            <TabsContent value="recommendations" className="pt-4">
+              <ActivitySpecificRecommendations 
+                activityType="hiit" 
+                onStartWorkout={handleStartWorkout}
+              />
             </TabsContent>
           </Tabs>
         </div>
