@@ -112,27 +112,32 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   
   // Get special CSS class for positioning within the gallery images
   const getPoseClass = (poseId: string): string => {
-    const level2Classes: Record<string, string> = {
-      'mountain': 'pose-mountain-level2',
-      'child': 'pose-child-level2',
-      'corpse': 'pose-corpse-level2',
-      'downward_dog': 'pose-downward-dog-level2',
-      'cat_cow': 'pose-cat-cow-level2',
-      'forward_fold': 'pose-forward-fold-level2'
+    // Group poses by level for easier styling
+    const levelMapping: Record<string, number> = {
+      // Level 1
+      'mountain': 1, 'child': 1, 'corpse': 1,
+      
+      // Level 2
+      'downward_dog': 2, 'cat_cow': 2, 'forward_fold': 2,
+      
+      // Level 3
+      'tree': 3, 'warrior_1': 3, 'warrior_2': 3, 
+      
+      // Level 4
+      'triangle': 4, 'chair': 4, 'bridge': 4,
+      
+      // Level 5
+      'half_moon': 5, 'eagle': 5, 'pigeon': 5,
+      
+      // Level 6
+      'crow': 6, 'side_plank': 6, 'boat': 6
     };
     
-    const level3Classes: Record<string, string> = {
-      'tree': 'pose-tree-level3',
-      'warrior_1': 'pose-warrior-1-level3',
-      'warrior_2': 'pose-warrior-2-level3',
-      'triangle': 'pose-triangle-level3',
-      'chair': 'pose-chair-level3',
-      'bridge': 'pose-bridge-level3'
-    };
-    
-    // Return the specific CSS class for the pose if it exists
-    if (level2Classes[poseId]) return level2Classes[poseId];
-    if (level3Classes[poseId]) return level3Classes[poseId];
+    // Generate a CSS class based on the pose ID and level
+    const level = levelMapping[poseId] || 0;
+    if (level > 0) {
+      return `pose-level-${level} pose-${poseId}`;
+    }
     
     // Default to a standard class
     return 'pose-default';
@@ -140,29 +145,50 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   
   // Get specific positioning styles for each pose in the gallery
   const getPositionStyle = (poseId: string): React.CSSProperties => {
-    // Define position adjustments for poses in level 2 gallery
-    const level2Styles: Record<string, React.CSSProperties> = {
-      'mountain': { objectPosition: 'left top', objectFit: 'cover' },
-      'child': { objectPosition: 'center top', objectFit: 'cover' },
-      'corpse': { objectPosition: 'right top', objectFit: 'cover' },
-      'downward_dog': { objectPosition: 'left bottom', objectFit: 'cover' },
-      'cat_cow': { objectPosition: 'center bottom', objectFit: 'cover' },
-      'forward_fold': { objectPosition: 'right bottom', objectFit: 'cover' }
+    // Group poses by level
+    const level1Styles: Record<string, React.CSSProperties> = {
+      'mountain': { objectPosition: '0% 0%', objectFit: 'cover' },
+      'child': { objectPosition: '50% 0%', objectFit: 'cover' },
+      'corpse': { objectPosition: '100% 0%', objectFit: 'cover' }
     };
     
-    // Define position adjustments for poses in level 3 gallery
+    const level2Styles: Record<string, React.CSSProperties> = {
+      'downward_dog': { objectPosition: '0% 20%', objectFit: 'cover' },
+      'cat_cow': { objectPosition: '50% 20%', objectFit: 'cover' },
+      'forward_fold': { objectPosition: '100% 20%', objectFit: 'cover' }
+    };
+    
     const level3Styles: Record<string, React.CSSProperties> = {
-      'tree': { objectPosition: 'left top', objectFit: 'cover' },
-      'warrior_1': { objectPosition: 'center top', objectFit: 'cover' },
-      'warrior_2': { objectPosition: 'right top', objectFit: 'cover' },
-      'triangle': { objectPosition: 'left bottom', objectFit: 'cover' },
-      'chair': { objectPosition: 'center bottom', objectFit: 'cover' },
-      'bridge': { objectPosition: 'right bottom', objectFit: 'cover' }
+      'tree': { objectPosition: '0% 40%', objectFit: 'cover' },
+      'warrior_1': { objectPosition: '50% 40%', objectFit: 'cover' },
+      'warrior_2': { objectPosition: '100% 40%', objectFit: 'cover' }
+    };
+    
+    const level4Styles: Record<string, React.CSSProperties> = {
+      'triangle': { objectPosition: '0% 60%', objectFit: 'cover' },
+      'chair': { objectPosition: '50% 60%', objectFit: 'cover' },
+      'bridge': { objectPosition: '100% 60%', objectFit: 'cover' }
+    };
+    
+    const level5Styles: Record<string, React.CSSProperties> = {
+      'half_moon': { objectPosition: '0% 80%', objectFit: 'cover' },
+      'eagle': { objectPosition: '50% 80%', objectFit: 'cover' },
+      'pigeon': { objectPosition: '100% 80%', objectFit: 'cover' }
+    };
+    
+    const level6Styles: Record<string, React.CSSProperties> = {
+      'crow': { objectPosition: '0% 100%', objectFit: 'cover' },
+      'side_plank': { objectPosition: '50% 100%', objectFit: 'cover' },
+      'boat': { objectPosition: '100% 100%', objectFit: 'cover' }
     };
     
     // Return the specific style for the pose if it exists
+    if (level1Styles[poseId]) return level1Styles[poseId];
     if (level2Styles[poseId]) return level2Styles[poseId];
     if (level3Styles[poseId]) return level3Styles[poseId];
+    if (level4Styles[poseId]) return level4Styles[poseId];
+    if (level5Styles[poseId]) return level5Styles[poseId];
+    if (level6Styles[poseId]) return level6Styles[poseId];
     
     // Default style
     return { objectFit: 'cover', objectPosition: 'center' };
@@ -283,6 +309,10 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                     }}
                     style={getPositionStyle(pose.id)}
                   />
+                  {/* Small pose ID label in corner to help identify which part of the image is shown */}
+                  <div className="absolute bottom-1 right-1 bg-black/30 text-white text-[8px] px-1 rounded">
+                    {pose.id}
+                  </div>
                 </div>
               )}
             </div>
@@ -382,6 +412,9 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                         }}
                         style={getPositionStyle(pose.id)}
                       />
+                      <div className="absolute bottom-2 right-2 bg-black/40 text-white text-xs px-2 py-1 rounded">
+                        {pose.difficulty} • {pose.id}
+                      </div>
                     </div>
                   )}
                 </div>
