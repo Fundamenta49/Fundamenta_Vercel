@@ -49,36 +49,52 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         
         // Create a direct mapping to the source images in attached_assets
         const poseImageMap: Record<string, string> = {
-          // Level 1-2 poses from image_1745636127273.png
-          'mountain': '/images/yoga/yoga_poses_level2.jpg',
-          'child': '/images/yoga/yoga_poses_level2.jpg',
-          'corpse': '/images/yoga/yoga_poses_level2.jpg',
-          'downward_dog': '/images/yoga/yoga_poses_level2.jpg',
-          'cat_cow': '/images/yoga/yoga_poses_level2.jpg',
-          'forward_fold': '/images/yoga/yoga_poses_level2.jpg',
+          // Level 1 poses (beginner basics) from image_1745636127273.png
+          'mountain': '/images/yoga/level1/mountain.jpg',
+          'child': '/images/yoga/level1/child.jpg',
+          'corpse': '/images/yoga/level1/corpse.jpg',
           
-          // Level 3-4 poses from image_1745636114084.png
-          'tree': '/images/yoga/yoga_poses_level3.jpg',
-          'warrior_1': '/images/yoga/yoga_poses_level3.jpg',
-          'warrior_2': '/images/yoga/yoga_poses_level3.jpg',
-          'triangle': '/images/yoga/yoga_poses_level3.jpg',
-          'chair': '/images/yoga/yoga_poses_level3.jpg',
-          'bridge': '/images/yoga/yoga_poses_level3.jpg',
+          // Level 2 poses (beginner progression) from image_1745636127273.png
+          'downward_dog': '/images/yoga/level2/downward_dog.jpg',
+          'cat_cow': '/images/yoga/level2/cat_cow.jpg',
+          'forward_fold': '/images/yoga/level2/forward_fold.jpg',
           
-          // Additional poses (using fallback external images if needed)
-          'crow': '/images/yoga/crow.jpg',
-          'half_moon': '/images/yoga/half_moon.png',
-          'eagle': '/images/yoga/eagle.png',
-          'side_plank': '/images/yoga/side_plank.png',
-          'pigeon': '/images/yoga/pigeon.jpg'
+          // Level 3 poses (intermediate) from image_1745636114084.png
+          'tree': '/images/yoga/level3/tree.jpg', 
+          'warrior_1': '/images/yoga/level3/warrior_1.jpg',
+          'warrior_2': '/images/yoga/level3/warrior_2.jpg',
+          
+          // Level 4 poses (intermediate progression) from image_1745636114084.png
+          'triangle': '/images/yoga/level4/triangle.jpg',
+          'chair': '/images/yoga/level4/chair.jpg',
+          'bridge': '/images/yoga/level4/bridge.jpg',
+          
+          // Level 5 poses (advanced) - temporarily using fallbacks until we add more images
+          'half_moon': '/images/yoga/level5/half_moon.jpg',
+          'eagle': '/images/yoga/level5/eagle.jpg',
+          'pigeon': '/images/yoga/level5/pigeon.jpg',
+          
+          // Level 6 poses (expert) - temporarily using fallbacks until we add more images
+          'crow': '/images/yoga/level6/crow.jpg',
+          'side_plank': '/images/yoga/level6/side_plank.jpg',
+          'boat': '/images/yoga/level6/boat.jpg'
         };
         
+        // Use pose-specific map image path if we have one
         if (poseImageMap[pose.id]) {
           setPoseImage(poseImageMap[pose.id]);
           console.log(`Setting image path for ${pose.id}: ${poseImageMap[pose.id]}`);
         } else {
-          // For any other poses, try the basic path
-          const fallbackPath = `/images/yoga/${pose.id}.png`;
+          // For any other poses, try standard paths in this priority order:
+          const possiblePaths = [
+            `/images/yoga/${pose.id}.jpg`,
+            `/images/yoga/${pose.id}.png`,
+            `/images/yoga-poses/${pose.id}.jpg`,
+            `/images/yoga-poses/${pose.id}.png`
+          ];
+          
+          // Use the first path by default
+          const fallbackPath = possiblePaths[0];
           setPoseImage(fallbackPath);
           console.log(`Using fallback path for ${pose.id}: ${fallbackPath}`);
         }
