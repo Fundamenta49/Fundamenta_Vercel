@@ -81,30 +81,30 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     // Create a mapping of pose IDs to specific images for unique poses
     const poseSpecificImages: Record<string, string> = {
       // Level 1-2 Poses
-      'mountain': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773',
-      'child': 'https://images.unsplash.com/photo-1601325039356-6bbe403a13bf',
-      'corpse': 'https://images.unsplash.com/photo-1588286840104-8957b019727f',
-      'downward_dog': 'https://images.unsplash.com/photo-1610508500445-a4592435e5d7',
-      'cat_cow': 'https://images.unsplash.com/photo-1526717081708-697e639c20ac',
-      'forward_fold': 'https://images.unsplash.com/photo-1594050753835-0e9894479f5a',
+      'mountain': 'https://images.pexels.com/photos/6698513/pexels-photo-6698513.jpeg',
+      'child': 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg',
+      'corpse': 'https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg',
+      'downward_dog': 'https://images.pexels.com/photos/5384538/pexels-photo-5384538.jpeg',
+      'cat_cow': 'https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg',
+      'forward_fold': 'https://images.pexels.com/photos/6111616/pexels-photo-6111616.jpeg',
       
       // Level 3-4 Poses
-      'tree': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b',
-      'warrior_1': 'https://images.unsplash.com/photo-1508672019048-805c876b67e2',
-      'warrior_2': 'https://images.unsplash.com/photo-1517374148663-13d26488791e',
-      'triangle': 'https://images.unsplash.com/photo-1599586122309-454cb614a86f',
-      'chair': 'https://images.unsplash.com/photo-1618257205127-a0bf2142e6e3',
-      'bridge': 'https://images.unsplash.com/photo-1592431698394-e5ed80f2c0a9',
+      'tree': 'https://images.pexels.com/photos/6453396/pexels-photo-6453396.jpeg',
+      'warrior_1': 'https://images.pexels.com/photos/6453398/pexels-photo-6453398.jpeg',
+      'warrior_2': 'https://images.pexels.com/photos/4534687/pexels-photo-4534687.jpeg',
+      'triangle': 'https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg',
+      'chair': 'https://images.pexels.com/photos/3822134/pexels-photo-3822134.jpeg',
+      'bridge': 'https://images.pexels.com/photos/3823207/pexels-photo-3823207.jpeg',
       
       // Level 5 Poses
-      'half_moon': 'https://images.unsplash.com/photo-1598971639058-bb01d3c9d72e',
-      'eagle': 'https://images.unsplash.com/photo-1552286450-4a669f880062',
-      'pigeon': 'https://images.unsplash.com/photo-1600618528240-fb9fc964eca8',
+      'half_moon': 'https://images.pexels.com/photos/3823185/pexels-photo-3823185.jpeg',
+      'eagle': 'https://images.pexels.com/photos/6957882/pexels-photo-6957882.jpeg',
+      'pigeon': 'https://images.pexels.com/photos/3823031/pexels-photo-3823031.jpeg',
       
       // Level 6 Poses
-      'crow': 'https://images.unsplash.com/photo-1599587867649-a99ea56dd151',
-      'side_plank': 'https://images.unsplash.com/photo-1597175587481-a65296c7d6af',
-      'boat': 'https://images.unsplash.com/photo-1566027310016-5f05444ccd1b'
+      'crow': 'https://images.pexels.com/photos/6453377/pexels-photo-6453377.jpeg',
+      'side_plank': 'https://images.pexels.com/photos/6453406/pexels-photo-6453406.jpeg',
+      'boat': 'https://images.pexels.com/photos/4058411/pexels-photo-4058411.jpeg'
     };
     
     // First try to get a pose-specific image
