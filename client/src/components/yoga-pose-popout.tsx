@@ -311,7 +311,16 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         </Card>
       </DialogTrigger>
       
-      <DialogContent className="max-w-4xl w-[94vw] sm:w-[90vw] max-h-[85vh] overflow-y-auto mx-auto p-0 rounded-xl shadow-lg">
+      <DialogContent 
+        className="max-w-4xl overflow-y-auto p-0 rounded-xl shadow-lg mx-auto"
+        style={{
+          width: "94vw",
+          maxHeight: "90vh",
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)"
+        }}>
         {/* Header with clean, minimal design - responsive for mobile and desktop */}
         <div className="px-4 sm:px-6 pt-4 sm:pt-6 relative">
           <div className="flex justify-between items-start mb-3 sm:mb-4">

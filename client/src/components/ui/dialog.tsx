@@ -63,7 +63,7 @@ const DialogContent = React.forwardRef<
             left: '50%',
             top: '50%',
             zIndex: 50,
-            width: '90%',
+            width: '94vw',
             maxWidth: '450px',
             maxHeight: '85vh',
             transform: 'translate(-50%, -50%)',
@@ -114,14 +114,16 @@ const DialogContent = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed left-[50%] top-[50%] z-50 grid gap-4 border bg-background p-0 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:translate-x-[-50%] data-[state=open]:translate-y-[-50%] data-[state=closed]:translate-x-[-50%] data-[state=closed]:translate-y-[-50%] rounded-xl",
+            "fixed z-50 grid gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-xl",
             className
           )}
           style={{
-            width: "94vw",
+            width: "95vw",
             maxWidth: "900px",
             maxHeight: "85vh",
             overflow: "auto",
+            left: "50%",
+            top: "50%",
             transform: "translate(-50%, -50%)"
           }}
           {...props}
