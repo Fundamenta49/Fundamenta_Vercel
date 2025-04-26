@@ -265,55 +265,12 @@ export default function YogaVisionSimplified({
 
   return (
     <div className="w-full">
-      {/* Top Part - Reference image and camera toggle */}
-      <div className="mb-3">
-        {/* Reference Image from Video */}
-        <div className="relative mb-2 bg-white rounded-md overflow-hidden">
-          <img 
-            src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
-            alt={`${selectedPose?.name || 'Yoga pose'} reference`}
-            className="w-full object-cover rounded-md"
-            style={{ aspectRatio: "16/9", maxHeight: "180px" }}
-            onError={(e) => {
-              const videoInfo = getYogaPoseVideoInfo(poseId);
-              if (videoInfo?.videoId) {
-                e.currentTarget.src = `https://img.youtube.com/vi/${videoInfo.videoId}/hqdefault.jpg`;
-              } else {
-                e.currentTarget.src = `https://img.youtube.com/vi/hQN6j3UxIQ0/hqdefault.jpg`;
-              }
-            }}
-          />
-          {/* Camera toggle as overlay button */}
-          <div className="absolute top-2 right-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={toggleCameraMode}
-              className="rounded-full h-7 text-xs px-3 bg-black/40 hover:bg-black/50 text-white"
-            >
-              {useCameraMode ? 
-                <><Upload className="h-3 w-3 mr-1" /> <span className="whitespace-nowrap">Use photos</span></> : 
-                <><Camera className="h-3 w-3 mr-1" /> <span className="whitespace-nowrap">Use camera</span></>
-              }
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Middle Part - Camera/Upload area */}
-      <div className="mb-4">
-        <input 
-          type="file" 
-          accept="image/*" 
-          onChange={handleFileSelect} 
-          className="hidden" 
-          ref={fileInputRef}
-        />
-        
+      {/* Single streamlined container for image capture */}
+      <div className="relative">
         {useCameraMode ? (
           // Camera mode
           !imagePreview ? (
-            <div className="w-full">
+            <div className="w-full pb-2">
               <Webcam
                 audio={false}
                 ref={webcamRef}
@@ -324,7 +281,7 @@ export default function YogaVisionSimplified({
                   width: { ideal: 640 },
                   height: { ideal: 360 }
                 }}
-                className="w-full rounded-md mx-auto mb-3 object-cover"
+                className="w-full rounded-md mx-auto mb-2 object-cover"
                 style={{ 
                   maxWidth: "100%", 
                   height: "auto",
@@ -332,100 +289,124 @@ export default function YogaVisionSimplified({
                   aspectRatio: "16/9"
                 }}
               />
+              {/* Center-positioned capture button */}
               <div className="flex justify-center">
                 <Button 
                   onClick={handleWebcamCapture} 
                   variant="default"
                   size="sm"
-                  className="h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white"
+                  className="h-10 text-sm rounded-full px-5 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
                 >
-                  <Camera className="h-3 w-3 mr-1.5" />
+                  <Camera className="h-4 w-4 mr-2" />
                   Capture Photo
                 </Button>
               </div>
             </div>
           ) : (
             // Show captured image
-            <div className="text-center w-full">
-              <div className="relative w-full mx-auto mb-3">
+            <div className="w-full pb-2">
+              <div className="relative w-full mx-auto">
                 <img 
                   src={imagePreview} 
                   alt="Yoga pose capture" 
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "260px",
+                    maxHeight: "300px",
                     aspectRatio: "16/9"
                   }}
                 />
-              </div>
-              <div className="flex justify-center">
-                <Button 
-                  onClick={() => handleReset()} 
-                  variant="ghost" 
-                  size="sm"
-                  className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
-                >
-                  <Camera className="h-3 w-3 mr-1.5" />
-                  Retake
-                </Button>
+                {/* Small retake button overlay */}
+                <div className="absolute bottom-2 left-2">
+                  <Button 
+                    onClick={() => handleReset()}
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs rounded-full px-3 bg-black/40 hover:bg-black/50 text-white"
+                  >
+                    <Camera className="h-3 w-3 mr-1" />
+                    Retake
+                  </Button>
+                </div>
               </div>
             </div>
           )
         ) : (
           // File upload mode
           !imagePreview ? (
-            <div className="flex flex-col items-center justify-center p-10 rounded-md bg-gray-50 border border-dashed border-gray-200">
-              <Camera className="h-10 w-10 mb-3 text-gray-400" />
-              <p className="text-sm text-muted-foreground mb-3">No image selected</p>
+            <div className="flex flex-col items-center justify-center py-5 px-2 bg-gray-50 rounded-lg">
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={handleFileSelect} 
+                className="hidden" 
+                ref={fileInputRef}
+              />
               <Button 
                 onClick={handleCameraClick} 
-                variant="ghost"
+                variant="default"
                 size="sm"
-                className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
+                className="h-10 text-sm rounded-full px-5 bg-blue-600 hover:bg-blue-700 text-white shadow-sm mb-2"
               >
-                <Upload className="h-3 w-3 mr-1.5" />
-                Upload Image
+                <Upload className="h-4 w-4 mr-2" />
+                Use Photos
               </Button>
+              <p className="text-xs text-muted-foreground">Upload a photo of your pose</p>
             </div>
           ) : (
-            <div className="text-center w-full">
-              <div className="relative w-full mx-auto mb-3">
+            <div className="w-full pb-2">
+              <div className="relative w-full mx-auto">
                 <img 
                   src={imagePreview} 
                   alt="Yoga pose preview" 
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "260px",
+                    maxHeight: "300px",
                     aspectRatio: "16/9"
                   }}
                 />
-              </div>
-              <div className="flex justify-center">
-                <Button 
-                  onClick={handleCameraClick} 
-                  variant="ghost" 
-                  size="sm"
-                  className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
-                >
-                  <Upload className="h-3 w-3 mr-1.5" />
-                  Change Image
-                </Button>
+                {/* Small change button overlay */}
+                <div className="absolute bottom-2 left-2">
+                  <Button 
+                    onClick={handleCameraClick}
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs rounded-full px-3 bg-black/40 hover:bg-black/50 text-white"
+                  >
+                    <Upload className="h-3 w-3 mr-1" />
+                    Change
+                  </Button>
+                </div>
               </div>
             </div>
           )
         )}
+
+        {/* Mode toggle as overlay in top-right */}
+        <div className="absolute top-2 right-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={toggleCameraMode}
+            className="rounded-full h-7 text-xs px-3 bg-black/40 hover:bg-black/50 text-white"
+          >
+            {useCameraMode ? 
+              <><Upload className="h-3 w-3 mr-1" /> <span className="whitespace-nowrap">Use photos</span></> : 
+              <><Camera className="h-3 w-3 mr-1" /> <span className="whitespace-nowrap">Use camera</span></>
+            }
+          </Button>
+        </div>
       </div>
 
-      {/* Bottom part - Action buttons */}
-      <div className="flex justify-between mt-4">
+      {/* Action buttons - styled more like the screenshot */}
+      <div className="flex justify-between mt-2">
         {onClose && (
           <Button 
             variant="ghost" 
             onClick={onClose}
             size="sm"
-            className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
+            className="h-9 text-sm rounded-full px-5 bg-gray-200 hover:bg-gray-300 text-gray-800"
           >
             Back
           </Button>
@@ -433,18 +414,18 @@ export default function YogaVisionSimplified({
         <Button
           onClick={handleSubmitForAnalysis}
           disabled={!selectedImage || isAnalyzing}
-          className="flex items-center h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white ml-auto"
+          className="flex items-center h-9 text-sm rounded-full px-5 bg-blue-600 hover:bg-blue-700 text-white ml-auto"
           size="sm"
         >
           {isAnalyzing ? (
             <>
-              <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               Analyzing...
             </>
           ) : (
             <>
               Analyze
-              <ArrowRight className="h-3 w-3 ml-1.5" />
+              <ArrowRight className="h-4 w-4 ml-2" />
             </>
           )}
         </Button>
