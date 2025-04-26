@@ -63,8 +63,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
     channelTitle: 'Yoga With Adriene' 
   },
   'warrior_2': { 
-    videoId: 'zabes0DLQvk', 
-    title: 'Warrior II (Virabhadrasana II)',
+    videoId: 'DoC5mh9GxF4', 
+    title: 'Warrior 2 Pose | Virabhadrasana II',
     channelTitle: 'Yoga With Adriene' 
   },
   
