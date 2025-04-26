@@ -400,21 +400,21 @@ export default function YogaVisionEnhanced({
   const userPoseAchievement = userProgress?.poseAchievements?.[selectedPoseId];
 
   return (
-    <div className={`space-y-4 ${compactMode ? 'pt-2' : 'space-y-6'}`}>
-      <Card className="w-full border-0 shadow-none">
-        <CardHeader className={compactMode ? 'px-4 py-3' : ''}>
+    <div className={`space-y-3 ${compactMode ? 'pt-1' : 'space-y-6'}`}>
+      <Card className="w-full border-0 shadow-none rounded-xl">
+        <CardHeader className={compactMode ? 'px-4 py-2.5' : ''}>
           <CardTitle className={compactMode ? 'text-lg' : ''}>
-            {compactMode ? 'Practice with YogaVision' : 'YogaVision'}
+            {compactMode ? 'YogaVision Analysis' : 'YogaVision'}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className={compactMode ? 'text-xs' : ''}>
             {compactMode 
-              ? 'Get live AI feedback on your yoga pose' 
+              ? 'Get AI feedback on your yoga pose practice' 
               : 'Upload a photo of yourself practicing a yoga pose and get AI-powered form feedback'
             }
           </CardDescription>
         </CardHeader>
-        <CardContent className={compactMode ? 'px-4 pt-0' : ''}>
-          <div className="space-y-4">
+        <CardContent className={compactMode ? 'px-4 pt-0 pb-3' : ''}>
+          <div className={`${compactMode ? 'space-y-3' : 'space-y-4'}`}>
             {/* Step 1: Select a pose */}
             <div>
               <h3 className="font-medium text-sm flex items-center mb-2">
@@ -584,7 +584,7 @@ export default function YogaVisionEnhanced({
                           onClick={handleWebcamCapture} 
                           variant="default"
                           size={compactMode ? "sm" : "default"}
-                          className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-primary hover:bg-primary/90`}
+                          className={`${compactMode ? 'h-7 text-xs' : ''} rounded-full px-4 bg-primary/90 hover:bg-primary shadow-sm`}
                         >
                           <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5`} />
                           Capture Photo
@@ -638,7 +638,7 @@ export default function YogaVisionEnhanced({
                           onClick={handleCameraClick} 
                           variant="ghost"
                           size={compactMode ? "sm" : "default"}
-                          className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-primary/10 hover:bg-primary/20 text-primary-foreground`}
+                          className={`${compactMode ? 'h-7 text-xs' : ''} rounded-full px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 shadow-sm`}
                         >
                           <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5`} />
                           Upload Image
@@ -755,13 +755,13 @@ export default function YogaVisionEnhanced({
             )}
           </div>
         </CardContent>
-        <CardFooter className={`flex justify-between ${compactMode ? 'px-4 py-3' : ''}`}>
+        <CardFooter className={`flex justify-between ${compactMode ? 'px-4 py-3' : ''} border-t border-gray-50`}>
           {onClose ? (
             <Button 
               variant="ghost" 
               onClick={onClose}
               size={compactMode ? "sm" : "default"}
-              className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-secondary/10 hover:bg-secondary/20 text-secondary-foreground`}
+              className={`${compactMode ? 'h-7 text-xs' : ''} rounded-full px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 shadow-sm`}
             >
               Back
             </Button>
@@ -771,7 +771,7 @@ export default function YogaVisionEnhanced({
               disabled={isAnalyzing}
               onClick={handleReset}
               size={compactMode ? "sm" : "default"}
-              className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-secondary/10 hover:bg-secondary/20 text-secondary-foreground`}
+              className={`${compactMode ? 'h-7 text-xs' : ''} rounded-full px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 shadow-sm`}
             >
               Reset
             </Button>
@@ -779,7 +779,7 @@ export default function YogaVisionEnhanced({
           <Button
             onClick={handleSubmitForAnalysis}
             disabled={!selectedImage || !selectedPoseId || isAnalyzing}
-            className={`flex items-center ${compactMode ? "h-8 text-xs" : ""} rounded-full px-4 bg-primary hover:bg-primary/90`}
+            className={`flex items-center ${compactMode ? "h-7 text-xs" : ""} rounded-full px-4 bg-primary/90 hover:bg-primary shadow-sm`}
             size={compactMode ? "sm" : "default"}
           >
             {isAnalyzing ? (
@@ -902,12 +902,12 @@ export default function YogaVisionEnhanced({
               </AlertDescription>
             </Alert>
           </CardContent>
-          <CardFooter className={`flex justify-between ${compactMode ? 'px-4 py-3' : ''}`}>
+          <CardFooter className={`flex justify-between ${compactMode ? 'px-4 py-3' : ''} border-t border-gray-50`}>
             <Button
               variant="ghost"
               onClick={handleReset}
               size={compactMode ? "sm" : "default"}
-              className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-secondary/10 hover:bg-secondary/20 text-secondary-foreground`}
+              className={`${compactMode ? 'h-7 text-xs' : ''} rounded-full px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 shadow-sm`}
             >
               Try Another Pose
             </Button>
@@ -918,7 +918,7 @@ export default function YogaVisionEnhanced({
                 }
               }}
               size={compactMode ? "sm" : "default"}
-              className={`flex items-center ${compactMode ? "h-8 text-xs" : ""} rounded-full px-4 bg-primary hover:bg-primary/90`}
+              className={`flex items-center ${compactMode ? "h-7 text-xs" : ""} rounded-full px-4 bg-primary/90 hover:bg-primary shadow-sm`}
             >
               <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5`} />
               Retake Photo
