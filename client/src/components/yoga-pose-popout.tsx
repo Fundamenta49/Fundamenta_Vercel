@@ -64,19 +64,19 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         // Then, try to find the pose in our poses_with_paths.json file
         const poseData = posesWithPaths.find(p => p.id === pose.id);
         
-        if (poseData && poseData.filename) {
-          // Use a common shared image for all poses until proper images are available
-          const commonImagePath = '/images/yoga-poses/original_yoga_image.jpg';
-          setPoseImage(commonImagePath);
-          console.log(`Using common image for ${pose.id}: ${commonImagePath}`);
-          
-          // Keep the original path first in our possibilities, but add the common image as fallback
-          setPossiblePaths([poseData.filename, commonImagePath]);
+        // Always use the common image that we know exists
+        const commonImagePath = '/images/yoga-poses/original_yoga_image.jpg';
+        setPoseImage(commonImagePath);
+        console.log(`Using common image for ${pose.id}: ${commonImagePath}`);
+        
+        if (poseData) {
+          // Set both the JSON path and the common image as possible paths
+          // Always putting common image first since we know it exists
+          setPossiblePaths([commonImagePath, poseData.filename]);
         } else {
-          // If pose somehow not found in our JSON (shouldn't happen), use the common image
+          // If pose somehow not found in our JSON (shouldn't happen), still use the common image
           console.warn(`Pose ${pose.id} not found in poses_with_paths.json, using common image`);
-          setPoseImage('/images/yoga-poses/original_yoga_image.jpg');
-          setPossiblePaths(['/images/yoga-poses/original_yoga_image.jpg']);
+          setPossiblePaths([commonImagePath]);
         }
       } catch (error) {
         console.error('Error setting pose image path:', error);
