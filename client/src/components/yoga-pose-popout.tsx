@@ -311,30 +311,30 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         </Card>
       </DialogTrigger>
       
-      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto mx-auto p-0 rounded-xl">
-        {/* Header with clean, minimal design */}
-        <div className="px-6 pt-6 relative">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-xl font-medium tracking-tight">{pose.name}</h2>
-                <Badge variant="outline" className="bg-blue-50 border-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
+      <DialogContent className="max-w-4xl w-[95vw] sm:w-[90vw] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto mx-auto p-0 rounded-xl shadow-lg">
+        {/* Header with clean, minimal design - responsive for mobile and desktop */}
+        <div className="px-4 sm:px-6 pt-4 sm:pt-6 relative">
+          <div className="flex justify-between items-start mb-3 sm:mb-4">
+            <div className="pr-8 sm:pr-0"> {/* Add padding right on mobile for close button */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
+                <h2 className="text-lg sm:text-xl font-medium tracking-tight">{pose.name}</h2>
+                <Badge variant="outline" className="bg-blue-50 border-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full w-fit sm:ml-1">
                   {pose.difficulty}
                 </Badge>
               </div>
               {pose.sanskritName && (
-                <p className="text-sm text-gray-500 italic">
+                <p className="text-xs sm:text-sm text-gray-500 italic">
                   {pose.sanskritName}
                 </p>
               )}
             </div>
             
-            {/* Modern, Apple-style close button */}
+            {/* Modern, Apple-style close button - fixed position for all screen sizes */}
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleClose} 
-              className="rounded-full h-8 w-8 p-0 absolute top-4 right-4 bg-white shadow-sm border border-gray-100"
+              className="rounded-full h-8 w-8 p-0 absolute top-4 right-4 bg-white shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors"
               aria-label="Close"
             >
               <X className="h-4 w-4 text-gray-600" />
@@ -342,21 +342,24 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           </div>
         </div>
         
-        {/* Clean, minimal tab navigation */}
-        <div className="px-6 pb-0">
+        {/* Clean, minimal tab navigation - optimized for mobile and desktop */}
+        <div className="px-4 sm:px-6 pb-0">
           <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="mt-0">
-            <TabsList className="grid grid-cols-3 mb-4 w-full mx-auto rounded-full p-1 bg-gray-100/70">
-              <TabsTrigger value="info" className="flex items-center justify-center px-3 py-1.5 rounded-full text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Info className="h-3.5 w-3.5 mr-1.5" />
-                Info
+            <TabsList className="grid grid-cols-3 mb-3 sm:mb-4 w-full mx-auto rounded-full p-1 bg-gray-100/70">
+              <TabsTrigger value="info" className="flex items-center justify-center px-1.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Info className="h-3 sm:h-3.5 w-3 sm:w-3.5 mr-1 sm:mr-1.5" />
+                <span className="hidden xs:inline">Info</span>
+                <span className="xs:hidden">Info</span>
               </TabsTrigger>
-              <TabsTrigger value="practice" className="flex items-center justify-center px-3 py-1.5 rounded-full text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Camera className="h-3.5 w-3.5 mr-1.5" />
-                Practice
+              <TabsTrigger value="practice" className="flex items-center justify-center px-1.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Camera className="h-3 sm:h-3.5 w-3 sm:w-3.5 mr-1 sm:mr-1.5" />
+                <span className="hidden xs:inline">Practice</span>
+                <span className="xs:hidden">Practice</span>
               </TabsTrigger>
-              <TabsTrigger value="video" className="flex items-center justify-center px-3 py-1.5 rounded-full text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Youtube className="h-3.5 w-3.5 mr-1.5" />
-                Video
+              <TabsTrigger value="video" className="flex items-center justify-center px-1.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Youtube className="h-3 sm:h-3.5 w-3 sm:w-3.5 mr-1 sm:mr-1.5" />
+                <span className="hidden xs:inline">Video</span>
+                <span className="xs:hidden">Video</span>
               </TabsTrigger>
             </TabsList>
           
@@ -410,42 +413,42 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   )}
                 </div>
                 
-                {/* Content section with modern styling */}
-                <div className="px-6">
+                {/* Content section with modern styling - optimized for mobile and desktop */}
+                <div className="px-4 sm:px-6">
                   {/* Description card */}
-                  <div className="mb-6">
-                    <h3 className="text-base font-medium text-gray-900 mb-2">Description</h3>
-                    <p className="text-sm leading-relaxed text-gray-600">
+                  <div className="mb-5 sm:mb-6">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1.5 sm:mb-2">Description</h3>
+                    <p className="text-xs sm:text-sm leading-relaxed text-gray-600">
                       {pose.description || "A restful pose that gently stretches the back and promotes relaxation."}
                     </p>
                   </div>
                   
-                  {/* Benefits card with modern styling */}
-                  <div className="mb-6">
-                    <h3 className="text-base font-medium text-gray-900 mb-2">Benefits</h3>
-                    <ul className="space-y-1.5">
+                  {/* Benefits card with modern styling - responsive grid on larger screens */}
+                  <div className="mb-5 sm:mb-6">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1.5 sm:mb-2">Benefits</h3>
+                    <ul className="space-y-1.5 sm:grid sm:grid-cols-2 sm:gap-x-4 sm:gap-y-1.5 sm:space-y-0">
                       {pose.benefits && pose.benefits.length > 0 ? 
                         pose.benefits.map((benefit, index) => (
-                          <li key={index} className="flex items-start text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <li key={index} className="flex items-start text-xs sm:text-sm">
+                            <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 mr-1.5 sm:mr-2 mt-0.5 flex-shrink-0" />
                             <span className="text-gray-600">{benefit}</span>
                           </li>
                         )) : 
                         <>
-                          <li className="flex items-start text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <li className="flex items-start text-xs sm:text-sm">
+                            <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 mr-1.5 sm:mr-2 mt-0.5 flex-shrink-0" />
                             <span className="text-gray-600">Releases tension in back, shoulders, and chest</span>
                           </li>
-                          <li className="flex items-start text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <li className="flex items-start text-xs sm:text-sm">
+                            <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 mr-1.5 sm:mr-2 mt-0.5 flex-shrink-0" />
                             <span className="text-gray-600">Calms the mind and reduces stress</span>
                           </li>
-                          <li className="flex items-start text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <li className="flex items-start text-xs sm:text-sm">
+                            <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 mr-1.5 sm:mr-2 mt-0.5 flex-shrink-0" />
                             <span className="text-gray-600">Gently stretches hips, thighs, and ankles</span>
                           </li>
-                          <li className="flex items-start text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <li className="flex items-start text-xs sm:text-sm">
+                            <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 mr-1.5 sm:mr-2 mt-0.5 flex-shrink-0" />
                             <span className="text-gray-600">Relieves back and neck pain</span>
                           </li>
                         </>
@@ -455,29 +458,29 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   
                   {/* Achievement card with modern styling */}
                   {achievement && achievement.masteryLevel > 0 && (
-                    <div className="mb-6 p-4 bg-blue-50 rounded-xl">
-                      <div className="flex items-center mb-3">
-                        <Award className="h-5 w-5 text-blue-600 mr-2" />
-                        <h3 className="text-base font-medium text-gray-900">Your Progress</h3>
+                    <div className="mb-5 sm:mb-6 p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl">
+                      <div className="flex items-center mb-2 sm:mb-3">
+                        <Award className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mr-1.5 sm:mr-2" />
+                        <h3 className="text-sm sm:text-base font-medium text-gray-900">Your Progress</h3>
                       </div>
                       
-                      <div className="space-y-2">
+                      <div className="space-y-1.5 sm:space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Mastery Level</span>
+                          <span className="text-xs sm:text-sm text-gray-600">Mastery Level</span>
                           <div className="flex items-center">
                             {renderMasteryStars(achievement.masteryLevel)}
                           </div>
                         </div>
                         
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Best Score</span>
-                          <span className="text-sm font-medium">{achievement.bestScore}%</span>
+                          <span className="text-xs sm:text-sm text-gray-600">Best Score</span>
+                          <span className="text-xs sm:text-sm font-medium">{achievement.bestScore}%</span>
                         </div>
                         
                         {achievement.lastPracticedDate && (
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">Last Practice</span>
-                            <span className="text-sm text-gray-500">{achievement.lastPracticedDate}</span>
+                            <span className="text-xs sm:text-sm text-gray-600">Last Practice</span>
+                            <span className="text-xs sm:text-sm text-gray-500">{achievement.lastPracticedDate}</span>
                           </div>
                         )}
                       </div>
@@ -487,10 +490,10 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               </div>
             </TabsContent>
             
-            <TabsContent value="video" className="min-h-[400px]">
+            <TabsContent value="video" className="min-h-[300px] sm:min-h-[400px]">
               {currentVideoId ? (
                 <div className="w-full max-w-screen-md mx-auto">
-                  <div className="aspect-video w-full rounded-lg overflow-hidden shadow-sm mb-4">
+                  <div className="aspect-video w-full rounded-lg overflow-hidden shadow-sm mb-3 sm:mb-4">
                     <iframe
                       className="w-full h-full"
                       src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
@@ -501,21 +504,21 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                     ></iframe>
                   </div>
                   
-                  <div className="px-2">
-                    <h3 className="text-lg font-medium mb-2">{getYogaPoseVideoInfo(pose.id)?.title || pose.name + " Tutorial"}</h3>
-                    <p className="text-sm text-gray-600 mb-4">
+                  <div className="px-4 sm:px-6">
+                    <h3 className="text-sm sm:text-lg font-medium mb-1 sm:mb-2">{getYogaPoseVideoInfo(pose.id)?.title || pose.name + " Tutorial"}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                       Watch this guided tutorial to learn the proper technique and alignment for {pose.name}.
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="w-full max-w-screen-md mx-auto">
-                  <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 rounded-lg p-8 border border-gray-100">
-                    <div className="bg-gray-100 rounded-full p-6 mb-6">
-                      <Youtube className="h-16 w-16 text-gray-400" />
+                  <div className="flex flex-col items-center justify-center min-h-[250px] sm:min-h-[350px] bg-gray-50 rounded-lg p-4 sm:p-8 border border-gray-100">
+                    <div className="bg-gray-100 rounded-full p-4 sm:p-6 mb-4 sm:mb-6">
+                      <Youtube className="h-10 w-10 sm:h-16 sm:w-16 text-gray-400" />
                     </div>
-                    <h3 className="text-xl font-medium mb-2 text-gray-800">Video Tutorial</h3>
-                    <p className="text-center text-gray-600 max-w-md mb-6">
+                    <h3 className="text-base sm:text-xl font-medium mb-1 sm:mb-2 text-gray-800">Video Tutorial</h3>
+                    <p className="text-center text-xs sm:text-sm text-gray-600 max-w-md mb-4 sm:mb-6 px-2 sm:px-0">
                       Watch a professional demonstration of {pose.name} to learn proper form and technique.
                     </p>
                     {pose.id && getYogaPoseVideoInfo(pose.id) && (
@@ -526,9 +529,9 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                             setCurrentVideoId(videoInfo.videoId);
                           }
                         }}
-                        className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-5 py-2"
+                        className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-4 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm"
                       >
-                        <Youtube className="mr-2 h-4 w-4" />
+                        <Youtube className="mr-1.5 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                         Watch Tutorial
                       </Button>
                     )}
@@ -537,9 +540,9 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               )}
             </TabsContent>
             
-            <TabsContent value="practice" className="min-h-[400px]">
+            <TabsContent value="practice" className="min-h-[300px] sm:min-h-[400px]">
               <div className="w-full mx-auto">
-                <div className="bg-background rounded-lg mb-4">
+                <div className="bg-background rounded-lg mb-3 sm:mb-4">
                   <YogaVisionEnhanced 
                     initialPoseId={pose.id} 
                     onClose={handleClose}
@@ -551,18 +554,21 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           </Tabs>
         </div>
         
-        <DialogFooter className="flex-wrap gap-3 pt-4 border-t mt-4">
-          <div className="w-full flex justify-between items-center">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleClose}
-              className="rounded-full px-4"
-            >
-              Close
-            </Button>
+        <DialogFooter className="flex-wrap gap-2 sm:gap-3 pt-3 sm:pt-4 border-t mt-2 sm:mt-4 px-4 sm:px-6">
+          <div className="w-full flex flex-col sm:flex-row justify-between sm:items-center">
+            {/* For mobile: Action buttons on top, close button at bottom */}
+            <div className="flex gap-2 order-2 sm:order-1 mt-2 sm:mt-0 mx-auto sm:mx-0">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleClose}
+                className="rounded-full px-3 sm:px-4 h-8 sm:h-9 text-xs sm:text-sm"
+              >
+                Close
+              </Button>
+            </div>
             
-            <div className="flex gap-2">
+            <div className="flex gap-2 order-1 sm:order-2 mx-auto sm:mx-0">
               {activeTab !== "video" && pose.id && getYogaPoseVideoInfo(pose.id) && (
                 <Button 
                   variant="outline"
@@ -573,9 +579,9 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                       setActiveTab("video");
                     }
                   }}
-                  className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-4 h-9"
+                  className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-3 sm:px-4 h-8 sm:h-9 text-xs sm:text-sm"
                 >
-                  <Youtube className="mr-1.5 h-4 w-4" />
+                  <Youtube className="mr-1 sm:mr-1.5 h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="whitespace-nowrap">Watch Video</span>
                 </Button>
               )}
@@ -583,9 +589,9 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               {activeTab !== "practice" && (
                 <Button 
                   onClick={() => setActiveTab("practice")}
-                  className="rounded-full px-4 h-9 bg-primary hover:bg-primary/90"
+                  className="rounded-full px-3 sm:px-4 h-8 sm:h-9 bg-primary hover:bg-primary/90 text-xs sm:text-sm"
                 >
-                  <Camera className="mr-1.5 h-4 w-4" />
+                  <Camera className="mr-1 sm:mr-1.5 h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="whitespace-nowrap">Practice Now</span>
                 </Button>
               )}
