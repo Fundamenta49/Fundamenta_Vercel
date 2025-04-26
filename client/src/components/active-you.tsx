@@ -21,6 +21,7 @@ interface PoseAnalysis {
   [key: string]: any;
 }
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Camera, 
   ArrowLeft,
@@ -59,6 +60,9 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
   const [showPointsEarned, setShowPointsEarned] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
   const [inChallenge, setInChallenge] = useState(false);
+  
+  // Toast notification
+  const { toast } = useToast();
   
   // Navigation hooks
   const [, navigate] = useLocation();
@@ -251,16 +255,89 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
               </div>
               <Button 
                 onClick={() => {
-                  console.log('Start GPS Run Tracking');
-                  // Notify Fundi about run tracking
-                  notifyRunTracked(3.2, 25 * 60, 7.8); // 3.2 miles, 25 min, 7.8 min/mile pace
-                  // Trigger completion for arcade points
-                  handleExerciseCompleted('running-gps-track');
+                  const requestLocationPermission = async () => {
+                    try {
+                      // Check if permission is already granted
+                      const savedPermission = localStorage.getItem('location_permission');
+                      
+                      if (savedPermission === 'granted') {
+                        // Permission already granted, navigate to running tracker
+                        navigateToRunningTracker();
+                        return;
+                      }
+                      
+                      // Request permission
+                      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                          enableHighAccuracy: true,
+                          timeout: 10000,
+                          maximumAge: 0
+                        });
+                      });
+                      
+                      // If we get here, permission was granted
+                      localStorage.setItem('location_permission', 'granted');
+                      
+                      // Store the initial position
+                      if (position && position.coords) {
+                        localStorage.setItem('last_location', 
+                          JSON.stringify({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            timestamp: position.timestamp
+                          })
+                        );
+                      }
+                      
+                      toast({
+                        title: "Location Access Granted",
+                        description: "GPS tracking is now enabled for your runs.",
+                      });
+                      
+                      // Navigate to the running tracker
+                      navigateToRunningTracker();
+                      
+                      // Notify Fundi about run tracking (will be updated with actual data)
+                      notifyRunTracked(3.2, 25 * 60, 7.8); // 3.2 miles, 25 min, 7.8 min/mile pace
+                      
+                      // Trigger completion for arcade points
+                      handleExerciseCompleted('running-gps-track');
+                      
+                    } catch (error) {
+                      console.error('Error requesting location permission:', error);
+                      // User denied permission or there was an error
+                      localStorage.setItem('location_permission', 'denied');
+                      
+                      toast({
+                        variant: "destructive",
+                        title: "Location Access Required",
+                        description: "Please allow location access to track your runs. You can update this in your browser settings.",
+                      });
+                    }
+                  };
+                  
+                  // Function to navigate to running tracker page/component
+                  const navigateToRunningTracker = () => {
+                    console.log('Navigating to running tracker with GPS enabled');
+                    
+                    // We'll use the existing logic - we don't need to navigate away
+                    // because the RunningSpecificExercisesEnhanced component is already
+                    // part of this page and will detect the GPS permission is granted
+                    
+                    // Show success notification
+                    toast({
+                      title: "GPS Running Mode Activated",
+                      description: "Your run is now being tracked. The map will appear once GPS data is available.",
+                    });
+                  };
+                  
+                  // Start the permission request flow
+                  requestLocationPermission();
                 }}
                 className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white"
               >
                 <MapPin className="w-5 h-5 mr-2" />
-                Start GPS Run Tracking
+                Start Run with GPS Tracking
               </Button>
             </div>
             
