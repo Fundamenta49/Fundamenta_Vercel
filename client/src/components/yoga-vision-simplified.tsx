@@ -398,7 +398,7 @@ export default function YogaVisionSimplified({
   return (
     <div className="w-full h-full">
       {/* Reference image - Always shown at top */}
-      <div className="w-full mb-3">
+      <div className="w-full mb-1">
         <div className="relative bg-white rounded-md overflow-hidden">
           <img 
             src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
@@ -408,7 +408,7 @@ export default function YogaVisionSimplified({
               objectFit: "contain", 
               backgroundColor: "#f8f9fa",
               aspectRatio: "16/9", 
-              maxHeight: "220px",
+              maxHeight: "175px",
               width: "100%"
             }}
             onError={(e) => {
@@ -421,19 +421,19 @@ export default function YogaVisionSimplified({
             }}
           />
           {/* Pose name overlay */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent py-1 px-2">
             <p className="text-white text-xs font-medium">{selectedPose?.name || 'Yoga Pose'}</p>
           </div>
         </div>
       </div>
       
       {/* Camera/Upload area - with capture functionality */}
-      <div className="relative mb-2">
+      <div className="relative mb-1">
         {useCameraMode ? (
           // Camera mode
           recordedVideo ? (
             // Show recorded video playback
-            <div className="w-full pb-2">
+            <div className="w-full pb-1">
               <div className="relative w-full mx-auto">
                 <video 
                   src={recordedVideo} 
@@ -442,7 +442,7 @@ export default function YogaVisionSimplified({
                   style={{ 
                     maxWidth: "100%", 
                     height: "auto",
-                    maxHeight: "280px",
+                    maxHeight: "215px",
                     aspectRatio: "16/9"
                   }}
                 />
@@ -461,7 +461,7 @@ export default function YogaVisionSimplified({
               </div>
             </div>
           ) : !imagePreview ? (
-            <div className="w-full pb-2" style={{ minHeight: "280px" }}>
+            <div className="w-full pb-1" style={{ minHeight: "230px" }}>
               <Webcam
                 audio={false}
                 ref={webcamRef}
@@ -472,11 +472,11 @@ export default function YogaVisionSimplified({
                   width: { ideal: 640 },
                   height: { ideal: 360 }
                 }}
-                className="w-full rounded-md mx-auto mb-2 object-cover"
+                className="w-full rounded-md mx-auto mb-1 object-cover"
                 style={{ 
                   maxWidth: "100%", 
                   height: "auto",
-                  maxHeight: "280px",
+                  maxHeight: "215px",
                   aspectRatio: "16/9"
                 }}
               />
@@ -486,16 +486,16 @@ export default function YogaVisionSimplified({
                   onClick={handleWebcamCapture} 
                   variant="default"
                   size="sm"
-                  className="h-10 text-sm rounded-full px-5 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                  className="h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
                   disabled={isRecording}
                   style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    minWidth: "160px" 
+                    minWidth: "140px" 
                   }}
                 >
-                  <Camera className="h-4 w-4 mr-2" />
+                  <Camera className="h-3 w-3 mr-1.5" />
                   <span>Capture Photo</span>
                 </Button>
                 
@@ -503,7 +503,7 @@ export default function YogaVisionSimplified({
                   onClick={toggleRecording}
                   variant={isRecording ? "destructive" : "outline"}
                   size="sm"
-                  className={`h-10 text-sm rounded-full px-5 shadow-sm ${
+                  className={`h-8 text-xs rounded-full px-4 shadow-sm ${
                     isRecording 
                       ? "bg-red-600 hover:bg-red-700 text-white" 
                       : "bg-white hover:bg-gray-50 text-blue-600 border-none"
@@ -512,17 +512,17 @@ export default function YogaVisionSimplified({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    minWidth: "160px" 
+                    minWidth: "140px" 
                   }}
                 >
                   {isRecording ? (
                     <>
-                      <VideoOff className="h-4 w-4 mr-2" />
-                      Stop Recording {recordingTime > 0 && `(${Math.floor(recordingTime / 60)}:${(recordingTime % 60).toString().padStart(2, '0')})`}
+                      <VideoOff className="h-3 w-3 mr-1.5" />
+                      Stop {recordingTime > 0 && `(${Math.floor(recordingTime / 60)}:${(recordingTime % 60).toString().padStart(2, '0')})`}
                     </>
                   ) : (
                     <>
-                      <Video className="h-4 w-4 mr-2" />
+                      <Video className="h-3 w-3 mr-1.5" />
                       <span className="text-blue-600 font-normal">Record Video</span>
                     </>
                   )}
@@ -531,7 +531,7 @@ export default function YogaVisionSimplified({
             </div>
           ) : (
             // Show captured image
-            <div className="w-full pb-2">
+            <div className="w-full pb-1">
               <div className="relative w-full mx-auto">
                 <img 
                   src={imagePreview} 
@@ -539,7 +539,7 @@ export default function YogaVisionSimplified({
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "280px",
+                    maxHeight: "215px",
                     aspectRatio: "16/9"
                   }}
                 />
@@ -561,7 +561,7 @@ export default function YogaVisionSimplified({
         ) : (
           // File upload mode
           !imagePreview ? (
-            <div className="flex flex-col items-center justify-center py-5 px-2 bg-gray-50 rounded-lg" style={{ minHeight: "280px" }}>
+            <div className="flex flex-col items-center justify-center py-3 px-2 bg-gray-50 rounded-lg" style={{ minHeight: "230px" }}>
               <input 
                 type="file" 
                 accept="image/*" 
@@ -573,15 +573,15 @@ export default function YogaVisionSimplified({
                 onClick={handleCameraClick} 
                 variant="default"
                 size="sm"
-                className="h-10 text-sm rounded-full px-5 bg-blue-600 hover:bg-blue-700 text-white shadow-sm mb-2"
+                className="h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm mb-1"
               >
-                <Upload className="h-4 w-4 mr-2" />
+                <Upload className="h-3 w-3 mr-1.5" />
                 Use Photos
               </Button>
               <p className="text-xs text-muted-foreground">Upload a photo of your pose</p>
             </div>
           ) : (
-            <div className="w-full pb-2">
+            <div className="w-full pb-1">
               <div className="relative w-full mx-auto">
                 <img 
                   src={imagePreview} 
@@ -589,7 +589,7 @@ export default function YogaVisionSimplified({
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "280px",
+                    maxHeight: "215px",
                     aspectRatio: "16/9"
                   }}
                 />
@@ -627,13 +627,13 @@ export default function YogaVisionSimplified({
       </div>
 
       {/* Action buttons - styled more like the screenshot */}
-      <div className="flex justify-between mt-2">
+      <div className="flex justify-between mt-1">
         {onClose && (
           <Button 
             variant="ghost" 
             onClick={onClose}
             size="sm"
-            className="h-9 text-sm rounded-full px-5 bg-gray-200 hover:bg-gray-300 text-gray-800"
+            className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
           >
             Back
           </Button>
@@ -641,18 +641,18 @@ export default function YogaVisionSimplified({
         <Button
           onClick={handleSubmitForAnalysis}
           disabled={!selectedImage || isAnalyzing}
-          className="flex items-center h-9 text-sm rounded-full px-5 bg-blue-600 hover:bg-blue-700 text-white ml-auto"
+          className="flex items-center h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white ml-auto"
           size="sm"
         >
           {isAnalyzing ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
               Analyzing...
             </>
           ) : (
             <>
               Analyze
-              <ArrowRight className="h-4 w-4 ml-2" />
+              <ArrowRight className="h-3 w-3 ml-1.5" />
             </>
           )}
         </Button>
