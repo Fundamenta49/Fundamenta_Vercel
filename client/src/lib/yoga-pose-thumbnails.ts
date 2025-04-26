@@ -19,8 +19,8 @@ interface PoseThumbnail {
 export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
   // Level 1 - Beginner poses
   'mountain': { 
-    videoId: 'E9bO1uGs4BM', 
-    title: 'Mountain Pose (Tadasana)',
+    videoId: '2HTvZp5rPrg', 
+    title: 'Mountain Pose | Tadasana',
     channelTitle: 'Yoga With Adriene'
   },
   'child': { 
@@ -29,8 +29,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
     channelTitle: 'Yoga With Adriene' 
   },
   'corpse': { 
-    videoId: 'J0GHZoBCxNQ', 
-    title: 'Corpse Pose (Savasana)',
+    videoId: '1VYlOKUdylM', 
+    title: 'Savasana (Corpse Pose)',
     channelTitle: 'Yoga With Adriene' 
   },
   
@@ -46,8 +46,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
     channelTitle: 'Yoga With Adriene'
   },
   'forward_fold': { 
-    videoId: 'RpIUc2h-yI8', 
-    title: 'Forward Fold (Uttanasana)',
+    videoId: 'goN4rWbQUn4', 
+    title: 'Forward Fold | Uttanasana',
     channelTitle: 'Yoga With Adriene' 
   },
   
