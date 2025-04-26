@@ -74,36 +74,38 @@ export default function AiFeedbackOverlay({
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <Card className="max-w-md w-[92vw] md:w-full rounded-xl shadow-lg max-h-[90vh] overflow-auto">
-        <CardHeader className="relative py-4 px-5">
-          <CardTitle className="text-lg pr-8">
-            YogaVision Analysis
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            AI feedback on your {poseName} pose
-          </p>
+      <Card className="max-w-md w-[92vw] md:w-full rounded-xl shadow-lg max-h-[88vh] overflow-auto">
+        <CardHeader className="relative py-3 px-4">
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={onClose} 
-            className="absolute top-3 right-3 h-8 w-8 rounded-full"
+            className="absolute top-2 right-2 h-7 w-7 rounded-full"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
           </Button>
+          <div className="flex items-baseline justify-between">
+            <CardTitle className="text-base">
+              {poseName} Analysis
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              AI feedback
+            </p>
+          </div>
         </CardHeader>
         
-        <CardContent className="space-y-4 px-5">
+        <CardContent className="space-y-3 px-4 py-2">
           {/* XP Reward */}
           {rewardEarned && (
-            <Alert className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 p-3">
+            <Alert className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 p-2">
               <div className="flex items-center">
-                <Award className="h-4 w-4 text-purple-500 mr-2" />
+                <Award className="h-3.5 w-3.5 text-purple-500 mr-1.5" />
                 <div>
-                  <AlertTitle className="text-purple-700 text-sm mb-0">Achievement Unlocked!</AlertTitle>
+                  <AlertTitle className="text-purple-700 text-xs mb-0">Achievement Unlocked!</AlertTitle>
                   <AlertDescription className="text-purple-600 text-xs">
-                    <p>You earned {rewardEarned.xp} XP points for your {poseName} pose!</p>
+                    <span className="text-xs">+{rewardEarned.xp} XP</span>
                     <div className="mt-0.5 flex items-center gap-2">
-                      <span className="font-medium">New level: </span>
+                      <span className="text-xs">New level: </span>
                       <MasteryStars level={rewardEarned.newMasteryLevel} />
                     </div>
                   </AlertDescription>

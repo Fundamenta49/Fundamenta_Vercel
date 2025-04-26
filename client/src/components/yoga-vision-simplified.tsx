@@ -270,13 +270,12 @@ export default function YogaVisionSimplified({
           <div className="space-y-2">
             {/* Reference Image - Using thumbnails from video */}
             <div>
-              <h3 className="text-sm font-medium mb-2">Practice {selectedPose?.name || "Yoga"}</h3>
               <div className="bg-white rounded-lg overflow-hidden border border-gray-100">
                 <img 
                   src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
                   alt={`${selectedPose?.name || 'Yoga pose'} reference`}
                   className="w-full object-cover rounded-md"
-                  style={{ aspectRatio: "16/9" }}
+                  style={{ aspectRatio: "16/9", maxHeight: "120px" }}
                   onError={(e) => {
                     const videoInfo = getYogaPoseVideoInfo(poseId);
                     if (videoInfo?.videoId) {
@@ -332,7 +331,7 @@ export default function YogaVisionSimplified({
                       style={{ 
                         maxWidth: "100%", 
                         height: "auto",
-                        maxHeight: "40vh",
+                        maxHeight: "25vh",
                         aspectRatio: "4/3"
                       }}
                     />
@@ -358,7 +357,7 @@ export default function YogaVisionSimplified({
                         className="w-full object-contain rounded-md"
                         style={{ 
                           maxWidth: "100%", 
-                          maxHeight: "40vh",
+                          maxHeight: "25vh",
                           aspectRatio: "4/3"
                         }}
                       />
@@ -403,7 +402,7 @@ export default function YogaVisionSimplified({
                         className="w-full object-contain rounded-md"
                         style={{ 
                           maxWidth: "100%", 
-                          maxHeight: "40vh",
+                          maxHeight: "25vh",
                           aspectRatio: "4/3"
                         }}
                       />
