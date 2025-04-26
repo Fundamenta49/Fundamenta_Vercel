@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useYogaProgression } from '../contexts/yoga-progression-context';
 import { getPoseById } from '../data/yoga-poses-progression';
+import { getYogaPoseThumbnail, getYogaPoseVideoInfo } from '../lib/yoga-pose-thumbnails';
 import Webcam from 'react-webcam';
 import {
   Card,
@@ -265,22 +266,24 @@ export default function YogaVisionSimplified({
   return (
     <div className="space-y-3">
       <Card className="w-full border-0 shadow-none rounded-xl">
-        <CardHeader className="px-4 py-2 mb-0">
-          <CardTitle className="text-base">Practice {selectedPose?.name || "Yoga"}</CardTitle>
-        </CardHeader>
-        
-        <CardContent className="px-4 pt-0 pb-3">
-          <div className="space-y-3">
-            {/* Reference Image - Using direct path to image */}
-            <div className="bg-white rounded-lg p-0 border border-gray-100">
-              <div className="h-40 overflow-hidden rounded-md flex items-center justify-center">
+        <CardContent className="px-4 pt-2 pb-2">
+          <div className="space-y-2">
+            {/* Reference Image - Using thumbnails from video */}
+            <div>
+              <h3 className="text-sm font-medium mb-2">Practice {selectedPose?.name || "Yoga"}</h3>
+              <div className="bg-white rounded-lg overflow-hidden border border-gray-100">
                 <img 
-                  src={`/images/yoga/${poseId}.jpg`} 
+                  src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
                   alt={`${selectedPose?.name || 'Yoga pose'} reference`}
-                  className="w-full h-full object-contain"
+                  className="w-full object-cover rounded-md"
+                  style={{ aspectRatio: "16/9" }}
                   onError={(e) => {
-                    // Use a fallback image if the specific pose image doesn't exist
-                    e.currentTarget.src = "/images/yoga/original_yoga_image.jpg";
+                    const videoInfo = getYogaPoseVideoInfo(poseId);
+                    if (videoInfo?.videoId) {
+                      e.currentTarget.src = `https://img.youtube.com/vi/${videoInfo.videoId}/hqdefault.jpg`;
+                    } else {
+                      e.currentTarget.src = `https://img.youtube.com/vi/hQN6j3UxIQ0/hqdefault.jpg`;
+                    }
                   }}
                 />
               </div>
