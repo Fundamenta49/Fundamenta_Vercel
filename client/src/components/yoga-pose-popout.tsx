@@ -38,86 +38,24 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [poseImage, setPoseImage] = useState<string | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Load local pose-specific images with validation and multiple path checking
+  // Simplified direct image loading without complex validation
   useEffect(() => {
-    const loadPoseImage = async () => {
+    const loadPoseImage = () => {
       // Only load if we have a valid pose ID
       if (!pose.id) return;
       
       try {
         setIsLoadingImage(true);
         
-        // Get all possible paths for this pose image
-        const possibleImagePaths = [
-          // Use the allImagePaths array if available (comprehensive list from grid interface)
-          ...(pose.allImagePaths || []),
-          
-          // Add primary and alternative URLs as fallbacks
-          pose.imageUrl,
-          pose.alternativeImageUrl,
-          
-          // Standard PNG paths (both directories)
-          `/images/yoga/${pose.id}.png`,
-          `/images/yoga-poses/${pose.id}.png`,
-          
-          // JPG paths (both directories)
-          `/images/yoga/${pose.id}.jpg`,
-          `/images/yoga-poses/${pose.id}.jpg`,
-          
-          // Special case paths for specific poses
-          pose.id === 'crow' ? `/images/yoga/crow.jpg` : null,
-          pose.id === 'crow' ? `/images/yoga/crow_3.jpg` : null,
-          pose.id === 'crow' ? `/images/yoga/crow_4.jpg` : null,
-          pose.id === 'boat' ? `/images/yoga/boat.jpg` : null,
-          pose.id === 'downward_dog' ? `/images/yoga/downward_dog.jpg` : null,
-          pose.id === 'forward_fold' ? `/images/yoga/forward_fold.jpg` : null,
-          pose.id === 'pigeon' ? `/images/yoga/pigeon.jpg` : null,
-          pose.id === 'bridge' ? `/images/yoga/bridge.jpg` : null
-        ].filter(Boolean); // Remove any undefined/null paths
+        // Use a much simpler approach: directly set a main path with fallbacks in the onError handler
+        // This avoids HEAD requests which might be causing timing/loading issues
+        const mainPath = `/images/yoga/${pose.id}.png`;
+        console.log(`Setting main image path for ${pose.id}: ${mainPath}`);
         
-        console.log(`Checking image paths for pose: ${pose.id}`, possibleImagePaths);
-        
-        console.log(`Checking paths for ${pose.id}:`, possibleImagePaths);
-        
-        // Check if image exists by making a HEAD request
-        const checkImage = async (url: string): Promise<boolean> => {
-          try {
-            const response = await fetch(url, { method: 'HEAD' });
-            return response.ok;
-          } catch (e) {
-            return false;
-          }
-        };
-        
-        // Try all possible paths until we find one that works
-        let foundImagePath = null;
-        
-        for (const path of possibleImagePaths) {
-          // Skip undefined/null paths
-          if (!path) continue;
-          
-          // Ensure path is a string
-          const pathString: string = path;
-          
-          const exists = await checkImage(pathString);
-          if (exists) {
-            foundImagePath = pathString;
-            console.log(`✓ Found image for ${pose.id} at: ${pathString}`);
-            break;
-          } else {
-            console.log(`✗ Image not found at: ${pathString}`);
-          }
-        }
-        
-        if (foundImagePath) {
-          setPoseImage(foundImagePath);
-        } else {
-          console.log(`✗ No images found for ${pose.id} in any location, using fallback`);
-          // Let the component fall back to the default category image
-          setPoseImage(null);
-        }
+        // Just set the path directly - the img element's onError will handle fallbacks if needed
+        setPoseImage(mainPath);
       } catch (error) {
-        console.error('Error loading pose image:', error);
+        console.error('Error setting pose image path:', error);
         setPoseImage(null);
       } finally {
         setIsLoadingImage(false);
@@ -125,7 +63,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     };
     
     loadPoseImage();
-  }, [pose.id, pose.imageUrl, pose.alternativeImageUrl, pose.allImagePaths]);
+  }, [pose.id]);
 
   const handleClose = () => {
     setIsOpen(false);

@@ -45,14 +45,14 @@ export default function YogaGridInterface() {
       const primaryPath = `/images/yoga/${updatedPose.filename}`;
       
       // Build alternate paths using both alternate filename and different directories
-      const alternatePaths = [
+      const alternatePaths: string[] = [
         // Check in both directories using the primary filename
         `/images/yoga-poses/${updatedPose.filename}`,
         
         // If we have an alternate filename, check both directories with that
-        updatedPose.alternateFilename ? `/images/yoga/${updatedPose.alternateFilename}` : null,
-        updatedPose.alternateFilename ? `/images/yoga-poses/${updatedPose.alternateFilename}` : null
-      ].filter(Boolean); // Remove any null entries
+        ...(updatedPose.alternateFilename ? [`/images/yoga/${updatedPose.alternateFilename}`, 
+                                            `/images/yoga-poses/${updatedPose.alternateFilename}`] : [])
+      ];
       
       return {
         ...pose,
@@ -63,7 +63,7 @@ export default function YogaGridInterface() {
         alternativeImageUrl: alternatePaths[0] || "", 
         
         // Store all possible paths for maximum compatibility
-        allImagePaths: [primaryPath, ...alternatePaths],
+        allImagePaths: [primaryPath, ...alternatePaths] as string[],
         
         // Add extra metadata from updated poses if available
         ...(updatedPose.name && {
@@ -76,15 +76,20 @@ export default function YogaGridInterface() {
     }
     
     // If no match in updated poses, try to use a standardized naming approach
-    const possibleImagePaths = [
+    const possibleImagePaths: string[] = [
+      `/images/yoga/${pose.id}.png`,
       `/images/yoga-poses/${pose.id}.png`,
-      `/images/yoga/${pose.id}.jpg`
+      `/images/yoga/${pose.id}.jpg`,
+      `/images/yoga-poses/${pose.id}.jpg`
     ];
     
     return {
       ...pose,
       // Store multiple possible paths in a custom field
-      possibleImagePaths
+      possibleImagePaths,
+      // Also set standard image URLs
+      imageUrl: `/images/yoga/${pose.id}.png`,
+      alternativeImageUrl: `/images/yoga/${pose.id}.jpg`
     };
   });
   
