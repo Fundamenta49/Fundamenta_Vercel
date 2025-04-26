@@ -299,20 +299,11 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               ) : (
                 <div className="w-full h-full relative overflow-hidden">
                   <img 
-                    src="/images/yoga-poses/original_yoga_image.jpg" 
+                    src={`${getFallbackImageUrl()}?auto=format&fit=crop&w=764&q=80`}
                     alt={pose.name} 
-                    className={`object-cover w-full h-full ${getPoseClass(pose.id)}`}
-                    onError={(e) => {
-                      // If the direct path fails, log and use external fallback
-                      console.log(`Image path failed for ${pose.id}, using external fallback`);
-                      e.currentTarget.src = `${getFallbackImageUrl()}?auto=format&fit=crop&w=764&q=80`;
-                    }}
-                    style={getPositionStyle(pose.id)}
+                    className="object-cover w-full h-full"
+                    style={{ objectFit: 'cover' }}
                   />
-                  {/* Small pose ID label in corner to help identify which part of the image is shown */}
-                  <div className="absolute bottom-1 right-1 bg-black/30 text-white text-[8px] px-1 rounded">
-                    {pose.id}
-                  </div>
                 </div>
               )}
             </div>
@@ -402,19 +393,10 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   ) : (
                     <div className="w-full h-full relative overflow-hidden">
                       <img 
-                        src={'/images/yoga-poses/original_yoga_image.jpg'} 
+                        src={`${getFallbackImageUrl()}?auto=format&fit=crop&w=764&q=80`}
                         alt={pose.name} 
-                        className={`object-cover w-full h-full ${getPoseClass(pose.id)}`}
-                        onError={(e) => {
-                          // Simplified error handling - just use the common yoga image
-                          console.log(`Dialog image path failed for ${pose.id}, using common image`);
-                          e.currentTarget.src = '/images/yoga-poses/original_yoga_image.jpg';
-                        }}
-                        style={getPositionStyle(pose.id)}
+                        className="object-cover w-full h-full"
                       />
-                      <div className="absolute bottom-2 right-2 bg-black/40 text-white text-xs px-2 py-1 rounded">
-                        {pose.difficulty} • {pose.id}
-                      </div>
                     </div>
                   )}
                 </div>
