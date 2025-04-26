@@ -1092,6 +1092,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register yoga routes
   app.use('/api/yoga', yogaRoutes);
   
+  // Register yoga pose images routes
+  app.use('/api/pose-images', poseImagesRoutes);
+  
   // Register meditation routes
   app.use('/api/meditation', meditationRoutes);
   

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { YogaPoseProgression } from '../../../shared/yoga-progression';
 import { ArrowRight, Camera, Info, Book, Award } from 'lucide-react';
 import YogaVisionEnhanced from './yoga-vision-enhanced';
+import axios from 'axios';
 
 interface YogaPosePopoutProps {
   pose: YogaPoseProgression;
@@ -29,6 +30,41 @@ interface YogaPosePopoutProps {
 export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPosePopoutProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
+  const [poseImage, setPoseImage] = useState<string | null>(null);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
+
+  // Fetch pose-specific image from our API
+  useEffect(() => {
+    const fetchPoseImage = async () => {
+      // Only fetch if we have a valid pose ID
+      if (!pose.id) return;
+      
+      try {
+        setIsLoadingImage(true);
+        // First check if the image already exists
+        const response = await axios.get(`/api/pose-images/get-pose-images`);
+        
+        if (response.data.success && response.data.images[pose.id] && 
+            response.data.images[pose.id] !== 'not-available') {
+          setPoseImage(response.data.images[pose.id]);
+          setIsLoadingImage(false);
+          return;
+        }
+        
+        // If not available, generate the image
+        const generatedResponse = await axios.get(`/api/pose-images/generate-pose-image/${pose.id}`);
+        if (generatedResponse.data.success) {
+          setPoseImage(generatedResponse.data.imageUrl);
+        }
+      } catch (error) {
+        console.error('Error fetching pose image:', error);
+      } finally {
+        setIsLoadingImage(false);
+      }
+    };
+    
+    fetchPoseImage();
+  }, [pose.id]);
 
   const handleClose = () => {
     setIsOpen(false);

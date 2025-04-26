@@ -136,7 +136,7 @@ router.get('/generate-all-pose-images', async (req, res) => {
           response_format: "url"
         });
         
-        if (!response.data[0]?.url) {
+        if (!response.data || !response.data[0]?.url) {
           throw new Error(`Failed to generate image for ${poseId}`);
         }
         
