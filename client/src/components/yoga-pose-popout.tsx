@@ -33,19 +33,40 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [poseImage, setPoseImage] = useState<string | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Load local pose-specific images
+  // Load local pose-specific images with validation
   useEffect(() => {
-    const loadPoseImage = () => {
+    const loadPoseImage = async () => {
       // Only load if we have a valid pose ID
       if (!pose.id) return;
       
       try {
         setIsLoadingImage(true);
+        
         // Set the image URL directly to the local image path
         const localImagePath = `/images/yoga-poses/${pose.id}.png`;
-        setPoseImage(localImagePath);
+        
+        // Check if image exists by making a HEAD request
+        const checkImage = async (url: string): Promise<boolean> => {
+          try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+          } catch (e) {
+            return false;
+          }
+        };
+        
+        const imageExists = await checkImage(localImagePath);
+        
+        if (imageExists) {
+          setPoseImage(localImagePath);
+        } else {
+          console.log(`Image for ${pose.id} not found, using fallback`);
+          // Let the component fall back to the default category image
+          setPoseImage(null);
+        }
       } catch (error) {
         console.error('Error loading pose image:', error);
+        setPoseImage(null);
       } finally {
         setIsLoadingImage(false);
       }
