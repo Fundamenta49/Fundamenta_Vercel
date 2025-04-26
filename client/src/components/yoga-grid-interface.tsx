@@ -41,15 +41,29 @@ export default function YogaGridInterface() {
     const updatedPose = updatedPoses.find(p => p.id === pose.id);
     
     if (updatedPose) {
-      // Update the imageUrl to use the newer yoga-poses path with the updated filename
-      // Check which directory this pose image is in (yoga or yoga-poses)
-      const directory = updatedPose.filename.endsWith('.jpg') ? 'yoga' : 'yoga-poses';
+      // Get primary and alternate paths for maximum reliability
+      const primaryPath = `/images/yoga/${updatedPose.filename}`;
+      
+      // Build alternate paths using both alternate filename and different directories
+      const alternatePaths = [
+        // Check in both directories using the primary filename
+        `/images/yoga-poses/${updatedPose.filename}`,
+        
+        // If we have an alternate filename, check both directories with that
+        updatedPose.alternateFilename ? `/images/yoga/${updatedPose.alternateFilename}` : null,
+        updatedPose.alternateFilename ? `/images/yoga-poses/${updatedPose.alternateFilename}` : null
+      ].filter(Boolean); // Remove any null entries
       
       return {
         ...pose,
-        // Store paths to both potential directories
-        imageUrl: `/images/${directory}/${updatedPose.filename}`,
-        alternativeImageUrl: `/images/${directory === 'yoga' ? 'yoga-poses' : 'yoga'}/${updatedPose.filename}`,
+        // Primary path - will be tried first
+        imageUrl: primaryPath,
+        
+        // Alternative path - will be tried if primary fails
+        alternativeImageUrl: alternatePaths[0] || "", 
+        
+        // Store all possible paths for maximum compatibility
+        allImagePaths: [primaryPath, ...alternatePaths],
         
         // Add extra metadata from updated poses if available
         ...(updatedPose.name && {

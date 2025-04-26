@@ -2,91 +2,109 @@
   {
     "id": "mountain",
     "filename": "mountain.png",
+    "alternateFilename": "mountain.jpg",
     "name": "Mountain Pose (Tadasana)"
   },
   {
     "id": "child",
     "filename": "child.png",
+    "alternateFilename": "child.jpg",
     "name": "Child's Pose (Balasana)"
   },
   {
     "id": "corpse",
     "filename": "corpse.png",
+    "alternateFilename": "corpse.jpg",
     "name": "Corpse Pose (Savasana)"
   },
   {
     "id": "downward_dog",
     "filename": "downward_dog.jpg",
+    "alternateFilename": "downward_dog.png",
     "name": "Downward Facing Dog (Adho Mukha Svanasana)"
   },
   {
     "id": "cat_cow",
     "filename": "cat_cow.png",
+    "alternateFilename": "cat_cow.jpg",
     "name": "Cat-Cow Pose (Marjaryasana-Bitilasana)"
   },
   {
     "id": "forward_fold",
     "filename": "forward_fold.jpg",
+    "alternateFilename": "forward_fold.png",
     "name": "Forward Fold (Uttanasana)"
   },
   {
     "id": "tree",
     "filename": "tree.png",
+    "alternateFilename": "tree.jpg",
     "name": "Tree Pose (Vrksasana)"
   },
   {
     "id": "warrior_1",
     "filename": "warrior_1.png",
+    "alternateFilename": "warrior_1.jpg",
     "name": "Warrior I (Virabhadrasana I)"
   },
   {
     "id": "warrior_2",
     "filename": "warrior_2.png",
+    "alternateFilename": "warrior_2.jpg",
     "name": "Warrior II (Virabhadrasana II)"
   },
   {
     "id": "triangle",
     "filename": "triangle.png",
+    "alternateFilename": "triangle.jpg",
     "name": "Triangle Pose (Trikonasana)"
   },
   {
     "id": "chair",
     "filename": "chair.png",
+    "alternateFilename": "chair.jpg",
     "name": "Chair Pose (Utkatasana)"
   },
   {
     "id": "bridge",
     "filename": "bridge.jpg",
+    "alternateFilename": "bridge.png",
     "name": "Bridge Pose (Setu Bandha Sarvangasana)"
   },
   {
     "id": "half_moon",
     "filename": "half_moon.png",
+    "alternateFilename": "half_moon.jpg",
     "name": "Half Moon Pose (Ardha Chandrasana)"
   },
   {
     "id": "eagle",
     "filename": "eagle.png",
+    "alternateFilename": "eagle.jpg",
     "name": "Eagle Pose (Garudasana)"
   },
   {
     "id": "pigeon",
     "filename": "pigeon.jpg",
+    "alternateFilename": "pigeon.png",
     "name": "Pigeon Pose (Eka Pada Rajakapotasana)"
   },
   {
     "id": "side_plank",
     "filename": "side_plank.png",
+    "alternateFilename": "side_plank.jpg",
     "name": "Side Plank (Vasisthasana)"
   },
   {
     "id": "crow",
-    "filename": "crow_3.jpg",
+    "filename": "crow.jpg", 
+    "alternateFilename": "crow_3.jpg",
     "name": "Crow Pose (Bakasana)"
   },
   {
     "id": "boat",
     "filename": "boat.jpg",
+    "alternateFilename": "boat.png",
     "name": "Boat Pose (Navasana)"
   }
 ]

@@ -55,6 +55,9 @@ export const YogaPoseProgressionSchema = z.object({
   prerequisites: z.array(z.string()).optional(), // Poses that should be mastered first
   imageUrl: z.string().optional(),
   alternativeImageUrl: z.string().optional(), // Secondary image URL for fallback
+  // New fields for better image handling
+  allImagePaths: z.array(z.string()).optional(), // List of all possible image paths
+  possibleImagePaths: z.array(z.string()).optional(), // More paths to try
   videoUrl: z.string().optional(),
   levelRequired: z.number().default(1), // Minimum user level to unlock
   challengeId: z.string().optional() // Associated challenge if any

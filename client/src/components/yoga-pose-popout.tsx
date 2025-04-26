@@ -21,6 +21,8 @@ import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
 interface YogaPosePopoutProps {
   pose: YogaPoseProgression & {
     alternativeImageUrl?: string;
+    allImagePaths?: string[];
+    possibleImagePaths?: string[];
   };
   unlocked: boolean;
   achievement?: {
@@ -45,28 +47,27 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
       try {
         setIsLoadingImage(true);
         
-        // Check multiple possible paths for the pose image
+        // Get all possible paths for this pose image
         const possibleImagePaths = [
-          // Paths from yoga-grid-interface.tsx updated data
+          // Use the allImagePaths array if available (comprehensive list from grid interface)
+          ...(pose.allImagePaths || []),
+          
+          // Add primary and alternative URLs as fallbacks
           pose.imageUrl,
           pose.alternativeImageUrl,
           
           // Standard PNG paths (both directories)
-          `/images/yoga-poses/${pose.id}.png`,
           `/images/yoga/${pose.id}.png`,
+          `/images/yoga-poses/${pose.id}.png`,
           
           // JPG paths (both directories)
-          `/images/yoga-poses/${pose.id}.jpg`,
           `/images/yoga/${pose.id}.jpg`,
+          `/images/yoga-poses/${pose.id}.jpg`,
           
-          // Crow variant paths
-          `/images/yoga-poses/crow_3.jpg`,
-          `/images/yoga/crow_3.jpg`,
-          `/images/yoga-poses/crow_4.jpg`,
-          `/images/yoga/crow_4.jpg`,
-          
-          // Try converted file paths
+          // Special case paths for specific poses
+          pose.id === 'crow' ? `/images/yoga/crow.jpg` : null,
           pose.id === 'crow' ? `/images/yoga/crow_3.jpg` : null,
+          pose.id === 'crow' ? `/images/yoga/crow_4.jpg` : null,
           pose.id === 'boat' ? `/images/yoga/boat.jpg` : null,
           pose.id === 'downward_dog' ? `/images/yoga/downward_dog.jpg` : null,
           pose.id === 'forward_fold' ? `/images/yoga/forward_fold.jpg` : null,
@@ -124,7 +125,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     };
     
     loadPoseImage();
-  }, [pose.id, pose.imageUrl, pose.alternativeImageUrl]);
+  }, [pose.id, pose.imageUrl, pose.alternativeImageUrl, pose.allImagePaths]);
 
   const handleClose = () => {
     setIsOpen(false);
