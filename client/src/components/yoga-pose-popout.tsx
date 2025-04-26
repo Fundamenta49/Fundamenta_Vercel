@@ -17,6 +17,7 @@ import { ArrowRight, Camera, Info, Book, Award } from 'lucide-react';
 import YogaVisionEnhanced from './yoga-vision-enhanced';
 import axios from 'axios';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
+import posesWithPaths from '../data/poses_with_paths.json';
 
 interface YogaPosePopoutProps {
   pose: YogaPoseProgression & {
@@ -42,7 +43,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [possiblePaths, setPossiblePaths] = useState<string[]>([]);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Load pose image directly from updated_poses.json data
+  // Load pose image directly from poses_with_paths.json data
   useEffect(() => {
     const loadPoseImage = () => {
       // Only load if we have a valid pose ID
@@ -51,40 +52,35 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
       try {
         setIsLoadingImage(true);
         
-        // Determine what image to use based on the pose level
-        const poseLevel = pose.levelRequired || 1;
+        // Find the pose in our poses_with_paths.json file
+        const poseData = posesWithPaths.find(p => p.id === pose.id);
         
-        // If pose is in level 1-3, use the level1-3 gallery image
-        // If pose is in level 4-6, use the level4-6 gallery image
-        const useGalleryImage = true; // Set to true to use the shared gallery images
-        
-        if (useGalleryImage) {
-          const galleryImage = poseLevel <= 3 
-            ? '/images/yoga/level1-3_poses.jpg' 
-            : '/images/yoga/level4-6_poses.jpg';
+        if (poseData && poseData.filename) {
+          // Use the exact path from the JSON file
+          setPoseImage(poseData.filename);
+          console.log(`Using image for ${pose.id}: ${poseData.filename}`);
           
-          setPoseImage(galleryImage);
-          console.log(`Using gallery image for ${pose.id}: ${galleryImage}`);
-          
-          // Set possible fallback paths
+          // Set possible fallback paths in case the primary one fails
           const possiblePaths = [
-            // Gallery images are the primary choice
-            galleryImage,
+            // Primary path from the JSON file
+            poseData.filename,
             
-            // Try the individual pose images as backups
-            `/images/yoga/${pose.id}.jpg`,
+            // Fallback paths
             `/images/yoga/${pose.id}.png`,
+            `/images/yoga/${pose.id}.jpg`
           ];
           
           // Store all paths for fallback purposes
           setPossiblePaths(possiblePaths);
         } else {
-          // If not using gallery images, fall back to individual pose images
-          const imagePath = `/images/yoga/${pose.id}.jpg`;
+          // If pose not found in our JSON, use a fallback
+          console.warn(`Pose ${pose.id} not found in poses_with_paths.json`);
+          const imagePath = `/images/yoga-poses/${pose.id}.png`;
           setPoseImage(imagePath);
           setPossiblePaths([
             imagePath,
-            `/images/yoga/${pose.id}.png`
+            `/images/yoga/${pose.id}.png`,
+            `/images/yoga/${pose.id}.jpg`
           ]);
         }
       } catch (error) {
@@ -96,7 +92,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     };
     
     loadPoseImage();
-  }, [pose.id, pose.levelRequired]);
+  }, [pose.id]);
 
   const handleClose = () => {
     setIsOpen(false);
