@@ -1,0 +1,274 @@
+{
+  "poses": [
+    {
+      "id": "mountain",
+      "name": "Mountain Pose",
+      "sanskritName": "Tadasana",
+      "description": "Standing tall with feet together, arms at sides",
+      "difficulty": "Beginner",
+      "category": "standing",
+      "benefits": [
+        "Improves posture",
+        "Strengthens thighs, knees, and ankles",
+        "Increases awareness and focus"
+      ],
+      "prerequisites": [],
+      "imageUrl": "/images/yoga-poses/mountain.png"
+    },
+    {
+      "id": "child",
+      "name": "Child's Pose",
+      "sanskritName": "Balasana",
+      "description": "Kneeling forward with forehead on mat, arms extended",
+      "difficulty": "Beginner",
+      "category": "resting",
+      "benefits": [
+        "Gently stretches the spine",
+        "Relieves tension in back and shoulders",
+        "Calms the mind and reduces stress"
+      ],
+      "prerequisites": [],
+      "imageUrl": "/images/yoga-poses/child.png"
+    },
+    {
+      "id": "corpse",
+      "name": "Corpse Pose",
+      "sanskritName": "Savasana",
+      "description": "Lying flat on back with arms at sides, palms up",
+      "difficulty": "Beginner",
+      "category": "resting",
+      "benefits": [
+        "Promotes deep relaxation",
+        "Reduces blood pressure and anxiety",
+        "Improves concentration and mental clarity"
+      ],
+      "prerequisites": [],
+      "imageUrl": "/images/yoga-poses/corpse.png"
+    },
+    {
+      "id": "downward_dog",
+      "name": "Downward Facing Dog",
+      "sanskritName": "Adho Mukha Svanasana",
+      "description": "Forming an inverted V-shape with body, hands and feet pressing into floor",
+      "difficulty": "Beginner",
+      "category": "foundation",
+      "benefits": [
+        "Strengthens arms, shoulders, and legs",
+        "Stretches hamstrings, calves, and spine",
+        "Increases blood flow to the brain"
+      ],
+      "prerequisites": [],
+      "imageUrl": "/images/yoga-poses/downward_dog.png"
+    },
+    {
+      "id": "cat_cow",
+      "name": "Cat-Cow Pose",
+      "sanskritName": "Marjaryasana-Bitilasana",
+      "description": "On hands and knees, alternating between arching and rounding spine",
+      "difficulty": "Beginner",
+      "category": "flow",
+      "benefits": [
+        "Improves spine flexibility",
+        "Relieves back pain",
+        "Coordinates breath with movement"
+      ],
+      "prerequisites": [],
+      "imageUrl": "/images/yoga-poses/cat_cow.png"
+    },
+    {
+      "id": "forward_fold",
+      "name": "Forward Fold",
+      "sanskritName": "Uttanasana",
+      "description": "Standing and bending forward from hips with hands toward floor",
+      "difficulty": "Beginner",
+      "category": "forward_bend",
+      "benefits": [
+        "Stretches hamstrings and spine",
+        "Relieves tension in neck and shoulders",
+        "Calms the mind and reduces stress"
+      ],
+      "prerequisites": [],
+      "imageUrl": "/images/yoga-poses/forward_fold.png"
+    },
+    {
+      "id": "tree",
+      "name": "Tree Pose",
+      "sanskritName": "Vrksasana",
+      "description": "Standing on one leg with other foot placed on inner thigh",
+      "difficulty": "Intermediate",
+      "category": "balance",
+      "benefits": [
+        "Improves balance and focus",
+        "Strengthens ankles, calves, and thighs",
+        "Develops concentration"
+      ],
+      "prerequisites": ["mountain"],
+      "imageUrl": "/images/yoga-poses/tree.png"
+    },
+    {
+      "id": "warrior_1",
+      "name": "Warrior I",
+      "sanskritName": "Virabhadrasana I",
+      "description": "Lunge with front knee bent, back leg straight, arms extended overhead",
+      "difficulty": "Intermediate",
+      "category": "standing",
+      "benefits": [
+        "Strengthens legs, shoulders, and arms",
+        "Opens chest and lungs",
+        "Builds focus and stability"
+      ],
+      "prerequisites": ["mountain"],
+      "imageUrl": "/images/yoga-poses/warrior_1.png"
+    },
+    {
+      "id": "warrior_2",
+      "name": "Warrior II",
+      "sanskritName": "Virabhadrasana II",
+      "description": "Wide stance with front knee bent, arms extended to sides",
+      "difficulty": "Intermediate",
+      "category": "standing",
+      "benefits": [
+        "Strengthens legs and core",
+        "Opens hips and chest",
+        "Builds stamina and concentration"
+      ],
+      "prerequisites": ["warrior_1"],
+      "imageUrl": "/images/yoga-poses/warrior_2.png"
+    },
+    {
+      "id": "triangle",
+      "name": "Triangle Pose",
+      "sanskritName": "Trikonasana",
+      "description": "Wide stance with one arm reaching toward floor, other arm extended upward",
+      "difficulty": "Intermediate",
+      "category": "standing",
+      "benefits": [
+        "Stretches legs, hips, and spine",
+        "Relieves back pain",
+        "Improves digestion"
+      ],
+      "prerequisites": ["warrior_2"],
+      "imageUrl": "/images/yoga-poses/triangle.png"
+    },
+    {
+      "id": "chair",
+      "name": "Chair Pose",
+      "sanskritName": "Utkatasana",
+      "description": "Standing with knees bent as if sitting in chair, arms extended upward",
+      "difficulty": "Intermediate",
+      "category": "standing",
+      "benefits": [
+        "Strengthens thighs, ankles, and spine",
+        "Stimulates heart and abdominal organs",
+        "Improves balance and posture"
+      ],
+      "prerequisites": ["mountain"],
+      "imageUrl": "/images/yoga-poses/chair.png"
+    },
+    {
+      "id": "bridge",
+      "name": "Bridge Pose",
+      "sanskritName": "Setu Bandha Sarvangasana",
+      "description": "Lying on back with hips lifted, feet on floor",
+      "difficulty": "Intermediate",
+      "category": "backbend",
+      "benefits": [
+        "Strengthens back, glutes, and hamstrings",
+        "Opens chest and shoulders",
+        "Improves spinal flexibility"
+      ],
+      "prerequisites": ["corpse"],
+      "imageUrl": "/images/yoga-poses/bridge.png"
+    },
+    {
+      "id": "half_moon",
+      "name": "Half Moon Pose",
+      "sanskritName": "Ardha Chandrasana",
+      "description": "Balancing on one leg with body parallel to floor",
+      "difficulty": "Advanced",
+      "category": "balance",
+      "benefits": [
+        "Strengthens legs, ankles, and core",
+        "Improves balance and coordination",
+        "Opens hips and chest"
+      ],
+      "prerequisites": ["triangle", "warrior_2"],
+      "imageUrl": "/images/yoga-poses/half_moon.png"
+    },
+    {
+      "id": "eagle",
+      "name": "Eagle Pose",
+      "sanskritName": "Garudasana",
+      "description": "Standing with legs and arms wrapped around each other",
+      "difficulty": "Advanced",
+      "category": "balance",
+      "benefits": [
+        "Improves balance and focus",
+        "Strengthens legs and core",
+        "Stretches shoulders and upper back"
+      ],
+      "prerequisites": ["chair", "tree"],
+      "imageUrl": "/images/yoga-poses/eagle.png"
+    },
+    {
+      "id": "pigeon",
+      "name": "Pigeon Pose",
+      "sanskritName": "Eka Pada Rajakapotasana",
+      "description": "One leg extended back, other leg bent in front",
+      "difficulty": "Advanced",
+      "category": "hip_opener",
+      "benefits": [
+        "Opens hips and hip flexors",
+        "Stretches glutes and psoas muscle",
+        "Relieves sciatic pain"
+      ],
+      "prerequisites": ["downward_dog"],
+      "imageUrl": "/images/yoga-poses/pigeon.png"
+    },
+    {
+      "id": "crow",
+      "name": "Crow Pose",
+      "sanskritName": "Bakasana",
+      "description": "Balancing on hands with knees resting on elbows",
+      "difficulty": "Expert",
+      "category": "arm_balance",
+      "benefits": [
+        "Strengthens arms, wrists, and core",
+        "Improves balance and focus",
+        "Builds confidence"
+      ],
+      "prerequisites": ["downward_dog", "chair"],
+      "imageUrl": "/images/yoga-poses/crow.png"
+    },
+    {
+      "id": "side_plank",
+      "name": "Side Plank",
+      "sanskritName": "Vasisthasana",
+      "description": "Balancing on one hand with body in straight line",
+      "difficulty": "Expert",
+      "category": "arm_balance",
+      "benefits": [
+        "Strengthens arms, shoulders, and core",
+        "Improves balance and focus",
+        "Tones the entire body"
+      ],
+      "prerequisites": ["downward_dog"],
+      "imageUrl": "/images/yoga-poses/side_plank.png"
+    },
+    {
+      "id": "boat",
+      "name": "Boat Pose",
+      "sanskritName": "Navasana",
+      "description": "Balancing on sit bones with legs and torso forming V-shape",
+      "difficulty": "Expert",
+      "category": "core",
+      "benefits": [
+        "Strengthens core, hip flexors, and spine",
+        "Improves balance and digestion",
+        "Stimulates kidneys and intestines"
+      ],
+      "prerequisites": ["chair", "bridge"],
+      "imageUrl": "/images/yoga-poses/boat.png"
+    }
+  ]
+}

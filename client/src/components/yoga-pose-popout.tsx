@@ -33,37 +33,25 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [poseImage, setPoseImage] = useState<string | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Fetch pose-specific image from our API
+  // Load local pose-specific images
   useEffect(() => {
-    const fetchPoseImage = async () => {
-      // Only fetch if we have a valid pose ID
+    const loadPoseImage = () => {
+      // Only load if we have a valid pose ID
       if (!pose.id) return;
       
       try {
         setIsLoadingImage(true);
-        // First check if the image already exists
-        const response = await axios.get(`/api/pose-images/get-pose-images`);
-        
-        if (response.data.success && response.data.images[pose.id] && 
-            response.data.images[pose.id] !== 'not-available') {
-          setPoseImage(response.data.images[pose.id]);
-          setIsLoadingImage(false);
-          return;
-        }
-        
-        // If not available, generate the image
-        const generatedResponse = await axios.get(`/api/pose-images/generate-pose-image/${pose.id}`);
-        if (generatedResponse.data.success) {
-          setPoseImage(generatedResponse.data.imageUrl);
-        }
+        // Set the image URL directly to the local image path
+        const localImagePath = `/images/yoga-poses/${pose.id}.png`;
+        setPoseImage(localImagePath);
       } catch (error) {
-        console.error('Error fetching pose image:', error);
+        console.error('Error loading pose image:', error);
       } finally {
         setIsLoadingImage(false);
       }
     };
     
-    fetchPoseImage();
+    loadPoseImage();
   }, [pose.id]);
 
   const handleClose = () => {
