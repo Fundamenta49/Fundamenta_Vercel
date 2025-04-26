@@ -13,11 +13,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { YogaPoseProgression } from '../../../shared/yoga-progression';
-import { ArrowRight, Camera, Info, Book, Award } from 'lucide-react';
+import { ArrowRight, Camera, Info, Book, Award, Youtube } from 'lucide-react';
 import YogaVisionEnhanced from './yoga-vision-enhanced';
 import axios from 'axios';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
 import posesWithPaths from '../data/poses_with_paths.json';
+import { getYogaPoseThumbnail, getYogaPoseVideoInfo } from '../lib/yoga-pose-thumbnails';
 
 interface YogaPosePopoutProps {
   pose: YogaPoseProgression & {
@@ -299,11 +300,17 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               ) : (
                 <div className="w-full h-full relative overflow-hidden">
                   <img 
-                    src={`${getFallbackImageUrl()}?auto=format&fit=crop&w=764&q=80`}
+                    src={getYogaPoseThumbnail(pose.id)}
                     alt={pose.name} 
                     className="object-cover w-full h-full"
                     style={{ objectFit: 'cover' }}
                   />
+                  {pose.id && getYogaPoseVideoInfo(pose.id) && (
+                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
+                      <Youtube className="w-3 h-3 mr-1" />
+                      <span>Demo Video</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -393,10 +400,16 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   ) : (
                     <div className="w-full h-full relative overflow-hidden">
                       <img 
-                        src={`${getFallbackImageUrl()}?auto=format&fit=crop&w=764&q=80`}
+                        src={getYogaPoseThumbnail(pose.id)}
                         alt={pose.name} 
                         className="object-cover w-full h-full"
                       />
+                      {pose.id && getYogaPoseVideoInfo(pose.id) && (
+                        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
+                          <Youtube className="w-3 h-3 mr-1" />
+                          <span className="text-xs">{getYogaPoseVideoInfo(pose.id)?.title || 'Demo Video'}</span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
