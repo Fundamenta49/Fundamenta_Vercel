@@ -423,7 +423,7 @@ export default function YogaVisionEnhanced({
               </h3>
               
               {availablePoses.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                <div className={`grid ${compactMode ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-2`}>
                   {availablePoses.map((pose) => {
                     const achievement = userProgress?.poseAchievements?.[pose.id];
                     
@@ -431,18 +431,18 @@ export default function YogaVisionEnhanced({
                       <Button
                         key={pose.id}
                         variant={selectedPoseId === pose.id ? "default" : "outline"}
-                        className="justify-start h-auto py-2 text-left"
+                        className={`justify-start h-auto ${compactMode ? 'py-1 px-2 text-xs' : 'py-2'} text-left`}
                         onClick={() => handlePoseSelect(pose.id)}
                       >
                         <div className="flex flex-col items-start w-full">
                           <div className="flex items-center w-full justify-between">
-                            <div className="flex items-center">
+                            <div className="flex items-center truncate">
                               {selectedPoseId === pose.id && (
-                                <CheckCircle2 className="h-4 w-4 mr-2 flex-shrink-0" />
+                                <CheckCircle2 className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1 flex-shrink-0`} />
                               )}
-                              <span>{pose.name}</span>
+                              <span className="truncate">{pose.name}</span>
                             </div>
-                            <Badge variant="secondary" className="ml-2 text-xs">
+                            <Badge variant="secondary" className={`ml-1 ${compactMode ? 'text-[10px] px-1' : 'text-xs'}`}>
                               {pose.difficulty}
                             </Badge>
                           </div>
@@ -548,7 +548,7 @@ export default function YogaVisionEnhanced({
                 </div>
               )}
               
-              <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-6 mb-4">
+              <div className={`flex flex-col items-center justify-center border-2 border-dashed rounded-lg ${compactMode ? 'p-3 mb-2' : 'p-6 mb-4'}`}>
                 <input 
                   type="file" 
                   accept="image/*" 
@@ -570,11 +570,16 @@ export default function YogaVisionEnhanced({
                           width: 720,
                           height: 480
                         }}
-                        className="w-full rounded-md mb-4"
+                        className={`w-full rounded-md ${compactMode ? 'mb-2 max-h-[240px] object-cover' : 'mb-4'}`}
                       />
                       <div className="flex gap-2 justify-center">
-                        <Button onClick={handleWebcamCapture} variant="default">
-                          <Camera className="h-4 w-4 mr-2" />
+                        <Button 
+                          onClick={handleWebcamCapture} 
+                          variant="default"
+                          size={compactMode ? "sm" : "default"}
+                          className={compactMode ? "rounded-full" : ""}
+                        >
+                          <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-2`} />
                           Capture Photo
                         </Button>
                       </div>
@@ -582,7 +587,7 @@ export default function YogaVisionEnhanced({
                   ) : (
                     // Show captured image
                     <div className="text-center w-full">
-                      <div className="relative aspect-video w-full max-w-md mx-auto mb-4">
+                      <div className={`relative aspect-video w-full mx-auto ${compactMode ? 'mb-2 max-h-[200px]' : 'max-w-md mb-4'}`}>
                         <img 
                           src={imagePreview} 
                           alt="Yoga pose capture" 
@@ -590,11 +595,21 @@ export default function YogaVisionEnhanced({
                         />
                       </div>
                       <div className="flex gap-2 justify-center">
-                        <Button onClick={() => handleReset()} variant="outline" size="sm">
-                          <Camera className="h-4 w-4 mr-2" />
-                          Retake Photo
+                        <Button 
+                          onClick={() => handleReset()} 
+                          variant="outline" 
+                          size="sm"
+                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                        >
+                          <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
+                          Retake
                         </Button>
-                        <Button onClick={handleReset} variant="destructive" size="sm">
+                        <Button 
+                          onClick={handleReset} 
+                          variant="destructive" 
+                          size="sm"
+                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                        >
                           Remove
                         </Button>
                       </div>
@@ -604,18 +619,23 @@ export default function YogaVisionEnhanced({
                   // File upload mode
                   !imagePreview ? (
                     <div className="text-center">
-                      <Camera className="mx-auto h-10 w-10 text-gray-400 mb-2" />
-                      <p className="text-sm text-muted-foreground mb-2">No image selected</p>
+                      <Camera className={`mx-auto ${compactMode ? 'h-8 w-8 mb-1' : 'h-10 w-10 mb-2'} text-gray-400`} />
+                      <p className={`${compactMode ? 'text-xs' : 'text-sm'} text-muted-foreground mb-2`}>No image selected</p>
                       <div className="flex gap-2 justify-center">
-                        <Button onClick={handleCameraClick} variant="outline">
-                          <Upload className="h-4 w-4 mr-2" />
+                        <Button 
+                          onClick={handleCameraClick} 
+                          variant="outline"
+                          size={compactMode ? "sm" : "default"}
+                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                        >
+                          <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
                           Upload Image
                         </Button>
                       </div>
                     </div>
                   ) : (
                     <div className="text-center w-full">
-                      <div className="relative aspect-video w-full max-w-md mx-auto mb-4">
+                      <div className={`relative aspect-video w-full mx-auto ${compactMode ? 'mb-2 max-h-[200px]' : 'max-w-md mb-4'}`}>
                         <img 
                           src={imagePreview} 
                           alt="Yoga pose preview" 
@@ -623,11 +643,21 @@ export default function YogaVisionEnhanced({
                         />
                       </div>
                       <div className="flex gap-2 justify-center">
-                        <Button onClick={handleCameraClick} variant="outline" size="sm">
-                          <Upload className="h-4 w-4 mr-2" />
+                        <Button 
+                          onClick={handleCameraClick} 
+                          variant="outline" 
+                          size="sm"
+                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                        >
+                          <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
                           Change Image
                         </Button>
-                        <Button onClick={handleReset} variant="destructive" size="sm">
+                        <Button 
+                          onClick={handleReset} 
+                          variant="destructive" 
+                          size="sm"
+                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                        >
                           Remove
                         </Button>
                       </div>
@@ -708,9 +738,14 @@ export default function YogaVisionEnhanced({
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className={`flex justify-between ${compactMode ? 'px-4 py-3' : ''}`}>
           {onClose ? (
-            <Button variant="outline" onClick={onClose}>
+            <Button 
+              variant="outline" 
+              onClick={onClose}
+              size={compactMode ? "sm" : "default"}
+              className={compactMode ? "h-8 text-xs rounded-full" : ""}
+            >
               Back
             </Button>
           ) : (
@@ -718,6 +753,8 @@ export default function YogaVisionEnhanced({
               variant="outline"
               disabled={isAnalyzing}
               onClick={handleReset}
+              size={compactMode ? "sm" : "default"}
+              className={compactMode ? "h-8 text-xs rounded-full" : ""}
             >
               Reset
             </Button>
@@ -725,17 +762,18 @@ export default function YogaVisionEnhanced({
           <Button
             onClick={handleSubmitForAnalysis}
             disabled={!selectedImage || !selectedPoseId || isAnalyzing}
-            className="flex items-center"
+            className={`flex items-center ${compactMode ? "h-8 text-xs rounded-full" : ""}`}
+            size={compactMode ? "sm" : "default"}
           >
             {isAnalyzing ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1 animate-spin`} />
                 Analyzing...
               </>
             ) : (
               <>
                 Analyze Pose
-                <ArrowRight className="h-4 w-4 ml-2" />
+                <ArrowRight className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} ml-1`} />
               </>
             )}
           </Button>
@@ -744,24 +782,24 @@ export default function YogaVisionEnhanced({
 
       {/* Analysis results */}
       {analysis && (
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>YogaVision Analysis</CardTitle>
+        <Card className={`w-full ${compactMode ? 'border-0 shadow-none' : ''}`}>
+          <CardHeader className={compactMode ? 'px-4 py-3' : ''}>
+            <CardTitle className={compactMode ? 'text-lg' : ''}>YogaVision Analysis</CardTitle>
             <CardDescription>
               AI-powered feedback on your {selectedPose?.name} pose
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className={`${compactMode ? 'px-4 pt-0' : ''} space-y-4`}>
             {/* XP Reward */}
             {rewardEarned && (
-              <Alert className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200">
+              <Alert className={`bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 ${compactMode ? 'p-3' : ''}`}>
                 <div className="flex items-center">
-                  <Award className="h-5 w-5 text-purple-500 mr-2" />
+                  <Award className={`${compactMode ? 'h-4 w-4' : 'h-5 w-5'} text-purple-500 mr-2`} />
                   <div>
-                    <AlertTitle className="text-purple-700">Achievement Unlocked!</AlertTitle>
-                    <AlertDescription className="text-purple-600">
+                    <AlertTitle className={`text-purple-700 ${compactMode ? 'text-sm mb-0' : ''}`}>Achievement Unlocked!</AlertTitle>
+                    <AlertDescription className={`text-purple-600 ${compactMode ? 'text-xs' : ''}`}>
                       <p>You earned {rewardEarned.xp} XP points for your {selectedPose?.name} pose!</p>
-                      <div className="mt-1">
+                      <div className={compactMode ? 'mt-0.5 flex items-center gap-2' : 'mt-1'}>
                         <span className="font-medium">New mastery level: </span>
                         <MasteryStars level={rewardEarned.newMasteryLevel} />
                       </div>
@@ -773,8 +811,8 @@ export default function YogaVisionEnhanced({
             
             {/* Overall assessment */}
             <div>
-              <h3 className="font-medium text-base mb-2">Overall Assessment</h3>
-              <p className="text-sm">{analysis.overallAssessment}</p>
+              <h3 className={`font-medium ${compactMode ? 'text-sm' : 'text-base'} mb-2`}>Overall Assessment</h3>
+              <p className={compactMode ? 'text-xs' : 'text-sm'}>{analysis.overallAssessment}</p>
               
               <div className="mt-3">
                 <div className="flex justify-between text-xs mb-1">
@@ -785,18 +823,18 @@ export default function YogaVisionEnhanced({
               </div>
             </div>
             
-            <Separator />
+            <Separator className={compactMode ? 'my-2' : ''} />
             
             {/* What you're doing well */}
             <div>
-              <h3 className="font-medium text-base mb-2 flex items-center">
-                <ThumbsUp className="h-4 w-4 mr-2 text-green-500" />
+              <h3 className={`font-medium ${compactMode ? 'text-sm' : 'text-base'} mb-2 flex items-center`}>
+                <ThumbsUp className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-green-500`} />
                 What You're Doing Well
               </h3>
               <ul className="space-y-1">
                 {analysis.strengths.map((strength, index) => (
-                  <li key={index} className="text-sm flex items-start">
-                    <CheckCircle2 className="h-4 w-4 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
+                  <li key={index} className={`${compactMode ? 'text-xs' : 'text-sm'} flex items-start`}>
+                    <CheckCircle2 className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-green-500 flex-shrink-0 mt-0.5`} />
                     <span>{strength}</span>
                   </li>
                 ))}
@@ -805,14 +843,14 @@ export default function YogaVisionEnhanced({
             
             {/* Areas for improvement */}
             <div>
-              <h3 className="font-medium text-base mb-2 flex items-center">
-                <MoveRight className="h-4 w-4 mr-2 text-amber-500" />
+              <h3 className={`font-medium ${compactMode ? 'text-sm' : 'text-base'} mb-2 flex items-center`}>
+                <MoveRight className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-amber-500`} />
                 Areas for Improvement
               </h3>
               <ul className="space-y-1">
                 {analysis.improvements.map((improvement, index) => (
-                  <li key={index} className="text-sm flex items-start">
-                    <ArrowRight className="h-4 w-4 mr-2 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <li key={index} className={`${compactMode ? 'text-xs' : 'text-sm'} flex items-start`}>
+                    <ArrowRight className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-amber-500 flex-shrink-0 mt-0.5`} />
                     <span>{improvement}</span>
                   </li>
                 ))}
@@ -822,35 +860,37 @@ export default function YogaVisionEnhanced({
             {/* Safety notes */}
             {analysis.safetyNotes && (
               <div>
-                <h3 className="font-medium text-base mb-2 flex items-center">
-                  <AlertTriangle className="h-4 w-4 mr-2 text-orange-500" />
+                <h3 className={`font-medium ${compactMode ? 'text-sm' : 'text-base'} mb-2 flex items-center`}>
+                  <AlertTriangle className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-orange-500`} />
                   Safety Considerations
                 </h3>
-                <p className="text-sm">{analysis.safetyNotes}</p>
+                <p className={compactMode ? 'text-xs' : 'text-sm'}>{analysis.safetyNotes}</p>
               </div>
             )}
             
             {/* Alignment tips */}
             <div>
-              <h3 className="font-medium text-base mb-2 flex items-center">
-                <Info className="h-4 w-4 mr-2 text-blue-500" />
+              <h3 className={`font-medium ${compactMode ? 'text-sm' : 'text-base'} mb-2 flex items-center`}>
+                <Info className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-blue-500`} />
                 Key Alignment Tips
               </h3>
-              <p className="text-sm">{analysis.alignmentTips}</p>
+              <p className={compactMode ? 'text-xs' : 'text-sm'}>{analysis.alignmentTips}</p>
             </div>
             
-            <Alert variant="default" className="mt-4 bg-secondary/30">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle className="text-sm font-medium">Difficulty Assessment</AlertTitle>
-              <AlertDescription className="text-xs">
+            <Alert variant="default" className={`${compactMode ? 'mt-2 p-3' : 'mt-4'} bg-secondary/30`}>
+              <AlertCircle className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'}`} />
+              <AlertTitle className={`${compactMode ? 'text-xs font-medium mb-0' : 'text-sm font-medium'}`}>Difficulty Assessment</AlertTitle>
+              <AlertDescription className={compactMode ? 'text-[11px]' : 'text-xs'}>
                 {analysis.difficultyAssessment}
               </AlertDescription>
             </Alert>
           </CardContent>
-          <CardFooter className="flex justify-between">
+          <CardFooter className={`flex justify-between ${compactMode ? 'px-4 py-3' : ''}`}>
             <Button
               variant="outline"
               onClick={handleReset}
+              size={compactMode ? "sm" : "default"}
+              className={compactMode ? "h-8 text-xs rounded-full" : ""}
             >
               Try Another Pose
             </Button>
@@ -860,8 +900,10 @@ export default function YogaVisionEnhanced({
                   fileInputRef.current.click();
                 }
               }}
+              size={compactMode ? "sm" : "default"}
+              className={compactMode ? "h-8 text-xs rounded-full" : ""}
             >
-              <Camera className="h-4 w-4 mr-2" />
+              <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
               Retake Photo
             </Button>
           </CardFooter>
