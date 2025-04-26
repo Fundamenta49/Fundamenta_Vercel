@@ -8,6 +8,7 @@ import RunningSpecificExercisesEnhanced from './running-specific-exercises-enhan
 import WeightliftingSpecificExercisesEnhanced from './weightlifting-specific-exercises-enhanced';
 import MeditationSpecificExercisesEnhanced from './meditation-specific-exercises-enhanced';
 import YogaVisionEnhanced from './yoga-vision-enhanced';
+import YogaGridInterface from './yoga-grid-interface';
 import { Card } from "@/components/ui/card";
 import { ExerciseType } from "../modules/active-you/context/module-context";
 
@@ -154,36 +155,19 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
         );
       case 'yoga':
         return (
-          <div className="bg-gradient-to-br from-pink-50 to-white p-4 rounded-md mb-4">
+          <div className="p-4 rounded-md mb-4">
             <h2 className="text-xl font-semibold text-pink-700 mb-1">Yoga Practice</h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 mb-6">
               Yoga combines physical postures with breathing techniques and mindfulness.
               Regular practice can improve flexibility, strength, balance, and mental wellbeing.
             </p>
             
-            {/* YogaVision AI Feature Button */}
-            <div className="my-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-pink-100">
-              <div className="flex items-center mb-2">
-                <div className="bg-pink-100 p-2 rounded-full mr-3">
-                  <Camera className="h-6 w-6 text-pink-700" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-pink-800">YogaVision AI Pose Analysis</h3>
-                  <p className="text-sm text-gray-600">Upload a photo of your yoga pose for real-time AI feedback on form and alignment</p>
-                </div>
-              </div>
-              <Button 
-                onClick={() => setIsYogaVisionOpen(true)} 
-                className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white"
-              >
-                <Camera className="w-5 h-5 mr-2" />
-                Open YogaVision
-              </Button>
-            </div>
+            {/* New YogaGridInterface Component - Each card has its own YogaVision integration */}
+            <YogaGridInterface />
             
-            <YogaSpecificExercisesEnhanced />
-            
-            {/* YogaVision AI Dialog */}
+            {/* Remove the main YogaVision dialog since each pose card has its own integrated camera */}
+            {/* The old YogaVision dialog code is kept for reference */}
+            {/*
             <Dialog open={isYogaVisionOpen} onOpenChange={setIsYogaVisionOpen}>
               <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
@@ -215,6 +199,7 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
                 />
               </DialogContent>
             </Dialog>
+            */}
           </div>
         );
       case 'running':
