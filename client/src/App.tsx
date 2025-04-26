@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import { TourProvider } from "@/components/home-tour";
 import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
+import { ActivityProfileProvider } from "@/contexts/activity-profile-context";
 
 // Import cooking pages
 import CookingPage from "@/pages/cooking";
@@ -376,9 +377,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TourProvider>
-          <Router />
-        </TourProvider>
+        <ActivityProfileProvider>
+          <TourProvider>
+            <Router />
+          </TourProvider>
+        </ActivityProfileProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
