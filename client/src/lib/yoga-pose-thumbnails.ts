@@ -97,8 +97,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
     channelTitle: 'Yoga With Adriene' 
   },
   'pigeon': { 
-    videoId: 'FVXPf0qxGzI', 
-    title: 'Pigeon Pose (Eka Pada Rajakapotasana)',
+    videoId: 'jkJwvzt12dA', 
+    title: 'Pigeon Pose | Eka Pada Rajakapotasana',
     channelTitle: 'Yoga With Adriene' 
   },
   
