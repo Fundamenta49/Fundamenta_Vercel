@@ -1,11 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { ExerciseType } from "../modules/active-you/context/module-context";
-import { FitnessProfile } from "../components/fitness-profile";
 
 // Base profile interface for all activity types
 export interface BaseActivityProfile {
   lastUpdated: Date;
   experience: 'beginner' | 'intermediate' | 'advanced';
+  timeAvailable: number; // Minutes
 }
 
 // Yoga specific profile
@@ -15,7 +15,6 @@ export interface YogaProfile extends BaseActivityProfile {
   practiceFrequency: string; // E.g., "daily", "2-3 times per week", "weekly"
   injuryConsiderations: string[]; // Any areas to be careful with
   favoriteAsanas: string[]; // Favorite poses
-  timeAvailable: number; // Minutes
 }
 
 // Running specific profile
@@ -27,7 +26,6 @@ export interface RunningProfile extends BaseActivityProfile {
   runningFrequency: string; // E.g., "daily", "3 times per week"
   injuryConsiderations: string[]; // Any injuries to consider
   preferredWeather: string[]; // E.g., "rain", "sunshine", "any"
-  timeAvailable: number; // Minutes
 }
 
 // Weightlifting specific profile
@@ -38,7 +36,6 @@ export interface WeightliftingProfile extends BaseActivityProfile {
   maxLifts: Record<string, number>; // E.g., {"bench": 100, "squat": 150, "deadlift": 200}
   trainingFrequency: string; // E.g., "3-4 times per week"
   injuryConsiderations: string[]; // Any injuries to consider
-  timeAvailable: number; // Minutes
 }
 
 // HIIT specific profile
@@ -50,7 +47,6 @@ export interface HIITProfile extends BaseActivityProfile {
   preferredExercises: string[]; // Favorite exercises
   trainingFrequency: string; // E.g., "2-3 times per week"
   injuryConsiderations: string[]; // Any injuries to consider
-  timeAvailable: number; // Minutes
 }
 
 // Stretching specific profile
@@ -60,7 +56,6 @@ export interface StretchingProfile extends BaseActivityProfile {
   preferredTechniques: string[]; // E.g., "static", "dynamic", "PNF", "ballistic"
   stretchingFrequency: string; // E.g., "daily", "after workouts"
   injuryConsiderations: string[]; // Any injuries to consider
-  timeAvailable: number; // Minutes
 }
 
 // Meditation specific profile
@@ -69,7 +64,22 @@ export interface MeditationProfile extends BaseActivityProfile {
   preferredStyles: string[]; // E.g., "guided", "breathing", "body scan", "mindfulness"
   practiceFrequency: string; // E.g., "daily", "morning and evening"
   challengingAspects: string[]; // E.g., "staying focused", "finding time", "posture"
-  timeAvailable: number; // Minutes
+}
+
+// General fitness profile
+export interface FitnessProfile {
+  name?: string;
+  age?: number;
+  gender?: string;
+  weight?: number; // in kg
+  height?: number; // in cm
+  fitnessLevel?: 'beginner' | 'intermediate' | 'advanced';
+  healthConditions?: string[];
+  fitnessGoals?: string[];
+  preferredActivities?: string[];
+  dietaryPreferences?: string[];
+  sleepHours?: number;
+  stressLevel?: 'low' | 'moderate' | 'high';
 }
 
 // Union type of all activity profiles
@@ -90,107 +100,139 @@ export type ActivityProfileMap = {
 interface ActivityProfileContextType {
   profiles: ActivityProfileMap;
   fitnessProfile: FitnessProfile | null;
-  setActivityProfile: (type: ExerciseType, profile: ActivityProfile) => void;
-  getProfileByType: (type: ExerciseType) => ActivityProfile | undefined;
-  setFitnessProfile: (profile: FitnessProfile) => void;
-  isProfileComplete: (type: ExerciseType) => boolean;
+  updateProfile: (activityType: ExerciseType, profile: ActivityProfile) => void;
+  updateFitnessProfile: (profile: FitnessProfile) => void;
+  getProfileByType: (activityType: ExerciseType) => ActivityProfile | null;
+  isProfileComplete: (activityType: ExerciseType) => boolean;
+  resetProfiles: () => void;
 }
 
-// Default values for context
-const defaultContextValue: ActivityProfileContextType = {
+// Local storage keys
+const PROFILES_STORAGE_KEY = 'fundamenta-activity-profiles';
+const FITNESS_PROFILE_STORAGE_KEY = 'fundamenta-fitness-profile';
+
+// Create the context
+const ActivityProfileContext = createContext<ActivityProfileContextType>({
   profiles: {},
   fitnessProfile: null,
-  setActivityProfile: () => {},
-  getProfileByType: () => undefined,
-  setFitnessProfile: () => {},
+  updateProfile: () => {},
+  updateFitnessProfile: () => {},
+  getProfileByType: () => null,
   isProfileComplete: () => false,
-};
-
-// Create context
-const ActivityProfileContext = createContext<ActivityProfileContextType>(defaultContextValue);
+  resetProfiles: () => {},
+});
 
 // Provider component
-export const ActivityProfileProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const ActivityProfileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [profiles, setProfiles] = useState<ActivityProfileMap>({});
-  const [fitnessProfile, setFitnessProfileState] = useState<FitnessProfile | null>(null);
-
-  // Load profiles from localStorage on first render
+  const [fitnessProfile, setFitnessProfile] = useState<FitnessProfile | null>(null);
+  
+  // Load profiles from local storage on component mount
   useEffect(() => {
     try {
-      const savedProfiles = localStorage.getItem('activityProfiles');
-      if (savedProfiles) {
-        // Parse the JSON but need to convert strings back to Date objects
-        const parsedProfiles = JSON.parse(savedProfiles, (key, value) => {
-          if (key === 'lastUpdated') {
-            return new Date(value);
+      const storedProfiles = localStorage.getItem(PROFILES_STORAGE_KEY);
+      if (storedProfiles) {
+        const parsedProfiles = JSON.parse(storedProfiles);
+        
+        // Convert string dates back to Date objects
+        Object.keys(parsedProfiles).forEach(key => {
+          if (parsedProfiles[key]?.lastUpdated) {
+            parsedProfiles[key].lastUpdated = new Date(parsedProfiles[key].lastUpdated);
           }
-          return value;
         });
+        
         setProfiles(parsedProfiles);
       }
-
-      const savedFitnessProfile = localStorage.getItem('fitnessProfile');
-      if (savedFitnessProfile) {
-        setFitnessProfileState(JSON.parse(savedFitnessProfile));
+      
+      const storedFitnessProfile = localStorage.getItem(FITNESS_PROFILE_STORAGE_KEY);
+      if (storedFitnessProfile) {
+        setFitnessProfile(JSON.parse(storedFitnessProfile));
       }
     } catch (error) {
-      console.error('Error loading activity profiles from localStorage:', error);
+      console.error('Error loading profiles from local storage:', error);
     }
   }, []);
-
-  // Save profiles to localStorage whenever they change
+  
+  // Save profiles to local storage whenever they change
   useEffect(() => {
     try {
-      localStorage.setItem('activityProfiles', JSON.stringify(profiles));
+      localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(profiles));
     } catch (error) {
-      console.error('Error saving activity profiles to localStorage:', error);
+      console.error('Error saving profiles to local storage:', error);
     }
   }, [profiles]);
-
-  // Function to set an activity profile
-  const setActivityProfile = (type: ExerciseType, profile: ActivityProfile) => {
+  
+  // Save fitness profile to local storage whenever it changes
+  useEffect(() => {
+    if (fitnessProfile) {
+      try {
+        localStorage.setItem(FITNESS_PROFILE_STORAGE_KEY, JSON.stringify(fitnessProfile));
+      } catch (error) {
+        console.error('Error saving fitness profile to local storage:', error);
+      }
+    }
+  }, [fitnessProfile]);
+  
+  // Update a specific activity profile
+  const updateProfile = (activityType: ExerciseType, profile: ActivityProfile) => {
     setProfiles(prev => ({
       ...prev,
-      [type]: {
-        ...profile,
-        lastUpdated: new Date(),
-      }
+      [activityType]: profile
     }));
   };
-
-  // Function to get a profile by activity type
-  const getProfileByType = (type: ExerciseType): ActivityProfile | undefined => {
-    return profiles[type];
+  
+  // Update the general fitness profile
+  const updateFitnessProfile = (profile: FitnessProfile) => {
+    setFitnessProfile(profile);
   };
-
-  // Function to set the general fitness profile
-  const setFitnessProfile = (profile: FitnessProfile) => {
-    setFitnessProfileState(profile);
-    localStorage.setItem('fitnessProfile', JSON.stringify(profile));
+  
+  // Get a profile by activity type
+  const getProfileByType = (activityType: ExerciseType): ActivityProfile | null => {
+    return profiles[activityType] || null;
   };
-
-  // Function to check if a profile is complete for a specific activity type
-  const isProfileComplete = (type: ExerciseType): boolean => {
-    const profile = profiles[type];
-    return profile !== undefined;
+  
+  // Check if a profile is complete
+  const isProfileComplete = (activityType: ExerciseType): boolean => {
+    const profile = profiles[activityType];
+    if (!profile) return false;
+    
+    // Basic check - profile exists and has been updated in the last 90 days
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    
+    return profile.lastUpdated > ninetyDaysAgo;
   };
-
-  // Context value
-  const value = {
-    profiles,
-    fitnessProfile,
-    setActivityProfile,
-    getProfileByType,
-    setFitnessProfile,
-    isProfileComplete,
+  
+  // Reset all profiles
+  const resetProfiles = () => {
+    setProfiles({});
+    localStorage.removeItem(PROFILES_STORAGE_KEY);
   };
-
+  
   return (
-    <ActivityProfileContext.Provider value={value}>
+    <ActivityProfileContext.Provider
+      value={{
+        profiles,
+        fitnessProfile,
+        updateProfile,
+        updateFitnessProfile,
+        getProfileByType,
+        isProfileComplete,
+        resetProfiles
+      }}
+    >
       {children}
     </ActivityProfileContext.Provider>
   );
 };
 
-// Hook to use the context
-export const useActivityProfile = () => useContext(ActivityProfileContext);
+// Custom hook to use the context
+export const useActivityProfile = () => {
+  const context = useContext(ActivityProfileContext);
+  if (context === undefined) {
+    throw new Error('useActivityProfile must be used within an ActivityProfileProvider');
+  }
+  return context;
+};
+
+export default ActivityProfileContext;

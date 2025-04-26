@@ -26,6 +26,8 @@ import {
 import { searchExerciseVideos } from '@/lib/exercise-search';
 import { YouTubeVideo } from '@/lib/youtube-service';
 import { RUNNING_VIDEOS } from '@/lib/section-fallbacks';
+import ActivitySpecificRecommendations from './activity-specific-recommendations';
+import { Workout, RunningWorkout } from '@/lib/workout-generation-service';
 
 // Define Running Exercise interface extending BaseExercise
 interface RunningExercise extends BaseExercise {
@@ -261,6 +263,8 @@ export const RunningSpecificExercisesEnhanced = () => {
   const [error, setError] = useState<string | null>(null);
   // Track which exercises have been closed by the user
   const [closedExercises, setClosedExercises] = useState<Record<string, boolean>>({});
+  // Store AI-generated workout plans
+  const [aiWorkout, setAiWorkout] = useState<RunningWorkout | null>(null);
   
   // State for the running tracker feature
   const [isTracking, setIsTracking] = useState(false);
@@ -529,6 +533,26 @@ export const RunningSpecificExercisesEnhanced = () => {
     });
   };
   
+  // Handle start of an AI-generated workout
+  const handleStartWorkout = (workout: Workout) => {
+    console.log("Starting running workout:", workout);
+    
+    // Since this is the running component, we can safely assume this is a running workout
+    const runningWorkout = workout as RunningWorkout;
+    
+    // Set the workout in our state
+    setAiWorkout(runningWorkout);
+    
+    // Show success notification
+    toast({
+      title: "Workout Plan Ready",
+      description: "Your personalized running plan has been added to your schedule.",
+    });
+    
+    // Switch to tracker tab to begin the workout
+    setActiveTab('tracker');
+  };
+  
   // Clean up intervals on component unmount
   useEffect(() => {
     return () => {
@@ -606,7 +630,7 @@ export const RunningSpecificExercisesEnhanced = () => {
           )}
           
           <Tabs defaultValue="tracker" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full grid grid-cols-4 bg-pink-100">
+            <TabsList className="w-full grid grid-cols-5 bg-pink-100">
               <TabsTrigger 
                 value="tracker" 
                 className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
@@ -631,6 +655,13 @@ export const RunningSpecificExercisesEnhanced = () => {
                 className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
               >
                 Strength
+              </TabsTrigger>
+              <TabsTrigger 
+                value="recommendations" 
+                className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
+              >
+                <Trophy className="h-4 w-4 mr-2" />
+                For You
               </TabsTrigger>
             </TabsList>
             
@@ -920,6 +951,14 @@ export const RunningSpecificExercisesEnhanced = () => {
                   )
                 ))}
               </div>
+            </TabsContent>
+            
+            {/* Recommendations Tab */}
+            <TabsContent value="recommendations" className="pt-4">
+              <ActivitySpecificRecommendations 
+                activityType="running" 
+                onStartWorkout={handleStartWorkout}
+              />
             </TabsContent>
           </Tabs>
         </div>

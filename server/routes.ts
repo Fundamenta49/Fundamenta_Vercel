@@ -32,6 +32,7 @@ import repairRoutes from './routes/repair';
 import calendarRoutes from './routes/calendar';
 import financeRoutes from './routes/finance';
 import poseImagesRoutes from './routes/pose-images';
+import workoutRoutes from './routes/workout';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { userGuideService } from './services/user-guide-service';
@@ -1100,6 +1101,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register the repair routes
   app.use('/api/repair', repairRoutes);
+  
+  // Register workout routes for AI-generated workouts
+  app.use('/api/workout', workoutRoutes);
   
   // AI routes for fallback management and route validation
   app.use('/api/ai', aiRoutes);

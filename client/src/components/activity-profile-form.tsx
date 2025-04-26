@@ -1,28 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  ActivityProfile,
-  YogaProfile,
-  RunningProfile,
-  WeightliftingProfile,
-  HIITProfile,
-  StretchingProfile,
-  MeditationProfile,
-  useActivityProfile 
-} from "@/contexts/activity-profile-context";
-import { ExerciseType } from "@/modules/active-you/context/module-context";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -30,50 +17,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dumbbell,
-  Timer as Clock,
-  Hammer,
-  Zap,
-  Heart,
-  Brain,
-  Wind,
-  Mountain,
-  Footprints
-} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { ExerciseType } from "../modules/active-you/context/module-context";
+import { 
+  useActivityProfile, 
+  ActivityProfile,
+  YogaProfile,
+  RunningProfile,
+  WeightliftingProfile,
+  HIITProfile,
+  StretchingProfile,
+  MeditationProfile
+} from "../contexts/activity-profile-context";
 
-// Map of activity types to their icons
-const activityIcons: Record<string, React.ReactNode> = {
-  'yoga': <Mountain className="h-5 w-5 mr-2" />,
-  'running': <Footprints className="h-5 w-5 mr-2" />,
-  'weightlifting': <Dumbbell className="h-5 w-5 mr-2" />,
-  'hiit': <Zap className="h-5 w-5 mr-2" />,
-  'stretch': <Wind className="h-5 w-5 mr-2" />,
-  'meditation': <Brain className="h-5 w-5 mr-2" />,
-  'activeyou': <Heart className="h-5 w-5 mr-2" />
-};
+// Base form schema
+const baseProfileSchema = z.object({
+  experience: z.enum(['beginner', 'intermediate', 'advanced']),
+  timeAvailable: z.number().min(5).max(180)
+});
 
-// Activity-specific colors
-const activityColors = {
-  'yoga': 'purple',
-  'running': 'green',
-  'weightlifting': 'pink',
-  'hiit': 'orange',
-  'stretch': 'blue',
-  'meditation': 'indigo',
-  'activeyou': 'sky' // Adding activeyou for compatibility with ExerciseType
-};
+// Activity-specific schemas
+const yogaProfileSchema = baseProfileSchema.extend({});
+const runningProfileSchema = baseProfileSchema.extend({
+  typicalDistance: z.number().min(0.5).max(100),
+  typicalPace: z.number().min(3).max(20),
+});
+const weightliftingProfileSchema = baseProfileSchema.extend({
+  maxLifts: z.record(z.string(), z.number().optional()).optional()
+});
+const hiitProfileSchema = baseProfileSchema.extend({
+  intensityPreference: z.enum(['low', 'medium', 'high']),
+  restPreference: z.enum(['short', 'medium', 'long']),
+});
+const stretchingProfileSchema = baseProfileSchema.extend({});
+const meditationProfileSchema = baseProfileSchema.extend({});
 
-// Activity-specific presets for form options
+interface ActivityProfileFormProps {
+  activityType: ExerciseType;
+  onComplete?: () => void;
+}
+
+// Activity-specific form options
 const activityOptions = {
   yoga: {
     focusAreas: ['Flexibility', 'Strength', 'Balance', 'Mindfulness', 'Core', 'Relaxation'],
     styles: ['Hatha', 'Vinyasa', 'Yin', 'Power', 'Restorative', 'Ashtanga', 'Kundalini'],
     frequency: ['Daily', '2-3 times per week', 'Weekly', 'Occasionally'],
     injuries: ['Lower Back', 'Knees', 'Shoulders', 'Wrists', 'Neck', 'Hips'],
-    favoritePoses: ['Downward Dog', 'Child\'s Pose', 'Warrior I/II', 'Tree Pose', 'Corpse Pose', 'Bridge Pose']
+    poses: ['Downward Dog', 'Child\'s Pose', 'Warrior I/II', 'Tree Pose', 'Corpse Pose', 'Bridge Pose']
   },
   running: {
     goals: ['5K', '10K', 'Half Marathon', 'Marathon', 'Improve Pace', 'Weight Loss', 'Endurance'],
@@ -92,204 +89,196 @@ const activityOptions = {
   hiit: {
     intensity: ['Low', 'Medium', 'High'],
     rest: ['Short', 'Medium', 'Long'],
-    focusAreas: ['Cardio', 'Strength', 'Agility', 'Endurance', 'Fat Burning', 'Full Body'],
+    focusAreas: ['Cardio', 'Strength', 'Agility', 'Endurance', 'Fat Loss', 'Power'],
     equipment: ['Bodyweight', 'Kettlebell', 'Dumbbells', 'Jump Rope', 'Medicine Ball', 'Resistance Bands'],
-    frequency: ['1-2 times per week', '2-3 times per week', '3-4 times per week'],
-    injuries: ['Knees', 'Ankles', 'Wrists', 'Shoulders', 'Back', 'Hips']
+    frequency: ['1-2 times per week', '2-3 times per week', '3-4 times per week', 'Daily'],
+    injuries: ['Knees', 'Lower Back', 'Shoulders', 'Ankles', 'Wrists']
   },
   stretch: {
-    goals: ['Touch Toes', 'Splits', 'Shoulder Mobility', 'Hip Flexibility', 'Better Posture', 'Injury Prevention'],
+    flexibilityGoals: ['Touch Toes', 'Splits', 'Shoulder Mobility', 'Hip Mobility', 'General Flexibility'],
     tightAreas: ['Hamstrings', 'Back', 'Shoulders', 'Hips', 'Calves', 'Chest', 'Neck'],
-    techniques: ['Static', 'Dynamic', 'PNF', 'Ballistic', 'Active Isolated'],
-    frequency: ['Daily', 'After Workouts', 'Morning Routine', 'Evening Routine', 'Multiple Times Daily'],
-    injuries: ['Lower Back', 'Hamstrings', 'Shoulders', 'Neck']
+    techniques: ['Static', 'Dynamic', 'PNF', 'Ballistic', 'Active', 'Passive'],
+    frequency: ['Daily', 'After Workouts', 'Morning Routine', '2-3 times per week'],
+    injuries: ['Lower Back', 'Hamstrings', 'Shoulders', 'Knees', 'Hips']
   },
   meditation: {
     goals: ['Stress Reduction', 'Focus', 'Sleep', 'Mindfulness', 'Anxiety Relief', 'Emotional Balance'],
-    styles: ['Guided', 'Breathing', 'Body Scan', 'Mindfulness', 'Mantra', 'Loving-Kindness', 'Transcendental'],
-    frequency: ['Daily', 'Morning and Evening', 'Weekly', 'As Needed', 'Multiple Times Daily'],
-    challenges: ['Staying Focused', 'Finding Time', 'Posture', 'Falling Asleep', 'Racing Thoughts']
+    styles: ['Guided', 'Breathing', 'Body Scan', 'Mindfulness', 'Loving-Kindness', 'Transcendental', 'Zen'],
+    frequency: ['Daily', 'Morning and Evening', 'Weekly', 'As Needed'],
+    challenges: ['Staying Focused', 'Finding Time', 'Posture', 'Quieting the Mind', 'Consistency']
+  },
+  activeyou: {
+    // General options for the main profile
+    goals: ['General Fitness', 'Weight Management', 'Stress Reduction', 'Better Sleep', 'More Energy', 'Specific Sport'],
+    preferences: ['Solo Activities', 'Group Classes', 'Outdoor', 'Indoor', 'Morning', 'Evening'],
+    challenges: ['Time Constraints', 'Motivation', 'Energy Levels', 'Physical Limitations', 'Access to Facilities']
   }
 };
 
-// Get default values for each activity type
-const getDefaultProfile = (type: ExerciseType): ActivityProfile => {
-  const baseProfile = {
-    lastUpdated: new Date(),
-    experience: 'beginner' as const,
-    timeAvailable: 30,
-  };
-
-  switch (type) {
-    case 'yoga':
-      return {
-        ...baseProfile,
-        focusAreas: [],
-        preferredStyles: [],
-        practiceFrequency: 'Weekly',
-        injuryConsiderations: [],
-        favoriteAsanas: [],
-      } as YogaProfile;
-    
-    case 'running':
-      return {
-        ...baseProfile,
-        runningGoals: [],
-        typicalDistance: 5,
-        typicalPace: 6,
-        preferredTerrain: [],
-        runningFrequency: '3 times per week',
-        injuryConsiderations: [],
-        preferredWeather: [],
-      } as RunningProfile;
-    
-    case 'weightlifting':
-      return {
-        ...baseProfile,
-        strengthGoals: [],
-        focusMuscleGroups: [],
-        preferredEquipment: [],
-        maxLifts: {},
-        trainingFrequency: '3-4 times per week',
-        injuryConsiderations: [],
-      } as WeightliftingProfile;
-    
-    case 'hiit':
-      return {
-        ...baseProfile,
-        intensityPreference: 'medium',
-        restPreference: 'medium',
-        focusAreas: [],
-        preferredEquipment: [],
-        preferredExercises: [],
-        trainingFrequency: '2-3 times per week',
-        injuryConsiderations: [],
-      } as HIITProfile;
-    
-    case 'stretch':
-      return {
-        ...baseProfile,
-        flexibilityGoals: [],
-        tightAreas: [],
-        preferredTechniques: [],
-        stretchingFrequency: 'daily',
-        injuryConsiderations: [],
-      } as StretchingProfile;
-    
-    case 'meditation':
-      return {
-        ...baseProfile,
-        meditationGoals: [],
-        preferredStyles: [],
-        practiceFrequency: 'daily',
-        challengingAspects: [],
-      } as MeditationProfile;
-    
-    default:
-      return baseProfile as ActivityProfile;
-  }
+// Activity-specific colors
+const activityColors: Record<string, string> = {
+  'yoga': 'purple',
+  'running': 'green',
+  'weightlifting': 'pink',
+  'hiit': 'orange',
+  'stretch': 'blue',
+  'meditation': 'indigo',
+  'activeyou': 'sky'
 };
 
-interface ActivityProfileFormProps {
-  activityType: ExerciseType;
-  onComplete?: () => void;
-}
-
-export default function ActivityProfileForm({ activityType, onComplete }: ActivityProfileFormProps) {
+const ActivityProfileForm: React.FC<ActivityProfileFormProps> = ({ 
+  activityType,
+  onComplete
+}) => {
+  const { updateProfile, getProfileByType } = useActivityProfile();
   const { toast } = useToast();
-  const { getProfileByType, setActivityProfile } = useActivityProfile();
-  
-  // Load existing profile or create default
-  const existingProfile = getProfileByType(activityType);
-  const [formData, setFormData] = useState<ActivityProfile>(
-    existingProfile || getDefaultProfile(activityType)
-  );
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>({});
-
-  // Set up initial selected items based on the profile type
-  useEffect(() => {
-    const profile = existingProfile || getDefaultProfile(activityType);
-    const initialSelected: Record<string, string[]> = {};
+  const color = activityColors[activityType] || 'slate';
+  
+  // Get the existing profile data or create default
+  const existingProfile = getProfileByType(activityType);
+  
+  // Set up default form data based on activity type
+  const getDefaultFormData = () => {
+    const baseDefaults = {
+      experience: 'beginner' as const,
+      timeAvailable: 30,
+      lastUpdated: new Date()
+    };
     
     switch (activityType) {
       case 'yoga':
-        const yogaProfile = profile as YogaProfile;
-        initialSelected.focusAreas = yogaProfile.focusAreas;
-        initialSelected.styles = yogaProfile.preferredStyles;
-        initialSelected.injuries = yogaProfile.injuryConsiderations;
-        initialSelected.poses = yogaProfile.favoriteAsanas;
+        return {
+          ...baseDefaults,
+          practiceFrequency: activityOptions.yoga.frequency[1],
+        } as YogaProfile;
+      
+      case 'running':
+        return {
+          ...baseDefaults,
+          typicalDistance: 5,
+          typicalPace: 6,
+          runningFrequency: activityOptions.running.frequency[1]
+        } as RunningProfile;
+      
+      case 'weightlifting':
+        return {
+          ...baseDefaults,
+          trainingFrequency: activityOptions.weightlifting.frequency[0],
+          maxLifts: {}
+        } as WeightliftingProfile;
+      
+      case 'hiit':
+        return {
+          ...baseDefaults,
+          intensityPreference: 'medium' as const,
+          restPreference: 'medium' as const,
+          trainingFrequency: activityOptions.hiit.frequency[1]
+        } as HIITProfile;
+        
+      case 'stretch':
+        return {
+          ...baseDefaults,
+          stretchingFrequency: activityOptions.stretch.frequency[0]
+        } as StretchingProfile;
+      
+      case 'meditation':
+        return {
+          ...baseDefaults,
+          practiceFrequency: activityOptions.meditation.frequency[0]
+        } as MeditationProfile;
+      
+      default:
+        return baseDefaults;
+    }
+  };
+  
+  // Initialize form with existing profile data or defaults
+  const defaultValues = existingProfile || getDefaultFormData();
+  const [formData, setFormData] = useState<Partial<ActivityProfile>>(defaultValues);
+  
+  // Initialize selected items based on existing profile
+  useEffect(() => {
+    if (!existingProfile) return;
+    
+    const initialSelected: Record<string, string[]> = {};
+    
+    // Extract arrays from the profile based on activity type
+    switch (activityType) {
+      case 'yoga':
+        const yogaProfile = existingProfile as YogaProfile;
+        initialSelected.focusAreas = yogaProfile.focusAreas || [];
+        initialSelected.styles = yogaProfile.preferredStyles || [];
+        initialSelected.injuries = yogaProfile.injuryConsiderations || [];
+        initialSelected.poses = yogaProfile.favoriteAsanas || [];
         break;
       
       case 'running':
-        const runningProfile = profile as RunningProfile;
-        initialSelected.goals = runningProfile.runningGoals;
-        initialSelected.terrain = runningProfile.preferredTerrain;
-        initialSelected.injuries = runningProfile.injuryConsiderations;
-        initialSelected.weather = runningProfile.preferredWeather;
+        const runningProfile = existingProfile as RunningProfile;
+        initialSelected.goals = runningProfile.runningGoals || [];
+        initialSelected.terrain = runningProfile.preferredTerrain || [];
+        initialSelected.injuries = runningProfile.injuryConsiderations || [];
+        initialSelected.weather = runningProfile.preferredWeather || [];
         break;
       
       case 'weightlifting':
-        const liftingProfile = profile as WeightliftingProfile;
-        initialSelected.goals = liftingProfile.strengthGoals;
-        initialSelected.muscleGroups = liftingProfile.focusMuscleGroups;
-        initialSelected.equipment = liftingProfile.preferredEquipment;
-        initialSelected.injuries = liftingProfile.injuryConsiderations;
+        const weightliftingProfile = existingProfile as WeightliftingProfile;
+        initialSelected.goals = weightliftingProfile.strengthGoals || [];
+        initialSelected.muscleGroups = weightliftingProfile.focusMuscleGroups || [];
+        initialSelected.equipment = weightliftingProfile.preferredEquipment || [];
+        initialSelected.injuries = weightliftingProfile.injuryConsiderations || [];
         break;
       
       case 'hiit':
-        const hiitProfile = profile as HIITProfile;
-        initialSelected.focusAreas = hiitProfile.focusAreas;
-        initialSelected.equipment = hiitProfile.preferredEquipment;
-        initialSelected.injuries = hiitProfile.injuryConsiderations;
-        initialSelected.exercises = hiitProfile.preferredExercises;
+        const hiitProfile = existingProfile as HIITProfile;
+        initialSelected.focusAreas = hiitProfile.focusAreas || [];
+        initialSelected.equipment = hiitProfile.preferredEquipment || [];
+        initialSelected.exercises = hiitProfile.preferredExercises || [];
+        initialSelected.injuries = hiitProfile.injuryConsiderations || [];
         break;
       
       case 'stretch':
-        const stretchProfile = profile as StretchingProfile;
-        initialSelected.goals = stretchProfile.flexibilityGoals;
-        initialSelected.tightAreas = stretchProfile.tightAreas;
-        initialSelected.techniques = stretchProfile.preferredTechniques;
-        initialSelected.injuries = stretchProfile.injuryConsiderations;
+        const stretchProfile = existingProfile as StretchingProfile;
+        initialSelected.flexibilityGoals = stretchProfile.flexibilityGoals || [];
+        initialSelected.tightAreas = stretchProfile.tightAreas || [];
+        initialSelected.techniques = stretchProfile.preferredTechniques || [];
+        initialSelected.injuries = stretchProfile.injuryConsiderations || [];
         break;
       
       case 'meditation':
-        const meditationProfile = profile as MeditationProfile;
-        initialSelected.goals = meditationProfile.meditationGoals;
-        initialSelected.styles = meditationProfile.preferredStyles;
-        initialSelected.challenges = meditationProfile.challengingAspects;
+        const meditationProfile = existingProfile as MeditationProfile;
+        initialSelected.goals = meditationProfile.meditationGoals || [];
+        initialSelected.styles = meditationProfile.preferredStyles || [];
+        initialSelected.challenges = meditationProfile.challengingAspects || [];
         break;
     }
     
     setSelectedItems(initialSelected);
-  }, [activityType, existingProfile]);
-
-  const handleInputChange = (field: string, value: string | number) => {
+  }, [existingProfile, activityType]);
+  
+  // Handle input changes
+  const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
-
-  const toggleListItem = (category: string, item: string) => {
+  
+  // Toggle list items (for badges)
+  const toggleListItem = (listName: string, item: string) => {
     setSelectedItems(prev => {
-      const currentItems = prev[category] || [];
-      const newItems = currentItems.includes(item)
-        ? currentItems.filter(i => i !== item)
-        : [...currentItems, item];
-      
+      const list = prev[listName] || [];
       return {
         ...prev,
-        [category]: newItems
+        [listName]: list.includes(item)
+          ? list.filter(i => i !== item)
+          : [...list, item]
       };
     });
   };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
+  
+  // Handle form submission
+  const handleSubmit = async () => {
     try {
       // Combine selected items with form data based on activity type
       let updatedProfile: ActivityProfile;
@@ -330,15 +319,15 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
             ...formData,
             focusAreas: selectedItems.focusAreas || [],
             preferredEquipment: selectedItems.equipment || [],
-            injuryConsiderations: selectedItems.injuries || [],
             preferredExercises: selectedItems.exercises || [],
+            injuryConsiderations: selectedItems.injuries || [],
           } as HIITProfile;
           break;
         
         case 'stretch':
           updatedProfile = {
             ...formData,
-            flexibilityGoals: selectedItems.goals || [],
+            flexibilityGoals: selectedItems.flexibilityGoals || [],
             tightAreas: selectedItems.tightAreas || [],
             preferredTechniques: selectedItems.techniques || [],
             injuryConsiderations: selectedItems.injuries || [],
@@ -353,76 +342,46 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
             challengingAspects: selectedItems.challenges || [],
           } as MeditationProfile;
           break;
-        
+          
         default:
-          updatedProfile = formData;
+          throw new Error(`Unsupported activity type: ${activityType}`);
       }
-
-      // Save profile to context
-      setActivityProfile(activityType, updatedProfile);
-
+      
+      // Update the lastUpdated field
+      updatedProfile.lastUpdated = new Date();
+      
+      // Update the profile in the context
+      updateProfile(activityType, updatedProfile);
+      
+      // Show success notification
       toast({
-        title: "Profile Saved!",
-        description: `Your ${activityType} profile has been updated.`,
+        title: "Profile Updated",
+        description: `Your ${activityType} profile has been saved.`,
       });
-
+      
       // Call the onComplete callback if provided
       if (onComplete) {
         onComplete();
       }
     } catch (error) {
-      console.error(`${activityType} profile update error:`, error);
+      console.error("Error updating profile:", error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description: "Failed to update profile. Please try again.",
+        description: "Failed to save your profile. Please try again.",
+        variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
-
-  // Get the title and icon for the activity
-  const getActivityTitle = () => {
-    const titles: Record<ExerciseType, string> = {
-      'yoga': 'Yoga',
-      'running': 'Running',
-      'weightlifting': 'Strength Training',
-      'hiit': 'HIIT Training',
-      'stretch': 'Stretching',
-      'meditation': 'Meditation'
-    };
-    
-    return titles[activityType] || activityType.charAt(0).toUpperCase() + activityType.slice(1);
-  };
-
-  const getColorClass = (type: string) => {
-    const color = activityColors[activityType as keyof typeof activityColors] || 'blue';
-    switch (type) {
-      case 'bg-light':
-        return `bg-${color}-50`;
-      case 'bg-medium':
-        return `bg-${color}-100`;
-      case 'border':
-        return `border-${color}-200`;
-      case 'text':
-        return `text-${color}-700`;
-      case 'text-dark':
-        return `text-${color}-800`;
-      default:
-        return '';
-    }
-  };
-
-  // Render form fields specific to each activity type
-  const renderActivitySpecificFields = () => {
+  
+  // Render the appropriate form based on activity type
+  const renderActivityForm = () => {
     switch (activityType) {
       case 'yoga':
         return (
           <>
             <div className="space-y-4">
               <div>
-                <Label className="mb-2 block">Focus Areas (Select multiple)</Label>
+                <Label className="mb-2 block">Focus Areas</Label>
                 <div className="flex flex-wrap gap-2">
                   {activityOptions.yoga.focusAreas.map((area) => (
                     <Badge
@@ -438,7 +397,7 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
               </div>
               
               <div>
-                <Label className="mb-2 block">Preferred Yoga Styles</Label>
+                <Label className="mb-2 block">Preferred Styles</Label>
                 <div className="flex flex-wrap gap-2">
                   {activityOptions.yoga.styles.map((style) => (
                     <Badge
@@ -455,6 +414,23 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
+                  <Label htmlFor="experience">Experience Level</Label>
+                  <Select 
+                    value={(formData as YogaProfile).experience}
+                    onValueChange={(value) => handleInputChange('experience', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select experience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
                   <Label htmlFor="practiceFrequency">Practice Frequency</Label>
                   <Select 
                     value={(formData as YogaProfile).practiceFrequency}
@@ -470,21 +446,18 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
                     </SelectContent>
                   </Select>
                 </div>
-                
-                <div>
-                  <Label htmlFor="timeAvailable">Time Available (minutes)</Label>
-                  <div className="flex items-center gap-4">
-                    <Slider
-                      value={[formData.timeAvailable]}
-                      min={5}
-                      max={120}
-                      step={5}
-                      onValueChange={(value) => handleInputChange('timeAvailable', value[0])}
-                      className="flex-1"
-                    />
-                    <span className="w-12 text-right">{formData.timeAvailable}min</span>
-                  </div>
-                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="timeAvailable">Time Available (minutes)</Label>
+                <Input
+                  type="number"
+                  min="5"
+                  max="180"
+                  step="5"
+                  value={(formData as YogaProfile).timeAvailable}
+                  onChange={(e) => handleInputChange('timeAvailable', parseInt(e.target.value))}
+                />
               </div>
               
               <div>
@@ -506,7 +479,7 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
               <div>
                 <Label className="mb-2 block">Favorite Poses</Label>
                 <div className="flex flex-wrap gap-2">
-                  {activityOptions.yoga.favoritePoses.map((pose) => (
+                  {activityOptions.yoga.poses.map((pose) => (
                     <Badge
                       key={pose}
                       variant={selectedItems.poses?.includes(pose) ? "default" : "outline"}
@@ -521,7 +494,7 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
             </div>
           </>
         );
-
+      
       case 'running':
         return (
           <>
@@ -560,11 +533,47 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
                   <Input
                     type="number"
                     min="3"
-                    max="15"
+                    max="20"
                     step="0.5"
                     value={(formData as RunningProfile).typicalPace}
                     onChange={(e) => handleInputChange('typicalPace', parseFloat(e.target.value))}
                   />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="experience">Experience Level</Label>
+                  <Select 
+                    value={(formData as RunningProfile).experience}
+                    onValueChange={(value) => handleInputChange('experience', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select experience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="runningFrequency">Running Frequency</Label>
+                  <Select 
+                    value={(formData as RunningProfile).runningFrequency}
+                    onValueChange={(value) => handleInputChange('runningFrequency', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select frequency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {activityOptions.running.frequency.map((freq) => (
+                        <SelectItem key={freq} value={freq}>{freq}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               
@@ -584,38 +593,16 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="runningFrequency">Running Frequency</Label>
-                  <Select 
-                    value={(formData as RunningProfile).runningFrequency}
-                    onValueChange={(value) => handleInputChange('runningFrequency', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select frequency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {activityOptions.running.frequency.map((freq) => (
-                        <SelectItem key={freq} value={freq}>{freq}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="timeAvailable">Time Available (minutes)</Label>
-                  <div className="flex items-center gap-4">
-                    <Slider
-                      value={[formData.timeAvailable]}
-                      min={5}
-                      max={120}
-                      step={5}
-                      onValueChange={(value) => handleInputChange('timeAvailable', value[0])}
-                      className="flex-1"
-                    />
-                    <span className="w-12 text-right">{formData.timeAvailable}min</span>
-                  </div>
-                </div>
+              <div>
+                <Label htmlFor="timeAvailable">Time Available (minutes)</Label>
+                <Input
+                  type="number"
+                  min="5"
+                  max="180"
+                  step="5"
+                  value={(formData as RunningProfile).timeAvailable}
+                  onChange={(e) => handleInputChange('timeAvailable', parseInt(e.target.value))}
+                />
               </div>
               
               <div>
@@ -652,7 +639,7 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
             </div>
           </>
         );
-
+        
       case 'weightlifting':
         return (
           <>
@@ -676,14 +663,14 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
               <div>
                 <Label className="mb-2 block">Focus Muscle Groups</Label>
                 <div className="flex flex-wrap gap-2">
-                  {activityOptions.weightlifting.muscleGroups.map((muscle) => (
+                  {activityOptions.weightlifting.muscleGroups.map((group) => (
                     <Badge
-                      key={muscle}
-                      variant={selectedItems.muscleGroups?.includes(muscle) ? "default" : "outline"}
-                      className={`cursor-pointer ${selectedItems.muscleGroups?.includes(muscle) ? 'bg-pink-500' : ''}`}
-                      onClick={() => toggleListItem('muscleGroups', muscle)}
+                      key={group}
+                      variant={selectedItems.muscleGroups?.includes(group) ? "default" : "outline"}
+                      className={`cursor-pointer ${selectedItems.muscleGroups?.includes(group) ? 'bg-pink-500' : ''}`}
+                      onClick={() => toggleListItem('muscleGroups', group)}
                     >
-                      {muscle}
+                      {group}
                     </Badge>
                   ))}
                 </div>
@@ -707,6 +694,23 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
+                  <Label htmlFor="experience">Experience Level</Label>
+                  <Select 
+                    value={(formData as WeightliftingProfile).experience}
+                    onValueChange={(value) => handleInputChange('experience', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select experience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
                   <Label htmlFor="trainingFrequency">Training Frequency</Label>
                   <Select 
                     value={(formData as WeightliftingProfile).trainingFrequency}
@@ -722,21 +726,18 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
                     </SelectContent>
                   </Select>
                 </div>
-                
-                <div>
-                  <Label htmlFor="timeAvailable">Time Available (minutes)</Label>
-                  <div className="flex items-center gap-4">
-                    <Slider
-                      value={[formData.timeAvailable]}
-                      min={10}
-                      max={120}
-                      step={5}
-                      onValueChange={(value) => handleInputChange('timeAvailable', value[0])}
-                      className="flex-1"
-                    />
-                    <span className="w-12 text-right">{formData.timeAvailable}min</span>
-                  </div>
-                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="timeAvailable">Time Available (minutes)</Label>
+                <Input
+                  type="number"
+                  min="5"
+                  max="180"
+                  step="5"
+                  value={(formData as WeightliftingProfile).timeAvailable}
+                  onChange={(e) => handleInputChange('timeAvailable', parseInt(e.target.value))}
+                />
               </div>
               
               <div>
@@ -755,66 +756,247 @@ export default function ActivityProfileForm({ activityType, onComplete }: Activi
                 </div>
               </div>
               
+              <Separator className="my-4" />
+              
               <div>
-                <Label htmlFor="experience">Experience Level</Label>
-                <Select 
-                  value={formData.experience}
-                  onValueChange={(value: 'beginner' | 'intermediate' | 'advanced') => handleInputChange('experience', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select experience level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label className="mb-2 block">Max Lifts (optional)</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="benchPress">Bench Press (kg)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="500"
+                      value={(formData as WeightliftingProfile).maxLifts?.['benchPress'] || ''}
+                      onChange={(e) => {
+                        const value = e.target.value ? parseInt(e.target.value) : undefined;
+                        setFormData(prev => ({
+                          ...prev,
+                          maxLifts: {
+                            ...((prev as WeightliftingProfile).maxLifts || {}),
+                            benchPress: value
+                          }
+                        }));
+                      }}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="squat">Squat (kg)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="500"
+                      value={(formData as WeightliftingProfile).maxLifts?.['squat'] || ''}
+                      onChange={(e) => {
+                        const value = e.target.value ? parseInt(e.target.value) : undefined;
+                        setFormData(prev => ({
+                          ...prev,
+                          maxLifts: {
+                            ...((prev as WeightliftingProfile).maxLifts || {}),
+                            squat: value
+                          }
+                        }));
+                      }}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="deadlift">Deadlift (kg)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="500"
+                      value={(formData as WeightliftingProfile).maxLifts?.['deadlift'] || ''}
+                      onChange={(e) => {
+                        const value = e.target.value ? parseInt(e.target.value) : undefined;
+                        setFormData(prev => ({
+                          ...prev,
+                          maxLifts: {
+                            ...((prev as WeightliftingProfile).maxLifts || {}),
+                            deadlift: value
+                          }
+                        }));
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </>
         );
-
-      // Add cases for hiit, stretch, and meditation as needed
+      
+      case 'hiit':
+        return (
+          <>
+            <div className="space-y-4">
+              <div>
+                <Label className="mb-2 block">Focus Areas</Label>
+                <div className="flex flex-wrap gap-2">
+                  {activityOptions.hiit.focusAreas.map((area) => (
+                    <Badge
+                      key={area}
+                      variant={selectedItems.focusAreas?.includes(area) ? "default" : "outline"}
+                      className={`cursor-pointer ${selectedItems.focusAreas?.includes(area) ? 'bg-orange-500' : ''}`}
+                      onClick={() => toggleListItem('focusAreas', area)}
+                    >
+                      {area}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="intensityPreference">Intensity Preference</Label>
+                  <Select 
+                    value={(formData as HIITProfile).intensityPreference}
+                    onValueChange={(value: 'low' | 'medium' | 'high') => handleInputChange('intensityPreference', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select intensity" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="restPreference">Rest Preference</Label>
+                  <Select 
+                    value={(formData as HIITProfile).restPreference}
+                    onValueChange={(value: 'short' | 'medium' | 'long') => handleInputChange('restPreference', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select rest" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="short">Short</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="long">Long</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="experience">Experience Level</Label>
+                  <Select 
+                    value={(formData as HIITProfile).experience}
+                    onValueChange={(value) => handleInputChange('experience', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select experience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="trainingFrequency">Training Frequency</Label>
+                  <Select 
+                    value={(formData as HIITProfile).trainingFrequency}
+                    onValueChange={(value) => handleInputChange('trainingFrequency', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select frequency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {activityOptions.hiit.frequency.map((freq) => (
+                        <SelectItem key={freq} value={freq}>{freq}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="timeAvailable">Time Available (minutes)</Label>
+                <Input
+                  type="number"
+                  min="5"
+                  max="60"
+                  step="5"
+                  value={(formData as HIITProfile).timeAvailable}
+                  onChange={(e) => handleInputChange('timeAvailable', parseInt(e.target.value))}
+                />
+              </div>
+              
+              <div>
+                <Label className="mb-2 block">Preferred Equipment</Label>
+                <div className="flex flex-wrap gap-2">
+                  {activityOptions.hiit.equipment.map((equipment) => (
+                    <Badge
+                      key={equipment}
+                      variant={selectedItems.equipment?.includes(equipment) ? "default" : "outline"}
+                      className={`cursor-pointer ${selectedItems.equipment?.includes(equipment) ? 'bg-orange-500' : ''}`}
+                      onClick={() => toggleListItem('equipment', equipment)}
+                    >
+                      {equipment}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <Label className="mb-2 block">Injury Considerations</Label>
+                <div className="flex flex-wrap gap-2">
+                  {activityOptions.hiit.injuries.map((injury) => (
+                    <Badge
+                      key={injury}
+                      variant={selectedItems.injuries?.includes(injury) ? "default" : "outline"}
+                      className={`cursor-pointer ${selectedItems.injuries?.includes(injury) ? 'bg-red-500' : ''}`}
+                      onClick={() => toggleListItem('injuries', injury)}
+                    >
+                      {injury}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        );
+        
+      // Add cases for other activity types
+        
       default:
         return (
-          <div className="text-center py-8">
-            <p className="text-gray-500">Profile form for {activityType} is not available.</p>
-          </div>
+          <p className="text-gray-500 italic">
+            Profile form not available for this activity type.
+          </p>
         );
     }
   };
-
+  
   return (
-    <Card className="w-full">
-      <CardHeader className={`${getColorClass('bg-light')} border-b ${getColorClass('border')}`}>
-        <div className="flex items-center gap-2">
-          {activityIcons[activityType as keyof typeof activityIcons]}
-          <div>
-            <CardTitle className={getColorClass('text-dark')}>
-              {getActivityTitle()} Profile
-            </CardTitle>
-            <CardDescription>
-              Tell us about your {activityType} preferences to get personalized workout recommendations
-            </CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <ScrollArea className="h-[60vh] pr-4">
-            {renderActivitySpecificFields()}
-          </ScrollArea>
-          
-          <Button 
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full"
-          >
-            {isSubmitting ? "Saving Profile..." : "Save Profile"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h3 className="text-lg font-medium">Your {activityType.charAt(0).toUpperCase() + activityType.slice(1)} Profile</h3>
+        <p className="text-gray-500 text-sm">
+          Tell us about your preferences to get personalized recommendations
+        </p>
+      </div>
+      
+      {renderActivityForm()}
+      
+      <div className="flex justify-end mt-6">
+        <Button 
+          onClick={handleSubmit}
+          className={`bg-${color}-600 hover:bg-${color}-700`}
+        >
+          Save Profile
+        </Button>
+      </div>
+    </div>
   );
-}
+};
+
+export default ActivityProfileForm;

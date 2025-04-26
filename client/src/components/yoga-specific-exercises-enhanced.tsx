@@ -10,6 +10,9 @@ import {
   YOGA_INTERMEDIATE_VIDEOS,
   YOGA_ADVANCED_VIDEOS
 } from '@/lib/section-fallbacks';
+import { ExerciseType } from '@/modules/active-you/context/module-context';
+import ActivitySpecificRecommendations from './activity-specific-recommendations';
+import { Workout, YogaWorkout } from '@/lib/workout-generation-service';
 
 // Define Yoga Exercise interface that extends the BaseExercise
 interface YogaExercise extends BaseExercise {
@@ -233,10 +236,11 @@ const allFallbacks = {
 };
 
 // Main Yoga Exercises Component
-export const YogaSpecificExercisesEnhanced = () => {
+const YogaSpecificExercisesEnhanced = () => {
   const [activeTab, setActiveTab] = useState('beginner');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentWorkout, setCurrentWorkout] = useState<YogaWorkout | null>(null);
   
   // Find video for an exercise using the YouTube API
   const findExerciseVideo = async (exercise: YogaExercise) => {
@@ -245,13 +249,14 @@ export const YogaSpecificExercisesEnhanced = () => {
     
     try {
       // Search for specific exercise videos by name and level
-      const searchTerms = [
-        `${exercise.name} ${activeTab} yoga pose`,
-        `how to do ${exercise.name} yoga pose`,
-        `${exercise.name} yoga tutorial`
-      ];
+      const searchTerms = `${exercise.name} ${activeTab} yoga pose`;
       
-      const videos = await searchSectionSpecificExerciseVideos(searchTerms);
+      const videos = await searchSectionSpecificExerciseVideos(
+        'yoga', 
+        exercise.name, 
+        exercise.equipment?.join(', '), 
+        exercise.muscleGroups
+      );
       setIsLoading(false);
       return videos;
     } catch (err) {
@@ -269,6 +274,12 @@ export const YogaSpecificExercisesEnhanced = () => {
     // For now, just log the action
   };
   
+  // Handle starting a workout
+  const handleStartWorkout = (workout: Workout) => {
+    setCurrentWorkout(workout as YogaWorkout);
+    // Future implementation: Show the workout flow or timer
+  };
+  
   return (
     <div className="mx-auto w-full max-w-4xl">
       <Card className="shadow-md border-pink-100">
@@ -278,6 +289,12 @@ export const YogaSpecificExercisesEnhanced = () => {
             Yoga combines physical postures, breathing techniques, and meditation to improve strength, flexibility, and mental wellbeing.
             Choose your level below to get started.
           </p>
+          
+          {/* Activity-specific recommendations and profile prompt */}
+          <ActivitySpecificRecommendations 
+            activityType="yoga"
+            onStartWorkout={handleStartWorkout} 
+          />
           
           {error && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4 flex items-start">

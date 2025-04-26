@@ -21,6 +21,8 @@ import {
   MoreHorizontal, 
   Timer 
 } from "lucide-react";
+import ActivitySpecificRecommendations from './activity-specific-recommendations';
+import { Workout as AIWorkout, WeightliftingWorkout } from '@/lib/workout-generation-service';
 
 // Define interfaces for workout tracking
 interface Exercise {
@@ -239,6 +241,7 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('workout');
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
+  const [aiWorkout, setAiWorkout] = useState<WeightliftingWorkout | null>(null);
   
   // State for the active exercise during a workout
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
@@ -553,7 +556,7 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
           </p>
           
           <Tabs defaultValue="workout" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full grid grid-cols-5 bg-pink-100">
+            <TabsList className="w-full grid grid-cols-6 bg-pink-100">
               <TabsTrigger 
                 value="workout" 
                 className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
@@ -588,6 +591,13 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
               >
                 <TrendingUp className="h-4 w-4 mr-2" />
                 Progress
+              </TabsTrigger>
+              <TabsTrigger 
+                value="recommendations" 
+                className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
+              >
+                <Award className="h-4 w-4 mr-2" />
+                For You
               </TabsTrigger>
             </TabsList>
             
@@ -1295,6 +1305,68 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
                   </Card>
                 </div>
               </div>
+            </TabsContent>
+            
+            {/* Personalized Recommendations Tab */}
+            <TabsContent value="recommendations" className="pt-4">
+              <ActivitySpecificRecommendations 
+                activityType="weightlifting" 
+                onStartWorkout={(workout) => {
+                  const weightliftingWorkout = workout as WeightliftingWorkout;
+                  setAiWorkout(weightliftingWorkout);
+                  
+                  // Convert AI workout to app workout format
+                  if (weightliftingWorkout && weightliftingWorkout.exercises && weightliftingWorkout.exercises.length > 0) {
+                    // Find exercises in our local database or create placeholders
+                    const mappedExercises = weightliftingWorkout.exercises.map((ex) => {
+                      // Try to find a matching exercise
+                      const matchingExercise = SAMPLE_EXERCISES.find(
+                        e => e.name.toLowerCase() === ex.name.toLowerCase()
+                      );
+                      
+                      // If found, use it, otherwise create a placeholder
+                      const exercise = matchingExercise || {
+                        id: `ai-ex-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+                        name: ex.name,
+                        targetMuscles: ex.targetMuscles || ['custom'],
+                        category: 'custom',
+                        equipment: ex.equipmentNeeded || ['none'],
+                        difficulty: (ex.description?.includes('beginner') 
+                          ? 'beginner' 
+                          : ex.description?.includes('advanced') 
+                            ? 'advanced' 
+                            : 'intermediate') as 'beginner' | 'intermediate' | 'advanced'
+                      };
+                      
+                      return {
+                        exercise,
+                        sets: Array(ex.sets || 3).fill(0).map(() => ({
+                          weight: ex.weight === 'bodyweight' ? 0 : 0,
+                          reps: ex.reps || 10,
+                          completed: false
+                        })),
+                        restTime: ex.restBetween || 60,
+                        notes: ex.description
+                      };
+                    });
+                    
+                    // Create a new workout
+                    const newWorkout: Workout = {
+                      id: `ai-workout-${Date.now()}`,
+                      name: weightliftingWorkout.title || 'AI Workout',
+                      date: new Date(),
+                      exercises: mappedExercises,
+                      completed: false,
+                      notes: weightliftingWorkout.description
+                    };
+                    
+                    setCurrentWorkout(newWorkout);
+                    setActiveTab('active-workout');
+                    setActiveExerciseIndex(0);
+                    setActiveSetIndex(0);
+                  }
+                }}
+              />
             </TabsContent>
           </Tabs>
         </div>

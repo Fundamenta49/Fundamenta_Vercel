@@ -1,459 +1,337 @@
 import { Router } from 'express';
 import OpenAI from 'openai';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { z } from 'zod';
+import crypto from 'crypto';
 
 const router = Router();
 
-// OpenAI client initialization
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+// Initialize OpenAI
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// Validation schemas
+const generateWorkoutSchema = z.object({
+  activityType: z.string(),
+  activityProfile: z.record(z.any()),
+  fitnessProfile: z.record(z.any()).optional(),
 });
 
-// Generic workout generation endpoint that uses OpenAI to create custom workouts
+const recommendationsSchema = z.object({
+  activityType: z.string(),
+  activityProfile: z.record(z.any()),
+  fitnessProfile: z.record(z.any()).optional(),
+  count: z.number().min(1).max(5).default(3),
+});
+
+const saveWorkoutSchema = z.object({
+  workout: z.record(z.any()),
+});
+
+// Get OpenAI model based on environment
+const getOpenAIModel = () => {
+  // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+  return 'gpt-4o';
+};
+
+// Endpoint to generate a personalized workout
 router.post('/generate', async (req, res) => {
   try {
-    const { activityType, activityProfile, fitnessProfile, preferences } = req.body;
-
-    if (!activityType || !activityProfile) {
+    // Validate request body
+    const { activityType, activityProfile, fitnessProfile } = generateWorkoutSchema.parse(req.body);
+    
+    // Check if OpenAI API key is set
+    if (!process.env.OPENAI_API_KEY) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required parameters: activityType and activityProfile are required',
+        message: 'OpenAI API key is not configured'
       });
     }
-
-    // Create a prompt for OpenAI based on the activity type and profile
-    const prompt = createWorkoutPrompt(activityType, activityProfile, fitnessProfile, preferences);
-
-    // Call OpenAI to generate the workout
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+    
+    // Create system message with instructions for workout generation
+    const systemMessage = `You are an AI fitness coach specialized in creating personalized workouts. 
+    Your task is to create a detailed, safe, and effective workout plan based on the user's activity type and profile information.
+    The workout should be tailored to their experience level, goals, preferences, and any injury considerations.
+    For each workout, include:
+    - A catchy, motivating title
+    - A brief description explaining benefits and focus
+    - Appropriate duration based on their available time
+    - Equipment that matches their preferences
+    - Difficulty level matching their experience
+    - Relevant tags for categorization
+    - Activity-specific details like exercises, poses, segments, etc.
+    
+    Respond in a structured JSON format without any explanations. Use this schema:
+    {
+      "workout": {
+        "id": "unique-string",
+        "title": "Workout Title",
+        "description": "Brief description",
+        "duration": number-of-minutes,
+        "difficultyLevel": "beginner/intermediate/advanced",
+        "equipmentNeeded": ["item1", "item2"],
+        "tags": ["tag1", "tag2"],
+        "createdAt": "current-date",
+        // Activity-specific fields will vary based on activity type
+      }
+    }`;
+    
+    // Creating a comprehensive user message that includes all profile details
+    let userMessage = `Please create a personalized ${activityType} workout for me. 
+    
+    My ${activityType} profile:
+    ${JSON.stringify(activityProfile, null, 2)}
+    `;
+    
+    // Add general fitness profile if available
+    if (fitnessProfile) {
+      userMessage += `\n\nMy general fitness profile:
+      ${JSON.stringify(fitnessProfile, null, 2)}
+      `;
+    }
+    
+    // Make the API call to OpenAI
+    const response = await openai.chat.completions.create({
+      model: getOpenAIModel(),
       messages: [
-        { 
-          role: "system", 
-          content: "You are an expert fitness trainer specialized in creating personalized workout plans. Provide detailed, structured workouts in valid JSON format based on user profiles. Include exercise descriptions, sets, reps, durations, and proper form guidance."
-        },
-        { role: "user", content: prompt }
+        { role: 'system', content: systemMessage },
+        { role: 'user', content: userMessage }
       ],
-      response_format: { type: "json_object" },
+      response_format: { type: 'json_object' },
       temperature: 0.7,
     });
-
-    // Extract and parse the workout from OpenAI's response
-    const responseText = completion.choices[0].message.content;
-    if (!responseText) {
-      throw new Error('Empty response from workout generation');
-    }
-
-    const workoutData = JSON.parse(responseText);
-
-    // Add creation timestamp and ID
-    workoutData.id = 'workout_' + Date.now();
-    workoutData.createdAt = new Date();
     
-    // Return the generated workout
+    // Parse the response
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No content returned from OpenAI');
+    }
+    
+    const parsedResponse = JSON.parse(content);
+    
+    // Generate a unique ID if one wasn't provided
+    if (parsedResponse.workout && !parsedResponse.workout.id) {
+      parsedResponse.workout.id = crypto.randomUUID();
+    }
+    
+    // Set creation date if not provided
+    if (parsedResponse.workout && !parsedResponse.workout.createdAt) {
+      parsedResponse.workout.createdAt = new Date().toISOString();
+    }
+    
+    // Return the workout
     return res.json({
       success: true,
-      workout: workoutData,
+      workout: parsedResponse.workout
     });
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error generating workout:', error);
-    
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
-      message: error.message || 'Failed to generate workout',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 });
 
+// Endpoint to get workout recommendations
 router.post('/recommendations', async (req, res) => {
   try {
-    const { activityType, activityProfile, fitnessProfile, count = 3 } = req.body;
-
-    if (!activityType || !activityProfile) {
+    // Validate request body
+    const { activityType, activityProfile, fitnessProfile, count } = recommendationsSchema.parse(req.body);
+    
+    // Check if OpenAI API key is set
+    if (!process.env.OPENAI_API_KEY) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required parameters: activityType and activityProfile are required',
+        message: 'OpenAI API key is not configured'
       });
     }
-
-    // Create a prompt for OpenAI to generate workout recommendations
-    const prompt = createRecommendationsPrompt(activityType, activityProfile, fitnessProfile, count);
-
-    // Call OpenAI to generate the recommendations
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      messages: [
-        { 
-          role: "system", 
-          content: "You are an expert fitness trainer specialized in recommending personalized workout options. Generate a list of diverse workout recommendations in valid JSON format based on user profiles."
+    
+    // Create system message with instructions for workout recommendations
+    const systemMessage = `You are an AI fitness coach specialized in creating personalized workout recommendations. 
+    Your task is to create ${count} different workout options based on the user's activity type and profile information.
+    Each workout should be tailored to their experience level, goals, preferences, and any injury considerations.
+    Provide variety in the recommendations to give the user different options to choose from.
+    
+    For each workout, include:
+    - A catchy, motivating title
+    - A brief description explaining benefits and focus
+    - Appropriate duration based on their available time
+    - Equipment that matches their preferences
+    - Difficulty level matching their experience
+    - Relevant tags for categorization
+    - Activity-specific details like exercises, poses, segments, etc.
+    
+    Respond in a structured JSON format without any explanations. Use this schema:
+    {
+      "recommendations": [
+        {
+          "id": "unique-string-1",
+          "title": "Workout Title 1",
+          "description": "Brief description",
+          "duration": number-of-minutes,
+          "difficultyLevel": "beginner/intermediate/advanced",
+          "equipmentNeeded": ["item1", "item2"],
+          "tags": ["tag1", "tag2"],
+          "createdAt": "current-date",
+          // Activity-specific fields will vary based on activity type
         },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.8,
-    });
-
-    // Extract and parse the recommendations from OpenAI's response
-    const responseText = completion.choices[0].message.content;
-    if (!responseText) {
-      throw new Error('Empty response from workout recommendations');
+        // More workout recommendations...
+      ]
+    }`;
+    
+    // Creating a comprehensive user message that includes all profile details
+    let userMessage = `Please recommend ${count} different ${activityType} workouts for me. 
+    
+    My ${activityType} profile:
+    ${JSON.stringify(activityProfile, null, 2)}
+    `;
+    
+    // Add general fitness profile if available
+    if (fitnessProfile) {
+      userMessage += `\n\nMy general fitness profile:
+      ${JSON.stringify(fitnessProfile, null, 2)}
+      `;
     }
-
-    const recommendationsData = JSON.parse(responseText);
     
-    // Add creation timestamps and IDs to each workout
-    const workouts = recommendationsData.workouts.map((workout: any, index: number) => ({
-      ...workout,
-      id: \`workout_rec_\${Date.now()}_\${index}\`,
-      createdAt: new Date(),
-    }));
+    // Make the API call to OpenAI
+    const response = await openai.chat.completions.create({
+      model: getOpenAIModel(),
+      messages: [
+        { role: 'system', content: systemMessage },
+        { role: 'user', content: userMessage }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.7,
+    });
     
-    // Return the generated recommendations
+    // Parse the response
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No content returned from OpenAI');
+    }
+    
+    const parsedResponse = JSON.parse(content);
+    
+    // Generate unique IDs and set creation dates if needed
+    if (parsedResponse.recommendations) {
+      parsedResponse.recommendations.forEach((workout: any) => {
+        if (!workout.id) {
+          workout.id = crypto.randomUUID();
+        }
+        if (!workout.createdAt) {
+          workout.createdAt = new Date().toISOString();
+        }
+      });
+    }
+    
+    // Return the recommendations
     return res.json({
       success: true,
-      workouts,
+      recommendations: parsedResponse.recommendations || []
     });
     
-  } catch (error: any) {
-    console.error('Error generating workout recommendations:', error);
-    
-    return res.status(500).json({
+  } catch (error) {
+    console.error('Error getting workout recommendations:', error);
+    return res.status(400).json({
       success: false,
-      message: error.message || 'Failed to generate workout recommendations',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 });
 
-// In a real app, these would connect to a database
-// For now, we'll use in-memory storage for saved workouts
-let savedWorkouts: any[] = [];
+// In-memory storage for saved workouts
+// In a production app, this would be stored in a database
+const savedWorkouts = new Map<string, any>();
 
+// Endpoint to save a workout
 router.post('/save', (req, res) => {
   try {
-    const { workout } = req.body;
+    // Validate request body
+    const { workout } = saveWorkoutSchema.parse(req.body);
     
-    if (!workout) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing required parameter: workout',
-      });
-    }
+    // Generate an ID if not provided
+    const workoutId = workout.id || crypto.randomUUID();
+    workout.id = workoutId;
     
-    // In a real app, we would save to a database
-    savedWorkouts.push(workout);
+    // Save the workout
+    savedWorkouts.set(workoutId, workout);
     
     return res.json({
       success: true,
       message: 'Workout saved successfully',
+      workoutId
     });
-    
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error saving workout:', error);
-    
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
-      message: error.message || 'Failed to save workout',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 });
 
+// Endpoint to get saved workouts
 router.get('/saved', (req, res) => {
   try {
-    const { type } = req.query;
+    const { activityType } = req.query;
+    
+    // Convert Map to array
+    const workouts = Array.from(savedWorkouts.values());
     
     // Filter by activity type if provided
-    const workouts = type 
-      ? savedWorkouts.filter(workout => workout.activityType === type)
-      : savedWorkouts;
+    const filteredWorkouts = activityType
+      ? workouts.filter(workout => {
+          // Determine activity type from the workout object structure
+          if ('poses' in workout) return activityType === 'yoga';
+          if ('segments' in workout) return activityType === 'running';
+          if ('exercises' in workout && 'supersets' in workout) return activityType === 'weightlifting';
+          if ('rounds' in workout) return activityType === 'hiit';
+          if ('stretches' in workout) return activityType === 'stretch';
+          if ('phases' in workout) return activityType === 'meditation';
+          return false;
+        })
+      : workouts;
     
     return res.json({
       success: true,
-      workouts,
+      workouts: filteredWorkouts
     });
-    
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error getting saved workouts:', error);
-    
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
-      message: error.message || 'Failed to get saved workouts',
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 });
 
-// Helper function to create prompts for workout generation
-function createWorkoutPrompt(
-  activityType: string,
-  activityProfile: any,
-  fitnessProfile: any,
-  preferences: any
-): string {
-  let prompt = '';
-  
-  // Common info for all workout types
-  prompt += \`Create a detailed ${activityType} workout plan based on the following user profile:\n\n\`;
-  
-  // Add fitness profile information if available
-  if (fitnessProfile) {
-    prompt += "Fitness Profile:\n";
-    prompt += \`- Height: ${fitnessProfile.height} cm\n\`;
-    prompt += \`- Weight: ${fitnessProfile.weight} kg\n\`;
-    prompt += \`- Sex: ${fitnessProfile.sex}\n\`;
-    prompt += \`- Fitness Level: ${fitnessProfile.fitnessLevel}\n\`;
-    prompt += \`- Goals: ${fitnessProfile.goals.join(', ')}\n\n\`;
-  }
-  
-  // Add activity-specific profile details
-  prompt += "Activity Profile:\n";
-  prompt += \`- Experience Level: ${activityProfile.experience}\n\`;
-  prompt += \`- Time Available: ${activityProfile.timeAvailable} minutes\n\`;
-  
-  switch (activityType) {
-    case 'yoga':
-      prompt += \`- Focus Areas: ${activityProfile.focusAreas.join(', ')}\n\`;
-      prompt += \`- Preferred Styles: ${activityProfile.preferredStyles.join(', ')}\n\`;
-      prompt += \`- Practice Frequency: ${activityProfile.practiceFrequency}\n\`;
-      if (activityProfile.injuryConsiderations?.length) {
-        prompt += \`- Injury Considerations: ${activityProfile.injuryConsiderations.join(', ')}\n\`;
-      }
-      if (activityProfile.favoriteAsanas?.length) {
-        prompt += \`- Favorite Poses: ${activityProfile.favoriteAsanas.join(', ')}\n\`;
-      }
-      break;
-      
-    case 'running':
-      prompt += \`- Running Goals: ${activityProfile.runningGoals.join(', ')}\n\`;
-      prompt += \`- Typical Distance: ${activityProfile.typicalDistance} km\n\`;
-      prompt += \`- Typical Pace: ${activityProfile.typicalPace} min/km\n\`;
-      prompt += \`- Preferred Terrain: ${activityProfile.preferredTerrain.join(', ')}\n\`;
-      prompt += \`- Running Frequency: ${activityProfile.runningFrequency}\n\`;
-      if (activityProfile.injuryConsiderations?.length) {
-        prompt += \`- Injury Considerations: ${activityProfile.injuryConsiderations.join(', ')}\n\`;
-      }
-      break;
-      
-    case 'weightlifting':
-      prompt += \`- Strength Goals: ${activityProfile.strengthGoals.join(', ')}\n\`;
-      prompt += \`- Focus Muscle Groups: ${activityProfile.focusMuscleGroups.join(', ')}\n\`;
-      prompt += \`- Preferred Equipment: ${activityProfile.preferredEquipment.join(', ')}\n\`;
-      prompt += \`- Training Frequency: ${activityProfile.trainingFrequency}\n\`;
-      if (activityProfile.injuryConsiderations?.length) {
-        prompt += \`- Injury Considerations: ${activityProfile.injuryConsiderations.join(', ')}\n\`;
-      }
-      if (activityProfile.maxLifts && Object.keys(activityProfile.maxLifts).length) {
-        prompt += "- Max Lifts:\n";
-        for (const [exercise, weight] of Object.entries(activityProfile.maxLifts)) {
-          prompt += \`  - ${exercise}: ${weight} lbs\n\`;
-        }
-      }
-      break;
-      
-    // Add more cases for other activity types
+// Endpoint to delete a saved workout
+router.delete('/saved/:id', (req, res) => {
+  try {
+    const { id } = req.params;
     
-    default:
-      // General properties for any activity type
-      for (const [key, value] of Object.entries(activityProfile)) {
-        if (key !== 'experience' && key !== 'timeAvailable' && key !== 'lastUpdated') {
-          if (Array.isArray(value) && value.length) {
-            prompt += \`- ${key}: ${value.join(', ')}\n\`;
-          } else if (typeof value === 'string' || typeof value === 'number') {
-            prompt += \`- ${key}: ${value}\n\`;
-          }
-        }
-      }
-  }
-  
-  // Add any additional preferences
-  if (preferences) {
-    prompt += "\nAdditional Preferences:\n";
-    if (preferences.duration) {
-      prompt += \`- Preferred Duration: ${preferences.duration} minutes\n\`;
+    // Check if workout exists
+    if (!savedWorkouts.has(id)) {
+      return res.status(404).json({
+        success: false,
+        message: 'Workout not found'
+      });
     }
-    if (preferences.difficulty) {
-      prompt += \`- Preferred Difficulty: ${preferences.difficulty}\n\`;
-    }
-    if (preferences.focus && preferences.focus.length) {
-      prompt += \`- Focus Areas: ${preferences.focus.join(', ')}\n\`;
-    }
-    if (preferences.equipment && preferences.equipment.length) {
-      prompt += \`- Available Equipment: ${preferences.equipment.join(', ')}\n\`;
-    }
-  }
-  
-  // Add output formatting instructions based on activity type
-  prompt += "\nOutput format instructions:\n";
-  prompt += "Provide the complete workout plan as a valid JSON object with the following structure:\n";
-  
-  switch (activityType) {
-    case 'yoga':
-      prompt += \`
-{
-  "title": "string", // A creative, engaging title for the workout
-  "description": "string", // Brief description of the workout's benefits and focus
-  "duration": number, // Total duration in minutes
-  "difficultyLevel": "beginner" | "intermediate" | "advanced",
-  "equipmentNeeded": ["string"], // Array of required equipment (e.g., "yoga mat", "blocks")
-  "tags": ["string"], // Keywords describing the workout
-  "poses": [ // Array of yoga poses (asanas)
-    {
-      "id": "string", // Unique identifier
-      "name": "string", // Name of the pose (e.g., "Downward Dog")
-      "description": "string", // Brief description of the pose
-      "duration": number, // How long to hold in seconds
-      "tips": ["string"], // Form guidance and advice
-      "modifications": {
-        "easier": "string", // Easier variation
-        "harder": "string" // More challenging variation
-      }
-    }
-  ],
-  "focusAreas": ["string"], // Body areas or benefits targeted
-  "breathworkIncluded": boolean,
-  "meditationIncluded": boolean,
-  "flowType": "string" // E.g., "Vinyasa", "Hatha", etc.
-}
-\`;
-      break;
-      
-    case 'running':
-      prompt += \`
-{
-  "title": "string", // A creative, engaging title for the workout
-  "description": "string", // Brief description of the workout's benefits
-  "duration": number, // Total duration in minutes
-  "difficultyLevel": "beginner" | "intermediate" | "advanced",
-  "equipmentNeeded": ["string"], // E.g., "running shoes", "GPS watch"
-  "tags": ["string"], // Keywords describing the workout
-  "distance": number, // Approximate distance in kilometers
-  "segments": [ // Structured parts of the run
-    {
-      "type": "warmup" | "interval" | "steady" | "cooldown",
-      "duration": number, // Duration in minutes
-      "intensity": "low" | "medium" | "high",
-      "description": "string" // Detailed instructions
-    }
-  ],
-  "terrain": "string", // Recommended terrain
-  "targetPace": number // Target pace in minutes per km
-}
-\`;
-      break;
-      
-    case 'weightlifting':
-      prompt += \`
-{
-  "title": "string", // A creative, engaging title for the workout
-  "description": "string", // Brief description of the workout's benefits
-  "duration": number, // Estimated duration in minutes
-  "difficultyLevel": "beginner" | "intermediate" | "advanced",
-  "equipmentNeeded": ["string"], // Required equipment
-  "tags": ["string"], // Keywords describing the workout
-  "exercises": [ // Array of exercises
-    {
-      "id": "string", // Unique identifier
-      "name": "string", // Name of the exercise
-      "description": "string", // How to perform the exercise
-      "sets": number,
-      "reps": number,
-      "weight": number | string, // Specific weight or formula (e.g., "70% of 1RM")
-      "restBetween": number, // Rest between sets in seconds
-      "targetMuscles": ["string"], // Primary muscles worked
-      "tips": ["string"], // Form guidance and advice
-      "tempo": "string" // Optional timing pattern (e.g., "3-1-2-0")
-    }
-  ],
-  "muscleGroups": ["string"], // Primary muscle groups targeted
-  "splitType": "string" // E.g., "Full Body", "Upper/Lower", etc.
-}
-\`;
-      break;
-      
-    // Add more cases for other activity types
     
-    default:
-      prompt += \`
-{
-  "title": "string", // A creative, engaging title for the workout
-  "description": "string", // Brief description of the workout
-  "duration": number, // Total duration in minutes
-  "difficultyLevel": "beginner" | "intermediate" | "advanced",
-  "equipmentNeeded": ["string"], // Required equipment
-  "tags": ["string"], // Keywords describing the workout
-  "exercises": [ // Array of exercises
-    {
-      "id": "string",
-      "name": "string",
-      "description": "string",
-      "duration": number // Time in seconds or minutes
-    }
-  ]
-}
-\`;
+    // Delete the workout
+    savedWorkouts.delete(id);
+    
+    return res.json({
+      success: true,
+      message: 'Workout deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting saved workout:', error);
+    return res.status(400).json({
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
   }
-  
-  prompt += "\nMake sure to include detailed instructions for each exercise, proper form guidance, and create a workout that aligns with the user's goals, experience level, and any injury considerations. The output should be valid JSON that can be parsed directly.";
-  
-  return prompt;
-}
-
-// Function to generate workout recommendations prompt
-function createRecommendationsPrompt(
-  activityType: string,
-  activityProfile: any,
-  fitnessProfile: any,
-  count: number
-): string {
-  let prompt = \`Generate ${count} varied ${activityType} workout recommendations based on this user profile:\n\n\`;
-  
-  // Add fitness profile information if available
-  if (fitnessProfile) {
-    prompt += "Fitness Profile:\n";
-    prompt += \`- Fitness Level: ${fitnessProfile.fitnessLevel}\n\`;
-    prompt += \`- Goals: ${fitnessProfile.goals.join(', ')}\n\n\`;
-  }
-  
-  // Add key activity profile information
-  prompt += "Activity Profile:\n";
-  prompt += \`- Experience Level: ${activityProfile.experience}\n\`;
-  prompt += \`- Time Available: ${activityProfile.timeAvailable} minutes\n\`;
-  
-  // Add activity-specific details
-  for (const [key, value] of Object.entries(activityProfile)) {
-    if (key !== 'experience' && key !== 'timeAvailable' && key !== 'lastUpdated') {
-      if (Array.isArray(value) && value.length) {
-        prompt += \`- ${key}: ${value.join(', ')}\n\`;
-      } else if (typeof value === 'string' || typeof value === 'number') {
-        prompt += \`- ${key}: ${value}\n\`;
-      }
-    }
-  }
-  
-  // Output format instructions
-  prompt += \`
-Provide the workout recommendations as a valid JSON object with this structure:
-{
-  "workouts": [
-    {
-      "title": "string", // A catchy, descriptive title
-      "description": "string", // Brief overview of workout benefits and style
-      "duration": number, // Duration in minutes
-      "difficultyLevel": "beginner" | "intermediate" | "advanced",
-      "equipmentNeeded": ["string"], // Required equipment
-      "tags": ["string"], // Keywords describing the workout
-      "activityType": "${activityType}" // The activity type 
-    },
-    // Repeat for a total of ${count} different workouts
-  ]
-}
-
-Make each workout unique with different focuses, styles, or goals. Only include summary information for each workout, without detailed exercise lists.
-The workouts should vary in duration, focus, and style to give the user diverse options.
-\`;
-
-  return prompt;
-}
+});
 
 export default router;
