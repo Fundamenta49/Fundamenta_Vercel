@@ -140,15 +140,7 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
           </Button>
         );
       case 'running':
-        return (
-          <Button 
-            onClick={() => console.log('Start GPS Run Tracking')} 
-            className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white"
-          >
-            <MapPin className="w-5 h-5 mr-2" />
-            Start GPS Run Tracking
-          </Button>
-        );
+        return null; // Removed redundant button as it's already in the running section
       default:
         return null;
     }
