@@ -11,32 +11,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle
-} from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import {
-  CheckCircle2,
   Camera,
   Upload,
-  AlertCircle,
   ArrowRight,
-  Info,
-  ThumbsUp,
-  MoveRight,
-  AlertTriangle,
   Loader2,
-  Star,
-  Trophy,
-  Lock,
-  Award
 } from "lucide-react";
+import AiFeedbackOverlay from './ai-feedback-overlay';
 
 // Define interfaces for our component
 interface PoseAnalysis {

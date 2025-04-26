@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { YogaPoseProgression } from '../../../shared/yoga-progression';
 import { ArrowRight, Camera, Info, Book, Award, Youtube, X, CheckCircle2 } from 'lucide-react';
-import YogaVisionEnhanced from './yoga-vision-enhanced';
+import YogaVisionSimplified from './yoga-vision-simplified';
 import axios from 'axios';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
 import posesWithPaths from '../data/poses_with_paths.json';
@@ -554,10 +554,10 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             <TabsContent value="practice" className="h-auto">
               <div className="w-full mx-auto">
                 <div className="bg-background rounded-lg mb-3 sm:mb-4">
-                  <YogaVisionEnhanced 
-                    initialPoseId={pose.id} 
+                  {/* Using the simplified YogaVision component */}
+                  <YogaVisionSimplified 
+                    poseId={pose.id} 
                     onClose={handleClose}
-                    compactMode={true}
                   />
                 </div>
               </div>
