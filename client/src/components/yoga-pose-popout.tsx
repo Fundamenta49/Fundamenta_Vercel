@@ -195,79 +195,10 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     return { objectFit: 'cover', objectPosition: 'center' };
   };
 
-  // Get fallback image URL based on pose type/category
-  const getFallbackImageUrl = () => {
-    // Define the valid categories that we're using in our system
-    type YogaCategory = 'standing' | 'balance' | 'resting' | 'forward_bend' | 
-                         'backbend' | 'hip_opener' | 'core' | 'arm_balance' | 
-                         'foundation' | 'flow';
-    
-    // Safety check to ensure category is one of our defined types
-    const defaultCategory: YogaCategory = 'standing';
-    const category: YogaCategory = (pose.category as YogaCategory) || defaultCategory;
-    const poseId = pose.id || 'yoga';
-    
-    // Debug info
-    console.log(`Pose ${poseId} fallback info:`, {
-      imageUrl: pose.imageUrl,
-      category: category
-    });
-    
-    // Try to provide category-specific images
-    const categoryImages: Record<YogaCategory, string> = {
-      'standing': 'https://images.unsplash.com/photo-1508672019048-805c876b67e2',
-      'balance': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b',
-      'resting': 'https://images.unsplash.com/photo-1588286840104-8957b019727f',
-      'forward_bend': 'https://images.unsplash.com/photo-1610508500445-a4592435e5d7',
-      'backbend': 'https://images.unsplash.com/photo-1556816723-1ce827b9cfca',
-      'hip_opener': 'https://images.unsplash.com/photo-1562088287-e716c080a17f',
-      'core': 'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6',
-      'arm_balance': 'https://images.unsplash.com/photo-1507120410856-1f35574c3b45',
-      'foundation': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773',
-      'flow': 'https://images.unsplash.com/photo-1593164842264-854604db2260'
-    };
-    
-    // Create a mapping of pose IDs to specific images for unique poses
-    const poseSpecificImages: Record<string, string> = {
-      // Level 1-2 Poses
-      'mountain': 'https://images.pexels.com/photos/6698513/pexels-photo-6698513.jpeg',
-      'child': 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg',
-      'corpse': 'https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg',
-      'downward_dog': 'https://images.pexels.com/photos/5384538/pexels-photo-5384538.jpeg',
-      'cat_cow': 'https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg',
-      'forward_fold': 'https://images.pexels.com/photos/6111616/pexels-photo-6111616.jpeg',
-      
-      // Level 3-4 Poses
-      'tree': 'https://images.pexels.com/photos/6453396/pexels-photo-6453396.jpeg',
-      'warrior_1': 'https://images.pexels.com/photos/6453398/pexels-photo-6453398.jpeg',
-      'warrior_2': 'https://images.pexels.com/photos/4534687/pexels-photo-4534687.jpeg',
-      'triangle': 'https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg',
-      'chair': 'https://images.pexels.com/photos/3822134/pexels-photo-3822134.jpeg',
-      'bridge': 'https://images.pexels.com/photos/3823207/pexels-photo-3823207.jpeg',
-      
-      // Level 5 Poses
-      'half_moon': 'https://images.pexels.com/photos/3823185/pexels-photo-3823185.jpeg',
-      'eagle': 'https://images.pexels.com/photos/6957882/pexels-photo-6957882.jpeg',
-      'pigeon': 'https://images.pexels.com/photos/3823031/pexels-photo-3823031.jpeg',
-      
-      // Level 6 Poses
-      'crow': 'https://images.pexels.com/photos/6453377/pexels-photo-6453377.jpeg',
-      'side_plank': 'https://images.pexels.com/photos/6453406/pexels-photo-6453406.jpeg',
-      'boat': 'https://images.pexels.com/photos/4058411/pexels-photo-4058411.jpeg'
-    };
-    
-    // First try to get a pose-specific image
-    if (poseId in poseSpecificImages) {
-      return poseSpecificImages[poseId];
-    }
-    
-    // Otherwise fall back to category-based image
-    if (category in categoryImages) {
-      return categoryImages[category];
-    }
-    
-    // Default fallback if all else fails
-    return 'https://images.unsplash.com/photo-1545389336-cf090694435e';
+  // Function to handle opening YouTube video in a new tab
+  const openYouTubeVideo = (videoId: string | undefined) => {
+    if (!videoId) return;
+    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
   };
 
   // Render mastery stars
@@ -298,19 +229,31 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   <span className="text-xs text-muted-foreground">Loading pose image...</span>
                 </div>
               ) : (
-                <div className="w-full h-full relative overflow-hidden">
+                <div className="w-full h-full relative overflow-hidden group cursor-pointer"
+                  onClick={() => {
+                    const videoInfo = getYogaPoseVideoInfo(pose.id);
+                    if (videoInfo) {
+                      openYouTubeVideo(videoInfo.videoId);
+                    }
+                  }}
+                >
                   <img 
                     src={getYogaPoseThumbnail(pose.id)}
                     alt={pose.name} 
-                    className="object-cover w-full h-full"
+                    className="object-cover w-full h-full group-hover:opacity-90 transition-opacity"
                     style={{ objectFit: 'cover' }}
                   />
                   {pose.id && getYogaPoseVideoInfo(pose.id) && (
                     <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
                       <Youtube className="w-3 h-3 mr-1" />
-                      <span>Demo Video</span>
+                      <span>{getYogaPoseVideoInfo(pose.id)?.title.split('(')[0] || 'Demo Video'}</span>
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="bg-black/70 rounded-full p-2">
+                      <Youtube className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -398,18 +341,31 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                       <span className="text-sm text-muted-foreground">Loading pose image...</span>
                     </div>
                   ) : (
-                    <div className="w-full h-full relative overflow-hidden">
+                    <div 
+                      className="w-full h-full relative overflow-hidden group cursor-pointer"
+                      onClick={() => {
+                        const videoInfo = getYogaPoseVideoInfo(pose.id);
+                        if (videoInfo) {
+                          openYouTubeVideo(videoInfo.videoId);
+                        }
+                      }}
+                    >
                       <img 
                         src={getYogaPoseThumbnail(pose.id)}
                         alt={pose.name} 
-                        className="object-cover w-full h-full"
+                        className="object-cover w-full h-full group-hover:opacity-90 transition-opacity"
                       />
                       {pose.id && getYogaPoseVideoInfo(pose.id) && (
                         <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
                           <Youtube className="w-3 h-3 mr-1" />
-                          <span className="text-xs">{getYogaPoseVideoInfo(pose.id)?.title || 'Demo Video'}</span>
+                          <span className="text-xs">{getYogaPoseVideoInfo(pose.id)?.title.split('(')[0] || 'Demo Video'}</span>
                         </div>
                       )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <div className="bg-black/70 rounded-full p-3">
+                          <Youtube className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -497,10 +453,27 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           </TabsContent>
         </Tabs>
         
-        <DialogFooter>
+        <DialogFooter className="flex-wrap gap-2">
           <Button variant="outline" onClick={handleClose}>
             Close
           </Button>
+          
+          {activeTab === "info" && pose.id && getYogaPoseVideoInfo(pose.id) && (
+            <Button 
+              variant="outline"
+              onClick={() => {
+                const videoInfo = getYogaPoseVideoInfo(pose.id);
+                if (videoInfo) {
+                  openYouTubeVideo(videoInfo.videoId);
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white border-none"
+            >
+              Watch Video
+              <Youtube className="ml-2 h-4 w-4" />
+            </Button>
+          )}
+          
           {activeTab !== "practice" && (
             <Button 
               onClick={() => setActiveTab("practice")}

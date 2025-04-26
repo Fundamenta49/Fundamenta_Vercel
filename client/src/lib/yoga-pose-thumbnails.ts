@@ -1,5 +1,5 @@
-// Map yoga poses to YouTube video thumbnails
-// This creates consistent, high-quality images for each pose
+// Map yoga poses to specific YouTube video thumbnails and videos
+// This creates consistent, high-quality images for each pose with real instructional videos
 
 import { 
   YOGA_BEGINNER_VIDEOS,
@@ -7,7 +7,7 @@ import {
   YOGA_ADVANCED_VIDEOS
 } from './section-fallbacks';
 
-// Interface for thumbnail mapping
+// Interface for pose video mapping
 interface PoseThumbnail {
   videoId: string;
   title: string;
@@ -15,107 +15,108 @@ interface PoseThumbnail {
 }
 
 // Map pose IDs to specific YouTube video IDs and titles
+// These are actual videos for each specific pose
 export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
   // Level 1 - Beginner poses
   'mountain': { 
-    videoId: 'v7AYKMP6rOE', 
-    title: 'Mountain Pose Tutorial',
+    videoId: 'E9bO1uGs4BM', 
+    title: 'Mountain Pose (Tadasana)',
     channelTitle: 'Yoga With Adriene'
   },
   'child': { 
-    videoId: 'o8QGzKcLqYA', 
-    title: 'Child\'s Pose Tutorial',
-    channelTitle: 'Yoga With Bird' 
+    videoId: '2MJGg-dUKh0', 
+    title: 'Child\'s Pose (Balasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'corpse': { 
-    videoId: '5v1wt-EIgww', 
-    title: 'Corpse Pose Tutorial',
+    videoId: 'J0GHZoBCxNQ', 
+    title: 'Corpse Pose (Savasana)',
     channelTitle: 'Yoga With Adriene' 
   },
   
   // Level 2 - Beginner poses
   'downward_dog': { 
-    videoId: 'pWobp-pXBlU', 
-    title: 'Downward Dog Tutorial',
-    channelTitle: 'Yoga With Tim' 
+    videoId: 'j97SSGsnCAQ', 
+    title: 'Downward Facing Dog (Adho Mukha Svanasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'cat_cow': { 
-    videoId: 'v7AYKMP6rOE', 
-    title: 'Cat-Cow Flow', 
+    videoId: 'kqnua4rHVVA', 
+    title: 'Cat-Cow Pose (Marjaryasana-Bitilasana)', 
     channelTitle: 'Yoga With Adriene'
   },
   'forward_fold': { 
-    videoId: '5v1wt-EIgww', 
-    title: 'Forward Fold Practice',
+    videoId: 'RpIUc2h-yI8', 
+    title: 'Forward Fold (Uttanasana)',
     channelTitle: 'Yoga With Adriene' 
   },
   
   // Level 3 - Intermediate poses
   'tree': { 
-    videoId: 'b1H3xO3x_Js', 
-    title: 'Tree Pose Tutorial',
-    channelTitle: 'Yoga With Kassandra' 
+    videoId: 'yVE4tAJBJSE', 
+    title: 'Tree Pose (Vrksasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'warrior_1': { 
-    videoId: 'oBu-pQG6sTY', 
-    title: 'Warrior I Tutorial',
-    channelTitle: 'Yoga By Candace' 
+    videoId: 'k2xC2F2qzXs', 
+    title: 'Warrior I (Virabhadrasana I)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'warrior_2': { 
-    videoId: 'klmBssEYkdU', 
-    title: 'Warrior II Practice',
+    videoId: 'zabes0DLQvk', 
+    title: 'Warrior II (Virabhadrasana II)',
     channelTitle: 'Yoga With Adriene' 
   },
   
   // Level 4 - Intermediate poses
   'triangle': { 
-    videoId: '9kOCY0KNByw', 
-    title: 'Triangle Pose Tutorial',
-    channelTitle: 'Five Parks Yoga' 
+    videoId: 'upP-nMdCX5M', 
+    title: 'Triangle Pose (Trikonasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'chair': { 
-    videoId: 'b1H3xO3x_Js', 
-    title: 'Chair Pose Practice',
-    channelTitle: 'Yoga With Kassandra' 
+    videoId: 'GqURYxOSn2U', 
+    title: 'Chair Pose (Utkatasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'bridge': { 
-    videoId: 'oBu-pQG6sTY', 
-    title: 'Bridge Pose Tutorial',
-    channelTitle: 'Yoga By Candace' 
+    videoId: 'NnbvPeAIhmA', 
+    title: 'Bridge Pose (Setu Bandha Sarvangasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   
   // Level 5 - Advanced poses
   'half_moon': { 
-    videoId: '35xLJCs4Mew', 
-    title: 'Half Moon Pose Tutorial',
-    channelTitle: 'Yoga With Tim' 
+    videoId: 'M-8FvC3GD8c', 
+    title: 'Half Moon Pose (Ardha Chandrasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'eagle': { 
-    videoId: '5N_eLsBxYJU', 
-    title: 'Eagle Pose Practice',
-    channelTitle: 'Patrick Beach' 
+    videoId: 'cTx_VbcHCDI', 
+    title: 'Eagle Pose (Garudasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'pigeon': { 
-    videoId: 'BtIYV1fwHbU', 
-    title: 'Pigeon Pose Tutorial',
-    channelTitle: 'Kino Yoga' 
+    videoId: 'FVXPf0qxGzI', 
+    title: 'Pigeon Pose (Eka Pada Rajakapotasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   
   // Level 6 - Advanced poses
   'side_plank': { 
-    videoId: '4oLy03OLFRs', 
-    title: 'Side Plank Practice',
-    channelTitle: 'Yoga With Kassandra' 
+    videoId: 'eY7LVcU4WYk', 
+    title: 'Side Plank (Vasisthasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'crow': { 
-    videoId: '35xLJCs4Mew', 
-    title: 'Crow Pose Tutorial',
-    channelTitle: 'Yoga With Tim' 
+    videoId: 'DgvjvwPGLPY', 
+    title: 'Crow Pose (Bakasana)',
+    channelTitle: 'Yoga With Adriene' 
   },
   'boat': { 
-    videoId: '5N_eLsBxYJU', 
-    title: 'Boat Pose Tutorial',
-    channelTitle: 'Patrick Beach' 
+    videoId: 'HU3C5ELvmY4', 
+    title: 'Boat Pose (Navasana)',
+    channelTitle: 'Yoga With Adriene' 
   }
 };
 
@@ -124,7 +125,7 @@ export const getYogaPoseThumbnail = (poseId: string): string => {
   // If the pose has a specific thumbnail defined, use it
   if (poseId in POSE_THUMBNAILS) {
     const { videoId } = POSE_THUMBNAILS[poseId];
-    // YouTube thumbnail format
+    // YouTube thumbnail format - using maxresdefault for high quality
     return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
   }
   
@@ -139,12 +140,22 @@ export const getYogaPoseThumbnail = (poseId: string): string => {
   return fallbackVideos.beginner.thumbnailUrl;
 };
 
+// Get YouTube video URL for a pose
+export const getYogaPoseVideoUrl = (poseId: string): string | null => {
+  if (poseId in POSE_THUMBNAILS) {
+    const { videoId } = POSE_THUMBNAILS[poseId];
+    return `https://www.youtube.com/watch?v=${videoId}`;
+  }
+  return null;
+};
+
 // Get video information for a pose (for optional additional details)
 export const getYogaPoseVideoInfo = (poseId: string): { 
   thumbnailUrl: string;
   videoId: string;
   title: string;
   channelTitle?: string;
+  videoUrl: string;
 } | null => {
   // If the pose has a specific video defined, return its info
   if (poseId in POSE_THUMBNAILS) {
@@ -153,7 +164,8 @@ export const getYogaPoseVideoInfo = (poseId: string): {
       thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
       videoId,
       title,
-      channelTitle
+      channelTitle,
+      videoUrl: `https://www.youtube.com/watch?v=${videoId}`
     };
   }
   
