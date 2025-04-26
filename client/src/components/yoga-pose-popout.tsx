@@ -341,16 +341,16 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         </DialogHeader>
         
         <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="mt-4">
-          <TabsList className="grid grid-cols-3 mb-6 w-auto inline-flex mx-auto">
-            <TabsTrigger value="info" className="flex items-center px-6">
+          <TabsList className="grid grid-cols-3 mb-6 w-auto inline-flex mx-auto rounded-full p-1 bg-secondary/30">
+            <TabsTrigger value="info" className="flex items-center px-6 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <Info className="h-4 w-4 mr-2" />
               Info
             </TabsTrigger>
-            <TabsTrigger value="practice" className="flex items-center px-6">
+            <TabsTrigger value="practice" className="flex items-center px-6 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <Camera className="h-4 w-4 mr-2" />
               Practice
             </TabsTrigger>
-            <TabsTrigger value="video" className="flex items-center px-6">
+            <TabsTrigger value="video" className="flex items-center px-6 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <Youtube className="h-4 w-4 mr-2" />
               Video
             </TabsTrigger>
@@ -556,7 +556,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               Close
             </Button>
             
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               {activeTab !== "video" && pose.id && getYogaPoseVideoInfo(pose.id) && (
                 <Button 
                   variant="outline"
@@ -567,20 +567,20 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                       setActiveTab("video");
                     }
                   }}
-                  className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-6"
+                  className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-4 h-9"
                 >
-                  <Youtube className="mr-2 h-4 w-4" />
-                  Watch Video
+                  <Youtube className="mr-1.5 h-4 w-4" />
+                  <span className="whitespace-nowrap">Watch Video</span>
                 </Button>
               )}
               
               {activeTab !== "practice" && (
                 <Button 
                   onClick={() => setActiveTab("practice")}
-                  className="rounded-full px-6 bg-primary hover:bg-primary/90"
+                  className="rounded-full px-4 h-9 bg-primary hover:bg-primary/90"
                 >
-                  <Camera className="mr-2 h-4 w-4" />
-                  Practice Now
+                  <Camera className="mr-1.5 h-4 w-4" />
+                  <span className="whitespace-nowrap">Practice Now</span>
                 </Button>
               )}
             </div>

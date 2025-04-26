@@ -626,7 +626,7 @@ export default function YogaVisionEnhanced({
                           onClick={handleCameraClick} 
                           variant="outline"
                           size={compactMode ? "sm" : "default"}
-                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                          className={compactMode ? "h-8 text-xs rounded-full px-3" : "rounded-md"}
                         >
                           <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
                           Upload Image
@@ -647,7 +647,7 @@ export default function YogaVisionEnhanced({
                           onClick={handleCameraClick} 
                           variant="outline" 
                           size="sm"
-                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                          className={compactMode ? "h-8 text-xs rounded-full px-3" : "rounded-md"}
                         >
                           <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
                           Change Image
@@ -656,7 +656,7 @@ export default function YogaVisionEnhanced({
                           onClick={handleReset} 
                           variant="destructive" 
                           size="sm"
-                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                          className={compactMode ? "h-8 text-xs rounded-full px-3" : "rounded-md"}
                         >
                           Remove
                         </Button>
@@ -744,7 +744,7 @@ export default function YogaVisionEnhanced({
               variant="outline" 
               onClick={onClose}
               size={compactMode ? "sm" : "default"}
-              className={compactMode ? "h-8 text-xs rounded-full" : ""}
+              className={compactMode ? "h-8 text-xs rounded-full px-4" : ""}
             >
               Back
             </Button>
@@ -754,7 +754,7 @@ export default function YogaVisionEnhanced({
               disabled={isAnalyzing}
               onClick={handleReset}
               size={compactMode ? "sm" : "default"}
-              className={compactMode ? "h-8 text-xs rounded-full" : ""}
+              className={compactMode ? "h-8 text-xs rounded-full px-4" : ""}
             >
               Reset
             </Button>
@@ -762,7 +762,7 @@ export default function YogaVisionEnhanced({
           <Button
             onClick={handleSubmitForAnalysis}
             disabled={!selectedImage || !selectedPoseId || isAnalyzing}
-            className={`flex items-center ${compactMode ? "h-8 text-xs rounded-full" : ""}`}
+            className={`flex items-center ${compactMode ? "h-8 text-xs rounded-full px-4" : ""}`}
             size={compactMode ? "sm" : "default"}
           >
             {isAnalyzing ? (
