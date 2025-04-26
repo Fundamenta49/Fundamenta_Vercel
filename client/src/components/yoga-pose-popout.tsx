@@ -80,13 +80,31 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     
     // Create a mapping of pose IDs to specific images for unique poses
     const poseSpecificImages: Record<string, string> = {
+      // Level 1-2 Poses
       'mountain': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773',
+      'child': 'https://images.unsplash.com/photo-1601325039356-6bbe403a13bf',
+      'corpse': 'https://images.unsplash.com/photo-1588286840104-8957b019727f',
+      'downward_dog': 'https://images.unsplash.com/photo-1610508500445-a4592435e5d7',
+      'cat_cow': 'https://images.unsplash.com/photo-1526717081708-697e639c20ac',
+      'forward_fold': 'https://images.unsplash.com/photo-1594050753835-0e9894479f5a',
+      
+      // Level 3-4 Poses
       'tree': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b',
       'warrior_1': 'https://images.unsplash.com/photo-1508672019048-805c876b67e2',
       'warrior_2': 'https://images.unsplash.com/photo-1517374148663-13d26488791e',
-      'downward_dog': 'https://images.unsplash.com/photo-1610508500445-a4592435e5d7',
-      'corpse': 'https://images.unsplash.com/photo-1588286840104-8957b019727f',
-      'child': 'https://images.unsplash.com/photo-1601325039356-6bbe403a13bf'
+      'triangle': 'https://images.unsplash.com/photo-1599586122309-454cb614a86f',
+      'chair': 'https://images.unsplash.com/photo-1618257205127-a0bf2142e6e3',
+      'bridge': 'https://images.unsplash.com/photo-1592431698394-e5ed80f2c0a9',
+      
+      // Level 5 Poses
+      'half_moon': 'https://images.unsplash.com/photo-1598971639058-bb01d3c9d72e',
+      'eagle': 'https://images.unsplash.com/photo-1552286450-4a669f880062',
+      'pigeon': 'https://images.unsplash.com/photo-1600618528240-fb9fc964eca8',
+      
+      // Level 6 Poses
+      'crow': 'https://images.unsplash.com/photo-1599587867649-a99ea56dd151',
+      'side_plank': 'https://images.unsplash.com/photo-1597175587481-a65296c7d6af',
+      'boat': 'https://images.unsplash.com/photo-1566027310016-5f05444ccd1b'
     };
     
     // First try to get a pose-specific image
