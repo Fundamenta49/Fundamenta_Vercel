@@ -74,7 +74,7 @@ export default function AiFeedbackOverlay({
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <Card className="max-w-md w-[92vw] md:w-full rounded-xl shadow-lg max-h-[88vh] overflow-auto">
+      <Card className="max-w-md w-[92vw] md:w-full rounded-xl shadow-lg max-h-[80vh] overflow-auto">
         <CardHeader className="relative py-3 px-4">
           <Button 
             variant="ghost" 
@@ -114,33 +114,28 @@ export default function AiFeedbackOverlay({
             </Alert>
           )}
           
-          {/* Overall assessment */}
-          <div>
-            <h3 className="font-medium text-sm mb-2">Overall Assessment</h3>
-            <p className="text-xs">{analysis.overallAssessment}</p>
-            
-            <div className="mt-3">
-              <div className="flex justify-between text-xs mb-1">
-                <span>Form Accuracy</span>
-                <span>{analysis.score ? `${analysis.score}%` : 'N/A'}</span>
-              </div>
-              <Progress value={analysis.score || 0} className="h-1.5" />
+          {/* Score indicator */}
+          <div className="mb-1">
+            <div className="flex justify-between text-xs mb-1">
+              <span>Form Accuracy</span>
+              <span className="font-medium">{analysis.score ? `${analysis.score}%` : 'N/A'}</span>
             </div>
+            <Progress value={analysis.score || 0} className="h-1" />
           </div>
           
-          <Separator className="my-2" />
+          <Separator className="my-1" />
           
           {/* What you're doing well */}
           <div>
-            <h3 className="font-medium text-sm mb-2 flex items-center">
-              <ThumbsUp className="h-3 w-3 mr-2 text-green-500" />
-              What You're Doing Well
+            <h3 className="font-medium text-xs mb-1 flex items-center">
+              <ThumbsUp className="h-3 w-3 mr-1 text-green-500" />
+              Strengths
             </h3>
-            <ul className="space-y-1">
-              {analysis.strengths.map((strength, index) => (
+            <ul className="grid grid-cols-1 gap-1">
+              {analysis.strengths.slice(0, 3).map((strength, index) => (
                 <li key={index} className="text-xs flex items-start">
-                  <CheckCircle2 className="h-3 w-3 mr-2 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>{strength}</span>
+                  <CheckCircle2 className="h-3 w-3 mr-1 text-green-500 flex-shrink-0 mt-0.5" />
+                  <span>{strength.length > 60 ? strength.substring(0, 60) + '...' : strength}</span>
                 </li>
               ))}
             </ul>
@@ -148,15 +143,15 @@ export default function AiFeedbackOverlay({
           
           {/* Areas for improvement */}
           <div>
-            <h3 className="font-medium text-sm mb-2 flex items-center">
-              <MoveRight className="h-3 w-3 mr-2 text-amber-500" />
-              Areas for Improvement
+            <h3 className="font-medium text-xs mb-1 flex items-center">
+              <MoveRight className="h-3 w-3 mr-1 text-amber-500" />
+              Improvements
             </h3>
-            <ul className="space-y-1">
-              {analysis.improvements.map((improvement, index) => (
+            <ul className="grid grid-cols-1 gap-1">
+              {analysis.improvements.slice(0, 3).map((improvement, index) => (
                 <li key={index} className="text-xs flex items-start">
-                  <ArrowRight className="h-3 w-3 mr-2 text-amber-500 flex-shrink-0 mt-0.5" />
-                  <span>{improvement}</span>
+                  <ArrowRight className="h-3 w-3 mr-1 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <span>{improvement.length > 60 ? improvement.substring(0, 60) + '...' : improvement}</span>
                 </li>
               ))}
             </ul>
@@ -165,31 +160,22 @@ export default function AiFeedbackOverlay({
           {/* Safety notes */}
           {analysis.safetyNotes && (
             <div>
-              <h3 className="font-medium text-sm mb-2 flex items-center">
-                <AlertTriangle className="h-3 w-3 mr-2 text-orange-500" />
-                Safety Considerations
+              <h3 className="font-medium text-xs mb-1 flex items-center">
+                <AlertTriangle className="h-3 w-3 mr-1 text-orange-500" />
+                Safety
               </h3>
-              <p className="text-xs">{analysis.safetyNotes}</p>
+              <p className="text-xs">{analysis.safetyNotes.length > 100 ? analysis.safetyNotes.substring(0, 100) + '...' : analysis.safetyNotes}</p>
             </div>
           )}
-          
-          {/* Alignment tips */}
-          <div>
-            <h3 className="font-medium text-sm mb-2 flex items-center">
-              <Info className="h-3 w-3 mr-2 text-blue-500" />
-              Key Alignment Tips
-            </h3>
-            <p className="text-xs">{analysis.alignmentTips}</p>
-          </div>
         </CardContent>
         
-        <CardFooter className="flex justify-end px-5 py-4 border-t border-gray-50">
+        <CardFooter className="flex justify-end px-4 py-2 border-t border-gray-50">
           <Button 
             onClick={onClose} 
             size="sm"
-            className="rounded-full h-8 text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 shadow-sm"
+            className="rounded-full h-7 text-xs bg-gray-100 hover:bg-gray-200 text-gray-800"
           >
-            Dismiss
+            Done
           </Button>
         </CardFooter>
       </Card>

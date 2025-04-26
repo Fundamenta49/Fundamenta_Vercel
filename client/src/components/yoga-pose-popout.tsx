@@ -359,18 +359,15 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             <TabsList className="grid grid-cols-3 mb-3 sm:mb-4 w-full mx-auto rounded-full p-1 bg-gray-100/70">
               <TabsTrigger value="info" className="flex items-center justify-center px-1.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Info className="h-3 sm:h-3.5 w-3 sm:w-3.5 mr-1 sm:mr-1.5" />
-                <span className="hidden xs:inline">Info</span>
-                <span className="xs:hidden">Info</span>
+                <span>Info</span>
               </TabsTrigger>
               <TabsTrigger value="practice" className="flex items-center justify-center px-1.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Camera className="h-3 sm:h-3.5 w-3 sm:w-3.5 mr-1 sm:mr-1.5" />
-                <span className="hidden xs:inline">Practice</span>
-                <span className="xs:hidden">Practice</span>
+                <span>Practice</span>
               </TabsTrigger>
               <TabsTrigger value="video" className="flex items-center justify-center px-1.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Youtube className="h-3 sm:h-3.5 w-3 sm:w-3.5 mr-1 sm:mr-1.5" />
-                <span className="hidden xs:inline">Video</span>
-                <span className="xs:hidden">Video</span>
+                <span>Video</span>
               </TabsTrigger>
             </TabsList>
           
