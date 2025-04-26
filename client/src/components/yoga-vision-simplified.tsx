@@ -265,29 +265,26 @@ export default function YogaVisionSimplified({
   return (
     <div className="space-y-3">
       <Card className="w-full border-0 shadow-none rounded-xl">
-        <CardHeader className="px-4 py-2.5">
-          <CardTitle className="text-lg">Practice {selectedPose?.name || "Yoga"}</CardTitle>
-          <CardDescription className="text-xs">
-            Capture a photo of your pose for AI feedback
-          </CardDescription>
+        <CardHeader className="px-4 py-2 mb-0">
+          <CardTitle className="text-base">Practice {selectedPose?.name || "Yoga"}</CardTitle>
         </CardHeader>
         
         <CardContent className="px-4 pt-0 pb-3">
           <div className="space-y-3">
-            {/* Reference Image */}
-            {selectedPose && selectedPose.imageUrl && (
-              <div className="bg-secondary/10 rounded-lg p-3">
-                <h4 className="text-sm font-medium mb-2">Reference Example</h4>
-                <div className="max-h-40 overflow-hidden rounded-md bg-secondary/10">
-                  <img 
-                    src={selectedPose.imageUrl} 
-                    alt={`${selectedPose.name} reference`}
-                    className="w-full object-contain"
-                    style={{ maxHeight: "160px" }}
-                  />
-                </div>
+            {/* Reference Image - Using direct path to image */}
+            <div className="bg-white rounded-lg p-0 border border-gray-100">
+              <div className="h-40 overflow-hidden rounded-md flex items-center justify-center">
+                <img 
+                  src={`/images/yoga/${poseId}.jpg`} 
+                  alt={`${selectedPose?.name || 'Yoga pose'} reference`}
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    // Use a fallback image if the specific pose image doesn't exist
+                    e.currentTarget.src = "/images/yoga/original_yoga_image.jpg";
+                  }}
+                />
               </div>
-            )}
+            </div>
             
             {/* Camera Toggle */}
             <div className="flex justify-end">
@@ -295,7 +292,7 @@ export default function YogaVisionSimplified({
                 variant="ghost" 
                 size="sm" 
                 onClick={toggleCameraMode}
-                className="rounded-full text-xs px-3 h-7 bg-secondary/10 hover:bg-secondary/20 text-secondary-foreground"
+                className="rounded-full text-xs px-4 h-8 bg-gray-100 hover:bg-gray-200 text-gray-800"
               >
                 {useCameraMode ? 
                   <><Upload className="h-3 w-3 mr-1.5" /> <span className="whitespace-nowrap">Use photos</span></> : 
@@ -341,7 +338,7 @@ export default function YogaVisionSimplified({
                         onClick={handleWebcamCapture} 
                         variant="default"
                         size="sm"
-                        className="h-7 text-xs rounded-full px-4 bg-primary/90 hover:bg-primary shadow-sm"
+                        className="h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
                       >
                         <Camera className="h-3 w-3 mr-1.5" />
                         Capture Photo
@@ -368,7 +365,7 @@ export default function YogaVisionSimplified({
                         onClick={() => handleReset()} 
                         variant="ghost" 
                         size="sm"
-                        className="h-7 text-xs rounded-full px-4 bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground"
+                        className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
                       >
                         <Camera className="h-3 w-3 mr-1.5" />
                         Retake
@@ -387,7 +384,7 @@ export default function YogaVisionSimplified({
                         onClick={handleCameraClick} 
                         variant="ghost"
                         size="sm"
-                        className="h-7 text-xs rounded-full px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 shadow-sm"
+                        className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
                       >
                         <Upload className="h-3 w-3 mr-1.5" />
                         Upload Image
@@ -413,7 +410,7 @@ export default function YogaVisionSimplified({
                         onClick={handleCameraClick} 
                         variant="ghost" 
                         size="sm"
-                        className="h-7 text-xs rounded-full px-4 bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground"
+                        className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
                       >
                         <Upload className="h-3 w-3 mr-1.5" />
                         Change Image
@@ -432,7 +429,7 @@ export default function YogaVisionSimplified({
               variant="ghost" 
               onClick={onClose}
               size="sm"
-              className="h-7 text-xs rounded-full px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 shadow-sm"
+              className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 shadow-sm"
             >
               Back
             </Button>
@@ -440,7 +437,7 @@ export default function YogaVisionSimplified({
           <Button
             onClick={handleSubmitForAnalysis}
             disabled={!selectedImage || isAnalyzing}
-            className="flex items-center h-7 text-xs rounded-full px-4 bg-primary/90 hover:bg-primary shadow-sm ml-auto"
+            className="flex items-center h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm ml-auto"
             size="sm"
           >
             {isAnalyzing ? (
