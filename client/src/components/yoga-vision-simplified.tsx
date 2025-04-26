@@ -265,8 +265,28 @@ export default function YogaVisionSimplified({
 
   return (
     <div className="w-full">
-      {/* Single streamlined container for image capture */}
-      <div className="relative">
+      {/* Reference image - Always shown at top */}
+      <div className="w-full mb-3">
+        <div className="relative bg-white rounded-md overflow-hidden">
+          <img 
+            src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
+            alt={`${selectedPose?.name || 'Yoga pose'} reference`}
+            className="w-full object-cover rounded-md"
+            style={{ aspectRatio: "16/9", maxHeight: "160px" }}
+            onError={(e) => {
+              const videoInfo = getYogaPoseVideoInfo(poseId);
+              if (videoInfo?.videoId) {
+                e.currentTarget.src = `https://img.youtube.com/vi/${videoInfo.videoId}/hqdefault.jpg`;
+              } else {
+                e.currentTarget.src = `https://img.youtube.com/vi/hQN6j3UxIQ0/hqdefault.jpg`;
+              }
+            }}
+          />
+        </div>
+      </div>
+      
+      {/* Camera/Upload area - with capture functionality */}
+      <div className="relative mb-2">
         {useCameraMode ? (
           // Camera mode
           !imagePreview ? (
@@ -285,7 +305,7 @@ export default function YogaVisionSimplified({
                 style={{ 
                   maxWidth: "100%", 
                   height: "auto",
-                  maxHeight: "260px",
+                  maxHeight: "220px",
                   aspectRatio: "16/9"
                 }}
               />
@@ -312,7 +332,7 @@ export default function YogaVisionSimplified({
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "300px",
+                    maxHeight: "220px",
                     aspectRatio: "16/9"
                   }}
                 />
@@ -362,7 +382,7 @@ export default function YogaVisionSimplified({
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "300px",
+                    maxHeight: "220px",
                     aspectRatio: "16/9"
                   }}
                 />
