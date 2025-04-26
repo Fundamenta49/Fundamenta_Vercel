@@ -509,6 +509,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
+                      style={{ width: "calc(100% + 8px)", marginLeft: "-4px", marginRight: "-4px" }}
                     ></iframe>
                   </div>
                   

@@ -272,7 +272,7 @@ export default function YogaVisionSimplified({
             src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
             alt={`${selectedPose?.name || 'Yoga pose'} reference`}
             className="w-full object-cover rounded-md"
-            style={{ aspectRatio: "16/9", maxHeight: "160px" }}
+            style={{ aspectRatio: "16/9", maxHeight: "168px" }}
             onError={(e) => {
               const videoInfo = getYogaPoseVideoInfo(poseId);
               if (videoInfo?.videoId) {
