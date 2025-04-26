@@ -548,7 +548,7 @@ export default function YogaVisionEnhanced({
                 </div>
               )}
               
-              <div className={`flex flex-col items-center justify-center border-2 border-dashed rounded-lg ${compactMode ? 'p-3 mb-2' : 'p-6 mb-4'}`}>
+              <div className={`flex flex-col items-center justify-center border border-dashed rounded-lg ${compactMode ? 'p-2 mb-2 border-gray-200' : 'p-6 mb-4 border-2'}`}>
                 <input 
                   type="file" 
                   accept="image/*" 
@@ -567,10 +567,12 @@ export default function YogaVisionEnhanced({
                         screenshotFormat="image/jpeg"
                         videoConstraints={{
                           facingMode: "user",
-                          width: 720,
-                          height: 480
+                          aspectRatio: 1.3333,
+                          width: { ideal: 640 },
+                          height: { ideal: 480 }
                         }}
-                        className={`w-full rounded-md ${compactMode ? 'mb-2 max-h-[240px] object-cover' : 'mb-4'}`}
+                        className={`w-full rounded-md mx-auto ${compactMode ? 'mb-2 object-cover max-h-64' : 'mb-4'}`}
+                        style={{ maxWidth: compactMode ? "100%" : "640px" }}
                       />
                       <div className="flex gap-2 justify-center">
                         <Button 
@@ -587,7 +589,7 @@ export default function YogaVisionEnhanced({
                   ) : (
                     // Show captured image
                     <div className="text-center w-full">
-                      <div className={`relative aspect-video w-full mx-auto ${compactMode ? 'mb-2 max-h-[200px]' : 'max-w-md mb-4'}`}>
+                      <div className={`relative w-full mx-auto ${compactMode ? 'mb-2 h-48' : 'max-w-md mb-4 aspect-video'}`}>
                         <img 
                           src={imagePreview} 
                           alt="Yoga pose capture" 
@@ -635,7 +637,7 @@ export default function YogaVisionEnhanced({
                     </div>
                   ) : (
                     <div className="text-center w-full">
-                      <div className={`relative aspect-video w-full mx-auto ${compactMode ? 'mb-2 max-h-[200px]' : 'max-w-md mb-4'}`}>
+                      <div className={`relative w-full mx-auto ${compactMode ? 'mb-2 h-48' : 'max-w-md mb-4 aspect-video'}`}>
                         <img 
                           src={imagePreview} 
                           alt="Yoga pose preview" 
