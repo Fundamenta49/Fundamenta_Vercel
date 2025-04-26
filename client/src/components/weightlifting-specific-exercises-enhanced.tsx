@@ -941,6 +941,107 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
               </ScrollArea>
             </TabsContent>
             
+            {/* Personal Records Tab */}
+            <TabsContent value="records" className="pt-4">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">Personal Records</h3>
+                <p className="text-sm text-gray-500">Track your personal bests for each exercise</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {SAMPLE_EXERCISES.filter(exercise => 
+                  personalRecords.some(record => record.exerciseId === exercise.id)
+                ).map(exercise => {
+                  const exerciseRecords = personalRecords
+                    .filter(record => record.exerciseId === exercise.id)
+                    .sort((a, b) => b.weight - a.weight || b.reps - a.reps);
+                  
+                  const personalBest = exerciseRecords[0];
+                  
+                  return (
+                    <Card key={exercise.id} className="overflow-hidden">
+                      <div className="p-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-medium">{exercise.name}</h4>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {exercise.targetMuscles.map(muscle => (
+                                <Badge key={muscle} variant="outline" className="text-xs bg-white">
+                                  {muscle}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                          <Badge 
+                            className="bg-pink-100 text-pink-800 border-pink-200"
+                          >
+                            <Award className="h-3.5 w-3.5 mr-1" />
+                            PR
+                          </Badge>
+                        </div>
+                        
+                        <div className="mt-4 space-y-2">
+                          <div className="bg-pink-50 rounded-md p-3 flex flex-col">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm font-medium">Best Weight:</span>
+                              <span className="text-lg font-bold text-pink-700">{personalBest.weight} lbs</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm font-medium">Reps:</span>
+                              <span className="text-md">{personalBest.reps}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs text-gray-500">
+                              <span>Date:</span>
+                              <span>{personalBest.date.toLocaleDateString()}</span>
+                            </div>
+                            {personalBest.notes && (
+                              <div className="mt-1 text-xs italic text-gray-500">
+                                "{personalBest.notes}"
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div>
+                            <h5 className="text-sm font-medium mb-1">Record History</h5>
+                            <div className="space-y-1 max-h-32 overflow-y-auto">
+                              {exerciseRecords.slice(1).map((record, idx) => (
+                                <div key={idx} className="text-xs flex justify-between bg-gray-50 p-1.5 rounded">
+                                  <span>
+                                    {record.weight} lbs × {record.reps} reps
+                                  </span>
+                                  <span className="text-gray-500">
+                                    {record.date.toLocaleDateString()}
+                                  </span>
+                                </div>
+                              ))}
+                              {exerciseRecords.length === 1 && (
+                                <div className="text-xs text-gray-500 italic">
+                                  No previous records.
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+                
+                {/* If no records exist */}
+                {!SAMPLE_EXERCISES.some(exercise => 
+                  personalRecords.some(record => record.exerciseId === exercise.id)
+                ) && (
+                  <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg">
+                    <Award className="h-12 w-12 text-gray-300 mb-2" />
+                    <h4 className="text-lg font-medium text-gray-500">No Personal Records Yet</h4>
+                    <p className="text-sm text-gray-400 text-center mt-1">
+                      Complete workouts to start tracking your personal bests.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+            
             {/* Progress Tracking Tab */}
             <TabsContent value="progress" className="pt-4">
               <div className="mb-4">
@@ -953,37 +1054,40 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
                   <h4 className="font-medium mb-2">Main Lifts Progress</h4>
                   
                   <div className="space-y-3">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <div>Bench Press</div>
-                        <div className="text-pink-600 font-medium">175 lbs (1RM: 195 lbs)</div>
+                    {personalRecords.length > 0 ? (
+                      SAMPLE_EXERCISES
+                        .filter(exercise => personalRecords.some(record => record.exerciseId === exercise.id))
+                        .filter(exercise => ['bench-press', 'squat', 'deadlift', 'shoulder-press'].includes(exercise.id))
+                        .map(exercise => {
+                          const records = personalRecords
+                            .filter(record => record.exerciseId === exercise.id)
+                            .sort((a, b) => b.weight - a.weight);
+                          
+                          if (records.length === 0) return null;
+                          
+                          const maxWeight = records[0].weight;
+                          // For progress bar, we'll calculate a relative percentage (based on the highest weight in all records)
+                          const allWeights = personalRecords.map(record => record.weight);
+                          const highestWeight = Math.max(...allWeights);
+                          const progressValue = Math.round((maxWeight / highestWeight) * 100);
+                          
+                          return (
+                            <div key={exercise.id}>
+                              <div className="flex justify-between text-sm mb-1">
+                                <div>{exercise.name}</div>
+                                <div className="text-pink-600 font-medium">
+                                  {maxWeight} lbs × {records[0].reps} reps
+                                </div>
+                              </div>
+                              <Progress value={progressValue} className="h-2 bg-gray-100" />
+                            </div>
+                          );
+                        })
+                    ) : (
+                      <div className="py-4 text-center text-gray-500">
+                        No personal records available
                       </div>
-                      <Progress value={65} className="h-2 bg-gray-100" />
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <div>Squat</div>
-                        <div className="text-pink-600 font-medium">225 lbs (1RM: 265 lbs)</div>
-                      </div>
-                      <Progress value={75} className="h-2 bg-gray-100" />
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <div>Deadlift</div>
-                        <div className="text-pink-600 font-medium">265 lbs (1RM: 315 lbs)</div>
-                      </div>
-                      <Progress value={85} className="h-2 bg-gray-100" />
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <div>Overhead Press</div>
-                        <div className="text-pink-600 font-medium">115 lbs (1RM: 135 lbs)</div>
-                      </div>
-                      <Progress value={60} className="h-2 bg-gray-100" />
-                    </div>
+                    )}
                   </div>
                 </Card>
                 
