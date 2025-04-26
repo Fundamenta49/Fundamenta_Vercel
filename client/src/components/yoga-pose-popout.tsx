@@ -43,7 +43,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [possiblePaths, setPossiblePaths] = useState<string[]>([]);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Load pose image directly from poses_with_paths.json data
+  // Load pose image directly from poses_with_paths.json data - simplified approach
   useEffect(() => {
     const loadPoseImage = () => {
       // Only load if we have a valid pose ID
@@ -56,32 +56,18 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         const poseData = posesWithPaths.find(p => p.id === pose.id);
         
         if (poseData && poseData.filename) {
-          // Use the exact path from the JSON file
-          setPoseImage(poseData.filename);
-          console.log(`Using image for ${pose.id}: ${poseData.filename}`);
-          
-          // Set possible fallback paths in case the primary one fails
-          const possiblePaths = [
-            // Primary path from the JSON file
-            poseData.filename,
-            
-            // Fallback paths
-            `/images/yoga/${pose.id}.png`,
-            `/images/yoga/${pose.id}.jpg`
-          ];
-          
-          // Store all paths for fallback purposes
-          setPossiblePaths(possiblePaths);
-        } else {
-          // If pose not found in our JSON, use a fallback
-          console.warn(`Pose ${pose.id} not found in poses_with_paths.json`);
-          const imagePath = `/images/yoga-poses/${pose.id}.png`;
+          // Use the exact path from the JSON file - this is the source of truth
+          const imagePath = poseData.filename;
           setPoseImage(imagePath);
-          setPossiblePaths([
-            imagePath,
-            `/images/yoga/${pose.id}.png`,
-            `/images/yoga/${pose.id}.jpg`
-          ]);
+          console.log(`Using image for ${pose.id}: ${imagePath}`);
+          
+          // No complex fallback paths, just use the exact path from JSON
+          setPossiblePaths([imagePath]);
+        } else {
+          // If pose somehow not found in our JSON (shouldn't happen), log warning
+          console.warn(`Pose ${pose.id} not found in poses_with_paths.json`);
+          setPoseImage(null);
+          setPossiblePaths([]);
         }
       } catch (error) {
         console.error('Error setting pose image path:', error);

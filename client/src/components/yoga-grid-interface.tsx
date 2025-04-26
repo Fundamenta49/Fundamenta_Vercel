@@ -36,23 +36,13 @@ export default function YogaGridInterface() {
   // Get user progression context
   const { currentLevel, isPoseUnlocked, userProgress } = useYogaProgression();
 
-  // Process the poses data with accurate image paths from poses_with_paths.json
+  // Process the poses data with accurate image paths from poses_with_paths.json - simplified approach
   const processedYogaPoses = yogaPoses.map(pose => {
     // Find matching pose in posesWithPaths for the correct image path
     const poseWithPath = posesWithPaths.find(p => p.id === pose.id);
     
-    // Also check if we have additional metadata in updatedPoses
-    const updatedPose = updatedPoses.find(p => p.id === pose.id);
-    
-    // Get the pose level from updated data or use our mapping function
+    // Get the pose level from our mapping function
     const getPoseLevel = (poseId: string): number => {
-      // First, check if we have level data in updatedPoses
-      const updatedPoseData = updatedPoses.find(p => p.id === poseId);
-      if (updatedPoseData && updatedPoseData.level) {
-        return updatedPoseData.level;
-      }
-      
-      // Fallback level mapping if not found in updatedPoses
       // Level 1 poses (beginner basics)
       if (['mountain', 'child', 'corpse'].includes(poseId)) return 1;
       
@@ -75,34 +65,16 @@ export default function YogaGridInterface() {
       return 1;
     };
     
-    // Determine pose level based on ID or updated data
+    // Determine pose level based on ID
     const poseLevel = getPoseLevel(pose.id);
 
     // If we found this pose in posesWithPaths, use that exact image path
     if (poseWithPath && poseWithPath.filename) {
-      // Create fallback paths in case the primary one fails
-      const fallbackPaths = [
-        // Primary path from poses_with_paths.json is the most reliable
-        poseWithPath.filename,
-        
-        // These fallbacks are less likely to be needed since we're using the authoritative paths
-        `/images/yoga/${pose.id}.png`,
-        `/images/yoga/${pose.id}.jpg`,
-        `/images/yoga-poses/${pose.id}.png`,
-        `/images/yoga-poses/${pose.id}.jpg`
-      ];
-
       // Construct the complete pose object with the correct image path
       return {
         ...pose,
         // Use the exact path from poses_with_paths.json
         imageUrl: poseWithPath.filename,
-        
-        // Store backup paths
-        alternativeImageUrl: `/images/yoga-poses/${pose.id}.png`,
-        
-        // Store all possible paths for fallback
-        allImagePaths: fallbackPaths as string[],
         
         // Include the level in the pose data
         level: poseLevel,
@@ -113,36 +85,17 @@ export default function YogaGridInterface() {
           sanskritName: poseWithPath.name.includes('(') 
             ? poseWithPath.name.match(/\((.*)\)/)?.[1] || pose.sanskritName 
             : pose.sanskritName
-        }),
-        
-        // Add any extra metadata from updated poses
-        ...(updatedPose?.name && !poseWithPath.name && {
-          name: updatedPose.name.split('(')[0].trim(),
-          sanskritName: updatedPose.name.includes('(') 
-            ? updatedPose.name.match(/\((.*)\)/)?.[1] || pose.sanskritName 
-            : pose.sanskritName
         })
       };
     }
     
-    // If pose not found in posesWithPaths, use best-effort paths
-    console.warn(`Pose ${pose.id} not found in poses_with_paths.json, using fallback paths`);
-    
-    // Create a set of possible fallback paths based on the pose ID
-    const possibleImagePaths: string[] = [
-      `/images/yoga-poses/${pose.id}.png`,
-      `/images/yoga-poses/${pose.id}.jpg`,
-      `/images/yoga/${pose.id}.png`,
-      `/images/yoga/${pose.id}.jpg`
-    ];
+    // If pose not found in posesWithPaths (shouldn't happen), use a default path
+    console.warn(`Pose ${pose.id} not found in poses_with_paths.json`);
     
     return {
       ...pose,
-      // Store multiple possible paths in a custom field
-      possibleImagePaths,
-      // Set standard image URLs
-      imageUrl: possibleImagePaths[0],
-      alternativeImageUrl: possibleImagePaths[1] || "",
+      // Set a default image URL based on the pose ID
+      imageUrl: `/images/yoga-poses/${pose.id}.png`,
       // Include the level in the pose data
       level: poseLevel
     };
