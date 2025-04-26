@@ -31,6 +31,7 @@ import meditationRoutes from './routes/meditation';
 import repairRoutes from './routes/repair';
 import calendarRoutes from './routes/calendar';
 import financeRoutes from './routes/finance';
+import poseImagesRoutes from './routes/pose-images';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { userGuideService } from './services/user-guide-service';
