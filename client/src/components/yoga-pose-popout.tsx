@@ -521,9 +521,9 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                           setCurrentVideoId(videoInfo.videoId);
                         }
                       }}
-                      className="bg-red-600 hover:bg-red-700 text-white border-none px-6"
+                      className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-5 py-2"
                     >
-                      <Youtube className="mr-2 h-5 w-5" />
+                      <Youtube className="mr-2 h-4 w-4" />
                       Watch Tutorial
                     </Button>
                   )}

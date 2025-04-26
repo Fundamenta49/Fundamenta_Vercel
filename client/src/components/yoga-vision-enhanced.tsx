@@ -890,7 +890,7 @@ export default function YogaVisionEnhanced({
               variant="outline"
               onClick={handleReset}
               size={compactMode ? "sm" : "default"}
-              className={compactMode ? "h-8 text-xs rounded-full" : ""}
+              className={compactMode ? "h-8 text-xs rounded-full px-4" : ""}
             >
               Try Another Pose
             </Button>
@@ -901,7 +901,7 @@ export default function YogaVisionEnhanced({
                 }
               }}
               size={compactMode ? "sm" : "default"}
-              className={compactMode ? "h-8 text-xs rounded-full" : ""}
+              className={compactMode ? "h-8 text-xs rounded-full px-4" : ""}
             >
               <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
               Retake Photo
