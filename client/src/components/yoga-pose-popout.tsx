@@ -354,8 +354,8 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         </div>
         
         {/* Clean, minimal tab navigation - optimized for mobile and desktop */}
-        <div className="px-4 sm:px-6 pb-0">
-          <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="mt-0">
+        <div className="px-4 sm:px-6 pb-0 h-full">
+          <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="mt-0 h-full">
             <TabsList className="grid grid-cols-3 mb-3 sm:mb-4 w-full mx-auto rounded-full p-1 bg-gray-100/70">
               <TabsTrigger value="info" className="flex items-center justify-center px-1.5 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Info className="h-3 sm:h-3.5 w-3 sm:w-3.5 mr-1 sm:mr-1.5" />
@@ -549,7 +549,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               )}
             </TabsContent>
             
-            <TabsContent value="practice" className="h-auto">
+            <TabsContent value="practice" className="h-full">
               {/* Using the simplified YogaVision component with direct integration */}
               <YogaVisionSimplified 
                 poseId={pose.id} 

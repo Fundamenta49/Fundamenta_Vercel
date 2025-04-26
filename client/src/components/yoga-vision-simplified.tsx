@@ -396,7 +396,7 @@ export default function YogaVisionSimplified({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       {/* Reference image - Always shown at top */}
       <div className="w-full mb-3">
         <div className="relative bg-white rounded-md overflow-hidden">
@@ -408,7 +408,7 @@ export default function YogaVisionSimplified({
               objectFit: "contain", 
               backgroundColor: "#f8f9fa",
               aspectRatio: "16/9", 
-              maxHeight: "180px",
+              maxHeight: "220px",
               width: "100%"
             }}
             onError={(e) => {
@@ -442,7 +442,7 @@ export default function YogaVisionSimplified({
                   style={{ 
                     maxWidth: "100%", 
                     height: "auto",
-                    maxHeight: "228px",
+                    maxHeight: "280px",
                     aspectRatio: "16/9"
                   }}
                 />
@@ -461,7 +461,7 @@ export default function YogaVisionSimplified({
               </div>
             </div>
           ) : !imagePreview ? (
-            <div className="w-full pb-2">
+            <div className="w-full pb-2" style={{ minHeight: "280px" }}>
               <Webcam
                 audio={false}
                 ref={webcamRef}
@@ -476,7 +476,7 @@ export default function YogaVisionSimplified({
                 style={{ 
                   maxWidth: "100%", 
                   height: "auto",
-                  maxHeight: "228px", /* 8px taller to match wider dialog */
+                  maxHeight: "280px",
                   aspectRatio: "16/9"
                 }}
               />
@@ -539,7 +539,7 @@ export default function YogaVisionSimplified({
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "228px", /* 8px taller */
+                    maxHeight: "280px",
                     aspectRatio: "16/9"
                   }}
                 />
@@ -561,7 +561,7 @@ export default function YogaVisionSimplified({
         ) : (
           // File upload mode
           !imagePreview ? (
-            <div className="flex flex-col items-center justify-center py-5 px-2 bg-gray-50 rounded-lg">
+            <div className="flex flex-col items-center justify-center py-5 px-2 bg-gray-50 rounded-lg" style={{ minHeight: "280px" }}>
               <input 
                 type="file" 
                 accept="image/*" 
@@ -589,7 +589,7 @@ export default function YogaVisionSimplified({
                   className="w-full object-contain rounded-md"
                   style={{ 
                     maxWidth: "100%", 
-                    maxHeight: "228px", /* 8px taller */
+                    maxHeight: "280px",
                     aspectRatio: "16/9"
                   }}
                 />
