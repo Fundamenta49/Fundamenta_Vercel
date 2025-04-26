@@ -75,8 +75,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
     channelTitle: 'Yoga With Adriene' 
   },
   'chair': { 
-    videoId: 'GqURYxOSn2U', 
-    title: 'Chair Pose (Utkatasana)',
+    videoId: '0FxWRAJht6k', 
+    title: 'Chair Pose | Utkatasana',
     channelTitle: 'Yoga With Adriene' 
   },
   'bridge': { 
