@@ -1,0 +1,77 @@
+[
+  {
+    "id": "mountain",
+    "filename": "mountain.png",
+    "name": "Mountain Pose (Tadasana)"
+  },
+  {
+    "id": "child",
+    "filename": "child.png",
+    "name": "Child's Pose (Balasana)"
+  },
+  {
+    "id": "corpse",
+    "filename": "corpse.png",
+    "name": "Corpse Pose (Savasana)"
+  },
+  {
+    "id": "cat_cow",
+    "filename": "cat_cow.png",
+    "name": "Cat-Cow Pose (Marjaryasana-Bitilasana)"
+  },
+  {
+    "id": "forward_fold",
+    "filename": "forward_fold.png",
+    "name": "Forward Fold (Uttanasana)"
+  },
+  {
+    "id": "tree",
+    "filename": "tree.png",
+    "name": "Tree Pose (Vrksasana)"
+  },
+  {
+    "id": "warrior_1",
+    "filename": "warrior_1.png",
+    "name": "Warrior I (Virabhadrasana I)"
+  },
+  {
+    "id": "warrior_2",
+    "filename": "warrior_2.png",
+    "name": "Warrior II (Virabhadrasana II)"
+  },
+  {
+    "id": "triangle",
+    "filename": "triangle.png",
+    "name": "Triangle Pose (Trikonasana)"
+  },
+  {
+    "id": "chair",
+    "filename": "chair.png",
+    "name": "Chair Pose (Utkatasana)"
+  },
+  {
+    "id": "bridge",
+    "filename": "bridge.png",
+    "name": "Bridge Pose (Setu Bandha Sarvangasana)"
+  },
+  {
+    "id": "half_moon",
+    "filename": "half_moon.png",
+    "name": "Half Moon Pose (Ardha Chandrasana)"
+  },
+  {
+    "id": "eagle",
+    "filename": "eagle.png",
+    "name": "Eagle Pose (Garudasana)"
+  },
+  {
+    "id": "pigeon",
+    "filename": "pigeon.png",
+    "name": "Pigeon Pose (Eka Pada Rajakapotasana)"
+  },
+  {
+    "id": "side_plank",
+    "filename": "side_plank.png",
+    "name": "Side Plank (Vasisthasana)"
+  }
+]

@@ -8,6 +8,8 @@ import { Search, FilterIcon, Info, Award } from "lucide-react";
 import { useYogaProgression, PoseDifficulty, PoseAchievement } from '../contexts/yoga-progression-context';
 import { yogaPoses, yogaChallenges } from '../data/yoga-poses-progression';
 import YogaPosePopout from './yoga-pose-popout';
+import updatedPoses from '../data/updated_poses.json';
+import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
 
 // Create an adapter interface to handle type discrepancies
 interface YogaPoseAchievementAdapter {
@@ -33,9 +35,43 @@ export default function YogaGridInterface() {
   // Get user progression context
   const { currentLevel, isPoseUnlocked, userProgress } = useYogaProgression();
 
+  // Process the poses data with updated image paths and fallbacks
+  const processedYogaPoses = yogaPoses.map(pose => {
+    // Find matching pose in updatedPoses
+    const updatedPose = updatedPoses.find(p => p.id === pose.id);
+    
+    if (updatedPose) {
+      // Update the imageUrl to use the newer yoga-poses path with the updated filename
+      return {
+        ...pose,
+        imageUrl: `/images/yoga-poses/${updatedPose.filename}`,
+        
+        // Add extra metadata from updated poses if available
+        ...(updatedPose.name && {
+          name: updatedPose.name.split('(')[0].trim(),
+          sanskritName: updatedPose.name.includes('(') 
+            ? updatedPose.name.match(/\((.*)\)/)?.[1] || pose.sanskritName 
+            : pose.sanskritName
+        })
+      };
+    }
+    
+    // If no match in updated poses, try to use a standardized naming approach
+    const possibleImagePaths = [
+      `/images/yoga-poses/${pose.id}.png`,
+      `/images/yoga/${pose.id}.jpg`
+    ];
+    
+    return {
+      ...pose,
+      // Store multiple possible paths in a custom field
+      possibleImagePaths
+    };
+  });
+  
   // Filter poses whenever filters change
   useEffect(() => {
-    let result = yogaPoses;
+    let result = processedYogaPoses;
     
     // Apply difficulty filter
     if (difficultyFilter !== "all") {
@@ -53,7 +89,7 @@ export default function YogaGridInterface() {
     }
     
     setFilteredPoses(result);
-  }, [difficultyFilter, searchTerm]);
+  }, [difficultyFilter, searchTerm, processedYogaPoses]);
 
   // Group poses by level
   const posesByLevel = filteredPoses.reduce((acc, pose) => {

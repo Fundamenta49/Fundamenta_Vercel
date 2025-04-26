@@ -1,12 +1,28 @@
 import { YogaPoseProgression } from "../../../shared/yoga-progression";
+import updatedPoses from '../data/updated_poses.json';
+
+// Map for quick access to pose data by ID
+const poseMap = new Map(updatedPoses.map(pose => [pose.id, pose]));
 
 // Utility function to ensure poses have all required fields
 export const getYogaPoseWithDefaults = (poseData: any): YogaPoseProgression => {
+  // Try to get additional pose info from the updated poses data
+  const updatedPoseInfo = poseMap.get(poseData.id);
+  
+  // Extract Sanskrit name if present in the format "Name (SanskritName)"
+  let extractedSanskritName = "";
+  if (updatedPoseInfo && updatedPoseInfo.name) {
+    const match = updatedPoseInfo.name.match(/\((.*?)\)/);
+    if (match && match[1]) {
+      extractedSanskritName = match[1];
+    }
+  }
+  
   // Ensure pose has required fields with defaults if missing
   return {
     id: poseData.id || "",
-    name: poseData.name || "Unknown Pose",
-    sanskritName: poseData.sanskritName || "",
+    name: (updatedPoseInfo ? updatedPoseInfo.name.split('(')[0].trim() : poseData.name) || "Unknown Pose",
+    sanskritName: poseData.sanskritName || extractedSanskritName || "",
     description: poseData.description || "No description available.",
     benefits: poseData.benefits || ["Improves flexibility", "Builds strength"],
     difficulty: poseData.difficulty || "beginner",

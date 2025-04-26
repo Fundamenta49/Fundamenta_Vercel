@@ -34,7 +34,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [poseImage, setPoseImage] = useState<string | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Load local pose-specific images with validation
+  // Load local pose-specific images with validation and multiple path checking
   useEffect(() => {
     const loadPoseImage = async () => {
       // Only load if we have a valid pose ID
@@ -43,8 +43,19 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
       try {
         setIsLoadingImage(true);
         
-        // Set the image URL directly to the local image path
-        const localImagePath = `/images/yoga-poses/${pose.id}.png`;
+        // Check multiple possible paths for the pose image
+        const possibleImagePaths = [
+          // Path from yoga-grid-interface.tsx updated data
+          pose.imageUrl,
+          
+          // Standard PNG paths
+          `/images/yoga-poses/${pose.id}.png`,
+          
+          // JPG paths (for compatibility)
+          `/images/yoga/${pose.id}.jpg`
+        ].filter(Boolean); // Remove any undefined/null paths
+        
+        console.log(`Checking paths for ${pose.id}:`, possibleImagePaths);
         
         // Check if image exists by making a HEAD request
         const checkImage = async (url: string): Promise<boolean> => {
@@ -56,12 +67,30 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           }
         };
         
-        const imageExists = await checkImage(localImagePath);
+        // Try all possible paths until we find one that works
+        let foundImagePath = null;
         
-        if (imageExists) {
-          setPoseImage(localImagePath);
+        for (const path of possibleImagePaths) {
+          // Skip undefined/null paths
+          if (!path) continue;
+          
+          // Ensure path is a string
+          const pathString: string = path;
+          
+          const exists = await checkImage(pathString);
+          if (exists) {
+            foundImagePath = pathString;
+            console.log(`✓ Found image for ${pose.id} at: ${pathString}`);
+            break;
+          } else {
+            console.log(`✗ Image not found at: ${pathString}`);
+          }
+        }
+        
+        if (foundImagePath) {
+          setPoseImage(foundImagePath);
         } else {
-          console.log(`Image for ${pose.id} not found, using fallback`);
+          console.log(`✗ No images found for ${pose.id} in any location, using fallback`);
           // Let the component fall back to the default category image
           setPoseImage(null);
         }
@@ -74,7 +103,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     };
     
     loadPoseImage();
-  }, [pose.id]);
+  }, [pose.id, pose.imageUrl]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -109,6 +138,12 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     const defaultCategory: YogaCategory = 'standing';
     const category: YogaCategory = (pose.category as YogaCategory) || defaultCategory;
     const poseId = pose.id || 'yoga';
+    
+    // Debug info
+    console.log(`Pose ${poseId} fallback info:`, {
+      imageUrl: pose.imageUrl,
+      category: category
+    });
     
     // Try to provide category-specific images
     const categoryImages: Record<YogaCategory, string> = {
