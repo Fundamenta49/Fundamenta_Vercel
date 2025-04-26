@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { YogaPoseProgression } from '../../../shared/yoga-progression';
-import { ArrowRight, Camera, Info, Book, Award, Youtube } from 'lucide-react';
+import { ArrowRight, Camera, Info, Book, Award, Youtube, X, CheckCircle2 } from 'lucide-react';
 import YogaVisionEnhanced from './yoga-vision-enhanced';
 import axios from 'axios';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
@@ -311,62 +311,72 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         </Card>
       </DialogTrigger>
       
-      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto mx-auto">
-        <DialogHeader className="pb-2 border-b">
-          <div className="flex justify-between items-center">
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto mx-auto p-0 rounded-xl">
+        {/* Header with clean, minimal design */}
+        <div className="px-6 pt-6 relative">
+          <div className="flex justify-between items-start mb-4">
             <div>
-              <DialogTitle className="flex items-center text-xl font-semibold">
-                {pose.name}
-                <Badge variant="outline" className="ml-2 text-xs">
+              <div className="flex items-center gap-2 mb-1">
+                <h2 className="text-xl font-medium tracking-tight">{pose.name}</h2>
+                <Badge variant="outline" className="bg-blue-50 border-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
                   {pose.difficulty}
                 </Badge>
-              </DialogTitle>
-              <DialogDescription className="italic text-gray-500 mt-1">
-                {pose.sanskritName}
-              </DialogDescription>
+              </div>
+              {pose.sanskritName && (
+                <p className="text-sm text-gray-500 italic">
+                  {pose.sanskritName}
+                </p>
+              )}
             </div>
-            {/* Button to close the dialog */}
+            
+            {/* Modern, Apple-style close button */}
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleClose} 
-              className="rounded-full h-8 w-8 p-0"
+              className="rounded-full h-8 w-8 p-0 absolute top-4 right-4 bg-white shadow-sm border border-gray-100"
               aria-label="Close"
             >
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-              </svg>
+              <X className="h-4 w-4 text-gray-600" />
             </Button>
           </div>
-        </DialogHeader>
+        </div>
         
-        <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="mt-4">
-          <TabsList className="grid grid-cols-3 mb-6 w-auto inline-flex mx-auto rounded-full p-1 bg-secondary/30">
-            <TabsTrigger value="info" className="flex items-center px-6 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <Info className="h-4 w-4 mr-2" />
-              Info
-            </TabsTrigger>
-            <TabsTrigger value="practice" className="flex items-center px-6 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <Camera className="h-4 w-4 mr-2" />
-              Practice
-            </TabsTrigger>
-            <TabsTrigger value="video" className="flex items-center px-6 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
-              <Youtube className="h-4 w-4 mr-2" />
-              Video
-            </TabsTrigger>
-          </TabsList>
+        {/* Clean, minimal tab navigation */}
+        <div className="px-6 pb-0">
+          <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="mt-0">
+            <TabsList className="grid grid-cols-3 mb-4 w-full mx-auto rounded-full p-1 bg-gray-100/70">
+              <TabsTrigger value="info" className="flex items-center justify-center px-3 py-1.5 rounded-full text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Info className="h-3.5 w-3.5 mr-1.5" />
+                Info
+              </TabsTrigger>
+              <TabsTrigger value="practice" className="flex items-center justify-center px-3 py-1.5 rounded-full text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Camera className="h-3.5 w-3.5 mr-1.5" />
+                Practice
+              </TabsTrigger>
+              <TabsTrigger value="video" className="flex items-center justify-center px-3 py-1.5 rounded-full text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Youtube className="h-3.5 w-3.5 mr-1.5" />
+                Video
+              </TabsTrigger>
+            </TabsList>
           
-          <TabsContent value="info" className="min-h-[300px]">
-            <div className="grid grid-cols-1 gap-8">
-              <div className="w-full max-w-screen-md mx-auto">
-                <div className="aspect-video rounded-lg overflow-hidden mb-6 bg-gray-50 flex items-center justify-center shadow-sm">
+            <TabsContent value="info" className="pt-0 px-0">
+              {/* Modern, Apple-style clean layout */}
+              <div className="w-full">
+                {/* Hero image section with modern styling */}
+                <div className="overflow-hidden bg-white mb-4">
                   {isLoadingImage ? (
-                    <div className="animate-pulse flex items-center justify-center w-full h-full">
-                      <span className="text-sm text-muted-foreground">Loading pose image...</span>
+                    <div className="flex items-center justify-center h-64 bg-gray-50">
+                      <div className="animate-pulse flex flex-col items-center">
+                        <div className="rounded-full bg-gray-200 h-16 w-16 mb-2 flex items-center justify-center">
+                          <Camera className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <span className="text-sm text-gray-400">Loading image...</span>
+                      </div>
                     </div>
                   ) : (
                     <div 
-                      className="w-full h-full relative overflow-hidden group cursor-pointer"
+                      className="relative aspect-video w-full overflow-hidden cursor-pointer"
                       onClick={() => {
                         const videoInfo = getYogaPoseVideoInfo(pose.id);
                         if (videoInfo) {
@@ -377,173 +387,169 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                       <img 
                         src={getYogaPoseThumbnail(pose.id)}
                         alt={pose.name} 
-                        className="object-cover w-full h-full group-hover:opacity-90 transition-opacity"
+                        className="object-cover w-full h-full"
                         onError={(e) => {
-                          console.log(`Thumbnail failed to load for ${pose.id}, trying alternative format`);
-                          // Try a different YouTube thumbnail format
                           const videoId = getYogaPoseVideoInfo(pose.id)?.videoId;
                           if (videoId) {
                             e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-                            
-                            // Add a second error handler in case hqdefault also fails
                             e.currentTarget.onerror = () => {
-                              console.log(`Alternative thumbnail also failed for ${pose.id}, trying sddefault format`);
                               e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
-                              
-                              // Final fallback if all YouTube formats fail
                               e.currentTarget.onerror = null;
                             };
                           }
                         }}
                       />
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="bg-black/60 rounded-full p-4">
-                          <Youtube className="w-8 h-8 text-white" />
+                      
+                      {/* Clean play button overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                        <div className="bg-white rounded-full p-3 shadow-lg">
+                          <Youtube className="w-6 h-6 text-red-600" />
                         </div>
-                      </div>
-                      <div className="absolute bottom-4 left-4 right-4 bg-black/60 text-white px-3 py-2 rounded">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-medium">{pose.name}</h3>
-                          <div className="flex items-center">
-                            <Badge variant="outline" className="text-xs bg-white/20 border-none text-white">
-                              {pose.difficulty}
-                            </Badge>
-                          </div>
-                        </div>
-                        <p className="text-xs text-gray-200 mt-1">Child's Pose</p>
                       </div>
                     </div>
                   )}
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <h3 className="text-lg font-medium mb-3 text-gray-800">Description</h3>
-                    <p className="text-sm text-gray-600 mb-4 leading-relaxed whitespace-pre-line">
+                {/* Content section with modern styling */}
+                <div className="px-6">
+                  {/* Description card */}
+                  <div className="mb-6">
+                    <h3 className="text-base font-medium text-gray-900 mb-2">Description</h3>
+                    <p className="text-sm leading-relaxed text-gray-600">
                       {pose.description || "A restful pose that gently stretches the back and promotes relaxation."}
                     </p>
                   </div>
                   
-                  <div>
-                    <h3 className="text-lg font-medium mb-3 text-gray-800">Benefits</h3>
-                    <ul className="text-sm text-gray-600 space-y-2">
+                  {/* Benefits card with modern styling */}
+                  <div className="mb-6">
+                    <h3 className="text-base font-medium text-gray-900 mb-2">Benefits</h3>
+                    <ul className="space-y-1.5">
                       {pose.benefits && pose.benefits.length > 0 ? 
                         pose.benefits.map((benefit, index) => (
-                          <li key={index} className="flex items-start">
-                            <div className="mr-2 mt-1 text-primary">•</div>
-                            <span>{benefit}</span>
+                          <li key={index} className="flex items-start text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-600">{benefit}</span>
                           </li>
                         )) : 
                         <>
-                          <li className="flex items-start">
-                            <div className="mr-2 mt-1 text-primary">•</div>
-                            <span>Releases tension in back, shoulders, and chest</span>
+                          <li className="flex items-start text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-600">Releases tension in back, shoulders, and chest</span>
                           </li>
-                          <li className="flex items-start">
-                            <div className="mr-2 mt-1 text-primary">•</div>
-                            <span>Calms the mind and reduces stress</span>
+                          <li className="flex items-start text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-600">Calms the mind and reduces stress</span>
                           </li>
-                          <li className="flex items-start">
-                            <div className="mr-2 mt-1 text-primary">•</div>
-                            <span>Gently stretches hips, thighs, and ankles</span>
+                          <li className="flex items-start text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-600">Gently stretches hips, thighs, and ankles</span>
                           </li>
-                          <li className="flex items-start">
-                            <div className="mr-2 mt-1 text-primary">•</div>
-                            <span>Relieves back and neck pain</span>
+                          <li className="flex items-start text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-600">Relieves back and neck pain</span>
                           </li>
                         </>
                       }
                     </ul>
                   </div>
-                </div>
-                
-                {achievement && achievement.masteryLevel > 0 && (
-                  <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                    <h3 className="text-lg font-medium mb-3 text-gray-800">Your Progress</h3>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm">Mastery Level:</span>
-                      <div className="flex items-center">
-                        {renderMasteryStars(achievement.masteryLevel)}
+                  
+                  {/* Achievement card with modern styling */}
+                  {achievement && achievement.masteryLevel > 0 && (
+                    <div className="mb-6 p-4 bg-blue-50 rounded-xl">
+                      <div className="flex items-center mb-3">
+                        <Award className="h-5 w-5 text-blue-600 mr-2" />
+                        <h3 className="text-base font-medium text-gray-900">Your Progress</h3>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">Mastery Level</span>
+                          <div className="flex items-center">
+                            {renderMasteryStars(achievement.masteryLevel)}
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">Best Score</span>
+                          <span className="text-sm font-medium">{achievement.bestScore}%</span>
+                        </div>
+                        
+                        {achievement.lastPracticedDate && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">Last Practice</span>
+                            <span className="text-sm text-gray-500">{achievement.lastPracticedDate}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Best Score:</span>
-                      <span className="font-medium">{achievement.bestScore}%</span>
-                    </div>
-                    {achievement.lastPracticedDate && (
-                      <div className="flex items-center justify-between mt-1">
-                        <span className="text-sm">Last Practiced:</span>
-                        <span className="text-sm text-muted-foreground">{achievement.lastPracticedDate}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="video" className="min-h-[400px]">
-            {currentVideoId ? (
-              <div className="w-full max-w-screen-md mx-auto">
-                <div className="aspect-video w-full rounded-lg overflow-hidden shadow-sm mb-4">
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-                
-                <div className="px-2">
-                  <h3 className="text-lg font-medium mb-2">{getYogaPoseVideoInfo(pose.id)?.title || pose.name + " Tutorial"}</h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Watch this guided tutorial to learn the proper technique and alignment for {pose.name}.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="w-full max-w-screen-md mx-auto">
-                <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 rounded-lg p-8 border border-gray-100">
-                  <div className="bg-gray-100 rounded-full p-6 mb-6">
-                    <Youtube className="h-16 w-16 text-gray-400" />
-                  </div>
-                  <h3 className="text-xl font-medium mb-2 text-gray-800">Video Tutorial</h3>
-                  <p className="text-center text-gray-600 max-w-md mb-6">
-                    Watch a professional demonstration of {pose.name} to learn proper form and technique.
-                  </p>
-                  {pose.id && getYogaPoseVideoInfo(pose.id) && (
-                    <Button 
-                      onClick={() => {
-                        const videoInfo = getYogaPoseVideoInfo(pose.id);
-                        if (videoInfo) {
-                          setCurrentVideoId(videoInfo.videoId);
-                        }
-                      }}
-                      className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-5 py-2"
-                    >
-                      <Youtube className="mr-2 h-4 w-4" />
-                      Watch Tutorial
-                    </Button>
                   )}
                 </div>
               </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="practice" className="min-h-[400px]">
-            <div className="w-full mx-auto">
-              <div className="bg-background rounded-lg mb-4">
-                <YogaVisionEnhanced 
-                  initialPoseId={pose.id} 
-                  onClose={handleClose}
-                  compactMode={true}
-                />
+            </TabsContent>
+            
+            <TabsContent value="video" className="min-h-[400px]">
+              {currentVideoId ? (
+                <div className="w-full max-w-screen-md mx-auto">
+                  <div className="aspect-video w-full rounded-lg overflow-hidden shadow-sm mb-4">
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                  
+                  <div className="px-2">
+                    <h3 className="text-lg font-medium mb-2">{getYogaPoseVideoInfo(pose.id)?.title || pose.name + " Tutorial"}</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Watch this guided tutorial to learn the proper technique and alignment for {pose.name}.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full max-w-screen-md mx-auto">
+                  <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 rounded-lg p-8 border border-gray-100">
+                    <div className="bg-gray-100 rounded-full p-6 mb-6">
+                      <Youtube className="h-16 w-16 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-medium mb-2 text-gray-800">Video Tutorial</h3>
+                    <p className="text-center text-gray-600 max-w-md mb-6">
+                      Watch a professional demonstration of {pose.name} to learn proper form and technique.
+                    </p>
+                    {pose.id && getYogaPoseVideoInfo(pose.id) && (
+                      <Button 
+                        onClick={() => {
+                          const videoInfo = getYogaPoseVideoInfo(pose.id);
+                          if (videoInfo) {
+                            setCurrentVideoId(videoInfo.videoId);
+                          }
+                        }}
+                        className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-5 py-2"
+                      >
+                        <Youtube className="mr-2 h-4 w-4" />
+                        Watch Tutorial
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="practice" className="min-h-[400px]">
+              <div className="w-full mx-auto">
+                <div className="bg-background rounded-lg mb-4">
+                  <YogaVisionEnhanced 
+                    initialPoseId={pose.id} 
+                    onClose={handleClose}
+                    compactMode={true}
+                  />
+                </div>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+          </Tabs>
+        </div>
         
         <DialogFooter className="flex-wrap gap-3 pt-4 border-t mt-4">
           <div className="w-full flex justify-between items-center">
