@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useYogaProgression } from '../contexts/yoga-progression-context';
 import { yogaPoses, getPoseById } from '../data/yoga-poses-progression';
+import Webcam from 'react-webcam';
 import {
   Card,
   CardContent,
@@ -77,7 +78,10 @@ export default function YogaVisionEnhanced({
   const [rewardEarned, setRewardEarned] = useState<{xp: number, newMasteryLevel: number} | null>(null);
   const [referencePoses, setReferencePoses] = useState<ReferencePose[]>([]);
   const [isLoadingPoses, setIsLoadingPoses] = useState<boolean>(false);
+  const [useCameraMode, setUseCameraMode] = useState<boolean>(true);
+  const [showReferenceExample, setShowReferenceExample] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const webcamRef = useRef<Webcam>(null);
   const { toast } = useToast();
   
   // Get progression context
@@ -166,10 +170,39 @@ export default function YogaVisionEnhanced({
     }
   };
 
-  // Handle camera button click
+  // Handle camera button click - now just for file uploads
   const handleCameraClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  };
+  
+  // Handle webcam capture
+  const handleWebcamCapture = async () => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (imageSrc) {
+        setImagePreview(imageSrc);
+        
+        // Convert base64 to file
+        const fetchRes = await fetch(imageSrc);
+        const blob = await fetchRes.blob();
+        const file = new File([blob], "webcam-capture.jpg", { type: "image/jpeg" });
+        setSelectedImage(file);
+        
+        // Clear any previous analysis
+        setAnalysis(null);
+        setRewardEarned(null);
+      }
+    }
+  };
+  
+  // Toggle between camera and upload modes
+  const toggleCameraMode = () => {
+    setUseCameraMode(prev => !prev);
+    // Reset any existing image
+    if (imagePreview) {
+      handleReset();
     }
   };
 
@@ -253,7 +286,7 @@ export default function YogaVisionEnhanced({
         const masteryLevel = scoreToMasteryLevel(score);
         
         // Check current mastery level from user progress
-        const currentAchievement = userProgress.poseAchievements[selectedPoseId];
+        const currentAchievement = userProgress?.poseAchievements?.[selectedPoseId];
         const currentMasteryLevel = currentAchievement?.masteryLevel || 0;
         
         // Calculate XP earned based on improvement
@@ -271,10 +304,14 @@ export default function YogaVisionEnhanced({
           });
           
           // Update user progression
-          updatePoseMastery(selectedPoseId, score);
+          if (updatePoseMastery) {
+            updatePoseMastery(selectedPoseId, score);
+          }
         } else {
           // Still update the attempt, but no XP earned
-          updatePoseMastery(selectedPoseId, score);
+          if (updatePoseMastery) {
+            updatePoseMastery(selectedPoseId, score);
+          }
         }
         
         // Notify parent if callback provided
@@ -452,12 +489,57 @@ export default function YogaVisionEnhanced({
               )}
             </div>
             
-            {/* Step 2: Upload image */}
+            {/* Step 2: Upload image or use camera */}
             <div>
               <h3 className="font-medium text-sm flex items-center mb-2">
                 <Badge variant="outline" className="mr-2">Step 2</Badge>
-                Upload a photo of your pose
+                {useCameraMode ? "Take a photo with your camera" : "Upload a photo of your pose"}
               </h3>
+              
+              <div className="mb-2 flex justify-end">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleCameraMode}
+                  className="text-xs"
+                >
+                  {useCameraMode ? 
+                    <><Upload className="h-3 w-3 mr-1" /> Switch to file upload</> : 
+                    <><Camera className="h-3 w-3 mr-1" /> Switch to camera</>
+                  }
+                </Button>
+              </div>
+              
+              {/* Reference example button - visible when a pose is selected */}
+              {selectedPoseId && (
+                <div className="mb-4">
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    onClick={() => setShowReferenceExample(!showReferenceExample)}
+                    className="text-xs w-full"
+                  >
+                    {showReferenceExample ? "Hide reference example" : "Show reference example"}
+                  </Button>
+                  
+                  {/* Reference example image */}
+                  {showReferenceExample && selectedPose && selectedPose.imageUrl && (
+                    <div className="mt-2 p-3 bg-secondary/20 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2">Reference Example</h4>
+                      <div className="aspect-video w-full max-w-md mx-auto overflow-hidden rounded-md bg-secondary/20">
+                        <img 
+                          src={selectedPose.imageUrl} 
+                          alt={`${selectedPose.name} reference`}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Study this reference image to understand proper alignment for {selectedPose.name}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
               
               <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-6 mb-4">
                 <input 
@@ -468,36 +550,82 @@ export default function YogaVisionEnhanced({
                   ref={fileInputRef}
                 />
                 
-                {!imagePreview ? (
-                  <div className="text-center">
-                    <Camera className="mx-auto h-10 w-10 text-gray-400 mb-2" />
-                    <p className="text-sm text-muted-foreground mb-2">No image selected</p>
-                    <div className="flex gap-2 justify-center">
-                      <Button onClick={handleCameraClick} variant="outline">
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload Image
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center w-full">
-                    <div className="relative aspect-video w-full max-w-md mx-auto mb-4">
-                      <img 
-                        src={imagePreview} 
-                        alt="Yoga pose preview" 
-                        className="w-full h-full object-contain rounded-md"
+                {useCameraMode ? (
+                  // Camera mode
+                  !imagePreview ? (
+                    <div className="w-full">
+                      <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        videoConstraints={{
+                          facingMode: "user",
+                          width: 720,
+                          height: 480
+                        }}
+                        className="w-full rounded-md mb-4"
                       />
+                      <div className="flex gap-2 justify-center">
+                        <Button onClick={handleWebcamCapture} variant="default">
+                          <Camera className="h-4 w-4 mr-2" />
+                          Capture Photo
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2 justify-center">
-                      <Button onClick={handleCameraClick} variant="outline" size="sm">
-                        <Camera className="h-4 w-4 mr-2" />
-                        Change Image
-                      </Button>
-                      <Button onClick={handleReset} variant="destructive" size="sm">
-                        Remove
-                      </Button>
+                  ) : (
+                    // Show captured image
+                    <div className="text-center w-full">
+                      <div className="relative aspect-video w-full max-w-md mx-auto mb-4">
+                        <img 
+                          src={imagePreview} 
+                          alt="Yoga pose capture" 
+                          className="w-full h-full object-contain rounded-md"
+                        />
+                      </div>
+                      <div className="flex gap-2 justify-center">
+                        <Button onClick={() => handleReset()} variant="outline" size="sm">
+                          <Camera className="h-4 w-4 mr-2" />
+                          Retake Photo
+                        </Button>
+                        <Button onClick={handleReset} variant="destructive" size="sm">
+                          Remove
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  )
+                ) : (
+                  // File upload mode
+                  !imagePreview ? (
+                    <div className="text-center">
+                      <Camera className="mx-auto h-10 w-10 text-gray-400 mb-2" />
+                      <p className="text-sm text-muted-foreground mb-2">No image selected</p>
+                      <div className="flex gap-2 justify-center">
+                        <Button onClick={handleCameraClick} variant="outline">
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload Image
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center w-full">
+                      <div className="relative aspect-video w-full max-w-md mx-auto mb-4">
+                        <img 
+                          src={imagePreview} 
+                          alt="Yoga pose preview" 
+                          className="w-full h-full object-contain rounded-md"
+                        />
+                      </div>
+                      <div className="flex gap-2 justify-center">
+                        <Button onClick={handleCameraClick} variant="outline" size="sm">
+                          <Upload className="h-4 w-4 mr-2" />
+                          Change Image
+                        </Button>
+                        <Button onClick={handleReset} variant="destructive" size="sm">
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  )
                 )}
               </div>
             </div>
