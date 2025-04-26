@@ -78,16 +78,15 @@ const DialogContent = React.forwardRef<
           onDragEnd={handleDragEnd}
           className="rounded-lg border bg-background shadow-lg"
         >
-          {/* Swipe handle indicator - improved for visibility and spacing */}
-          <div className="w-full flex flex-col items-center pt-3 pb-4 bg-white sticky top-0 z-20 border-b border-gray-100">
-            <div className="w-16 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
-            <p className="text-xs text-gray-500 mt-2 font-medium">Swipe down to close</p>
+          {/* Swipe handle indicator - Apple-style minimal design */}
+          <div className="w-full flex flex-col items-center pt-3 pb-1 bg-white absolute top-0 z-20 border-b border-gray-50">
+            <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
           </div>
           
           <DialogPrimitive.Content
             ref={ref}
             className={cn(
-              "grid w-full gap-3 p-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto bg-white",
+              "grid w-full gap-3 pt-8 px-4 pb-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto bg-white",
               className
             )}
             style={{ maxHeight: 'calc(85vh - 40px)', backgroundColor: 'white' }}
