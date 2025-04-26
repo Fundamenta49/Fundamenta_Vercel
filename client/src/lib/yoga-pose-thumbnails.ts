@@ -104,8 +104,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
   
   // Level 6 - Advanced poses
   'side_plank': { 
-    videoId: 'eY7LVcU4WYk', 
-    title: 'Side Plank (Vasisthasana)',
+    videoId: '4h9qCFo-Uco', 
+    title: 'Side Plank Pose | Vasisthasana',
     channelTitle: 'Yoga With Adriene' 
   },
   'crow': { 
@@ -114,8 +114,8 @@ export const POSE_THUMBNAILS: Record<string, PoseThumbnail> = {
     channelTitle: 'Yoga With Adriene' 
   },
   'boat': { 
-    videoId: 'HU3C5ELvmY4', 
-    title: 'Boat Pose (Navasana)',
+    videoId: 'QVEINjrYUPU', 
+    title: 'Boat Pose | Navasana',
     channelTitle: 'Yoga With Adriene' 
   }
 };
