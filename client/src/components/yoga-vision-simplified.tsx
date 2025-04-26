@@ -305,7 +305,7 @@ export default function YogaVisionSimplified({
                 style={{ 
                   maxWidth: "100%", 
                   height: "auto",
-                  maxHeight: "220px",
+                  maxHeight: "228px", /* 8px taller to match wider dialog */
                   aspectRatio: "16/9"
                 }}
               />

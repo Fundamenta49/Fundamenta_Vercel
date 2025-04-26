@@ -64,7 +64,7 @@ const DialogContent = React.forwardRef<
             top: '50%',
             zIndex: 50,
             width: '94vw',
-            maxWidth: '450px',
+            maxWidth: '458px', /* Made 8px wider */
             maxHeight: '85vh',
             transform: 'translate(-50%, -50%)',
             overflow: 'hidden',
@@ -126,7 +126,7 @@ const DialogContent = React.forwardRef<
           )}
           style={{
             width: "95vw",
-            maxWidth: "900px",
+            maxWidth: "908px", /* Made 8px wider */
             maxHeight: "85vh",
             overflow: "auto",
             left: "50%",
