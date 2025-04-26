@@ -311,7 +311,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         </Card>
       </DialogTrigger>
       
-      <DialogContent className="max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto mx-auto">
         <DialogHeader className="pb-2 border-b">
           <div className="flex justify-between items-center">
             <div>
@@ -533,11 +533,14 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           </TabsContent>
           
           <TabsContent value="practice" className="min-h-[400px]">
-            <div className="w-full max-w-screen-md mx-auto">
-              <YogaVisionEnhanced 
-                initialPoseId={pose.id} 
-                onClose={handleClose} 
-              />
+            <div className="w-full mx-auto">
+              <div className="bg-background rounded-lg mb-4">
+                <YogaVisionEnhanced 
+                  initialPoseId={pose.id} 
+                  onClose={handleClose}
+                  compactMode={true}
+                />
+              </div>
             </div>
           </TabsContent>
         </Tabs>

@@ -63,12 +63,14 @@ interface YogaVisionEnhancedProps {
   initialPoseId?: string;
   onAnalysisComplete?: (analysis: PoseAnalysis) => void;
   onClose?: () => void;
+  compactMode?: boolean; // For displaying in a more compact layout in dialogs
 }
 
 export default function YogaVisionEnhanced({ 
   initialPoseId, 
   onAnalysisComplete,
-  onClose
+  onClose,
+  compactMode = false
 }: YogaVisionEnhancedProps) {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -398,15 +400,20 @@ export default function YogaVisionEnhanced({
   const userPoseAchievement = userProgress?.poseAchievements?.[selectedPoseId];
 
   return (
-    <div className="space-y-6">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>YogaVision</CardTitle>
+    <div className={`space-y-4 ${compactMode ? 'pt-2' : 'space-y-6'}`}>
+      <Card className="w-full border-0 shadow-none">
+        <CardHeader className={compactMode ? 'px-4 py-3' : ''}>
+          <CardTitle className={compactMode ? 'text-lg' : ''}>
+            {compactMode ? 'Practice with YogaVision' : 'YogaVision'}
+          </CardTitle>
           <CardDescription>
-            Upload a photo of yourself practicing a yoga pose and get AI-powered form feedback
+            {compactMode 
+              ? 'Get live AI feedback on your yoga pose' 
+              : 'Upload a photo of yourself practicing a yoga pose and get AI-powered form feedback'
+            }
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className={compactMode ? 'px-4 pt-0' : ''}>
           <div className="space-y-4">
             {/* Step 1: Select a pose */}
             <div>
