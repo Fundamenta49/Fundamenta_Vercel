@@ -16,6 +16,7 @@ import { YogaPoseProgression } from '../../../shared/yoga-progression';
 import { ArrowRight, Camera, Info, Book, Award } from 'lucide-react';
 import YogaVisionEnhanced from './yoga-vision-enhanced';
 import axios from 'axios';
+import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
 
 interface YogaPosePopoutProps {
   pose: YogaPoseProgression;
