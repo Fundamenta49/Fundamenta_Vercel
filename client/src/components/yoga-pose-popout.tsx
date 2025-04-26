@@ -195,10 +195,14 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     return { objectFit: 'cover', objectPosition: 'center' };
   };
 
-  // Function to handle opening YouTube video in a new tab
+  // Function to handle showing YouTube video in a dialog
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [currentVideoId, setCurrentVideoId] = useState<string | undefined>(undefined);
+  
   const openYouTubeVideo = (videoId: string | undefined) => {
     if (!videoId) return;
-    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+    setCurrentVideoId(videoId);
+    setShowVideoDialog(true);
   };
 
   // Render mastery stars
@@ -341,12 +345,14 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="font-medium mb-2">Description</h3>
-                <p className="text-sm text-gray-600 mb-4">{pose.description}</p>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed whitespace-pre-line">
+                  {pose.description}
+                </p>
                 
                 <h3 className="font-medium mb-2">Benefits</h3>
-                <ul className="text-sm text-gray-600 space-y-1 list-disc pl-5">
+                <ul className="text-sm text-gray-600 space-y-2 list-disc pl-5">
                   {pose.benefits.map((benefit, index) => (
-                    <li key={index}>{benefit}</li>
+                    <li key={index} className="leading-relaxed">{benefit}</li>
                   ))}
                 </ul>
               </div>
@@ -518,6 +524,29 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           )}
         </DialogFooter>
       </DialogContent>
+      
+      {/* Video dialog for in-app YouTube viewing */}
+      {showVideoDialog && currentVideoId && (
+        <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
+          <DialogContent className="max-w-4xl w-full p-0 overflow-hidden bg-black">
+            <div className="aspect-video w-full">
+              <iframe
+                className="w-full h-full"
+                src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="p-4 bg-white">
+              <Button variant="outline" onClick={() => setShowVideoDialog(false)} className="w-full">
+                Close Video
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 }
