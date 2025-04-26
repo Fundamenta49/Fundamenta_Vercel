@@ -195,14 +195,13 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     return { objectFit: 'cover', objectPosition: 'center' };
   };
 
-  // Function to handle showing YouTube video in a dialog
-  const [showVideoDialog, setShowVideoDialog] = useState(false);
+  // Function to handle showing YouTube video within the existing tab
   const [currentVideoId, setCurrentVideoId] = useState<string | undefined>(undefined);
   
   const openYouTubeVideo = (videoId: string | undefined) => {
     if (!videoId) return;
     setCurrentVideoId(videoId);
-    setShowVideoDialog(true);
+    setActiveTab("video"); // Switch to video tab
   };
 
   // Render mastery stars
@@ -326,10 +325,14 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         </DialogHeader>
         
         <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-3 mb-4">
+          <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="info" className="flex items-center">
               <Info className="h-4 w-4 mr-2" />
               Info
+            </TabsTrigger>
+            <TabsTrigger value="video" className="flex items-center">
+              <Youtube className="h-4 w-4 mr-2" />
+              Video
             </TabsTrigger>
             <TabsTrigger value="practice" className="flex items-center">
               <Camera className="h-4 w-4 mr-2" />
@@ -451,6 +454,42 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             </div>
           </TabsContent>
           
+          <TabsContent value="video" className="min-h-[400px]">
+            {currentVideoId ? (
+              <div className="aspect-video w-full mb-4 rounded-md overflow-hidden">
+                <iframe
+                  className="w-full h-full"
+                  src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center min-h-[400px] bg-muted rounded-md p-4">
+                <Youtube className="h-16 w-16 text-muted-foreground mb-4" />
+                <p className="text-center text-muted-foreground">
+                  Click "Watch Video" to view a tutorial for this pose
+                </p>
+                {pose.id && getYogaPoseVideoInfo(pose.id) && (
+                  <Button 
+                    onClick={() => {
+                      const videoInfo = getYogaPoseVideoInfo(pose.id);
+                      if (videoInfo) {
+                        setCurrentVideoId(videoInfo.videoId);
+                      }
+                    }}
+                    className="mt-4 bg-red-600 hover:bg-red-700 text-white border-none"
+                  >
+                    Watch Video
+                    <Youtube className="ml-2 h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            )}
+          </TabsContent>
+          
           <TabsContent value="practice" className="min-h-[400px]">
             <YogaVisionEnhanced 
               initialPoseId={pose.id} 
@@ -498,13 +537,14 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             Close
           </Button>
           
-          {activeTab === "info" && pose.id && getYogaPoseVideoInfo(pose.id) && (
+          {activeTab !== "video" && pose.id && getYogaPoseVideoInfo(pose.id) && (
             <Button 
               variant="outline"
               onClick={() => {
                 const videoInfo = getYogaPoseVideoInfo(pose.id);
                 if (videoInfo) {
-                  openYouTubeVideo(videoInfo.videoId);
+                  setCurrentVideoId(videoInfo.videoId);
+                  setActiveTab("video");
                 }
               }}
               className="bg-red-600 hover:bg-red-700 text-white border-none"
@@ -524,29 +564,6 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           )}
         </DialogFooter>
       </DialogContent>
-      
-      {/* Video dialog for in-app YouTube viewing */}
-      {showVideoDialog && currentVideoId && (
-        <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
-          <DialogContent className="max-w-4xl w-full p-0 overflow-hidden bg-black">
-            <div className="aspect-video w-full">
-              <iframe
-                className="w-full h-full"
-                src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-            <div className="p-4 bg-white">
-              <Button variant="outline" onClick={() => setShowVideoDialog(false)} className="w-full">
-                Close Video
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </Dialog>
   );
 }
