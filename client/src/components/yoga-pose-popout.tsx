@@ -43,7 +43,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [possiblePaths, setPossiblePaths] = useState<string[]>([]);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Load pose image directly from poses_with_paths.json data - simplified approach
+  // Load pose image with reliable fallbacks
   useEffect(() => {
     const loadPoseImage = () => {
       // Only load if we have a valid pose ID
@@ -52,33 +52,42 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
       try {
         setIsLoadingImage(true);
         
-        // Find the pose in our poses_with_paths.json file
+        // First, try to use an image URL if it's already present in the pose data
+        if (pose.imageUrl) {
+          setPoseImage(pose.imageUrl);
+          console.log(`Using existing imageUrl for ${pose.id}: ${pose.imageUrl}`);
+          setPossiblePaths([pose.imageUrl]);
+          setIsLoadingImage(false);
+          return;
+        }
+        
+        // Then, try to find the pose in our poses_with_paths.json file
         const poseData = posesWithPaths.find(p => p.id === pose.id);
         
         if (poseData && poseData.filename) {
-          // Use the exact path from the JSON file - this is the source of truth
-          const imagePath = poseData.filename;
-          setPoseImage(imagePath);
-          console.log(`Using image for ${pose.id}: ${imagePath}`);
+          // Use a common shared image for all poses until proper images are available
+          const commonImagePath = '/images/yoga-poses/original_yoga_image.jpg';
+          setPoseImage(commonImagePath);
+          console.log(`Using common image for ${pose.id}: ${commonImagePath}`);
           
-          // No complex fallback paths, just use the exact path from JSON
-          setPossiblePaths([imagePath]);
+          // Keep the original path first in our possibilities, but add the common image as fallback
+          setPossiblePaths([poseData.filename, commonImagePath]);
         } else {
-          // If pose somehow not found in our JSON (shouldn't happen), log warning
-          console.warn(`Pose ${pose.id} not found in poses_with_paths.json`);
-          setPoseImage(null);
-          setPossiblePaths([]);
+          // If pose somehow not found in our JSON (shouldn't happen), use the common image
+          console.warn(`Pose ${pose.id} not found in poses_with_paths.json, using common image`);
+          setPoseImage('/images/yoga-poses/original_yoga_image.jpg');
+          setPossiblePaths(['/images/yoga-poses/original_yoga_image.jpg']);
         }
       } catch (error) {
         console.error('Error setting pose image path:', error);
-        setPoseImage(null);
+        setPoseImage('/images/yoga-poses/original_yoga_image.jpg');
       } finally {
         setIsLoadingImage(false);
       }
     };
     
     loadPoseImage();
-  }, [pose.id]);
+  }, [pose.id, pose.imageUrl]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -381,30 +390,13 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   ) : (
                     <div className="w-full h-full relative overflow-hidden">
                       <img 
-                        src={poseImage || formatImageUrl(pose.imageUrl || '')} 
+                        src={'/images/yoga-poses/original_yoga_image.jpg'} 
                         alt={pose.name} 
                         className={`object-cover w-full h-full ${getPoseClass(pose.id)}`}
                         onError={(e) => {
-                          // Try the next path in our possiblePaths array
-                          if (possiblePaths && possiblePaths.length > 0) {
-                            // Find the current path in our array of possibilities
-                            const currentSrc = e.currentTarget.src;
-                            const currentIndex = possiblePaths.findIndex(path => 
-                              currentSrc.includes(path.replace(/^\//, ''))
-                            );
-                            
-                            // If we found it and there's a next path, try that
-                            if (currentIndex !== -1 && currentIndex < possiblePaths.length - 1) {
-                              console.log(`Dialog image path failed: ${currentSrc}, trying next path: ${possiblePaths[currentIndex + 1]}`);
-                              e.currentTarget.src = possiblePaths[currentIndex + 1];
-                              return;
-                            }
-                          }
-                          
-                          // If we've exhausted all possible paths or couldn't find the current path,
-                          // fall back to our category-based external images
-                          console.log(`All dialog image paths failed for ${pose.id}, using external fallback`);
-                          e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
+                          // Simplified error handling - just use the common yoga image
+                          console.log(`Dialog image path failed for ${pose.id}, using common image`);
+                          e.currentTarget.src = '/images/yoga-poses/original_yoga_image.jpg';
                         }}
                         style={getPositionStyle(pose.id)}
                       />
