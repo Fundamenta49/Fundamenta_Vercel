@@ -562,6 +562,50 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           </Tabs>
         </div>
         
+        <DialogFooter className="flex-wrap gap-2 sm:gap-3 pt-3 sm:pt-4 border-t mt-2 sm:mt-4 px-4 sm:px-6">
+          <div className="w-full flex flex-col sm:flex-row justify-between sm:items-center">
+            {/* For mobile: Action buttons on top, close button at bottom */}
+            <div className="flex gap-2 order-2 sm:order-1 mt-2 sm:mt-0 mx-auto sm:mx-0">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleClose}
+                className="rounded-full px-3 sm:px-4 h-8 sm:h-9 text-xs sm:text-sm"
+              >
+                Close
+              </Button>
+            </div>
+            
+            <div className="flex gap-2 order-1 sm:order-2 mx-auto sm:mx-0">
+              {activeTab !== "video" && pose.id && getYogaPoseVideoInfo(pose.id) && (
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    const videoInfo = getYogaPoseVideoInfo(pose.id);
+                    if (videoInfo) {
+                      setCurrentVideoId(videoInfo.videoId);
+                      setActiveTab("video");
+                    }
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-3 sm:px-4 h-8 sm:h-9 text-xs sm:text-sm"
+                >
+                  <Youtube className="mr-1 sm:mr-1.5 h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="whitespace-nowrap">Watch Video</span>
+                </Button>
+              )}
+              
+              {activeTab !== "practice" && (
+                <Button 
+                  onClick={() => setActiveTab("practice")}
+                  className="rounded-full px-3 sm:px-4 h-8 sm:h-9 bg-primary hover:bg-primary/90 text-xs sm:text-sm"
+                >
+                  <Camera className="mr-1 sm:mr-1.5 h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="whitespace-nowrap">Practice Now</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

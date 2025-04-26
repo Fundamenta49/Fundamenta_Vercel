@@ -264,10 +264,10 @@ export default function YogaVisionSimplified({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="w-full max-w-full space-y-2">
       <Card className="w-full border-0 shadow-none rounded-xl">
-        <CardContent className="px-4 pt-2 pb-2">
-          <div className="space-y-2">
+        <CardContent className="px-4 pt-2 pb-0">
+          <div className="space-y-1">
             {/* Reference Image - Using thumbnails from video */}
             <div>
               <div className="bg-white rounded-lg overflow-hidden border border-gray-100">
@@ -275,7 +275,7 @@ export default function YogaVisionSimplified({
                   src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
                   alt={`${selectedPose?.name || 'Yoga pose'} reference`}
                   className="w-full object-cover rounded-md"
-                  style={{ aspectRatio: "16/9", maxHeight: "120px" }}
+                  style={{ aspectRatio: "16/9", maxHeight: "110px" }}
                   onError={(e) => {
                     const videoInfo = getYogaPoseVideoInfo(poseId);
                     if (videoInfo?.videoId) {
@@ -331,8 +331,8 @@ export default function YogaVisionSimplified({
                       style={{ 
                         maxWidth: "100%", 
                         height: "auto",
-                        maxHeight: "25vh",
-                        aspectRatio: "4/3"
+                        maxHeight: "22vh",
+                        aspectRatio: "16/9"
                       }}
                     />
                     <div className="flex gap-2 justify-center">
@@ -357,8 +357,8 @@ export default function YogaVisionSimplified({
                         className="w-full object-contain rounded-md"
                         style={{ 
                           maxWidth: "100%", 
-                          maxHeight: "25vh",
-                          aspectRatio: "4/3"
+                          maxHeight: "22vh",
+                          aspectRatio: "16/9"
                         }}
                       />
                     </div>
@@ -402,8 +402,8 @@ export default function YogaVisionSimplified({
                         className="w-full object-contain rounded-md"
                         style={{ 
                           maxWidth: "100%", 
-                          maxHeight: "25vh",
-                          aspectRatio: "4/3"
+                          maxHeight: "22vh",
+                          aspectRatio: "16/9"
                         }}
                       />
                     </div>
@@ -425,13 +425,14 @@ export default function YogaVisionSimplified({
           </div>
         </CardContent>
         
-        <CardFooter className="flex justify-between px-4 py-3 border-t border-gray-50">
+        {/* Inline the buttons into the content area to avoid unnecessary footers */}
+        <div className="flex justify-between px-4 py-2">
           {onClose && (
             <Button 
               variant="ghost" 
               onClick={onClose}
               size="sm"
-              className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 shadow-sm"
+              className="h-7 text-xs rounded-full px-3 bg-gray-200 hover:bg-gray-300 text-gray-800"
             >
               Back
             </Button>
@@ -439,22 +440,22 @@ export default function YogaVisionSimplified({
           <Button
             onClick={handleSubmitForAnalysis}
             disabled={!selectedImage || isAnalyzing}
-            className="flex items-center h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm ml-auto"
+            className="flex items-center h-7 text-xs rounded-full px-3 bg-blue-600 hover:bg-blue-700 text-white ml-auto"
             size="sm"
           >
             {isAnalyzing ? (
               <>
-                <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                 Analyzing...
               </>
             ) : (
               <>
-                Analyze Pose
-                <ArrowRight className="h-3 w-3 ml-1.5" />
+                Analyze
+                <ArrowRight className="h-3 w-3 ml-1" />
               </>
             )}
           </Button>
-        </CardFooter>
+        </div>
       </Card>
 
       {/* Analysis results as overlay */}
