@@ -7,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
+import { useToast } from "@/hooks/use-toast";
 import { 
   MapPin, 
   Timer, 
@@ -254,6 +255,7 @@ const allFallbacks = {
 
 // Main Running Component
 export const RunningSpecificExercisesEnhanced = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('tracker');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -374,7 +376,25 @@ export const RunningSpecificExercisesEnhanced = () => {
   
   // Start run tracking
   const startTracking = () => {
-    // In a real app, we would start GPS tracking here
+    // Check for GPS permission
+    const permissionStatus = localStorage.getItem('location_permission');
+    
+    if (permissionStatus !== 'granted') {
+      // If permission is not already granted, we'll need to request it
+      // This is now handled by the button in active-you.tsx
+      console.log('GPS permission not granted. Use the GPS tracking button first.');
+      
+      // Show a toast notification
+      toast({
+        variant: "destructive",
+        title: "Location Access Required",
+        description: "Please use the 'Start Run with GPS Tracking' button to enable location tracking.",
+      });
+      
+      return;
+    }
+    
+    // Permission is granted, start tracking
     setIsTracking(true);
     
     // Start timer
@@ -383,7 +403,8 @@ export const RunningSpecificExercisesEnhanced = () => {
       const newElapsedTime = Math.floor((Date.now() - startTime) / 1000);
       setElapsedTime(newElapsedTime);
       
-      // Simulate distance (in a real app this would come from GPS)
+      // In a real app, we would get actual distance from GPS
+      // For now, we're simulating distance based on time
       const newDistance = parseFloat((newElapsedTime / 600).toFixed(2)); // Rough simulation
       setDistance(newDistance);
       
@@ -396,7 +417,8 @@ export const RunningSpecificExercisesEnhanced = () => {
       }
     }, 1000);
     
-    // Simulate location updates (in a real app, we would use the Geolocation API)
+    // Start location tracking with the Geolocation API
+    // In this prototype, we're just simulating location updates
     locationRef.current = setInterval(() => {
       // Simulate a running route with small random variations
       const baseCoordinates: [number, number] = [37.7749, -122.4194]; // San Francisco coordinates
