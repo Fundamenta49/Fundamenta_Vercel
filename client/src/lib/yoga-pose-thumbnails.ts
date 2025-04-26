@@ -125,8 +125,10 @@ export const getYogaPoseThumbnail = (poseId: string): string => {
   // If the pose has a specific thumbnail defined, use it
   if (poseId in POSE_THUMBNAILS) {
     const { videoId } = POSE_THUMBNAILS[poseId];
-    // YouTube thumbnail format - using maxresdefault for high quality
-    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    
+    // Use more reliable thumbnail formats - standard quality 
+    // This is more reliable than maxresdefault which might not be available for all videos
+    return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
   }
   
   // Fallback based on difficulty level if no specific thumbnail defined
@@ -161,7 +163,7 @@ export const getYogaPoseVideoInfo = (poseId: string): {
   if (poseId in POSE_THUMBNAILS) {
     const { videoId, title, channelTitle } = POSE_THUMBNAILS[poseId];
     return {
-      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
       videoId,
       title,
       channelTitle,

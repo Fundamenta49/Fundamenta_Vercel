@@ -242,6 +242,23 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                     alt={pose.name} 
                     className="object-cover w-full h-full group-hover:opacity-90 transition-opacity"
                     style={{ objectFit: 'cover' }}
+                    onError={(e) => {
+                      console.log(`Thumbnail failed to load for ${pose.id}, trying alternative format`);
+                      // Try a different YouTube thumbnail format
+                      const videoId = getYogaPoseVideoInfo(pose.id)?.videoId;
+                      if (videoId) {
+                        e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                        
+                        // Add a second error handler in case hqdefault also fails
+                        e.currentTarget.onerror = () => {
+                          console.log(`Alternative thumbnail also failed for ${pose.id}, trying sddefault format`);
+                          e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
+                          
+                          // Final fallback if all YouTube formats fail
+                          e.currentTarget.onerror = null;
+                        };
+                      }
+                    }}
                   />
                   {pose.id && getYogaPoseVideoInfo(pose.id) && (
                     <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
@@ -354,6 +371,23 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                         src={getYogaPoseThumbnail(pose.id)}
                         alt={pose.name} 
                         className="object-cover w-full h-full group-hover:opacity-90 transition-opacity"
+                        onError={(e) => {
+                          console.log(`Thumbnail failed to load for ${pose.id}, trying alternative format`);
+                          // Try a different YouTube thumbnail format
+                          const videoId = getYogaPoseVideoInfo(pose.id)?.videoId;
+                          if (videoId) {
+                            e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                            
+                            // Add a second error handler in case hqdefault also fails
+                            e.currentTarget.onerror = () => {
+                              console.log(`Alternative thumbnail also failed for ${pose.id}, trying sddefault format`);
+                              e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
+                              
+                              // Final fallback if all YouTube formats fail
+                              e.currentTarget.onerror = null;
+                            };
+                          }
+                        }}
                       />
                       {pose.id && getYogaPoseVideoInfo(pose.id) && (
                         <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
