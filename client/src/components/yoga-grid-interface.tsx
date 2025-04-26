@@ -42,9 +42,14 @@ export default function YogaGridInterface() {
     
     if (updatedPose) {
       // Update the imageUrl to use the newer yoga-poses path with the updated filename
+      // Check which directory this pose image is in (yoga or yoga-poses)
+      const directory = updatedPose.filename.endsWith('.jpg') ? 'yoga' : 'yoga-poses';
+      
       return {
         ...pose,
-        imageUrl: `/images/yoga-poses/${updatedPose.filename}`,
+        // Store paths to both potential directories
+        imageUrl: `/images/${directory}/${updatedPose.filename}`,
+        alternativeImageUrl: `/images/${directory === 'yoga' ? 'yoga-poses' : 'yoga'}/${updatedPose.filename}`,
         
         // Add extra metadata from updated poses if available
         ...(updatedPose.name && {

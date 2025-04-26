@@ -19,7 +19,9 @@ import axios from 'axios';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
 
 interface YogaPosePopoutProps {
-  pose: YogaPoseProgression;
+  pose: YogaPoseProgression & {
+    alternativeImageUrl?: string;
+  };
   unlocked: boolean;
   achievement?: {
     masteryLevel: number;
@@ -45,15 +47,34 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         
         // Check multiple possible paths for the pose image
         const possibleImagePaths = [
-          // Path from yoga-grid-interface.tsx updated data
+          // Paths from yoga-grid-interface.tsx updated data
           pose.imageUrl,
+          pose.alternativeImageUrl,
           
-          // Standard PNG paths
+          // Standard PNG paths (both directories)
           `/images/yoga-poses/${pose.id}.png`,
+          `/images/yoga/${pose.id}.png`,
           
-          // JPG paths (for compatibility)
-          `/images/yoga/${pose.id}.jpg`
+          // JPG paths (both directories)
+          `/images/yoga-poses/${pose.id}.jpg`,
+          `/images/yoga/${pose.id}.jpg`,
+          
+          // Crow variant paths
+          `/images/yoga-poses/crow_3.jpg`,
+          `/images/yoga/crow_3.jpg`,
+          `/images/yoga-poses/crow_4.jpg`,
+          `/images/yoga/crow_4.jpg`,
+          
+          // Try converted file paths
+          pose.id === 'crow' ? `/images/yoga/crow_3.jpg` : null,
+          pose.id === 'boat' ? `/images/yoga/boat.jpg` : null,
+          pose.id === 'downward_dog' ? `/images/yoga/downward_dog.jpg` : null,
+          pose.id === 'forward_fold' ? `/images/yoga/forward_fold.jpg` : null,
+          pose.id === 'pigeon' ? `/images/yoga/pigeon.jpg` : null,
+          pose.id === 'bridge' ? `/images/yoga/bridge.jpg` : null
         ].filter(Boolean); // Remove any undefined/null paths
+        
+        console.log(`Checking image paths for pose: ${pose.id}`, possibleImagePaths);
         
         console.log(`Checking paths for ${pose.id}:`, possibleImagePaths);
         
@@ -103,7 +124,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     };
     
     loadPoseImage();
-  }, [pose.id, pose.imageUrl]);
+  }, [pose.id, pose.imageUrl, pose.alternativeImageUrl]);
 
   const handleClose = () => {
     setIsOpen(false);
