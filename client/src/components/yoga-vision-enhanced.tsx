@@ -505,14 +505,14 @@ export default function YogaVisionEnhanced({
               
               <div className="mb-2 flex justify-end">
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="sm" 
                   onClick={toggleCameraMode}
-                  className="text-xs"
+                  className={`rounded-full text-xs px-3 ${compactMode ? 'h-7' : 'h-8'} bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground`}
                 >
                   {useCameraMode ? 
-                    <><Upload className="h-3 w-3 mr-1" /> Switch to file upload</> : 
-                    <><Camera className="h-3 w-3 mr-1" /> Switch to camera</>
+                    <><Upload className="h-3 w-3 mr-1.5" /> <span className="whitespace-nowrap">Use photos</span></> : 
+                    <><Camera className="h-3 w-3 mr-1.5" /> <span className="whitespace-nowrap">Use camera</span></>
                   }
                 </Button>
               </div>
@@ -521,10 +521,10 @@ export default function YogaVisionEnhanced({
               {selectedPoseId && (
                 <div className="mb-4">
                   <Button 
-                    variant="secondary" 
+                    variant="ghost" 
                     size="sm" 
                     onClick={() => setShowReferenceExample(!showReferenceExample)}
-                    className="text-xs w-full"
+                    className={`text-xs w-full ${compactMode ? 'h-7' : 'h-8'} rounded-full bg-secondary/10 hover:bg-secondary/20 text-secondary-foreground`}
                   >
                     {showReferenceExample ? "Hide reference example" : "Show reference example"}
                   </Button>
@@ -579,9 +579,9 @@ export default function YogaVisionEnhanced({
                           onClick={handleWebcamCapture} 
                           variant="default"
                           size={compactMode ? "sm" : "default"}
-                          className={compactMode ? "rounded-full" : ""}
+                          className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-primary hover:bg-primary/90`}
                         >
-                          <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-2`} />
+                          <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5`} />
                           Capture Photo
                         </Button>
                       </div>
@@ -599,18 +599,18 @@ export default function YogaVisionEnhanced({
                       <div className="flex gap-2 justify-center">
                         <Button 
                           onClick={() => handleReset()} 
-                          variant="outline" 
+                          variant="ghost" 
                           size="sm"
-                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                          className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground`}
                         >
-                          <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
+                          <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5`} />
                           Retake
                         </Button>
                         <Button 
                           onClick={handleReset} 
-                          variant="destructive" 
+                          variant="ghost" 
                           size="sm"
-                          className={compactMode ? "h-8 text-xs rounded-full" : ""}
+                          className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-destructive/10 hover:bg-destructive/20 text-destructive`}
                         >
                           Remove
                         </Button>
@@ -626,11 +626,11 @@ export default function YogaVisionEnhanced({
                       <div className="flex gap-2 justify-center">
                         <Button 
                           onClick={handleCameraClick} 
-                          variant="outline"
+                          variant="ghost"
                           size={compactMode ? "sm" : "default"}
-                          className={compactMode ? "h-8 text-xs rounded-full px-3" : "rounded-md"}
+                          className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-primary/10 hover:bg-primary/20 text-primary-foreground`}
                         >
-                          <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
+                          <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5`} />
                           Upload Image
                         </Button>
                       </div>
@@ -647,18 +647,18 @@ export default function YogaVisionEnhanced({
                       <div className="flex gap-2 justify-center">
                         <Button 
                           onClick={handleCameraClick} 
-                          variant="outline" 
+                          variant="ghost" 
                           size="sm"
-                          className={compactMode ? "h-8 text-xs rounded-full px-3" : "rounded-md"}
+                          className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground`}
                         >
-                          <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
+                          <Upload className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5`} />
                           Change Image
                         </Button>
                         <Button 
                           onClick={handleReset} 
-                          variant="destructive" 
+                          variant="ghost" 
                           size="sm"
-                          className={compactMode ? "h-8 text-xs rounded-full px-3" : "rounded-md"}
+                          className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-destructive/10 hover:bg-destructive/20 text-destructive`}
                         >
                           Remove
                         </Button>
@@ -743,20 +743,20 @@ export default function YogaVisionEnhanced({
         <CardFooter className={`flex justify-between ${compactMode ? 'px-4 py-3' : ''}`}>
           {onClose ? (
             <Button 
-              variant="outline" 
+              variant="ghost" 
               onClick={onClose}
               size={compactMode ? "sm" : "default"}
-              className={compactMode ? "h-8 text-xs rounded-full px-4" : ""}
+              className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-secondary/10 hover:bg-secondary/20 text-secondary-foreground`}
             >
               Back
             </Button>
           ) : (
             <Button
-              variant="outline"
+              variant="ghost"
               disabled={isAnalyzing}
               onClick={handleReset}
               size={compactMode ? "sm" : "default"}
-              className={compactMode ? "h-8 text-xs rounded-full px-4" : ""}
+              className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-secondary/10 hover:bg-secondary/20 text-secondary-foreground`}
             >
               Reset
             </Button>
@@ -764,18 +764,18 @@ export default function YogaVisionEnhanced({
           <Button
             onClick={handleSubmitForAnalysis}
             disabled={!selectedImage || !selectedPoseId || isAnalyzing}
-            className={`flex items-center ${compactMode ? "h-8 text-xs rounded-full px-4" : ""}`}
+            className={`flex items-center ${compactMode ? "h-8 text-xs" : ""} rounded-full px-4 bg-primary hover:bg-primary/90`}
             size={compactMode ? "sm" : "default"}
           >
             {isAnalyzing ? (
               <>
-                <Loader2 className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1 animate-spin`} />
+                <Loader2 className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5 animate-spin`} />
                 Analyzing...
               </>
             ) : (
               <>
                 Analyze Pose
-                <ArrowRight className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} ml-1`} />
+                <ArrowRight className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} ml-1.5`} />
               </>
             )}
           </Button>
@@ -889,10 +889,10 @@ export default function YogaVisionEnhanced({
           </CardContent>
           <CardFooter className={`flex justify-between ${compactMode ? 'px-4 py-3' : ''}`}>
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={handleReset}
               size={compactMode ? "sm" : "default"}
-              className={compactMode ? "h-8 text-xs rounded-full px-4" : ""}
+              className={`${compactMode ? 'h-8 text-xs' : ''} rounded-full px-4 bg-secondary/10 hover:bg-secondary/20 text-secondary-foreground`}
             >
               Try Another Pose
             </Button>
@@ -903,9 +903,9 @@ export default function YogaVisionEnhanced({
                 }
               }}
               size={compactMode ? "sm" : "default"}
-              className={compactMode ? "h-8 text-xs rounded-full px-4" : ""}
+              className={`flex items-center ${compactMode ? "h-8 text-xs" : ""} rounded-full px-4 bg-primary hover:bg-primary/90`}
             >
-              <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1`} />
+              <Camera className={`${compactMode ? 'h-3 w-3' : 'h-4 w-4'} mr-1.5`} />
               Retake Photo
             </Button>
           </CardFooter>
