@@ -312,56 +312,54 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
       </DialogTrigger>
       
       <DialogContent className="max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center">
-            {pose.name}
-            <Badge variant="outline" className="ml-2">
-              {pose.difficulty}
-            </Badge>
-          </DialogTitle>
-          <DialogDescription className="italic">
-            {pose.sanskritName}
-          </DialogDescription>
+        <DialogHeader className="pb-2 border-b">
+          <div className="flex justify-between items-center">
+            <div>
+              <DialogTitle className="flex items-center text-xl font-semibold">
+                {pose.name}
+                <Badge variant="outline" className="ml-2 text-xs">
+                  {pose.difficulty}
+                </Badge>
+              </DialogTitle>
+              <DialogDescription className="italic text-gray-500 mt-1">
+                {pose.sanskritName}
+              </DialogDescription>
+            </div>
+            {/* Button to close the dialog */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleClose} 
+              className="rounded-full h-8 w-8 p-0"
+              aria-label="Close"
+            >
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+              </svg>
+            </Button>
+          </div>
         </DialogHeader>
         
-        <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-4 mb-4">
-            <TabsTrigger value="info" className="flex items-center">
+        <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="mt-4">
+          <TabsList className="grid grid-cols-3 mb-6 w-auto inline-flex mx-auto">
+            <TabsTrigger value="info" className="flex items-center px-6">
               <Info className="h-4 w-4 mr-2" />
               Info
             </TabsTrigger>
-            <TabsTrigger value="video" className="flex items-center">
-              <Youtube className="h-4 w-4 mr-2" />
-              Video
-            </TabsTrigger>
-            <TabsTrigger value="practice" className="flex items-center">
+            <TabsTrigger value="practice" className="flex items-center px-6">
               <Camera className="h-4 w-4 mr-2" />
               Practice
             </TabsTrigger>
-            <TabsTrigger value="learn" className="flex items-center">
-              <Book className="h-4 w-4 mr-2" />
-              Learn
+            <TabsTrigger value="video" className="flex items-center px-6">
+              <Youtube className="h-4 w-4 mr-2" />
+              Video
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="info" className="min-h-[300px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-medium mb-2">Description</h3>
-                <p className="text-sm text-gray-600 mb-4 leading-relaxed whitespace-pre-line">
-                  {pose.description}
-                </p>
-                
-                <h3 className="font-medium mb-2">Benefits</h3>
-                <ul className="text-sm text-gray-600 space-y-2 list-disc pl-5">
-                  {pose.benefits.map((benefit, index) => (
-                    <li key={index} className="leading-relaxed">{benefit}</li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div>
-                <div className="w-full h-48 rounded-md overflow-hidden mb-4 bg-muted flex items-center justify-center">
+            <div className="grid grid-cols-1 gap-8">
+              <div className="w-full max-w-screen-md mx-auto">
+                <div className="aspect-video rounded-lg overflow-hidden mb-6 bg-gray-50 flex items-center justify-center shadow-sm">
                   {isLoadingImage ? (
                     <div className="animate-pulse flex items-center justify-center w-full h-full">
                       <span className="text-sm text-muted-foreground">Loading pose image...</span>
@@ -398,24 +396,70 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                           }
                         }}
                       />
-                      {pose.id && getYogaPoseVideoInfo(pose.id) && (
-                        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
-                          <Youtube className="w-3 h-3 mr-1" />
-                          <span className="text-xs">{getYogaPoseVideoInfo(pose.id)?.title.split('(')[0] || 'Demo Video'}</span>
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-black/60 rounded-full p-4">
+                          <Youtube className="w-8 h-8 text-white" />
                         </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                        <div className="bg-black/70 rounded-full p-3">
-                          <Youtube className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="absolute bottom-4 left-4 right-4 bg-black/60 text-white px-3 py-2 rounded">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-medium">{pose.name}</h3>
+                          <div className="flex items-center">
+                            <Badge variant="outline" className="text-xs bg-white/20 border-none text-white">
+                              {pose.difficulty}
+                            </Badge>
+                          </div>
                         </div>
+                        <p className="text-xs text-gray-200 mt-1">Child's Pose</p>
                       </div>
                     </div>
                   )}
                 </div>
                 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-lg font-medium mb-3 text-gray-800">Description</h3>
+                    <p className="text-sm text-gray-600 mb-4 leading-relaxed whitespace-pre-line">
+                      {pose.description || "A restful pose that gently stretches the back and promotes relaxation."}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-medium mb-3 text-gray-800">Benefits</h3>
+                    <ul className="text-sm text-gray-600 space-y-2">
+                      {pose.benefits && pose.benefits.length > 0 ? 
+                        pose.benefits.map((benefit, index) => (
+                          <li key={index} className="flex items-start">
+                            <div className="mr-2 mt-1 text-primary">•</div>
+                            <span>{benefit}</span>
+                          </li>
+                        )) : 
+                        <>
+                          <li className="flex items-start">
+                            <div className="mr-2 mt-1 text-primary">•</div>
+                            <span>Releases tension in back, shoulders, and chest</span>
+                          </li>
+                          <li className="flex items-start">
+                            <div className="mr-2 mt-1 text-primary">•</div>
+                            <span>Calms the mind and reduces stress</span>
+                          </li>
+                          <li className="flex items-start">
+                            <div className="mr-2 mt-1 text-primary">•</div>
+                            <span>Gently stretches hips, thighs, and ankles</span>
+                          </li>
+                          <li className="flex items-start">
+                            <div className="mr-2 mt-1 text-primary">•</div>
+                            <span>Relieves back and neck pain</span>
+                          </li>
+                        </>
+                      }
+                    </ul>
+                  </div>
+                </div>
+                
                 {achievement && achievement.masteryLevel > 0 && (
-                  <div className="mt-4 p-3 bg-muted rounded-md">
-                    <h3 className="font-medium mb-2">Your Progress</h3>
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <h3 className="text-lg font-medium mb-3 text-gray-800">Your Progress</h3>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm">Mastery Level:</span>
                       <div className="flex items-center">
@@ -434,134 +478,110 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                     )}
                   </div>
                 )}
-                
-                {pose.prerequisites && pose.prerequisites.length > 0 && (
-                  <div className="mt-4">
-                    <h3 className="font-medium mb-2">Prerequisites</h3>
-                    <p className="text-sm text-gray-600">
-                      Master these poses first:
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {pose.prerequisites.map((prereqId) => (
-                        <Badge key={prereqId} variant="secondary">
-                          {prereqId}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </TabsContent>
           
           <TabsContent value="video" className="min-h-[400px]">
             {currentVideoId ? (
-              <div className="aspect-video w-full mb-4 rounded-md overflow-hidden">
-                <iframe
-                  className="w-full h-full"
-                  src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
-                  title="YouTube video player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
+              <div className="w-full max-w-screen-md mx-auto">
+                <div className="aspect-video w-full rounded-lg overflow-hidden shadow-sm mb-4">
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+                
+                <div className="px-2">
+                  <h3 className="text-lg font-medium mb-2">{getYogaPoseVideoInfo(pose.id)?.title || pose.name + " Tutorial"}</h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Watch this guided tutorial to learn the proper technique and alignment for {pose.name}.
+                  </p>
+                </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center min-h-[400px] bg-muted rounded-md p-4">
-                <Youtube className="h-16 w-16 text-muted-foreground mb-4" />
-                <p className="text-center text-muted-foreground">
-                  Click "Watch Video" to view a tutorial for this pose
-                </p>
-                {pose.id && getYogaPoseVideoInfo(pose.id) && (
-                  <Button 
-                    onClick={() => {
-                      const videoInfo = getYogaPoseVideoInfo(pose.id);
-                      if (videoInfo) {
-                        setCurrentVideoId(videoInfo.videoId);
-                      }
-                    }}
-                    className="mt-4 bg-red-600 hover:bg-red-700 text-white border-none"
-                  >
-                    Watch Video
-                    <Youtube className="ml-2 h-4 w-4" />
-                  </Button>
-                )}
+              <div className="w-full max-w-screen-md mx-auto">
+                <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 rounded-lg p-8 border border-gray-100">
+                  <div className="bg-gray-100 rounded-full p-6 mb-6">
+                    <Youtube className="h-16 w-16 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-medium mb-2 text-gray-800">Video Tutorial</h3>
+                  <p className="text-center text-gray-600 max-w-md mb-6">
+                    Watch a professional demonstration of {pose.name} to learn proper form and technique.
+                  </p>
+                  {pose.id && getYogaPoseVideoInfo(pose.id) && (
+                    <Button 
+                      onClick={() => {
+                        const videoInfo = getYogaPoseVideoInfo(pose.id);
+                        if (videoInfo) {
+                          setCurrentVideoId(videoInfo.videoId);
+                        }
+                      }}
+                      className="bg-red-600 hover:bg-red-700 text-white border-none px-6"
+                    >
+                      <Youtube className="mr-2 h-5 w-5" />
+                      Watch Tutorial
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </TabsContent>
           
           <TabsContent value="practice" className="min-h-[400px]">
-            <YogaVisionEnhanced 
-              initialPoseId={pose.id} 
-              onClose={handleClose} 
-            />
-          </TabsContent>
-          
-          <TabsContent value="learn" className="min-h-[300px]">
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Instructions</h3>
-                <ol className="text-sm text-gray-600 space-y-2 list-decimal pl-5">
-                  <li>Stand tall with feet together or hip-width apart</li>
-                  <li>Distribute weight evenly through both feet</li>
-                  <li>Engage your thighs and draw your abdominals in</li>
-                  <li>Extend your spine and relax your shoulders down</li>
-                  <li>Breathe deeply and maintain the posture for 30-60 seconds</li>
-                </ol>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Alignment Tips</h3>
-                <ul className="text-sm text-gray-600 space-y-1 list-disc pl-5">
-                  <li>Keep your shoulders relaxed and away from your ears</li>
-                  <li>Maintain a neutral spine position - don't arch or round your back</li>
-                  <li>Distribute weight evenly between the balls and heels of your feet</li>
-                  <li>Keep a soft gaze at a fixed point in front of you to maintain balance</li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Modifications</h3>
-                <ul className="text-sm text-gray-600 space-y-1 list-disc pl-5">
-                  <li>If you have balance issues, practice near a wall for support</li>
-                  <li>For extra challenge, try closing your eyes while in the pose</li>
-                  <li>If you have foot pain, stand on a yoga mat for cushioning</li>
-                </ul>
-              </div>
+            <div className="w-full max-w-screen-md mx-auto">
+              <YogaVisionEnhanced 
+                initialPoseId={pose.id} 
+                onClose={handleClose} 
+              />
             </div>
           </TabsContent>
         </Tabs>
         
-        <DialogFooter className="flex-wrap gap-2">
-          <Button variant="outline" onClick={handleClose}>
-            Close
-          </Button>
-          
-          {activeTab !== "video" && pose.id && getYogaPoseVideoInfo(pose.id) && (
+        <DialogFooter className="flex-wrap gap-3 pt-4 border-t mt-4">
+          <div className="w-full flex justify-between items-center">
             <Button 
-              variant="outline"
-              onClick={() => {
-                const videoInfo = getYogaPoseVideoInfo(pose.id);
-                if (videoInfo) {
-                  setCurrentVideoId(videoInfo.videoId);
-                  setActiveTab("video");
-                }
-              }}
-              className="bg-red-600 hover:bg-red-700 text-white border-none"
+              variant="ghost" 
+              size="sm" 
+              onClick={handleClose}
+              className="rounded-full px-4"
             >
-              Watch Video
-              <Youtube className="ml-2 h-4 w-4" />
+              Close
             </Button>
-          )}
-          
-          {activeTab !== "practice" && (
-            <Button 
-              onClick={() => setActiveTab("practice")}
-            >
-              Practice Now
-              <Camera className="ml-2 h-4 w-4" />
-            </Button>
-          )}
+            
+            <div className="flex gap-3">
+              {activeTab !== "video" && pose.id && getYogaPoseVideoInfo(pose.id) && (
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    const videoInfo = getYogaPoseVideoInfo(pose.id);
+                    if (videoInfo) {
+                      setCurrentVideoId(videoInfo.videoId);
+                      setActiveTab("video");
+                    }
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white border-none rounded-full px-6"
+                >
+                  <Youtube className="mr-2 h-4 w-4" />
+                  Watch Video
+                </Button>
+              )}
+              
+              {activeTab !== "practice" && (
+                <Button 
+                  onClick={() => setActiveTab("practice")}
+                  className="rounded-full px-6 bg-primary hover:bg-primary/90"
+                >
+                  <Camera className="mr-2 h-4 w-4" />
+                  Practice Now
+                </Button>
+              )}
+            </div>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
