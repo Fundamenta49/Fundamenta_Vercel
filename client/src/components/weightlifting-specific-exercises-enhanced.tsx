@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 import { 
   BarChart3, 
   Calendar, 
@@ -29,6 +30,15 @@ interface Exercise {
   category: string;
   equipment: string[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';
+}
+
+// Interface for personal records
+interface PersonalRecord {
+  exerciseId: string;
+  weight: number; // in lbs/kg
+  reps: number;
+  date: Date;
+  notes?: string;
 }
 
 interface Set {
@@ -226,6 +236,7 @@ const SAMPLE_WORKOUT_TEMPLATES = [
 
 // Main component
 export const WeightliftingSpecificExercisesEnhanced = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('workout');
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   
@@ -239,6 +250,52 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
   const [isResting, setIsResting] = useState(false);
   const [restInterval, setRestInterval] = useState<NodeJS.Timeout | null>(null);
   
+  // Sample personal records for demonstration
+  const [personalRecords, setPersonalRecords] = useState<PersonalRecord[]>([
+    {
+      exerciseId: 'bench-press',
+      weight: 185,
+      reps: 5,
+      date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), // 14 days ago
+      notes: 'First time hitting 185 for 5'
+    },
+    {
+      exerciseId: 'bench-press',
+      weight: 195,
+      reps: 3,
+      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      notes: 'New PR, felt strong'
+    },
+    {
+      exerciseId: 'squat',
+      weight: 225,
+      reps: 5,
+      date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+      notes: 'Good form'
+    },
+    {
+      exerciseId: 'squat',
+      weight: 245,
+      reps: 3,
+      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      notes: 'Depth was good'
+    },
+    {
+      exerciseId: 'deadlift',
+      weight: 275,
+      reps: 3,
+      date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000), // 21 days ago
+      notes: 'Lower back felt a bit tight'
+    },
+    {
+      exerciseId: 'deadlift',
+      weight: 315,
+      reps: 1,
+      date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+      notes: 'New PR!'
+    }
+  ]);
+
   // Sample workout history for demonstration
   const [workoutHistory] = useState<Workout[]>([
     {
@@ -397,6 +454,8 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
     if (!currentWorkout) return;
     
     const updatedWorkout = { ...currentWorkout };
+    const exercise = updatedWorkout.exercises[exerciseIndex].exercise;
+    
     updatedWorkout.exercises[exerciseIndex].sets[setIndex] = {
       weight,
       reps,
@@ -404,6 +463,24 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
     };
     
     setCurrentWorkout(updatedWorkout);
+    
+    // Check if this is a personal record
+    if (checkForNewPR(exercise.id, weight, reps)) {
+      // Add to personal records
+      addPersonalRecord(
+        exercise.id, 
+        weight, 
+        reps, 
+        `New PR during ${updatedWorkout.name} workout`
+      );
+      
+      // Show a toast notification for the new PR
+      toast({
+        title: "New Personal Record! 🏆",
+        description: `${exercise.name}: ${weight} lbs x ${reps} reps`,
+        variant: "default",
+      });
+    }
     
     // Move to the next set or exercise
     if (setIndex < updatedWorkout.exercises[exerciseIndex].sets.length - 1) {
@@ -431,6 +508,41 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
   
+  // Get current PR for a specific exercise
+  const getCurrentPR = (exerciseId: string): PersonalRecord | undefined => {
+    // Find all records for this exercise
+    const exerciseRecords = personalRecords.filter(record => record.exerciseId === exerciseId);
+    
+    // If no records, return undefined
+    if (exerciseRecords.length === 0) return undefined;
+    
+    // Sort by weight (descending)
+    const sortedByWeight = [...exerciseRecords].sort((a, b) => b.weight - a.weight);
+    return sortedByWeight[0];
+  };
+  
+  // Check if a completed set is a new PR
+  const checkForNewPR = (exerciseId: string, weight: number, reps: number): boolean => {
+    const currentPR = getCurrentPR(exerciseId);
+    if (!currentPR) return true; // First record is always a PR
+    
+    // For simplicity, we'll consider it a PR if the weight is higher or equal weight with more reps
+    return weight > currentPR.weight || (weight === currentPR.weight && reps > currentPR.reps);
+  };
+  
+  // Add a new personal record
+  const addPersonalRecord = (exerciseId: string, weight: number, reps: number, notes?: string) => {
+    const newRecord: PersonalRecord = {
+      exerciseId,
+      weight,
+      reps,
+      date: new Date(),
+      notes
+    };
+    
+    setPersonalRecords(prev => [...prev, newRecord]);
+  };
+  
   return (
     <div className="mx-auto w-full max-w-4xl">
       <Card className="shadow-md border-pink-100">
@@ -441,7 +553,7 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
           </p>
           
           <Tabs defaultValue="workout" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full grid grid-cols-4 bg-pink-100">
+            <TabsList className="w-full grid grid-cols-5 bg-pink-100">
               <TabsTrigger 
                 value="workout" 
                 className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
@@ -462,6 +574,13 @@ export const WeightliftingSpecificExercisesEnhanced = () => {
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 History
+              </TabsTrigger>
+              <TabsTrigger 
+                value="records" 
+                className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800"
+              >
+                <Award className="h-4 w-4 mr-2" />
+                Records
               </TabsTrigger>
               <TabsTrigger 
                 value="progress" 
