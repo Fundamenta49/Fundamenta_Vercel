@@ -264,199 +264,191 @@ export default function YogaVisionSimplified({
   };
 
   return (
-    <div className="w-full max-w-full space-y-2">
-      <Card className="w-full border-0 shadow-none rounded-xl">
-        <CardContent className="px-4 pt-2 pb-0">
-          <div className="space-y-1">
-            {/* Reference Image - Using thumbnails from video */}
-            <div>
-              <div className="bg-white rounded-lg overflow-hidden border border-gray-100">
+    <div className="w-full">
+      {/* Top Part - Reference image and camera toggle */}
+      <div className="mb-3">
+        {/* Reference Image from Video */}
+        <div className="relative mb-2 bg-white rounded-md overflow-hidden">
+          <img 
+            src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
+            alt={`${selectedPose?.name || 'Yoga pose'} reference`}
+            className="w-full object-cover rounded-md"
+            style={{ aspectRatio: "16/9", maxHeight: "180px" }}
+            onError={(e) => {
+              const videoInfo = getYogaPoseVideoInfo(poseId);
+              if (videoInfo?.videoId) {
+                e.currentTarget.src = `https://img.youtube.com/vi/${videoInfo.videoId}/hqdefault.jpg`;
+              } else {
+                e.currentTarget.src = `https://img.youtube.com/vi/hQN6j3UxIQ0/hqdefault.jpg`;
+              }
+            }}
+          />
+          {/* Camera toggle as overlay button */}
+          <div className="absolute top-2 right-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={toggleCameraMode}
+              className="rounded-full h-7 text-xs px-3 bg-black/40 hover:bg-black/50 text-white"
+            >
+              {useCameraMode ? 
+                <><Upload className="h-3 w-3 mr-1" /> <span className="whitespace-nowrap">Use photos</span></> : 
+                <><Camera className="h-3 w-3 mr-1" /> <span className="whitespace-nowrap">Use camera</span></>
+              }
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Middle Part - Camera/Upload area */}
+      <div className="mb-4">
+        <input 
+          type="file" 
+          accept="image/*" 
+          onChange={handleFileSelect} 
+          className="hidden" 
+          ref={fileInputRef}
+        />
+        
+        {useCameraMode ? (
+          // Camera mode
+          !imagePreview ? (
+            <div className="w-full">
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                videoConstraints={{
+                  facingMode: "user",
+                  aspectRatio: 16/9,
+                  width: { ideal: 640 },
+                  height: { ideal: 360 }
+                }}
+                className="w-full rounded-md mx-auto mb-3 object-cover"
+                style={{ 
+                  maxWidth: "100%", 
+                  height: "auto",
+                  maxHeight: "260px",
+                  aspectRatio: "16/9"
+                }}
+              />
+              <div className="flex justify-center">
+                <Button 
+                  onClick={handleWebcamCapture} 
+                  variant="default"
+                  size="sm"
+                  className="h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <Camera className="h-3 w-3 mr-1.5" />
+                  Capture Photo
+                </Button>
+              </div>
+            </div>
+          ) : (
+            // Show captured image
+            <div className="text-center w-full">
+              <div className="relative w-full mx-auto mb-3">
                 <img 
-                  src={getYogaPoseThumbnail(poseId) || `https://img.youtube.com/vi/hQN6j3UxIQ0/mqdefault.jpg`}
-                  alt={`${selectedPose?.name || 'Yoga pose'} reference`}
-                  className="w-full object-cover rounded-md"
-                  style={{ aspectRatio: "16/9", maxHeight: "110px" }}
-                  onError={(e) => {
-                    const videoInfo = getYogaPoseVideoInfo(poseId);
-                    if (videoInfo?.videoId) {
-                      e.currentTarget.src = `https://img.youtube.com/vi/${videoInfo.videoId}/hqdefault.jpg`;
-                    } else {
-                      e.currentTarget.src = `https://img.youtube.com/vi/hQN6j3UxIQ0/hqdefault.jpg`;
-                    }
+                  src={imagePreview} 
+                  alt="Yoga pose capture" 
+                  className="w-full object-contain rounded-md"
+                  style={{ 
+                    maxWidth: "100%", 
+                    maxHeight: "260px",
+                    aspectRatio: "16/9"
                   }}
                 />
               </div>
+              <div className="flex justify-center">
+                <Button 
+                  onClick={() => handleReset()} 
+                  variant="ghost" 
+                  size="sm"
+                  className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
+                >
+                  <Camera className="h-3 w-3 mr-1.5" />
+                  Retake
+                </Button>
+              </div>
             </div>
-            
-            {/* Camera Toggle */}
-            <div className="flex justify-end">
+          )
+        ) : (
+          // File upload mode
+          !imagePreview ? (
+            <div className="flex flex-col items-center justify-center p-10 rounded-md bg-gray-50 border border-dashed border-gray-200">
+              <Camera className="h-10 w-10 mb-3 text-gray-400" />
+              <p className="text-sm text-muted-foreground mb-3">No image selected</p>
               <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={toggleCameraMode}
-                className="rounded-full text-xs px-4 h-8 bg-gray-100 hover:bg-gray-200 text-gray-800"
+                onClick={handleCameraClick} 
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
               >
-                {useCameraMode ? 
-                  <><Upload className="h-3 w-3 mr-1.5" /> <span className="whitespace-nowrap">Use photos</span></> : 
-                  <><Camera className="h-3 w-3 mr-1.5" /> <span className="whitespace-nowrap">Use camera</span></>
-                }
+                <Upload className="h-3 w-3 mr-1.5" />
+                Upload Image
               </Button>
             </div>
-            
-            {/* Photo Capture Area */}
-            <div className="flex flex-col items-center justify-center border border-dashed rounded-lg p-2 mb-2 border-gray-200">
-              <input 
-                type="file" 
-                accept="image/*" 
-                onChange={handleFileSelect} 
-                className="hidden" 
-                ref={fileInputRef}
-              />
-              
-              {useCameraMode ? (
-                // Camera mode
-                !imagePreview ? (
-                  <div className="w-full">
-                    <Webcam
-                      audio={false}
-                      ref={webcamRef}
-                      screenshotFormat="image/jpeg"
-                      videoConstraints={{
-                        facingMode: "user",
-                        aspectRatio: 4/3,
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                      }}
-                      className="w-full rounded-md mx-auto mb-2 object-cover"
-                      style={{ 
-                        maxWidth: "100%", 
-                        height: "auto",
-                        maxHeight: "22vh",
-                        aspectRatio: "16/9"
-                      }}
-                    />
-                    <div className="flex gap-2 justify-center">
-                      <Button 
-                        onClick={handleWebcamCapture} 
-                        variant="default"
-                        size="sm"
-                        className="h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                      >
-                        <Camera className="h-3 w-3 mr-1.5" />
-                        Capture Photo
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  // Show captured image
-                  <div className="text-center w-full">
-                    <div className="relative w-full mx-auto mb-2">
-                      <img 
-                        src={imagePreview} 
-                        alt="Yoga pose capture" 
-                        className="w-full object-contain rounded-md"
-                        style={{ 
-                          maxWidth: "100%", 
-                          maxHeight: "22vh",
-                          aspectRatio: "16/9"
-                        }}
-                      />
-                    </div>
-                    <div className="flex gap-2 justify-center">
-                      <Button 
-                        onClick={() => handleReset()} 
-                        variant="ghost" 
-                        size="sm"
-                        className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
-                      >
-                        <Camera className="h-3 w-3 mr-1.5" />
-                        Retake
-                      </Button>
-                    </div>
-                  </div>
-                )
-              ) : (
-                // File upload mode
-                !imagePreview ? (
-                  <div className="text-center">
-                    <Camera className="mx-auto h-8 w-8 mb-1 text-gray-400" />
-                    <p className="text-xs text-muted-foreground mb-2">No image selected</p>
-                    <div className="flex gap-2 justify-center">
-                      <Button 
-                        onClick={handleCameraClick} 
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
-                      >
-                        <Upload className="h-3 w-3 mr-1.5" />
-                        Upload Image
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center w-full">
-                    <div className="relative w-full mx-auto mb-2">
-                      <img 
-                        src={imagePreview} 
-                        alt="Yoga pose preview" 
-                        className="w-full object-contain rounded-md"
-                        style={{ 
-                          maxWidth: "100%", 
-                          maxHeight: "22vh",
-                          aspectRatio: "16/9"
-                        }}
-                      />
-                    </div>
-                    <div className="flex gap-2 justify-center">
-                      <Button 
-                        onClick={handleCameraClick} 
-                        variant="ghost" 
-                        size="sm"
-                        className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
-                      >
-                        <Upload className="h-3 w-3 mr-1.5" />
-                        Change Image
-                      </Button>
-                    </div>
-                  </div>
-                )
-              )}
+          ) : (
+            <div className="text-center w-full">
+              <div className="relative w-full mx-auto mb-3">
+                <img 
+                  src={imagePreview} 
+                  alt="Yoga pose preview" 
+                  className="w-full object-contain rounded-md"
+                  style={{ 
+                    maxWidth: "100%", 
+                    maxHeight: "260px",
+                    aspectRatio: "16/9"
+                  }}
+                />
+              </div>
+              <div className="flex justify-center">
+                <Button 
+                  onClick={handleCameraClick} 
+                  variant="ghost" 
+                  size="sm"
+                  className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
+                >
+                  <Upload className="h-3 w-3 mr-1.5" />
+                  Change Image
+                </Button>
+              </div>
             </div>
-          </div>
-        </CardContent>
-        
-        {/* Inline the buttons into the content area to avoid unnecessary footers */}
-        <div className="flex justify-between px-4 py-2">
-          {onClose && (
-            <Button 
-              variant="ghost" 
-              onClick={onClose}
-              size="sm"
-              className="h-7 text-xs rounded-full px-3 bg-gray-200 hover:bg-gray-300 text-gray-800"
-            >
-              Back
-            </Button>
-          )}
-          <Button
-            onClick={handleSubmitForAnalysis}
-            disabled={!selectedImage || isAnalyzing}
-            className="flex items-center h-7 text-xs rounded-full px-3 bg-blue-600 hover:bg-blue-700 text-white ml-auto"
+          )
+        )}
+      </div>
+
+      {/* Bottom part - Action buttons */}
+      <div className="flex justify-between mt-4">
+        {onClose && (
+          <Button 
+            variant="ghost" 
+            onClick={onClose}
             size="sm"
+            className="h-8 text-xs rounded-full px-4 bg-gray-200 hover:bg-gray-300 text-gray-800"
           >
-            {isAnalyzing ? (
-              <>
-                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                Analyze
-                <ArrowRight className="h-3 w-3 ml-1" />
-              </>
-            )}
+            Back
           </Button>
-        </div>
-      </Card>
+        )}
+        <Button
+          onClick={handleSubmitForAnalysis}
+          disabled={!selectedImage || isAnalyzing}
+          className="flex items-center h-8 text-xs rounded-full px-4 bg-blue-600 hover:bg-blue-700 text-white ml-auto"
+          size="sm"
+        >
+          {isAnalyzing ? (
+            <>
+              <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+              Analyzing...
+            </>
+          ) : (
+            <>
+              Analyze
+              <ArrowRight className="h-3 w-3 ml-1.5" />
+            </>
+          )}
+        </Button>
+      </div>
 
       {/* Analysis results as overlay */}
       {analysis && showAnalysisOverlay && (

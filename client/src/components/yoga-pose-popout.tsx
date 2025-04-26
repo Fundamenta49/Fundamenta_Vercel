@@ -549,15 +549,11 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             </TabsContent>
             
             <TabsContent value="practice" className="h-auto">
-              <div className="w-full mx-auto">
-                <div className="bg-background rounded-lg mb-3 sm:mb-4">
-                  {/* Using the simplified YogaVision component */}
-                  <YogaVisionSimplified 
-                    poseId={pose.id} 
-                    onClose={handleClose}
-                  />
-                </div>
-              </div>
+              {/* Using the simplified YogaVision component with direct integration */}
+              <YogaVisionSimplified 
+                poseId={pose.id} 
+                onClose={handleClose}
+              />
             </TabsContent>
           </Tabs>
         </div>
