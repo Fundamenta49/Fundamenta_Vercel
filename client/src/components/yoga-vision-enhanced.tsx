@@ -345,12 +345,13 @@ export default function YogaVisionEnhanced({
   }
   
   // Filter poses based on what user has unlocked
+  // Use optional chaining to safely call isPoseUnlocked
   const availablePoses = referencePoses.filter(pose => 
-    isPoseUnlocked(pose.id)
+    isPoseUnlocked?.(pose.id) || true // Default to showing all poses if function is undefined
   );
   
   const lockedPoses = referencePoses.filter(pose => 
-    !isPoseUnlocked(pose.id)
+    isPoseUnlocked ? !isPoseUnlocked(pose.id) : false // Default to no locked poses if function is undefined
   );
 
   // Get selected pose if available
