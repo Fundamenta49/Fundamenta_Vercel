@@ -312,14 +312,16 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
       </DialogTrigger>
       
       <DialogContent 
-        className="max-w-4xl overflow-y-auto p-0 rounded-xl shadow-lg mx-auto"
+        className="max-w-4xl p-0 rounded-xl shadow-lg mx-auto"
         style={{
           width: "94vw",
-          maxHeight: "90vh",
+          height: "auto",
+          maxHeight: "95vh",
           position: "fixed",
           top: "50%",
           left: "50%",
-          transform: "translate(-50%, -50%)"
+          transform: "translate(-50%, -50%)",
+          overflow: "auto"
         }}>
         {/* Header with clean, minimal design - responsive for mobile and desktop */}
         <div className="px-4 sm:px-6 pt-4 sm:pt-6 relative">
@@ -499,7 +501,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               </div>
             </TabsContent>
             
-            <TabsContent value="video" className="min-h-[300px] sm:min-h-[400px]">
+            <TabsContent value="video" className="h-auto">
               {currentVideoId ? (
                 <div className="w-full max-w-screen-md mx-auto">
                   <div className="aspect-video w-full rounded-lg overflow-hidden shadow-sm mb-3 sm:mb-4">
@@ -549,7 +551,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               )}
             </TabsContent>
             
-            <TabsContent value="practice" className="min-h-[300px] sm:min-h-[400px]">
+            <TabsContent value="practice" className="h-auto">
               <div className="w-full mx-auto">
                 <div className="bg-background rounded-lg mb-3 sm:mb-4">
                   <YogaVisionEnhanced 
