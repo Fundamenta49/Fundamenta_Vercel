@@ -179,18 +179,22 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           className={`cursor-pointer hover:border-primary transition-all duration-200 ${!unlocked ? 'opacity-60' : ''}`}
         >
           <CardContent className="p-4 flex flex-col items-center">
-            {pose.imageUrl && (
-              <div className="w-full h-32 rounded-md overflow-hidden mb-3 bg-muted flex items-center justify-center">
+            <div className="w-full h-32 rounded-md overflow-hidden mb-3 bg-muted flex items-center justify-center">
+              {isLoadingImage ? (
+                <div className="animate-pulse flex items-center justify-center w-full h-full">
+                  <span className="text-xs text-muted-foreground">Loading pose image...</span>
+                </div>
+              ) : (
                 <img 
-                  src={formatImageUrl(pose.imageUrl)} 
+                  src={poseImage || formatImageUrl(pose.imageUrl || '')} 
                   alt={pose.name} 
                   className="object-cover w-full h-full"
                   onError={(e) => {
                     e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
                   }}
                 />
-              </div>
-            )}
+              )}
+            </div>
             
             <h3 className="font-medium text-center text-base">{pose.name}</h3>
             <p className="text-xs text-muted-foreground text-center italic">{pose.sanskritName}</p>
@@ -269,18 +273,22 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               </div>
               
               <div>
-                {pose.imageUrl && (
-                  <div className="w-full h-48 rounded-md overflow-hidden mb-4 bg-muted flex items-center justify-center">
+                <div className="w-full h-48 rounded-md overflow-hidden mb-4 bg-muted flex items-center justify-center">
+                  {isLoadingImage ? (
+                    <div className="animate-pulse flex items-center justify-center w-full h-full">
+                      <span className="text-sm text-muted-foreground">Loading pose image...</span>
+                    </div>
+                  ) : (
                     <img 
-                      src={formatImageUrl(pose.imageUrl)} 
+                      src={poseImage || formatImageUrl(pose.imageUrl || '')} 
                       alt={pose.name} 
                       className="object-cover w-full h-full"
                       onError={(e) => {
                         e.currentTarget.src = `${getFallbackImageUrl()}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80`;
                       }}
                     />
-                  </div>
-                )}
+                  )}
+                </div>
                 
                 {achievement && achievement.masteryLevel > 0 && (
                   <div className="mt-4 p-3 bg-muted rounded-md">
