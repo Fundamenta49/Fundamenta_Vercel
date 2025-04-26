@@ -1,110 +1,164 @@
 [
   {
     "id": "mountain",
-    "filename": "mountain.png",
-    "alternateFilename": "mountain.jpg",
-    "name": "Mountain Pose (Tadasana)"
+    "filename": "level1/mountain.jpg",
+    "alternateFilename": "mountain.png",
+    "name": "Mountain Pose (Tadasana)",
+    "level": 1,
+    "category": "standing",
+    "difficulty": "beginner"
   },
   {
     "id": "child",
-    "filename": "child.png",
-    "alternateFilename": "child.jpg",
-    "name": "Child's Pose (Balasana)"
+    "filename": "level1/child.jpg",
+    "alternateFilename": "child.png",
+    "name": "Child's Pose (Balasana)",
+    "level": 1,
+    "category": "resting",
+    "difficulty": "beginner"
   },
   {
     "id": "corpse",
-    "filename": "corpse.png",
-    "alternateFilename": "corpse.jpg",
-    "name": "Corpse Pose (Savasana)"
+    "filename": "level1/corpse.jpg",
+    "alternateFilename": "corpse.png",
+    "name": "Corpse Pose (Savasana)",
+    "level": 1,
+    "category": "resting",
+    "difficulty": "beginner"
   },
   {
     "id": "downward_dog",
-    "filename": "downward_dog.jpg",
+    "filename": "level2/downward_dog.jpg",
     "alternateFilename": "downward_dog.png",
-    "name": "Downward Facing Dog (Adho Mukha Svanasana)"
+    "name": "Downward Facing Dog (Adho Mukha Svanasana)",
+    "level": 2,
+    "category": "forward_bend",
+    "difficulty": "beginner"
   },
   {
     "id": "cat_cow",
-    "filename": "cat_cow.png",
-    "alternateFilename": "cat_cow.jpg",
-    "name": "Cat-Cow Pose (Marjaryasana-Bitilasana)"
+    "filename": "level2/cat_cow.jpg",
+    "alternateFilename": "cat_cow.png",
+    "name": "Cat-Cow Pose (Marjaryasana-Bitilasana)",
+    "level": 2,
+    "category": "flow",
+    "difficulty": "beginner"
   },
   {
     "id": "forward_fold",
-    "filename": "forward_fold.jpg",
+    "filename": "level2/forward_fold.jpg",
     "alternateFilename": "forward_fold.png",
-    "name": "Forward Fold (Uttanasana)"
+    "name": "Forward Fold (Uttanasana)",
+    "level": 2,
+    "category": "forward_bend",
+    "difficulty": "beginner"
   },
   {
     "id": "tree",
-    "filename": "tree.png",
-    "alternateFilename": "tree.jpg",
-    "name": "Tree Pose (Vrksasana)"
+    "filename": "level3/tree.jpg",
+    "alternateFilename": "tree.png",
+    "name": "Tree Pose (Vrksasana)",
+    "level": 3,
+    "category": "balance",
+    "difficulty": "intermediate"
   },
   {
     "id": "warrior_1",
-    "filename": "warrior_1.png",
-    "alternateFilename": "warrior_1.jpg",
-    "name": "Warrior I (Virabhadrasana I)"
+    "filename": "level3/warrior_1.jpg",
+    "alternateFilename": "warrior_1.png",
+    "name": "Warrior I (Virabhadrasana I)",
+    "level": 3,
+    "category": "standing",
+    "difficulty": "intermediate"
   },
   {
     "id": "warrior_2",
-    "filename": "warrior_2.png",
-    "alternateFilename": "warrior_2.jpg",
-    "name": "Warrior II (Virabhadrasana II)"
+    "filename": "level3/warrior_2.jpg",
+    "alternateFilename": "warrior_2.png",
+    "name": "Warrior II (Virabhadrasana II)",
+    "level": 3,
+    "category": "standing",
+    "difficulty": "intermediate"
   },
   {
     "id": "triangle",
-    "filename": "triangle.png",
-    "alternateFilename": "triangle.jpg",
-    "name": "Triangle Pose (Trikonasana)"
+    "filename": "level4/triangle.jpg",
+    "alternateFilename": "triangle.png",
+    "name": "Triangle Pose (Trikonasana)",
+    "level": 4,
+    "category": "standing",
+    "difficulty": "intermediate"
   },
   {
     "id": "chair",
-    "filename": "chair.png",
-    "alternateFilename": "chair.jpg",
-    "name": "Chair Pose (Utkatasana)"
+    "filename": "level4/chair.jpg",
+    "alternateFilename": "chair.png",
+    "name": "Chair Pose (Utkatasana)",
+    "level": 4,
+    "category": "standing",
+    "difficulty": "intermediate"
   },
   {
     "id": "bridge",
-    "filename": "bridge.jpg",
+    "filename": "level4/bridge.jpg",
     "alternateFilename": "bridge.png",
-    "name": "Bridge Pose (Setu Bandha Sarvangasana)"
+    "name": "Bridge Pose (Setu Bandha Sarvangasana)",
+    "level": 4,
+    "category": "backbend",
+    "difficulty": "intermediate"
   },
   {
     "id": "half_moon",
-    "filename": "half_moon.png",
-    "alternateFilename": "half_moon.jpg",
-    "name": "Half Moon Pose (Ardha Chandrasana)"
+    "filename": "level5/half_moon.jpg",
+    "alternateFilename": "half_moon.png",
+    "name": "Half Moon Pose (Ardha Chandrasana)",
+    "level": 5,
+    "category": "balance",
+    "difficulty": "advanced"
   },
   {
     "id": "eagle",
-    "filename": "eagle.png",
-    "alternateFilename": "eagle.jpg",
-    "name": "Eagle Pose (Garudasana)"
+    "filename": "level5/eagle.jpg",
+    "alternateFilename": "eagle.png",
+    "name": "Eagle Pose (Garudasana)",
+    "level": 5,
+    "category": "balance",
+    "difficulty": "advanced"
   },
   {
     "id": "pigeon",
-    "filename": "pigeon.jpg",
+    "filename": "level5/pigeon.jpg",
     "alternateFilename": "pigeon.png",
-    "name": "Pigeon Pose (Eka Pada Rajakapotasana)"
+    "name": "Pigeon Pose (Eka Pada Rajakapotasana)",
+    "level": 5,
+    "category": "hip_opener",
+    "difficulty": "advanced"
   },
   {
     "id": "side_plank",
-    "filename": "side_plank.png",
-    "alternateFilename": "side_plank.jpg",
-    "name": "Side Plank (Vasisthasana)"
+    "filename": "level6/side_plank.jpg",
+    "alternateFilename": "side_plank.png",
+    "name": "Side Plank (Vasisthasana)",
+    "level": 6,
+    "category": "arm_balance",
+    "difficulty": "advanced"
   },
   {
     "id": "crow",
-    "filename": "crow.jpg", 
+    "filename": "level6/crow.jpg", 
     "alternateFilename": "crow_3.jpg",
-    "name": "Crow Pose (Bakasana)"
+    "name": "Crow Pose (Bakasana)",
+    "level": 6,
+    "category": "arm_balance",
+    "difficulty": "advanced"
   },
   {
     "id": "boat",
-    "filename": "boat.jpg",
+    "filename": "level6/boat.jpg",
     "alternateFilename": "boat.png",
-    "name": "Boat Pose (Navasana)"
+    "name": "Boat Pose (Navasana)",
+    "level": 6,
+    "category": "core",
+    "difficulty": "advanced"
   }
 ]

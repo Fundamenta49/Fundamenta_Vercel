@@ -36,9 +36,10 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
   const [poseImage, setPoseImage] = useState<string | null>(null);
+  const [possiblePaths, setPossiblePaths] = useState<string[]>([]);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
 
-  // Direct hardcoded image mapping based on pose ID
+  // Dynamic pose image loading from the level-based directory structure
   useEffect(() => {
     const loadPoseImage = () => {
       // Only load if we have a valid pose ID
@@ -47,57 +48,68 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
       try {
         setIsLoadingImage(true);
         
-        // Create a direct mapping to the source images in attached_assets
-        const poseImageMap: Record<string, string> = {
-          // Level 1 poses (beginner basics) from image_1745636127273.png
-          'mountain': '/images/yoga/level1/mountain.jpg',
-          'child': '/images/yoga/level1/child.jpg',
-          'corpse': '/images/yoga/level1/corpse.jpg',
+        // Get the pose level - either from the pose object directly or determine it
+        const getPoseLevel = (): number => {
+          // If level is directly provided in the pose object
+          if (pose.level) return pose.level;
           
-          // Level 2 poses (beginner progression) from image_1745636127273.png
-          'downward_dog': '/images/yoga/level2/downward_dog.jpg',
-          'cat_cow': '/images/yoga/level2/cat_cow.jpg',
-          'forward_fold': '/images/yoga/level2/forward_fold.jpg',
+          // Determine level based on ID mapping
+          // Level 1 poses (beginner basics)
+          if (['mountain', 'child', 'corpse'].includes(pose.id)) return 1;
           
-          // Level 3 poses (intermediate) from image_1745636114084.png
-          'tree': '/images/yoga/level3/tree.jpg', 
-          'warrior_1': '/images/yoga/level3/warrior_1.jpg',
-          'warrior_2': '/images/yoga/level3/warrior_2.jpg',
+          // Level 2 poses (beginner progression)
+          if (['downward_dog', 'cat_cow', 'forward_fold'].includes(pose.id)) return 2;
           
-          // Level 4 poses (intermediate progression) from image_1745636114084.png
-          'triangle': '/images/yoga/level4/triangle.jpg',
-          'chair': '/images/yoga/level4/chair.jpg',
-          'bridge': '/images/yoga/level4/bridge.jpg',
+          // Level 3 poses (intermediate)
+          if (['tree', 'warrior_1', 'warrior_2'].includes(pose.id)) return 3;
           
-          // Level 5 poses (advanced) - temporarily using fallbacks until we add more images
-          'half_moon': '/images/yoga/level5/half_moon.jpg',
-          'eagle': '/images/yoga/level5/eagle.jpg',
-          'pigeon': '/images/yoga/level5/pigeon.jpg',
+          // Level 4 poses (intermediate progression)
+          if (['triangle', 'chair', 'bridge'].includes(pose.id)) return 4;
           
-          // Level 6 poses (expert) - temporarily using fallbacks until we add more images
-          'crow': '/images/yoga/level6/crow.jpg',
-          'side_plank': '/images/yoga/level6/side_plank.jpg',
-          'boat': '/images/yoga/level6/boat.jpg'
+          // Level 5 poses (advanced)
+          if (['half_moon', 'eagle', 'pigeon'].includes(pose.id)) return 5;
+          
+          // Level 6 poses (expert)
+          if (['crow', 'side_plank', 'boat'].includes(pose.id)) return 6;
+          
+          // Default to level 1 if unknown
+          return 1;
         };
         
-        // Use pose-specific map image path if we have one
-        if (poseImageMap[pose.id]) {
-          setPoseImage(poseImageMap[pose.id]);
-          console.log(`Setting image path for ${pose.id}: ${poseImageMap[pose.id]}`);
-        } else {
-          // For any other poses, try standard paths in this priority order:
-          const possiblePaths = [
-            `/images/yoga/${pose.id}.jpg`,
-            `/images/yoga/${pose.id}.png`,
-            `/images/yoga-poses/${pose.id}.jpg`,
-            `/images/yoga-poses/${pose.id}.png`
-          ];
+        const poseLevel = getPoseLevel();
+        
+        // Primary path based on level-organized directory structure
+        const primaryPath = `/images/yoga/level${poseLevel}/${pose.id}.jpg`;
+        
+        // Create a prioritized list of possible image paths to try
+        const possiblePaths = [
+          // Primary level-based path
+          primaryPath,
           
-          // Use the first path by default
-          const fallbackPath = possiblePaths[0];
-          setPoseImage(fallbackPath);
-          console.log(`Using fallback path for ${pose.id}: ${fallbackPath}`);
+          // Try nearby levels (some poses are classified differently in different systems)
+          `/images/yoga/level${poseLevel > 1 ? poseLevel - 1 : poseLevel}/${pose.id}.jpg`,
+          `/images/yoga/level${poseLevel < 6 ? poseLevel + 1 : poseLevel}/${pose.id}.jpg`,
+          
+          // Try root directory with both jpg and png extensions
+          `/images/yoga/${pose.id}.jpg`,
+          `/images/yoga/${pose.id}.png`,
+          
+          // Try alternate directory
+          `/images/yoga-poses/${pose.id}.jpg`,
+          `/images/yoga-poses/${pose.id}.png`,
+        ];
+        
+        // If the pose has allImagePaths from the grid interface, use those too
+        if (pose.allImagePaths && Array.isArray(pose.allImagePaths)) {
+          possiblePaths.push(...pose.allImagePaths);
         }
+        
+        // Use the primary path - the image onError handler will try alternatives if needed
+        setPoseImage(primaryPath);
+        console.log(`Setting primary image path for ${pose.id}: ${primaryPath}`);
+        
+        // Store all paths for fallback purposes
+        setPossiblePaths(possiblePaths);
       } catch (error) {
         console.error('Error setting pose image path:', error);
         setPoseImage(null);
@@ -107,7 +119,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     };
     
     loadPoseImage();
-  }, [pose.id]);
+  }, [pose.id, pose.level]);
 
   const handleClose = () => {
     setIsOpen(false);

@@ -40,18 +40,64 @@ export default function YogaGridInterface() {
     // Find matching pose in updatedPoses
     const updatedPose = updatedPoses.find(p => p.id === pose.id);
     
-    if (updatedPose) {
-      // Get primary and alternate paths for maximum reliability
-      const primaryPath = `/images/yoga/${updatedPose.filename}`;
+    // Get the pose level from updatedPoses data or use our mapping function
+    const getPoseLevel = (poseId: string): number => {
+      // First, check if we have level data in updatedPoses
+      const updatedPoseData = updatedPoses.find(p => p.id === poseId);
+      if (updatedPoseData && updatedPoseData.level) {
+        return updatedPoseData.level;
+      }
       
-      // Build alternate paths using both alternate filename and different directories
+      // Fallback level mapping if not found in updatedPoses
+      // Level 1 poses (beginner basics)
+      if (['mountain', 'child', 'corpse'].includes(poseId)) return 1;
+      
+      // Level 2 poses (beginner progression)
+      if (['downward_dog', 'cat_cow', 'forward_fold'].includes(poseId)) return 2;
+      
+      // Level 3 poses (intermediate)
+      if (['tree', 'warrior_1', 'warrior_2'].includes(poseId)) return 3;
+      
+      // Level 4 poses (intermediate progression)
+      if (['triangle', 'chair', 'bridge'].includes(poseId)) return 4;
+      
+      // Level 5 poses (advanced)
+      if (['half_moon', 'eagle', 'pigeon'].includes(poseId)) return 5;
+      
+      // Level 6 poses (expert)
+      if (['crow', 'side_plank', 'boat'].includes(poseId)) return 6;
+      
+      // Default to level 1 if unknown
+      return 1;
+    };
+    
+    // Determine pose level based on ID or updated data
+    const poseLevel = getPoseLevel(pose.id);
+    
+    if (updatedPose) {
+      // Get primary and alternate paths using our level-based directory structure
+      const primaryPath = `/images/yoga/level${poseLevel}/${pose.id}.jpg`;
+      
+      // Build alternate paths for maximum compatibility
       const alternatePaths: string[] = [
-        // Check in both directories using the primary filename
-        `/images/yoga-poses/${updatedPose.filename}`,
+        // Try alternate level directory (for some poses that are in different levels in different systems)
+        `/images/yoga/level${poseLevel > 1 ? poseLevel - 1 : poseLevel}/${pose.id}.jpg`,
+        `/images/yoga/level${poseLevel < 6 ? poseLevel + 1 : poseLevel}/${pose.id}.jpg`,
         
-        // If we have an alternate filename, check both directories with that
-        ...(updatedPose.alternateFilename ? [`/images/yoga/${updatedPose.alternateFilename}`, 
-                                            `/images/yoga-poses/${updatedPose.alternateFilename}`] : [])
+        // Also try the root directory paths (for backward compatibility)
+        `/images/yoga/${pose.id}.jpg`,
+        `/images/yoga/${pose.id}.png`,
+        
+        // Check in the old yoga-poses directory too
+        `/images/yoga-poses/${pose.id}.jpg`,
+        `/images/yoga-poses/${pose.id}.png`,
+        
+        // If we have an alternate filename, add paths with that as well
+        ...(updatedPose.alternateFilename ? [
+          `/images/yoga/level${poseLevel}/${updatedPose.alternateFilename}`,
+          `/images/yoga/${updatedPose.alternateFilename}`, 
+          `/images/yoga-poses/${updatedPose.alternateFilename}`
+        ] : [])
       ];
       
       return {
@@ -65,6 +111,9 @@ export default function YogaGridInterface() {
         // Store all possible paths for maximum compatibility
         allImagePaths: [primaryPath, ...alternatePaths] as string[],
         
+        // Include the level in the pose data
+        level: poseLevel,
+        
         // Add extra metadata from updated poses if available
         ...(updatedPose.name && {
           name: updatedPose.name.split('(')[0].trim(),
@@ -75,12 +124,16 @@ export default function YogaGridInterface() {
       };
     }
     
-    // If no match in updated poses, try to use a standardized naming approach
+    // If no match in updated poses, use the level-based directory structure
+    const primaryPath = `/images/yoga/level${poseLevel}/${pose.id}.jpg`;
+    
+    // Create a set of possible fallback paths
     const possibleImagePaths: string[] = [
-      `/images/yoga/${pose.id}.png`,
-      `/images/yoga-poses/${pose.id}.png`,
+      primaryPath,
       `/images/yoga/${pose.id}.jpg`,
-      `/images/yoga-poses/${pose.id}.jpg`
+      `/images/yoga/${pose.id}.png`,
+      `/images/yoga-poses/${pose.id}.jpg`,
+      `/images/yoga-poses/${pose.id}.png`
     ];
     
     return {
@@ -88,8 +141,10 @@ export default function YogaGridInterface() {
       // Store multiple possible paths in a custom field
       possibleImagePaths,
       // Also set standard image URLs
-      imageUrl: `/images/yoga/${pose.id}.png`,
-      alternativeImageUrl: `/images/yoga/${pose.id}.jpg`
+      imageUrl: primaryPath,
+      alternativeImageUrl: `/images/yoga/${pose.id}.jpg`,
+      // Include the level in the pose data
+      level: poseLevel
     };
   });
   
