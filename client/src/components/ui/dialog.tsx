@@ -81,17 +81,23 @@ const DialogContent = React.forwardRef<
           className="rounded-lg border bg-background shadow-lg"
         >
           {/* Swipe handle indicator - Apple-style minimal design */}
-          <div className="w-full flex flex-col items-center pt-3 pb-1 bg-white sticky top-0 z-20 border-b border-gray-50/80">
-            <div className="w-12 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700" />
+          <div className="w-full flex flex-col items-center pt-2.5 pb-1 bg-white sticky top-0 z-20">
+            <div className="w-8 h-1 rounded-full bg-gray-200 dark:bg-gray-700" />
           </div>
           
           <DialogPrimitive.Content
             ref={ref}
             className={cn(
-              "grid w-full gap-3 pt-8 px-4 pb-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto bg-white flex-grow",
+              "grid w-full gap-3 pt-6 px-4 pb-4 sm:p-6 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 overflow-y-auto bg-white flex-grow",
               className
             )}
-            style={{ maxHeight: 'calc(88vh - 40px)', backgroundColor: 'white', overscrollBehavior: 'contain' }}
+            style={{ 
+              maxHeight: 'calc(88vh - 30px)', 
+              backgroundColor: 'white', 
+              overscrollBehavior: 'contain',
+              borderTopLeftRadius: '0.75rem',
+              borderTopRightRadius: '0.75rem'
+            }}
             {...props}
           >
             {children}

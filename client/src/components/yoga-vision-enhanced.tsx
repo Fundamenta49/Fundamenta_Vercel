@@ -567,12 +567,17 @@ export default function YogaVisionEnhanced({
                         screenshotFormat="image/jpeg"
                         videoConstraints={{
                           facingMode: "user",
-                          aspectRatio: 1.3333,
+                          aspectRatio: 4/3,
                           width: { ideal: 640 },
                           height: { ideal: 480 }
                         }}
-                        className={`w-full rounded-md mx-auto ${compactMode ? 'mb-2 object-cover max-h-64' : 'mb-4'}`}
-                        style={{ maxWidth: compactMode ? "100%" : "640px" }}
+                        className={`w-full rounded-md mx-auto ${compactMode ? 'mb-2 object-cover' : 'mb-4'}`}
+                        style={{ 
+                          maxWidth: "100%", 
+                          height: compactMode ? "auto" : "auto",
+                          maxHeight: compactMode ? "50vh" : "60vh",
+                          aspectRatio: "4/3"
+                        }}
                       />
                       <div className="flex gap-2 justify-center">
                         <Button 
@@ -589,11 +594,16 @@ export default function YogaVisionEnhanced({
                   ) : (
                     // Show captured image
                     <div className="text-center w-full">
-                      <div className={`relative w-full mx-auto ${compactMode ? 'mb-2 h-48' : 'max-w-md mb-4 aspect-video'}`}>
+                      <div className="relative w-full mx-auto mb-2">
                         <img 
                           src={imagePreview} 
                           alt="Yoga pose capture" 
-                          className="w-full h-full object-contain rounded-md"
+                          className="w-full object-contain rounded-md"
+                          style={{ 
+                            maxWidth: "100%", 
+                            maxHeight: compactMode ? "50vh" : "60vh",
+                            aspectRatio: "4/3"
+                          }}
                         />
                       </div>
                       <div className="flex gap-2 justify-center">
@@ -637,11 +647,16 @@ export default function YogaVisionEnhanced({
                     </div>
                   ) : (
                     <div className="text-center w-full">
-                      <div className={`relative w-full mx-auto ${compactMode ? 'mb-2 h-48' : 'max-w-md mb-4 aspect-video'}`}>
+                      <div className="relative w-full mx-auto mb-2">
                         <img 
                           src={imagePreview} 
                           alt="Yoga pose preview" 
-                          className="w-full h-full object-contain rounded-md"
+                          className="w-full object-contain rounded-md"
+                          style={{ 
+                            maxWidth: "100%", 
+                            maxHeight: compactMode ? "50vh" : "60vh",
+                            aspectRatio: "4/3"
+                          }}
                         />
                       </div>
                       <div className="flex gap-2 justify-center">
