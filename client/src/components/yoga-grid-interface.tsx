@@ -5,9 +5,25 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, FilterIcon, Info, Award } from "lucide-react";
-import { useYogaProgression } from '../contexts/yoga-progression-context';
+import { useYogaProgression, PoseDifficulty, PoseAchievement } from '../contexts/yoga-progression-context';
 import { yogaPoses, yogaChallenges } from '../data/yoga-poses-progression';
 import YogaPosePopout from './yoga-pose-popout';
+
+// Create an adapter interface to handle type discrepancies
+interface YogaPoseAchievementAdapter {
+  masteryLevel: number;
+  bestScore: number;
+  lastPracticedDate?: string;
+}
+
+// Helper function to convert PoseAchievement to our adapter format
+const adaptAchievement = (achievement: PoseAchievement): YogaPoseAchievementAdapter => {
+  return {
+    masteryLevel: achievement.masteryLevel || 0,
+    bestScore: achievement.bestScore || 0,
+    lastPracticedDate: achievement.completionDate  // Map completionDate to lastPracticedDate
+  };
+};
 
 export default function YogaGridInterface() {
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
@@ -15,8 +31,7 @@ export default function YogaGridInterface() {
   const [filteredPoses, setFilteredPoses] = useState(yogaPoses);
   
   // Get user progression context
-  const { userProgress, isPoseUnlocked } = useYogaProgression();
-  const userLevel = userProgress?.currentLevel || 1;
+  const { currentLevel, isPoseUnlocked, userProgress } = useYogaProgression();
 
   // Filter poses whenever filters change
   useEffect(() => {
@@ -32,7 +47,7 @@ export default function YogaGridInterface() {
       const term = searchTerm.toLowerCase();
       result = result.filter(pose => 
         pose.name.toLowerCase().includes(term) || 
-        pose.sanskritName.toLowerCase().includes(term) ||
+        (pose.sanskritName ? pose.sanskritName.toLowerCase().includes(term) : false) ||
         pose.description.toLowerCase().includes(term)
       );
     }
@@ -50,9 +65,14 @@ export default function YogaGridInterface() {
     return acc;
   }, {} as Record<number, typeof yogaPoses>);
 
+  // Convert currentLevel from string to number for comparison
+  const currentLevelNum = currentLevel === 'beginner' ? 1 : 
+                         currentLevel === 'intermediate' ? 2 : 
+                         currentLevel === 'advanced' ? 3 : 1;
+  
   // Get current active challenges
   const availableChallenges = yogaChallenges.filter(challenge => 
-    challenge.levelRequired <= (userProgress?.currentLevel || 1)
+    challenge.levelRequired <= currentLevelNum
   ).slice(0, 3);
 
   return (
@@ -63,7 +83,7 @@ export default function YogaGridInterface() {
             <span>Yoga Practice</span>
             <Badge variant="outline" className="ml-2 flex items-center">
               <Award className="h-3.5 w-3.5 mr-1" />
-              Level {userProgress?.currentLevel || 1}
+              Level {currentLevelNum}
             </Badge>
           </CardTitle>
           <CardDescription>
@@ -151,7 +171,7 @@ export default function YogaGridInterface() {
                           achievement={achievement ? {
                             masteryLevel: achievement.masteryLevel || 0,
                             bestScore: achievement.bestScore || 0,
-                            lastPracticedDate: achievement.lastPracticedDate
+                            lastPracticedDate: achievement.completionDate
                           } : undefined}
                         />
                       );
