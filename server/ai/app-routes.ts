@@ -230,10 +230,59 @@ export const applicationRoutes: Record<string, RouteInfo> = {
   },
   
   "/active": {
-    name: "Active Fitness Tracker",
-    description: "Track and analyze your physical activities and exercises",
+    name: "ActiveYou Fitness Platform",
+    description: "Comprehensive fitness hub with multiple workout modalities, tracking, and AI-powered recommendations",
     categories: ["fitness", "wellness"],
-    keywords: ["active", "fitness", "exercise", "tracking", "activity", "workout", "movement", "progress"]
+    keywords: ["active", "fitness", "exercise", "tracking", "activity", "workout", "movement", "progress", "yoga", "running", "hiit", "meditation", "weightlifting", "stretching"]
+  },
+  
+  "/active/yoga": {
+    name: "ActiveYou Yoga Practice",
+    description: "Yoga poses, sequences, and form analysis with progression tracking",
+    categories: ["fitness", "wellness"],
+    keywords: ["yoga", "poses", "flexibility", "mindfulness", "strength", "balance", "meditation"]
+  },
+  
+  "/active/running": {
+    name: "ActiveYou Running Tracker",
+    description: "Track runs with GPS integration, analyze performance, and set goals",
+    categories: ["fitness"],
+    keywords: ["running", "jogging", "cardio", "tracking", "gps", "distance", "pace", "endurance"]
+  },
+  
+  "/active/hiit": {
+    name: "ActiveYou HIIT Workouts",
+    description: "High-intensity interval training workouts for effective cardio and strength",
+    categories: ["fitness"],
+    keywords: ["hiit", "intervals", "cardio", "intensity", "calorie", "burn", "training"]
+  },
+  
+  "/active/weightlifting": {
+    name: "ActiveYou Weightlifting",
+    description: "Strength training exercises with personal record tracking and form guidance",
+    categories: ["fitness"],
+    keywords: ["weightlifting", "strength", "resistance", "training", "muscles", "weights", "lifting", "PR"]
+  },
+  
+  "/active/stretch": {
+    name: "ActiveYou Stretching",
+    description: "Flexibility and mobility routines for recovery and injury prevention",
+    categories: ["fitness", "wellness"],
+    keywords: ["stretching", "flexibility", "mobility", "recovery", "range of motion", "cool down"]
+  },
+  
+  "/active/meditation": {
+    name: "ActiveYou Meditation",
+    description: "Guided meditation practices for mental wellness and mindfulness",
+    categories: ["fitness", "wellness", "mental health"],
+    keywords: ["meditation", "mindfulness", "breathing", "mental", "relaxation", "focus", "calm"]
+  },
+  
+  "/active/metrics": {
+    name: "ActiveYou Metrics Dashboard",
+    description: "Visualize fitness progress and connections to learning paths and achievements",
+    categories: ["fitness", "wellness"],
+    keywords: ["metrics", "dashboard", "progress", "tracking", "achievements", "visualization", "analytics"]
   },
   
   "/yoga-test": {
