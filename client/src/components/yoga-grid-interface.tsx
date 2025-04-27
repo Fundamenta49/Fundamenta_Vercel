@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -36,70 +36,72 @@ export default function YogaGridInterface() {
   // Get user progression context
   const { currentLevel, isPoseUnlocked, userProgress } = useYogaProgression();
 
-  // Process the poses data with accurate image paths from poses_with_paths.json - simplified approach
-  const processedYogaPoses = yogaPoses.map(pose => {
-    // Find matching pose in posesWithPaths for the correct image path
-    const poseWithPath = posesWithPaths.find(p => p.id === pose.id);
-    
-    // Get the pose level from our mapping function
-    const getPoseLevel = (poseId: string): number => {
-      // Level 1 poses (beginner basics)
-      if (['mountain', 'child', 'corpse'].includes(poseId)) return 1;
+  // Process the poses data with accurate image paths from poses_with_paths.json - using useMemo
+  const processedYogaPoses = useMemo(() => {
+    return yogaPoses.map(pose => {
+      // Find matching pose in posesWithPaths for the correct image path
+      const poseWithPath = posesWithPaths.find(p => p.id === pose.id);
       
-      // Level 2 poses (beginner progression)
-      if (['downward_dog', 'cat_cow', 'forward_fold'].includes(poseId)) return 2;
+      // Get the pose level from our mapping function
+      const getPoseLevel = (poseId: string): number => {
+        // Level 1 poses (beginner basics)
+        if (['mountain', 'child', 'corpse'].includes(poseId)) return 1;
+        
+        // Level 2 poses (beginner progression)
+        if (['downward_dog', 'cat_cow', 'forward_fold'].includes(poseId)) return 2;
+        
+        // Level 3 poses (intermediate)
+        if (['tree', 'warrior_1', 'warrior_2'].includes(poseId)) return 3;
+        
+        // Level 4 poses (intermediate progression)
+        if (['triangle', 'chair', 'bridge'].includes(poseId)) return 4;
+        
+        // Level 5 poses (advanced)
+        if (['half_moon', 'eagle', 'pigeon'].includes(poseId)) return 5;
+        
+        // Level 6 poses (expert)
+        if (['crow', 'side_plank', 'boat'].includes(poseId)) return 6;
+        
+        // Default to level 1 if unknown
+        return 1;
+      };
       
-      // Level 3 poses (intermediate)
-      if (['tree', 'warrior_1', 'warrior_2'].includes(poseId)) return 3;
+      // Determine pose level based on ID
+      const poseLevel = getPoseLevel(pose.id);
+  
+      // If we found this pose in posesWithPaths, use that exact image path
+      if (poseWithPath && poseWithPath.filename) {
+        // Construct the complete pose object with the correct image path
+        return {
+          ...pose,
+          // Use the exact path from poses_with_paths.json
+          imageUrl: poseWithPath.filename,
+          
+          // Include the level in the pose data
+          level: poseLevel,
+          
+          // Use the name from poses_with_paths if available
+          ...(poseWithPath.name && {
+            name: poseWithPath.name.split('(')[0].trim(),
+            sanskritName: poseWithPath.name.includes('(') 
+              ? poseWithPath.name.match(/\((.*)\)/)?.[1] || pose.sanskritName 
+              : pose.sanskritName
+          })
+        };
+      }
       
-      // Level 4 poses (intermediate progression)
-      if (['triangle', 'chair', 'bridge'].includes(poseId)) return 4;
+      // If pose not found in posesWithPaths (shouldn't happen), use a default path
+      console.warn(`Pose ${pose.id} not found in poses_with_paths.json`);
       
-      // Level 5 poses (advanced)
-      if (['half_moon', 'eagle', 'pigeon'].includes(poseId)) return 5;
-      
-      // Level 6 poses (expert)
-      if (['crow', 'side_plank', 'boat'].includes(poseId)) return 6;
-      
-      // Default to level 1 if unknown
-      return 1;
-    };
-    
-    // Determine pose level based on ID
-    const poseLevel = getPoseLevel(pose.id);
-
-    // If we found this pose in posesWithPaths, use that exact image path
-    if (poseWithPath && poseWithPath.filename) {
-      // Construct the complete pose object with the correct image path
       return {
         ...pose,
-        // Use the exact path from poses_with_paths.json
-        imageUrl: poseWithPath.filename,
-        
+        // Set a default image URL based on the pose ID
+        imageUrl: `/images/yoga-poses/${pose.id}.png`,
         // Include the level in the pose data
-        level: poseLevel,
-        
-        // Use the name from poses_with_paths if available
-        ...(poseWithPath.name && {
-          name: poseWithPath.name.split('(')[0].trim(),
-          sanskritName: poseWithPath.name.includes('(') 
-            ? poseWithPath.name.match(/\((.*)\)/)?.[1] || pose.sanskritName 
-            : pose.sanskritName
-        })
+        level: poseLevel
       };
-    }
-    
-    // If pose not found in posesWithPaths (shouldn't happen), use a default path
-    console.warn(`Pose ${pose.id} not found in poses_with_paths.json`);
-    
-    return {
-      ...pose,
-      // Set a default image URL based on the pose ID
-      imageUrl: `/images/yoga-poses/${pose.id}.png`,
-      // Include the level in the pose data
-      level: poseLevel
-    };
-  });
+    });
+  }, []);
   
   // Filter poses whenever filters change
   useEffect(() => {

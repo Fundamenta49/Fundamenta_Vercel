@@ -15,6 +15,21 @@
     "name": "Corpse Pose (Savasana)"
   },
   {
+    "id": "downward_dog",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
+    "name": "Downward-Facing Dog (Adho Mukha Svanasana)"
+  },
+  {
+    "id": "crow",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
+    "name": "Crow Pose (Bakasana)"
+  },
+  {
+    "id": "boat",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
+    "name": "Boat Pose (Navasana)"
+  },
+  {
     "id": "cat_cow",
     "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Cat-Cow Pose (Marjaryasana-Bitilasana)"
