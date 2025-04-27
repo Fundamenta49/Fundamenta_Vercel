@@ -139,7 +139,7 @@ export default function AuthPage() {
                       />
                     </div>
                   </CardContent>
-                  <CardFooter>
+                  <CardFooter className="flex flex-col gap-2">
                     <Button className="w-full" type="submit" disabled={loading}>
                       {loading ? (
                         <>
@@ -149,6 +149,24 @@ export default function AuthPage() {
                       ) : (
                         "Login"
                       )}
+                    </Button>
+                    <div className="w-full flex justify-between items-center">
+                      <div className="h-px bg-border flex-1"></div>
+                      <span className="px-2 text-xs text-muted-foreground">or</span>
+                      <div className="h-px bg-border flex-1"></div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      type="button" 
+                      className="w-full text-sm bg-gray-50 hover:bg-gray-100"
+                      onClick={() => {
+                        setLoginData({ email: 'admin@fundamenta.app', password: 'admin123' });
+                        setTimeout(() => {
+                          handleLoginSubmit({ preventDefault: () => {} } as React.FormEvent);
+                        }, 100);
+                      }}
+                    >
+                      Admin Quick Login
                     </Button>
                   </CardFooter>
                 </form>

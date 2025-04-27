@@ -148,6 +148,10 @@ function Router() {
           <LoginPage />
         </div>
       </Route>
+      <Route path="/auth">
+        {/* New Auth page is completely separated from app layout */}
+        <AuthPage />
+      </Route>
       <Route path="/privacy-policy">
         {/* Privacy policy page without protected route */}
         <PrivacyPolicyPage />
