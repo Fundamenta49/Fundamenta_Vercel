@@ -338,26 +338,29 @@ export const getFitnessActivityStats = (): {
     }, 0);
     
     // Determine favorite activity
-    const activityCounts: Record<ActivityType, number> = {
+    const activityCounts: Partial<Record<ActivityType, number>> = {
       yoga: 0,
       running: 0,
       weightlifting: 0,
       hiit: 0,
       stretch: 0,
-      meditation: 0
+      meditation: 0,
+      activeyou: 0
     };
     
     activities.forEach(activity => {
-      activityCounts[activity.type]++;
+      if (activityCounts[activity.type] !== undefined) {
+        activityCounts[activity.type]!++;
+      }
     });
     
     let favoriteActivity: ActivityType | null = null;
     let maxCount = 0;
     
-    (Object.keys(activityCounts) as ActivityType[]).forEach(type => {
-      if (activityCounts[type] > maxCount) {
-        maxCount = activityCounts[type];
-        favoriteActivity = type;
+    Object.entries(activityCounts).forEach(([type, count]) => {
+      if (count !== undefined && count > maxCount) {
+        maxCount = count;
+        favoriteActivity = type as ActivityType;
       }
     });
     
@@ -401,7 +404,17 @@ export const getSuggestedNextActivities = (activityType?: ActivityType): {
 }[] => {
   // Get user stats to inform recommendations
   const stats = getFitnessActivityStats();
-  const suggestions = [];
+  
+  // Define the suggestion type
+  type ActivitySuggestion = {
+    title: string;
+    description: string;
+    type: ActivityType;
+    duration: number;
+    benefitDescription: string;
+  };
+  
+  const suggestions: ActivitySuggestion[] = [];
 
   // Default suggestions if no specific activity type is provided
   if (!activityType) {

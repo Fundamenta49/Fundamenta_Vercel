@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import HIITSpecificExercisesEnhanced from './hiit-specific-exercises-enhanced';
 import YogaSpecificExercisesEnhanced from './yoga-specific-exercises-enhanced';
@@ -10,7 +11,7 @@ import WeightliftingSpecificExercisesEnhanced from './weightlifting-specific-exe
 import MeditationSpecificExercisesEnhanced from './meditation-specific-exercises-enhanced';
 import ActiveYouMetricsDashboard from './active-you-metrics-dashboard';
 import { Activity } from 'lucide-react';
-import { ActivityType } from '@/contexts/activity-profile-context';
+import { ExerciseType } from '@/modules/active-you/context/module-context';
 import { trackFitnessActivity, getFitnessActivityStats } from '@/lib/active-you-integration';
 
 // Export the StretchingIcon for backward compatibility with active-you.tsx
@@ -151,39 +152,59 @@ export default function ActiveYouEnhanced() {
         </Tabs>
       </Card>
       
-      <div className="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto">
-        <Card className="flex-1 p-4 border shadow-sm">
-          <h3 className="text-lg font-semibold text-pink-700 mb-2">Personalized Recommendations</h3>
-          <p className="text-gray-600 text-sm mb-3">
-            Our AI assistant Fundi can analyze your exercise preferences and create a custom plan tailored to your goals and constraints.
-          </p>
-          <div className="bg-pink-50 p-3 rounded-md">
-            <p className="text-sm text-pink-700 font-medium">Popular recommendations:</p>
-            <ul className="text-sm text-gray-600 mt-1 pl-4 space-y-1 list-disc">
-              <li>Morning energy boosters (5-10 min)</li>
-              <li>Office desk stretches for posture</li>
-              <li>Recovery routines for post-workout</li>
-              <li>Stress-reducing mindful movement</li>
-            </ul>
-          </div>
-        </Card>
+      <div className="flex flex-col gap-8 max-w-4xl mx-auto">
+        {/* Metrics Dashboard - Shows connections to other platform features */}
+        <ActiveYouMetricsDashboard />
         
-        <Card className="flex-1 p-4 border shadow-sm">
-          <h3 className="text-lg font-semibold text-pink-700 mb-2">Exercise Tracking</h3>
-          <p className="text-gray-600 text-sm mb-3">
-            Monitor your progress and build consistency with our simple tracking tools. See improvements over time and stay motivated.
-          </p>
-          <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="bg-pink-50 p-2 rounded-md">
-              <p className="text-pink-700 font-medium text-xl">12</p>
-              <p className="text-xs text-gray-600">Workouts this month</p>
+        {/* Recommendations & Tracking Section */}
+        <div className="flex flex-col md:flex-row gap-6">
+          <Card className="flex-1 p-4 border shadow-sm">
+            <h3 className="text-lg font-semibold text-pink-700 mb-2">Personalized Recommendations</h3>
+            <p className="text-gray-600 text-sm mb-3">
+              Our AI assistant Fundi can analyze your exercise preferences and create a custom plan tailored to your goals and constraints.
+            </p>
+            <div className="bg-pink-50 p-3 rounded-md">
+              <p className="text-sm text-pink-700 font-medium">Popular recommendations:</p>
+              <ul className="text-sm text-gray-600 mt-1 pl-4 space-y-1 list-disc">
+                <li>Morning energy boosters (5-10 min)</li>
+                <li>Office desk stretches for posture</li>
+                <li>Recovery routines for post-workout</li>
+                <li>Stress-reducing mindful movement</li>
+              </ul>
             </div>
-            <div className="bg-pink-50 p-2 rounded-md">
-              <p className="text-pink-700 font-medium text-xl">83%</p>
-              <p className="text-xs text-gray-600">Weekly goal progress</p>
-            </div>
-          </div>
-        </Card>
+          </Card>
+          
+          <Card className="flex-1 p-4 border shadow-sm">
+            <h3 className="text-lg font-semibold text-pink-700 mb-2">Track Your Progress</h3>
+            <p className="text-gray-600 text-sm mb-3">
+              Log your workouts and build consistency with our simple tracking tools. Your completed activities automatically connect to your learning paths.
+            </p>
+            <Button 
+              className="w-full bg-pink-600 hover:bg-pink-700 text-white"
+              onClick={() => {
+                const stats = getFitnessActivityStats();
+                toast({
+                  title: "Activity Tracked",
+                  description: `You've completed ${stats.totalWorkouts} workouts so far. Keep it up!`,
+                  variant: "default"
+                });
+                
+                // Example of how tracking would work
+                trackFitnessActivity({
+                  id: `workout-${Date.now()}`,
+                  type: activeTab as ExerciseType,
+                  timestamp: new Date(),
+                  duration: 20,
+                  details: {
+                    intensity: "moderate"
+                  }
+                });
+              }}
+            >
+              Log Completed Workout
+            </Button>
+          </Card>
+        </div>
       </div>
     </div>
   );

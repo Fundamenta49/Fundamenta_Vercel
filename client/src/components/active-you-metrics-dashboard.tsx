@@ -26,7 +26,8 @@ import {
   Mountain,
   Footprints,
   Wind,
-  Trophy
+  Trophy,
+  Activity
 } from 'lucide-react';
 
 import { getFitnessActivityStats } from '@/lib/active-you-integration';
@@ -36,13 +37,15 @@ import { ExerciseType } from '@/modules/active-you/context/module-context';
 type ActivityType = ExerciseType;
 
 // Map activity types to their icons
-const activityIcons: Record<ActivityType, React.ReactNode> = {
+const activityIcons: Partial<Record<ActivityType, React.ReactNode>> = {
   yoga: <Mountain className="h-5 w-5" />,
   running: <Footprints className="h-5 w-5" />,
   weightlifting: <Dumbbell className="h-5 w-5" />,
   hiit: <Flame className="h-5 w-5" />,
   stretch: <Wind className="h-5 w-5" />,
-  meditation: <Brain className="h-5 w-5" />
+  meditation: <Brain className="h-5 w-5" />,
+  // The "activeyou" is the main tab, not an actual activity type
+  activeyou: <Activity className="h-5 w-5" />
 };
 
 /**
