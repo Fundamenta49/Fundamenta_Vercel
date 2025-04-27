@@ -110,7 +110,7 @@ export const mapQuestToJungle = (module: {
   id: string;
   title: string;
   description: string;
-  type: string; 
+  type?: string; 
   category: string;
   estimatedTime: number;
 }): JungleQuest => {
@@ -139,9 +139,9 @@ export const mapQuestToJungle = (module: {
     jungleTitle,
     jungleDescription,
     category: module.category,
-    type: module.type,
     estimatedTime: module.estimatedTime,
-    requiredRank
+    requiredRank,
+    difficulty: 'beginner'
   };
 };
 

@@ -1,31 +1,35 @@
 /**
- * Companion type represents an animal guide in the jungle system
+ * Represents a jungle companion character that assists users
  */
 export interface Companion {
   id: string;
   name: string;
   species: string;
   description: string;
-  
-  // Appearance
-  avatarSrc: string;
-  color: string;
-  
-  // Specializations
-  specialtyZones: string[];
+  avatarSrc: string; // Path to image
+  color: string; // Primary color for styling
+  specialtyZones: string[]; // Zone categories where this companion is an expert
   personality: 'friendly' | 'wise' | 'energetic' | 'cautious' | 'bold';
-  
-  // Unlock requirements
-  requiredAchievements?: string[];
-  requiredRank?: number;
-  premiumOnly?: boolean;
-  
-  // Tips and dialogue
   introMessage: string;
-  tips: Array<{
-    id: string;
-    text: string;
-    context: string[];
-    minRank?: number;
-  }>;
+  tips: CompanionTip[];
+}
+
+/**
+ * Represents a tip or hint from a companion
+ */
+export interface CompanionTip {
+  id: string;
+  text: string;
+  context: string[]; // Contexts in which this tip is relevant
+}
+
+/**
+ * Represents user progress/relationship with a companion
+ */
+export interface CompanionRelationship {
+  companionId: string;
+  unlockedAt: string;
+  interactionCount: number;
+  lastInteraction: string | null;
+  favoriteStatus: boolean;
 }

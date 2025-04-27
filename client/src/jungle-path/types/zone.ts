@@ -1,33 +1,41 @@
 /**
- * JungleZone type represents a category/area in the jungle map
+ * Represents a jungle zone on the map
  */
 export interface JungleZone {
   id: string;
   name: string;
-  description: string;
   category: string;
-  
-  // Map positioning
-  mapX: number;
-  mapY: number;
-  
-  // Appearance
+  description: string;
   color: string;
-  iconName: string;
-  
-  // Requirements
   requiredRank: number;
-  
-  // Connected zones
-  connectedTo: string[];
-  
-  // Optional visual elements
-  bgImagePath?: string;
-  decorations?: Array<{
-    type: string;
-    x: number;
-    y: number;
-    scale: number;
-    rotation?: number;
-  }>;
+  mapX?: number; // X position on map (0-100)
+  mapY?: number; // Y position on map (0-100)
+  iconName?: string; // Icon to display on map
+  connectedTo?: string[]; // IDs of connected zones
+}
+
+/**
+ * Represents progress within a zone
+ */
+export interface ZoneProgress {
+  zoneId: string;
+  questsCompleted: number;
+  totalQuests: number;
+  progress: number; // 0-100
+  unlockedAt: string | null;
+}
+
+/**
+ * Represents a point of interest within a zone
+ */
+export interface ZonePointOfInterest {
+  id: string;
+  zoneId: string;
+  name: string;
+  description: string;
+  type: 'quest' | 'challenge' | 'landmark';
+  mapX: number; // X position on map (0-100)
+  mapY: number; // Y position on map (0-100)
+  iconName: string;
+  unlocked: boolean;
 }

@@ -1,26 +1,33 @@
 /**
- * User rank in the jungle theme system
+ * Represents a user's rank in the jungle system
  */
 export interface UserRank {
   level: number;
-  title: string;
-  points: number;
-  nextRankPoints: number;
-  progress: number; // 0-1 percentage to next rank
+  name: string;
   color: string;
-  badgeUrl?: string;
+  points: number;
+  nextRankName: string | null;
+  nextRankPoints: number | null;
+  progress: number; // 0-100
 }
 
 /**
- * Rank information for the jungle theme system
+ * Represents a rank threshold in the system
  */
-export interface RankInfo {
+export interface RankThreshold {
   level: number;
-  title: string;
-  description: string;
+  name: string;
   minPoints: number;
-  maxPoints: number;
   color: string;
-  badgeUrl?: string;
-  perks: string[];
+  perks?: string[];
+}
+
+/**
+ * Represents an activity that awards rank points
+ */
+export interface RankActivity {
+  type: 'quest_completion' | 'daily_login' | 'achievement' | 'streak';
+  points: number;
+  description: string;
+  timestamp: string;
 }

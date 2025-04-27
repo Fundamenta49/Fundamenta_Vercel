@@ -1,8 +1,8 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
-export interface JungleThemeContextType {
+interface JungleThemeContextType {
   isJungleTheme: boolean;
-  toggleTheme: () => void;
+  toggleJungleTheme: () => void;
   enableJungleTheme: () => void;
   disableJungleTheme: () => void;
 }
@@ -11,61 +11,62 @@ const JungleThemeContext = createContext<JungleThemeContextType | undefined>(und
 
 interface JungleThemeProviderProps {
   children: ReactNode;
-  defaultTheme?: boolean;
+  defaultEnabled?: boolean;
 }
 
 /**
- * Provider component that enables jungle theme functionality throughout the app
+ * Provider component for the jungle theme system
+ * Allows toggling between normal app appearance and jungle-themed appearance
  */
 export const JungleThemeProvider: React.FC<JungleThemeProviderProps> = ({
   children,
-  defaultTheme = false
+  defaultEnabled = false
 }) => {
   // State to track if jungle theme is active
-  const [isJungleTheme, setIsJungleTheme] = useState<boolean>(() => {
-    // Try to get saved preference from localStorage
-    const savedPreference = localStorage.getItem('jungle-theme-enabled');
-    return savedPreference !== null ? JSON.parse(savedPreference) : defaultTheme;
-  });
-
-  // Save theme preference to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('jungle-theme-enabled', JSON.stringify(isJungleTheme));
-    
-    // Add or remove the jungle-theme class from the document element
-    if (isJungleTheme) {
-      document.documentElement.classList.add('jungle-theme');
-    } else {
-      document.documentElement.classList.remove('jungle-theme');
-    }
-  }, [isJungleTheme]);
-
-  // Toggle between jungle and standard themes
-  const toggleTheme = () => {
+  const [isJungleTheme, setIsJungleTheme] = useState<boolean>(defaultEnabled);
+  
+  // Toggle jungle theme
+  const toggleJungleTheme = () => {
     setIsJungleTheme(prev => !prev);
   };
-
-  // Explicitly enable jungle theme
+  
+  // Enable jungle theme
   const enableJungleTheme = () => {
     setIsJungleTheme(true);
   };
-
-  // Explicitly disable jungle theme
+  
+  // Disable jungle theme
   const disableJungleTheme = () => {
     setIsJungleTheme(false);
   };
-
+  
+  // Apply theme-specific classes to the body when theme changes
+  useEffect(() => {
+    if (isJungleTheme) {
+      document.body.classList.add('jungle-theme');
+    } else {
+      document.body.classList.remove('jungle-theme');
+    }
+    
+    // Clean up on unmount
+    return () => {
+      document.body.classList.remove('jungle-theme');
+    };
+  }, [isJungleTheme]);
+  
   // Context value
   const value = {
     isJungleTheme,
-    toggleTheme,
+    toggleJungleTheme,
     enableJungleTheme,
     disableJungleTheme
   };
-
+  
   return (
     <JungleThemeContext.Provider value={value}>
-      {children}
+      <div className={isJungleTheme ? 'jungle-theme' : ''}>
+        {children}
+      </div>
     </JungleThemeContext.Provider>
   );
 };
