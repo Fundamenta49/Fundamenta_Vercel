@@ -182,7 +182,7 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
             className="p-3 md:p-4 cursor-pointer transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-900"
             onClick={handleToggle}
             style={{
-              borderLeft: isOpen ? `3px solid ${sectionColor}` : '3px solid transparent',
+              borderLeft: `4px solid ${isOpen ? sectionColor : 'transparent'}`,
             }}
           >
             <div className="flex items-start md:items-center justify-between">
