@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useToast, toast } from "@/hooks/use-toast";
 import HIITSpecificExercisesEnhanced from './hiit-specific-exercises-enhanced';
 import YogaSpecificExercisesEnhanced from './yoga-specific-exercises-enhanced';
 import StretchSpecificExercisesEnhanced from './stretch-specific-exercises-enhanced';
