@@ -124,15 +124,15 @@ export default function YogaGridMobile() {
     setFilteredPoses(result);
   }, [difficultyFilter, searchTerm, processedYogaPoses]);
 
-  // Group poses by level
-  const posesByLevel = filteredPoses.reduce((acc, pose) => {
+  // Group poses by level with proper type handling
+  const posesByLevel = filteredPoses.reduce<Record<number, any[]>>((acc, pose) => {
     const level = pose.levelRequired;
     if (!acc[level]) {
       acc[level] = [];
     }
     acc[level].push(pose);
     return acc;
-  }, {} as Record<number, typeof yogaPoses>);
+  }, {});
 
   // Convert currentLevel from string to number for comparison
   const currentLevelNum = currentLevel === 'beginner' ? 1 : 
@@ -251,7 +251,7 @@ export default function YogaGridMobile() {
         {Object.keys(posesByLevel).length > 0 ? (
           Object.entries(posesByLevel)
             .sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB))
-            .map(([level, poses]) => (
+            .map(([level, poses]: [string, any[]]) => (
               <div key={level} className="px-4 sm:px-6 py-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-base font-medium text-gray-800">Level {level} Poses</h3>
@@ -261,7 +261,7 @@ export default function YogaGridMobile() {
                 </div>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                  {poses.map(pose => {
+                  {poses.map((pose: any) => {
                     // Check if pose is unlocked
                     const isUnlocked = isPoseUnlocked ? isPoseUnlocked(pose.id) : true;
                     

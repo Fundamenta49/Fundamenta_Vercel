@@ -197,11 +197,12 @@ export default function YogaPosePopoutMobile({ pose, unlocked, achievement }: Yo
                   </ul>
                 </div>
                 
-                {pose.modifications && pose.modifications.length > 0 && (
+                {/* Modifications section - conditional rendering based on pose data type */}
+                {pose.modifications && Array.isArray(pose.modifications) && pose.modifications.length > 0 && (
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Modifications</p>
                     <ul className="text-sm space-y-1 pl-5 list-disc">
-                      {pose.modifications.map((mod, i) => (
+                      {pose.modifications.map((mod: string, i: number) => (
                         <li key={i}>{mod}</li>
                       ))}
                     </ul>
@@ -214,8 +215,8 @@ export default function YogaPosePopoutMobile({ pose, unlocked, achievement }: Yo
               {unlocked ? (
                 <YogaVisionSimplified 
                   poseId={pose.id}
-                  poseName={pose.name}
-                  initialPoseImageUrl={poseImage || undefined}
+                  /* Remove poseName prop as it's not in the component interface */
+                  /* Pass initialPoseImageUrl only if needed by the component */
                 />
               ) : (
                 <div className="text-center py-8">
