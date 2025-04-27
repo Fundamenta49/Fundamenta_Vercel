@@ -99,6 +99,44 @@ const messageSchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup middleware for security
+  app.use(cookieParser()); // For JWT cookies
+
+  // Security middleware
+  if (process.env.NODE_ENV === 'production') {
+    // Force HTTPS in production
+    app.use((req, res, next) => {
+      if (req.header('x-forwarded-proto') !== 'https') {
+        res.redirect(`https://${req.header('host')}${req.url}`);
+      } else {
+        next();
+      }
+    });
+
+    // Use Helmet for security headers
+    app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", "data:", "blob:"],
+          connectSrc: ["'self'", "https://api.openai.com", "https://api.adzuna.com"]
+        }
+      }
+    }));
+  }
+
+  // CORS configuration
+  app.use(cors({
+    origin: process.env.NODE_ENV === 'production' 
+      ? [process.env.CLIENT_URL || 'https://fundamentalifeskills.com'] 
+      : true,
+    credentials: true
+  }));
+
+  // Mount auth routes
+  app.use('/api/auth', authRoutes);
   app.post("/api/chat", async (req, res) => {
     try {
       // Enhanced debug logging to understand the incoming request better
