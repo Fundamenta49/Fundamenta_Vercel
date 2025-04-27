@@ -257,7 +257,8 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                 onClick={() => {
                   const videoInfo = getYogaPoseVideoInfo(pose.id);
                   if (videoInfo) {
-                    openYouTubeVideo(videoInfo.videoId);
+                    setIsOpen(true); // Open the dialog
+                    openYouTubeVideo(videoInfo.videoId); // Set the video ID and switch to video tab
                   }
                 }}
               >
@@ -426,6 +427,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                       onClick={() => {
                         const videoInfo = getYogaPoseVideoInfo(pose.id);
                         if (videoInfo) {
+                          // Just use the existing openYouTubeVideo function as it already sets the tab
                           openYouTubeVideo(videoInfo.videoId);
                         }
                       }}
