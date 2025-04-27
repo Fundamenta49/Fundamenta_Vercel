@@ -37,15 +37,6 @@ export const skillLevels = {
 
 export type SkillLevel = keyof typeof skillLevels;
 
-// Subscription tier enum
-export const subscriptionTiers = {
-  FREE: "free",
-  PREMIUM: "premium",
-  PRO: "pro",
-} as const;
-
-export type SubscriptionTier = keyof typeof subscriptionTiers;
-
 // User Table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -55,14 +46,6 @@ export const users = pgTable("users", {
   role: text("role").default("user"),
   emailVerified: boolean("email_verified").default(false),
   privacyConsent: boolean("privacy_consent").default(false),
-  // Subscription fields
-  subscriptionTier: text("subscription_tier").default(subscriptionTiers.FREE),
-  subscriptionStartDate: timestamp("subscription_start_date"),
-  subscriptionEndDate: timestamp("subscription_end_date"),
-  stripeCustomerId: text("stripe_customer_id"),
-  stripeSubscriptionId: text("stripe_subscription_id"),
-  aiTokensUsed: integer("ai_tokens_used").default(0),
-  aiMonthlyAllowance: integer("ai_monthly_allowance").default(10000), // Default free tier allowance
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
