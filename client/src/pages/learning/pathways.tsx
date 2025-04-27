@@ -22,7 +22,8 @@ import {
   enrichPathwaysWithProgress
 } from "@/lib/learning-progress";
 import { useToast } from "@/hooks/use-toast";
-import { learningPathways, LearningPathway } from "./pathways-data";
+import { learningPathways, LearningPathway, PathwayModule } from "./pathways-data";
+import { adaptPathways } from "@/lib/type-adapters";
 
 // Category colors for styling
 const categoryColors = {
@@ -104,8 +105,10 @@ export default function LearningPathwaysPage() {
   // Enrich the static pathways data with actual progress from the API
   const pathwaysWithProgress = React.useMemo(() => {
     // If no progress data, initialize with empty object that matches GroupedProgress type
-    const progress = progressData || {} as { [pathwayId: string]: any[] };
-    return enrichPathwaysWithProgress(learningPathways, progress);
+    const progress = progressData || {} as { [pathwayId: string]: { moduleId: string, completed: boolean }[] };
+    // Convert the pathways to the format expected by enrichPathwaysWithProgress
+    const adaptedPathways = adaptPathways(learningPathways);
+    return enrichPathwaysWithProgress(adaptedPathways, progress as any);
   }, [progressData]);
   
   // Filter pathways by category
@@ -228,23 +231,35 @@ export default function LearningPathwaysPage() {
               <div className="grid grid-cols-1 gap-4">
                 {filteredPathways.map(pathway => {
                   // Find prerequisite pathway titles for locked pathways
-                  const getPrerequisiteInfo = (pathway: LearningPathway) => {
-                    if (!pathway.prerequisites || pathway.prerequisites.length === 0) {
+                  const getPrerequisiteInfo = (pathway: any) => {
+                    // Check for prerequisites property using type-safe approach
+                    const prerequisites = (pathway as any).prerequisites;
+                    if (!prerequisites || !Array.isArray(prerequisites) || prerequisites.length === 0) {
                       return null;
                     }
                     
-                    const prerequisiteTitles = pathway.prerequisites.map(prereqId => {
+                    // Map prerequisites to titles
+                    const prerequisiteTitles = prerequisites.map((prereqId: string) => {
                       const prereqPathway = pathwaysWithProgress.find(p => p.id === prereqId);
                       return prereqPathway ? prereqPathway.title : prereqId;
                     });
                     
+                    // Render prerequisite info
                     return (
-                      <div className="mt-2 text-sm text-amber-700 bg-amber-50 p-2 rounded-md flex items-start gap-2">
-                        <Lock className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <div className={`mt-2 text-sm ${
+                        isJungleTheme 
+                          ? 'text-[#E6B933] bg-[#1E4A3D]/50 border border-[#94C973]/30' 
+                          : 'text-amber-700 bg-amber-50'
+                      } p-2 rounded-md flex items-start gap-2`}>
+                        <Lock className={`h-4 w-4 mt-0.5 flex-shrink-0 ${
+                          isJungleTheme ? 'text-[#E6B933]' : 'text-amber-600'
+                        }`} />
                         <div>
-                          <p className="font-medium">Prerequisites Required:</p>
+                          <p className="font-medium">
+                            {isJungleTheme ? 'Expedition Requirements:' : 'Prerequisites Required:'}
+                          </p>
                           <ul className="list-disc pl-4 mt-1 space-y-0.5">
-                            {prerequisiteTitles.map((title, i) => (
+                            {prerequisiteTitles.map((title: string, i: number) => (
                               <li key={i}>{title}</li>
                             ))}
                           </ul>
@@ -274,7 +289,7 @@ export default function LearningPathwaysPage() {
                             </div>
                             <div className="flex items-center gap-1.5">
                               <CardTitle className={`text-lg ${isJungleTheme ? 'text-[#E6B933]' : ''}`}>
-                                {isJungleTheme && pathway.jungleTitle ? pathway.jungleTitle : pathway.title}
+                                {isJungleTheme && (pathway as any).jungleTitle ? (pathway as any).jungleTitle : pathway.title}
                               </CardTitle>
                               {pathway.isLocked && (
                                 <TooltipProvider>
@@ -295,7 +310,7 @@ export default function LearningPathwaysPage() {
                           </Badge>
                         </div>
                         <CardDescription className={`mt-1 ${isJungleTheme ? 'text-[#94C973]' : ''}`}>
-                          {isJungleTheme && pathway.jungleDescription ? pathway.jungleDescription : pathway.description}
+                          {isJungleTheme && (pathway as any).jungleDescription ? (pathway as any).jungleDescription : pathway.description}
                         </CardDescription>
                         
                         {pathway.isLocked && getPrerequisiteInfo(pathway)}
@@ -356,7 +371,7 @@ export default function LearningPathwaysPage() {
                                             ? "text-green-700 font-medium" 
                                             : "text-gray-700"
                                       }`}>
-                                        {isJungleTheme && module.jungleTitle ? module.jungleTitle : module.title}
+                                        {isJungleTheme && (module as any).jungleTitle ? (module as any).jungleTitle : module.title}
                                       </span>
                                     </div>
                                     
