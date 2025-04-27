@@ -1,9 +1,19 @@
-import express, { RequestHandler } from "express";
+import express, { RequestHandler, Request } from "express";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import { storage } from "../storage";
 import { isAuthenticated } from "../auth/auth-middleware";
 import { connectionTypes, connectionStatuses, userRoles } from "@shared/schema";
+
+// Extended Request type with user property
+interface AuthRequest extends Request {
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    role?: string;
+  };
+}
 
 const router = express.Router();
 
@@ -17,7 +27,7 @@ function generatePairingCode(): string {
 }
 
 // Get all connections for the current user (both as mentor and student)
-router.get("/connections", isAuthenticated, (async (req, res) => {
+router.get("/connections", isAuthenticated, (async (req: AuthRequest, res) => {
   try {
     const userId = req.user.id;
 
@@ -74,7 +84,7 @@ router.get("/connections", isAuthenticated, (async (req, res) => {
 }) as RequestHandler);
 
 // Get pending connection requests for a user
-router.get("/connections/pending", isAuthenticated, (async (req, res) => {
+router.get("/connections/pending", isAuthenticated, (async (req: AuthRequest, res) => {
   try {
     const userId = req.user.id;
     
@@ -105,7 +115,7 @@ router.get("/connections/pending", isAuthenticated, (async (req, res) => {
 }) as RequestHandler);
 
 // Create a new connection with a pairing code
-router.post("/connections/create", isAuthenticated, (async (req, res) => {
+router.post("/connections/create", isAuthenticated, (async (req: AuthRequest, res) => {
   try {
     const userId = req.user.id;
     const { connectionType, studentEmail } = req.body;
@@ -155,7 +165,7 @@ router.post("/connections/create", isAuthenticated, (async (req, res) => {
 }) as RequestHandler);
 
 // Join a connection using a pairing code
-router.post("/connections/join", isAuthenticated, (async (req, res) => {
+router.post("/connections/join", isAuthenticated, (async (req: AuthRequest, res) => {
   try {
     const userId = req.user.id;
     const { connectionCode } = req.body;
@@ -196,7 +206,7 @@ router.post("/connections/join", isAuthenticated, (async (req, res) => {
 }) as RequestHandler);
 
 // Respond to a connection request (accept or reject)
-router.post("/connections/:connectionId/respond", isAuthenticated, (async (req, res) => {
+router.post("/connections/:connectionId/respond", isAuthenticated, (async (req: AuthRequest, res) => {
   try {
     const userId = req.user.id;
     const connectionId = parseInt(req.params.connectionId);
@@ -229,7 +239,7 @@ router.post("/connections/:connectionId/respond", isAuthenticated, (async (req, 
 }) as RequestHandler);
 
 // Delete a connection
-router.delete("/connections/:connectionId", isAuthenticated, (async (req, res) => {
+router.delete("/connections/:connectionId", isAuthenticated, (async (req: AuthRequest, res) => {
   try {
     const userId = req.user.id;
     const connectionId = parseInt(req.params.connectionId);

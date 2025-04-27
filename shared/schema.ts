@@ -130,7 +130,7 @@ export const learningProgress = pgTable("learning_progress", {
 export const userConnections = pgTable("user_connections", {
   id: serial("id").primaryKey(),
   mentorId: integer("mentor_id").notNull().references(() => users.id), // Parent or teacher
-  studentId: integer("student_id").notNull().references(() => users.id), // Child or student
+  studentId: integer("student_id").references(() => users.id), // Child or student (can be null initially for pairing code)
   connectionType: text("connection_type").notNull(), // "parent_child" or "teacher_student"
   status: text("status").notNull().default("pending"), // "pending", "active", "rejected"
   accessLevel: text("access_level").notNull().default("standard"), // "standard", "full", "limited"
