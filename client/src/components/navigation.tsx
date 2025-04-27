@@ -20,7 +20,8 @@ import {
   HelpCircle,
   Trophy,
   Gamepad2,
-  Calendar
+  Calendar,
+  Map
 } from "lucide-react";
 import {
   Sheet,
@@ -92,6 +93,7 @@ export default function Navigation() {
     if (href === '/emergency' && location.includes('/emergency')) return true;
     if (href === '/arcade' && location.includes('/arcade')) return true;
     if (href === '/calendar' && location.includes('/calendar')) return true;
+    if (href === '/mypath' && location.includes('/mypath')) return true;
     
     return false;
   };
@@ -189,6 +191,15 @@ export default function Navigation() {
         hoverBg: "hover:bg-indigo-50",
         iconColor: "text-indigo-700",
         borderColor: "border-indigo-300"
+      };
+    } else if (location.includes('/mypath')) {
+      // Teal for MyPath
+      return {
+        activeItemBg: "bg-teal-100",
+        activeItemText: "text-teal-700",
+        hoverBg: "hover:bg-teal-50",
+        iconColor: "text-teal-700",
+        borderColor: "border-teal-300"
       };
     }
     
@@ -300,6 +311,22 @@ export default function Navigation() {
                 >
                   <Gamepad2 className={cn("h-5 w-5", isNavItemActive("/arcade") ? themeColors.iconColor : "text-gray-600")} />
                   <span className="font-medium">Arcade</span>
+                </button>
+              </div>
+              
+              <div className="mt-2">
+                <button 
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
+                    isNavItemActive("/mypath")
+                      ? `${activeItemBg} ${activeItemText}`
+                      : `text-gray-700 hover:bg-gray-50`
+                  )}
+                  onClick={() => handleNavigation("/mypath")}
+                  data-tour-id="nav-mypath"
+                >
+                  <Map className={cn("h-5 w-5", isNavItemActive("/mypath") ? themeColors.iconColor : "text-gray-600")} />
+                  <span className="font-medium">MyPath</span>
                 </button>
               </div>
             </div>
@@ -459,6 +486,44 @@ export default function Navigation() {
                 <Gamepad2 className={cn(
                   "h-5 w-5", 
                   isNavItemActive("/arcade") ? themeColors.iconColor : "text-gray-600"
+                )} />
+              </button>
+            </div>
+          )}
+          
+          {/* MyPath Link */}
+          {!isMinimized ? (
+            <div className="mt-2">
+              <button 
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
+                  isNavItemActive("/mypath")
+                    ? `${activeItemBg} ${activeItemText}`
+                    : `text-gray-700 hover:bg-gray-50`
+                )}
+                onClick={() => handleNavigation("/mypath")}
+                data-tour-id="nav-mypath"
+              >
+                <Map className={cn("h-5 w-5", isNavItemActive("/mypath") ? themeColors.iconColor : "text-gray-600")} />
+                <span className="font-medium">MyPath</span>
+              </button>
+            </div>
+          ) : (
+            <div className="mt-3 flex flex-col items-center">
+              <button
+                onClick={() => handleNavigation("/mypath")}
+                className={cn(
+                  "p-2 rounded-md",
+                  isNavItemActive("/mypath")
+                    ? activeItemBg
+                    : "hover:bg-gray-100"
+                )}
+                title="MyPath"
+                data-tour-id="nav-mypath"
+              >
+                <Map className={cn(
+                  "h-5 w-5", 
+                  isNavItemActive("/mypath") ? themeColors.iconColor : "text-gray-600"
                 )} />
               </button>
             </div>
