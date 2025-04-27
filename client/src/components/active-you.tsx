@@ -9,6 +9,7 @@ import WeightliftingSpecificExercisesEnhanced from './weightlifting-specific-exe
 import MeditationSpecificExercisesEnhanced from './meditation-specific-exercises-enhanced';
 import YogaVisionEnhanced from './yoga-vision-enhanced';
 import YogaGridInterface from './yoga-grid-interface';
+import YogaGridMobile from './yoga-grid-mobile';
 import { Card } from "@/components/ui/card";
 import { ExerciseType } from "../modules/active-you/context/module-context";
 
@@ -169,8 +170,13 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
               Regular practice can improve flexibility, strength, balance, and mental wellbeing.
             </p>
             
-            {/* New YogaGridInterface Component - Each card has its own YogaVision integration */}
-            <YogaGridInterface />
+            {/* Use mobile-optimized view on small screens, desktop view on larger screens */}
+            <div className="block md:hidden">
+              <YogaGridMobile />
+            </div>
+            <div className="hidden md:block">
+              <YogaGridInterface />
+            </div>
             
             {/* Remove the main YogaVision dialog since each pose card has its own integrated camera */}
             {/* The old YogaVision dialog code is kept for reference */}
