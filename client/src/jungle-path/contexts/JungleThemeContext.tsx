@@ -1,75 +1,84 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
-type ThemeMode = 'default' | 'jungle';
-
-interface JungleThemeContextType {
-  themeMode: ThemeMode;
+export interface JungleThemeContextType {
+  isJungleTheme: boolean;
   toggleTheme: () => void;
   enableJungleTheme: () => void;
   disableJungleTheme: () => void;
-  isJungleTheme: boolean;
 }
 
-const JungleThemeContext = createContext<JungleThemeContextType>({
-  themeMode: 'default',
-  toggleTheme: () => {},
-  enableJungleTheme: () => {},
-  disableJungleTheme: () => {},
-  isJungleTheme: false
-});
+const JungleThemeContext = createContext<JungleThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = 'fundamenta-jungle-theme';
+interface JungleThemeProviderProps {
+  children: ReactNode;
+  defaultTheme?: boolean;
+}
 
-export const JungleThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('default');
+/**
+ * Provider component that enables jungle theme functionality throughout the app
+ */
+export const JungleThemeProvider: React.FC<JungleThemeProviderProps> = ({
+  children,
+  defaultTheme = false
+}) => {
+  // State to track if jungle theme is active
+  const [isJungleTheme, setIsJungleTheme] = useState<boolean>(() => {
+    // Try to get saved preference from localStorage
+    const savedPreference = localStorage.getItem('jungle-theme-enabled');
+    return savedPreference !== null ? JSON.parse(savedPreference) : defaultTheme;
+  });
 
-  // Load theme preference from localStorage on mount
+  // Save theme preference to localStorage whenever it changes
   useEffect(() => {
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    if (savedTheme === 'jungle') {
-      setThemeMode('jungle');
-    }
-  }, []);
-
-  // Update localStorage when theme changes
-  useEffect(() => {
-    localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+    localStorage.setItem('jungle-theme-enabled', JSON.stringify(isJungleTheme));
     
-    // Add or remove jungle theme class from body
-    if (themeMode === 'jungle') {
-      document.body.classList.add('jungle-theme');
+    // Add or remove the jungle-theme class from the document element
+    if (isJungleTheme) {
+      document.documentElement.classList.add('jungle-theme');
     } else {
-      document.body.classList.remove('jungle-theme');
+      document.documentElement.classList.remove('jungle-theme');
     }
-  }, [themeMode]);
+  }, [isJungleTheme]);
 
+  // Toggle between jungle and standard themes
   const toggleTheme = () => {
-    setThemeMode(prev => prev === 'default' ? 'jungle' : 'default');
+    setIsJungleTheme(prev => !prev);
   };
 
+  // Explicitly enable jungle theme
   const enableJungleTheme = () => {
-    setThemeMode('jungle');
+    setIsJungleTheme(true);
   };
 
+  // Explicitly disable jungle theme
   const disableJungleTheme = () => {
-    setThemeMode('default');
+    setIsJungleTheme(false);
+  };
+
+  // Context value
+  const value = {
+    isJungleTheme,
+    toggleTheme,
+    enableJungleTheme,
+    disableJungleTheme
   };
 
   return (
-    <JungleThemeContext.Provider 
-      value={{ 
-        themeMode, 
-        toggleTheme, 
-        enableJungleTheme,
-        disableJungleTheme,
-        isJungleTheme: themeMode === 'jungle'
-      }}
-    >
+    <JungleThemeContext.Provider value={value}>
       {children}
     </JungleThemeContext.Provider>
   );
 };
 
-export const useJungleTheme = () => useContext(JungleThemeContext);
-
-export default JungleThemeContext;
+/**
+ * Custom hook to access the jungle theme context
+ */
+export const useJungleTheme = (): JungleThemeContextType => {
+  const context = useContext(JungleThemeContext);
+  
+  if (context === undefined) {
+    throw new Error('useJungleTheme must be used within a JungleThemeProvider');
+  }
+  
+  return context;
+};
