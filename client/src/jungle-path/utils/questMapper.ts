@@ -1,160 +1,188 @@
-import { JungleQuest } from '../types/quest';
+import { JungleQuest, QuestProgress } from '../types/quest';
 import { getZoneByCategory } from './zoneUtils';
 
-// Quest transformation templates by category
-const QUEST_TEMPLATES: Record<string, Array<{
-  titleTemplate: string;
-  descriptionTemplate: string;
-}>> = {
-  wellness: [
-    {
-      titleTemplate: 'Traverse the $1 Trail',
-      descriptionTemplate: 'Journey through ancient paths to discover $1 practices for your well-being.'
-    },
-    {
-      titleTemplate: 'The Hidden $1 Grove',
-      descriptionTemplate: 'Uncover secret wellness techniques guarded by the keepers of the $1 Grove.'
-    }
-  ],
-  finance: [
-    {
-      titleTemplate: 'River of $1 Resources',
-      descriptionTemplate: 'Navigate the flowing waters of $1 to master your financial journey.'
-    },
-    {
-      titleTemplate: 'Treasure Map: $1',
-      descriptionTemplate: 'Follow the ancient markings to uncover the hidden wealth of $1 knowledge.'
-    }
-  ],
-  career: [
-    {
-      titleTemplate: 'Temple of $1 Wisdom',
-      descriptionTemplate: 'Study the ancient hieroglyphs carved into the walls of the $1 Temple.'
-    },
-    {
-      titleTemplate: 'The $1 Expedition',
-      descriptionTemplate: 'Join a band of career explorers on a quest to master $1 skills.'
-    }
-  ],
-  relationships: [
-    {
-      titleTemplate: 'Banyan Connections: $1',
-      descriptionTemplate: 'Explore the interconnected roots of $1 and build stronger relationship skills.'
-    },
-    {
-      titleTemplate: 'Campfire Stories: $1',
-      descriptionTemplate: 'Share wisdom around the ancient campfire to understand the art of $1.'
-    }
-  ],
-  skills: [
-    {
-      titleTemplate: 'Crystal Cavern of $1',
-      descriptionTemplate: 'Mine the glittering crystals of knowledge to master $1 skills.'
-    },
-    {
-      titleTemplate: 'Artifact of $1 Mastery',
-      descriptionTemplate: 'Recover a lost artifact containing the secrets of $1 excellence.'
-    }
-  ],
-  growth: [
-    {
-      titleTemplate: 'Summit of $1 Achievement',
-      descriptionTemplate: 'Climb to new heights and master the peaks of $1 for personal growth.'
-    },
-    {
-      titleTemplate: 'Jungle Transformation: $1',
-      descriptionTemplate: 'Witness the metamorphosis of your skills as you journey through $1 practices.'
-    }
-  ],
-  default: [
-    {
-      titleTemplate: 'Jungle Expedition: $1',
-      descriptionTemplate: 'Embark on a journey through uncharted territory to master $1.'
-    }
-  ]
-};
-
-/**
- * Substitutes keywords into templates
- */
-const applyTemplate = (template: string, keyword: string): string => {
-  return template.replace('$1', keyword);
-};
-
-/**
- * Generates a title keyword from the original title
- */
-const getKeyword = (title: string): string => {
-  // Remove common filler words and get main concepts
-  const fillerWords = ['the', 'a', 'an', 'and', 'or', 'but', 'for', 'to', 'with', 'about'];
-  const words = title.split(' ');
-  
-  // Try to find the most meaningful word
-  const mainWords = words.filter(word => 
-    word.length > 3 && !fillerWords.includes(word.toLowerCase())
-  );
-  
-  if (mainWords.length > 0) {
-    // Use the longest word or phrase as the keyword
-    return mainWords.sort((a, b) => b.length - a.length)[0];
-  }
-  
-  // Fallback to the original title if no good keyword found
-  return title;
-};
-
-/**
- * Transforms a regular module into a jungle-themed quest
- */
-export const mapQuestToJungle = (module: {
+// Type for the original learning module data structure
+interface LearningModule {
   id: string;
   title: string;
   description: string;
-  type?: string; 
   category: string;
   estimatedTime: number;
-}): JungleQuest => {
-  // Get templates for this category
-  const templates = QUEST_TEMPLATES[module.category] || QUEST_TEMPLATES.default;
-  
-  // Pick a random template
-  const template = templates[Math.floor(Math.random() * templates.length)];
-  
-  // Get the keyword from the title
-  const keyword = getKeyword(module.title);
-  
-  // Apply templates
-  const jungleTitle = applyTemplate(template.titleTemplate, keyword);
-  const jungleDescription = applyTemplate(template.descriptionTemplate, keyword);
-  
-  // Determine required rank based on category
-  const zone = getZoneByCategory(module.category);
-  const requiredRank = zone ? zone.requiredRank : 0;
-  
-  // Return transformed quest
-  return {
-    id: module.id,
-    originalTitle: module.title,
-    originalDescription: module.description,
-    jungleTitle,
-    jungleDescription,
-    category: module.category,
-    estimatedTime: module.estimatedTime,
-    requiredRank,
-    difficulty: 'beginner'
+}
+
+// Type for user progress data
+interface UserProgressData {
+  [moduleId: string]: {
+    progressPercent: number;
+    startedAt: string | null;
+    completedAt: string | null;
   };
+}
+
+/**
+ * Maps a category to a jungle-themed quest prefix
+ */
+const getCategoryPrefix = (category: string): string => {
+  const prefixMap: Record<string, string[]> = {
+    financial: [
+      'Treasure Hunt:',
+      'Resource Expedition:',
+      'Navigate the River of',
+      'Golden Trail:',
+      'Wealth Seeker:'
+    ],
+    wellness: [
+      'Healing Grove:',
+      'Mind Oasis:',
+      'Tranquil Pools of',
+      'Serene Canopy:',
+      'Spirit Journey:'
+    ],
+    fitness: [
+      'Strength Challenge:',
+      'Jungle Traverse:',
+      'Swift Rapids of',
+      'Endurance Trek:',
+      'Primal Power:'
+    ],
+    career: [
+      'Summit Climb:',
+      'Highland Strategy:',
+      'Career Peaks of',
+      'Professional Expedition:',
+      'Leadership Vista:'
+    ],
+    leadership: [
+      'Ancient Temple of',
+      'Command Ritual:',
+      'Wisdom Path:',
+      'Ancient Scrolls of',
+      'Legacy Trial:'
+    ],
+    adventure: [
+      'Uncharted Territory:',
+      'Danger Falls:',
+      'Secret Cave of',
+      'Epic Expedition:',
+      'Legendary Quest:'
+    ]
+  };
+
+  // Default to general if category not found
+  const options = prefixMap[category] || [
+    'Jungle Discovery:',
+    'Wild Path of',
+    'Mysterious Journey:',
+    'Forest Secrets:',
+    'Hidden Knowledge:'
+  ];
+
+  // Randomly select one prefix from the list
+  return options[Math.floor(Math.random() * options.length)];
 };
 
 /**
- * Maps an array of modules to jungle quests
+ * Transforms the description into a jungle-themed description
  */
-export const mapModulesToJungleQuests = (modules: Array<{
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  category: string;
-  estimatedTime: number;
-}>): JungleQuest[] => {
-  return modules.map(module => mapQuestToJungle(module));
+const getJungleDescription = (description: string, category: string): string => {
+  // Get 2-3 thematic words based on the category
+  const thematicWords: Record<string, string[]> = {
+    financial: ['treasure', 'resources', 'wealth', 'gold', 'riches', 'trading'],
+    wellness: ['healing', 'balance', 'tranquility', 'spirit', 'harmony', 'nature'],
+    fitness: ['strength', 'endurance', 'agility', 'power', 'swiftness', 'stamina'],
+    career: ['climb', 'summit', 'path', 'journey', 'vista', 'strategy'],
+    leadership: ['wisdom', 'ancient', 'command', 'ritual', 'legacy', 'tribe'],
+    adventure: ['danger', 'expedition', 'discovery', 'quest', 'challenge', 'legend']
+  };
+
+  const words = thematicWords[category] || thematicWords.adventure;
+  
+  // Select 2 random words from the category's themed words
+  const selectedWords: string[] = [];
+  while (selectedWords.length < 2) {
+    const randomWord = words[Math.floor(Math.random() * words.length)];
+    if (!selectedWords.includes(randomWord)) {
+      selectedWords.push(randomWord);
+    }
+  }
+
+  // Get a random jungle narrative intro
+  const jungleIntros = [
+    `Deep in the jungle, you'll discover ${selectedWords[0]} and ${selectedWords[1]} as you`,
+    `Venture through dense foliage to ${selectedWords[0]} your way as you`,
+    `Navigate treacherous terrain with ${selectedWords[0]} and ${selectedWords[1]} while you`,
+    `Under the jungle canopy, seek ${selectedWords[0]} and master ${selectedWords[1]} as you`,
+    `With the calls of exotic birds overhead, you'll explore ${selectedWords[0]} and ${selectedWords[1]} when you`
+  ];
+
+  const intro = jungleIntros[Math.floor(Math.random() * jungleIntros.length)];
+  
+  // Convert the first letter of the description to lowercase if it's not already
+  const firstChar = description.charAt(0).toLowerCase();
+  const restOfDesc = description.slice(1);
+  const lowerCaseDesc = firstChar + restOfDesc;
+  
+  // Replace certain words to make it more jungle-themed
+  const themedDesc = lowerCaseDesc
+    .replace(/learn/gi, 'discover')
+    .replace(/understand/gi, 'uncover')
+    .replace(/create/gi, 'craft')
+    .replace(/develop/gi, 'forge')
+    .replace(/build/gi, 'construct')
+    .replace(/analyze/gi, 'track')
+    .replace(/study/gi, 'observe')
+    .replace(/practice/gi, 'train');
+  
+  return `${intro} ${themedDesc}`;
+};
+
+/**
+ * Maps original learning modules to jungle-themed quests
+ */
+export const mapModulesToQuests = (
+  modules: LearningModule[], 
+  progressData: UserProgressData = {}
+): { 
+  jungleQuests: JungleQuest[],
+  questProgress: Record<string, QuestProgress>
+} => {
+  const jungleQuests: JungleQuest[] = modules.map(module => {
+    // Get the corresponding zone based on module category
+    const zone = getZoneByCategory(module.category);
+    
+    // Generate a jungle-themed title
+    const prefix = getCategoryPrefix(module.category);
+    const jungleTitle = prefix.includes(':') 
+      ? `${prefix} ${module.title}`
+      : `${prefix} ${module.title}`;
+      
+    // Generate a jungle-themed description
+    const jungleDescription = getJungleDescription(module.description, module.category);
+    
+    return {
+      id: module.id,
+      originalTitle: module.title,
+      jungleTitle,
+      originalDescription: module.description,
+      jungleDescription,
+      category: module.category,
+      zoneId: zone?.id,
+      estimatedTime: module.estimatedTime,
+      difficulty: Math.floor(Math.random() * 3) + 1, // Random difficulty between 1-3
+      requiredRank: zone?.requiredRank || 0,
+    };
+  });
+  
+  // Map progress data to a standardized format
+  const questProgress: Record<string, QuestProgress> = {};
+  
+  Object.entries(progressData).forEach(([moduleId, progress]) => {
+    questProgress[moduleId] = {
+      progressPercent: progress.progressPercent,
+      startedAt: progress.startedAt,
+      completedAt: progress.completedAt
+    };
+  });
+  
+  return { jungleQuests, questProgress };
 };

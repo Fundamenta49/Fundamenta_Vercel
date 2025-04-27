@@ -1,131 +1,178 @@
 import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { JungleQuest } from '../../types/quest';
-import { getZoneColor } from '../../utils/zoneStyler';
-import { Lock, Award, MapPin, Clock } from 'lucide-react';
+import { JungleQuest, QuestProgress } from '../../types/quest';
 import { useJungleTheme } from '../../contexts/JungleThemeContext';
 
+// Card size variants
+type CardSize = 'sm' | 'md' | 'lg';
+
+// Base styles for different card sizes
+const cardSizeStyles: Record<CardSize, string> = {
+  sm: 'w-full max-w-xs',
+  md: 'w-full max-w-sm',
+  lg: 'w-full max-w-md',
+};
+
+// Interface for the QuestCard component props
 interface QuestCardProps {
+  /** The quest data to display */
   quest: JungleQuest;
-  progress: number; // 0-100
-  isUnlocked: boolean;
-  isCompleted?: boolean;
-  onClick?: () => void;
-  className?: string;
+  
+  /** Quest progress data (optional) */
+  progress?: QuestProgress;
+  
+  /** Current user rank (for locked/unlocked state) */
+  userRank: number;
+  
+  /** Card size variant */
+  size?: CardSize;
+  
+  /** Whether to show the original title below the jungle title */
+  showOriginalTitle?: boolean;
+  
+  /** Click handler for when the quest card is clicked */
+  onClick?: (quest: JungleQuest) => void;
 }
 
 /**
- * QuestCard displays a learning module as a jungle-themed quest
+ * Component to display a quest as a card
  */
 const QuestCard: React.FC<QuestCardProps> = ({
   quest,
   progress,
-  isUnlocked,
-  isCompleted = false,
+  userRank,
+  size = 'md',
+  showOriginalTitle = false,
   onClick,
-  className = ''
 }) => {
+  // Access the jungle theme context
   const { isJungleTheme } = useJungleTheme();
   
-  // Determine the zone color for this quest
-  const zoneColor = getZoneColor(quest.category);
+  // Calculate if the quest is locked based on user rank
+  const isLocked = typeof quest.requiredRank === 'number' && userRank < quest.requiredRank;
   
-  // Format estimated time
-  const formatTime = (minutes: number): string => {
-    if (minutes < 60) {
-      return `${minutes} min`;
+  // Calculate completion status
+  const isCompleted = progress?.completedAt !== null && progress?.completedAt !== undefined;
+  const isInProgress = !isCompleted && (progress?.progressPercent ?? 0) > 0;
+  
+  // Determine status label
+  let statusLabel = '';
+  let statusColor = '';
+  
+  if (isLocked) {
+    statusLabel = 'Locked';
+    statusColor = 'bg-gray-500';
+  } else if (isCompleted) {
+    statusLabel = isJungleTheme ? 'Quest Completed' : 'Completed';
+    statusColor = 'bg-green-500';
+  } else if (isInProgress) {
+    statusLabel = isJungleTheme ? 'Expedition Underway' : 'In Progress';
+    statusColor = 'bg-blue-500';
+  }
+  
+  // Get card background based on completion and jungle theme status
+  const getCardBackground = () => {
+    if (isLocked) {
+      return 'bg-gray-100 border-gray-300';
     }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 
-      ? `${hours}h ${remainingMinutes}m`
-      : `${hours}h`;
+    
+    if (isJungleTheme) {
+      if (isCompleted) {
+        return 'bg-emerald-50 border-emerald-300';
+      }
+      return 'bg-amber-50 border-amber-300';
+    }
+    
+    if (isCompleted) {
+      return 'bg-green-50 border-green-200';
+    }
+    
+    return 'bg-white border-gray-200';
   };
   
-  // Determine the card title based on jungle theme
-  const title = isJungleTheme ? quest.jungleTitle : quest.originalTitle;
-  const description = isJungleTheme ? quest.jungleDescription : quest.originalDescription;
-  
-  // Card border style based on completion and unlock status
-  const getBorderStyle = () => {
-    if (isCompleted) return { borderColor: '#94C973' }; // Canopy Light (success)
-    if (!isUnlocked) return { borderColor: '#8B8682' }; // Stone Gray (locked)
-    return { borderColor: zoneColor };
+  // Handle card click
+  const handleClick = () => {
+    if (!isLocked && onClick) {
+      onClick(quest);
+    }
   };
   
   return (
-    <Card 
-      className={`border-2 transition-all ${isUnlocked ? 'hover:shadow-md' : 'opacity-80'} ${className}`}
-      style={getBorderStyle()}
+    <div 
+      className={`
+        ${cardSizeStyles[size]} 
+        ${getCardBackground()}
+        rounded-lg border p-4 shadow-sm transition-all duration-200
+        ${isLocked ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md cursor-pointer'}
+      `}
+      onClick={handleClick}
     >
-      <CardHeader 
-        className="pb-2"
-        style={isUnlocked ? { borderBottom: `1px solid ${zoneColor}20` } : {}}
-      >
-        <div className="flex justify-between items-start gap-2">
-          <CardTitle className="text-base font-bold leading-tight">
-            {title}
-          </CardTitle>
+      {/* Status badge */}
+      {statusLabel && (
+        <div className="mb-3 flex justify-between items-center">
+          <span className={`${statusColor} text-white text-xs px-2 py-1 rounded-full`}>
+            {statusLabel}
+          </span>
           
-          {!isUnlocked && (
-            <Lock size={18} className="text-muted-foreground flex-shrink-0" />
-          )}
-          
-          {isCompleted && (
-            <Award 
-              size={18} 
-              className="text-[#94C973] flex-shrink-0" // Canopy Light (success)
-            />
+          {isInProgress && (
+            <span className="text-xs text-gray-500">
+              {progress?.progressPercent}% complete
+            </span>
           )}
         </div>
-      </CardHeader>
+      )}
       
-      <CardContent className="py-3">
-        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-          {description}
-        </p>
-        
-        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-          <MapPin size={14} />
-          <span>{quest.zone.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</span>
-          
-          <Clock size={14} className="ml-2" />
-          <span>{formatTime(quest.estimatedTime)}</span>
+      {/* Quest title */}
+      <h3 className="text-lg font-medium mb-1">
+        {isJungleTheme ? quest.jungleTitle : quest.originalTitle}
+      </h3>
+      
+      {/* Original title (if showing in jungle mode) */}
+      {isJungleTheme && showOriginalTitle && (
+        <div className="text-xs text-gray-500 mb-2">
+          Original: {quest.originalTitle}
         </div>
+      )}
+      
+      {/* Quest description */}
+      <p className="text-gray-600 text-sm mb-4">
+        {isJungleTheme ? quest.jungleDescription : quest.originalDescription}
+      </p>
+      
+      {/* Quest metadata */}
+      <div className="flex justify-between items-center text-xs text-gray-500">
+        <span>
+          {isJungleTheme ? 'Expedition time:' : 'Est. time:'} {quest.estimatedTime} min
+        </span>
         
-        {isUnlocked && (
-          <Progress 
-            value={progress} 
-            className="h-1"
-            style={{
-              '--progress-foreground': isCompleted ? '#94C973' : zoneColor
-            } as React.CSSProperties} 
-          />
+        {quest.difficulty && (
+          <span>
+            {isJungleTheme ? 'Challenge:' : 'Difficulty:'} {
+              '●'.repeat(quest.difficulty) + '○'.repeat(5 - quest.difficulty)
+            }
+          </span>
         )}
-      </CardContent>
+      </div>
       
-      <CardFooter className={isUnlocked ? 'pt-0' : 'pt-2'}>
-        <Button 
-          variant={isUnlocked ? "default" : "outline"}
-          size="sm"
-          className="w-full"
-          onClick={onClick}
-          disabled={!isUnlocked}
-          style={isUnlocked ? { backgroundColor: zoneColor } : {}}
-        >
-          {isCompleted
-            ? 'Review Quest' 
-            : isUnlocked 
-              ? progress > 0 
-                ? 'Continue Quest' 
-                : 'Start Quest'
-              : `Requires Rank ${quest.requiredRank}`
+      {/* Progress bar (if in progress) */}
+      {isInProgress && progress && (
+        <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
+          <div 
+            className="bg-blue-600 h-1.5 rounded-full" 
+            style={{ width: `${progress.progressPercent ?? 0}%` }}
+          ></div>
+        </div>
+      )}
+      
+      {/* Locked message */}
+      {isLocked && (
+        <div className="mt-3 border-t border-gray-200 pt-2 text-xs text-gray-500">
+          {isJungleTheme 
+            ? `Requires Jungle Rank: ${(quest.requiredRank ?? 0) + 1}` 
+            : `Locked until rank: ${(quest.requiredRank ?? 0) + 1}`
           }
-        </Button>
-      </CardFooter>
-    </Card>
+        </div>
+      )}
+    </div>
   );
 };
 

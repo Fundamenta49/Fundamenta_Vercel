@@ -1,80 +1,72 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface JungleThemeContextType {
+// Interface for the context value
+interface JungleThemeContextValue {
   isJungleTheme: boolean;
   toggleJungleTheme: () => void;
   enableJungleTheme: () => void;
   disableJungleTheme: () => void;
 }
 
-const JungleThemeContext = createContext<JungleThemeContextType | undefined>(undefined);
+// Create the context with a default value
+const JungleThemeContext = createContext<JungleThemeContextValue>({
+  isJungleTheme: false,
+  toggleJungleTheme: () => {},
+  enableJungleTheme: () => {},
+  disableJungleTheme: () => {},
+});
 
+// Props for the provider component
 interface JungleThemeProviderProps {
   children: ReactNode;
   defaultEnabled?: boolean;
 }
 
 /**
- * Provider component for the jungle theme system
- * Allows toggling between normal app appearance and jungle-themed appearance
+ * Provider component that manages the jungle theme state
  */
-export const JungleThemeProvider: React.FC<JungleThemeProviderProps> = ({
-  children,
-  defaultEnabled = false
+export const JungleThemeProvider: React.FC<JungleThemeProviderProps> = ({ 
+  children, 
+  defaultEnabled = false 
 }) => {
-  // State to track if jungle theme is active
+  // State to track whether the jungle theme is enabled
   const [isJungleTheme, setIsJungleTheme] = useState<boolean>(defaultEnabled);
-  
-  // Toggle jungle theme
+
+  // Toggle the jungle theme on/off
   const toggleJungleTheme = () => {
     setIsJungleTheme(prev => !prev);
   };
-  
-  // Enable jungle theme
+
+  // Explicitly enable the jungle theme
   const enableJungleTheme = () => {
     setIsJungleTheme(true);
   };
-  
-  // Disable jungle theme
+
+  // Explicitly disable the jungle theme
   const disableJungleTheme = () => {
     setIsJungleTheme(false);
   };
-  
-  // Apply theme-specific classes to the body when theme changes
-  useEffect(() => {
-    if (isJungleTheme) {
-      document.body.classList.add('jungle-theme');
-    } else {
-      document.body.classList.remove('jungle-theme');
-    }
-    
-    // Clean up on unmount
-    return () => {
-      document.body.classList.remove('jungle-theme');
-    };
-  }, [isJungleTheme]);
-  
-  // Context value
-  const value = {
+
+  // Create the context value object
+  const contextValue: JungleThemeContextValue = {
     isJungleTheme,
     toggleJungleTheme,
     enableJungleTheme,
-    disableJungleTheme
+    disableJungleTheme,
   };
-  
+
+  // Provide the context to children
   return (
-    <JungleThemeContext.Provider value={value}>
-      <div className={isJungleTheme ? 'jungle-theme' : ''}>
-        {children}
-      </div>
+    <JungleThemeContext.Provider value={contextValue}>
+      {children}
     </JungleThemeContext.Provider>
   );
 };
 
 /**
- * Custom hook to access the jungle theme context
+ * Custom hook to use the jungle theme context
  */
-export const useJungleTheme = (): JungleThemeContextType => {
+export const useJungleTheme = (): JungleThemeContextValue => {
   const context = useContext(JungleThemeContext);
   
   if (context === undefined) {

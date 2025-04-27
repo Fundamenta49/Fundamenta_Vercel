@@ -1,149 +1,257 @@
 import React, { useState, useMemo } from 'react';
-import { JungleQuest } from '../../types/quest';
+import { JungleQuest, QuestProgress } from '../../types/quest';
+import { useJungleTheme } from '../../contexts/JungleThemeContext';
 import QuestCard from './QuestCard';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getZoneByCategory, getAllZones } from '../../utils/zoneUtils';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
 
-type UserAchievements = Record<string, { 
-  unlockedAt: string | null;
-  progress: number;
-}>;
+// Display style variants for the quest list
+type DisplayStyle = 'grid' | 'list';
 
+// Interface for the QuestList component props
 interface QuestListProps {
+  /** Array of quests to display */
   quests: JungleQuest[];
-  userAchievements: UserAchievements;
+  
+  /** Progress data for the quests (keyed by quest ID) */
+  userProgress: Record<string, QuestProgress>;
+  
+  /** Current user rank (for locked/unlocked state) */
   userRank: number;
-  onQuestClick?: (questId: string) => void;
-  showFilters?: boolean;
-  className?: string;
+  
+  /** Display style for the quests (grid or list) */
+  displayStyle?: DisplayStyle;
+  
+  /** Whether to show original titles for quests */
+  showOriginalTitles?: boolean;
+  
+  /** Quest card size */
+  cardSize?: 'sm' | 'md' | 'lg';
+  
+  /** Whether to show filtering options */
+  showFilter?: boolean;
+  
+  /** Handler for when a quest is clicked */
+  onQuestClick?: (quest: JungleQuest) => void;
 }
 
 /**
- * QuestList displays a filterable grid of quest cards
+ * Component to display a filterable list of quests
  */
 const QuestList: React.FC<QuestListProps> = ({
   quests,
-  userAchievements,
+  userProgress,
   userRank,
+  displayStyle = 'grid',
+  showOriginalTitles = false,
+  cardSize = 'md',
+  showFilter = false,
   onQuestClick,
-  showFilters = true,
-  className = ''
 }) => {
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  // Access the jungle theme context
+  const { isJungleTheme } = useJungleTheme();
+  
+  // State for filtering
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   
-  // Get all available zone categories
-  const availableCategories = useMemo(() => {
-    const categories = new Set(quests.map(quest => quest.category));
-    return ['all', ...Array.from(categories)];
+  // Get unique categories from quests
+  const categories = useMemo(() => {
+    const uniqueCategories = new Set<string>(quests.map(quest => quest.category));
+    return Array.from(uniqueCategories);
   }, [quests]);
   
-  // Filter quests based on active category and search query
+  // Filtered quests based on filters
   const filteredQuests = useMemo(() => {
     return quests.filter(quest => {
       // Filter by category
-      if (activeCategory !== 'all' && quest.category !== activeCategory) {
+      if (categoryFilter !== 'all' && quest.category !== categoryFilter) {
         return false;
       }
       
+      // Filter by status
+      if (statusFilter !== 'all') {
+        const progress = userProgress[quest.id];
+        const isLocked = typeof quest.requiredRank === 'number' && userRank < quest.requiredRank;
+        
+        if (statusFilter === 'locked' && !isLocked) {
+          return false;
+        }
+        
+        if (statusFilter === 'completed' && (!progress || !progress.completedAt)) {
+          return false;
+        }
+        
+        if (statusFilter === 'in-progress' && 
+            (!progress || progress.progressPercent === 0 || progress.completedAt)) {
+          return false;
+        }
+        
+        if (statusFilter === 'available' && 
+            (isLocked || (progress && progress.progressPercent > 0))) {
+          return false;
+        }
+      }
+      
       // Filter by search query
-      if (searchQuery.trim() !== '') {
-        const searchLower = searchQuery.toLowerCase();
+      if (searchQuery) {
+        const normalizedQuery = searchQuery.toLowerCase();
         return (
-          quest.jungleTitle.toLowerCase().includes(searchLower) ||
-          quest.jungleDescription.toLowerCase().includes(searchLower) ||
-          quest.originalTitle.toLowerCase().includes(searchLower)
+          quest.originalTitle.toLowerCase().includes(normalizedQuery) ||
+          quest.jungleTitle.toLowerCase().includes(normalizedQuery) ||
+          quest.originalDescription.toLowerCase().includes(normalizedQuery) ||
+          quest.jungleDescription.toLowerCase().includes(normalizedQuery)
         );
       }
       
       return true;
     });
-  }, [quests, activeCategory, searchQuery]);
-  
-  // Handle quest card click
-  const handleQuestClick = (questId: string) => {
-    if (onQuestClick) {
-      onQuestClick(questId);
-    }
-  };
+  }, [quests, categoryFilter, statusFilter, searchQuery, userProgress, userRank]);
   
   return (
-    <div className={className}>
-      {showFilters && (
-        <div className="mb-4 space-y-3">
-          {/* Search input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search quests..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+    <div className="w-full">
+      {/* Filtering controls */}
+      {showFilter && (
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-medium mb-3">
+            {isJungleTheme ? 'Quest Finder' : 'Filter Modules'}
+          </h3>
           
-          {/* Category filter */}
-          <Tabs 
-            value={activeCategory} 
-            onValueChange={setActiveCategory}
-            className="w-full"
-          >
-            <TabsList className="w-full overflow-x-auto flex flex-nowrap justify-start">
-              {availableCategories.map(category => {
-                const zone = category !== 'all' 
-                  ? getZoneByCategory(category) 
-                  : null;
-                
-                return (
-                  <TabsTrigger 
-                    key={category} 
-                    value={category}
-                    className="flex-shrink-0"
-                    style={
-                      category === activeCategory && zone
-                        ? { borderColor: zone.color }
-                        : {}
-                    }
-                  >
-                    {category === 'all' 
-                      ? 'All Quests' 
-                      : zone?.name || category.charAt(0).toUpperCase() + category.slice(1)
-                    }
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-          </Tabs>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Search input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {isJungleTheme ? 'Search Expeditions' : 'Search'}
+              </label>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={isJungleTheme ? "Enter quest name..." : "Search modules..."}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+              />
+            </div>
+            
+            {/* Category filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {isJungleTheme ? 'Jungle Region' : 'Category'}
+              </label>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Status filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {isJungleTheme ? 'Quest Status' : 'Status'}
+              </label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+              >
+                <option value="all">All Statuses</option>
+                <option value="available">
+                  {isJungleTheme ? 'Ready for Expedition' : 'Available'}
+                </option>
+                <option value="in-progress">
+                  {isJungleTheme ? 'Expedition Underway' : 'In Progress'}
+                </option>
+                <option value="completed">
+                  {isJungleTheme ? 'Quests Completed' : 'Completed'}
+                </option>
+                <option value="locked">
+                  {isJungleTheme ? 'Path Not Yet Discovered' : 'Locked'}
+                </option>
+              </select>
+            </div>
+          </div>
         </div>
       )}
       
-      {filteredQuests.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>No quests found. Try adjusting your search or filters.</p>
+      {/* Quest count summary */}
+      <div className="mb-4 flex justify-between items-center">
+        <div className="text-sm text-gray-500">
+          Showing {filteredQuests.length} of {quests.length} 
+          {isJungleTheme ? ' quests' : ' modules'}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredQuests.map(quest => {
-            const userAchievement = userAchievements[quest.id] || { unlockedAt: null, progress: 0 };
-            const progress = userAchievement.progress || 0;
-            const isUnlocked = userRank >= quest.requiredRank;
-            const isCompleted = userAchievement.unlockedAt !== null && progress >= 100;
-            
-            return (
-              <QuestCard
-                key={quest.id}
-                quest={quest}
-                progress={progress}
-                isUnlocked={isUnlocked}
-                isCompleted={isCompleted}
-                onClick={() => handleQuestClick(quest.id)}
-              />
-            );
-          })}
+        
+        {/* Display style toggle */}
+        {showFilter && (
+          <div className="flex space-x-2">
+            <button
+              onClick={() => {}}
+              className={`p-1.5 rounded ${displayStyle === 'grid' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}
+              title="Grid view"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </button>
+            <button
+              onClick={() => {}}
+              className={`p-1.5 rounded ${displayStyle === 'list' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}
+              title="List view"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3" y2="6"></line>
+                <line x1="3" y1="12" x2="3" y2="12"></line>
+                <line x1="3" y1="18" x2="3" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+      
+      {/* No results message */}
+      {filteredQuests.length === 0 && (
+        <div className="p-8 text-center bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-medium text-gray-700 mb-2">
+            {isJungleTheme ? 'No quests found in this region!' : 'No modules found'}
+          </h3>
+          <p className="text-gray-500">
+            {isJungleTheme 
+              ? 'Try searching in different jungle regions or adjusting your filters.'
+              : 'Try changing your search criteria or filters.'}
+          </p>
         </div>
       )}
+      
+      {/* Quest cards grid/list */}
+      <div className={`
+        ${displayStyle === 'grid' 
+          ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4' 
+          : 'space-y-4'
+        }
+      `}>
+        {filteredQuests.map(quest => (
+          <QuestCard
+            key={quest.id}
+            quest={quest}
+            progress={userProgress[quest.id]}
+            userRank={userRank}
+            size={cardSize}
+            showOriginalTitle={showOriginalTitles}
+            onClick={onQuestClick}
+          />
+        ))}
+      </div>
     </div>
   );
 };
