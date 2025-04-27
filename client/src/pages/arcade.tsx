@@ -405,7 +405,7 @@ export default function Arcade() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl">
+    <div className="container mx-auto px-4 py-6 max-w-6xl h-full overflow-y-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Arcade</h1>
@@ -419,7 +419,7 @@ export default function Arcade() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 h-full overflow-visible">
         <TabsList className="grid grid-cols-4 sm:grid-cols-4 w-full max-w-lg mx-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="achievements">Achievements</TabsTrigger>
@@ -428,7 +428,7 @@ export default function Arcade() {
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-6 overflow-y-auto pb-10">
           <div className="grid md:grid-cols-2 gap-6">
             {/* Rank Card */}
             <RankCard userProgress={userProgress} />
@@ -525,7 +525,7 @@ export default function Arcade() {
         </TabsContent>
 
         {/* Achievements Tab */}
-        <TabsContent value="achievements" className="space-y-6">
+        <TabsContent value="achievements" className="space-y-6 overflow-y-auto pb-10">
           <div className="flex flex-wrap gap-2 mb-6">
             <Button 
               variant={categoryFilter === "all" ? "default" : "outline"}
@@ -563,7 +563,7 @@ export default function Arcade() {
         </TabsContent>
 
         {/* Learning Tab */}
-        <TabsContent value="learning" className="space-y-6">
+        <TabsContent value="learning" className="space-y-6 overflow-y-auto pb-10">
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
@@ -688,7 +688,7 @@ export default function Arcade() {
         </TabsContent>
 
         {/* Challenges Tab */}
-        <TabsContent value="challenges" className="space-y-6">
+        <TabsContent value="challenges" className="space-y-6 overflow-y-auto pb-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
