@@ -44,6 +44,23 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   const [poseImage, setPoseImage] = useState<string | null>(null);
   const [possiblePaths, setPossiblePaths] = useState<string[]>([]);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect mobile view on component mount and window resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Load pose image with reliable fallbacks
   useEffect(() => {
@@ -229,7 +246,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           {/* iOS-style subtle gradient accent at top */}
           <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
           
-          <div className="aspect-square relative bg-gray-50">
+          <div className={`relative bg-gray-50 ${isMobile ? 'aspect-video' : 'aspect-square'}`}>
             {isLoadingImage ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-pulse w-10 h-10 rounded-full bg-gray-200" />
