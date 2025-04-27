@@ -4,9 +4,18 @@ import { db } from '../db';
 import { users, User } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
+// User type matching the UserType in mentorship-routes
+export interface UserType {
+  id: number;
+  username: string;
+  email?: string;
+  role?: string;
+  name?: string;
+}
+
 // Extended Request type to include authenticated user
 export interface AuthenticatedRequest extends Request {
-  user?: User;
+  user?: UserType;
 }
 
 /**
@@ -37,8 +46,14 @@ export async function authenticateJWT(req: AuthenticatedRequest, res: Response, 
       return res.status(401).json({ message: 'User not found' });
     }
 
-    // Attach user to request
-    req.user = user;
+    // Attach user to request with type matching UserType interface
+    req.user = {
+      id: user.id,
+      username: user.name, // Use name as username
+      email: user.email,
+      role: user.role || undefined,
+      name: user.name
+    };
     next();
   } catch (error) {
     console.error('Authentication error:', error);
@@ -72,7 +87,14 @@ export async function optionalAuthenticate(req: AuthenticatedRequest, res: Respo
     // Get user from database
     const [user] = await db.select().from(users).where(eq(users.id, payload.userId));
     if (user) {
-      req.user = user;
+      // Attach user to request with type matching UserType interface
+      req.user = {
+        id: user.id,
+        username: user.name, // Use name as username
+        email: user.email,
+        role: user.role || undefined,
+        name: user.name
+      };
     }
     
     next();

@@ -344,6 +344,7 @@ export class MemStorage implements IStorage {
       updatedAt: now,
       startedAt: null,
       completedAt: null,
+      dueDate: assignment.dueDate || null,
     };
     this.assignedPathways.set(id, newAssignment);
     return newAssignment;
@@ -406,6 +407,9 @@ export class MemStorage implements IStorage {
       id,
       createdAt: now,
       updatedAt: now,
+      pathwayId: note.pathwayId || null,
+      moduleId: note.moduleId || null,
+      visibility: note.visibility || null,
     };
     this.progressNotes.set(id, newNote);
     return newNote;

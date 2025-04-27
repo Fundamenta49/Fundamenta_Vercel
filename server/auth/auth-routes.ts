@@ -222,10 +222,8 @@ router.get('/me', authenticateJWT, (req: AuthenticatedRequest, res: Response) =>
     return res.status(401).json({ error: 'Authentication required' });
   }
 
-  // Return user info (excluding password)
-  const { password, ...userWithoutPassword } = req.user;
-  
-  res.json({ user: userWithoutPassword });
+  // Return user info (UserType doesn't include password)
+  res.json({ user: req.user });
 });
 
 /**
