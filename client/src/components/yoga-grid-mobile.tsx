@@ -13,6 +13,8 @@ import updatedPoses from '../data/updated_poses.json';
 import posesWithPaths from '../data/poses_with_paths.json';
 import yogaYoutubeIds from '../data/yoga_youtube_ids.json';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
+import YogaPosePopout from './yoga-pose-popout';
+import { getYogaPoseVideoInfo } from '../lib/yoga-pose-thumbnails';
 
 // Create an adapter interface to handle type discrepancies
 interface YogaPoseAchievementAdapter {
@@ -269,79 +271,24 @@ export default function YogaGridMobile() {
                     
                     return (
                       <div key={pose.id} className="group">
-                        <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-200 group-hover:shadow-md group-hover:border-blue-200">
-                          <div className="aspect-square relative overflow-hidden">
-                            {pose.imageUrl && (
-                              <img 
-                                src={pose.imageUrl} 
-                                alt={pose.name}
-                                className="w-full h-full object-cover"
-                              />
-                            )}
-                            
-                            {/* YouTube video indicator with clear, visible overlay */}
-                            {pose.youtubeId && isUnlocked && (
-                              <div 
-                                className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent hover:from-black/60 flex items-center justify-center transition-all duration-200 cursor-pointer"
-                                onClick={() => {
-                                  // Open YouTube video in a new tab
-                                  window.open(`https://www.youtube.com/watch?v=${pose.youtubeId}`, '_blank');
-                                  // Track this activity
-                                  console.log(`Opening YouTube video for ${pose.name}: ${pose.youtubeId}`);
-                                }}
-                              >
-                                {/* YouTube play button */}
-                                <div className="absolute p-3 rounded-full bg-red-600 border-2 border-white shadow-lg transform hover:scale-110 transition-transform">
-                                  <Play className="h-6 w-6 text-white fill-white" />
-                                </div>
-                                
-                                {/* YouTube logo badge */}
-                                <div className="absolute bottom-2 right-2 bg-red-600 px-2 py-1 rounded-md flex items-center shadow-sm">
-                                  <Youtube className="h-4 w-4 text-white mr-1" />
-                                  <span className="text-xs font-bold text-white tracking-tight">TUTORIAL</span>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {!isUnlocked && (
-                              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                                <div className="text-white text-center p-2">
-                                  <Info className="h-8 w-8 mx-auto mb-1" />
-                                  <p className="text-sm font-medium">Complete level {pose.levelRequired - 1} first</p>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {achievement && achievement.masteryLevel > 0 && (
-                              <div className="absolute top-2 right-2">
-                                <Badge className="bg-white/90 backdrop-blur-sm text-gray-900 border-0 shadow-sm">
-                                  <Award className="h-3 w-3 mr-1 text-amber-500" />
-                                  {achievement.masteryLevel}/5
-                                </Badge>
-                              </div>
-                            )}
-                          </div>
-                          
-                          <div className="p-3">
-                            <div className="font-medium text-sm text-gray-900">{pose.name}</div>
-                            {pose.sanskritName && (
-                              <div className="text-xs text-gray-500 italic mb-1.5">{pose.sanskritName}</div>
-                            )}
-                            <div className="flex items-center justify-between mt-1.5">
-                              <Badge variant="outline" className="bg-gray-50 text-xs capitalize rounded-full px-2.5">
-                                {pose.difficulty}
-                              </Badge>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="h-7 px-2.5 text-xs rounded-full text-blue-600 hover:text-blue-700 hover:bg-blue-50" 
-                                disabled={!isUnlocked}
-                              >
-                                Practice <ArrowRight className="ml-1 h-3 w-3" />
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
+                        <YogaPosePopout 
+                          pose={{
+                            ...pose,
+                            id: pose.id,
+                            name: pose.name,
+                            sanskritName: pose.sanskritName,
+                            difficulty: pose.difficulty,
+                            description: pose.description,
+                            levelRequired: pose.levelRequired,
+                            imageUrl: pose.imageUrl
+                          }}
+                          unlocked={isUnlocked}
+                          achievement={achievement ? {
+                            masteryLevel: achievement.masteryLevel || 0,
+                            bestScore: achievement.bestScore || 0,
+                            lastPracticedDate: achievement.lastPracticedDate
+                          } : undefined}
+                        />
                       </div>
                     );
                   })}
