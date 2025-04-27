@@ -392,7 +392,9 @@ function Router() {
                 <MyPathPage />
               </ProtectedRoute>
             </Route>
-            <Route path="/jungle-path-demo" component={JunglePathDemoPage} />
+            <Route path="/jungle-path-demo">
+              <JunglePathDemoPage />
+            </Route>
             <Route component={NotFound} />
           </Switch>
           <Toaster />
