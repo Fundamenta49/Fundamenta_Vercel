@@ -9,6 +9,7 @@ import { TourProvider } from "@/components/home-tour";
 import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
 import { ActivityProfileProvider } from "@/contexts/activity-profile-context";
+import MyPathPage from "@/pages/mypath";
 
 // Import cooking pages
 import CookingPage from "@/pages/cooking";
@@ -379,6 +380,11 @@ function Router() {
             <Route path="/learning/saved-quizzes">
               <ProtectedRoute>
                 <SavedQuizzesPage />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/mypath">
+              <ProtectedRoute>
+                <MyPathPage />
               </ProtectedRoute>
             </Route>
             <Route component={NotFound} />
