@@ -280,12 +280,15 @@ export default function YogaGridMobile() {
                             difficulty: pose.difficulty,
                             description: pose.description,
                             levelRequired: pose.levelRequired,
-                            imageUrl: pose.imageUrl
+                            imageUrl: pose.imageUrl,
+                            // Ensure youtubeId is passed to enable direct video playing
+                            youtubeId: pose.youtubeId || getYogaPoseVideoInfo(pose.id)?.videoId
                           }}
                           unlocked={isUnlocked}
                           achievement={achievement ? {
                             masteryLevel: achievement.masteryLevel || 0,
-                            bestScore: achievement.bestScore || 0
+                            bestScore: achievement.bestScore || 0,
+                            lastPracticedDate: achievement.lastPracticedDate || achievement.completionDate
                           } : undefined}
                         />
                       </div>
