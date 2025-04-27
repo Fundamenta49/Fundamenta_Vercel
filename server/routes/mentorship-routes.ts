@@ -607,6 +607,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Update assignment status/progress
   router.put("/api/assignments/:id", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const assignmentId = parseInt(req.params.id);
       const userId = req.user.id;
       const { status, progress } = req.body;
@@ -652,6 +656,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Add a progress note for a student
   router.post("/api/students/:id/notes", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const studentId = parseInt(req.params.id);
       const authorId = req.user.id;
       
@@ -685,6 +693,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Get progress notes for a student
   router.get("/api/students/:id/notes", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const studentId = parseInt(req.params.id);
       const userId = req.user.id;
       const pathwayId = req.query.pathwayId ? parseInt(req.query.pathwayId as string) : undefined;

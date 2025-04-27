@@ -194,6 +194,9 @@ export class MemStorage implements IStorage {
       id,
       createdAt: now,
       updatedAt: now,
+      status: connection.status || "pending",
+      accessLevel: connection.accessLevel || "standard",
+      connectionCode: connection.connectionCode || null,
     };
     this.userConnections.set(id, newConnection);
     return newConnection;
@@ -240,6 +243,10 @@ export class MemStorage implements IStorage {
       id,
       createdAt: now,
       updatedAt: now,
+      description: pathway.description || null,
+      category: pathway.category || null,
+      isTemplate: pathway.isTemplate || null,
+      isPublic: pathway.isPublic || null,
     };
     this.customPathways.set(id, newPathway);
     return newPathway;
@@ -289,6 +296,10 @@ export class MemStorage implements IStorage {
       id,
       createdAt: now,
       updatedAt: now,
+      description: module.description || null,
+      content: module.content || null,
+      estimatedDuration: module.estimatedDuration || null,
+      skillLevel: module.skillLevel || null,
     };
     this.customPathwayModules.set(id, newModule);
     return newModule;
