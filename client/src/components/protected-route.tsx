@@ -22,7 +22,7 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
 
   // If not authenticated, redirect to login page
   if (!isAuthenticated) {
-    return <Redirect to="/auth" />;
+    return <Redirect to="/login" />;
   }
 
   // If admin-only route but user is not an admin

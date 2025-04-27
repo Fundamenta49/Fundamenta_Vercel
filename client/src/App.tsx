@@ -138,18 +138,14 @@ function AuthRedirect() {
 }
 
 function Router() {
-  // Define a separate route configuration for the auth pages
+  // Define a separate route configuration for the login page
   return (
     <Switch>
-      <Route path="/auth">
-        {/* Auth page is completely separated from app layout */}
-        <div className="auth-container">
-          <AuthPage />
-        </div>
-      </Route>
       <Route path="/login">
-        {/* Redirect old login page to new auth page */}
-        <AuthRedirect />
+        {/* Login page is completely separated from app layout */}
+        <div className="login-container">
+          <LoginPage />
+        </div>
       </Route>
       <Route path="/privacy-policy">
         {/* Privacy policy page without protected route */}
