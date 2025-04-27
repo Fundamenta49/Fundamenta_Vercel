@@ -10,7 +10,7 @@ import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
 import { ActivityProfileProvider } from "@/contexts/activity-profile-context";
 import MyPathPage from "@/pages/mypath";
-import JunglePathDemo from "@/jungle-path/demo/QuestSystemDemo";
+import JunglePathDemoPage from "@/pages/jungle-path-demo";
 
 // Import cooking pages
 import CookingPage from "@/pages/cooking";
@@ -392,9 +392,7 @@ function Router() {
                 <MyPathPage />
               </ProtectedRoute>
             </Route>
-            <Route path="/jungle-path-demo">
-              <JunglePathDemo />
-            </Route>
+            <Route path="/jungle-path-demo" component={JunglePathDemoPage} />
             <Route component={NotFound} />
           </Switch>
           <Toaster />

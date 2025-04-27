@@ -145,7 +145,7 @@ const QuestDetail: React.FC<{ quest: JungleQuest; onBack: () => void }> = ({ que
 };
 
 // Main Demo Component
-export const QuestSystemDemo: React.FC = () => {
+const QuestSystemDemo: React.FC = () => {
   const [selectedQuest, setSelectedQuest] = useState<JungleQuest | null>(null);
   
   // Use our quest mapper hook
