@@ -42,7 +42,10 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  password: text("password"),
+  password: text("password").notNull(),
+  role: text("role").default("user"),
+  emailVerified: boolean("email_verified").default(false),
+  privacyConsent: boolean("privacy_consent").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -123,25 +126,32 @@ export const insertLearningProgressSchema = createInsertSchema(learningProgress)
 export const insertSessionSchema = createInsertSchema(sessions);
 
 // Define TypeScript types
-export type InsertUserType = z.infer<typeof insertUserSchema>;
-export type SelectUserType = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+export type InsertUserType = InsertUser; // Backward compatibility
+export type SelectUserType = User; // Backward compatibility
 
-export type InsertConversationType = z.infer<typeof insertConversationSchema>;
-export type SelectConversationType = typeof conversations.$inferSelect;
+export type InsertConversation = z.infer<typeof insertConversationSchema>;
 export type Conversation = typeof conversations.$inferSelect;
+export type InsertConversationType = InsertConversation; // Backward compatibility
+export type SelectConversationType = Conversation; // Backward compatibility
 
-export type InsertMessageType = z.infer<typeof insertMessageSchema>;
-export type SelectMessageType = typeof messages.$inferSelect;
+export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type Message = typeof messages.$inferSelect;
+export type InsertMessageType = InsertMessage; // Backward compatibility
+export type SelectMessageType = Message; // Backward compatibility
 
-export type InsertUserInfoType = z.infer<typeof insertUserInfoSchema>;
-export type SelectUserInfoType = typeof userInfo.$inferSelect;
+export type InsertUserInfo = z.infer<typeof insertUserInfoSchema>;
+export type UserInfo = typeof userInfo.$inferSelect;
+export type InsertUserInfoType = InsertUserInfo; // Backward compatibility
+export type SelectUserInfoType = UserInfo; // Backward compatibility
 
-export type InsertLearningProgressType = z.infer<typeof insertLearningProgressSchema>;
-export type SelectLearningProgressType = typeof learningProgress.$inferSelect;
+export type InsertLearningProgress = z.infer<typeof insertLearningProgressSchema>;
+export type LearningProgress = typeof learningProgress.$inferSelect;
+export type InsertLearningProgressType = InsertLearningProgress; // Backward compatibility
+export type SelectLearningProgressType = LearningProgress; // Backward compatibility
 
-
-
-export type InsertSessionType = z.infer<typeof insertSessionSchema>;
-export type SelectSessionType = typeof sessions.$inferSelect;
+export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type Session = typeof sessions.$inferSelect;
+export type InsertSessionType = InsertSession; // Backward compatibility
+export type SelectSessionType = Session; // Backward compatibility
