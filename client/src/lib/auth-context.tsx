@@ -1,11 +1,23 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useLocation } from 'wouter';
+import { useToast } from '@/hooks/use-toast';
+import { PrivacyConsentModal } from '@/components/privacy/PrivacyConsentModal';
 
 // Define auth user type
 type AuthUser = {
+  id: number;
   name: string;
   email: string;
   role?: string;
+  emailVerified?: boolean;
+  privacyConsent?: boolean;
+};
+
+// Auth tokens type
+type AuthTokens = {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
 };
 
 // Define auth context state
@@ -14,8 +26,13 @@ type AuthContextType = {
   user: AuthUser | null;
   login: (email: string, password: string) => Promise<boolean>;
   signUp: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  refreshToken: () => Promise<boolean>;
   loading: boolean;
+  error: string | null;
+  setError: (error: string | null) => void;
+  showConsent: boolean;
+  setPrivacyConsent: (consent: boolean) => Promise<boolean>;
 };
 
 // Create the auth context with default values
@@ -24,8 +41,13 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   login: async () => false,
   signUp: async () => false,
-  logout: () => {},
+  logout: async () => {},
+  refreshToken: async () => false,
   loading: true,
+  error: null,
+  setError: () => {},
+  showConsent: false,
+  setPrivacyConsent: async () => false,
 });
 
 // Auth provider props
@@ -37,204 +59,301 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [tokens, setTokens] = useState<AuthTokens | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showConsent, setShowConsent] = useState(false);
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
-  // Initialize auth state from localStorage on component mount
-  useEffect(() => {
-    const checkAuth = () => {
-      // Regular auth check
-      const authData = localStorage.getItem('auth');
+  // Function to check privacy consent
+  const checkConsent = async () => {
+    try {
+      const response = await fetch('/api/auth/consent', {
+        method: 'GET',
+        credentials: 'include',
+      });
       
-      if (authData) {
-        try {
-          const { isAuthenticated, user } = JSON.parse(authData);
-          setIsAuthenticated(isAuthenticated);
-          setUser(user);
-        } catch (error) {
-          console.error('Failed to parse auth data', error);
-          // Clear invalid auth data
-          localStorage.removeItem('auth');
-        }
+      if (response.ok) {
+        const data = await response.json();
+        return data.hasConsent;
       }
       
-      setLoading(false);
-    };
-    
-    checkAuth();
-  }, []);
+      return false;
+    } catch (error) {
+      console.error('Failed to check consent status:', error);
+      return false;
+    }
+  };
 
-  // Login function - in a real app, this would call an API
+  // Initialize auth state from cookies/session on component mount
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        // Call the /me endpoint to check if user is logged in
+        const response = await fetch('/api/auth/me', {
+          method: 'GET',
+          credentials: 'include', // Include cookies
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+          setIsAuthenticated(true);
+          
+          // Check if user has consented to privacy policy
+          if (data.user && !data.user.privacyConsent) {
+            const hasConsent = await checkConsent();
+            if (!hasConsent) {
+              setShowConsent(true);
+            }
+          }
+        } else {
+          // Not authenticated or token expired
+          setIsAuthenticated(false);
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        setIsAuthenticated(false);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurrentUser();
+    
+    // Set up token refresh interval
+    const refreshInterval = setInterval(() => {
+      if (isAuthenticated) {
+        refreshToken();
+      }
+    }, 25 * 60 * 1000); // Refresh every 25 minutes
+    
+    return () => clearInterval(refreshInterval);
+  }, [isAuthenticated]);
+
+  // Refresh token function
+  const refreshToken = async (): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setTokens({
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          expiresIn: data.expiresIn,
+        });
+        return true;
+      } else {
+        // If token refresh fails, log the user out
+        await logout();
+        return false;
+      }
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      await logout();
+      return false;
+    }
+  };
+
+  // Login function
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
+    setError(null);
     
     try {
-      // Prevent empty credentials
       if (!email || !password) {
-        console.error('Email and password are required');
+        setError('Email and password are required');
         setLoading(false);
         return false;
       }
       
-      // Demo admin login - in production, this would validate credentials with a server
-      if (email.toLowerCase() === 'admin@fundamenta.app' && password === 'admin123') {
-        const userData: AuthUser = {
-          name: 'Admin User',
-          email: email,
-          role: 'admin'
-        };
-        
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+        setTokens(data.tokens);
         setIsAuthenticated(true);
-        setUser(userData);
         
-        // Store auth data in localStorage with error handling
-        try {
-          localStorage.setItem('auth', JSON.stringify({
-            isAuthenticated: true,
-            user: userData
-          }));
-        } catch (storageError) {
-          console.error('Failed to save auth state:', storageError);
-          // Continue anyway since we've already set the in-memory state
+        // Check if user has given privacy consent
+        if (data.user && !data.user.privacyConsent) {
+          setShowConsent(true);
         }
+        
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${data.user.name}!`,
+        });
         
         setLoading(false);
         return true;
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Login failed');
+        toast({
+          title: "Login failed",
+          description: errorData.error || "Invalid credentials",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return false;
       }
-      
-      // Check if this is a registered user
-      try {
-        const registeredUsers = localStorage.getItem('registered_users');
-        if (registeredUsers) {
-          const users = JSON.parse(registeredUsers);
-          
-          // Case-insensitive email comparison
-          const userMatch = users.find((user: any) => 
-            user.email.toLowerCase() === email.toLowerCase() && user.password === password
-          );
-          
-          if (userMatch) {
-            console.log('User authenticated successfully');
-            
-            const userData: AuthUser = {
-              name: userMatch.name,
-              email: userMatch.email,
-              role: 'user'
-            };
-            
-            setIsAuthenticated(true);
-            setUser(userData);
-            
-            // Store auth data in localStorage with error handling
-            try {
-              localStorage.setItem('auth', JSON.stringify({
-                isAuthenticated: true,
-                user: userData
-              }));
-            } catch (storageError) {
-              console.error('Failed to save auth state:', storageError);
-              // Continue anyway since we've already set the in-memory state
-            }
-            
-            setLoading(false);
-            return true;
-          } else {
-            console.log('Invalid credentials - no matching user found');
-          }
-        } else {
-          console.log('No registered users found');
-        }
-      } catch (parseError) {
-        console.error('Error parsing registered users:', parseError);
-        // Clear corrupted data
-        localStorage.removeItem('registered_users');
-      }
-      
-      setLoading(false);
-      return false;
     } catch (error) {
       console.error('Login error:', error);
+      setError('Network error. Please try again.');
+      toast({
+        title: "Login error",
+        description: "Failed to connect to authentication service",
+        variant: "destructive",
+      });
       setLoading(false);
       return false;
     }
   };
   
-  // Sign-up function to register new users
+  // Sign-up function
   const signUp = async (name: string, email: string, password: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      // Add loading state to prevent multiple signups
-      setLoading(true);
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+        credentials: 'include',
+      });
       
-      // Check if user already exists
-      const registeredUsers = localStorage.getItem('registered_users');
-      let users = registeredUsers ? JSON.parse(registeredUsers) : [];
-      
-      // Case-insensitive email check to prevent duplicate registrations
-      const existingUser = users.find((user: any) => 
-        user.email.toLowerCase() === email.toLowerCase()
-      );
-      
-      if (existingUser) {
-        console.log('User already exists with this email');
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+        setTokens(data.tokens);
+        setIsAuthenticated(true);
+        
+        // Always show consent modal for new users
+        setShowConsent(true);
+        
+        toast({
+          title: "Registration successful",
+          description: `Welcome to Fundamenta Life Skills, ${data.user.name}!`,
+        });
+        
         setLoading(false);
-        return false; // User already exists
-      }
-      
-      // Register new user
-      const newUser = { name, email, password };
-      users.push(newUser);
-      
-      // Store updated users list in local storage
-      try {
-        localStorage.setItem('registered_users', JSON.stringify(users));
-      } catch (storageError) {
-        console.error('Failed to save user to localStorage:', storageError);
+        return true;
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Registration failed');
+        toast({
+          title: "Registration failed",
+          description: errorData.error || "Please try again with different information",
+          variant: "destructive",
+        });
         setLoading(false);
         return false;
       }
-      
-      console.log('Successfully registered user');
-      
-      // Auto-login after registration
-      const userData: AuthUser = {
-        name: name,
-        email: email,
-        role: 'user'
-      };
-      
-      setIsAuthenticated(true);
-      setUser(userData);
-      
-      // Store auth data in localStorage
-      try {
-        localStorage.setItem('auth', JSON.stringify({
-          isAuthenticated: true,
-          user: userData
-        }));
-      } catch (authStorageError) {
-        console.error('Failed to save auth state:', authStorageError);
-        // Continue anyway, as the user is authenticated in memory
-      }
-      
-      setLoading(false);
-      return true;
     } catch (error) {
       console.error('Sign-up error:', error);
+      setError('Network error. Please try again.');
+      toast({
+        title: "Registration error",
+        description: "Failed to connect to registration service",
+        variant: "destructive",
+      });
       setLoading(false);
       return false;
     }
   };
 
   // Logout function
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-    localStorage.removeItem('auth');
-    setLocation('/login');
+  const logout = async (): Promise<void> => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Continue with client-side logout even if server logout fails
+    } finally {
+      setIsAuthenticated(false);
+      setUser(null);
+      setTokens(null);
+      setLocation('/login');
+    }
+  };
+
+  // Set privacy consent
+  const setPrivacyConsent = async (consent: boolean): Promise<boolean> => {
+    if (!consent) {
+      setShowConsent(false);
+      return false;
+    }
+    
+    try {
+      const response = await fetch('/api/auth/consent', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      
+      if (response.ok) {
+        setShowConsent(false);
+        
+        // Update user object with consent
+        if (user) {
+          setUser({
+            ...user,
+            privacyConsent: true,
+          });
+        }
+        
+        return true;
+      } else {
+        throw new Error('Failed to record consent');
+      }
+    } catch (error) {
+      console.error('Privacy consent error:', error);
+      return false;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, signUp, logout, loading }}>
+    <AuthContext.Provider 
+      value={{ 
+        isAuthenticated, 
+        user, 
+        login, 
+        signUp, 
+        logout, 
+        refreshToken,
+        loading, 
+        error, 
+        setError,
+        showConsent,
+        setPrivacyConsent
+      }}
+    >
+      {showConsent && (
+        <PrivacyConsentModal 
+          onConsent={() => setPrivacyConsent(true)} 
+          onDecline={() => setPrivacyConsent(false)}
+        />
+      )}
       {children}
     </AuthContext.Provider>
   );
