@@ -163,20 +163,15 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
         );
       case 'yoga':
         return (
-          <div className="p-4 rounded-md mb-4">
-            <h2 className="text-xl font-semibold text-pink-700 mb-1">Yoga Practice</h2>
-            <p className="text-gray-600 mb-6">
+          <div className="p-2 sm:p-4 rounded-md mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-1">Yoga Practice</h2>
+            <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
               Yoga combines physical postures with breathing techniques and mindfulness.
               Regular practice can improve flexibility, strength, balance, and mental wellbeing.
             </p>
             
-            {/* Use mobile-optimized view on small screens, desktop view on larger screens */}
-            <div className="block md:hidden">
-              <YogaGridMobile />
-            </div>
-            <div className="hidden md:block">
-              <YogaGridInterface />
-            </div>
+            {/* Just use YogaGridInterface with updated styles */}
+            <YogaGridInterface />
             
             {/* Remove the main YogaVision dialog since each pose card has its own integrated camera */}
             {/* The old YogaVision dialog code is kept for reference */}

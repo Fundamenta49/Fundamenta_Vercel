@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { YogaPoseProgression } from '../../../shared/yoga-progression';
-import { ArrowRight, Camera, Info, Book, Award, Youtube, X, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Camera, Info, Book, Award, Youtube, X, CheckCircle2, Lock as LockIcon } from 'lucide-react';
 import YogaVisionSimplified from './yoga-vision-simplified';
 import axios from 'axios';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
@@ -223,90 +223,94 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Card 
-          className={`cursor-pointer hover:border-primary transition-all duration-200 ${!unlocked ? 'opacity-60' : ''}`}
+          className={`cursor-pointer hover:shadow-md transition-shadow duration-300 border overflow-hidden ${!unlocked ? 'opacity-75' : ''} border-gray-200 rounded-xl`}
         >
-          <CardContent className="p-4 flex flex-col items-center">
-            <div className="w-full h-32 rounded-md overflow-hidden mb-3 bg-muted flex items-center justify-center">
-              {isLoadingImage ? (
-                <div className="animate-pulse flex items-center justify-center w-full h-full">
-                  <span className="text-xs text-muted-foreground">Loading pose image...</span>
-                </div>
-              ) : (
-                <div className="w-full h-full relative overflow-hidden group cursor-pointer"
-                  onClick={() => {
-                    const videoInfo = getYogaPoseVideoInfo(pose.id);
-                    if (videoInfo) {
-                      openYouTubeVideo(videoInfo.videoId);
+          <div className="aspect-square relative bg-gray-50">
+            {isLoadingImage ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="animate-pulse w-8 h-8 rounded-full bg-gray-200" />
+              </div>
+            ) : (
+              <div 
+                className="w-full h-full relative overflow-hidden group cursor-pointer"
+                onClick={() => {
+                  const videoInfo = getYogaPoseVideoInfo(pose.id);
+                  if (videoInfo) {
+                    openYouTubeVideo(videoInfo.videoId);
+                  }
+                }}
+              >
+                <img 
+                  src={getYogaPoseThumbnail(pose.id)}
+                  alt={pose.name} 
+                  className="object-cover w-full h-full group-hover:opacity-90 transition-opacity"
+                  style={{ objectFit: 'cover' }}
+                  onError={(e) => {
+                    console.log(`Thumbnail failed to load for ${pose.id}, trying alternative format`);
+                    // Try a different YouTube thumbnail format
+                    const videoId = getYogaPoseVideoInfo(pose.id)?.videoId;
+                    if (videoId) {
+                      e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                      
+                      // Add a second error handler in case hqdefault also fails
+                      e.currentTarget.onerror = () => {
+                        console.log(`Alternative thumbnail also failed for ${pose.id}, trying sddefault format`);
+                        e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
+                        
+                        // Final fallback if all YouTube formats fail
+                        e.currentTarget.onerror = null;
+                      };
                     }
                   }}
-                >
-                  <img 
-                    src={getYogaPoseThumbnail(pose.id)}
-                    alt={pose.name} 
-                    className="object-cover w-full h-full group-hover:opacity-90 transition-opacity"
-                    style={{ objectFit: 'cover' }}
-                    onError={(e) => {
-                      console.log(`Thumbnail failed to load for ${pose.id}, trying alternative format`);
-                      // Try a different YouTube thumbnail format
-                      const videoId = getYogaPoseVideoInfo(pose.id)?.videoId;
-                      if (videoId) {
-                        e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-                        
-                        // Add a second error handler in case hqdefault also fails
-                        e.currentTarget.onerror = () => {
-                          console.log(`Alternative thumbnail also failed for ${pose.id}, trying sddefault format`);
-                          e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
-                          
-                          // Final fallback if all YouTube formats fail
-                          e.currentTarget.onerror = null;
-                        };
-                      }
-                    }}
-                  />
-                  {pose.id && getYogaPoseVideoInfo(pose.id) && (
-                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
-                      <Youtube className="w-3 h-3 mr-1" />
-                      <span>{getYogaPoseVideoInfo(pose.id)?.title.split('(')[0] || 'Demo Video'}</span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <div className="bg-black/70 rounded-full p-2">
-                      <Youtube className="w-5 h-5 text-white" />
-                    </div>
+                />
+                
+                {pose.id && getYogaPoseVideoInfo(pose.id) && (
+                  <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center">
+                    <Youtube className="w-3 h-3 mr-1" />
+                    <span>{getYogaPoseVideoInfo(pose.id)?.title.split('(')[0] || 'Demo Video'}</span>
+                  </div>
+                )}
+                
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="bg-black/70 rounded-full p-2">
+                    <Youtube className="w-5 h-5 text-white" />
                   </div>
                 </div>
-              )}
-            </div>
-            
-            <h3 className="font-medium text-center text-base">{pose.name}</h3>
-            <p className="text-xs text-muted-foreground text-center italic">{pose.sanskritName}</p>
-            
-            <div className="flex items-center justify-between w-full mt-2">
-              <Badge variant="outline" className="text-xs">
-                {pose.difficulty}
-              </Badge>
-              {achievement && achievement.masteryLevel > 0 && (
-                <div className="flex items-center">
-                  {renderMasteryStars(achievement.masteryLevel)}
-                </div>
-              )}
-            </div>
-            
-            {!unlocked && (
-              <Badge variant="destructive" className="mt-2">
-                Locked
-              </Badge>
+              </div>
             )}
             
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="mt-3 w-full" 
-              disabled={!unlocked}
-            >
-              <span>Practice</span>
-              <ArrowRight className="h-4 w-4 ml-1" />
-            </Button>
+            {!unlocked && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <div className="text-white text-center px-3">
+                  <LockIcon className="h-6 w-6 mx-auto mb-1" />
+                  <p className="text-sm">Complete level {pose.levelRequired - 1} first</p>
+                </div>
+              </div>
+            )}
+            
+            {achievement && achievement.masteryLevel > 0 && (
+              <div className="absolute top-2 right-2">
+                <Badge className="bg-gray-900/70 text-white">
+                  <Award className="h-3 w-3 mr-1" />
+                  {achievement.masteryLevel}/5
+                </Badge>
+              </div>
+            )}
+          </div>
+          
+          <CardContent className="p-2">
+            <div className="text-sm font-medium text-gray-900">{pose.name}</div>
+            {pose.sanskritName && (
+              <div className="text-xs text-gray-500 italic mb-1">{pose.sanskritName}</div>
+            )}
+            <div className="flex items-center justify-between mt-1">
+              <Badge variant="outline" className="text-xs capitalize px-2 py-0 h-5 bg-transparent border-gray-200">
+                {pose.difficulty}
+              </Badge>
+              <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-gray-700 hover:text-gray-900" disabled={!unlocked}>
+                Practice
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </DialogTrigger>

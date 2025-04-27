@@ -159,42 +159,42 @@ export default function YogaGridInterface() {
           </CardDescription>
         </CardHeader>
         <CardContent className="p-3 sm:p-5">
-          {/* Filters - iOS style */}
-          <div className="flex flex-col sm:flex-row gap-2 mb-4">
+          {/* Filters - Enhanced iOS style for mobile */}
+          <div className="flex flex-col gap-3 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search poses..."
-                className="pl-9 border border-gray-200 rounded-full h-9 text-sm focus:ring-gray-300 focus:border-gray-300"
+                className="pl-9 border border-gray-200 rounded-full h-9 text-sm focus:ring-blue-200 focus:border-blue-300"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             
-            <div className="sm:w-auto">
+            <div className="w-full overflow-x-auto pb-1 hide-scrollbar">
               <Tabs value={difficultyFilter} onValueChange={setDifficultyFilter}>
-                <TabsList className="h-9 bg-gray-100 p-1 rounded-full">
+                <TabsList className="h-9 bg-gray-100 p-1 rounded-full w-full inline-flex">
                   <TabsTrigger 
                     value="all" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 flex-1 min-w-[60px]"
                   >
                     All
                   </TabsTrigger>
                   <TabsTrigger 
                     value="beginner" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 flex-1 min-w-[80px]"
                   >
                     Beginner
                   </TabsTrigger>
                   <TabsTrigger 
                     value="intermediate" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 flex-1 min-w-[80px]"
                   >
                     Medium
                   </TabsTrigger>
                   <TabsTrigger 
                     value="advanced" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 flex-1 min-w-[80px]"
                   >
                     Advanced
                   </TabsTrigger>
@@ -203,24 +203,24 @@ export default function YogaGridInterface() {
             </div>
           </div>
           
-          {/* Active challenges section - iOS-style cards */}
+          {/* Active challenges section - Scrollable horizontally on mobile, grid on larger screens */}
           {availableChallenges.length > 0 && (
             <div className="mb-4">
-              <h3 className="text-base font-medium mb-2 text-gray-800">Active Challenges</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-x-auto pb-1">
+              <h3 className="text-sm sm:text-base font-medium mb-2 text-gray-800">Active Challenges</h3>
+              <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-x-auto pb-2 -mx-3 sm:mx-0 px-3 sm:px-0 hide-scrollbar">
                 {availableChallenges.map(challenge => (
-                  <div key={challenge.id} className="min-w-[240px]">
-                    <div className="bg-white border border-gray-200 rounded-xl p-3 h-full hover:border-gray-300 transition-colors">
+                  <div key={challenge.id} className="min-w-[200px] sm:min-w-0 flex-shrink-0 sm:flex-shrink-initial">
+                    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 h-full hover:shadow-md transition-shadow">
                       <div className="flex flex-col h-full">
                         <h4 className="font-medium text-sm mb-1">{challenge.name}</h4>
                         <p className="text-xs text-gray-500 mb-2 line-clamp-2 flex-grow">
                           {challenge.description}
                         </p>
                         <div className="flex items-center justify-between">
-                          <Badge className="text-xs px-2 py-0.5 bg-gray-100 text-gray-800 hover:bg-gray-200 border-0">
+                          <Badge className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-0">
                             {challenge.difficulty}
                           </Badge>
-                          <span className="text-xs text-gray-400">{challenge.durationDays} days</span>
+                          <span className="text-xs text-gray-500">{challenge.durationDays} days</span>
                         </div>
                       </div>
                     </div>
