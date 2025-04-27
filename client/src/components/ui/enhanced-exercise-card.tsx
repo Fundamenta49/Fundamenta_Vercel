@@ -175,7 +175,7 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
       className="transition-opacity duration-200" 
       tabIndex={-1} // Make focusable for accessibility and programmatic focus
     >
-      <Card className="overflow-hidden border shadow-sm hover:shadow-md transition-shadow duration-200">
+      <Card className="overflow-hidden border-0 sm:border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 rounded-none sm:rounded-lg">
         <CardContent className="p-0">
           {/* Card Header - Always visible - iOS-style with cleaner spacing */}
           <div 
@@ -383,49 +383,51 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                     </div>
                   )}
                   
-                  {/* Action buttons */}
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {onShowExerciseDetail && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="text-xs border-pink-200 text-pink-700 hover:bg-pink-50"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (onShowExerciseDetail) {
-                            onShowExerciseDetail(exercise);
-                          }
-                        }}
-                      >
-                        <Info className="h-3.5 w-3.5 mr-1" />
-                        View Full Details
-                      </Button>
-                    )}
+                  {/* iOS-styled action buttons */}
+                  <div className="flex flex-wrap justify-between items-center gap-2 mt-3 md:mt-4">
+                    <div className="flex gap-1.5 md:gap-2">
+                      {onShowExerciseDetail && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="h-8 text-[10px] md:text-xs border-pink-200 text-pink-700 hover:bg-pink-50 rounded-full px-2.5 md:px-3"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onShowExerciseDetail) {
+                              onShowExerciseDetail(exercise);
+                            }
+                          }}
+                        >
+                          <Info className="h-3 w-3 md:h-3.5 md:w-3.5 mr-1" />
+                          Details
+                        </Button>
+                      )}
+                      
+                      {!exerciseVideo && !isLoading && loadExerciseVideo && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="h-8 text-[10px] md:text-xs border-blue-200 text-blue-700 hover:bg-blue-50 rounded-full px-2.5 md:px-3"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            loadVideo();
+                          }}
+                        >
+                          <Play className="h-3 w-3 md:h-3.5 md:w-3.5 mr-1" />
+                          Video
+                        </Button>
+                      )}
+                    </div>
                     
-                    {!exerciseVideo && !isLoading && loadExerciseVideo && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          loadVideo();
-                        }}
-                      >
-                        <Play className="h-3.5 w-3.5 mr-1" />
-                        Load Tutorial
-                      </Button>
-                    )}
-                    
-                    {/* Additional close button at the bottom */}
+                    {/* iOS-style prominent close button */}
                     <Button 
                       variant="destructive" 
                       size="sm"
-                      className="text-xs ml-auto"
+                      className="h-8 text-[10px] md:text-xs rounded-full px-2.5 md:px-3"
                       onClick={handleClose}
                     >
-                      <X className="h-3.5 w-3.5 mr-1" />
-                      Close Exercise
+                      <X className="h-3 w-3 md:h-3.5 md:w-3.5 mr-1" />
+                      Close
                     </Button>
                   </div>
                 </div>

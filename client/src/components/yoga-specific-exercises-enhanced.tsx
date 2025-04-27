@@ -282,11 +282,11 @@ const YogaSpecificExercisesEnhanced = () => {
   
   return (
     <div className="mx-auto w-full max-w-4xl">
-      {/* Apple-inspired minimalist container - removed nested Card for mobile */}
-      <div className="bg-white md:shadow-md md:border md:border-pink-100 md:rounded-xl overflow-hidden">
-        <div className="p-3 md:p-4 bg-white">
+      {/* Apple-inspired ultra-minimalist container - full width on mobile with subtle border */}
+      <div className="w-full bg-white border-l-4 border-pink-300 md:border-l-0 md:shadow-md md:border md:border-pink-100 md:rounded-xl overflow-hidden">
+        <div className="p-2 md:p-4 bg-white">
           {/* Header section with simplified styling */}
-          <h2 className="text-xl md:text-2xl font-medium text-gray-800 mb-1 md:mb-2">Yoga Practice</h2>
+          <h2 className="text-xl md:text-2xl font-medium text-gray-800 pl-1 mb-1 md:mb-2">Yoga Practice</h2>
           
           {/* Collapsible description for mobile - only shows on larger screens by default */}
           <p className="hidden md:block text-gray-600 mb-4">
@@ -334,24 +334,24 @@ const YogaSpecificExercisesEnhanced = () => {
             </div>
             
             {/* Activity recommendations - only show this component on the recommendations tab on mobile */}
-            <div className={`${activeTab === 'recommendations' ? 'block' : 'hidden md:block'} mb-4`}>
+            <div className={`${activeTab === 'recommendations' ? 'block' : 'hidden md:block'} mb-3 md:mb-4`}>
               <ActivitySpecificRecommendations 
                 activityType="yoga"
                 onStartWorkout={handleStartWorkout} 
               />
             </div>
             
-            {/* Beginner tab content with simplified mobile styling */}
-            <TabsContent value="beginner" className="pt-1 md:pt-3">
-              {/* Collapsible description with iOS-style design */}
-              <div className="mb-3 border-l-2 border-pink-400 pl-2 py-1 md:p-3 md:rounded-md">
+            {/* Beginner tab content with minimalist styling on mobile */}
+            <TabsContent value="beginner" className="pt-0 md:pt-3">
+              {/* iOS-style minimal section header */}
+              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-pink-400 md:pl-2 md:py-1 md:p-3 md:rounded-md">
                 <h3 className="font-medium text-gray-800 text-sm md:text-base">Beginner Poses</h3>
-                {/* Show abbreviated description on mobile, full on desktop */}
+                {/* Description only on desktop */}
                 <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
                   These foundational poses focus on proper alignment and building body awareness.
                 </p>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3">
                 {YOGA_EXERCISES.beginner.map((exercise) => (
                   <EnhancedExerciseCard 
                     key={exercise.id}
@@ -366,15 +366,15 @@ const YogaSpecificExercisesEnhanced = () => {
               </div>
             </TabsContent>
             
-            {/* Intermediate tab content with simplified mobile styling */}
-            <TabsContent value="intermediate" className="pt-1 md:pt-3">
-              <div className="mb-3 border-l-2 border-pink-400 pl-2 py-1 md:p-3 md:rounded-md">
+            {/* Intermediate tab content with minimalist styling on mobile */}
+            <TabsContent value="intermediate" className="pt-0 md:pt-3">
+              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-pink-400 md:pl-2 md:py-1 md:p-3 md:rounded-md">
                 <h3 className="font-medium text-gray-800 text-sm md:text-base">Intermediate Poses</h3>
                 <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
                   These poses build on fundamentals to incorporate balance, strength, and flexibility.
                 </p>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3">
                 {YOGA_EXERCISES.intermediate.map((exercise) => (
                   <EnhancedExerciseCard 
                     key={exercise.id}
@@ -389,15 +389,15 @@ const YogaSpecificExercisesEnhanced = () => {
               </div>
             </TabsContent>
             
-            {/* Advanced tab content with simplified mobile styling */}
-            <TabsContent value="advanced" className="pt-1 md:pt-3">
-              <div className="mb-3 border-l-2 border-pink-400 pl-2 py-1 md:p-3 md:rounded-md">
+            {/* Advanced tab content with minimalist styling on mobile */}
+            <TabsContent value="advanced" className="pt-0 md:pt-3">
+              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-pink-400 md:pl-2 md:py-1 md:p-3 md:rounded-md">
                 <h3 className="font-medium text-gray-800 text-sm md:text-base">Advanced Poses</h3>
                 <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
                   These challenging poses require strength, flexibility, and body awareness.
                 </p>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3">
                 {YOGA_EXERCISES.advanced.map((exercise) => (
                   <EnhancedExerciseCard 
                     key={exercise.id}
@@ -412,8 +412,8 @@ const YogaSpecificExercisesEnhanced = () => {
               </div>
             </TabsContent>
             
-            {/* Recommendations Tab with simplified mobile styling */}
-            <TabsContent value="recommendations" className="pt-1 md:pt-3">
+            {/* Recommendations Tab with minimalist styling on mobile */}
+            <TabsContent value="recommendations" className="pt-0 md:pt-3">
               {/* On desktop, this is duplicated from above, but on mobile it's the main display */}
               <ActivitySpecificRecommendations 
                 activityType="yoga" 
@@ -423,8 +423,6 @@ const YogaSpecificExercisesEnhanced = () => {
           </Tabs>
         </div>
       </div>
-
-      {/* Adding scrollbar styles via global CSS instead of JSX */}
     </div>
   );
 };
