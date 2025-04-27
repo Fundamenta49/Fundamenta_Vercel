@@ -252,7 +252,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild className="block w-full h-full">
         <Card 
-          className={`cursor-pointer overflow-hidden transition-all duration-300 border-0 rounded-2xl shadow-sm hover:shadow-md hover:translate-y-[-2px] ${!unlocked ? 'opacity-85' : ''} ${isMobile ? 'w-full mx-auto max-w-md' : ''}`}
+          className={`cursor-pointer overflow-hidden transition-all duration-300 border-0 rounded-2xl shadow-sm hover:shadow-md hover:translate-y-[-2px] ${!unlocked ? 'opacity-85' : ''} ${isMobile ? 'w-full mx-auto' : ''}`}
         >
           {/* iOS-style subtle gradient accent at top */}
           <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>

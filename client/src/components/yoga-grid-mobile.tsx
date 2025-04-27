@@ -146,9 +146,9 @@ export default function YogaGridMobile() {
   ).slice(0, 3);
 
   return (
-    <div className="pb-16 max-w-4xl mx-auto">
+    <div className="pb-16 w-full max-w-full sm:max-w-4xl mx-auto px-1 sm:px-4">
       {/* iOS-style container with ultra-minimal design */}
-      <div className="bg-white/90 backdrop-blur-xl rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4 w-full">
         {/* iOS-style subtle gradient header */}
         <div className="h-1 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
         
@@ -253,7 +253,7 @@ export default function YogaGridMobile() {
           Object.entries(posesByLevel)
             .sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB))
             .map(([level, poses]: [string, any[]]) => (
-              <div key={level} className="px-4 sm:px-6 py-4 sm:py-4 mb-6 sm:mb-3">
+              <div key={level} className="px-2 sm:px-6 py-4 sm:py-4 mb-6 sm:mb-3">
                 <div className="flex items-center justify-between mb-5 sm:mb-3 pb-2 border-b border-gray-100">
                   <h3 className="text-lg sm:text-base font-medium text-gray-800">Level {level} Poses</h3>
                   <Badge variant="outline" className="text-xs bg-gray-50 rounded-full">
@@ -261,7 +261,7 @@ export default function YogaGridMobile() {
                   </Badge>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-4">
                   {poses.map((pose: any) => {
                     // Check if pose is unlocked
                     const isUnlocked = isPoseUnlocked ? isPoseUnlocked(pose.id) : true;
@@ -270,7 +270,7 @@ export default function YogaGridMobile() {
                     const achievement = userProgress?.poseAchievements?.[pose.id];
                     
                     return (
-                      <div key={pose.id} className="group mb-8 sm:mb-0">
+                      <div key={pose.id} className="group mb-4 sm:mb-0 w-full">
                         <YogaPosePopout 
                           pose={{
                             ...pose,
