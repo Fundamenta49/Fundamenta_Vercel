@@ -75,9 +75,9 @@ export default function YogaGridMobile() {
       // Determine pose level based on ID
       const poseLevel = getPoseLevel(pose.id);
 
-      // Create YouTube thumbnail URL
+      // Create YouTube thumbnail URL - using higher quality thumbnails
       const youtubeThumbUrl = youtubeId 
-        ? `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg` 
+        ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` 
         : `/images/yoga-poses/original_yoga_image.jpg`;
   
       // Construct the complete pose object
@@ -279,10 +279,10 @@ export default function YogaGridMobile() {
                               />
                             )}
                             
-                            {/* YouTube video indicator */}
+                            {/* YouTube video indicator - more subtle overlay */}
                             {pose.youtubeId && isUnlocked && (
                               <div 
-                                className="absolute inset-0 bg-black/10 hover:bg-black/30 flex items-center justify-center transition-all duration-200 cursor-pointer group"
+                                className="absolute inset-0 hover:bg-black/20 flex items-center justify-center transition-all duration-200 cursor-pointer"
                                 onClick={() => {
                                   // Open YouTube video in a new tab
                                   window.open(`https://www.youtube.com/watch?v=${pose.youtubeId}`, '_blank');
@@ -290,11 +290,15 @@ export default function YogaGridMobile() {
                                   console.log(`Opening YouTube video for ${pose.name}: ${pose.youtubeId}`);
                                 }}
                               >
-                                <div className="p-2 rounded-full bg-red-600/80 backdrop-blur-sm border border-white/20 shadow-md transform scale-90 group-hover:scale-100 transition-transform">
-                                  <Play className="h-5 w-5 text-white fill-white" />
+                                {/* YouTube play button */}
+                                <div className="absolute p-3 rounded-full bg-red-600/90 border border-white/30 shadow-lg transform hover:scale-110 transition-transform">
+                                  <Play className="h-6 w-6 text-white fill-white" />
                                 </div>
-                                <div className="absolute bottom-2 right-2">
-                                  <Youtube className="h-4 w-4 text-white" />
+                                
+                                {/* YouTube logo badge */}
+                                <div className="absolute bottom-2 right-2 bg-red-600/90 px-1.5 py-0.5 rounded flex items-center shadow-sm">
+                                  <Youtube className="h-3.5 w-3.5 text-white mr-0.5" />
+                                  <span className="text-[10px] font-bold text-white tracking-tight">TUTORIAL</span>
                                 </div>
                               </div>
                             )}
